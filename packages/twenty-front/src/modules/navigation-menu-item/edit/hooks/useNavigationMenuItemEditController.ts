@@ -32,7 +32,7 @@ type CreateItemOptions = {
   targetIndex?: number;
 };
 
-// The single create/update/delete API for the add/edit side panel. It forks on
+// The single create/update/delete API for navigation item editing. It forks on
 // the active section (mirroring useHandleNavigationMenuItemDragAndDrop): the
 // workspace section stages changes in the draft (saved on layout exit), while
 // the favorite section persists personal items immediately and optimistically.

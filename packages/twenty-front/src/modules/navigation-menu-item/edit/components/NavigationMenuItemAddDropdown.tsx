@@ -1,4 +1,3 @@
-import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { type ReactNode } from 'react';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -8,6 +7,8 @@ import { NavigationMenuItemAddDropdownContent } from '@/navigation-menu-item/edi
 
 type NavigationMenuItemAddDropdownProps = {
   children: ReactNode;
+  instanceId?: string;
+  section?: 'workspace' | 'favorite';
 } & (
   | { folderId: string; position: number }
   | { folderId?: never; position?: never }
@@ -15,30 +16,24 @@ type NavigationMenuItemAddDropdownProps = {
 
 export const NavigationMenuItemAddDropdown = ({
   children,
+  instanceId = 'workspace',
+  section = 'workspace',
   folderId,
   position,
 }: NavigationMenuItemAddDropdownProps) => {
-  const dropdownId = `navigation-add-item-${folderId ?? 'workspace'}`;
+  const dropdownId = `navigation-add-item-${folderId ?? instanceId}`;
   const { closeDropdown } = useCloseDropdown();
   const setNavigationMenuItemEditSection = useSetAtomState(
     navigationMenuItemEditSectionState,
-  );
-
-  const setPendingInsertionNavigationMenuItem = useSetAtomState(
-    pendingInsertionNavigationMenuItemState,
   );
 
   return (
     <Dropdown
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
-      dropdownOffset={{ y: 8 }}
       clickableComponent={children}
       onOpen={() => {
-        setNavigationMenuItemEditSection('workspace');
-        setPendingInsertionNavigationMenuItem(
-          folderId ? { folderId, position } : null,
-        );
+        setNavigationMenuItemEditSection(section);
       }}
       dropdownComponents={
         <NavigationMenuItemAddDropdownContent

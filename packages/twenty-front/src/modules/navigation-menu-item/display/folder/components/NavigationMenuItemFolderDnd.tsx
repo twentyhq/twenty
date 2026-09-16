@@ -1,3 +1,4 @@
+import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
@@ -74,6 +75,7 @@ const StyledFolderDroppableContent = styled.div`
 `;
 
 type NavigationMenuItemFolderDndProps = {
+  item: NavigationMenuItem;
   folderId: string;
   folderName: string;
   folderIconKey?: string | null;
@@ -88,6 +90,7 @@ type NavigationMenuItemFolderDndProps = {
 };
 
 export const NavigationMenuItemFolderDnd = ({
+  item,
   folderId,
   folderName,
   folderIconKey,
@@ -190,14 +193,7 @@ export const NavigationMenuItemFolderDnd = ({
       closeDropdown={favoritesEdit.closeDropdown}
     />
   ) : (
-    <div
-      onClick={(event) => {
-        event.stopPropagation();
-        handleToggle();
-      }}
-    >
-      <NavigationMenuItemFolderChevron isOpen={isOpen} />
-    </div>
+    <NavigationMenuItemFolderChevron isOpen={isOpen} />
   );
 
   const headerOverride =
@@ -224,7 +220,7 @@ export const NavigationMenuItemFolderDnd = ({
         isWorkspace && isFolderEditHighlighted && !isExpanded
       }
       onClick={handleHeaderClick}
-      rightOptions={headerRightOptions}
+      rightOptions={shouldUseEditModeClick ? undefined : headerRightOptions}
       className="navigation-drawer-item"
       isRightOptionsDropdownOpen={
         isEditInPlace ? favoritesEdit.isDropdownOpen : undefined
@@ -303,7 +299,30 @@ export const NavigationMenuItemFolderDnd = ({
         data-forbidden-drop-target={isForbiddenDropTarget ? 'true' : undefined}
       >
         <NavigationMenuItemFolderLayout
-          header={wrappedHeader}
+          header={
+            <NavigationMenuItemEditable
+              item={item}
+              rightOptions={
+                shouldUseEditModeClick &&
+                isExpanded && (
+                  <LightIconButton
+                    Icon={() => (
+                      <NavigationMenuItemFolderChevron isOpen={isOpen} />
+                    )}
+                    size="small"
+                    accent="tertiary"
+                    aria-label={isOpen ? t`Collapse folder` : t`Expand folder`}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleToggle();
+                    }}
+                  />
+                )
+              }
+            >
+              {wrappedHeader}
+            </NavigationMenuItemEditable>
+          }
           isOpen={isOpen}
           isGroup={isGroup}
         >

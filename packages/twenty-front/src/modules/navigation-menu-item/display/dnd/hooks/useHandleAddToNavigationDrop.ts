@@ -3,7 +3,6 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined, normalizeUrl } from 'twenty-shared/utils';
-import { IconFolder, IconLink, useIcons } from 'twenty-ui/icon';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -20,7 +19,7 @@ import {
   type NewNavigationMenuItemInput,
   useNavigationMenuItemEditController,
 } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
-import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -32,11 +31,11 @@ import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common
 export const useHandleAddToNavigationDrop = () => {
   const store = useStore();
   const { currentItems, createItem } = useNavigationMenuItemEditController();
-  const { openNavigationMenuItemInSidePanel } =
-    useOpenNavigationMenuItemInSidePanel();
+  const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
+    selectedNavigationMenuItemIdInEditModeState,
+  );
   const { objectMetadataItems } = useObjectMetadataItems();
   const views = useAtomStateValue(viewsSelector);
-  const { getIcon } = useIcons();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const setOpenNavigationMenuItemFolderIds = useSetAtomState(
     openNavigationMenuItemFolderIdsState,
@@ -91,20 +90,13 @@ export const useHandleAddToNavigationDrop = () => {
       const addToWorkspaceAndOpenEdit = (
         input: NewNavigationMenuItemInput,
         position: { targetFolderId: string | null; targetIndex: number },
-        openOptions: Omit<
-          Parameters<typeof openNavigationMenuItemInSidePanel>[0],
-          'itemId'
-        >,
       ) => {
         enterLayoutCustomizationMode();
         if (!store.get(isLayoutCustomizationModeEnabledState.atom)) {
           return;
         }
         const newItemId = createItem(input, position);
-        openNavigationMenuItemInSidePanel({
-          ...openOptions,
-          itemId: newItemId,
-        });
+        setSelectedNavigationMenuItemIdInEditMode(newItemId);
       };
 
       switch (payload.type) {
@@ -116,11 +108,6 @@ export const useHandleAddToNavigationDrop = () => {
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
             },
             { targetFolderId: null, targetIndex: index },
-            {
-              pageTitle: t`Edit folder`,
-              pageIcon: IconFolder,
-              focusTitleInput: true,
-            },
           );
           return;
         }
@@ -133,11 +120,6 @@ export const useHandleAddToNavigationDrop = () => {
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
             },
             { targetFolderId: folderId, targetIndex: index },
-            {
-              pageTitle: t`Edit link`,
-              pageIcon: IconLink,
-              focusTitleInput: true,
-            },
           );
           return;
         }
@@ -163,12 +145,6 @@ export const useHandleAddToNavigationDrop = () => {
                   : undefined),
             },
             { targetFolderId: folderId, targetIndex: index },
-            {
-              pageTitle: objectMetadataItem?.labelPlural ?? payload.label,
-              pageIcon: objectMetadataItem
-                ? getIcon(objectMetadataItem.icon)
-                : IconFolder,
-            },
           );
           return;
         }
@@ -188,10 +164,6 @@ export const useHandleAddToNavigationDrop = () => {
                 : undefined,
             },
             { targetFolderId: folderId, targetIndex: index },
-            {
-              pageTitle: view?.name ?? payload.label,
-              pageIcon: view ? getIcon(view.icon) : IconFolder,
-            },
           );
           return;
         }
@@ -199,9 +171,6 @@ export const useHandleAddToNavigationDrop = () => {
           if (!isDefined(payload.objectMetadataId)) {
             return;
           }
-          const objectMetadataItem = objectMetadataItems.find(
-            (item) => item.id === payload.objectMetadataId,
-          );
           addToWorkspaceAndOpenEdit(
             {
               type: NavigationMenuItemType.RECORD,
@@ -214,12 +183,6 @@ export const useHandleAddToNavigationDrop = () => {
               },
             },
             { targetFolderId: folderId, targetIndex: index },
-            {
-              pageTitle: payload.label,
-              pageIcon: objectMetadataItem
-                ? getIcon(objectMetadataItem.icon)
-                : IconFolder,
-            },
           );
           return;
         }
@@ -229,9 +192,8 @@ export const useHandleAddToNavigationDrop = () => {
       createItem,
       currentItems,
       views,
-      getIcon,
       objectMetadataItems,
-      openNavigationMenuItemInSidePanel,
+      setSelectedNavigationMenuItemIdInEditMode,
       setOpenNavigationMenuItemFolderIds,
       enterLayoutCustomizationMode,
       store,

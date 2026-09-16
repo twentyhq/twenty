@@ -1,6 +1,11 @@
-import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useState, type ReactNode } from 'react';
+import {
+  NavigationMenuItemSelectableItem,
+  type NavigationMenuItemOption,
+} from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
@@ -12,7 +17,6 @@ import {
   IconUser,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { Avatar, TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -21,65 +25,26 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import {
   useNavigationMenuItemEditController,
   type NewNavigationMenuItemInput,
 } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuObjectMetadataForSection } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataForSection';
-import { useAvailableNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/side-panel/hooks/useAvailableNavigationMenuItemSearchRecords';
-import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/side-panel/utils/getAvailableObjectMetadataForNewSidebarItem';
-import { isViewDisplayableInNavigationMenu } from '@/navigation-menu-item/edit/side-panel/utils/isViewDisplayableInNavigationMenu';
+import { useAvailableNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useAvailableNavigationMenuItemSearchRecords';
+import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/utils/getAvailableObjectMetadataForNewSidebarItem';
+import { isViewDisplayableInNavigationMenu } from '@/navigation-menu-item/edit/utils/isViewDisplayableInNavigationMenu';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useAddFolderToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu';
-import { useAddLinkToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu';
-import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { ViewKey } from '@/views/types/ViewKey';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type Step = 'main' | 'object' | 'view' | 'record';
-type Item = {
-  id: string;
-  label: string;
-  icon: ReactNode;
-  onClick: () => void;
-  isDisabled?: boolean;
-  hasSubMenu?: boolean;
-};
-const NavigationMenuItemAddDropdownOption = ({ item }: { item: Item }) => {
-  const { t } = useLingui();
-  const isSelectedItemId = useAtomComponentFamilyStateValue(
-    isSelectedItemIdComponentFamilyState,
-    item.id,
-  );
-  return (
-    <SelectableListItem
-      itemId={item.id}
-      onEnter={item.isDisabled ? undefined : item.onClick}
-    >
-      <MenuItem
-        text={item.label}
-        LeftComponent={item.icon}
-        onClick={item.onClick}
-        disabled={item.isDisabled}
-        contextualText={
-          item.isDisabled && !item.hasSubMenu ? t`Already in navbar` : undefined
-        }
-        contextualTextPosition="left"
-        hasSubMenu={item.hasSubMenu}
-        focused={isSelectedItemId}
-      />
-    </SelectableListItem>
-  );
-};
-
 type NavigationMenuItemAddDropdownContentProps = {
   dropdownId: string;
   folderId?: string;
@@ -95,10 +60,9 @@ export const NavigationMenuItemAddDropdownContent = ({
 }: NavigationMenuItemAddDropdownContentProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const { handleAddFolder } = useAddFolderToNavigationMenu();
-  const { handleAddLink } = useAddLinkToNavigationMenu();
-  const { openNavigationMenuItemInSidePanel } =
-    useOpenNavigationMenuItemInSidePanel();
+  const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
+    selectedNavigationMenuItemIdInEditModeState,
+  );
   const [step, setStep] = useState<Step>('main');
   const [search, setSearch] = useState('');
   const [objectId, setObjectId] = useState<string | null>(null);
@@ -139,22 +103,7 @@ export const NavigationMenuItemAddDropdownContent = ({
       targetIndex: position,
     });
     onClose();
-    const object = objectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.id === input.targetObjectMetadataId,
-    );
-    const view = views.find(
-      (availableView) => availableView.id === input.viewId,
-    );
-    openNavigationMenuItemInSidePanel({
-      itemId,
-      pageTitle:
-        input.targetRecordIdentifier?.labelIdentifier ??
-        object?.labelSingular ??
-        view?.name ??
-        t`Edit menu item`,
-      pageIcon: getIcon(object?.icon ?? view?.icon),
-    });
+    setSelectedNavigationMenuItemIdInEditMode(itemId);
   };
   const navigate = (next: Step) => {
     setStep(next);
@@ -173,7 +122,7 @@ export const NavigationMenuItemAddDropdownContent = ({
     record: t`Record`,
   };
 
-  const getItems = (): Item[] => {
+  const getItems = (): NavigationMenuItemOption[] => {
     if (step === 'main')
       return [
         {
@@ -207,8 +156,11 @@ export const NavigationMenuItemAddDropdownContent = ({
             />
           ),
           onClick: () => {
-            onClose();
-            handleAddFolder();
+            addItem({
+              type: NavigationMenuItemType.FOLDER,
+              name: t`New folder`,
+              color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
+            });
           },
           isDisabled: Boolean(folderId),
           hasSubMenu: true,
@@ -223,8 +175,12 @@ export const NavigationMenuItemAddDropdownContent = ({
             />
           ),
           onClick: () => {
-            onClose();
-            handleAddLink();
+            addItem({
+              type: NavigationMenuItemType.LINK,
+              name: t`Link label`,
+              link: 'https://www.example.com',
+              color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
+            });
           },
           hasSubMenu: true,
         },
@@ -244,6 +200,8 @@ export const NavigationMenuItemAddDropdownContent = ({
         id: object.id,
         label: object.labelPlural,
         icon: <ObjectMetadataIcon objectMetadataItem={object} />,
+        isAlreadyInNavbar:
+          step === 'object' && objectMetadataIdsAlreadyAdded.has(object.id),
         isDisabled:
           step === 'object' && objectMetadataIdsAlreadyAdded.has(object.id),
         hasSubMenu: step === 'view',
@@ -275,6 +233,7 @@ export const NavigationMenuItemAddDropdownContent = ({
             label: view.name,
             icon: <TintedIconTile Icon={Icon} />,
             isDisabled: viewIdsAlreadyAdded.has(view.id),
+            isAlreadyInNavbar: viewIdsAlreadyAdded.has(view.id),
             onClick: () =>
               addItem({ type: NavigationMenuItemType.VIEW, viewId: view.id }),
           };
@@ -326,7 +285,7 @@ export const NavigationMenuItemAddDropdownContent = ({
     emptyMessage = t`Loading...`;
 
   return (
-    <DropdownContent widthInPixels={320}>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
         StartComponent={
           step !== 'main' && (
@@ -356,7 +315,7 @@ export const NavigationMenuItemAddDropdownContent = ({
       >
         <DropdownMenuItemsContainer hasMaxHeight>
           {items.map((item) => (
-            <NavigationMenuItemAddDropdownOption key={item.id} item={item} />
+            <NavigationMenuItemSelectableItem key={item.id} item={item} />
           ))}
           {items.length === 0 && (
             <DropdownMenuSectionLabel label={emptyMessage} />

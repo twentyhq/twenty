@@ -1,3 +1,4 @@
+import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { NavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder';
 import { NavigationMenuItemLinkDisplay } from '@/navigation-menu-item/display/link/components/NavigationMenuItemLinkDisplay';
@@ -37,48 +38,54 @@ export const NavigationMenuItemDisplay = ({
       );
     case NavigationMenuItemType.LINK:
       return (
-        <NavigationMenuItemLinkDisplay
-          item={item}
-          isEditInPlace={isEditInPlace}
-          editModeProps={editModeProps}
-          isDragging={isDragging}
-          folderChildrenById={folderChildrenById}
-          folderCount={folderCount}
-          rightOptions={rightOptions}
-          onNavigationMenuItemClick={onNavigationMenuItemClick}
-          onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-          readOnly={readOnly}
-        />
+        <NavigationMenuItemEditable item={item}>
+          <NavigationMenuItemLinkDisplay
+            item={item}
+            isEditInPlace={isEditInPlace}
+            editModeProps={editModeProps}
+            isDragging={isDragging}
+            folderChildrenById={folderChildrenById}
+            folderCount={folderCount}
+            rightOptions={rightOptions}
+            onNavigationMenuItemClick={onNavigationMenuItemClick}
+            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+            readOnly={readOnly}
+          />
+        </NavigationMenuItemEditable>
       );
     case NavigationMenuItemType.PAGE_LAYOUT:
       return (
-        <NavigationMenuItemPageLayoutDisplay
-          item={item}
-          isEditInPlace={isEditInPlace}
-          editModeProps={editModeProps}
-          isDragging={isDragging}
-          folderChildrenById={folderChildrenById}
-          folderCount={folderCount}
-          rightOptions={rightOptions}
-          onNavigationMenuItemClick={onNavigationMenuItemClick}
-          onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-          readOnly={readOnly}
-        />
+        <NavigationMenuItemEditable item={item}>
+          <NavigationMenuItemPageLayoutDisplay
+            item={item}
+            isEditInPlace={isEditInPlace}
+            editModeProps={editModeProps}
+            isDragging={isDragging}
+            folderChildrenById={folderChildrenById}
+            folderCount={folderCount}
+            rightOptions={rightOptions}
+            onNavigationMenuItemClick={onNavigationMenuItemClick}
+            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+            readOnly={readOnly}
+          />
+        </NavigationMenuItemEditable>
       );
     default:
       return (
-        <NavigationMenuItemObjectDisplay
-          item={item}
-          isEditInPlace={isEditInPlace}
-          editModeProps={editModeProps}
-          isDragging={isDragging}
-          folderChildrenById={folderChildrenById}
-          folderCount={folderCount}
-          rightOptions={rightOptions}
-          onNavigationMenuItemClick={onNavigationMenuItemClick}
-          onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-          readOnly={readOnly}
-        />
+        <NavigationMenuItemEditable item={item}>
+          <NavigationMenuItemObjectDisplay
+            item={item}
+            isEditInPlace={isEditInPlace}
+            editModeProps={editModeProps}
+            isDragging={isDragging}
+            folderChildrenById={folderChildrenById}
+            folderCount={folderCount}
+            rightOptions={rightOptions}
+            onNavigationMenuItemClick={onNavigationMenuItemClick}
+            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+            readOnly={readOnly}
+          />
+        </NavigationMenuItemEditable>
       );
   }
 };
