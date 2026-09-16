@@ -44,14 +44,15 @@ const StyledContentContainer = styled.div`
 `;
 
 // The sidebar only sticks while both columns fit side by side: once they
-// stack, a sticky sidebar would cover the description below it
+// stack, a sticky sidebar would cover the description below it. It sticks
+// at the page's top padding so it does not jump when scrolling starts.
 const StyledSidebarColumn = styled.div`
   flex: 1 1 0;
   min-width: ${SIDEBAR_COLUMN_MIN_WIDTH_PX}px;
 
   @container application-about (min-width: ${TWO_COLUMN_LAYOUT_MIN_WIDTH_PX}px) {
     position: sticky;
-    top: 0;
+    top: var(--settings-page-container-padding-top, 0);
   }
 `;
 
