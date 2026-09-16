@@ -5,6 +5,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
 
 @RegisteredWorkspaceCommand('2.41.0', 1789566000000)
 @Command({
@@ -53,6 +54,18 @@ export class RelinkWorkflowVersionsToCoreWorkflowsCommand extends ProvisionedWor
         AND EXISTS (${canonicalParentId})`;
 
     try {
+      if (
+        !(await hasCoreWorkflowWorkspaceWorkflowIdColumn((query) =>
+          queryRunner.query(query),
+        ))
+      ) {
+        this.logger.warn(
+          `core.workflow.workspaceWorkflowId missing for workspace ${workspaceId}, skipping relink`,
+        );
+
+        return;
+      }
+
       const [counts] = await queryRunner.query(
         `SELECT count(*)::int AS total
          FROM core."workflowVersion" v

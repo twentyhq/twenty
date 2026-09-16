@@ -8,6 +8,7 @@ import { In, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -133,9 +134,17 @@ export class WorkflowCoreSyncService {
       return new Map();
     }
 
-    // Raw SQL: workspaceWorkflowId is hidden from the entity metadata while an
-    // upgrade that introduces it is running, which makes a repository where
-    // clause on it throw.
+    const isColumnAvailable = await hasCoreWorkflowWorkspaceWorkflowIdColumn(
+      (query) => this.workspaceRepository.manager.query(query),
+    );
+
+    if (!isColumnAvailable) {
+      return new Map();
+    }
+
+    // Raw SQL: workspaceWorkflowId is also hidden from the entity metadata
+    // while the upgrade that introduces it runs, so a repository where clause
+    // on it throws even once the column exists.
     const reverseMappedCoreWorkflows =
       (await this.workspaceRepository.manager.query(
         `SELECT DISTINCT ON ("workspaceWorkflowId") "workspaceWorkflowId", "id"

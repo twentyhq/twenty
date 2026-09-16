@@ -12,6 +12,7 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
@@ -288,10 +289,15 @@ export class WorkflowVersionCoreSyncService {
         !coreWorkflowIdByWorkflowId.has(candidateWorkflowId),
     );
 
-    if (unresolvedWorkflowIds.length > 0) {
-      // Raw SQL: workspaceWorkflowId is hidden from the entity metadata while an
-      // upgrade that introduces it is running, which makes a repository where
-      // clause on it throw.
+    if (
+      unresolvedWorkflowIds.length > 0 &&
+      (await hasCoreWorkflowWorkspaceWorkflowIdColumn((query) =>
+        this.workspaceRepository.manager.query(query),
+      ))
+    ) {
+      // Raw SQL: workspaceWorkflowId is also hidden from the entity metadata
+      // while the upgrade that introduces it runs, so a repository where clause
+      // on it throws even once the column exists.
       const reverseMappedCoreWorkflows =
         (await this.workspaceRepository.manager.query(
           `SELECT DISTINCT ON ("workspaceWorkflowId") "workspaceWorkflowId", "id"
@@ -342,6 +348,14 @@ export class WorkflowVersionCoreSyncService {
 
     if (isNonEmptyString(pointedCoreWorkflowId)) {
       return pointedCoreWorkflowId;
+    }
+
+    const isColumnAvailable = await hasCoreWorkflowWorkspaceWorkflowIdColumn(
+      (query) => transactionScope.executeRawQuery(query),
+    );
+
+    if (!isColumnAvailable) {
+      return null;
     }
 
     await transactionScope.executeRawQuery(
