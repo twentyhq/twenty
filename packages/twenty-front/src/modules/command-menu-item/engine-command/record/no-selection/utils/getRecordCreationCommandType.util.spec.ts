@@ -83,3 +83,16 @@ it.each([
     ).toBe(expected);
   },
 );
+
+it('uses global creation for the current object in a trash view', () => {
+  expect(
+    getRecordCreationCommandType({
+      objectNameSingular: 'company',
+      contextObjectMetadataId: 'company-id',
+      creationTargetObjectMetadataId: 'company-id',
+      recordIndexId: 'company-index',
+      hasAnySoftDeleteFilterOnView: true,
+      isWorkflowCoreIndexPageEnabled: false,
+    }),
+  ).toBe('global');
+});

@@ -7,8 +7,10 @@ export const getRecordCreationCommandType = ({
   isWorkflowCoreIndexPageEnabled,
   contextObjectMetadataId,
   recordIndexId,
+  hasAnySoftDeleteFilterOnView = false,
 }: {
   objectNameSingular: string;
+  hasAnySoftDeleteFilterOnView?: boolean;
   contextObjectMetadataId?: string | null;
   recordIndexId?: string | null;
   creationTargetObjectMetadataId?: string | null;
@@ -26,7 +28,8 @@ export const getRecordCreationCommandType = ({
   }
 
   return creationTargetObjectMetadataId === contextObjectMetadataId &&
-    isDefined(recordIndexId)
+    isDefined(recordIndexId) &&
+    !hasAnySoftDeleteFilterOnView
     ? 'index'
     : 'global';
 };

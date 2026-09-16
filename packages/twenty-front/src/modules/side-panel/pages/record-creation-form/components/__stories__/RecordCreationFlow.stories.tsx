@@ -1,3 +1,15 @@
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
+import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
+import { CommandRunner } from '@/command-menu-item/engine-command/components/CommandRunner';
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { WorkspaceRouteObjectsContext } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -16,14 +28,14 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
 import {
+  EngineComponentKey,
   FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -41,9 +53,15 @@ const onRecordCreated = fn();
 const LAYOUT_ID = 'record-creation-story-layout';
 const TAB_ID = 'record-creation-story-tab';
 
-type RecordCreationFlowProps = { isFormEnabled: boolean };
+type RecordCreationFlowProps = {
+  isFormEnabled: boolean;
+  commandOrigin?: 'task' | 'no-object';
+};
 
-const RecordCreationFlow = ({ isFormEnabled }: RecordCreationFlowProps) => {
+const RecordCreationFlow = ({
+  isFormEnabled,
+  commandOrigin,
+}: RecordCreationFlowProps) => {
   const store = useStore();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: 'company',
@@ -104,6 +122,31 @@ const RecordCreationFlow = ({ isFormEnabled }: RecordCreationFlowProps) => {
         },
       },
     ]);
+    if (isDefined(commandOrigin)) {
+      const template = mockedCommandMenuItems.find(
+        (item) =>
+          item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD &&
+          !isDefined(item.availabilityObjectMetadataId),
+      );
+      if (!isDefined(template)) {
+        throw new Error('Creation command template is required');
+      }
+      replaceDraft('commandMenuItems', [template]);
+      store.set(
+        contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
+        commandOrigin === 'task'
+          ? getMockObjectMetadataItemOrThrow('task').id
+          : null,
+      );
+      store.set(
+        contextStoreCurrentViewIdComponentState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
+        null,
+      );
+    }
     applyChanges();
     store.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
@@ -120,7 +163,14 @@ const RecordCreationFlow = ({ isFormEnabled }: RecordCreationFlowProps) => {
         : member,
     );
     setIsReady(true);
-  }, [applyChanges, isFormEnabled, objectMetadataItem, replaceDraft, store]);
+  }, [
+    applyChanges,
+    commandOrigin,
+    isFormEnabled,
+    objectMetadataItem,
+    replaceDraft,
+    store,
+  ]);
 
   return isReady ? (
     <WorkspaceRouteObjectsContext.Provider
@@ -132,13 +182,35 @@ const RecordCreationFlow = ({ isFormEnabled }: RecordCreationFlowProps) => {
       ]}
     >
       <RecordCreationFormProvider>
-        <RecordCreationFlowContent />
+        <ContextStoreComponentInstanceContext.Provider
+          value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+        >
+          <RecordCreationFlowContent commandOrigin={commandOrigin} />
+          <CommandRunner />
+        </ContextStoreComponentInstanceContext.Provider>
       </RecordCreationFormProvider>
     </WorkspaceRouteObjectsContext.Provider>
   ) : null;
 };
 
-const RecordCreationFlowContent = () => {
+const CreationCommandMenu = () => {
+  const { commandMenuItems } = useContext(CommandMenuContext);
+  return (
+    <SelectableList
+      selectableListInstanceId="creation-story-menu"
+      focusId="creation-story-menu"
+      selectableItemIdArray={commandMenuItems.map((item) => item.id)}
+    >
+      {commandMenuItems.map((item) => (
+        <CommandMenuItemRenderer key={item.id} item={item} />
+      ))}
+    </SelectableList>
+  );
+};
+
+const RecordCreationFlowContent = ({
+  commandOrigin,
+}: Pick<RecordCreationFlowProps, 'commandOrigin'>) => {
   const store = useStore();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: 'company',
@@ -160,7 +232,19 @@ const RecordCreationFlowContent = () => {
 
   return (
     <>
-      <Button title="Create company" onClick={handleCreate} />
+      {isDefined(commandOrigin) ? (
+        <CommandMenuContextProvider
+          displayType="listItem"
+          containerType={CommandMenuItemContainerType.CommandMenuList}
+        >
+          <CreationCommandMenu />
+        </CommandMenuContextProvider>
+      ) : (
+        <Button title="Create company" onClick={handleCreate} />
+      )}
+      {isDefined(commandOrigin) && (
+        <p role="status">Opened: {currentPage?.routedLocation?.pathname}</p>
+      )}
       {isOpened && currentPage?.page === SidePanelPages.RecordCreationForm && (
         <SidePanelPageComponentInstanceContext.Provider
           value={{ instanceId: currentPage.pageId }}
@@ -244,8 +328,6 @@ const submitCompany = async (canvasElement: HTMLElement, shortcut?: string) => {
   await userEvent.clear(nameInput);
   await userEvent.type(nameInput, 'Acme');
   const createButton = canvas.getByTestId('record-creation-form-create-button');
-  await expect(createButton).toHaveTextContent(getOsControlSymbol());
-  await expect(createButton).toHaveTextContent('⏎');
   if (isDefined(shortcut)) {
     await expect(nameInput).toHaveFocus();
     await userEvent.keyboard(shortcut);
@@ -273,15 +355,6 @@ const submitCompany = async (canvasElement: HTMLElement, shortcut?: string) => {
 export const SubmitWithButton: Story = {
   play: ({ canvasElement }) => submitCompany(canvasElement),
 };
-export const SubmitWithCommandEnter: Story = {
-  play: ({ canvasElement }) =>
-    submitCompany(canvasElement, '{Meta>}{Enter}{/Meta}'),
-};
-export const SubmitWithControlEnter: Story = {
-  play: ({ canvasElement }) =>
-    submitCompany(canvasElement, '{Control>}{Enter}{/Control}'),
-};
-
 export const Cancel: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -317,4 +390,34 @@ export const FlagDisabled: Story = {
       expect.objectContaining({ name: 'Filter default', employees: 10 }),
     );
   },
+};
+
+const createCompanyFromCommandMenu = async (canvasElement: HTMLElement) => {
+  const canvas = within(canvasElement);
+  await userEvent.click(await canvas.findByText('Create Company'));
+  const input = await canvas.findByRole('textbox');
+  await userEvent.type(input, 'Cross-object company');
+  await userEvent.click(
+    canvas.getByTestId('record-creation-form-create-button'),
+  );
+  await waitFor(() => expect(createCompanyRequest).toHaveBeenCalledTimes(1));
+  await expect(createCompanyRequest).toHaveBeenCalledWith(
+    expect.objectContaining({
+      name: 'Cross-object company',
+      position: 'first',
+    }),
+  );
+  await waitFor(() =>
+    expect(canvas.getByRole('status')).toHaveTextContent('/object/company/'),
+  );
+};
+
+export const CreateCompanyFromTaskPage: Story = {
+  args: { commandOrigin: 'task' },
+  play: ({ canvasElement }) => createCompanyFromCommandMenu(canvasElement),
+};
+
+export const CreateCompanyWithoutObjectContext: Story = {
+  args: { commandOrigin: 'no-object' },
+  play: ({ canvasElement }) => createCompanyFromCommandMenu(canvasElement),
 };

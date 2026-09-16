@@ -1,3 +1,4 @@
+import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
 import type { Store } from 'jotai/vanilla/store';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -125,6 +126,9 @@ export const buildHeadlessCommandContextApi = ({
 
   return {
     engineComponentKey,
+    hasAnySoftDeleteFilterOnView: filters.some((recordFilter) =>
+      isRecordFilterAboutSoftDelete({ recordFilter, objectMetadataItems }),
+    ),
     contextStoreInstanceId,
     objectMetadataItem: objectMetadataItem ?? null,
     currentViewId,

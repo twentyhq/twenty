@@ -14,6 +14,7 @@ export const CreateNewRecordCommand = () => {
   const {
     objectMetadataItem: contextObjectMetadataItem,
     recordIndexId,
+    hasAnySoftDeleteFilterOnView,
     creationTargetObjectMetadataId,
   } = useHeadlessCommandContextApi();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
@@ -35,6 +36,7 @@ export const CreateNewRecordCommand = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
     contextObjectMetadataId: contextObjectMetadataItem?.id,
     recordIndexId,
+    hasAnySoftDeleteFilterOnView,
     creationTargetObjectMetadataId,
     isWorkflowCoreIndexPageEnabled,
   });
