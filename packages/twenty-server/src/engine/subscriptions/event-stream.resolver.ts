@@ -152,7 +152,9 @@ export class EventStreamResolver {
 
     let lastTtlRefreshAt = 0;
 
-    return wrapAsyncIteratorWithLifecycle(iterator, {
+    return wrapAsyncIteratorWithLifecycle(() => iterator, {
+      heartbeatStart: 'on-first-next',
+      heartbeatErrorBehavior: 'ignore',
       initialValue: {
         objectRecordEventsWithQueryIds: [],
         metadataEvents: [],
