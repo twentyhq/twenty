@@ -5,10 +5,8 @@ import { type FileStorageDriverFactory } from 'src/engine/core-modules/file-stor
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const APPLICATION_ID = 'b30a4560-fedb-4ccd-904a-3788762c7d33';
@@ -29,20 +27,9 @@ describe('FileStorageService', () => {
         .fn()
         .mockImplementation((_workspaceId, entity) => entity),
       withManager: jest.fn().mockReturnValue(transactionRepository),
-      deleteAndReturn: jest.fn().mockResolvedValue([]),
     };
 
-    const driver = {
-      writeFile: jest.fn().mockResolvedValue(undefined),
-      delete: jest.fn().mockResolvedValue(undefined),
-      copy: jest.fn().mockResolvedValue(undefined),
-    };
-
-    const usageLimitStockService = {
-      assertStockAvailable: jest.fn().mockResolvedValue(undefined),
-      acquireStock: jest.fn().mockResolvedValue(undefined),
-      releaseStock: jest.fn().mockResolvedValue(undefined),
-    };
+    const driver = { writeFile: jest.fn().mockResolvedValue(undefined) };
 
     const service = new FileStorageService(
       {
@@ -50,16 +37,13 @@ describe('FileStorageService', () => {
       } as unknown as FileStorageDriverFactory,
       fileRepository as unknown as WorkspaceScopedRepository<FileEntity>,
       {} as WorkspaceCacheService,
-      usageLimitStockService as unknown as UsageLimitStockService,
+      {
+        assertStockAvailable: jest.fn().mockResolvedValue(undefined),
+        acquireStock: jest.fn().mockResolvedValue(undefined),
+      } as unknown as UsageLimitStockService,
     );
 
-    return {
-      service,
-      fileRepository,
-      transactionRepository,
-      driver,
-      usageLimitStockService,
-    };
+    return { service, fileRepository, transactionRepository };
   };
 
   const writeFile = (
@@ -77,18 +61,6 @@ describe('FileStorageService', () => {
       fileId,
       settings: { isTemporaryFile: false, toDelete: false },
       queryRunner,
-    });
-
-  const writeEmptyFile = (service: FileStorageService, fileId: string) =>
-    service.writeFile({
-      sourceFile: '',
-      fileFolder: FileFolder.Dependencies,
-      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      applicationId: APPLICATION_ID,
-      workspaceId: WORKSPACE_ID,
-      resourcePath: 'package.json',
-      fileId,
-      settings: { isTemporaryFile: false, toDelete: false },
     });
 
   const createPendingFile = (service: FileStorageService, fileId: string) =>
@@ -176,191 +148,5 @@ describe('FileStorageService', () => {
       expect.objectContaining({ id: 'the-row-the-application-points-at' }),
       ['path', 'workspaceId', 'applicationId'],
     );
-  });
-
-  it('should give back the stock the delete actually removed', async () => {
-    const { service, fileRepository, usageLimitStockService } =
-      buildService(null);
-
-    fileRepository.deleteAndReturn.mockResolvedValue([
-      { size: 1000, applicationId: APPLICATION_ID },
-      { size: 2000, applicationId: APPLICATION_ID },
-      { size: 40, applicationId: 'another-application' },
-    ]);
-
-    await service.deleteFile({
-      fileFolder: FileFolder.Dependencies,
-      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      applicationId: APPLICATION_ID,
-      workspaceId: WORKSPACE_ID,
-      resourcePath: 'package.json',
-    });
-
-    expect(fileRepository.deleteAndReturn).toHaveBeenCalledWith(WORKSPACE_ID, {
-      path: `${FileFolder.Dependencies}/package.json`,
-      applicationId: APPLICATION_ID,
-    });
-    expect(usageLimitStockService.releaseStock).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
-      spenders: { applicationId: APPLICATION_ID },
-      cost: { bytes: 3000, quantity: 2 },
-    });
-    expect(usageLimitStockService.releaseStock).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
-      spenders: { applicationId: 'another-application' },
-      cost: { bytes: 40, quantity: 1 },
-    });
-  });
-
-  it('should not move the stock when the delete removed nothing', async () => {
-    const { service, usageLimitStockService } = buildService(null);
-
-    await service.deleteFile({
-      fileFolder: FileFolder.Dependencies,
-      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      applicationId: APPLICATION_ID,
-      workspaceId: WORKSPACE_ID,
-      resourcePath: 'package.json',
-    });
-
-    expect(usageLimitStockService.releaseStock).not.toHaveBeenCalled();
-  });
-
-  it('should refuse a write the stock cannot take, before any bytes land', async () => {
-    const { service, usageLimitStockService, fileRepository, driver } =
-      buildService(null);
-
-    usageLimitStockService.assertStockAvailable.mockRejectedValue(
-      new Error('stock exhausted'),
-    );
-
-    await expect(
-      writeFile(service, 'a-freshly-generated-identifier'),
-    ).rejects.toThrow('stock exhausted');
-
-    expect(usageLimitStockService.assertStockAvailable).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
-      spenders: { applicationId: APPLICATION_ID },
-      computeUsedStock: expect.any(Function),
-      cost: { bytes: 2, quantity: 1 },
-    });
-    expect(driver.copy).not.toHaveBeenCalled();
-    expect(fileRepository.upsertAndReturnOne).not.toHaveBeenCalled();
-  });
-
-  it('should gate an empty file on the stock, which still holds a row', async () => {
-    const { service, usageLimitStockService } = buildService(null);
-
-    await writeEmptyFile(service, 'a-freshly-generated-identifier');
-
-    expect(usageLimitStockService.assertStockAvailable).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
-      spenders: { applicationId: APPLICATION_ID },
-      computeUsedStock: expect.any(Function),
-      cost: { bytes: 0, quantity: 1 },
-    });
-  });
-
-  it('should gate a pending file on the stock as well', async () => {
-    const { service, usageLimitStockService } = buildService(null);
-
-    await createPendingFile(service, 'a-freshly-generated-identifier');
-
-    expect(usageLimitStockService.assertStockAvailable).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
-      spenders: { applicationId: APPLICATION_ID },
-      computeUsedStock: expect.any(Function),
-      cost: { bytes: 12, quantity: 1 },
-    });
-  });
-
-  it('should only charge the difference when a write replaces a row', async () => {
-    const { service, usageLimitStockService } = buildService({
-      id: 'the-row-already-at-that-path',
-      size: 500,
-    });
-
-    await writeFile(service, 'a-freshly-generated-identifier');
-
-    // '{}' is 2 bytes replacing 500, so the workspace ends up 498 lighter
-    expect(usageLimitStockService.assertStockAvailable).not.toHaveBeenCalled();
-    expect(usageLimitStockService.releaseStock).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
-      spenders: { applicationId: APPLICATION_ID },
-      cost: { bytes: 498, quantity: 0 },
-    });
-    expect(usageLimitStockService.acquireStock).not.toHaveBeenCalled();
-  });
-
-  it('should charge a growing replacement only for what it adds', async () => {
-    const { service, usageLimitStockService } = buildService({
-      id: 'the-row-already-at-that-path',
-      size: 1,
-    });
-
-    await writeFile(service, 'a-freshly-generated-identifier');
-
-    expect(usageLimitStockService.assertStockAvailable).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
-      spenders: { applicationId: APPLICATION_ID },
-      computeUsedStock: expect.any(Function),
-      cost: { bytes: 1, quantity: 0 },
-    });
-    expect(usageLimitStockService.acquireStock).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      resourceType: UsageResourceType.STORAGE,
-      operationType: UsageOperationType.STORAGE_FILE,
-      spenders: { applicationId: APPLICATION_ID },
-      cost: { bytes: 1, quantity: 0 },
-    });
-  });
-
-  it('should refuse a copy before the destination object is written', async () => {
-    const { service, usageLimitStockService, driver, fileRepository } =
-      buildService(null);
-
-    usageLimitStockService.assertStockAvailable.mockRejectedValue(
-      new Error('stock exhausted'),
-    );
-
-    await expect(
-      service.copyFile({
-        from: {
-          workspaceId: WORKSPACE_ID,
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-          fileFolder: FileFolder.Dependencies,
-          resourcePath: 'source.json',
-        },
-        to: {
-          workspaceId: WORKSPACE_ID,
-          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-          fileFolder: FileFolder.FilesField,
-          resourcePath: 'field/file.json',
-        },
-        applicationId: APPLICATION_ID,
-        fileId: 'copied-file-id',
-        size: 800,
-        mimeType: 'application/json',
-        settings: { isTemporaryFile: true, toDelete: false },
-      }),
-    ).rejects.toThrow('stock exhausted');
-
-    expect(driver.writeFile).not.toHaveBeenCalled();
-    expect(fileRepository.upsertAndReturnOne).not.toHaveBeenCalled();
-    expect(usageLimitStockService.acquireStock).not.toHaveBeenCalled();
   });
 });

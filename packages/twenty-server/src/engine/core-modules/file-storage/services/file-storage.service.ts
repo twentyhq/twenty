@@ -26,6 +26,7 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { buildReleasedStockByApplication } from 'src/engine/core-modules/file-storage/utils/build-released-stock-by-application.util';
 import { buildStockDelta } from 'src/engine/core-modules/file-storage/utils/build-stock-delta.util';
 import { STOCK_METERS } from 'src/engine/core-modules/usage-limit/constants/usage-meters.constant';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
@@ -155,19 +156,7 @@ export class FileStorageService {
       where,
     );
 
-    const releasedByApplication = deletedRows.reduce((byApplication, row) => {
-      const released = byApplication.get(row.applicationId) ?? {
-        bytes: 0,
-        quantity: 0,
-      };
-
-      byApplication.set(row.applicationId, {
-        bytes: released.bytes + row.size,
-        quantity: released.quantity + 1,
-      });
-
-      return byApplication;
-    }, new Map<string, { bytes: number; quantity: number }>());
+    const releasedByApplication = buildReleasedStockByApplication(deletedRows);
 
     await Promise.all(
       [...releasedByApplication.entries()].map(([applicationId, released]) =>
