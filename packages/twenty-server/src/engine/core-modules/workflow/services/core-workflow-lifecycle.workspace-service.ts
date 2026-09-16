@@ -558,10 +558,8 @@ export class CoreWorkflowLifecycleWorkspaceService {
       return;
     }
 
-    const manualTrigger = trigger as WorkflowManualTrigger;
-
     const { availabilityType, availabilityObjectMetadataId } =
-      await this.resolveManualTriggerAvailability(manualTrigger, workspaceId);
+      await this.resolveManualTriggerAvailability(trigger, workspaceId);
 
     const label = getWorkflowCommandMenuItemLabel({
       name: resolved.coreWorkflow.name,
@@ -579,8 +577,8 @@ export class CoreWorkflowLifecycleWorkspaceService {
           id: existingCommandMenuItem.id,
           label,
           shortLabel: label,
-          icon: manualTrigger.settings.icon,
-          isPinned: manualTrigger.settings.isPinned,
+          icon: trigger.settings.icon,
+          isPinned: trigger.settings.isPinned,
           availabilityType,
           availabilityObjectMetadataId,
         },
@@ -594,8 +592,8 @@ export class CoreWorkflowLifecycleWorkspaceService {
           engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
           label,
           shortLabel: label,
-          icon: manualTrigger.settings.icon,
-          isPinned: manualTrigger.settings.isPinned,
+          icon: trigger.settings.icon,
+          isPinned: trigger.settings.isPinned,
           availabilityType,
           availabilityObjectMetadataId,
         },

@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { In } from 'typeorm';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 import { v4 as uuidv4 } from 'uuid';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
@@ -205,7 +206,7 @@ export class CoreWorkflowMutationWorkspaceService {
         };
 
         if (
-          source.type === 'ITERATOR' &&
+          source.type === WorkflowActionType.ITERATOR &&
           isDefined(source.settings?.input?.initialLoopStepIds)
         ) {
           remappedStep.settings = {
