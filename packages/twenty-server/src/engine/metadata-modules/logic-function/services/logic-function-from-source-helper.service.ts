@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { join } from 'path';
+import { posixJoin } from 'src/utils/posix-join.util';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -58,11 +58,11 @@ export class LogicFunctionFromSourceHelperService {
       getLogicFunctionSubfolderForFromSource(logicFunctionId);
 
     return {
-      sourceHandlerPath: join(
+      sourceHandlerPath: posixJoin(
         logicFunctionSubfolder,
         DEFAULT_SOURCE_HANDLER_PATH,
       ),
-      builtHandlerPath: join(
+      builtHandlerPath: posixJoin(
         logicFunctionSubfolder,
         DEFAULT_BUILT_HANDLER_PATH,
       ),

@@ -81,7 +81,7 @@ export class FileUploader {
     const uploadRequests: ApplicationFileUploadRequest[] = batch.map(
       ({ builtPath, fileFolder }) => ({
         fileFolder,
-        filePath: relative(OUTPUT_DIR, builtPath),
+        filePath: relative(OUTPUT_DIR, builtPath).split(path.sep).join('/'),
         size: fs.statSync(path.join(this.appPath, builtPath)).size,
       }),
     );
@@ -174,7 +174,7 @@ export class FileUploader {
     await this.runWithConcurrency(batch, async ({ builtPath, fileFolder }) => {
       const result = await this.apiService.uploadFile({
         filePath: path.join(this.appPath, builtPath),
-        builtHandlerPath: relative(OUTPUT_DIR, builtPath),
+        builtHandlerPath: relative(OUTPUT_DIR, builtPath).split(path.sep).join('/'),
         fileFolder,
         applicationUniversalIdentifier: this.applicationUniversalIdentifier,
       });

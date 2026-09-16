@@ -1,4 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
+
+import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -184,10 +186,18 @@ export class DevSeederPermissionsService {
     workspaceId: string;
     workspaceCustomFlatApplication: FlatApplication;
   }): Promise<RoleDTO> {
-    const memberRole = await this.roleService.createMemberRole({
-      workspaceId,
-      ownerFlatApplication: workspaceCustomFlatApplication,
+    // v2.40 workspace creation prefills a standard "Member" role; reuse it
+    // instead of colliding with the prefill on ROLE_LABEL_ALREADY_EXISTS.
+    const existingMemberRole = await this.roleRepository.findOne(workspaceId, {
+      where: { label: MEMBER_ROLE_LABEL },
     });
+
+    const memberRole =
+      existingMemberRole ??
+      (await this.roleService.createMemberRole({
+        workspaceId,
+        ownerFlatApplication: workspaceCustomFlatApplication,
+      }));
 
     await this.coreDataSource
       .getRepository(WorkspaceEntity)

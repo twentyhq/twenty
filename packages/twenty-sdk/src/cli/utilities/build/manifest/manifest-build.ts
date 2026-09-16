@@ -26,7 +26,7 @@ import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
-import { basename, extname, join, relative } from 'path';
+import { basename, extname, join, relative, sep } from 'path';
 import { glob } from 'tinyglobby';
 import {
   type AgentManifest,
@@ -153,7 +153,9 @@ export const buildManifest = async (
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
-    const relativePath = relative(appPath, filePath);
+    // Manifest paths are storage resource paths: always forward slashes, the
+    // server-side file storage rejects backslashes (Windows path.sep).
+    const relativePath = relative(appPath, filePath).split(sep).join('/');
 
     errors.push(
       ...validateConditionalAvailabilityUsage(fileContent, relativePath),
@@ -538,7 +540,7 @@ export const buildManifest = async (
   const assetFiles = await loadAssets(appPath);
 
   for (const assetFile of assetFiles) {
-    const relativePath = relative(appPath, assetFile);
+    const relativePath = relative(appPath, assetFile).split(sep).join('/');
     publicAssets.push({
       filePath: relativePath,
       fileName: basename(assetFile),

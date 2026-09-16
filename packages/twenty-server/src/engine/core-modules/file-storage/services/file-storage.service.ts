@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { basename, dirname, join } from 'path';
+import { basename, dirname, posix } from 'path';
 import { type Readable } from 'stream';
 
 import { FileFolder } from 'twenty-shared/types';
@@ -147,13 +147,15 @@ export class FileStorageService {
     fileFolder: FileFolder;
     relativePath: string;
   }): { onStoragePath: string; resourcePath: string } {
-    const resourcePath = join(fileFolder, relativePath).replace(/\/+/g, '/');
+    // Storage paths are always forward-slash separated: file entities get
+    // re-split on '/' downstream and the local driver writes them verbatim.
+    const resourcePath = posix.join(fileFolder, relativePath);
 
-    const onStoragePath = join(
+    const onStoragePath = posix.join(
       workspaceId,
       applicationUniversalIdentifier,
       resourcePath,
-    ).replace(/\/+/g, '/');
+    );
 
     validateStoragePathIsWithinWorkspaceOrThrow({
       onStoragePath,

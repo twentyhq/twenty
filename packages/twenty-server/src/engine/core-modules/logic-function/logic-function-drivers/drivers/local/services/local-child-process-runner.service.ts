@@ -42,20 +42,30 @@ export class LocalChildProcessRunnerService {
 
     const symlinkPromises = entries
       .filter((entry) => entry.name !== 'twenty-client-sdk')
-      .map((entry) =>
-        fs.symlink(
-          join(depsNodeModules, entry.name),
-          join(execNodeModules, entry.name),
-          entry.isDirectory() ? 'dir' : 'file',
-        ),
-      );
+      .map(async (entry) => {
+        const sourcePath = join(depsNodeModules, entry.name);
+        const targetPath = join(execNodeModules, entry.name);
+
+        if (entry.isDirectory()) {
+          await fs.symlink(sourcePath, targetPath, 'junction');
+          return;
+        }
+
+        // Windows forbids file symlinks without elevated privileges:
+        // fall back to copying the file into the executor dir.
+        try {
+          await fs.symlink(sourcePath, targetPath, 'file');
+        } catch {
+          await fs.copyFile(sourcePath, targetPath);
+        }
+      });
 
     await Promise.all(symlinkPromises);
 
     await fs.symlink(
       join(sdkNodeModules, 'twenty-client-sdk'),
       join(execNodeModules, 'twenty-client-sdk'),
-      'dir',
+      'junction',
     );
   }
 
