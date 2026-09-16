@@ -28,7 +28,6 @@ export const Button = ({
   disabled = false,
   href,
   render,
-  nativeButton,
   className,
   children,
   ...props
@@ -38,14 +37,13 @@ export const Button = ({
   const resolvedColor = buttonGroup?.color ?? color;
   const resolvedSize = buttonGroup?.size ?? size;
   const isMobile = useIsMobile();
-  const isNativeButton = nativeButton ?? !isDefined(href);
-  const nonNativeRole = isDefined(href) ? 'link' : 'button';
-  const resolvedRole =
-    props.role ?? (isNativeButton ? undefined : nonNativeRole);
+  const isLink = isDefined(href);
+  const linkProps = isLink ? { href } : undefined;
 
   return (
     <ButtonPrimitive
       {...props}
+      {...linkProps}
       className={mergeClassNames(styles.button, className)}
       data-variant={resolvedVariant}
       data-color={resolvedColor}
@@ -55,11 +53,9 @@ export const Button = ({
       data-elevated={elevated || undefined}
       aria-busy={loading || props['aria-busy']}
       disabled={disabled || soon || loading}
-      role={resolvedRole}
-      nativeButton={isNativeButton}
-      render={
-        render ?? (isDefined(href) ? <a href={href}>{children}</a> : undefined)
-      }
+      role={isLink ? 'link' : undefined}
+      nativeButton={!isLink}
+      render={render ?? (isLink ? <a href={href}>{children}</a> : undefined)}
     >
       <span className={clsx(styles.content, loading && styles.hidden)}>
         {isDefined(startIcon) && (
