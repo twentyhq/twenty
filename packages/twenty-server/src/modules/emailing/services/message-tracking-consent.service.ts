@@ -27,20 +27,6 @@ import { normalizeEmailAddress } from 'src/modules/emailing/utils/normalize-emai
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-type RecordDecisionArgs = {
-  workspaceId: string;
-  emailAddress: string;
-  decision: MessageTrackingConsentDecision;
-  source: MessageTrackingConsentSource;
-};
-
-type UpsertDecisionsArgs = {
-  workspaceId: string;
-  emailAddresses: string[];
-  decision: MessageTrackingConsentDecision;
-  source: MessageTrackingConsentSource;
-};
-
 @Injectable()
 export class MessageTrackingConsentService {
   constructor(
@@ -73,11 +59,7 @@ export class MessageTrackingConsentService {
     workspaceId: string;
     emailAddress: string;
   }): Promise<TrackingPreference | undefined> {
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
-    });
-
-    if (!workspace?.isCampaignClickTrackingEnabled) {
+    if (!(await this.isClickTrackingEnabled(workspaceId))) {
       return undefined;
     }
 
@@ -91,11 +73,7 @@ export class MessageTrackingConsentService {
     workspaceId: string;
     emailAddresses: string[];
   }): Promise<Set<string>> {
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
-    });
-
-    if (!workspace?.isCampaignClickTrackingEnabled) {
+    if (!(await this.isClickTrackingEnabled(workspaceId))) {
       return new Set();
     }
 
@@ -133,23 +111,23 @@ export class MessageTrackingConsentService {
     emailAddress,
     decision,
     source,
-  }: RecordDecisionArgs): Promise<void> {
+  }: {
+    workspaceId: string;
+    emailAddress: string;
+    decision: MessageTrackingConsentDecision;
+    source: MessageTrackingConsentSource;
+  }): Promise<void> {
     const normalizedEmailAddress = normalizeEmailAddress(emailAddress);
 
     if (!isNonEmptyString(normalizedEmailAddress)) {
       return;
     }
 
-    await this.upsertDecisions({
+    await this.upsertDecisionsAndRefresh({
       workspaceId,
       emailAddresses: [normalizedEmailAddress],
       decision,
       source,
-    });
-
-    await this.refreshPeopleByEmailAddresses({
-      workspaceId,
-      emailAddresses: [normalizedEmailAddress],
     });
   }
 
@@ -183,14 +161,12 @@ export class MessageTrackingConsentService {
       await this.assertNotRefusedByRecipient({ workspaceId, emailAddresses });
     }
 
-    await this.upsertDecisions({
+    await this.upsertDecisionsAndRefresh({
       workspaceId,
       emailAddresses,
       decision,
       source,
     });
-
-    await this.refreshPeopleByEmailAddresses({ workspaceId, emailAddresses });
 
     return true;
   }
@@ -205,6 +181,14 @@ export class MessageTrackingConsentService {
     const people = await this.findPeopleByIds({ workspaceId, personIds });
 
     await this.refreshPersonFields({ workspaceId, people });
+  }
+
+  private async isClickTrackingEnabled(workspaceId: string): Promise<boolean> {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    return workspace?.isCampaignClickTrackingEnabled ?? false;
   }
 
   private async assertNotRefusedByRecipient({
@@ -231,12 +215,37 @@ export class MessageTrackingConsentService {
     }
   }
 
+  private async upsertDecisionsAndRefresh({
+    workspaceId,
+    emailAddresses,
+    decision,
+    source,
+  }: {
+    workspaceId: string;
+    emailAddresses: string[];
+    decision: MessageTrackingConsentDecision;
+    source: MessageTrackingConsentSource;
+  }): Promise<void> {
+    await this.upsertDecisions({
+      workspaceId,
+      emailAddresses,
+      decision,
+      source,
+    });
+    await this.refreshPeopleByEmailAddresses({ workspaceId, emailAddresses });
+  }
+
   private async upsertDecisions({
     workspaceId,
     emailAddresses,
     decision,
     source,
-  }: UpsertDecisionsArgs): Promise<void> {
+  }: {
+    workspaceId: string;
+    emailAddresses: string[];
+    decision: MessageTrackingConsentDecision;
+    source: MessageTrackingConsentSource;
+  }): Promise<void> {
     const existingConsents = await this.consentRepository.find(workspaceId, {
       where: { emailAddress: In(emailAddresses) },
     });
