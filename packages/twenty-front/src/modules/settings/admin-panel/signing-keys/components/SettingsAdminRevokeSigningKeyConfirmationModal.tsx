@@ -26,7 +26,7 @@ export const SettingsAdminRevokeSigningKeyConfirmationModal = ({
       onConfirmClick={onConfirm}
       onClose={onClose}
       confirmButtonText={t`Revoke`}
-      confirmButtonAccent="danger"
+      confirmButtonColor="danger"
     />
   );
 };

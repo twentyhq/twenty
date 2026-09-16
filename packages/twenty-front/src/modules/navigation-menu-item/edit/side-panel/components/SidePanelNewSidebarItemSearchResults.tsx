@@ -1,3 +1,4 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
@@ -50,11 +51,15 @@ export const SidePanelNewSidebarItemSearchResults = ({
   const { views, objectMetadataIdsWithIndexView, viewIdsAlreadyAdded } =
     useNavigationMenuObjectMetadataForSection(currentItems);
   const trimmedSearchValue = searchValue.trim();
-  const { availableSearchRecords, isSearchDebouncing, recordSearchLoading } =
-    useAvailableNavigationMenuItemSearchRecords({
-      searchInput: trimmedSearchValue,
-      skip: !isNonEmptyString(trimmedSearchValue),
-    });
+  const {
+    availableSearchRecords,
+    isSearchDebouncing,
+    recordSearchLoading,
+    error,
+  } = useAvailableNavigationMenuItemSearchRecords({
+    searchInput: trimmedSearchValue,
+    skip: !isNonEmptyString(trimmedSearchValue),
+  });
   const isRecordSearchLoading = recordSearchLoading || isSearchDebouncing;
 
   const availableViews = views
@@ -180,86 +185,91 @@ export const SidePanelNewSidebarItemSearchResults = ({
     objectMetadataItems.find((item) => item.id === view.objectMetadataId);
 
   return (
-    <SidePanelAddToNavigationDroppable>
-      {({ innerRef, droppableProps, placeholder }) => (
-        <SidePanelList
-          selectableItemIds={selectableItemIds}
-          loading={isRecordSearchLoading}
-          noResults={isEmpty}
-          noResultsText={t`No results found`}
-        >
-          {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-          <div ref={innerRef} {...droppableProps}>
-            <SidePanelGroup heading={t`Objects`}>
-              {filteredObjectMetadataItems.map((objectMetadataItem, index) => (
-                <SidePanelObjectMenuItem
-                  key={objectMetadataItem.id}
-                  objectMetadataItem={objectMetadataItem}
-                  onSelect={handleSelectObject}
-                  variant="add"
-                  dragIndex={index}
-                />
-              ))}
-            </SidePanelGroup>
-            <SidePanelGroup heading={t`Views`}>
-              {filteredViews.map((view, index) => {
-                const objectMetadataItem = getObjectMetadataItemForView(view);
-                const objectIconColor = isDefined(objectMetadataItem)
-                  ? getObjectColorWithFallback(objectMetadataItem)
-                  : undefined;
-
-                return (
-                  <SelectableListItem
-                    key={view.id}
-                    itemId={view.id}
-                    onEnter={() => handleSelectView(view)}
-                  >
-                    <SidePanelItemWithAddToNavigationDrag
-                      customIconContent={
-                        isDefined(objectMetadataItem) ? (
-                          <ObjectIconWithViewOverlay
-                            ObjectIcon={getIcon(objectMetadataItem.icon)}
-                            ViewIcon={getIcon(view.icon)}
-                            objectColor={objectIconColor}
-                          />
-                        ) : undefined
-                      }
-                      icon={
-                        isDefined(objectMetadataItem)
-                          ? undefined
-                          : getIcon(view.icon)
-                      }
-                      label={view.name}
-                      id={view.id}
-                      onClick={() => handleSelectView(view)}
-                      dragIndex={filteredObjectMetadataItems.length + index}
-                      payload={{
-                        type: NavigationMenuItemType.VIEW,
-                        viewId: view.id,
-                        label: view.name,
-                      }}
+    <>
+      <ToastOnQueryErrorEffect error={error} />
+      <SidePanelAddToNavigationDroppable>
+        {({ innerRef, droppableProps, placeholder }) => (
+          <SidePanelList
+            selectableItemIds={selectableItemIds}
+            loading={isRecordSearchLoading}
+            noResults={isEmpty}
+            noResultsText={t`No results found`}
+          >
+            {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+            <div ref={innerRef} {...droppableProps}>
+              <SidePanelGroup heading={t`Objects`}>
+                {filteredObjectMetadataItems.map(
+                  (objectMetadataItem, index) => (
+                    <SidePanelObjectMenuItem
+                      key={objectMetadataItem.id}
+                      objectMetadataItem={objectMetadataItem}
+                      onSelect={handleSelectObject}
+                      variant="add"
+                      dragIndex={index}
                     />
-                  </SelectableListItem>
-                );
-              })}
-            </SidePanelGroup>
-            <SidePanelGroup heading={t`Records`}>
-              {availableSearchRecords.map((record, index) => (
-                <SidePanelNewSidebarItemRecordItem
-                  key={record.recordId}
-                  record={record}
-                  dragIndex={
-                    filteredObjectMetadataItems.length +
-                    filteredViews.length +
-                    index
-                  }
-                />
-              ))}
-            </SidePanelGroup>
-            {placeholder}
-          </div>
-        </SidePanelList>
-      )}
-    </SidePanelAddToNavigationDroppable>
+                  ),
+                )}
+              </SidePanelGroup>
+              <SidePanelGroup heading={t`Views`}>
+                {filteredViews.map((view, index) => {
+                  const objectMetadataItem = getObjectMetadataItemForView(view);
+                  const objectIconColor = isDefined(objectMetadataItem)
+                    ? getObjectColorWithFallback(objectMetadataItem)
+                    : undefined;
+
+                  return (
+                    <SelectableListItem
+                      key={view.id}
+                      itemId={view.id}
+                      onEnter={() => handleSelectView(view)}
+                    >
+                      <SidePanelItemWithAddToNavigationDrag
+                        customIconContent={
+                          isDefined(objectMetadataItem) ? (
+                            <ObjectIconWithViewOverlay
+                              ObjectIcon={getIcon(objectMetadataItem.icon)}
+                              ViewIcon={getIcon(view.icon)}
+                              objectColor={objectIconColor}
+                            />
+                          ) : undefined
+                        }
+                        icon={
+                          isDefined(objectMetadataItem)
+                            ? undefined
+                            : getIcon(view.icon)
+                        }
+                        label={view.name}
+                        id={view.id}
+                        onClick={() => handleSelectView(view)}
+                        dragIndex={filteredObjectMetadataItems.length + index}
+                        payload={{
+                          type: NavigationMenuItemType.VIEW,
+                          viewId: view.id,
+                          label: view.name,
+                        }}
+                      />
+                    </SelectableListItem>
+                  );
+                })}
+              </SidePanelGroup>
+              <SidePanelGroup heading={t`Records`}>
+                {availableSearchRecords.map((record, index) => (
+                  <SidePanelNewSidebarItemRecordItem
+                    key={record.recordId}
+                    record={record}
+                    dragIndex={
+                      filteredObjectMetadataItems.length +
+                      filteredViews.length +
+                      index
+                    }
+                  />
+                ))}
+              </SidePanelGroup>
+              {placeholder}
+            </div>
+          </SidePanelList>
+        )}
+      </SidePanelAddToNavigationDroppable>
+    </>
   );
 };

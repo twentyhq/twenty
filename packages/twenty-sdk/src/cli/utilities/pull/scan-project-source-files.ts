@@ -2,6 +2,7 @@ import {
   TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING,
   extractDefineEntity,
   type ManifestEntityKey,
+  type TargetFunction,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import { glob } from 'tinyglobby';
@@ -12,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 export type ScannedSourceFile = {
   relativePath: string;
   entityKey: ManifestEntityKey | null;
+  targetFunctionName: TargetFunction | null;
   universalIdentifier: string | null;
   isReadable: boolean;
 };
@@ -43,6 +45,7 @@ export const scanProjectSourceFiles = async (
       scannedFiles.push({
         relativePath,
         entityKey: null,
+        targetFunctionName: null,
         universalIdentifier: null,
         isReadable: false,
       });
@@ -55,6 +58,7 @@ export const scanProjectSourceFiles = async (
       scannedFiles.push({
         relativePath,
         entityKey: null,
+        targetFunctionName: null,
         universalIdentifier: null,
         isReadable: true,
       });
@@ -81,6 +85,7 @@ export const scanProjectSourceFiles = async (
     scannedFiles.push({
       relativePath,
       entityKey,
+      targetFunctionName,
       universalIdentifier:
         typeof config.universalIdentifier === 'string'
           ? config.universalIdentifier

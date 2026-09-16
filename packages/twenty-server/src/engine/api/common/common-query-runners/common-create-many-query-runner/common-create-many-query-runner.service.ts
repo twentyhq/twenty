@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import {
-  FeatureFlagKey,
-  MetadataReadability,
-  ObjectRecord,
-} from 'twenty-shared/types';
+import { MetadataReadability, ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   Brackets,
@@ -50,8 +46,8 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { ShareWithService } from 'src/engine/record-share/services/share-with.service';
-import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
+import { ShareWithService } from 'src/engine/core-modules/record-share/services/share-with.service';
+import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
@@ -649,11 +645,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   private isRecordSharingEnabled(
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): boolean {
-    return (
-      queryRunnerContext.featureFlagsMap[
-        FeatureFlagKey.IS_RECORD_SHARING_ENABLED
-      ] ?? false
-    );
+    return queryRunnerContext.isRecordSharingEnabled;
   }
 
   private resolveNestedRelationsForCreate({

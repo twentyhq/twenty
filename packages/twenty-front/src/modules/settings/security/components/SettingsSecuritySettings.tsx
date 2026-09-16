@@ -1,7 +1,3 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useDebouncedCallback } from 'use-debounce';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
@@ -12,24 +8,29 @@ import { SettingsOptionCardContentCounter } from '@/settings/components/Settings
 import { SettingsRoleDefaultRole } from '@/settings/roles/components/SettingsRolesDefaultRole';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
-import { SettingsSsoIdentitiesProvidersListCard } from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCard';
 import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SettingsSecurityEditableProfileFields } from '@/settings/security/components/SettingsSecurityEditableProfileFields';
+import { SettingsSsoIdentitiesProvidersListCard } from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCard';
 import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
 import { ImpersonationSwitch } from '@/settings/workspace/components/ImpersonationSwitch';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useDebouncedCallback } from 'use-debounce';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
+
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -48,7 +49,7 @@ const StyledSectionContainer = styled.div`
 
 export const SettingsSecuritySettings = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
@@ -71,9 +72,7 @@ export const SettingsSecuritySettings = () => {
         },
       });
     } catch (err) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error: err }));
     }
   }, 500);
 
@@ -87,9 +86,7 @@ export const SettingsSecuritySettings = () => {
         },
       });
     } catch (err) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error: err }));
     }
   }, 500);
 

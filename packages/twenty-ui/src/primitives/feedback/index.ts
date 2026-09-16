@@ -7,12 +7,12 @@
  *                              |___/
  */
 
-export type { AnimatedPlaceholderType } from './AnimatedPlaceholder/AnimatedPlaceholder';
 export { AnimatedPlaceholder } from './AnimatedPlaceholder/AnimatedPlaceholder';
 export { BACKGROUND } from './AnimatedPlaceholder/constants/Background';
 export { DARK_BACKGROUND } from './AnimatedPlaceholder/constants/DarkBackground';
 export { DARK_MOVING_IMAGE } from './AnimatedPlaceholder/constants/DarkMovingImage';
 export { MOVING_IMAGE } from './AnimatedPlaceholder/constants/MovingImage';
+export type { AnimatedPlaceholderType } from './AnimatedPlaceholder/types/AnimatedPlaceholderType';
 export type { BannerColor, BannerVariant } from './Banner/Banner';
 export { Banner } from './Banner/Banner';
 export type { CalloutVariant, CalloutProps } from './Callout/Callout';
@@ -38,6 +38,13 @@ export type { ProgressBarProps } from './ProgressBar/ProgressBar';
 export { ProgressBar } from './ProgressBar/ProgressBar';
 export type { SidePanelInformationBannerProps } from './SidePanelInformationBanner/SidePanelInformationBanner';
 export { SidePanelInformationBanner } from './SidePanelInformationBanner/SidePanelInformationBanner';
+export { useToast } from './Toast/hooks/useToast';
 export { Toast } from './Toast/Toast';
+export { ToastProvider } from './Toast/ToastProvider';
+export type { ToastNotification } from './Toast/types/ToastNotification';
+export type { ToastOptions } from './Toast/types/ToastOptions';
 export type { ToastProps } from './Toast/types/ToastProps';
+export type { ToastProviderProps } from './Toast/types/ToastProviderProps';
 export type { ToastVariant } from './Toast/types/ToastVariant';
+export { Toaster } from './Toaster/Toaster';
+export type { ToasterProps } from './Toaster/types/ToasterProps';

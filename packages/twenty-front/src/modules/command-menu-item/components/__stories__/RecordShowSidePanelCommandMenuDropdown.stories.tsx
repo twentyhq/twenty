@@ -14,7 +14,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
 const meta: Meta<typeof RecordPageSidePanelCommandMenuDropdown> = {
@@ -59,7 +59,7 @@ const meta: Meta<typeof RecordPageSidePanelCommandMenuDropdown> = {
     ComponentDecorator,
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     RouterDecorator,
   ],
   args: {

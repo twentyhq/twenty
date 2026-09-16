@@ -58,11 +58,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
               description={t`This feature is part of the Organization plan`}
               Button={
                 <Button
-                  title={t`Upgrade`}
-                  variant="primary"
-                  accent="blue"
-                  size="small"
-                  Icon={IconArrowUp}
+                  size="sm"
+                  startIcon={<IconArrowUp />}
                   onClick={() =>
                     navigateSettings(
                       isBillingEnabled
@@ -70,7 +67,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
                         : SettingsPath.AdminPanelOrganization,
                     )
                   }
-                />
+                  variant="solid"
+                  color="accent"
+                >{t`Upgrade`}</Button>
               }
             />
           </Card>

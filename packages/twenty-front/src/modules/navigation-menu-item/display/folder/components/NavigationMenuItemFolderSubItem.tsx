@@ -6,7 +6,6 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { useNavigateToNavigationMenuItemLink } from '@/navigation-menu-item/common/hooks/useNavigateToNavigationMenuItemLink';
-import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
@@ -127,6 +126,7 @@ export const NavigationMenuItemFolderSubItem = ({
   const viewSecondaryLabel =
     navigationMenuItem.type === NavigationMenuItemType.VIEW
       ? getObjectNavigationMenuItemSecondaryLabel({
+          isView: true,
           objectMetadataItems,
           navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
         })
@@ -142,10 +142,6 @@ export const NavigationMenuItemFolderSubItem = ({
       label={label}
       Icon={() => (
         <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
-      )}
-      iconColor={getNavigationMenuItemColor(
-        navigationMenuItem,
-        objectMetadataItem ?? undefined,
       )}
       to={isDragging || isEditable ? undefined : computedLink}
       onClick={handleClick}

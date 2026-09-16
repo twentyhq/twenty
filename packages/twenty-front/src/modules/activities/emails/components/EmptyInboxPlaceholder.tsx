@@ -29,12 +29,11 @@ export const EmptyInboxPlaceholder = () => {
         </AnimatedPlaceholderEmptySubTitle>
       </AnimatedPlaceholderEmptyTextContainer>
       <Button
-        Icon={IconMail}
-        title={t`Send Email`}
-        variant="secondary"
+        startIcon={<IconMail />}
         onClick={openComposer}
         disabled={loading}
-      />
+        variant="outline"
+      >{t`Send Email`}</Button>
     </AnimatedPlaceholderEmptyContainer>
   );
 };

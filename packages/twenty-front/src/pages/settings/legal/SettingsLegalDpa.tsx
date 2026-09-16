@@ -1,11 +1,11 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { H2Title } from 'twenty-ui/primitives/typography';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -53,14 +53,13 @@ export const SettingsLegalDpa = () => {
         { children: t`Legal` },
       ]}
       actionButton={
-        <UndecoratedLink to={getSettingsPath(SettingsPath.LegalDpaNew)}>
-          <Button
-            Icon={IconPlus}
-            title={t`Generate DPA`}
-            accent="blue"
-            size="small"
-          />
-        </UndecoratedLink>
+        <NavigationButton
+          to={getSettingsPath(SettingsPath.LegalDpaNew)}
+          startIcon={<IconPlus />}
+          size="sm"
+          variant="solid"
+          color="accent"
+        >{t`Generate DPA`}</NavigationButton>
       }
     >
       <SettingsPageContainer>

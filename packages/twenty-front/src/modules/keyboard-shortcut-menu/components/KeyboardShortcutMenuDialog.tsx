@@ -4,7 +4,7 @@ import {
   StyledHeading,
 } from './KeyboardShortcutMenuStyles';
 import { t } from '@lingui/core/macro';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -23,7 +23,13 @@ export const KeyboardMenuDialog = ({
     <StyledDialog isMobile={isMobile}>
       <StyledHeading>
         {t`Keyboard shortcuts`}
-        <IconButton variant="tertiary" Icon={IconX} onClick={onClose} />
+        <IconButton
+          aria-label={t`Close keyboard shortcuts`}
+          variant="ghost"
+          onClick={onClose}
+        >
+          <IconX />
+        </IconButton>
       </StyledHeading>
       <StyledContainer>{children}</StyledContainer>
     </StyledDialog>
