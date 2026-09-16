@@ -39,6 +39,9 @@ export const Button = ({
   const resolvedSize = buttonGroup?.size ?? size;
   const isMobile = useIsMobile();
   const isNativeButton = nativeButton ?? !isDefined(href);
+  const nonNativeRole = isDefined(href) ? 'link' : 'button';
+  const resolvedRole =
+    props.role ?? (isNativeButton ? undefined : nonNativeRole);
 
   return (
     <ButtonPrimitive
@@ -52,10 +55,7 @@ export const Button = ({
       data-elevated={elevated || undefined}
       aria-busy={loading || props['aria-busy']}
       disabled={disabled || soon || loading}
-      role={
-        props.role ??
-        (isNativeButton ? undefined : isDefined(href) ? 'link' : 'button')
-      }
+      role={resolvedRole}
       nativeButton={isNativeButton}
       render={
         render ?? (isDefined(href) ? <a href={href}>{children}</a> : undefined)
