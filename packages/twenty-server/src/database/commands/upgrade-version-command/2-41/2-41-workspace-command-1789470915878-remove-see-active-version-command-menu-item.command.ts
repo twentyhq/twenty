@@ -58,10 +58,16 @@ export class RemoveSeeActiveVersionCommandMenuItemCommand extends ProvisionedWor
       return;
     }
 
-    if (
-      itemToDelete.engineComponentKey !==
-      EngineComponentKey.SEE_ACTIVE_VERSION_WORKFLOW
-    ) {
+    const isFrontComponentRenderedItem =
+      itemToDelete.engineComponentKey ===
+        EngineComponentKey.FRONT_COMPONENT_RENDERER &&
+      isDefined(itemToDelete.frontComponentId);
+
+    const isLegacyEngineKeyItem =
+      itemToDelete.engineComponentKey ===
+      EngineComponentKey.SEE_ACTIVE_VERSION_WORKFLOW;
+
+    if (!isFrontComponentRenderedItem && !isLegacyEngineKeyItem) {
       throw new Error(
         `Command menu item ${SEE_ACTIVE_VERSION_WORKFLOW_UNIVERSAL_IDENTIFIER} in workspace ${workspaceId} carries engine component key ${itemToDelete.engineComponentKey}, refusing to delete`,
       );
