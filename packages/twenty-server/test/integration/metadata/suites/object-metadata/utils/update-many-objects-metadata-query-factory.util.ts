@@ -4,7 +4,7 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 import { type UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 
 export type UpdateManyObjectsFactoryInput = {
-  updates: UpdateOneObjectInput[];
+  inputs: UpdateOneObjectInput[];
 };
 
 export const updateManyObjectsMetadataQueryFactory = ({
@@ -12,13 +12,13 @@ export const updateManyObjectsMetadataQueryFactory = ({
   input,
 }: PerformMetadataQueryParams<UpdateManyObjectsFactoryInput>) => ({
   query: gql`
-        mutation UpdateManyObjectMetadataItems($updates: [UpdateOneObjectInput!]!) {
-            updateManyObjects(input: {updates: $updates}) {
+        mutation UpdateManyObjectMetadataItems($inputs: [UpdateOneObjectInput!]!) {
+            updateManyObjects(inputs: $inputs) {
             ${gqlFields}
         }
       }
       `,
   variables: {
-    updates: input.updates,
+    inputs: input.inputs,
   },
 });

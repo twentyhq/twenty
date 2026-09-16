@@ -4221,7 +4221,7 @@ export type MutationUpdateManyNavigationMenuItemsArgs = {
 
 
 export type MutationUpdateManyObjectsArgs = {
-  input: UpdateManyObjectsInput;
+  inputs: Array<UpdateOneObjectInput>;
 };
 
 
@@ -6343,10 +6343,6 @@ export type UpdateLogicFunctionFromSourceInputUpdates = {
   timeoutSeconds?: InputMaybe<Scalars['Float']['input']>;
   toolTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
   workflowActionTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
-};
-
-export type UpdateManyObjectsInput = {
-  updates: Array<UpdateOneObjectInput>;
 };
 
 export type UpdateMessageChannelInput = {

@@ -53,7 +53,7 @@ describe('Bulk object metadata update', () => {
     const { data } = await updateManyObjectsMetadata({
       expectToFail: false,
       input: {
-        updates: [
+        inputs: [
           { id: companyObject.id, update: { color: 'red' } },
           { id: personObject.id, update: { color: 'purple' } },
         ],
@@ -76,7 +76,7 @@ describe('Bulk object metadata update', () => {
     const { data } = await updateManyObjectsMetadata({
       expectToFail: false,
       input: {
-        updates: [
+        inputs: [
           { id: companyObject.id, update: { labelSingular: 'Business' } },
           { id: personObject.id, update: { labelSingular: 'Human' } },
         ],
@@ -121,7 +121,7 @@ describe('Bulk object metadata update', () => {
       const { data } = await updateManyObjectsMetadata({
         expectToFail: false,
         input: {
-          updates: createdObjectIds.map((id, index) => ({
+          inputs: createdObjectIds.map((id, index) => ({
             id,
             update: {
               nameSingular: `bulkRenamed${index + 1}${suffix}`,
@@ -158,7 +158,7 @@ describe('Bulk object metadata update', () => {
     const { errors } = await updateManyObjectsMetadata({
       expectToFail: true,
       input: {
-        updates: [
+        inputs: [
           { id: companyObject.id, update: { color: 'red' } },
           { id: companyObject.id, update: { color: 'blue' } },
         ],

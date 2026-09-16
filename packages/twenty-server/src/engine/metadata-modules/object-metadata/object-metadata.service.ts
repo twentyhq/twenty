@@ -34,6 +34,8 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
+const MAX_OBJECTS_PER_BATCH_UPDATE = 100;
+
 @Injectable()
 export class ObjectMetadataService {
   constructor(
@@ -58,6 +60,13 @@ export class ObjectMetadataService {
   }): Promise<FlatObjectMetadata[]> {
     if (updateObjectInputs.length === 0) {
       return [];
+    }
+
+    if (updateObjectInputs.length > MAX_OBJECTS_PER_BATCH_UPDATE) {
+      throw new ObjectMetadataException(
+        `Cannot update more than ${MAX_OBJECTS_PER_BATCH_UPDATE} objects in one batch`,
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      );
     }
 
     const objectMetadataIds = updateObjectInputs.map(({ id }) => id);

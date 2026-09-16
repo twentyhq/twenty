@@ -44,7 +44,6 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/dtos/object-filter.input';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectRecordCountDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-record-count.dto';
-import { UpdateManyObjectsInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-many-objects.input';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
@@ -401,13 +400,14 @@ export class ObjectMetadataResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => [ObjectMetadataDTO])
   async updateManyObjects(
-    @Args('input') updateManyObjectsInput: UpdateManyObjectsInput,
+    @Args('inputs', { type: () => [UpdateOneObjectInput] })
+    updateObjectInputs: UpdateOneObjectInput[],
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       const flatObjectMetadatas =
         await this.objectMetadataService.updateManyObjects({
-          updateObjectInputs: updateManyObjectsInput.updates,
+          updateObjectInputs,
           workspaceId,
         });
 
