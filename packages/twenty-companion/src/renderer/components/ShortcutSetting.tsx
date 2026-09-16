@@ -4,7 +4,7 @@ import { formatShortcut } from '../utils/formatShortcut';
 import { i18n } from '@lingui/core';
 import { SettingsCardContent } from './SettingsCardContent';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
-import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import { IconButton } from '@ui/components/IconButton/IconButton';
 import { useState } from 'react';
 import { IconCommand, IconRestore } from 'twenty-ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -32,8 +32,8 @@ export const ShortcutSetting = ({ state, isPending, command }: ActionProps) => {
       <div className="button-group shortcut-actions">
         {state.settings.openShortcut !== DEFAULT_SETTINGS.openShortcut && (
           <IconButton
-            variant="tertiary"
-            ariaLabel={i18n._('Reset shortcut')}
+            variant="ghost"
+            aria-label={i18n._('Reset shortcut')}
             disabled={isPending('settings')}
             onClick={() =>
               void command({
@@ -41,9 +41,10 @@ export const ShortcutSetting = ({ state, isPending, command }: ActionProps) => {
                 settings: { openShortcut: DEFAULT_SETTINGS.openShortcut },
               })
             }
-            size="medium"
-            Icon={IconRestore}
-          />
+            size="md"
+          >
+            <IconRestore />
+          </IconButton>
         )}
         <div
           onBlur={() => setCapturing(false)}

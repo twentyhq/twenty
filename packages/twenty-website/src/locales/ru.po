@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-15 14:21\n"
+"PO-Revision-Date: 2026-09-16 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -735,6 +735,11 @@ msgstr "Платформа, готовая к *росту*"
 msgid "A platform ready to grow"
 msgstr "Платформа, готовая к росту"
 
+#. js-lingui-id: GGXFEW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A proper home on mobile"
+msgstr "Полноценная работа на мобильных устройствах"
+
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
 msgid ""
@@ -1110,7 +1115,7 @@ msgstr "AI в процессе миграции"
 #. js-lingui-id: CKvvwf
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "AI settings now show each model’s provider, price per million tokens, context window, maximum output, and data residency."
-msgstr ""
+msgstr "В настройках ИИ теперь отображаются поставщик каждой модели, цена за миллион токенов, контекстное окно, максимальный вывод и местоположение хранения данных."
 
 #. js-lingui-id: t97j+F
 #: src/case-studies/case-study-catalog.ts
@@ -1284,7 +1289,7 @@ msgstr "Арабский"
 #. js-lingui-id: Qrqy7n
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Arabic and Hebrew read right to left"
-msgstr ""
+msgstr "Арабский и иврит читаются справа налево"
 
 #. js-lingui-id: uicv6Z
 #: src/case-studies/case-study-stories.ts
@@ -1712,7 +1717,7 @@ msgstr "Календарное представление для объекто�
 #. js-lingui-id: RZgOeI
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Call recordings that have no video now come with an audio player, so click-to-seek and transcript highlighting work there too."
-msgstr ""
+msgstr "Записи звонков без видео теперь содержат аудиоплеер, поэтому в них также работают переход по щелчку и выделение расшифровки."
 
 #. js-lingui-id: 4yFkf9
 #: src/partner-application/data/partner-country-options.ts
@@ -1865,7 +1870,12 @@ msgstr "Выберите, как отображать даты в любом п�
 #. js-lingui-id: BZEHq1
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose how your AI should behave on a single slider, from Extra Fast to Extra Smart, instead of picking a model by name. Each tier shows what it trades in speed, cost, and intelligence."
-msgstr ""
+msgstr "Выберите поведение своего ИИ с помощью одного ползунка — от «Максимально быстро» до «Максимально умно», вместо выбора модели по названию. Каждый уровень показывает компромиссы между скоростью, стоимостью и интеллектуальностью."
+
+#. js-lingui-id: oXetDh
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Choose where records open"
+msgstr "Выберите, где будут открываться записи"
 
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2668,6 +2678,11 @@ msgstr "Только сделки, контакты и продукты"
 msgid "Dear Team, I am pleased to submit our proposal for your consideration. We have carefully reviewed your requirements."
 msgstr "Дорогая команда, с радостью отправляю наше предложение на ваше рассмотрение. Мы внимательно изучили ваши требования."
 
+#. js-lingui-id: JG4DOf
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Decide whether records open in the side panel or as a full page, set per object and as your own preference in Settings > Experience."
+msgstr "Выберите, будут ли записи открываться на боковой панели или на всю страницу, для каждого объекта и в качестве личного предпочтения в Настройки > Взаимодействие."
+
 #. js-lingui-id: 4UlR5Y
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
@@ -2679,6 +2694,11 @@ msgstr "Выделенная поддержка и SLA"
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Default position/visibility for field…"
 msgstr "Позиция/видимость по умолчанию для поля…"
+
+#. js-lingui-id: IOhXZ5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Delete a workflow step from the diagram"
+msgstr "Удаление шага рабочего процесса из диаграммы"
 
 #. js-lingui-id: 9RARjP
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -2970,6 +2990,11 @@ msgstr "Эквадор 🇪🇨"
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Edit actions"
 msgstr "Редактировать действия"
+
+#. js-lingui-id: V4B1Gm
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Edit deactivated objects"
+msgstr "Редактирование деактивированных объектов"
 
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3410,7 +3435,7 @@ msgstr "Фев"
 #. js-lingui-id: ATTTRk
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field descriptions on hover"
-msgstr ""
+msgstr "Описания полей при наведении"
 
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4029,7 +4054,7 @@ msgstr "Почасовая ставка *"
 #. js-lingui-id: c+5807
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Hover a column header or a field label to read that field’s description, instead of opening settings to find it."
-msgstr ""
+msgstr "Наведите указатель на заголовок столбца или метку поля, чтобы прочитать описание этого поля, вместо того чтобы открывать настройки для его поиска."
 
 #. js-lingui-id: XnFo3G
 #: src/case-studies/case-study-stories.ts
@@ -5635,6 +5660,11 @@ msgstr "Разовый обязательный онбординг‑сбор"
 msgid "Only $5 for SSO. Practically a charity program."
 msgstr "Всего $5 за SSO. Практически благотворительная программа."
 
+#. js-lingui-id: Av5T3E
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Open a deactivated object from Settings and change it, instead of deleting it and building it again."
+msgstr "Откройте деактивированный объект в Настройках и измените его вместо того, чтобы удалять и создавать заново."
+
 #. js-lingui-id: VWC0s5
 #. placeholder {0}: caseStudy.title
 #: src/partners-marketplace/PartnerSelectedWork.tsx
@@ -5843,7 +5873,7 @@ msgstr "Вставьте ключ и нажмите Activate."
 #. js-lingui-id: oKV11Q
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Pause the recording bot"
-msgstr ""
+msgstr "Приостановить бота записи"
 
 #. js-lingui-id: 1wdjme
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5904,7 +5934,7 @@ msgstr "Филиппины 🇵🇭"
 #. js-lingui-id: hyGrEm
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Pick an AI model by tier"
-msgstr ""
+msgstr "Выберите модель ИИ по уровню"
 
 #. js-lingui-id: we6gj5
 #: src/partner-application/partner-application-copy.ts
@@ -5944,7 +5974,7 @@ msgstr "Воронки, пользовательские объекты, ИИ‑
 #. js-lingui-id: NjL3pD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Play audio-only recordings"
-msgstr ""
+msgstr "Воспроизводите записи только со звуком"
 
 #. js-lingui-id: z7gnI9
 #: src/partner-application/partner-application-copy.ts
@@ -6300,7 +6330,7 @@ msgstr "Повторяющиеся события Google Календаря"
 #. js-lingui-id: pRH3vs
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Reference records and skills in AI chat"
-msgstr ""
+msgstr "Упоминайте записи и навыки в чате с ИИ"
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
@@ -6359,6 +6389,11 @@ msgstr "Убрать фильтр {0}"
 #: src/partner-application/partner-application-copy.ts
 msgid "Remove {skill}"
 msgstr "Удалить {skill}"
+
+#. js-lingui-id: ChVv1j
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Remove a step from its node in the diagram, without opening the side panel first."
+msgstr "Удаляйте шаг из его узла на диаграмме, не открывая сначала боковую панель."
 
 #. js-lingui-id: a/aGHe
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -6781,6 +6816,11 @@ msgstr "Смотреть больше возможностей"
 msgid "See related records across relationships"
 msgstr "Просматривайте связанные записи через связи"
 
+#. js-lingui-id: B79UH5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See the devices on your account"
+msgstr "Просматривайте устройства в своей учетной записи"
+
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
 msgid "See Twenty pricing"
@@ -6794,7 +6834,7 @@ msgstr "Смотрите обновления по мере их появлен�
 #. js-lingui-id: DlPcBc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See what a model costs and where it runs"
-msgstr ""
+msgstr "Узнайте стоимость модели и где она работает"
 
 #. js-lingui-id: 0kgOPB
 #. placeholder {0}: LATEST_RELEASE.release
@@ -6945,6 +6985,11 @@ msgstr "Сербия 🇷🇸"
 #: src/partners-marketplace/PartnerServices.tsx
 msgid "Services"
 msgstr "Услуги"
+
+#. js-lingui-id: y/35JB
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Settings > Profile now lists every device with an active session, marks the one you are on, and lets you sign out any of the others."
+msgstr "В разделе «Настройки» > «Профиль» теперь отображаются все устройства с активным сеансом, отмечается текущее устройство и можно выйти из сеанса на любом другом устройстве."
 
 #. js-lingui-id: 62gxWx
 #: src/partner-application/data/partner-country-options.ts
@@ -7294,7 +7339,7 @@ msgstr "Хватит мириться с компромиссами."
 #. js-lingui-id: 8b3N0u
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Stop the call recorder from joining calendar meetings with one workspace setting, rather than uninstalling the app. The Recording Bot preference now reads On only when a bot is really scheduled."
-msgstr ""
+msgstr "Запретите регистратору звонков присоединяться к встречам в календаре с помощью одной настройки рабочего пространства вместо удаления приложения. Теперь параметр «Бот записи» показывает «Вкл.» только тогда, когда бот действительно запланирован."
 
 #. js-lingui-id: hjgBcp
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7710,7 +7755,7 @@ msgstr "Бремя внутренних разработок"
 #. js-lingui-id: 6U7fek
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The interface now mirrors for right-to-left languages, so Arabic and Hebrew workspaces read in their own direction."
-msgstr ""
+msgstr "Интерфейс теперь зеркально отображается для языков с письмом справа налево, поэтому рабочие пространства на арабском и иврите читаются в соответствующем направлении."
 
 #. js-lingui-id: ZNzKXV
 #: src/case-studies/case-study-stories.ts
@@ -7744,6 +7789,11 @@ msgid ""
 msgstr ""
 "Прайсовая цена — только начало.\n"
 "Вот как выглядит счёт, когда на платформе работает реальная команда."
+
+#. js-lingui-id: 5V+Mch
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The navigation menu is now a page of its own, with a real address and a way back. Create actions appear as icons in page headers, and the bottom bar no longer sits on top of your content."
+msgstr "Меню навигации теперь представляет собой отдельную страницу с настоящим адресом и возможностью вернуться назад. Действия создания отображаются в виде значков в заголовках страниц, а нижняя панель больше не перекрывает ваш контент."
 
 #. js-lingui-id: nf1NnD
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8226,7 +8276,7 @@ msgstr "Двухфакторная аутентификация"
 #. js-lingui-id: QMyFdb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Type <0>@</0> to point the chat at a record, or <1>/</1> to pick one of your workspace’s skills. Both suggest matches as you type."
-msgstr ""
+msgstr "Введите <0>@</0>, чтобы указать в чате запись, или <1>/</1>, чтобы выбрать один из навыков рабочего пространства. По мере ввода оба варианта предлагают совпадения."
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts
