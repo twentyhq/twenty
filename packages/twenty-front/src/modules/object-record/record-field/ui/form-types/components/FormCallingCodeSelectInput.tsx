@@ -6,7 +6,7 @@ import { useCountries } from '@/ui/input/components/internal/hooks/useCountries'
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
 import { IconCircleOff, type IconComponentProps } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 
 export type FormCallingCodeSelectInputUpdatedValue = {
   callingCode: string;

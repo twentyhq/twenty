@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -250,7 +251,7 @@ describe('ChatReferenceChip', () => {
       });
 
       expect(screen.getByText(reference.displayName).closest('a')).toBeNull();
-      expect(screen.getByTestId('chip')).toBeInTheDocument();
+      expect(screen.getByText(reference.displayName)).toBeVisible();
     },
   );
 
@@ -364,7 +365,7 @@ describe('ChatReferenceChip', () => {
     });
 
     expect(screen.getByText(reference.displayName)).toBeInTheDocument();
-    expect(screen.queryByTestId('chip')).not.toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 
   it.each([
@@ -389,21 +390,29 @@ describe('ChatReferenceChip', () => {
     renderWithReferences(<ChatReferenceChip reference={reference} />);
 
     expect(screen.getByText(reference.displayName).closest('a')).toBeNull();
-    expect(screen.getByTestId('chip')).toBeInTheDocument();
+    expect(screen.getByText(reference.displayName)).toBeVisible();
   });
 
-  it('should render a static chip when navigation is disabled', () => {
-    renderWithReferences(
-      <ChatReferenceChip reference={findCase('role').reference} />,
-      { isNavigationEnabled: false },
-    );
+  it('should render a static chip when navigation is disabled', async () => {
+    const reference = findCase('role').reference;
 
+    renderWithReferences(<ChatReferenceChip reference={reference} />, {
+      isNavigationEnabled: false,
+    });
+
+    const label = screen.getByText(reference.displayName);
+
+    expect(label).toBeVisible();
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
 
-    const chipClassName = screen.getByTestId('chip').className;
+    await userEvent.click(label);
 
-    expect(chipClassName).not.toMatch(/cursorPointer/);
-    expect(chipClassName).toMatch(/backgroundStatic/);
+    expect(openRoutedPageInSidePanelMock).not.toHaveBeenCalled();
+    expect(openRecordInSidePanelMock).not.toHaveBeenCalled();
+    expect(screen.getByTestId('location-probe')).toHaveTextContent(
+      '/objects/companies',
+    );
   });
 });
 
@@ -431,7 +440,7 @@ describe('TextWithChatReferences', () => {
       />,
     );
 
-    expect(screen.queryByTestId('chip')).not.toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
     expect(screen.getByText(/Sort by/)).toHaveTextContent(
       'Sort by Stage first',
     );

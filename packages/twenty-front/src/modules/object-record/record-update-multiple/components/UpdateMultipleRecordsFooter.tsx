@@ -8,7 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Key } from 'ts-key-enum';
 import { IconBoxMultiple } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 const StyledFooterContainer = styled.div`
   align-items: flex-end;

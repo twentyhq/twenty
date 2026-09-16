@@ -1,9 +1,11 @@
 import { BASIC_FAILING_STRING_EDGE_CASE_INPUTS } from 'test/constants/basic-failing-string-edge-case-inputs.constant';
 import { type FieldMetadataEnumSuccessfulAndFailingTestCases } from 'test/integration/metadata/suites/field-metadata/enum/types/fieldMetadataEnumSuccessfulAndFailingTestCases';
 import { type UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case';
+import {
+  type FieldMetadataComplexOption,
+  type TagColor,
+} from 'twenty-shared/types';
 import { v4 } from 'uuid';
-
-import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 const stringFields: (keyof FieldMetadataComplexOption)[] = [
   'id',
@@ -313,6 +315,51 @@ export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_T
               label: 'Option 1',
               value: 'OPTION_1',
               color: 'green',
+              position: 1,
+            },
+          ],
+        },
+      },
+      {
+        title: 'should default a missing option color to gray',
+        context: {
+          input: {
+            options: [
+              {
+                label: 'Option 1',
+                value: 'OPTION_1',
+                position: 1,
+              },
+            ],
+          },
+          expectedOptions: [
+            {
+              label: 'Option 1',
+              value: 'OPTION_1',
+              color: 'gray',
+              position: 1,
+            },
+          ],
+        },
+      },
+      {
+        title: 'should trim option color',
+        context: {
+          input: {
+            options: [
+              {
+                label: 'Option 1',
+                value: 'OPTION_1',
+                color: '  blue  ' as TagColor,
+                position: 1,
+              },
+            ],
+          },
+          expectedOptions: [
+            {
+              label: 'Option 1',
+              value: 'OPTION_1',
+              color: 'blue',
               position: 1,
             },
           ],

@@ -8,9 +8,9 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconClock, IconSend } from 'twenty-ui/icon';
-import { Button, type SelectOption } from 'twenty-ui/input';
+import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { Label } from 'twenty-ui/typography';
+import { Label } from 'twenty-ui/primitives/typography';
 
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessageCampaign';

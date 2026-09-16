@@ -90,7 +90,7 @@ jest.mock('@/views/hooks/useUpdateCurrentView', () => ({
     updateCurrentView: mockUpdateCurrentView,
   })),
 }));
-jest.mock('twenty-ui/input', () => ({
+jest.mock('twenty-ui/primitives/input', () => ({
   Button: ({
     ariaLabel,
     onClick,

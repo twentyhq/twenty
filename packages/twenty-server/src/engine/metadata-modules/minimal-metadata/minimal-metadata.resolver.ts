@@ -25,10 +25,11 @@ export class MinimalMetadataResolver {
     userWorkspaceId: string | undefined,
     @Context() context: I18nContext,
   ): Promise<MinimalMetadataDTO> {
-    return this.minimalMetadataService.getMinimalMetadata(
-      workspace.id,
+    return this.minimalMetadataService.getMinimalMetadata({
+      workspaceId: workspace.id,
+      workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       userWorkspaceId,
-      context.req.locale,
-    );
+      locale: context.req.locale,
+    });
   }
 }
