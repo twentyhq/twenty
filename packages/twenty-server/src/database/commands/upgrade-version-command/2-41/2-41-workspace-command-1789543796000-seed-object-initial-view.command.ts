@@ -1,12 +1,11 @@
 import { Command } from 'nest-commander';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { computeMissingInitialObjectViewOperations } from 'src/engine/metadata-modules/view/utils/compute-missing-initial-object-view-operations.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -39,15 +38,21 @@ export class SeedObjectInitialViewCommand extends ProvisionedWorkspaceCommandRun
         'flatViewFieldMaps',
       ]);
 
-    const { workspaceCustomFlatApplication } =
+    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
 
     const seedOperations = computeMissingInitialObjectViewOperations({
-      flatObjectMetadatas: Object.values(
-        flatObjectMetadataMaps.byUniversalIdentifier,
-      ).filter(isDefined),
+      flatObjectMetadatas: [
+        twentyStandardFlatApplication.id,
+        workspaceCustomFlatApplication.id,
+      ].flatMap((applicationId) =>
+        findFlatEntitiesByApplicationId({
+          applicationId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        }),
+      ),
       flatViewMaps,
       flatViewFieldMaps,
       initialViewApplicationUniversalIdentifier:
