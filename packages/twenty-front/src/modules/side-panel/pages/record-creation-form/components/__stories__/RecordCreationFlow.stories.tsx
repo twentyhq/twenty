@@ -1,3 +1,4 @@
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
@@ -238,7 +239,11 @@ const RecordCreationFlowContent = ({
           displayType="listItem"
           containerType={CommandMenuItemContainerType.CommandMenuList}
         >
-          <CreationCommandMenu />
+          <CommandMenuComponentInstanceContext.Provider
+            value={{ instanceId: 'creation-story-menu' }}
+          >
+            <CreationCommandMenu />
+          </CommandMenuComponentInstanceContext.Provider>
         </CommandMenuContextProvider>
       ) : (
         <Button title="Create company" onClick={handleCreate} />
