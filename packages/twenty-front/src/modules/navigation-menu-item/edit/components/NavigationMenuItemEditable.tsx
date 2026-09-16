@@ -1,5 +1,7 @@
 import { NavigationMenuItemObjectColorEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemObjectColorEditor';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+// Aliased so both reads satisfy the matching-state-variable lint rule, which
+// requires the variable to be named after the state it reads.
 import {
   isDropdownOpenComponentState,
   isDropdownOpenComponentState as isColorPickerOpenComponentState,
@@ -8,6 +10,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useCallback, useState, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
@@ -71,7 +74,7 @@ export const NavigationMenuItemEditable = ({
     `navigation-item-${item.id}-color`,
   );
   const anchorId = `navigation-item-anchor-${item.id}`;
-  const isWorkspace = !item.userWorkspaceId;
+  const isWorkspace = !isDefined(item.userWorkspaceId);
   const canOrganize = isLayoutCustomizationModeEnabled && isWorkspace;
   const canEdit =
     item.type === NavigationMenuItemType.LINK ||

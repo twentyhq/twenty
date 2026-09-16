@@ -70,7 +70,7 @@ export const NavigationMenuItemInlineEditor = ({
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const { updateItem } = useNavigationMenuItemEditController(
-    item.userWorkspaceId ? 'favorite' : 'workspace',
+    isDefined(item.userWorkspaceId) ? 'favorite' : 'workspace',
   );
   const [
     selectedNavigationMenuItemIdInEditMode,

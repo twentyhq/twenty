@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { ensureAbsoluteUrl, isValidUrl } from 'twenty-shared/utils';
+import { ensureAbsoluteUrl, isDefined, isValidUrl } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
@@ -26,7 +26,7 @@ export const NavigationMenuItemLinkEditor = ({
 }: NavigationMenuItemLinkEditorProps) => {
   const { t } = useLingui();
   const { updateItem } = useNavigationMenuItemEditController(
-    item.userWorkspaceId ? 'favorite' : 'workspace',
+    isDefined(item.userWorkspaceId) ? 'favorite' : 'workspace',
   );
   const [error, setError] = useState(false);
   const saveLink = ({
