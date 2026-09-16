@@ -2,13 +2,13 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SidePanelDecorator } from '~/testing/decorators/SidePanelDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 
@@ -30,7 +30,7 @@ const meta: Meta<typeof TaskGroups> = {
     ComponentWithRouterDecorator,
     ObjectMetadataItemsDecorator,
     SidePanelDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
 };
 

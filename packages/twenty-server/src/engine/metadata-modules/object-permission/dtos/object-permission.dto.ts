@@ -12,17 +12,17 @@ export class ObjectPermissionDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   objectMetadataId: string;
 
-  @Field({ nullable: true })
-  canReadObjectRecords?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  canReadObjectRecords?: boolean | null;
 
-  @Field({ nullable: true })
-  canUpdateObjectRecords?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  canUpdateObjectRecords?: boolean | null;
 
-  @Field({ nullable: true })
-  canSoftDeleteObjectRecords?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  canSoftDeleteObjectRecords?: boolean | null;
 
-  @Field({ nullable: true })
-  canDestroyObjectRecords?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  canDestroyObjectRecords?: boolean | null;
 
   @Field(() => GraphQLJSON, {
     nullable: true,

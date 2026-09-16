@@ -48,7 +48,7 @@ export const SettingsBillingPlansWithSubscription = ({
         subtitle={confirmationModalSwitchToOrganizationMessage()}
         onConfirmClick={() => switchBillingPlan(BillingPlanKey.ENTERPRISE)}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
         loading={isSwitchingPlan}
       />
       <ConfirmationModal
@@ -57,7 +57,7 @@ export const SettingsBillingPlansWithSubscription = ({
         subtitle={confirmationModalSwitchToProMessage()}
         onConfirmClick={() => switchBillingPlan(BillingPlanKey.PRO)}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
         loading={isSwitchingPlan}
       />
     </SettingsPageContainer>

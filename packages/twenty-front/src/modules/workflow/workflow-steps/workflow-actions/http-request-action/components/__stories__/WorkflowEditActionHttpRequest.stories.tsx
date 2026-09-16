@@ -4,14 +4,14 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, waitFor, within } from 'storybook/test';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  getWorkflowNodeIdMock,
   MOCKED_STEP_ID,
+  getWorkflowNodeIdMock,
 } from '~/testing/mock-data/workflow';
 
 const DEFAULT_ACTION: WorkflowHttpRequestAction = {
@@ -81,7 +81,7 @@ const meta: Meta<typeof WorkflowEditActionHttpRequest> = {
     WorkflowStepActionDrawerDecorator,
     WorkflowStepDecorator,
     ComponentWithRouterDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     WorkspaceDecorator,
     ObjectMetadataItemsDecorator,
   ],

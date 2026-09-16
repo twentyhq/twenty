@@ -7,21 +7,12 @@ import { themeCssVariables, useTheme } from '@ui/theme-constants';
 import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
-import {
-  type ButtonAccent,
-  type ButtonPosition,
-  type ButtonProps,
-  type ButtonVariant,
-} from '@ui/primitives/input/Button/Button';
+import { type AnimatedButtonAccent } from './internal/AnimatedButtonAccent';
+import { type AnimatedButtonPosition } from './internal/AnimatedButtonPosition';
+import { type AnimatedButtonProps } from './types/AnimatedButtonProps';
+import { type AnimatedButtonVariant } from './internal/AnimatedButtonVariant';
 
 import styles from './AnimatedButton.module.scss';
-
-export type AnimatedButtonProps = ButtonProps & {
-  animatedSvg: React.ReactNode;
-  soonLabel?: string;
-  // Renders a square icon-only button (width matches the size-based height).
-  square?: boolean;
-};
 
 type AnimatedButtonDynamicStyles = {
   background: string;
@@ -33,14 +24,21 @@ type AnimatedButtonDynamicStyles = {
   activeBackground: string;
 };
 
-const computeAnimatedButtonDynamicStyles = (
-  variant: ButtonVariant,
-  inverted: boolean,
-  accent: ButtonAccent,
-  disabled: boolean,
-  focus: boolean,
-  position: ButtonPosition,
-): AnimatedButtonDynamicStyles => {
+const computeAnimatedButtonDynamicStyles = ({
+  variant,
+  inverted,
+  accent,
+  disabled,
+  focus,
+  position,
+}: {
+  variant: AnimatedButtonVariant;
+  inverted: boolean;
+  accent: AnimatedButtonAccent;
+  disabled: boolean;
+  focus: boolean;
+  position: AnimatedButtonPosition;
+}): AnimatedButtonDynamicStyles => {
   const result: AnimatedButtonDynamicStyles = {
     background: 'transparent',
     borderColor: 'transparent',
@@ -336,14 +334,14 @@ export const AnimatedButton = ({
   const isDisabled = soon || disabled;
 
   const dynamicStyles = useMemo(() => {
-    const computedStyles = computeAnimatedButtonDynamicStyles(
+    const computedStyles = computeAnimatedButtonDynamicStyles({
       variant,
       inverted,
       accent,
-      isDisabled,
+      disabled: isDisabled,
       focus,
       position,
-    );
+    });
     return {
       '--abtn-bg': computedStyles.background,
       '--abtn-border-color': computedStyles.borderColor,

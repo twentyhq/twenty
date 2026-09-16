@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { ViewType } from 'twenty-shared/types';
+import { FeatureFlagKey, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { isInitialObjectView } from 'src/engine/metadata-modules/view/utils/is-initial-object-view.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -46,6 +48,7 @@ export class ViewService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async createOne({
@@ -402,8 +405,18 @@ export class ViewService {
         },
       );
 
+    const isInitialObjectViewEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+        workspaceId,
+      );
+
     return Object.values(flatViewMaps.byUniversalIdentifier)
       .filter(isDefined)
+      .filter(
+        (flatView) =>
+          isInitialObjectViewEnabled || !isInitialObjectView(flatView),
+      )
       .filter((flatView) => flatView.workspaceId === workspaceId)
       .filter(
         (flatView) =>
