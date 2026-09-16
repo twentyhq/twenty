@@ -5865,7 +5865,7 @@ export default {
             "firstClickedAt": [
                 4
             ],
-            "lastEngagedAt": [
+            "lastClickedAt": [
                 4
             ],
             "__typename": [

@@ -2758,7 +2758,7 @@ export type MessageCampaignEngagementRecipientDto = {
   __typename?: 'MessageCampaignEngagementRecipientDTO';
   deliveryId: Scalars['UUID']['output'];
   firstClickedAt?: Maybe<Scalars['DateTime']['output']>;
-  lastEngagedAt: Scalars['DateTime']['output'];
+  lastClickedAt: Scalars['DateTime']['output'];
   personId: Scalars['UUID']['output'];
 };
 

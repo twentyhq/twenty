@@ -3033,7 +3033,7 @@ type MessageCampaignEngagementRecipientDTO {
   deliveryId: UUID!
   personId: UUID!
   firstClickedAt: DateTime
-  lastEngagedAt: DateTime!
+  lastClickedAt: DateTime!
 }
 
 type MessageCampaignEngagementDTO {

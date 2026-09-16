@@ -2610,7 +2610,7 @@ export interface MessageCampaignEngagementRecipientDTO {
     deliveryId: Scalars['UUID']
     personId: Scalars['UUID']
     firstClickedAt?: Scalars['DateTime']
-    lastEngagedAt: Scalars['DateTime']
+    lastClickedAt: Scalars['DateTime']
     __typename: 'MessageCampaignEngagementRecipientDTO'
 }
 
@@ -6356,7 +6356,7 @@ export interface MessageCampaignEngagementRecipientDTOGenqlSelection{
     deliveryId?: boolean | number
     personId?: boolean | number
     firstClickedAt?: boolean | number
-    lastEngagedAt?: boolean | number
+    lastClickedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
