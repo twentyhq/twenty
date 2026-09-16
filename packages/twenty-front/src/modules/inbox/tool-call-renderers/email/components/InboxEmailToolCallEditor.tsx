@@ -1,13 +1,10 @@
-import { useRef } from 'react';
-
 import { InboxPlanToolCallEditor } from '@/inbox/components/InboxPlanToolCallEditor';
-import {
-  InboxEmailComposer,
-  type InboxEmailComposerHandle,
-} from '@/inbox/tool-call-renderers/email/components/InboxEmailComposer';
+import { InboxEmailComposer } from '@/inbox/tool-call-renderers/email/components/InboxEmailComposer';
 import { getEmailComposerPrefillFromToolCall } from '@/inbox/tool-call-renderers/email/utils/getEmailComposerPrefillFromToolCall';
 import { type InboxToolCallEditorProps } from '@/inbox/tool-call-renderers/types/InboxToolCallRenderer';
 import { InboxItemToolCallStatus } from '~/generated/graphql';
+
+type InboxEmailToolCallEditorProps = InboxToolCallEditorProps;
 
 // An email proposal on an item that is not about a thread: the composer where
 // the schema form used to be. Once the call has run there is nothing left to
@@ -17,9 +14,7 @@ export const InboxEmailToolCallEditor = ({
   source,
   onSave,
   onRegisterFlush,
-}: InboxToolCallEditorProps) => {
-  const handleRef = useRef<InboxEmailComposerHandle | null>(null);
-
+}: InboxEmailToolCallEditorProps) => {
   const isEditable = toolCall.status === InboxItemToolCallStatus.PROPOSED;
 
   if (!isEditable) {
@@ -36,10 +31,9 @@ export const InboxEmailToolCallEditor = ({
     <InboxEmailComposer
       prefill={getEmailComposerPrefillFromToolCall(toolCall)}
       onSave={onSave}
-      onHandleChange={(handle) => {
-        handleRef.current = handle;
-        onRegisterFlush?.(handle ? handle.flushSave : null);
-      }}
+      onHandleChange={(handle) =>
+        onRegisterFlush?.(handle ? handle.flushSave : null)
+      }
     />
   );
 };

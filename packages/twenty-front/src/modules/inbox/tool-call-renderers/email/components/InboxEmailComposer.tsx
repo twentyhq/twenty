@@ -36,7 +36,10 @@ type InboxEmailComposerProps = {
   // What the thread says about how to reply, filling whatever the proposal
   // left out. The proposal wins where both speak.
   replyDefaults?: Partial<
-    Pick<InboxEmailComposerPrefill, 'to' | 'subject' | 'connectedAccountId' | 'inReplyTo'>
+    Pick<
+      InboxEmailComposerPrefill,
+      'to' | 'subject' | 'connectedAccountId' | 'inReplyTo'
+    >
   >;
   contextRecord?: EmailComposerContextRecord | null;
   onSave?: (editedInput: Record<string, unknown>) => Promise<void>;

@@ -34,10 +34,9 @@ const readBody = (value: unknown): string => {
 export const getEmailComposerPrefillFromToolCall = (
   toolCall: Pick<InboxItemToolCall, 'proposedInput' | 'editedInput'>,
 ): InboxEmailComposerPrefill => {
-  const input = (toolCall.editedInput ?? toolCall.proposedInput ?? {}) as Record<
-    string,
-    unknown
-  >;
+  const input = (toolCall.editedInput ??
+    toolCall.proposedInput ??
+    {}) as Record<string, unknown>;
   const recipients = isPlainObject(input.recipients)
     ? (input.recipients as Record<string, unknown>)
     : input;

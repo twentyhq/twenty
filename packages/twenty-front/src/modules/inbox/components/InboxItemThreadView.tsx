@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useRef, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowBackUp, IconSend } from 'twenty-ui/icon';
@@ -19,15 +19,12 @@ import {
   InboxEmailComposer,
   type InboxEmailComposerHandle,
 } from '@/inbox/tool-call-renderers/email/components/InboxEmailComposer';
-import { EMAIL_TOOL_CALL_INPUT_SCHEMA } from '@/inbox/tool-call-renderers/email/constants/EmailToolCallInputSchema';
-import {
-  isEmailToolName,
-  SEND_EMAIL_TOOL_NAME,
-} from '@/inbox/tool-call-renderers/email/constants/EmailToolCallNames';
+import { SEND_EMAIL_TOOL_NAME } from '@/inbox/tool-call-renderers/email/constants/SendEmailToolName';
 import {
   getEmailComposerPrefillFromToolCall,
   type InboxEmailComposerPrefill,
 } from '@/inbox/tool-call-renderers/email/utils/getEmailComposerPrefillFromToolCall';
+import { isEmailToolName } from '@/inbox/tool-call-renderers/email/utils/isEmailToolName';
 import { getInboxToolCallRenderer } from '@/inbox/tool-call-renderers/utils/getInboxToolCallRenderer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
 import {
@@ -130,7 +127,8 @@ export const InboxItemThreadView = ({
   onCreateAndRunToolCall,
 }: InboxItemThreadViewProps) => {
   const { t } = useLingui();
-  const composerHandleRef = useRef<InboxEmailComposerHandle | null>(null);
+  const [composerHandle, setComposerHandle] =
+    useState<InboxEmailComposerHandle | null>(null);
 
   const { thread, messages, fetchMoreMessages, threadLoading } =
     useEmailThread(threadId);
@@ -167,12 +165,10 @@ export const InboxItemThreadView = ({
         }
       : undefined;
 
-  const isComposerOpen =
-    !isDone && (isDefined(emailToolCall) || isReplyOpen);
+  const isComposerOpen = !isDone && (isDefined(emailToolCall) || isReplyOpen);
 
   const sendLabel = isDefined(emailToolCall)
-    ? (getInboxToolCallRenderer(emailToolCall.toolName)?.runLabel() ??
-      t`Send`)
+    ? (getInboxToolCallRenderer(emailToolCall.toolName)?.runLabel() ?? t`Send`)
     : t`Send`;
 
   const handleDraftClick = (message: EmailThreadMessageWithSender) => {
@@ -197,7 +193,7 @@ export const InboxItemThreadView = ({
       return;
     }
 
-    await composerHandleRef.current?.flushSave();
+    await composerHandle?.flushSave();
 
     if (alsoRunRest) {
       await onRunAll();
@@ -209,9 +205,7 @@ export const InboxItemThreadView = ({
   // No proposal to run, so the reply becomes a call first. The person is its
   // author, and the row records that the same way it would an agent's.
   const sendAdHoc = async () => {
-    const handle = composerHandleRef.current;
-
-    if (!isDefined(handle)) {
+    if (!isDefined(composerHandle)) {
       return;
     }
 
@@ -219,7 +213,7 @@ export const InboxItemThreadView = ({
       toolName: SEND_EMAIL_TOOL_NAME,
       label: t`Reply`,
       icon: 'IconMail',
-      proposedInput: handle.getInput(),
+      proposedInput: composerHandle.getInput(),
     });
   };
 
@@ -319,9 +313,7 @@ export const InboxItemThreadView = ({
                     onSaveToolCallInput(emailToolCall.id, editedInput)
                 : undefined
             }
-            onHandleChange={(handle) => {
-              composerHandleRef.current = handle;
-            }}
+            onHandleChange={setComposerHandle}
           />
         )}
         {!isComposerOpen && !isDone && isDefined(replyDefaults) && (

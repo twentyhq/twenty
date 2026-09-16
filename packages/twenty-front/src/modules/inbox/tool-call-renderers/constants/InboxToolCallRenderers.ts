@@ -1,10 +1,8 @@
 import { t } from '@lingui/core/macro';
 
 import { InboxEmailToolCallEditor } from '@/inbox/tool-call-renderers/email/components/InboxEmailToolCallEditor';
-import {
-  DRAFT_EMAIL_TOOL_NAME,
-  SEND_EMAIL_TOOL_NAME,
-} from '@/inbox/tool-call-renderers/email/constants/EmailToolCallNames';
+import { DRAFT_EMAIL_TOOL_NAME } from '@/inbox/tool-call-renderers/email/constants/DraftEmailToolName';
+import { SEND_EMAIL_TOOL_NAME } from '@/inbox/tool-call-renderers/email/constants/SendEmailToolName';
 import { type InboxToolCallRenderer } from '@/inbox/tool-call-renderers/types/InboxToolCallRenderer';
 
 // Keyed by tool name, which is what a producer writes on the row. A standard
