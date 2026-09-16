@@ -60,11 +60,11 @@ export const EmailGroup: Story = {
     expect(
       await canvas.findByText('Contact auto-creation'),
     ).toBeInTheDocument();
+    expect(canvas.getByText('Exclude group emails')).toBeInTheDocument();
     expect(
       canvas.getByText('Exclude non-professional emails'),
     ).toBeInTheDocument();
     expect(canvas.queryByText('Visibility')).not.toBeInTheDocument();
-    expect(canvas.queryByText('Exclude group emails')).not.toBeInTheDocument();
     expect(canvas.queryByText('Import')).not.toBeInTheDocument();
   },
 };
