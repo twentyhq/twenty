@@ -211,7 +211,7 @@ export const NavigationMenuItemAddDropdownContent = ({
         {
           id: 'folder',
           label: t`Folder`,
-          contextualText: folderId ? t`Cannot nest folders` : undefined,
+          contextualText: folderId ? t`Cannot nest folders into folders` : undefined,
           Icon: folderId ? IconFolder : undefined,
           icon: folderId ? undefined : (
             <ColoredIcon
