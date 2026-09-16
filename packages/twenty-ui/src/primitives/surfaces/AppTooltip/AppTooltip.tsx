@@ -205,42 +205,46 @@ export const AppTooltip = ({
       clearTimeout(hideDelayTimerRef.current);
     };
 
-    const handleAnchorLeave = (anchorElement: Element) => {
-      if (anchorElement.contains(anchorElement.ownerDocument.activeElement)) {
+    const handleAnchorLeave = () => {
+      clearTimeout(showDelayTimerRef.current);
+      clearTimeout(hideDelayTimerRef.current);
+
+      if (!interactive) {
+        handleShow(false);
         return;
       }
-
-      clearTimeout(hideDelayTimerRef.current);
       hideDelayTimerRef.current = setTimeout(() => {
         if (isHoveringTooltipRef.current) {
           return;
         }
         handleShow(false);
       }, HIDE_DELAY_MS);
-      clearTimeout(showDelayTimerRef.current);
     };
 
     const removeListeners = anchorElements.map((anchorElement) => {
       const handleEnter = () => handleAnchorEnter(anchorElement);
-      const handleLeave = () => handleAnchorLeave(anchorElement);
+      const handleLeave = () => handleAnchorLeave();
 
-      // mouseover/mouseout instead of mouseenter/mouseleave to replicate
-      // react-tooltip's default open and close events
-      anchorElement.addEventListener('mouseover', handleEnter);
-      anchorElement.addEventListener('mouseout', handleLeave);
+      // Child-to-child pointer movement must not restart the tooltip timer.
+      anchorElement.addEventListener('mouseenter', handleEnter);
+      anchorElement.addEventListener('mouseleave', handleLeave);
       anchorElement.addEventListener('focus', handleEnter);
       anchorElement.addEventListener('blur', handleLeave);
 
       return () => {
-        anchorElement.removeEventListener('mouseover', handleEnter);
-        anchorElement.removeEventListener('mouseout', handleLeave);
+        anchorElement.removeEventListener('mouseenter', handleEnter);
+        anchorElement.removeEventListener('mouseleave', handleLeave);
         anchorElement.removeEventListener('focus', handleEnter);
         anchorElement.removeEventListener('blur', handleLeave);
       };
     });
 
-    return () => removeListeners.forEach((removeListener) => removeListener());
-  }, [anchorElements, isControlled, delayShowMs]);
+    return () => {
+      removeListeners.forEach((removeListener) => removeListener());
+      clearTimeout(showDelayTimerRef.current);
+      clearTimeout(hideDelayTimerRef.current);
+    };
+  }, [anchorElements, isControlled, delayShowMs, interactive]);
 
   useEffect(() => {
     return () => {
