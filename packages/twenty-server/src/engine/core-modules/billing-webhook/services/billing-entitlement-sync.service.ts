@@ -4,7 +4,6 @@ import { Injectable } from '@nestjs/common';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { BillingEntitlementService } from 'src/engine/core-modules/billing/services/billing-entitlement.service';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BILLING_ENTITLEMENT_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-entitlement-state-lock-options.constant';
 import { buildBillingEntitlementStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-entitlement-state-lock-key.util';
@@ -13,6 +12,7 @@ import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/serv
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type EntitlementTransitionArgs = {
   workspaceId: string;
@@ -34,7 +34,7 @@ export class BillingEntitlementSyncService {
     private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly cacheLockService: CacheLockService,
-    private readonly billingEntitlementService: BillingEntitlementService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async syncEntitlements({
@@ -103,9 +103,9 @@ export class BillingEntitlementSyncService {
       },
     );
 
-    await this.billingEntitlementService.invalidateWorkspaceEntitlements(
-      workspaceId,
-    );
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'billingEntitlements',
+    ]);
 
     // The opposite order to the reset above, because the unsafe direction is
     // reversed: predicates deleted while the row still grants RLS would leave

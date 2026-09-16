@@ -1,5 +1,4 @@
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
-import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
 
 export type WorkspaceAuthContextType =
   | 'system'
@@ -11,7 +10,6 @@ export type WorkspaceAuthContextType =
 interface BaseWorkspaceAuthContext {
   type: WorkspaceAuthContextType;
   workspace: NonNullable<RawAuthContext['workspace']>;
-  billingEntitlements?: BillingEntitlements;
 }
 
 export interface ApiKeyWorkspaceAuthContext extends BaseWorkspaceAuthContext {

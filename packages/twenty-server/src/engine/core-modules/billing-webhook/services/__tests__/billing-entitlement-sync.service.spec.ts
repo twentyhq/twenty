@@ -4,12 +4,12 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { BillingEntitlementSyncService } from 'src/engine/core-modules/billing-webhook/services/billing-entitlement-sync.service';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { BillingEntitlementService } from 'src/engine/core-modules/billing/services/billing-entitlement.service';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const STRIPE_CUSTOMER_ID = 'cus_test';
@@ -31,8 +31,8 @@ describe('BillingEntitlementSyncService', () => {
     dropIntraWorkspaceLimitCounters: jest.fn(),
   };
 
-  const billingEntitlementService = {
-    invalidateWorkspaceEntitlements: jest.fn(),
+  const workspaceCacheService = {
+    invalidateAndRecompute: jest.fn(),
   };
 
   // A real single-holder lock rather than a pass-through, so a test that runs
@@ -72,9 +72,7 @@ describe('BillingEntitlementSyncService', () => {
     heldLockKeys.clear();
     lockQueueByKey.clear();
     billingEntitlementRepository.upsert.mockResolvedValue(undefined);
-    billingEntitlementService.invalidateWorkspaceEntitlements.mockResolvedValue(
-      undefined,
-    );
+    workspaceCacheService.invalidateAndRecompute.mockResolvedValue(undefined);
     usageLimitQuotaService.dropIntraWorkspaceLimitCounters.mockResolvedValue(
       undefined,
     );
@@ -102,8 +100,8 @@ describe('BillingEntitlementSyncService', () => {
           useValue: cacheLockService,
         },
         {
-          provide: BillingEntitlementService,
-          useValue: billingEntitlementService,
+          provide: WorkspaceCacheService,
+          useValue: workspaceCacheService,
         },
       ],
     }).compile();
@@ -233,18 +231,17 @@ describe('BillingEntitlementSyncService', () => {
 
     await syncEntitlements([]);
 
+    expect(workspaceCacheService.invalidateAndRecompute).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      ['billingEntitlements'],
+    );
     expect(
-      billingEntitlementService.invalidateWorkspaceEntitlements,
-    ).toHaveBeenCalledWith(WORKSPACE_ID);
-    expect(
-      billingEntitlementService.invalidateWorkspaceEntitlements.mock
-        .invocationCallOrder[0],
+      workspaceCacheService.invalidateAndRecompute.mock.invocationCallOrder[0],
     ).toBeGreaterThan(
       billingEntitlementRepository.upsert.mock.invocationCallOrder[0],
     );
     expect(
-      billingEntitlementService.invalidateWorkspaceEntitlements.mock
-        .invocationCallOrder[0],
+      workspaceCacheService.invalidateAndRecompute.mock.invocationCallOrder[0],
     ).toBeLessThan(
       rowLevelPermissionPredicateGroupService
         .deleteAllRowLevelPermissionPredicateGroups.mock.invocationCallOrder[0],
@@ -258,7 +255,7 @@ describe('BillingEntitlementSyncService', () => {
         { key: BillingEntitlementKey.USAGE_LIMIT, value: true },
       ]);
     });
-    billingEntitlementService.invalidateWorkspaceEntitlements.mockRejectedValueOnce(
+    workspaceCacheService.invalidateAndRecompute.mockRejectedValueOnce(
       new Error('cache unavailable'),
     );
 
@@ -267,9 +264,9 @@ describe('BillingEntitlementSyncService', () => {
     ).rejects.toThrow('cache unavailable');
     await syncEntitlements([BillingEntitlementKey.USAGE_LIMIT]);
 
-    expect(
-      billingEntitlementService.invalidateWorkspaceEntitlements,
-    ).toHaveBeenCalledTimes(2);
+    expect(workspaceCacheService.invalidateAndRecompute).toHaveBeenCalledTimes(
+      2,
+    );
     expect(
       usageLimitQuotaService.dropIntraWorkspaceLimitCounters,
     ).toHaveBeenCalledTimes(1);
@@ -283,9 +280,7 @@ describe('BillingEntitlementSyncService', () => {
 
     await expect(syncEntitlements([])).rejects.toThrow('database unavailable');
 
-    expect(
-      billingEntitlementService.invalidateWorkspaceEntitlements,
-    ).not.toHaveBeenCalled();
+    expect(workspaceCacheService.invalidateAndRecompute).not.toHaveBeenCalled();
   });
 
   it('holds the lock for the whole transition', async () => {
