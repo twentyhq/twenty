@@ -476,7 +476,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         await getAppProviderByClassName<RecordAccessPolicyService>(
           'RecordAccessPolicyService',
         )
-          .buildEventRecordShareGate({
+          .buildEventRecordAccessGate({
             name: 'note.created',
             workspaceId: SEED_APPLE_WORKSPACE_ID,
             objectMetadata: noteObjectMetadata!,
@@ -643,7 +643,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         getAppProviderByClassName<RecordAccessPolicyService>(
           'RecordAccessPolicyService',
         )
-          .buildEventRecordShareGate({
+          .buildEventRecordAccessGate({
             name: 'note.deleted',
             workspaceId: SEED_APPLE_WORKSPACE_ID,
             objectMetadata: noteObjectMetadata!,

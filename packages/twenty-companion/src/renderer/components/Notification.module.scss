@@ -1,0 +1,35 @@
+.container {
+  backdrop-filter: var(--t-blur-medium);
+  background: var(--t-background-transparent-primary);
+  border-radius: var(--t-border-radius-md);
+  box-shadow: var(--t-box-shadow-strong);
+  box-sizing: border-box;
+  padding: var(--t-spacing-2);
+  position: relative;
+  width: 296px;
+  max-width: 100%;
+  overflow: hidden;
+}
+.content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--t-spacing-2);
+  > svg {
+    flex-shrink: 0;
+  }
+}
+.message {
+  flex: 1;
+  color: var(--t-font-color-secondary);
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-sm);
+}
+.progress {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  > [role='progressbar'] {
+    height: 100%;
+  }
+}

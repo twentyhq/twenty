@@ -11,6 +11,7 @@ import {
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
 import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
@@ -454,6 +455,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
                 rolesPermissions: {},
+                flatRowLevelPermissionPredicateMaps:
+                  createEmptyFlatEntityMaps(),
+                flatRowLevelPermissionPredicateGroupMaps:
+                  createEmptyFlatEntityMaps(),
+                flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
               }
             : {
                 workflowAutomatedTriggerMaps: {
@@ -521,6 +527,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
                 flatRoleMaps: { byUniversalIdentifier: {} },
                 rolesPermissions: {},
+                flatRowLevelPermissionPredicateMaps:
+                  createEmptyFlatEntityMaps(),
+                flatRowLevelPermissionPredicateGroupMaps:
+                  createEmptyFlatEntityMaps(),
+                flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
               }
             : {
                 workflowAutomatedTriggerMaps: {

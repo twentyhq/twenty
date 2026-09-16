@@ -6,19 +6,25 @@
 
 Twenty's open-source React UI component library: components, icons, and design tokens built on a zero-runtime, CSS-variable styling layer.
 
+Read the [twenty-ui documentation](https://docs.twenty.com/ui/getting-started) for setup, theming, and component guides.
+
 > **Alpha:** `twenty-ui` is still in alpha. Its version number follows the Twenty SDK release cycle. APIs and component behavior may change between releases.
 
 # Installation
 
+For a standalone React application, install the library and its peer dependencies. React 19 is required.
+
 ```bash
-npm install twenty-ui
+npm install twenty-ui monaco-editor react@^19 react-dom@^19
 ```
 
-`react`, `react-dom`, and `monaco-editor` are peer dependencies (install them in your app). The `twenty-ui/primitives/input`, `twenty-ui/primitives/feedback`, and `twenty-ui/primitives/navigation` entry points reference `monaco-editor`.
+Install `monaco-editor` even if you never render a code editor: the `twenty-ui/primitives/input`, `twenty-ui/primitives/feedback`, and `twenty-ui/primitives/navigation` entry points reference it, and bundlers fail to resolve it otherwise.
+
+For Twenty apps, follow [Using Twenty UI components](https://docs.twenty.com/developers/extend/apps/layout/front-components#using-twenty-ui-components). The front component renderer supplies the workspace theme. Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` on the same version.
 
 # Usage
 
-Import the base styles once, pick a theme stylesheet, and wrap your app in `ThemeProvider`:
+For a standalone React application, import the base styles once, pick a theme stylesheet, and wrap your app in `ThemeProvider`:
 
 ```tsx
 import { ThemeProvider } from 'twenty-ui/theme-constants';
@@ -34,10 +40,9 @@ export const App = () => (
 );
 ```
 
-Components are available from the root entry point or from a specific subpath for better tree-shaking:
+Prefer the matching subpath for better tree-shaking. Imports from the `twenty-ui` root entry point are also supported.
 
 ```tsx
-import { Button } from 'twenty-ui';
 import { Button } from 'twenty-ui/primitives/input';
 ```
 
@@ -71,6 +76,10 @@ import { Button } from 'twenty-ui/primitives/input';
 - `ThemeProvider` exposes the active theme through `useTheme()` and applies the `light` / `dark` class. Pass `applyToRoot={false}` with `overrides` to scope a theme to a subtree instead of the document root.
 
 # Development
+
+Component guides belong in `packages/twenty-docs/ui/primitives`. For each stateful API that supports both modes, include separate **Uncontrolled state** and **Controlled state** examples with the same scenario, labels, and initial state. Keep each example complete, with public imports and one exported example component.
+
+Explain state ownership before advanced behavior such as indeterminate selection or manual tab activation. Document independent states, such as selection and popup visibility, separately. For components that delegate state to a parent or group, explain that ownership and link to the relevant examples.
 
 Component interaction and behavior tests belong in Storybook stories (`*.stories.tsx`) using `play` functions. Component unit tests are reserved for conformance (native props, refs, class names, rendering, and prop types). Keep non-interactive utility, hook, and token tests in the Vitest unit project; avoid duplicating story coverage there.
 
