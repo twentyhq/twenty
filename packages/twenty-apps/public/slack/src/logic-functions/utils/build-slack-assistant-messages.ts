@@ -41,17 +41,21 @@ const buildSharedFilesSection = ({
   sharedFileNames,
   historySharedFileNames,
   attachedFileNames,
+  supersededFileNames,
 }: {
   sharedFileNames: string[];
   historySharedFileNames: string[];
   attachedFileNames: string[];
+  supersededFileNames: string[];
 }): string => {
   // A history file can share a name with an attached one without being it, so
   // the history names come back even when the same name is readable here
   const namesOnlyFileNames = [
     ...new Set([
       ...sharedFileNames.filter(
-        (fileName) => !attachedFileNames.includes(fileName),
+        (fileName) =>
+          !attachedFileNames.includes(fileName) &&
+          !supersededFileNames.includes(fileName),
       ),
       ...historySharedFileNames,
     ]),
@@ -102,6 +106,7 @@ export const buildSlackAssistantMessages = ({
   historySharedFileNames,
   attachments,
   attachedFileNames,
+  supersededFileNames,
   hasMentionedUsers,
 }: {
   requestText: string;
@@ -114,6 +119,7 @@ export const buildSlackAssistantMessages = ({
   historySharedFileNames: string[];
   attachments: SlackAssistantAttachment[];
   attachedFileNames: string[];
+  supersededFileNames: string[];
   hasMentionedUsers: boolean;
 }): SlackAssistantAgentMessage[] => {
   const requester = isNonEmptyString(requesterName)
@@ -142,6 +148,7 @@ export const buildSlackAssistantMessages = ({
         sharedFileNames,
         historySharedFileNames,
         attachedFileNames,
+        supersededFileNames,
       }),
     );
   }

@@ -15,6 +15,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [],
       attachedFileNames: [],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 
@@ -38,6 +39,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [],
       attachedFileNames: [],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 
@@ -56,6 +58,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [{ fileId: 'file-id-1', filename: 'screenshot.png' }],
       attachedFileNames: ['screenshot.png'],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 
@@ -80,6 +83,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [{ fileId: 'file-id-1', filename: 'screenshot.png' }],
       attachedFileNames: ['screenshot.png'],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 
@@ -104,6 +108,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: ['screenshot.png'],
       attachments: [{ fileId: 'file-id-1', filename: 'screenshot.png' }],
       attachedFileNames: ['screenshot.png'],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 
@@ -113,6 +118,28 @@ describe('buildSlackAssistantMessages', () => {
       'These files are attached to this request',
     );
     expect(requestMessage.content).toContain('reach you as names only');
+  });
+
+  it('should drop the placeholder name a resolved stub was listed under', () => {
+    const messages = buildSlackAssistantMessages({
+      requestText: 'what is this?',
+      requesterName: 'Jane',
+      conversationMessages: [],
+      runAsWorkspaceMemberId: undefined,
+      timeoutSeconds: 300,
+      workspaceBaseUrl: 'https://acme.twenty.com',
+      sharedFileNames: ['an unnamed file'],
+      historySharedFileNames: [],
+      attachments: [{ fileId: 'file-id-1', filename: 'diagram.png' }],
+      attachedFileNames: ['diagram.png'],
+      supersededFileNames: ['an unnamed file'],
+      hasMentionedUsers: false,
+    });
+
+    const [requestMessage] = messages;
+
+    expect(requestMessage.content).toContain('- "diagram.png"');
+    expect(requestMessage.content).not.toContain('an unnamed file');
   });
 
   it('should prepend conversation history as prior turns before the request', () => {
@@ -130,6 +157,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [],
       attachedFileNames: [],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 
@@ -162,6 +190,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [],
       attachedFileNames: [],
+      supersededFileNames: [],
       hasMentionedUsers: false,
       sharedFileNames: [],
     });
@@ -181,6 +210,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [],
       attachedFileNames: [],
+      supersededFileNames: [],
       hasMentionedUsers: true,
       sharedFileNames: [],
     });
@@ -203,6 +233,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [],
       attachedFileNames: [],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 
@@ -224,6 +255,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [],
       attachedFileNames: [],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 
@@ -247,6 +279,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [],
       attachedFileNames: [],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 
@@ -266,6 +299,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [],
       attachedFileNames: [],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 
@@ -285,6 +319,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [],
       attachedFileNames: [],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 
@@ -305,6 +340,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [],
       attachedFileNames: [],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 
@@ -329,6 +365,7 @@ describe('buildSlackAssistantMessages', () => {
       historySharedFileNames: [],
       attachments: [],
       attachedFileNames: [],
+      supersededFileNames: [],
       hasMentionedUsers: false,
     });
 

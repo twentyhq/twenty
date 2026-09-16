@@ -180,7 +180,7 @@ export const slackAssistantWorkerHandler = async (
     const slackConnection = isNonEmptyArray(requestFiles)
       ? await getSlackConnection()
       : undefined;
-    const { attachments, attachedFileNames } =
+    const { attachments, attachedFileNames, supersededFileNames } =
       await importSlackAssistantAttachments({
         client: slackClient,
         files: requestFiles,
@@ -221,6 +221,7 @@ export const slackAssistantWorkerHandler = async (
         historySharedFileNames,
         attachments,
         attachedFileNames,
+        supersededFileNames,
       }),
       deadlineAtMs: agentDeadlineAtMs,
     }).finally(() => stopStatusUpdates());
