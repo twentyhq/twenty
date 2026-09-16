@@ -64,15 +64,15 @@ const TwentyUiComponent = () => {
         </p>
         <div style={ROW_STYLE}>
           <Button
-            title="Increment"
-            accent="blue"
             onClick={() => setCount((previous) => previous + 1)}
-          />
-          <Button
-            title="Reset"
-            variant="secondary"
-            onClick={() => setCount(0)}
-          />
+            variant="solid"
+            color="accent"
+          >
+            {'Increment'}
+          </Button>
+          <Button onClick={() => setCount(0)} variant="outline">
+            {'Reset'}
+          </Button>
         </div>
       </div>
     </ThemeProvider>

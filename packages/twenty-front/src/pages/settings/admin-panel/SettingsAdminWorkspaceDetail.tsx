@@ -1,34 +1,24 @@
-import { useParams } from 'react-router-dom';
-
-import { useMutation, useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { billingState } from '@/client-config/states/billingState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceBillingContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent';
-import { SETTINGS_ADMIN_FEATURE_FLAG_METADATA } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
-import {
-  SettingsTableListSection,
-  type SettingsTableListSectionColumn,
-} from '@/settings/components/SettingsTableListSection';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { SETTINGS_ADMIN_FEATURE_FLAG_METADATA } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
 import { useAdminUpdateFeatureFlag } from '@/settings/admin-panel/hooks/useAdminUpdateFeatureFlag';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import {
+  SettingsTableListSection,
+  type SettingsTableListSectionColumn,
+} from '@/settings/components/SettingsTableListSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -40,9 +30,13 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Avatar } from 'twenty-ui/primitives/data-display';
-import { Switch, Button } from 'twenty-ui/primitives/input';
-import { Text, H2Title } from 'twenty-ui/primitives/typography';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useParams } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconCreditCard,
   IconEyeShare,
@@ -51,21 +45,26 @@ import {
   IconSettings2,
   IconUsers,
 } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Button, Switch } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import {
   Card,
   OverflowingTextWithTooltip,
   TooltipPosition,
 } from 'twenty-ui/primitives/surfaces';
-import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title, Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import {
+  GetUpgradeStatusDocument,
+  UpdateWorkspaceFeatureFlagDocument,
   type FeatureFlagKey,
   type GetAdminWorkspaceChatThreadsQuery,
   type WorkspaceLookupAdminPanelQuery,
-  GetUpgradeStatusDocument,
-  UpdateWorkspaceFeatureFlagDocument,
 } from '~/generated-admin/graphql';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledFeatureFlagName = styled(Text)`
   color: ${themeCssVariables.font.color.primary};
@@ -99,7 +98,7 @@ export const SettingsAdminWorkspaceDetail = () => {
   const labPublicFeatureFlags = useAtomStateValue(labPublicFeatureFlagsState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { updateFeatureFlagState } = useAdminUpdateFeatureFlag();
   const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
   const [updateFeatureFlag] = useMutation(UpdateWorkspaceFeatureFlagDocument, {
@@ -165,8 +164,9 @@ export const SettingsAdminWorkspaceDetail = () => {
         if (isDefined(previousValue)) {
           updateFeatureFlagState(workspaceId, featureFlag, previousValue);
         }
-        enqueueErrorSnackBar({
-          message: `Failed to update feature flag. ${error.message}`,
+        enqueueToast({
+          variant: 'error',
+          children: `Failed to update feature flag. ${error.message}`,
         });
       },
     });
@@ -399,17 +399,16 @@ export const SettingsAdminWorkspaceDetail = () => {
                           isDefined(currentUser?.id) &&
                           userId !== currentUser.id && (
                             <Button
-                              Icon={IconEyeShare}
-                              variant="secondary"
-                              size="small"
-                              title={t`Impersonate`}
+                              startIcon={<IconEyeShare />}
+                              size="sm"
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 handleImpersonate(userId, workspaceId!);
                               }}
                               disabled={impersonatingUserId === userId}
-                            />
+                              variant="outline"
+                            >{t`Impersonate`}</Button>
                           )}
                       </TableCell>
                     </TableRow>

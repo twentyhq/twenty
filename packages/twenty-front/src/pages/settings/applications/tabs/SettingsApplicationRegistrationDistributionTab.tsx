@@ -68,8 +68,8 @@ export const SettingsApplicationRegistrationDistributionTab = ({
                     t`Command copied to clipboard`,
                   );
                 }}
-                ariaLabel={t`Copy command`}
-                Icon={IconCopy}
+                aria-label={t`Copy command`}
+                startIcon={<IconCopy />}
               />
             }
           />

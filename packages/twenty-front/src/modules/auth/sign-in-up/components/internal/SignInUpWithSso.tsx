@@ -12,9 +12,9 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components';
 import { IconLock } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
-import { MainButton } from 'twenty-ui/primitives/input';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { useContext } from 'react';
@@ -51,12 +51,11 @@ export const SignInUpWithSso = () => {
     <>
       <StyledSsoButtonContainer>
         <MainButton
-          Icon={() => <IconLock size={theme.icon.size.md} />}
-          title={t`Single sign-on (SSO)`}
+          startIcon={<IconLock size={theme.icon.size.md} />}
           onClick={signInWithSso}
-          variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
           fullWidth
-        />
+          variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
+        >{t`Single sign-on (SSO)`}</MainButton>
         {isLastUsed && hasMultipleAuthMethods && <LastUsedPill />}
       </StyledSsoButtonContainer>
       <HorizontalSeparator visible={false} />

@@ -10,8 +10,8 @@ import {
   makeTab,
   makeWidget,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
-import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getIsFirstTabPinned } from '@/page-layout/utils/getIsFirstTabPinned';
+import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SidePanelPageLayoutTabSettingsContent } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent';
@@ -21,14 +21,14 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { PageLayoutType } from '~/generated-metadata/graphql';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const PAGE_LAYOUT_ID = 'tab-settings-story';
 const RECORD_ID = 'record-id';
@@ -141,7 +141,7 @@ const meta: Meta<typeof SidePanelPageLayoutTabSettingsContent> = {
     ]);
   },
   decorators: [
-    SnackBarDecorator,
+    ToastDecorator,
     (Story, { parameters }) => (
       <MemoryRouter
         initialEntries={[

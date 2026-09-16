@@ -413,20 +413,16 @@ export const ResourceCreditPackagePickerModal = ({
       <StyledModalActions>
         <Button
           onClick={onCancel}
-          variant="secondary"
-          title={t`Cancel`}
           fullWidth
-          justify="center"
-        />
+          variant="outline"
+        >{t`Cancel`}</Button>
         <Button
           onClick={onConfirm}
-          variant="primary"
-          accent="blue"
-          title={t`Confirm`}
           fullWidth
-          justify="center"
           disabled={isConfirmDisabled}
-        />
+          variant="solid"
+          color="accent"
+        >{t`Confirm`}</Button>
       </StyledModalActions>
     </ModalStatefulWrapper>
   );

@@ -6,7 +6,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -56,12 +56,9 @@ export const WorkflowDiagramCreateStepElement = ({
 
       {isDefined(Label) && <StyledLabelContainer>{Label}</StyledLabelContainer>}
 
-      <IconButton
-        Icon={IconPlus}
-        size="small"
-        ariaLabel={t`Add a step`}
-        onClick={addNode}
-      />
+      <IconButton size="sm" aria-label={t`Add a step`} onClick={addNode}>
+        <IconPlus />
+      </IconButton>
     </StyledContainer>
   );
 };

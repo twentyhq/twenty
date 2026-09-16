@@ -1,0 +1,162 @@
+---
+title: AlertDialog
+description: Ask for confirmation before an action that needs an explicit decision.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import AlertDialogReference from '/snippets/ui/generated/surfaces/alert-dialog.mdx';
+
+Use `AlertDialog` for a decision that interrupts the current workflow, such as confirming deletion. It provides an accessible modal with a backdrop and focus management.
+
+<StoryEmbed
+  storyId="ui-surfaces-alertdialog--documentation"
+  title="AlertDialog example"
+  height={440}
+/>
+
+## Anatomy
+
+Keep the trigger and popup inside `AlertDialog.Root`. This tree shows the recommended layout for a confirmation dialog.
+
+```text
+AlertDialog.Root
+├── AlertDialog.Trigger
+└── AlertDialog.Popup
+    ├── AlertDialog.Header
+    │   ├── AlertDialog.Title
+    │   └── AlertDialog.Description
+    ├── AlertDialog.Body
+    └── AlertDialog.Footer
+        ├── AlertDialog.Close
+        └── Confirmation action
+```
+
+| Part                       | Requirement                                   | Purpose                                                                  |
+| -------------------------- | --------------------------------------------- | ------------------------------------------------------------------------ |
+| `Root`                     | Required                                      | Coordinates open state and modal behavior.                               |
+| `Trigger`                  | Optional for a programmatically opened dialog | Opens the dialog and provides a return focus target.                     |
+| `Popup`                    | Required                                      | Renders the modal content with focus management.                         |
+| `Title`                    | Recommended                                   | Supplies the visible dialog name. An accessible name is always required. |
+| `Description`              | Recommended for a confirmation                | Explains the decision and its consequences.                              |
+| `Header`, `Body`, `Footer` | Optional layout parts                         | Arrange headings, additional content, and actions.                       |
+| `Close`                    | Recommended for cancellation                  | Supplies an explicit close action.                                       |
+
+`Popup` includes the portal, backdrop, and viewport. Put content directly inside it and set `size`, `container`, and focus props on `Popup`. `Header`, `Body`, and `Footer` arrange content; `Title` and `Description` provide the accessible relationships.
+
+The confirmation action is application content, not an exported part. Use `Close` with a synchronous handler or a `Button` with controlled open state for asynchronous confirmation.
+
+## Uncontrolled state
+
+Use `defaultOpen` to set the initial visibility. The dialog owns subsequent changes from its trigger, close controls, and dismissal interactions.
+
+```tsx
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root defaultOpen={false}>
+    <AlertDialog.Trigger>Delete record</AlertDialog.Trigger>
+    <AlertDialog.Popup>
+      <AlertDialog.Header>
+        <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+        <AlertDialog.Description>
+          This action cannot be undone.
+        </AlertDialog.Description>
+      </AlertDialog.Header>
+      <AlertDialog.Footer>
+        <AlertDialog.Close>Cancel</AlertDialog.Close>
+        <AlertDialog.Close onClick={onDelete}>Delete</AlertDialog.Close>
+      </AlertDialog.Footer>
+    </AlertDialog.Popup>
+  </AlertDialog.Root>
+);
+```
+
+`defaultOpen` defaults to `false`, so it can be omitted. This example uses a synchronous confirmation callback and closes after the action runs.
+
+## Controlled state
+
+Pass `open` and update it with `onOpenChange` to own the same dialog's visibility in React state. The callback receives the next boolean and event details, including changes requested by the trigger and close controls.
+
+```tsx
+import { useState } from 'react';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <AlertDialog.Root open={open} onOpenChange={setOpen}>
+      <AlertDialog.Trigger>Delete record</AlertDialog.Trigger>
+      <AlertDialog.Popup>
+        <AlertDialog.Header>
+          <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+          <AlertDialog.Description>
+            This action cannot be undone.
+          </AlertDialog.Description>
+        </AlertDialog.Header>
+        <AlertDialog.Footer>
+          <AlertDialog.Close>Cancel</AlertDialog.Close>
+          <AlertDialog.Close onClick={onDelete}>Delete</AlertDialog.Close>
+        </AlertDialog.Footer>
+      </AlertDialog.Popup>
+    </AlertDialog.Root>
+  );
+};
+```
+
+For asynchronous confirmation, use a `Button` with your action handler instead of `AlertDialog.Close`. Keep `open` true while the action is pending, call `setOpen(false)` after it succeeds, and show an error inside the dialog if it fails.
+
+## Compose with buttons
+
+Use `render` to give the trigger and close controls Twenty UI button styling. The dialog parts supply their interaction handlers and refs to the buttons.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root>
+    <AlertDialog.Trigger
+      render={<Button color="danger">Delete record</Button>}
+    />
+    <AlertDialog.Popup>
+      <AlertDialog.Header>
+        <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+        <AlertDialog.Description>
+          This action cannot be undone.
+        </AlertDialog.Description>
+      </AlertDialog.Header>
+      <AlertDialog.Footer>
+        <AlertDialog.Close render={<Button variant="outline">Cancel</Button>} />
+        <AlertDialog.Close
+          onClick={onDelete}
+          render={<Button color="danger">Delete</Button>}
+        />
+      </AlertDialog.Footer>
+    </AlertDialog.Popup>
+  </AlertDialog.Root>
+);
+```
+
+Keep each action as a single interactive control. If you wrap `Button` in your own component, [forward the supplied props and ref](/ui/primitives/overview#custom-components).
+
+## Sizing and portals
+
+`Popup.size` defaults to `md`; see the reference for supported sizes. Use `container` to override the theme's portal container and `keepMounted` to retain mounted content when closed.
+
+## Focus and dismissal
+
+The dialog traps focus while open. Escape can dismiss it; clicking the backdrop does not. Always provide a visible Cancel or Close action. Keep the initial focus on the least destructive action, and preserve a meaningful return focus target when the action removes its trigger. Use `Popup.initialFocus` and `Popup.finalFocus` to customize focus behavior.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<AlertDialogReference />

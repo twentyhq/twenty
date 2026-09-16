@@ -40,11 +40,10 @@ export const ConfigVariableFilterDropdown = ({
     <Dropdown
       clickableComponent={
         <Button
-          variant="secondary"
-          size="medium"
-          title={t`Options`}
-          Icon={IconSettings}
-        />
+          size="md"
+          startIcon={<IconSettings />}
+          variant="outline"
+        >{t`Options`}</Button>
       }
       dropdownId="env-var-options-dropdown"
       dropdownOffset={{ x: 0, y: 10 }}

@@ -1,0 +1,56 @@
+---
+title: LightButton
+description: Present lightweight actions with standard or subtle emphasis.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import LightButtonReference from '/snippets/ui/generated/input/light-button.mdx';
+
+Use the shared `LightButton` component for a lightweight action. It composes
+[Button](/ui/primitives/input/button) with a ghost surface, small size, regular
+font weight, and no elevation.
+
+<StoryEmbed
+  storyId="ui-components-lightbutton--default"
+  title="LightButton example"
+  height={240}
+/>
+
+## State ownership
+
+`LightButton` uses Button's state model and adds no state of its own. Your application supplies `loading`, `disabled`, and `soon`; `emphasis` only changes appearance. See [Button's state ownership example](/ui/primitives/input/button#state-ownership) for managing an asynchronous action. There are no controlled and uncontrolled selection modes.
+
+## Usage
+
+```tsx
+import { LightButton } from 'twenty-ui/components';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const FilterActions = () => (
+  <LightButton emphasis="subtle" startIcon={<IconPlus />}>
+    Add filter
+  </LightButton>
+);
+```
+
+The default `emphasis="standard"` uses secondary neutral text.
+`emphasis="subtle"` uses tertiary neutral text on ghost, outline, and soft
+surfaces. Semantic colors and solid surfaces retain their contrast treatment.
+
+Override `variant`, `color`, `size`, or `elevated` when needed.
+[ButtonGroup](/ui/primitives/input/button-group) can set a shared size, surface,
+and color; subtle emphasis does not replace the group's semantic color.
+
+## Interaction
+
+`LightButton` accepts Button's native attributes, refs, event handlers, icon
+slots, loading and disabled states, and render composition. Its native default
+is `type="button"`. Set `type="submit"` for submission or use `href` for a link.
+Supply `render` to choose a custom root, including an application-owned router
+link. The root must preserve a native button, or an anchor when `href` is set.
+Button derives the interaction behavior from `href`.
+
+## Props
+
+<LightButtonReference />
