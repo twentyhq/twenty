@@ -372,9 +372,6 @@ export class WorkflowVersionCoreSyncService {
       return reverseResolvedCoreWorkflowId;
     }
 
-    // upsertToCore only ever creates core rows for live workflows; creating one
-    // here for a soft-deleted workflow would leak a row the delete listener
-    // cannot find, since it keys on the pointer that is still null.
     if (!isDefined(workflow) || isDefined(workflow.deletedAt)) {
       return null;
     }

@@ -5,11 +5,12 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
 
-@RegisteredWorkspaceCommand('2.41.0', 1789566000000)
+@RegisteredWorkspaceCommand('2.42.0', 1789566000000)
 @Command({
-  name: 'upgrade:2-41:relink-workflow-versions-to-core-workflows',
+  name: 'upgrade:2-42:relink-workflow-versions-to-core-workflows',
   description:
     'Backfill coreWorkflowId on core workflow versions left unlinked by the mirror creation race',
 })
@@ -37,21 +38,30 @@ export class RelinkWorkflowVersionsToCoreWorkflowsCommand extends ProvisionedWor
 
     await queryRunner.connect();
 
-    // Same oldest-row rule as the runtime reverse lookup, so a version repaired
-    // here and a version linked by the mirror resolve to the same parent when
-    // several core rows share a workspaceWorkflowId.
+    const schema = getWorkspaceSchemaName(workspaceId);
+
     const canonicalParentId = `
-      SELECT c."id"
-      FROM core."workflow" c
-      WHERE c."workspaceId" = v."workspaceId"
-        AND c."workspaceWorkflowId" = v."workflowId"
-      ORDER BY c."createdAt" ASC, c."id" ASC
-      LIMIT 1`;
+      SELECT coalesce(
+        (
+          SELECT ww."coreWorkflowId"
+          FROM "${schema}"."workflow" ww
+          WHERE ww."id" = v."workflowId"
+            AND ww."coreWorkflowId" IS NOT NULL
+        ),
+        (
+          SELECT c."id"
+          FROM core."workflow" c
+          WHERE c."workspaceId" = v."workspaceId"
+            AND c."workspaceWorkflowId" = v."workflowId"
+          ORDER BY c."createdAt" ASC, c."id" ASC
+          LIMIT 1
+        )
+      )`;
 
     const predicate = `
       WHERE v."workspaceId" = $1
         AND v."coreWorkflowId" IS NULL
-        AND EXISTS (${canonicalParentId})`;
+        AND (${canonicalParentId}) IS NOT NULL`;
 
     try {
       if (

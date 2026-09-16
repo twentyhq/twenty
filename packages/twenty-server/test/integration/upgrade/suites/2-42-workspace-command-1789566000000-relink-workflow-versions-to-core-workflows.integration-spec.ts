@@ -2,7 +2,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { type RelinkWorkflowVersionsToCoreWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789566000000-relink-workflow-versions-to-core-workflows.command';
+import { type RelinkWorkflowVersionsToCoreWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789566000000-relink-workflow-versions-to-core-workflows.command';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
@@ -148,7 +148,7 @@ describe('RelinkWorkflowVersionsToCoreWorkflowsCommand (integration)', () => {
     expect(await readCoreWorkflowIdOfVersion(coreVersionId)).toBeNull();
   });
 
-  it('links to the oldest core workflow when several mirror the same workspace workflow', async () => {
+  it('links to the oldest core workflow when several mirror the same workspace workflow and no pointer resolves', async () => {
     const workspaceWorkflowId = v4();
 
     const oldestCoreWorkflowId = await seedCoreWorkflow(

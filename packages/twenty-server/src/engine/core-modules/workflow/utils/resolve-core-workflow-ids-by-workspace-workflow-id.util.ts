@@ -7,10 +7,6 @@ type CoreWorkflowReverseRow = {
   id: string;
 };
 
-// Raw SQL rather than the repository: workspaceWorkflowId is hidden from the
-// entity metadata while the upgrade that introduces it runs, so a where clause
-// on it throws even once the column exists. DISTINCT ON keeps the oldest row,
-// the same parent every other resolution path picks.
 export const resolveCoreWorkflowIdsByWorkspaceWorkflowId = async ({
   executeQuery,
   workspaceId,

@@ -1,6 +1,3 @@
-// The column is only added by a 2.41 instance command, and the upgrade sequence
-// replays older versions' workspace commands before reaching it, so the mirror
-// writers must tolerate its absence instead of failing the upgrade.
 export const hasCoreWorkflowWorkspaceWorkflowIdColumn = async (
   executeQuery: (query: string) => Promise<unknown[]>,
 ): Promise<boolean> => {
