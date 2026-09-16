@@ -1,6 +1,5 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
-import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import {
   FOLDER_HEADER_SLOT_COLLISION_PRIORITY,
   NavigationMenuItemDroppableSlot,
@@ -46,9 +45,6 @@ export const WorkspaceSectionListDndKit = ({
   );
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { isDragging } = useContext(NavigationMenuItemDragContext);
-  const { addToNavigationFallbackDestination } = useContext(
-    NavigationDropTargetContext,
-  );
   const folderCount = filteredItems.filter(
     (item) => item.type === NavigationMenuItemType.FOLDER,
   ).length;
@@ -97,23 +93,6 @@ export const WorkspaceSectionListDndKit = ({
         />
         {isAddMenuItemButtonVisible && <WorkspaceSectionAddMenuItemButton />}
       </NavigationMenuItemDroppableSlot>
-      {addToNavigationFallbackDestination?.droppableId ===
-        NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS &&
-        addToNavigationFallbackDestination.index > orphanAppendDndIndex && (
-          <NavigationMenuItemDroppableSlot
-            droppableId={
-              NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
-            }
-            index={addToNavigationFallbackDestination.index}
-            disabled={workspaceDropDisabled}
-            collisionPriority={FOLDER_HEADER_SLOT_COLLISION_PRIORITY}
-          >
-            <NavigationMenuItemOrphanDropTarget
-              index={addToNavigationFallbackDestination.index}
-              compact
-            />
-          </NavigationMenuItemDroppableSlot>
-        )}
     </StyledList>
   );
 };

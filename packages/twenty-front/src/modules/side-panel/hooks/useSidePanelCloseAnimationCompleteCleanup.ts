@@ -1,6 +1,5 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -103,7 +102,6 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
         removedItems: currentNavigationStack,
         remainingItems: [],
       });
-      store.set(addToNavPayloadRegistryState.atom, new Map());
       resetSelectedItem();
       store.set(hasUserSelectedSidePanelListItemState.atom, false);
 
