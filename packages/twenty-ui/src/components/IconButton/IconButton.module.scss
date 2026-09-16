@@ -1,11 +1,5 @@
 .button {
-  --tw-button-padding-inline: 0;
-
-  inline-size: var(--t-spacing-8);
-
-  &[data-size='sm'] {
-    inline-size: var(--t-spacing-6);
-  }
+  @include square-button;
 }
 
 .icon {

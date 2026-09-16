@@ -6,8 +6,7 @@
 }
 
 .filterButton {
-  --tw-button-padding-inline: 0;
-  inline-size: var(--t-spacing-8);
+  @include square-button;
 }
 
 .filterIcon {

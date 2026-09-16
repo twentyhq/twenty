@@ -5,6 +5,16 @@
   }
 }
 
+@mixin square-button {
+  --tw-button-padding-inline: 0;
+
+  inline-size: var(--t-spacing-8);
+
+  &[data-size='sm'] {
+    inline-size: var(--t-spacing-6);
+  }
+}
+
 // A tap leaves :hover applied until the next tap lands elsewhere, so anything
 // that paints on hover has to be limited to pointers that can actually hover.
 // Mirrors useIsTouchDevice.
