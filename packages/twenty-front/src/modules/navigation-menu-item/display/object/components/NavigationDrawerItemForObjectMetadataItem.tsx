@@ -6,8 +6,7 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
-import { getObjectNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemComputedLink';
-import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
+import { getObjectDrawerItemNavigationPath } from '@/navigation-menu-item/display/object/utils/getObjectDrawerItemNavigationPath';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { isCoreWorkflowsObjectNavigationMenuItem } from '@/navigation-menu-item/display/utils/isCoreWorkflowsObjectNavigationMenuItem';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
@@ -73,9 +72,6 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     objectMetadataItem.id,
   ).canReadObjectRecords;
 
-  const lastVisitedViewId =
-    lastVisitedViewPerObjectMetadataItem?.[objectMetadataItem.id];
-
   const { getIcon } = useIcons();
   const objectNavItemColor = getObjectColorWithFallback(objectMetadataItem);
   const navigate = useNavigate();
@@ -91,21 +87,14 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const isObject = navigationMenuItem?.type === NavigationMenuItemType.OBJECT;
   const hasNavigationMenuItem = isRecord || isView || isObject;
 
-  const navigationPath = hasNavigationMenuItem
-    ? getNavigationMenuItemComputedLink({
-        item: navigationMenuItem!,
-        objectMetadataItems,
-        views,
-        lastVisitedViewPerObjectMetadataItem,
-        isInitialObjectViewEnabled,
-      })
-    : getObjectNavigationMenuItemComputedLink({
-        item: { targetObjectMetadataId: objectMetadataItem.id },
-        objectMetadataItems,
-        views,
-        lastVisitedViewId,
-        isInitialObjectViewEnabled,
-      });
+  const navigationPath = getObjectDrawerItemNavigationPath({
+    navigationMenuItem: navigationMenuItem ?? undefined,
+    objectMetadataItem,
+    objectMetadataItems,
+    views,
+    lastVisitedViewPerObjectMetadataItem,
+    isInitialObjectViewEnabled,
+  });
 
   const isActive = hasNavigationMenuItem
     ? activeNavigationMenuItemIds.includes(navigationMenuItem!.id)
