@@ -8,14 +8,11 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
+import { isUsableLastVisitedView } from '@/views/utils/isUsableLastVisitedView';
 import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { isDefined, isWidgetViewType } from 'twenty-shared/utils';
-import {
-  FeatureFlagKey,
-  ViewKey,
-  ViewType,
-} from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey, ViewType } from '~/generated-metadata/graphql';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
@@ -110,12 +107,12 @@ export const RouteContextStoreProvider = () => {
     FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
   );
 
-  const lastVisitedViewId =
-    isDefined(lastVisitedView) &&
-    !isWidgetViewType(lastVisitedView.type) &&
-    !(isInitialObjectViewEnabled && lastVisitedView.key === ViewKey.INDEX)
-      ? lastVisitedViewIdRaw
-      : undefined;
+  const lastVisitedViewId = isUsableLastVisitedView({
+    lastVisitedView,
+    isInitialObjectViewEnabled,
+  })
+    ? lastVisitedViewIdRaw
+    : undefined;
 
   const { initialObjectViewId, indexViewId, firstAvailableViewId } =
     computeObjectViewTargetIds({
