@@ -160,6 +160,7 @@ describe('slackSetChannelRuleHandler', () => {
       slackChannelId: 'C0FIN',
       slackTeamId: INSTALLED_TEAM_ID,
       mode: 'SILENT',
+      capability: 'FULL',
     });
     expect(updateSlackChannelRuleMock).not.toHaveBeenCalled();
   });
@@ -184,6 +185,7 @@ describe('slackSetChannelRuleHandler', () => {
       slackChannelId: 'C0FIN',
       slackTeamId: INSTALLED_TEAM_ID,
       mode: 'OPEN',
+      capability: 'READ_ONLY',
     });
 
     const result = await slackSetChannelRuleHandler(
@@ -196,8 +198,64 @@ describe('slackSetChannelRuleHandler', () => {
       name: 'finance',
       slackTeamId: INSTALLED_TEAM_ID,
       mode: 'LINKED_MEMBERS_ONLY',
+      capability: 'READ_ONLY',
     });
     expect(createSlackChannelRuleMock).not.toHaveBeenCalled();
+  });
+
+  it('should reject a capability it does not know', async () => {
+    const result = await slackSetChannelRuleHandler(
+      buildPayload({
+        slackChannelId: 'C0FIN',
+        mode: 'OPEN',
+        capability: 'WRITE_ONLY',
+      }),
+    );
+
+    expect(result.success).toBe(false);
+    expect(result.message).toBe('Invalid capability');
+    expect(createSlackChannelRuleMock).not.toHaveBeenCalled();
+  });
+
+  it('should store a requested read-only cap and say so', async () => {
+    const result = await slackSetChannelRuleHandler(
+      buildPayload({
+        slackChannelId: 'C0FIN',
+        mode: 'OPEN',
+        capability: 'READ_ONLY',
+      }),
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.message).toContain('only read records');
+    expect(createSlackChannelRuleMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ mode: 'OPEN', capability: 'READ_ONLY' }),
+    );
+  });
+
+  it('should replace a stored cap when a new one is requested', async () => {
+    findSlackChannelRuleMock.mockResolvedValue({
+      id: 'rule-1',
+      name: 'finance',
+      slackChannelId: 'C0FIN',
+      slackTeamId: INSTALLED_TEAM_ID,
+      mode: 'OPEN',
+      capability: 'READ_ONLY',
+    });
+
+    await slackSetChannelRuleHandler(
+      buildPayload({
+        slackChannelId: 'C0FIN',
+        mode: 'OPEN',
+        capability: 'FULL',
+      }),
+    );
+
+    expect(updateSlackChannelRuleMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ capability: 'FULL' }),
+    );
   });
 
   it('should fail with a structured result when the existing rule cannot be read', async () => {

@@ -188,10 +188,15 @@ The `slack-assistant` agent binds to the app's **Slack Assistant** role
 automatically on install and upgrade. That role is the ceiling for everything
 the bot can do.
 
-Where a Slack account is linked to a workspace member, the bot also runs with
-that member's own permissions, so it can never do more than the person asking.
+Where a Slack account is linked to a workspace member, the bot runs with the
+intersection of that member's own permissions and the Slack Assistant role, so
+it can never do more than the person asking, nor more than the role allows.
 Accounts with no link act with the Slack Assistant role alone, so keep it scoped
 to what you're comfortable exposing to anyone who can message the bot.
+
+A second agent, `slack-assistant-read-only`, binds to the **Slack Assistant
+(read-only)** role and answers in channels whose rule caps the assistant at
+reading (see Channel rules). The same intersection applies to it.
 
 ### Channel rules
 
@@ -208,16 +213,21 @@ Each rule names one channel and one mode:
   empty mentions are dropped before anything visible happens in Slack, and no
   Slack Assistant Request is recorded.
 
-A channel without a rule follows the workspace access mode. Direct messages
-never carry a rule: the requester is the only person there, so the workspace
-mode applies. Rules are keyed on the Slack channel id, so renaming a channel
+Each rule also carries a capability, **Full** or **Read-only**. A read-only
+channel runs the read-only agent, so the assistant can look records up and
+answer questions there but never creates, updates or deletes anything, whoever
+is asking. The capability has no effect on a silent channel.
+
+A channel without a rule follows the workspace access mode with full capability.
+Direct messages never carry a rule: the requester is the only person there, so
+the workspace mode applies. Rules are keyed on the Slack channel id, so renaming a channel
 does not affect them. Slack confirms the channel when a rule is saved, so a rule
 can only target a channel or private group, never a direct message.
 
-Rules restrict who the assistant answers, not what it can do. A linked member
-who is allowed in a channel still acts with their own permissions, and an
-unlinked account still acts with the Slack Assistant role. Each rule is stored
-as a **Slack Channel Rule** record that only the app can write.
+A rule never grants more than the requester has: a linked member who is allowed
+in a channel still acts within their own permissions, capped by the agent role
+for that channel, and an unlinked account acts with that agent role alone. Each
+rule is stored as a **Slack Channel Rule** record that only the app can write.
 
 ## Linking Slack accounts to workspace members
 

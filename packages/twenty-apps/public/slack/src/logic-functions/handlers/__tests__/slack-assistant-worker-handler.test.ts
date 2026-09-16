@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
+import {
+  SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_READ_ONLY_AGENT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
 import { SLACK_CHANNEL_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-channel-access-denied-text';
 import { SLACK_CHANNEL_RULE_UNREADABLE_ERROR } from 'src/logic-functions/constants/slack-channel-rule-unreadable-error';
@@ -159,6 +163,7 @@ describe('slackAssistantWorkerHandler', () => {
     resolveSlackChannelAccessPolicyMock.mockResolvedValue({
       status: 'ANSWER',
       accessMode: SLACK_ACCESS_MODE.ANYONE,
+      capability: 'FULL',
       isChannelRule: false,
     });
     resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'ALLOWED' });
@@ -262,6 +267,7 @@ describe('slackAssistantWorkerHandler', () => {
     resolveSlackChannelAccessPolicyMock.mockResolvedValue({
       status: 'ANSWER',
       accessMode: SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+      capability: 'FULL',
       isChannelRule: false,
     });
     resolveSlackRunAsForRequestMock.mockResolvedValue('workspace-member-1');
@@ -296,6 +302,7 @@ describe('slackAssistantWorkerHandler', () => {
     resolveSlackChannelAccessPolicyMock.mockResolvedValue({
       status: 'ANSWER',
       accessMode: SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+      capability: 'FULL',
       isChannelRule: true,
     });
     resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'DENIED' });
@@ -315,6 +322,36 @@ describe('slackAssistantWorkerHandler', () => {
       expect.objectContaining({
         status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
         responseText: SLACK_CHANNEL_ACCESS_DENIED_TEXT,
+      }),
+    );
+  });
+
+  it('should run the full assistant agent when the channel is not capped', async () => {
+    await slackAssistantWorkerHandler(REQUEST_RECORD);
+
+    expect(runSlackAssistantAgentWithDeadlineMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
+      }),
+    );
+  });
+
+  it('should run the read-only assistant agent when the channel rule caps it at reading', async () => {
+    resolveSlackChannelAccessPolicyMock.mockResolvedValue({
+      status: 'ANSWER',
+      accessMode: SLACK_ACCESS_MODE.ANYONE,
+      capability: 'READ_ONLY',
+      isChannelRule: true,
+    });
+
+    await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
+      done: true,
+    });
+
+    expect(runSlackAssistantAgentWithDeadlineMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        agentUniversalIdentifier:
+          SLACK_ASSISTANT_READ_ONLY_AGENT_UNIVERSAL_IDENTIFIER,
       }),
     );
   });
@@ -357,6 +394,7 @@ describe('slackAssistantWorkerHandler', () => {
     resolveSlackChannelAccessPolicyMock.mockResolvedValue({
       status: 'ANSWER',
       accessMode: SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+      capability: 'FULL',
       isChannelRule: false,
     });
     resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);

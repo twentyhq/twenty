@@ -14,7 +14,9 @@ import { useRemoveSlackChannelRule } from 'src/front-components/hooks/use-remove
 import { useSetSlackChannelRule } from 'src/front-components/hooks/use-set-slack-channel-rule';
 import { useSlackChannelRules } from 'src/front-components/hooks/use-slack-channel-rules';
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
+import { type SlackChannelRuleCapability } from 'src/logic-functions/types/slack-channel-rule-capability.type';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
+import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
 
 const StyledCenteredState = styled.div`
   color: ${() => themeCssVariables.font.color.tertiary};
@@ -71,6 +73,32 @@ export const SlackChannelRulesSection = ({
     await refetchSlackChannelRules();
   };
 
+  const handleCapabilityChange = async (
+    rule: SlackChannelRuleRecord,
+    capability: SlackChannelRuleCapability,
+  ) => {
+    if (
+      !isNonEmptyString(rule.slackChannelId) ||
+      !isSlackChannelRuleMode(rule.mode)
+    ) {
+      return;
+    }
+
+    const result = await setSlackChannelRule({
+      slackChannelId: rule.slackChannelId,
+      name: rule.name ?? undefined,
+      mode: rule.mode,
+      capability,
+    });
+
+    enqueueSnackbar({
+      message: isNonEmptyString(result.error) ? result.error : result.message,
+      variant: result.success ? 'success' : 'error',
+    });
+
+    await refetchSlackChannelRules();
+  };
+
   const handleRemove = async (rule: SlackChannelRuleRecord) => {
     const result = await removeSlackChannelRule(rule.id);
 
@@ -93,7 +121,7 @@ export const SlackChannelRulesSection = ({
     <Section>
       <H2Title
         title="Channels"
-        description="Override the workspace access mode for specific channels: open a channel to anyone, restrict it to linked members, or silence the assistant there. Channels without a rule follow the setting above."
+        description="Override the workspace access mode for specific channels: open a channel to anyone, restrict it to linked members, or silence the assistant there, and cap what it may do. Channels without a rule follow the setting above with full capability."
       />
       {isSlackChannelRulesLoading && slackChannelRules.length === 0 ? (
         <StyledCenteredState>Loading channel rules…</StyledCenteredState>
@@ -106,6 +134,7 @@ export const SlackChannelRulesSection = ({
           installedSlackTeamId={installedSlackTeamId}
           hasMore={hasMoreSlackChannelRules}
           onModeChange={handleModeChange}
+          onCapabilityChange={handleCapabilityChange}
           onRemove={handleRemove}
           savingChannelId={savingChannelId}
           removingRuleId={removingRuleId}

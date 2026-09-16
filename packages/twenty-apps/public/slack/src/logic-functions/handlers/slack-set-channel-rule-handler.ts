@@ -2,11 +2,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { SLACK_CHANNEL_RULE_CAPABILITY } from 'src/logic-functions/constants/slack-channel-rule-capability';
 import { SLACK_CHANNEL_RULE_MODE } from 'src/logic-functions/constants/slack-channel-rule-mode';
 import { createSlackChannelRule } from 'src/logic-functions/data/create-slack-channel-rule';
 import { findSlackChannelRule } from 'src/logic-functions/data/find-slack-channel-rule';
 import { updateSlackChannelRule } from 'src/logic-functions/data/update-slack-channel-rule';
 import { type SlackChannelRule } from 'src/logic-functions/types/slack-channel-rule.type';
+import { type SlackChannelRuleCapability } from 'src/logic-functions/types/slack-channel-rule-capability.type';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
 import { type SlackRouteBody } from 'src/logic-functions/types/slack-route-body.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
@@ -14,6 +16,7 @@ import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { isSlackChannelRuleCapability } from 'src/logic-functions/utils/is-slack-channel-rule-capability';
 import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
@@ -27,8 +30,19 @@ const MODE_SAVED_NOTES: Record<SlackChannelRuleMode, string> = {
     'The assistant ignores that channel entirely.',
 };
 
-const describeChannel = (name: string | undefined, slackChannelId: string) =>
-  isNonEmptyString(name) ? `#${name}` : slackChannelId;
+const CAPABILITY_SAVED_NOTES: Record<SlackChannelRuleCapability, string> = {
+  [SLACK_CHANNEL_RULE_CAPABILITY.FULL]: '',
+  [SLACK_CHANNEL_RULE_CAPABILITY.READ_ONLY]:
+    ' It can only read records there, never create, update or delete them.',
+};
+
+const describeChannel = ({
+  name,
+  slackChannelId,
+}: {
+  name: string | undefined;
+  slackChannelId: string;
+}) => (isNonEmptyString(name) ? `#${name}` : slackChannelId);
 
 export const slackSetChannelRuleHandler = async (
   payload: SlackRouteBody,
@@ -54,6 +68,21 @@ export const slackSetChannelRuleHandler = async (
   }
 
   const mode = body.mode;
+
+  if (
+    isDefined(body.capability) &&
+    !isSlackChannelRuleCapability(body.capability)
+  ) {
+    return {
+      success: false,
+      message: 'Invalid capability',
+      error: 'capability must be FULL or READ_ONLY.',
+    };
+  }
+
+  const requestedCapability = isSlackChannelRuleCapability(body.capability)
+    ? body.capability
+    : undefined;
 
   const isAllowed = await currentUserHasRolesPermission();
 
@@ -129,6 +158,13 @@ export const slackSetChannelRuleHandler = async (
     };
   }
 
+  // An omitted capability keeps the stored one, so changing a mode from the
+  // list never silently lifts a read-only cap.
+  const capability =
+    requestedCapability ??
+    existingRule?.capability ??
+    SLACK_CHANNEL_RULE_CAPABILITY.FULL;
+
   try {
     if (isDefined(existingRule)) {
       await updateSlackChannelRule(client, {
@@ -136,6 +172,7 @@ export const slackSetChannelRuleHandler = async (
         name,
         slackTeamId,
         mode,
+        capability,
       });
     } else {
       await createSlackChannelRule(client, {
@@ -143,6 +180,7 @@ export const slackSetChannelRuleHandler = async (
         slackChannelId,
         slackTeamId,
         mode,
+        capability,
       });
     }
   } catch (error) {
@@ -153,8 +191,13 @@ export const slackSetChannelRuleHandler = async (
     };
   }
 
+  const capabilityNote =
+    mode === SLACK_CHANNEL_RULE_MODE.SILENT
+      ? ''
+      : CAPABILITY_SAVED_NOTES[capability];
+
   return {
     success: true,
-    message: `Saved the rule for ${describeChannel(name, slackChannelId)}. ${MODE_SAVED_NOTES[mode]}`,
+    message: `Saved the rule for ${describeChannel({ name, slackChannelId })}. ${MODE_SAVED_NOTES[mode]}${capabilityNote}`,
   };
 };

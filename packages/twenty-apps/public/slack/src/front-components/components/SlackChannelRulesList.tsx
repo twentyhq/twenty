@@ -7,6 +7,7 @@ import { Button } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { SlackChannelRuleCapabilitySelect } from 'src/front-components/components/SlackChannelRuleCapabilitySelect';
 import { SlackChannelRuleModeSelect } from 'src/front-components/components/SlackChannelRuleModeSelect';
 import {
   SlackTable,
@@ -16,10 +17,14 @@ import {
   SlackTableRow,
 } from 'src/front-components/components/SlackSettingsTable';
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
+import { SLACK_CHANNEL_RULE_CAPABILITY } from 'src/logic-functions/constants/slack-channel-rule-capability';
+import { SLACK_CHANNEL_RULE_MODE } from 'src/logic-functions/constants/slack-channel-rule-mode';
+import { type SlackChannelRuleCapability } from 'src/logic-functions/types/slack-channel-rule-capability.type';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
+import { isSlackChannelRuleCapability } from 'src/logic-functions/utils/is-slack-channel-rule-capability';
 import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
 
-const RULES_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) 220px 156px';
+const RULES_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) 200px 140px 156px';
 const REMOVAL_CONFIRM_TIMEOUT_MS = 4000;
 
 const StyledDetails = styled.div`
@@ -63,6 +68,18 @@ const isFromDisconnectedSlackWorkspace = ({
   isNonEmptyString(rule.slackTeamId) &&
   rule.slackTeamId !== installedSlackTeamId;
 
+// A rule written before the field existed reads as full capability; a value
+// this version cannot interpret is not the same thing and is left unlabelled.
+const toDisplayedCapability = (
+  capability: string | null,
+): SlackChannelRuleCapability | undefined => {
+  if (!isNonEmptyString(capability)) {
+    return SLACK_CHANNEL_RULE_CAPABILITY.FULL;
+  }
+
+  return isSlackChannelRuleCapability(capability) ? capability : undefined;
+};
+
 const getDisplayedName = (rule: SlackChannelRuleRecord): string =>
   isNonEmptyString(rule.name)
     ? `#${rule.name}`
@@ -77,6 +94,10 @@ type SlackChannelRulesListProps = {
     rule: SlackChannelRuleRecord,
     mode: SlackChannelRuleMode,
   ) => void;
+  onCapabilityChange: (
+    rule: SlackChannelRuleRecord,
+    capability: SlackChannelRuleCapability,
+  ) => void;
   onRemove: (rule: SlackChannelRuleRecord) => void;
   savingChannelId: string | undefined;
   removingRuleId: string | undefined;
@@ -88,6 +109,7 @@ export const SlackChannelRulesList = ({
   installedSlackTeamId,
   hasMore = false,
   onModeChange,
+  onCapabilityChange,
   onRemove,
   savingChannelId,
   removingRuleId,
@@ -125,6 +147,7 @@ export const SlackChannelRulesList = ({
       <SlackTableRow gridTemplateColumns={RULES_GRID_TEMPLATE_COLUMNS}>
         <SlackTableHeader>Channel</SlackTableHeader>
         <SlackTableHeader>Mode</SlackTableHeader>
+        <SlackTableHeader>Capability</SlackTableHeader>
         <SlackTableHeader align="right" />
       </SlackTableRow>
       <SlackTableBody>
@@ -137,6 +160,7 @@ export const SlackChannelRulesList = ({
           const mode = isSlackChannelRuleMode(rule.mode)
             ? rule.mode
             : undefined;
+          const capability = toDisplayedCapability(rule.capability);
 
           return (
             <SlackTableRow
@@ -163,6 +187,22 @@ export const SlackChannelRulesList = ({
                   />
                 ) : (
                   <Tag color="red" text="Unknown mode" />
+                )}
+              </SlackTableCell>
+              <SlackTableCell>
+                {isDisconnected || mode === SLACK_CHANNEL_RULE_MODE.SILENT ? (
+                  <Tag color="gray" text="Not applicable" />
+                ) : isDefined(capability) ? (
+                  <SlackChannelRuleCapabilitySelect
+                    value={capability}
+                    onChange={(nextCapability) =>
+                      onCapabilityChange(rule, nextCapability)
+                    }
+                    disabled={!canManage || isActionInFlight}
+                    ariaLabel={`Capability for ${displayedName}`}
+                  />
+                ) : (
+                  <Tag color="red" text="Unknown capability" />
                 )}
               </SlackTableCell>
               <SlackTableCell align="right">
