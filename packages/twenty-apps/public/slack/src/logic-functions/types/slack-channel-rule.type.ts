@@ -1,3 +1,4 @@
+import { type SlackChannelRuleCapability } from 'src/logic-functions/types/slack-channel-rule-capability.type';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
 
 export type SlackChannelRule = {
@@ -6,4 +7,5 @@ export type SlackChannelRule = {
   slackChannelId: string;
   slackTeamId: string | undefined;
   mode: SlackChannelRuleMode;
+  capability: SlackChannelRuleCapability;
 };
