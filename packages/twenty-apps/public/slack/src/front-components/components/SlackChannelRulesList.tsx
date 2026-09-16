@@ -68,6 +68,18 @@ const isFromDisconnectedSlackWorkspace = ({
   isNonEmptyString(rule.slackTeamId) &&
   rule.slackTeamId !== installedSlackTeamId;
 
+// A rule written before the field existed reads as full capability; a value
+// this version cannot interpret is not the same thing and is left unlabelled.
+const toDisplayedCapability = (
+  capability: string | null,
+): SlackChannelRuleCapability | undefined => {
+  if (!isNonEmptyString(capability)) {
+    return SLACK_CHANNEL_RULE_CAPABILITY.FULL;
+  }
+
+  return isSlackChannelRuleCapability(capability) ? capability : undefined;
+};
+
 const getDisplayedName = (rule: SlackChannelRuleRecord): string =>
   isNonEmptyString(rule.name)
     ? `#${rule.name}`
@@ -148,12 +160,7 @@ export const SlackChannelRulesList = ({
           const mode = isSlackChannelRuleMode(rule.mode)
             ? rule.mode
             : undefined;
-          // A rule written before the field existed reads as full capability.
-          const capability = isSlackChannelRuleCapability(rule.capability)
-            ? rule.capability
-            : isNonEmptyString(rule.capability)
-              ? undefined
-              : SLACK_CHANNEL_RULE_CAPABILITY.FULL;
+          const capability = toDisplayedCapability(rule.capability);
 
           return (
             <SlackTableRow

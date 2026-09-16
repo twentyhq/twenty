@@ -21,6 +21,8 @@ import { SLACK_CHANNEL_RULE_MODE } from 'src/logic-functions/constants/slack-cha
 import { type SlackChannelRuleCapability } from 'src/logic-functions/types/slack-channel-rule-capability.type';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
 import { type SlackChannelSearchOption } from 'src/logic-functions/types/slack-channel-search.type';
+import { isSlackChannelRuleCapability } from 'src/logic-functions/utils/is-slack-channel-rule-capability';
+import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
 
 const StyledForm = styled.form`
   display: flex;
@@ -64,6 +66,28 @@ export const SlackChannelRuleForm = ({
         (rule) => rule.slackChannelId === selectedChannel.slackChannelId,
       )
     : undefined;
+
+  // Picking a channel that already has a rule starts the form from that rule,
+  // so saving it never silently lifts a cap the admin did not touch.
+  const handleChannelSelect = (channel: SlackChannelSearchOption) => {
+    setSelectedChannel(channel);
+
+    const matchedRule = existingRules.find(
+      (rule) => rule.slackChannelId === channel.slackChannelId,
+    );
+
+    if (!isDefined(matchedRule)) {
+      return;
+    }
+
+    if (isSlackChannelRuleMode(matchedRule.mode)) {
+      setMode(matchedRule.mode);
+    }
+
+    if (isSlackChannelRuleCapability(matchedRule.capability)) {
+      setCapability(matchedRule.capability);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!isDefined(selectedChannel)) {
@@ -111,7 +135,7 @@ export const SlackChannelRuleForm = ({
           />
         ) : (
           <SlackChannelPicker
-            onSelect={setSelectedChannel}
+            onSelect={handleChannelSelect}
             disabled={isSubmitting}
             autoFocus
           />
