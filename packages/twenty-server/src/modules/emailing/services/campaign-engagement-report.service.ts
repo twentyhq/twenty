@@ -98,7 +98,7 @@ export class CampaignEngagementReportService {
       this.campaignEngagementEventService.countClicks(scope),
       this.campaignEngagementEventService.findClickSeries({ ...scope, bucket }),
       this.campaignEngagementEventService.findClicksByShortLink(scope),
-      this.campaignEngagementEventService.findEngagedDeliveries({
+      this.campaignEngagementEventService.findClickedDeliveries({
         ...scope,
         limit: RECIPIENTS_LIMIT,
       }),
@@ -114,7 +114,7 @@ export class CampaignEngagementReportService {
       return { ...emptyReport, isAvailable: false };
     }
 
-    const [totals, series, clicksByShortLink, engagedDeliveries] = aggregates;
+    const [totals, series, clicksByShortLink, clickedDeliveries] = aggregates;
 
     return {
       ...emptyReport,
@@ -132,7 +132,7 @@ export class CampaignEngagementReportService {
         workspaceId,
         roleId,
         messageCampaignId,
-        engagedDeliveries,
+        clickedDeliveries,
       }),
     };
   }
@@ -253,24 +253,24 @@ export class CampaignEngagementReportService {
     workspaceId,
     roleId,
     messageCampaignId,
-    engagedDeliveries,
+    clickedDeliveries,
   }: {
     workspaceId: string;
     roleId: string;
     messageCampaignId: string;
-    engagedDeliveries: {
+    clickedDeliveries: {
       deliveryId: string;
       firstClickedAt: Date | null;
-      lastEngagedAt: Date;
+      lastClickedAt: Date;
     }[];
   }): Promise<MessageCampaignEngagementRecipientDTO[]> {
-    if (engagedDeliveries.length === 0) {
+    if (clickedDeliveries.length === 0) {
       return [];
     }
 
     const deliveries = await this.campaignDeliveryRepository.find(workspaceId, {
       where: {
-        id: In(engagedDeliveries.map((delivery) => delivery.deliveryId)),
+        id: In(clickedDeliveries.map((delivery) => delivery.deliveryId)),
         campaignId: messageCampaignId,
       },
       select: { id: true, personId: true },
@@ -284,11 +284,11 @@ export class CampaignEngagementReportService {
       personIds: [...personIdByDeliveryId.values()].filter(isDefined),
     });
 
-    return engagedDeliveries.flatMap((engaged) => {
-      const personId = personIdByDeliveryId.get(engaged.deliveryId);
+    return clickedDeliveries.flatMap((clickedDelivery) => {
+      const personId = personIdByDeliveryId.get(clickedDelivery.deliveryId);
 
       return isDefined(personId) && readablePersonIds.has(personId)
-        ? [{ ...engaged, personId }]
+        ? [{ ...clickedDelivery, personId }]
         : [];
     });
   }
