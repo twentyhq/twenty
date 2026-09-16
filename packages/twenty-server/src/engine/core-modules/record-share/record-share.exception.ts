@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { type MessageDescriptor } from '@lingui/core';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';

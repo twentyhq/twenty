@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';

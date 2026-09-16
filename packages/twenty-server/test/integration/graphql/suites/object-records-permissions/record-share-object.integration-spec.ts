@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { randomUUID } from 'node:crypto';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';

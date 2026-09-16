@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Module } from '@nestjs/common';
 
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';

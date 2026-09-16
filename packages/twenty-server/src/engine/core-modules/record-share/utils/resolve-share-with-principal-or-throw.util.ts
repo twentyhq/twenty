@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { msg } from '@lingui/core/macro';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { RecordSharePrincipalType } from 'twenty-shared/types';

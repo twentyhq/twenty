@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { randomUUID } from 'node:crypto';
 
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';

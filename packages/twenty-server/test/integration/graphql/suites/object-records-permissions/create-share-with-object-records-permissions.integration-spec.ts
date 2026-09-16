@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { randomUUID } from 'node:crypto';
 
 import gql from 'graphql-tag';

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
