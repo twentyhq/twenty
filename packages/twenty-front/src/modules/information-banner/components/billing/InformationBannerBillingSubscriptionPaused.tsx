@@ -1,14 +1,14 @@
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useQuery } from '@apollo/client/react';
 import {
-  PermissionFlagType,
   BillingPortalSessionDocument,
+  PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
 export const InformationBannerBillingSubscriptionPaused = () => {
@@ -24,8 +24,6 @@ export const InformationBannerBillingSubscriptionPaused = () => {
     skip: !hasPermissionToUpdateBillingDetails,
   });
 
-  useSnackBarOnQueryError(error);
-
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
       redirect(data.billingPortalSession.url);
@@ -33,18 +31,23 @@ export const InformationBannerBillingSubscriptionPaused = () => {
   };
 
   return (
-    <InformationBanner
-      componentInstanceId="information-banner-billing-subscription-paused"
-      color="danger"
-      variant="secondary"
-      message={
-        hasPermissionToUpdateBillingDetails
-          ? t`Trial expired. Please update your billing details.`
-          : t`Trial expired. Please contact your admin`
-      }
-      buttonTitle={hasPermissionToUpdateBillingDetails ? t`Update` : undefined}
-      buttonOnClick={() => openBillingPortal()}
-      isButtonDisabled={loading || !isDefined(data)}
-    />
+    <>
+      <ToastOnQueryErrorEffect error={error} />
+      <InformationBanner
+        componentInstanceId="information-banner-billing-subscription-paused"
+        color="danger"
+        variant="secondary"
+        message={
+          hasPermissionToUpdateBillingDetails
+            ? t`Trial expired. Please update your billing details.`
+            : t`Trial expired. Please contact your admin`
+        }
+        buttonTitle={
+          hasPermissionToUpdateBillingDetails ? t`Update` : undefined
+        }
+        buttonOnClick={() => openBillingPortal()}
+        isButtonDisabled={loading || !isDefined(data)}
+      />
+    </>
   );
 };

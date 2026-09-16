@@ -89,7 +89,7 @@ export class CallWebhookJobsJob {
     // A webhook carries no identity, so only a row granted to everyone lets an event out
     const admittedRecordIds = isDefined(flatObjectMetadata)
       ? await this.recordAccessPolicyService
-          .buildEventRecordShareGate({
+          .buildEventRecordAccessGate({
             ...workspaceEventBatch,
             objectMetadata: flatObjectMetadata,
           })

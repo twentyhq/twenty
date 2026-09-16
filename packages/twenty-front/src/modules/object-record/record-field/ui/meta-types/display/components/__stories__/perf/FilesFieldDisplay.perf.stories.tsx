@@ -3,12 +3,12 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { FilesDisplay } from '@/ui/field/display/components/FilesDisplay';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 const meta: Meta<typeof FilesDisplay> = {
   title: 'UI/Data/Field/Display/FilesFieldDisplay',
-  decorators: [MemoryRouterDecorator, ComponentDecorator, SnackBarDecorator],
+  decorators: [MemoryRouterDecorator, ComponentDecorator, ToastDecorator],
   component: FilesDisplay,
   args: {
     value: [
