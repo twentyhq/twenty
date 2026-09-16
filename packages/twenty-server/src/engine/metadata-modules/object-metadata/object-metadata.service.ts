@@ -101,8 +101,6 @@ export class ObjectMetadataService {
     });
   }
 
-  // Shared by updateOneObject and updateManyObjects: one validate-build-run
-  // migration for however many inputs it is given.
   private async updateObjectsInOneMigration({
     updateObjectInputs,
     workspaceId,
