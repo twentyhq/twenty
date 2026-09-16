@@ -141,6 +141,11 @@ export const StyledMarkdownContainer = styled.div`
   .markdown-block-code * {
     animation: none !important;
   }
+
+  img {
+    height: auto;
+    max-width: 100%;
+  }
 `;
 
 export const StyledParagraph = styled.div`

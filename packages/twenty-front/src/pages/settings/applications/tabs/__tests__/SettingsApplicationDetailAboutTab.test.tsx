@@ -7,8 +7,16 @@ import { type DeveloperLinks } from '@/settings/applications/components/Settings
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 
 jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
-  LazyMarkdownRenderer: ({ text }: { text: string }) => (
-    <div data-testid="markdown-renderer">{text}</div>
+  LazyMarkdownRenderer: ({
+    text,
+    noImage,
+  }: {
+    text: string;
+    noImage?: boolean;
+  }) => (
+    <div data-testid="markdown-renderer" data-no-image={noImage}>
+      {text}
+    </div>
   ),
 }));
 
@@ -117,6 +125,10 @@ describe('SettingsApplicationDetailAboutTab', () => {
 
     expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
       'Enhance your workspace with automated data intelligence.',
+    );
+    expect(screen.getByTestId('markdown-renderer')).toHaveAttribute(
+      'data-no-image',
+      'true',
     );
   });
 
