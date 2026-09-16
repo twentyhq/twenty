@@ -511,58 +511,68 @@
                     ]
                   },
                   {
-                    "group": "Data display",
+                    "group": "Primitives",
                     "pages": [
-                      "ui/components/data-display/avatar",
-                      "ui/components/data-display/chip",
-                      "ui/components/data-display/tag",
-                      "ui/components/data-display/status"
+                      {
+                        "group": "Data display",
+                        "pages": [
+                          "ui/components/data-display/avatar",
+                          "ui/components/data-display/chip",
+                          "ui/components/data-display/tag",
+                          "ui/components/data-display/status"
+                        ]
+                      },
+                      {
+                        "group": "Forms",
+                        "pages": [
+                          "ui/components/input/button",
+                          "ui/components/input/button-group",
+                          "ui/components/input/field",
+                          "ui/components/input/input",
+                          "ui/components/input/input-group",
+                          "ui/components/input/textarea",
+                          "ui/components/input/checkbox",
+                          "ui/components/input/radio",
+                          "ui/components/input/radio-group",
+                          "ui/components/input/select",
+                          "ui/components/input/slider",
+                          "ui/components/input/switch"
+                        ]
+                      },
+                      {
+                        "group": "Navigation",
+                        "pages": [
+                          "ui/components/navigation/list-item",
+                          "ui/components/navigation/tabs"
+                        ]
+                      },
+                      {
+                        "group": "Surfaces",
+                        "pages": [
+                          "ui/components/surfaces/alert-dialog",
+                          "ui/components/surfaces/menu",
+                          "ui/components/surfaces/popover"
+                        ]
+                      },
+                      {
+                        "group": "Feedback",
+                        "pages": [
+                          "ui/components/feedback/toast"
+                        ]
+                      },
+                      {
+                        "group": "Typography",
+                        "pages": [
+                          "ui/components/typography/text"
+                        ]
+                      }
                     ]
                   },
                   {
-                    "group": "Forms",
+                    "group": "Components",
                     "pages": [
-                      "ui/components/input/button",
                       "ui/components/input/main-button",
-                      "ui/components/input/light-button",
-                      "ui/components/input/button-group",
-                      "ui/components/input/field",
-                      "ui/components/input/input",
-                      "ui/components/input/input-group",
-                      "ui/components/input/textarea",
-                      "ui/components/input/checkbox",
-                      "ui/components/input/radio",
-                      "ui/components/input/radio-group",
-                      "ui/components/input/select",
-                      "ui/components/input/slider",
-                      "ui/components/input/switch"
-                    ]
-                  },
-                  {
-                    "group": "Navigation",
-                    "pages": [
-                      "ui/components/navigation/list-item",
-                      "ui/components/navigation/tabs"
-                    ]
-                  },
-                  {
-                    "group": "Surfaces",
-                    "pages": [
-                      "ui/components/surfaces/alert-dialog",
-                      "ui/components/surfaces/menu",
-                      "ui/components/surfaces/popover"
-                    ]
-                  },
-                  {
-                    "group": "Feedback",
-                    "pages": [
-                      "ui/components/feedback/toast"
-                    ]
-                  },
-                  {
-                    "group": "Typography",
-                    "pages": [
-                      "ui/components/typography/text"
+                      "ui/components/input/light-button"
                     ]
                   }
                 ]
