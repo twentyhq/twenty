@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { isDefined } from 'twenty-sdk/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SlackDropdownBackdrop } from 'src/front-components/components/SlackDropdownBackdrop';
@@ -71,7 +72,7 @@ export const InlineWorkspaceMemberPickerPanel = ({
             (member) => member.id === memberId,
           );
 
-          if (selectedMember !== undefined) {
+          if (isDefined(selectedMember)) {
             onSelect(selectedMember);
           }
         }}

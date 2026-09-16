@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { Button } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
@@ -14,12 +13,12 @@ import {
   SlackTableHeader,
   SlackTableRow,
 } from 'src/front-components/components/SlackSettingsTable';
+import { useArmedRemoval } from 'src/front-components/hooks/use-armed-removal';
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
 import { isFromDisconnectedSlackWorkspace } from 'src/front-components/utils/is-from-disconnected-slack-workspace.util';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
 
 const RULES_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) 220px 156px';
-const REMOVAL_CONFIRM_TIMEOUT_MS = 4000;
 
 const StyledDetails = styled.div`
   display: flex;
@@ -78,22 +77,11 @@ export const SlackChannelRulesList = ({
   savingChannelId,
   removingRuleId,
 }: SlackChannelRulesListProps) => {
-  const [removalArmedRuleId, setRemovalArmedRuleId] = useState<string | null>(
-    null,
-  );
-
-  useEffect(() => {
-    if (removalArmedRuleId === null) {
-      return undefined;
-    }
-
-    const disarmTimer = setTimeout(
-      () => setRemovalArmedRuleId(null),
-      REMOVAL_CONFIRM_TIMEOUT_MS,
-    );
-
-    return () => clearTimeout(disarmTimer);
-  }, [removalArmedRuleId]);
+  const {
+    armedId: removalArmedRuleId,
+    arm: armRuleRemoval,
+    disarm: disarmRuleRemoval,
+  } = useArmedRemoval();
 
   const isActionInFlight =
     isDefined(savingChannelId) || isDefined(removingRuleId);
@@ -157,7 +145,7 @@ export const SlackChannelRulesList = ({
                       accent="danger"
                       disabled={isActionInFlight}
                       onClick={() => {
-                        setRemovalArmedRuleId(null);
+                        disarmRuleRemoval();
                         onRemove(rule);
                       }}
                     />
@@ -168,7 +156,7 @@ export const SlackChannelRulesList = ({
                       size="small"
                       variant="secondary"
                       disabled={isActionInFlight}
-                      onClick={() => setRemovalArmedRuleId(rule.id)}
+                      onClick={() => armRuleRemoval(rule.id)}
                     />
                   ))}
               </SlackTableCell>
