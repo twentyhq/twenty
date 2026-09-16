@@ -54,13 +54,13 @@ export default {
         137,
         146,
         148,
-        155,
-        157,
-        160,
-        162,
-        177,
-        178,
-        181,
+        152,
+        153,
+        156,
+        163,
+        165,
+        168,
+        170,
         191,
         196,
         203,
@@ -100,7 +100,7 @@ export default {
         392,
         397,
         414,
-        426,
+        428,
         546,
         550,
         577
@@ -3029,6 +3029,148 @@ export default {
                 1
             ]
         },
+        "UsageQuotaDefinition": {
+            "resourceType": [
+                152
+            ],
+            "limitKind": [
+                1
+            ],
+            "allowedOperationTypes": [
+                153
+            ],
+            "allowedSpenderTypes": [
+                1
+            ],
+            "allowedMeters": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageResourceType": {},
+        "UsageOperationType": {},
+        "UsageQuotaDefinitions": {
+            "definitions": [
+                151
+            ],
+            "isIntraWorkspaceLimitEntitled": [
+                8
+            ],
+            "hasAllowancePeriod": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageQuotaWithConsumption": {
+            "id": [
+                3
+            ],
+            "resourceType": [
+                152
+            ],
+            "operationType": [
+                153
+            ],
+            "spenderType": [
+                1
+            ],
+            "spenderId": [
+                1
+            ],
+            "spenderLabel": [
+                1
+            ],
+            "periodUnit": [
+                1
+            ],
+            "meter": [
+                1
+            ],
+            "limitValue": [
+                156
+            ],
+            "isEnforced": [
+                8
+            ],
+            "consumedValue": [
+                156
+            ],
+            "remainingValue": [
+                156
+            ],
+            "periodStart": [
+                4
+            ],
+            "periodEnd": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BigInt": {},
+        "UsageQuotaScopeConsumption": {
+            "consumedValue": [
+                156
+            ],
+            "periodStart": [
+                4
+            ],
+            "periodEnd": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageLimit": {
+            "id": [
+                3
+            ],
+            "resourceType": [
+                152
+            ],
+            "operationType": [
+                153
+            ],
+            "spenderType": [
+                1
+            ],
+            "spenderId": [
+                1
+            ],
+            "limitKind": [
+                1
+            ],
+            "periodCount": [
+                28
+            ],
+            "periodUnit": [
+                1
+            ],
+            "meter": [
+                1
+            ],
+            "limitValue": [
+                156
+            ],
+            "burstValue": [
+                156
+            ],
+            "createdAt": [
+                4
+            ],
+            "updatedAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "FileWithSignedUrl": {
             "id": [
                 3
@@ -3097,7 +3239,7 @@ export default {
                 3
             ],
             "type": [
-                155
+                163
             ],
             "name": [
                 1
@@ -3130,7 +3272,7 @@ export default {
                 4
             ],
             "targetRecordIdentifier": [
-                153
+                161
             ],
             "__typename": [
                 1
@@ -3142,7 +3284,7 @@ export default {
                 1
             ],
             "state": [
-                157
+                165
             ],
             "attemptsMade": [
                 28
@@ -3183,7 +3325,7 @@ export default {
         },
         "MetadataEvent": {
             "type": [
-                160
+                168
             ],
             "metadataName": [
                 1
@@ -3192,7 +3334,7 @@ export default {
                 1
             ],
             "properties": [
-                158
+                166
             ],
             "updatedCollectionHash": [
                 1
@@ -3204,7 +3346,7 @@ export default {
         "MetadataEventAction": {},
         "ObjectRecordEvent": {
             "action": [
-                162
+                170
             ],
             "objectNameSingular": [
                 1
@@ -3219,7 +3361,7 @@ export default {
                 1
             ],
             "properties": [
-                158
+                166
             ],
             "__typename": [
                 1
@@ -3231,7 +3373,7 @@ export default {
                 1
             ],
             "objectRecordEvent": [
-                161
+                169
             ],
             "__typename": [
                 1
@@ -3242,13 +3384,13 @@ export default {
                 1
             ],
             "objectRecordEventsWithQueryIds": [
-                163
+                171
             ],
             "metadataEvents": [
-                159
+                167
             ],
             "queueJobEvents": [
-                156
+                164
             ],
             "__typename": [
                 1
@@ -3415,7 +3557,7 @@ export default {
                 1
             ],
             "dailyUsage": [
-                173
+                181
             ],
             "__typename": [
                 1
@@ -3423,19 +3565,19 @@ export default {
         },
         "UsageAnalytics": {
             "usageByUser": [
-                172
+                180
             ],
             "usageByOperationType": [
-                172
+                180
             ],
             "usageByApplication": [
-                172
+                180
             ],
             "usageByModel": [
-                172
+                180
             ],
             "timeSeries": [
-                173
+                181
             ],
             "periodStart": [
                 4
@@ -3444,146 +3586,7 @@ export default {
                 4
             ],
             "userDailyUsage": [
-                174
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageQuotaDefinition": {
-            "resourceType": [
-                177
-            ],
-            "allowedOperationTypes": [
-                178
-            ],
-            "allowedSpenderTypes": [
-                1
-            ],
-            "allowedMeters": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageResourceType": {},
-        "UsageOperationType": {},
-        "UsageQuotaDefinitions": {
-            "definitions": [
-                176
-            ],
-            "isIntraWorkspaceLimitEntitled": [
-                8
-            ],
-            "hasAllowancePeriod": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageQuotaWithConsumption": {
-            "id": [
-                3
-            ],
-            "resourceType": [
-                177
-            ],
-            "operationType": [
-                178
-            ],
-            "spenderType": [
-                1
-            ],
-            "spenderId": [
-                1
-            ],
-            "spenderLabel": [
-                1
-            ],
-            "periodUnit": [
-                1
-            ],
-            "meter": [
-                1
-            ],
-            "limitValue": [
-                181
-            ],
-            "isEnforced": [
-                8
-            ],
-            "consumedValue": [
-                181
-            ],
-            "remainingValue": [
-                181
-            ],
-            "periodStart": [
-                4
-            ],
-            "periodEnd": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BigInt": {},
-        "UsageQuotaScopeConsumption": {
-            "consumedValue": [
-                181
-            ],
-            "periodStart": [
-                4
-            ],
-            "periodEnd": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageLimit": {
-            "id": [
-                3
-            ],
-            "resourceType": [
-                177
-            ],
-            "operationType": [
-                178
-            ],
-            "spenderType": [
-                1
-            ],
-            "spenderId": [
-                1
-            ],
-            "limitKind": [
-                1
-            ],
-            "periodCount": [
-                28
-            ],
-            "periodUnit": [
-                1
-            ],
-            "meter": [
-                1
-            ],
-            "limitValue": [
-                181
-            ],
-            "burstValue": [
-                181
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
+                182
             ],
             "__typename": [
                 1
@@ -6498,10 +6501,10 @@ export default {
         },
         "AiChatUsage": {
             "limitValue": [
-                181
+                156
             ],
             "consumedValue": [
-                181
+                156
             ],
             "periodEnd": [
                 4
@@ -7092,10 +7095,10 @@ export default {
         },
         "Query": {
             "navigationMenuItems": [
-                154
+                162
             ],
             "navigationMenuItem": [
-                154,
+                162,
                 {
                     "id": [
                         3,
@@ -7140,29 +7143,29 @@ export default {
             "enterpriseSubscriptionStatus": [
                 150
             ],
-            "getUsageAnalytics": [
-                175,
+            "usageLimits": [
+                158
+            ],
+            "usageQuotasWithConsumption": [
+                155
+            ],
+            "usageQuotaDefinitions": [
+                154
+            ],
+            "usageQuotaScopeConsumption": [
+                157,
                 {
                     "input": [
-                        402
+                        402,
+                        "UsageQuotaScopeInput!"
                     ]
                 }
             ],
-            "usageLimits": [
-                183
-            ],
-            "usageQuotasWithConsumption": [
-                180
-            ],
-            "usageQuotaDefinitions": [
-                179
-            ],
-            "usageQuotaScopeConsumption": [
-                182,
+            "getUsageAnalytics": [
+                183,
                 {
                     "input": [
-                        403,
-                        "UsageQuotaScopeInput!"
+                        403
                     ]
                 }
             ],
@@ -7290,7 +7293,7 @@ export default {
                 }
             ],
             "currentUserSessions": [
-                165
+                173
             ],
             "myConnectedAccounts": [
                 193
@@ -7314,7 +7317,7 @@ export default {
                 }
             ],
             "billingPortalSession": [
-                170,
+                178,
                 {
                     "returnUrlPath": [
                         1
@@ -7325,10 +7328,10 @@ export default {
                 }
             ],
             "listPlans": [
-                168
+                176
             ],
             "getResourceCreditUsage": [
-                167
+                175
             ],
             "getInviteSuggestions": [
                 185
@@ -7607,7 +7610,7 @@ export default {
                 }
             ],
             "findInstallApplicationJobStatus": [
-                156,
+                164,
                 {
                     "universalIdentifier": [
                         1,
@@ -7616,7 +7619,7 @@ export default {
                 }
             ],
             "findUninstallApplicationJobStatus": [
-                156,
+                164,
                 {
                     "universalIdentifier": [
                         1,
@@ -7798,7 +7801,7 @@ export default {
                 }
             ],
             "getJobs": [
-                156,
+                164,
                 {
                     "jobIds": [
                         1,
@@ -8057,29 +8060,12 @@ export default {
                 1
             ]
         },
-        "UsageAnalyticsInput": {
-            "periodStart": [
-                4
-            ],
-            "periodEnd": [
-                4
-            ],
-            "userWorkspaceId": [
-                1
-            ],
-            "operationTypes": [
-                178
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "UsageQuotaScopeInput": {
             "resourceType": [
-                177
+                152
             ],
             "operationType": [
-                178
+                153
             ],
             "spenderType": [
                 1
@@ -8092,6 +8078,23 @@ export default {
             ],
             "meter": [
                 1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageAnalyticsInput": {
+            "periodStart": [
+                4
+            ],
+            "periodEnd": [
+                4
+            ],
+            "userWorkspaceId": [
+                1
+            ],
+            "operationTypes": [
+                153
             ],
             "__typename": [
                 1
@@ -8328,7 +8331,7 @@ export default {
                 }
             ],
             "createManyNavigationMenuItems": [
-                154,
+                162,
                 {
                     "inputs": [
                         423,
@@ -8337,7 +8340,7 @@ export default {
                 }
             ],
             "createNavigationMenuItem": [
-                154,
+                162,
                 {
                     "input": [
                         423,
@@ -8346,7 +8349,7 @@ export default {
                 }
             ],
             "updateManyNavigationMenuItems": [
-                154,
+                162,
                 {
                     "inputs": [
                         424,
@@ -8355,7 +8358,7 @@ export default {
                 }
             ],
             "updateNavigationMenuItem": [
-                154,
+                162,
                 {
                     "input": [
                         424,
@@ -8364,7 +8367,7 @@ export default {
                 }
             ],
             "deleteManyNavigationMenuItems": [
-                154,
+                162,
                 {
                     "ids": [
                         3,
@@ -8373,7 +8376,7 @@ export default {
                 }
             ],
             "deleteNavigationMenuItem": [
-                154,
+                162,
                 {
                     "id": [
                         3,
@@ -8382,7 +8385,7 @@ export default {
                 }
             ],
             "createFileUpload": [
-                152,
+                160,
                 {
                     "filename": [
                         1,
@@ -8405,7 +8408,7 @@ export default {
                 }
             ],
             "completeFileUpload": [
-                151,
+                159,
                 {
                     "fileId": [
                         1,
@@ -8428,51 +8431,20 @@ export default {
                     ]
                 }
             ],
-            "uploadWorkspaceLogo": [
-                151,
-                {
-                    "file": [
-                        426,
-                        "Upload!"
-                    ]
-                }
-            ],
-            "uploadWorkspaceMemberProfilePicture": [
-                151,
-                {
-                    "file": [
-                        426,
-                        "Upload!"
-                    ]
-                }
-            ],
-            "uploadFilesFieldFileByUniversalIdentifier": [
-                151,
-                {
-                    "file": [
-                        426,
-                        "Upload!"
-                    ],
-                    "fieldMetadataUniversalIdentifier": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
             "createUsageLimit": [
-                183,
+                158,
                 {
                     "input": [
-                        427,
+                        426,
                         "CreateUsageLimitInput!"
                     ]
                 }
             ],
             "updateUsageLimit": [
-                183,
+                158,
                 {
                     "input": [
-                        428,
+                        427,
                         "UpdateUsageLimitInput!"
                     ]
                 }
@@ -8483,6 +8455,37 @@ export default {
                     "usageLimitId": [
                         3,
                         "UUID!"
+                    ]
+                }
+            ],
+            "uploadWorkspaceLogo": [
+                159,
+                {
+                    "file": [
+                        428,
+                        "Upload!"
+                    ]
+                }
+            ],
+            "uploadWorkspaceMemberProfilePicture": [
+                159,
+                {
+                    "file": [
+                        428,
+                        "Upload!"
+                    ]
+                }
+            ],
+            "uploadFilesFieldFileByUniversalIdentifier": [
+                159,
+                {
+                    "file": [
+                        428,
+                        "Upload!"
+                    ],
+                    "fieldMetadataUniversalIdentifier": [
+                        1,
+                        "String!"
                     ]
                 }
             ],
@@ -8825,7 +8828,7 @@ export default {
                 }
             ],
             "checkoutSession": [
-                170,
+                178,
                 {
                     "recurringInterval": [
                         137,
@@ -8845,7 +8848,7 @@ export default {
                 }
             ],
             "createSubscriptionPaymentIntent": [
-                169,
+                177,
                 {
                     "recurringInterval": [
                         137,
@@ -8869,22 +8872,22 @@ export default {
                 }
             ],
             "createBillingPaymentMethodSetupIntent": [
-                169
+                177
             ],
             "switchSubscriptionInterval": [
-                171
+                179
             ],
             "switchBillingPlan": [
-                171
+                179
             ],
             "cancelSwitchBillingPlan": [
-                171
+                179
             ],
             "cancelSwitchBillingInterval": [
-                171
+                179
             ],
             "setResourceCreditSubscriptionPrice": [
-                171,
+                179,
                 {
                     "priceId": [
                         1,
@@ -8893,10 +8896,10 @@ export default {
                 }
             ],
             "endSubscriptionTrialPeriod": [
-                166
+                174
             ],
             "cancelSwitchResourceCreditPrice": [
-                171
+                179
             ],
             "skipSyncEmailOnboardingStep": [
                 187,
@@ -9404,7 +9407,7 @@ export default {
                 76,
                 {
                     "file": [
-                        426,
+                        428,
                         "Upload!"
                     ],
                     "universalIdentifier": [
@@ -10375,14 +10378,14 @@ export default {
                 }
             ],
             "uploadNewWorkspaceLogo": [
-                151,
+                159,
                 {
                     "workspaceId": [
                         1,
                         "String!"
                     ],
                     "file": [
-                        426,
+                        428,
                         "Upload!"
                     ]
                 }
@@ -10792,7 +10795,7 @@ export default {
                 302,
                 {
                     "file": [
-                        426,
+                        428,
                         "Upload!"
                     ],
                     "applicationUniversalIdentifier": [
@@ -10908,7 +10911,7 @@ export default {
                 3
             ],
             "type": [
-                155
+                163
             ],
             "name": [
                 1
@@ -10972,13 +10975,12 @@ export default {
                 1
             ]
         },
-        "Upload": {},
         "CreateUsageLimitInput": {
             "resourceType": [
-                177
+                152
             ],
             "operationType": [
-                178
+                153
             ],
             "spenderType": [
                 1
@@ -10999,10 +11001,10 @@ export default {
                 1
             ],
             "limitValue": [
-                181
+                156
             ],
             "burstValue": [
-                181
+                156
             ],
             "__typename": [
                 1
@@ -11013,12 +11015,13 @@ export default {
                 3
             ],
             "payload": [
-                427
+                426
             ],
             "__typename": [
                 1
             ]
         },
+        "Upload": {},
         "CreateViewFilterGroupInput": {
             "id": [
                 3
@@ -13892,7 +13895,7 @@ export default {
         },
         "Subscription": {
             "onEventSubscription": [
-                164,
+                172,
                 {
                     "eventStreamId": [
                         1,
