@@ -126,7 +126,7 @@ export const NavigationMenuItemFolderSubItem = ({
   const viewSecondaryLabel =
     navigationMenuItem.type === NavigationMenuItemType.VIEW
       ? getObjectNavigationMenuItemSecondaryLabel({
-          isView: navigationMenuItem.type === NavigationMenuItemType.VIEW,
+          isView: true,
           objectMetadataItems,
           navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
         })

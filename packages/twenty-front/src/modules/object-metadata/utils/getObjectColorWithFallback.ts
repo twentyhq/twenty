@@ -39,7 +39,9 @@ const getColorForCustomObject = (seed: string): ThemeColor => {
 
 export const getObjectColorWithFallback = (
   objectMetadataItem:
-    | Pick<EnrichedObjectMetadataItem, 'nameSingular' | 'color' | 'isSystem'>
+    | (Pick<EnrichedObjectMetadataItem, 'color' | 'isSystem'> & {
+        nameSingular?: string | null;
+      })
     | null
     | undefined,
 ): ThemeColor => {
@@ -55,9 +57,14 @@ export const getObjectColorWithFallback = (
     return objectMetadataItem.color as ThemeColor;
   }
 
+  const nameSingular = objectMetadataItem.nameSingular;
+
+  if (!isNonEmptyString(nameSingular)) {
+    return SYSTEM_OBJECT_COLOR;
+  }
+
   return (
-    STANDARD_OBJECT_FALLBACK_COLOR[
-      objectMetadataItem.nameSingular as CoreObjectNameSingular
-    ] ?? getColorForCustomObject(objectMetadataItem.nameSingular)
+    STANDARD_OBJECT_FALLBACK_COLOR[nameSingular as CoreObjectNameSingular] ??
+    getColorForCustomObject(nameSingular)
   );
 };

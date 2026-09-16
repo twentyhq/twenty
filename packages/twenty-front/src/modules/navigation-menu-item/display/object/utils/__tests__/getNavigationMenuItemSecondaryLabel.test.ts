@@ -20,6 +20,16 @@ describe('getObjectNavigationMenuItemSecondaryLabel', () => {
     expect(result).toBe('Person');
   });
 
+  it('should return labelPlural for a view menu item', () => {
+    const result = getObjectNavigationMenuItemSecondaryLabel({
+      isView: true,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+      navigationMenuItemObjectNameSingular: 'person',
+    });
+
+    expect(result).toBe('People');
+  });
+
   it('should return undefined when object metadata item is not found', () => {
     const result = getObjectNavigationMenuItemSecondaryLabel({
       objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
