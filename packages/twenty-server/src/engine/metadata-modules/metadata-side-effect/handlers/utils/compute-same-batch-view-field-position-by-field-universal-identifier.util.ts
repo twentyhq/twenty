@@ -2,8 +2,8 @@ import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/meta
 import {
   computeDefaultViewFieldPositionByFieldUniversalIdentifier,
   type ViewFieldLabelIdentifierPolicy,
-} from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-default-view-field-position-by-field-universal-identifier.util';
-import { computeViewFieldPositionInputFlatFieldMetadatas } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-view-field-position-input-flat-field-metadatas.util';
+} from 'src/engine/metadata-modules/view/utils/compute-default-view-field-position-by-field-universal-identifier.util';
+import { computeViewFieldPositionInputFlatFieldMetadatas } from 'src/engine/metadata-modules/view/utils/compute-view-field-position-input-flat-field-metadatas.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 export type ParentFlatObjectMetadataForViewFields = {
