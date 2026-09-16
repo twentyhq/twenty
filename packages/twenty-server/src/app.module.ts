@@ -20,6 +20,7 @@ import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.mo
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
+import { McpHydrateRequestFromTokenMiddleware } from 'src/engine/api/mcp/middlewares/mcp-hydrate-request-from-token.middleware';
 import { McpMethodGuardMiddleware } from 'src/engine/api/mcp/middlewares/mcp-method-guard.middleware';
 import { McpModule } from 'src/engine/api/mcp/mcp.module';
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
@@ -140,7 +141,11 @@ export class AppModule {
       .forRoutes({ path: ApiPath.AdminPanel, method: RequestMethod.ALL });
 
     consumer
-      .apply(ApiRequestContextMiddleware, McpMethodGuardMiddleware)
+      .apply(
+        ApiRequestContextMiddleware,
+        McpHydrateRequestFromTokenMiddleware,
+        McpMethodGuardMiddleware,
+      )
       .forRoutes({ path: ApiPath.Mcp, method: RequestMethod.ALL });
 
     for (const method of MIGRATED_REST_METHODS) {

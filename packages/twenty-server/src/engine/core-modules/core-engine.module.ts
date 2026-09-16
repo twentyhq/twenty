@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { APP_FILTER, HttpAdapterHost } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, HttpAdapterHost } from '@nestjs/core';
 import { EventEmitter2, EventEmitterModule } from '@nestjs/event-emitter';
 
 import { WorkspaceResolverNameMapCacheModule } from 'src/engine/api/graphql/direct-execution/workspace-resolver-name-map-cache.module';
@@ -24,6 +24,7 @@ import { AppBillingModule } from 'src/engine/core-modules/billing/app-billing/ap
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { WorkspacePlanRequiredGuard } from 'src/engine/guards/workspace-plan-required.guard';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
@@ -193,6 +194,10 @@ import { FileModule } from './file/file.module';
     {
       provide: APP_FILTER,
       useClass: PermissionsGraphqlApiExceptionFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: WorkspacePlanRequiredGuard,
     },
   ],
   exports: [

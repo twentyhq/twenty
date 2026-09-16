@@ -24,14 +24,24 @@ import { ConnectionProviderRestApiExceptionFilter } from 'src/engine/core-module
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { WorkspacePlanRequiredGuard } from 'src/engine/guards/workspace-plan-required.guard';
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 
 /** @deprecated Superseded by the `appConnections` / `appConnection` GraphQL
  * queries on the metadata schema (ApplicationConnectionsResolver). The SDK
  * helpers (`listConnections`, `getConnection`) now call GraphQL. Kept for
  * backward compatibility with already-deployed app runtimes. */
 @Controller(`${ApiPath.Apps}/connections`)
-@UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
-@UseFilters(ConnectionProviderRestApiExceptionFilter)
+@UseGuards(
+  JwtAuthGuard,
+  WorkspacePlanRequiredGuard,
+  WorkspaceAuthGuard,
+  NoPermissionGuard,
+)
+@UseFilters(
+  ConnectionProviderRestApiExceptionFilter,
+  BillingRestApiExceptionFilter,
+)
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 export class ApplicationConnectionsController {
   constructor(

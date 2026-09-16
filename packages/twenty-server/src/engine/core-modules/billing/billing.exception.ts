@@ -35,6 +35,7 @@ export enum BillingExceptionCode {
   BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND = 'BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND',
   BILLING_CREDITS_EXHAUSTED = 'BILLING_CREDITS_EXHAUSTED',
   BILLING_SUBSCRIPTION_INACTIVE = 'BILLING_SUBSCRIPTION_INACTIVE',
+  BILLING_PLAN_REQUIRED = 'BILLING_PLAN_REQUIRED',
   BILLING_SUBSCRIPTION_NOT_CANCELED = 'BILLING_SUBSCRIPTION_NOT_CANCELED',
   BILLING_CREDIT_AMOUNT_INVALID = 'BILLING_CREDIT_AMOUNT_INVALID',
   BILLING_CREDIT_GRANT_NOT_FOUND = 'BILLING_CREDIT_GRANT_NOT_FOUND',
@@ -101,6 +102,8 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`You have exhausted your credits. Please upgrade your plan to continue.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE:
       return msg`This workspace has no active subscription.`;
+    case BillingExceptionCode.BILLING_PLAN_REQUIRED:
+      return msg`A subscription plan is required to use this workspace. Please choose a plan to continue.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_CANCELED:
       return msg`Workspace cannot be deleted: subscription is not yet canceled.`;
     case BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID:

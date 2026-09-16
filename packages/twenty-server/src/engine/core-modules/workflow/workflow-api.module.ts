@@ -4,6 +4,7 @@ import { WorkflowVersionValidationModule } from 'src/modules/workflow/workflow-b
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkflowTriggerController } from 'src/engine/core-modules/workflow/controllers/workflow-trigger.controller';
 import { CoreWorkflowResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow.resolver';
 import { WorkflowBuilderResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-builder.resolver';
@@ -46,6 +47,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowRunnerModule,
     PermissionsModule,
     ToolModule,
+    BillingModule,
     LogicFunctionModule,
     CodeStepBuildModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,

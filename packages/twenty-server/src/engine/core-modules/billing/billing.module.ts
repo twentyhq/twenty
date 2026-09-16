@@ -129,6 +129,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingCreditGrantService,
     BillingCreditService,
     ResourceCreditService,
+    BillingRestApiExceptionFilter,
   ],
 })
 export class BillingModule {}

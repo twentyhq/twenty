@@ -30,9 +30,15 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { WorkspacePlanRequiredGuard } from 'src/engine/guards/workspace-plan-required.guard';
 
 @Controller(ApiPath.Mcp)
-@UseGuards(McpAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
+@UseGuards(
+  McpAuthGuard,
+  WorkspacePlanRequiredGuard,
+  WorkspaceAuthGuard,
+  NoPermissionGuard,
+)
 @UseFilters(RestApiExceptionFilter)
 export class McpCoreController {
   constructor(private readonly mcpProtocolService: McpProtocolService) {}

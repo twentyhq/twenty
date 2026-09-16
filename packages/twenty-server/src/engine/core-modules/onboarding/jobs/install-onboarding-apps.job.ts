@@ -12,7 +12,9 @@ import {
   type InstallOnboardingAppsJobData,
 } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { SkipPlanRequired } from 'src/engine/guards/decorators/skip-plan-required.decorator';
 
+@SkipPlanRequired()
 @Processor(MessageQueue.workspaceQueue)
 export class InstallOnboardingAppsJob {
   private readonly logger = new Logger(InstallOnboardingAppsJob.name);

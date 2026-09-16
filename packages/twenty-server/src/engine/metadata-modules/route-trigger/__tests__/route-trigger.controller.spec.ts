@@ -1,3 +1,10 @@
+jest.mock(
+  'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service',
+  () => ({
+    RouteTriggerService: class RouteTriggerService {},
+  }),
+);
+
 import { type Response } from 'express';
 import { HTTPMethod } from 'twenty-shared/types';
 

@@ -35,6 +35,21 @@ describe('billingGraphqlApiExceptionHandler', () => {
     expect(graphqlError.extensions.userFriendlyMessage).toBeDefined();
   });
 
+  it('maps BILLING_PLAN_REQUIRED (402) to FORBIDDEN with billing subCode', () => {
+    const error = new BillingException(
+      'Workspace subscription plan is required',
+      BillingExceptionCode.BILLING_PLAN_REQUIRED,
+    );
+
+    const graphqlError = catchGraphqlError(error);
+
+    expect(graphqlError.extensions.code).toBe(ErrorCode.FORBIDDEN);
+    expect(graphqlError.extensions.subCode).toBe(
+      BillingExceptionCode.BILLING_PLAN_REQUIRED,
+    );
+    expect(graphqlError.extensions.userFriendlyMessage).toBeDefined();
+  });
+
   it('maps billing not found errors to NOT_FOUND', () => {
     const error = new BillingException(
       'Billing product not found',

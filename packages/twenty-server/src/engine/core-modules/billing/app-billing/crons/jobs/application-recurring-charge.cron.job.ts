@@ -13,6 +13,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SkipPlanRequired } from 'src/engine/guards/decorators/skip-plan-required.decorator';
 
 // Daily rather than monthly: the charge is keyed to the workspace's own billing
 // period, which starts on a different day for every workspace, and the service
@@ -21,6 +22,7 @@ export const APPLICATION_RECURRING_CHARGE_CRON_PATTERN = '0 5 * * *';
 
 const WORKSPACE_BATCH_SIZE = 10;
 
+@SkipPlanRequired()
 @Processor(MessageQueue.cronQueue)
 export class ApplicationRecurringChargeCronJob {
   private readonly logger = new Logger(ApplicationRecurringChargeCronJob.name);

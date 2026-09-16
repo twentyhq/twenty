@@ -19,10 +19,11 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { RouteTriggerRestApiExceptionFilter } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger-rest-api-exception-filter';
 import { RouteTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
 import { sendRouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 
 @Controller(ApiPath.RouteTrigger)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-@UseFilters(RouteTriggerRestApiExceptionFilter)
+@UseFilters(RouteTriggerRestApiExceptionFilter, BillingRestApiExceptionFilter)
 export class RouteTriggerController {
   constructor(private readonly routeTriggerService: RouteTriggerService) {}
 

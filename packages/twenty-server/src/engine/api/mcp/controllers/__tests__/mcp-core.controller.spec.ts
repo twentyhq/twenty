@@ -1,3 +1,7 @@
+jest.mock('src/engine/api/mcp/services/mcp-protocol.service', () => ({
+  McpProtocolService: class McpProtocolService {},
+}));
+
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
@@ -15,6 +19,7 @@ import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-h
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
+import { WorkspacePlanRequiredGuard } from 'src/engine/guards/workspace-plan-required.guard';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 describe('McpCoreController', () => {
@@ -57,7 +62,10 @@ describe('McpCoreController', () => {
         },
         McpAuthGuard,
       ],
-    }).compile();
+    })
+      .overrideGuard(WorkspacePlanRequiredGuard)
+      .useValue({ canActivate: jest.fn().mockReturnValue(true) })
+      .compile();
 
     controller = module.get<McpCoreController>(McpCoreController);
     mcpProtocolService = module.get(McpProtocolService);

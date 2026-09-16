@@ -10,6 +10,7 @@ import {
   NotFoundException,
   Post,
   Req,
+  UseFilters,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -32,6 +33,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { WorkspacePlanRequiredGuard } from 'src/engine/guards/workspace-plan-required.guard';
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 
 // Belt-and-suspenders on top of LogicFunctionExecutorService's execution
 // throttle: application-access tokens are JWTs usable outside the runtime.
@@ -48,7 +51,13 @@ const CREDIT_UNAVAILABLE_REASON_BY_SERVER_REASON: Record<
 };
 
 @Controller(`${ApiPath.App}/billing`)
-@UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
+@UseGuards(
+  JwtAuthGuard,
+  WorkspacePlanRequiredGuard,
+  WorkspaceAuthGuard,
+  NoPermissionGuard,
+)
+@UseFilters(BillingRestApiExceptionFilter)
 export class AppBillingController {
   constructor(
     private readonly appBillingService: AppBillingService,

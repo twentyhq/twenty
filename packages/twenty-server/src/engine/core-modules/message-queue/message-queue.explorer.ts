@@ -3,6 +3,7 @@ import {
   DiscoveryService,
   MetadataScanner,
   ModuleRef,
+  Reflector,
   createContextId,
 } from '@nestjs/core';
 import { Injector } from '@nestjs/core/injector/injector';
@@ -15,15 +16,18 @@ import {
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-queue/message-queue-metadata.accessor';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { EventLoopStallMonitorService } from 'src/engine/core-modules/message-queue/services/event-loop-stall-monitor.service';
+import { assertMessageQueueJobPlanRequired } from 'src/engine/core-modules/message-queue/utils/assert-message-queue-job-plan-required.util';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { shouldCreateWorkerForQueue } from 'src/engine/core-modules/message-queue/utils/should-create-worker-for-queue.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { SKIP_PLAN_REQUIRED_KEY } from 'src/engine/guards/decorators/skip-plan-required.decorator';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
 interface ProcessorGroup {
@@ -46,6 +50,8 @@ export class MessageQueueExplorer implements OnModuleInit {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly eventLoopStallMonitorService: EventLoopStallMonitorService,
+    private readonly billingService: BillingService,
+    private readonly reflector: Reflector,
   ) {}
 
   onModuleInit() {
@@ -267,7 +273,24 @@ export class MessageQueueExplorer implements OnModuleInit {
     for (const processMethodName of processMethodNames) {
       try {
         // @ts-expect-error legacy noImplicitAny
-        await instance[processMethodName].call(instance, job.data, {
+        const processMethod = instance[processMethodName];
+        const skipPlanRequired =
+          this.reflector.getAllAndOverride<boolean>(SKIP_PLAN_REQUIRED_KEY, [
+            processMethod,
+            instance.constructor,
+          ]) ?? false;
+
+        await assertMessageQueueJobPlanRequired({
+          isEnforcementEnabled: this.twentyConfigService.get(
+            'IS_PLAN_REQUIRED_API_ENFORCEMENT_ENABLED',
+          ),
+          workspaceId: job.data?.workspaceId as string | undefined,
+          skipPlanRequired,
+          assertWorkspaceHasRequiredPlan: (workspaceId) =>
+            this.billingService.assertWorkspaceHasRequiredPlan(workspaceId),
+        });
+
+        await processMethod.call(instance, job.data, {
           abortSignal: job.abortSignal,
           retryLimit: job.retryLimit,
           updateData: job.updateData,

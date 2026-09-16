@@ -1,6 +1,7 @@
-import { type DynamicModule, Global, Module } from '@nestjs/common';
+import { type DynamicModule, Global, Module, forwardRef } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { MessageQueueCoreModule } from 'src/engine/core-modules/message-queue/message-queue-core.module';
 import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-queue/message-queue-metadata.accessor';
 import { MessageQueueExplorer } from 'src/engine/core-modules/message-queue/message-queue.explorer';
@@ -23,7 +24,7 @@ export class MessageQueueModule {
   static registerExplorer(): DynamicModule {
     return {
       module: MessageQueueModule,
-      imports: [DiscoveryModule],
+      imports: [DiscoveryModule, forwardRef(() => BillingModule)],
       providers: [
         MessageQueueExplorer,
         MessageQueueMetadataAccessor,

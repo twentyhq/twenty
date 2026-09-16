@@ -6,11 +6,13 @@ import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billin
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { SkipPlanRequired } from 'src/engine/guards/decorators/skip-plan-required.decorator';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 export type UpdateSubscriptionQuantityJobData = { workspaceId: string };
 
+@SkipPlanRequired()
 @Processor({
   queueName: MessageQueue.billingQueue,
   scope: Scope.REQUEST,

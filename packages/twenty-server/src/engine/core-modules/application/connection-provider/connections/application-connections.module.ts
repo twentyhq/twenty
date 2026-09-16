@@ -8,6 +8,7 @@ import { ApplicationConnectionAuthFailureService } from 'src/engine/core-modules
 import { ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
 import { ConnectionProviderGraphqlApiExceptionInterceptor } from 'src/engine/core-modules/application/connection-provider/interceptors/connection-provider-graphql-api-exception.interceptor';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
@@ -29,6 +30,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
       UserWorkspaceEntity,
     ]),
     TokenModule,
+    BillingModule,
     WorkspaceCacheStorageModule,
     WorkspaceCacheModule,
     RefreshTokensManagerModule,

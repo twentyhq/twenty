@@ -13,6 +13,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -32,6 +33,7 @@ import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { assertRequestWorkspaceHasRequiredPlan } from 'src/engine/guards/utils/assert-request-workspace-has-required-plan.util';
 import { CustomException } from 'src/utils/custom-exception';
 
 type RouteTriggerWorkspace = Pick<
@@ -55,6 +57,7 @@ export class RouteTriggerService {
     private readonly logicFunctionTriggerService: LogicFunctionTriggerService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly billingService: BillingService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
   ) {}
@@ -260,6 +263,15 @@ export class RouteTriggerService {
       isIsolatedOrigin,
       authenticationContext,
     } = await this.resolveRouteTriggerRequestContextOrFail(request);
+
+    await assertRequestWorkspaceHasRequiredPlan({
+      isEnforcementEnabled: this.twentyConfigService.get(
+        'IS_PLAN_REQUIRED_API_ENFORCEMENT_ENABLED',
+      ),
+      workspaceId: workspace.id,
+      assertWorkspaceHasRequiredPlan: (workspaceId) =>
+        this.billingService.assertWorkspaceHasRequiredPlan(workspaceId),
+    });
 
     const logicFunctionsWithHttpRouteTrigger =
       await this.logicFunctionRepository.find({

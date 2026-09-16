@@ -16,8 +16,11 @@ import { Repository } from 'typeorm';
 
 import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { assertRequestWorkspaceHasRequiredPlan } from 'src/engine/guards/utils/assert-request-workspace-has-required-plan.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import {
@@ -25,6 +28,7 @@ import {
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
@@ -41,11 +45,14 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
 @UseFilters(
   WorkflowTriggerRestApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
+  BillingRestApiExceptionFilter,
 )
 export class WorkflowTriggerController {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
+    private readonly billingService: BillingService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -92,6 +99,15 @@ export class WorkflowTriggerController {
         WorkflowTriggerExceptionCode.NOT_FOUND,
       );
     }
+
+    await assertRequestWorkspaceHasRequiredPlan({
+      isEnforcementEnabled: this.twentyConfigService.get(
+        'IS_PLAN_REQUIRED_API_ENFORCEMENT_ENABLED',
+      ),
+      workspaceId,
+      assertWorkspaceHasRequiredPlan: (id) =>
+        this.billingService.assertWorkspaceHasRequiredPlan(id),
+    });
 
     const authContext = buildSystemAuthContext(workspaceId);
 

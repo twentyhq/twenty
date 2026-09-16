@@ -17,8 +17,10 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SkipPlanRequired } from 'src/engine/guards/decorators/skip-plan-required.decorator';
 
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+@SkipPlanRequired()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @MetadataResolver()

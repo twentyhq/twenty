@@ -8,9 +8,11 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SkipPlanRequired } from 'src/engine/guards/decorators/skip-plan-required.decorator';
 import { cleanOnboardingWorkspacesCronPattern } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-onboarding-workspaces.cron.pattern';
 import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
+@SkipPlanRequired()
 @Processor(MessageQueue.cronQueue)
 export class CleanOnboardingWorkspacesJob {
   constructor(
