@@ -1,4 +1,3 @@
-import { NavigationMenuItemRecordAvatar } from '@/navigation-menu-item/edit/components/NavigationMenuItemRecordAvatar';
 import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -9,6 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconDotsVertical,
+  IconAddressBook,
   IconBox,
   IconTable,
   IconLink,
@@ -131,7 +131,7 @@ export const NavigationMenuItemEditable = ({
   > = {
     OBJECT: { label: t`Object`, Icon: IconBox },
     VIEW: { label: t`View`, Icon: IconTable },
-    RECORD: { label: t`Record`, Icon: NavigationMenuItemRecordAvatar },
+    RECORD: { label: t`Record`, Icon: IconAddressBook },
     LINK: { label: t`Link`, Icon: IconLink },
     FOLDER: { label: t`Folder`, Icon: IconFolder },
     PAGE_LAYOUT: { label: t`Page`, Icon: IconPerspective },

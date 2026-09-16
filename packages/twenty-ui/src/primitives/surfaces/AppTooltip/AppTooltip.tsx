@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { useThemeContainer } from '@ui/theme-constants';
+import { useTheme, useThemeContainer } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './AppTooltip.module.scss';
@@ -95,6 +95,7 @@ export const AppTooltip = ({
   };
 
   const themeContainer = useThemeContainer();
+  const theme = useTheme();
 
   const [show, setShow] = useState(false);
   const [anchorElements, setAnchorElements] = useState<Element[]>([]);
@@ -282,7 +283,13 @@ export const AppTooltip = ({
         <div className={styles.textContent}>
           {hasTitle && (
             <div className={styles.title}>
-              {isDefined(Icon) && <Icon className={styles.icon} aria-hidden />}
+              {isDefined(Icon) && (
+                <Icon
+                  className={styles.icon}
+                  size={theme.icon.size.sm}
+                  aria-hidden
+                />
+              )}
               <span>{title}</span>
             </div>
           )}
