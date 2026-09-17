@@ -1,6 +1,7 @@
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -24,11 +25,6 @@ import {
   TransferApplicationRegistrationOwnershipDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import {
-  StyledAppModal,
-  StyledAppModalButton,
-  StyledAppModalSection,
-} from '~/pages/settings/applications/components/SettingsAppModalLayout';
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
 
@@ -39,6 +35,14 @@ const CLAIM_OWNERSHIP_MODAL_ID =
   'claim-application-registration-ownership-modal';
 
 const DELETE_REGISTRATION_BUTTON_ID = 'delete-registration-button';
+
+const StyledActionButton = styled(Button)`
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledDescriptionSection = styled(Section.Root)`
+  margin-bottom: ${themeCssVariables.spacing[6]};
+`;
 
 const StyledDangerButtonGroup = styled.div`
   display: flex;
@@ -55,7 +59,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
   const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isTransferring, setIsTransferring] = useState(false);
@@ -177,7 +181,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         variant: 'success',
         children: t`Ownership claimed successfully`,
       });
-      closeModal(CLAIM_OWNERSHIP_MODAL_ID);
+      closeDialog(CLAIM_OWNERSHIP_MODAL_ID);
     } catch {
       enqueueToast({
         variant: 'error',
@@ -212,7 +216,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
                 variant="outline"
                 startIcon={<IconTrash />}
                 disabled={hasActiveInstalls}
-                onClick={() => openModal(DELETE_REGISTRATION_MODAL_ID)}
+                onClick={() => openDialog(DELETE_REGISTRATION_MODAL_ID)}
               >
                 {t`Delete app`}
               </Button>
@@ -223,24 +227,24 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
             ? fromAdmin && (
                 <Button
                   startIcon={<IconUserPlus />}
-                  onClick={() => openModal(CLAIM_OWNERSHIP_MODAL_ID)}
+                  onClick={() => openDialog(CLAIM_OWNERSHIP_MODAL_ID)}
                   variant="outline"
                 >{t`Claim ownership`}</Button>
               )
             : !isUnclaimed && (
                 <Button
                   startIcon={<IconShare />}
-                  onClick={() => openModal(TRANSFER_OWNERSHIP_MODAL_ID)}
+                  onClick={() => openDialog(TRANSFER_OWNERSHIP_MODAL_ID)}
                   variant="outline"
                 >{t`Transfer ownership`}</Button>
               )}
         </StyledDangerButtonGroup>
       </Section.Root>
 
-      <ConfirmationModal
+      <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalInstanceId={DELETE_REGISTRATION_MODAL_ID}
+        dialogId={DELETE_REGISTRATION_MODAL_ID}
         title={t`Delete app`}
         subtitle={
           <Trans>
@@ -254,8 +258,8 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         loading={isLoading}
       />
 
-      <ConfirmationModal
-        modalInstanceId={CLAIM_OWNERSHIP_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={CLAIM_OWNERSHIP_MODAL_ID}
         title={t`Claim ownership`}
         subtitle={
           <Trans>
@@ -269,47 +273,57 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         loading={isClaiming}
       />
 
-      <StyledAppModal
-        modalId={TRANSFER_OWNERSHIP_MODAL_ID}
-        isClosable
+      <DialogInstance
+        dialogId={TRANSFER_OWNERSHIP_MODAL_ID}
+        dismissible
         onClose={() => setTransferSubdomain('')}
-        padding="large"
-        dataGloballyPreventClickOutside
       >
-        <Dialog.Title>{t`Transfer ownership`}</Dialog.Title>
-        <StyledAppModalSection align="center" color="primary">
-          {t`Enter the workspace subdomain to transfer this app to. You will lose access to manage it.`}
-        </StyledAppModalSection>
-        <Section.Root>
-          <SettingsTextInput
-            instanceId="transfer-ownership-subdomain"
-            value={transferSubdomain}
-            onChange={setTransferSubdomain}
-            placeholder={t`e.g. my-workspace`}
-            fullWidth
-            disableHotkeys
-            label={t`Target workspace subdomain`}
-            autoFocusOnMount
-          />
-        </Section.Root>
-        <StyledAppModalButton
-          onClick={() => {
-            closeModal(TRANSFER_OWNERSHIP_MODAL_ID);
-            setTransferSubdomain('');
-          }}
-          fullWidth
-          variant="outline"
-        >{t`Cancel`}</StyledAppModalButton>
-        <StyledAppModalButton
-          onClick={handleTransferOwnership}
-          disabled={
-            !isNonEmptyString(transferSubdomain.trim()) || isTransferring
-          }
-          fullWidth
-          variant="outline"
-          color="danger"
-        >{t`Transfer`}</StyledAppModalButton>
-      </StyledAppModal>
+        {({ container, backdrop, viewportProps, onKeyDown }) => (
+          <Dialog.Popup
+            {...{ container, backdrop, viewportProps, onKeyDown }}
+            data-globally-prevent-click-outside
+            style={{
+              padding: 'var(--t-spacing-6)',
+              borderRadius: 'var(--t-spacing-1)',
+              width: 'calc(400px - var(--t-spacing-32))',
+            }}
+          >
+            <Dialog.Title>{t`Transfer ownership`}</Dialog.Title>
+            <StyledDescriptionSection align="center" color="primary">
+              {t`Enter the workspace subdomain to transfer this app to. You will lose access to manage it.`}
+            </StyledDescriptionSection>
+            <Section.Root>
+              <SettingsTextInput
+                instanceId="transfer-ownership-subdomain"
+                value={transferSubdomain}
+                onChange={setTransferSubdomain}
+                placeholder={t`e.g. my-workspace`}
+                fullWidth
+                disableHotkeys
+                label={t`Target workspace subdomain`}
+                autoFocusOnMount
+              />
+            </Section.Root>
+            <StyledActionButton
+              onClick={() => {
+                closeDialog(TRANSFER_OWNERSHIP_MODAL_ID);
+                setTransferSubdomain('');
+              }}
+              fullWidth
+              variant="outline"
+            >{t`Cancel`}</StyledActionButton>
+            <StyledActionButton
+              onClick={handleTransferOwnership}
+              disabled={
+                !isNonEmptyString(transferSubdomain.trim()) || isTransferring
+              }
+              fullWidth
+              variant="outline"
+              color="danger"
+            >{t`Transfer`}</StyledActionButton>
+          </Dialog.Popup>
+        )}
+      </DialogInstance>
     </>
   );
 };

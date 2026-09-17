@@ -1,68 +1,105 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
-
-import { Modal } from '@ui/primitives/surfaces/Modal/Modal';
 import { Text } from '@ui/primitives/typography/Text/Text';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+
 import { ComponentDecorator } from '@ui/testing';
 
-import { Dialog } from '../Dialog';
+import { DialogExample } from './DialogExample';
 
-const meta: Meta<typeof Dialog.Title> = {
+import { waitForDialog } from './waitForDialog';
+
+const meta: Meta<typeof DialogExample> = {
   title: 'UI/Surfaces/Dialog',
-  component: Dialog.Title,
-  decorators: [ComponentDecorator],
-  args: { children: 'Grant credits' },
-  render: (args) => (
-    <Modal isOpen padding="large" autoHeight>
-      <Dialog.Title {...args} />
-      <Text>Add credits to this workspace.</Text>
-    </Modal>
-  ),
+  component: DialogExample,
+  argTypes: {
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg', 'xl', 'fullscreen'],
+    },
+  },
 };
 
 export default meta;
-
-type Story = StoryObj<typeof Dialog.Title>;
-
-export const Documentation: Story = {};
+type Story = StoryObj<typeof DialogExample>;
 
 export const Default: Story = {
-  play: async () => {
-    const dialog = within(document.body).getByRole('dialog', {
-      name: 'Grant credits',
-    });
-    const title = within(dialog).getByRole('heading', { level: 2 });
+  decorators: [ComponentDecorator],
+  args: { defaultOpen: true },
+  play: async ({ canvasElement }) => {
+    const dialog = await waitForDialog(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
-    const titleStyle = getComputedStyle(title);
+    expect(dialog).toHaveAccessibleName('Edit account');
+    expect(dialog).toHaveAccessibleDescription('Update the account details.');
+    expect(dialog).toHaveAttribute(
+      'aria-labelledby',
+      body.getByRole('heading', { name: 'Edit account' }).id,
+    );
+    expect(canvasElement).not.toContainElement(dialog);
+    const bounds = dialog.getBoundingClientRect();
+    const viewport = canvasElement.ownerDocument.documentElement;
 
-    await expect(title).toHaveAttribute('data-size', 'lg');
-    await expect(titleStyle.marginBlockEnd).toBe('16px');
-    await expect(titleStyle.textAlign).toBe('center');
-    await expect(dialog).toHaveAttribute('aria-labelledby', title.id);
+    expect(bounds.left).toBeGreaterThanOrEqual(0);
+    expect(bounds.top).toBeGreaterThanOrEqual(0);
+    expect(bounds.right).toBeLessThanOrEqual(viewport.clientWidth);
+    expect(bounds.bottom).toBeLessThanOrEqual(viewport.clientHeight);
   },
 };
 
-export const CustomTitle: Story = {
-  args: {
-    level: 3,
-    size: 'sm',
-    style: { marginBlockEnd: 24, textAlign: 'left' },
-  },
-  play: async () => {
-    const title = within(document.body).getByRole('heading', {
-      name: 'Grant credits',
-      level: 3,
-    });
-
-    const titleStyle = getComputedStyle(title);
-
-    await expect(title).toHaveAttribute('data-size', 'sm');
-    await expect(titleStyle.marginBlockEnd).toBe('24px');
-    await expect(titleStyle.textAlign).toBe('left');
-  },
-};
-
-export const Dark: Story = {
+export const Documentation: Story = {
   ...Default,
+  args: { defaultOpen: false },
+  play: undefined,
+};
+
+export const DocumentationInteractions: Story = {
+  ...Documentation,
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Edit account',
+    });
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    await userEvent.click(trigger);
+    const dialog = await waitForDialog(canvasElement);
+    expect(dialog).toHaveAccessibleName('Edit account');
+    expect(dialog).toHaveAccessibleDescription('Update the account details.');
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: 'Close' }),
+    );
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
+  },
+};
+
+export const Small: Story = {
+  ...Default,
+  args: { defaultOpen: true, size: 'sm' },
+};
+export const Large: Story = {
+  ...Default,
+  args: { defaultOpen: true, size: 'lg' },
+};
+export const ExtraLarge: Story = {
+  ...Default,
+  args: { defaultOpen: true, size: 'xl' },
+};
+export const Fullscreen: Story = {
+  ...Default,
+  args: { defaultOpen: true, size: 'fullscreen' },
+};
+
+export const Catalog: Story = {
+  ...Default,
+  args: {
+    defaultOpen: true,
+    content: <Text>Acme · Company record</Text>,
+  },
+};
+
+export const CatalogDark: Story = {
+  ...Catalog,
+  tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };

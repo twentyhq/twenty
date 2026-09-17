@@ -1,38 +1,140 @@
 ---
 title: Dialog
-description: Give a modal a visible heading and accessible name with Dialog.Title.
+description: Present a focused task above the current page.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import DialogReference from '/snippets/ui/generated/surfaces/dialog.mdx';
 
-Use `Dialog.Title` inside Twenty UI's existing `Modal`. It provides the shared modal heading style and automatically connects the heading to the modal's accessible name. The public `Dialog` namespace currently exports `Title`.
+Use `Dialog` for forms, details, and other tasks that open above the page. It manages focus, keyboard dismissal, outside clicks, and scrolling. Use [AlertDialog](/ui/primitives/surfaces/alert-dialog) when the user must explicitly respond to a decision.
 
 <StoryEmbed
   storyId="ui-surfaces-dialog--documentation"
-  title="Dialog title example"
-  height={300}
+  title="Dialog example"
+  height={440}
 />
 
-## Add a modal title
+## Anatomy
+
+```text
+Dialog.Root
+├── Dialog.Trigger
+└── Dialog.Popup
+    ├── Dialog.Header
+    │   ├── Dialog.Title
+    │   └── Dialog.Description
+    ├── Dialog.Body
+    └── Dialog.Footer
+        └── Dialog.Close
+```
+
+| Part                       | Requirement | Purpose                                                                        |
+| -------------------------- | ----------- | ------------------------------------------------------------------------------ |
+| `Root`                     | Required    | Coordinates visibility and modal behavior.                                     |
+| `Trigger`                  | Optional    | Opens the dialog and receives focus when it closes.                            |
+| `Popup`                    | Required    | Contains the dialog and includes its portal, backdrop, and viewport.           |
+| `Title`                    | Recommended | Provides the accessible name. Supply `aria-label` on `Popup` when omitting it. |
+| `Description`              | Optional    | Associates supporting text with the dialog.                                    |
+| `Header`, `Body`, `Footer` | Optional    | Arrange headings, content, and actions.                                        |
+| `Close`                    | Recommended | Provides a visible close action, including for touch screen readers.           |
+
+## Uncontrolled state
+
+`Root` owns visibility by default. Set `defaultOpen` for its initial state. Triggers, close controls, Escape, and outside clicks update that state.
 
 ```tsx
-import { Dialog, Modal } from 'twenty-ui/primitives/surfaces';
-import { Text } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 
-type CreditModalProps = { isOpen: boolean };
-
-export const CreditModal = ({ isOpen }: CreditModalProps) => (
-  <Modal isOpen={isOpen} padding="large" autoHeight>
-    <Dialog.Title>Grant credits</Dialog.Title>
-    <Text>Add credits to this workspace.</Text>
-  </Modal>
+export const AccountDialog = () => (
+  <Dialog.Root defaultOpen={false}>
+    <Dialog.Trigger
+      render={<Button>Account details</Button>}
+    />
+    <Dialog.Popup>
+      <Dialog.Header>
+        <Dialog.Title>Account details</Dialog.Title>
+        <Dialog.Description>
+          Review your account information.
+        </Dialog.Description>
+      </Dialog.Header>
+      <Dialog.Body>Acme</Dialog.Body>
+      <Dialog.Footer>
+        <Dialog.Close render={<Button>Close</Button>} />
+      </Dialog.Footer>
+    </Dialog.Popup>
+  </Dialog.Root>
 );
 ```
 
-The title defaults to an `h2` with large type, primary text color, centered alignment, and spacing-4 below it. Use `level` to change the document outline independently of `size`. Native `className` and `style` can adjust alignment and spacing.
+## Controlled state
 
-Native attributes, refs, and `render` are forwarded to the heading. Keep a heading element when using `render`, and keep the title inside `Modal` so its accessible naming relationship is available.
+Pass `open` and `onOpenChange` when the application owns visibility. The callback receives the requested state and event details. Update state to accept a change, or call `eventDetails.cancel()` to reject it.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+
+export const AccountDialog = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger
+        render={<Button>Account details</Button>}
+      />
+      <Dialog.Popup>
+        <Dialog.Header>
+          <Dialog.Title>Account details</Dialog.Title>
+          <Dialog.Description>
+            Review your account information.
+          </Dialog.Description>
+        </Dialog.Header>
+        <Dialog.Body>Acme</Dialog.Body>
+        <Dialog.Footer>
+          <Dialog.Close render={<Button>Close</Button>} />
+        </Dialog.Footer>
+      </Dialog.Popup>
+    </Dialog.Root>
+  );
+};
+```
+
+For an asynchronous form, keep the dialog open while submitting. Close it after success and display failures inside the dialog.
+
+## Composition
+
+`Trigger` and `Close` accept `render` to compose with `Button`, as shown above. Custom wrappers must [forward supplied props and refs](/ui/primitives/overview#custom-components). Layout parts also support `render`, native attributes, refs, styles, and class names. `Popup`, `Title`, and `Description` accept state-aware class names and styles.
+
+Nest another `Dialog.Root` inside a popup to open a second dialog. Closing the nested dialog returns focus to its trigger in the parent.
+
+To open one dialog from triggers outside `Root`, create a handle once with `Dialog.createHandle()` and pass it to `handle` on both `Root` and each `Trigger`. Trigger `payload` values are available in `Root`'s render function.
+
+`Title` uses `Heading` and defaults to an `h2` with large type, primary text color, centered alignment, and spacing-4 below it. Use `level` to change the heading level independently of `size`, or `color` to change its text color. Native `className`, `style`, refs, and `render` are forwarded to the heading. Keep a heading element when using `render`.
+
+## Focus, scrolling, and dismissal
+
+`Root.modal` controls the interaction boundary:
+
+| Value            | Focus                     | Page scrolling and outside interaction                   |
+| ---------------- | ------------------------- | -------------------------------------------------------- |
+| `true` (default) | Trapped inside the dialog | Page scrolling and outside interaction are blocked.      |
+| `"trap-focus"`   | Trapped inside the dialog | Page scrolling and outside interaction remain available. |
+| `false`          | Can leave the dialog      | Page scrolling and outside interaction remain available. |
+
+Set `Popup.backdrop={false}` when outside content should remain visible and interactive. Set `Popup.initialFocus` or `Popup.finalFocus` to a ref or callback to choose focus targets; `false` disables that automatic focus move.
+
+`Root.disablePointerDismissal` prevents outside clicks from requesting closure. To prevent Escape dismissal, cancel the `escape-key` change in `onOpenChange`. Always provide a visible way to close a modal dialog.
+
+## Sizes and portals
+
+`Popup.size` accepts `sm`, `md`, `lg`, `xl`, and `fullscreen`, and defaults to `md`. Long content scrolls within the popup. Width is constrained to the viewport.
+
+Portals use the nearest theme container by default and preserve text direction. Set `container` to an element or ref to choose another destination; `null` defers mounting until a destination is available. `keepMounted` retains content and form state while closed.
+
+Use `backdrop` props to customize the backdrop, and `viewportProps` for native attributes, styles, or `render` composition on the surrounding viewport. These props let application layout containers host a dialog while keeping the popup's semantics.
 
 ## Props
 

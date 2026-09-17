@@ -13,7 +13,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 
 const StyledInvertedIconButtonWrapper = styled.span`
   align-items: center;
@@ -31,11 +31,11 @@ const StyledInvertedIconButtonWrapper = styled.span`
 export const LayoutCustomizationBarMenuDropdown = () => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const handleResetClick = () => {
     closeDropdown(LAYOUT_CUSTOMIZATION_BAR_DROPDOWN_ID);
-    openModal(RESET_RECORD_PAGE_LAYOUT_MODAL_ID);
+    openDialog(RESET_RECORD_PAGE_LAYOUT_MODAL_ID);
   };
 
   return (

@@ -11,8 +11,8 @@ import { useOpenReplaceWidgetPicker } from '@/side-panel/pages/page-layout/hooks
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -57,7 +57,7 @@ export const WidgetSettingsManageSection = ({
 
   const { openReplaceWidgetPicker } = useOpenReplaceWidgetPicker(pageLayoutId);
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const visibilityLabel = useTranslatedVisibilityLabel(
     widgetInEditMode?.conditionalAvailabilityExpression,
@@ -76,7 +76,7 @@ export const WidgetSettingsManageSection = ({
     if (isResetToDefaultDisabled) {
       return;
     }
-    openModal(RESET_WIDGET_TO_DEFAULT_MODAL_ID);
+    openDialog(RESET_WIDGET_TO_DEFAULT_MODAL_ID);
   };
 
   const handleConfirmReset = () => {
@@ -156,8 +156,8 @@ export const WidgetSettingsManageSection = ({
           />
         </SelectableListItem>
       </SidePanelGroup>
-      <ConfirmationModal
-        modalInstanceId={RESET_WIDGET_TO_DEFAULT_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={RESET_WIDGET_TO_DEFAULT_MODAL_ID}
         title={t`Reset to default`}
         subtitle={t`This will cancel all modifications done on the widget. This action cannot be undone.`}
         onConfirmClick={handleConfirmReset}

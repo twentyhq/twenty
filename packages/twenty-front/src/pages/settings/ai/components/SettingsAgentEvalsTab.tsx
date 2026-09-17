@@ -6,8 +6,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useMutation } from '@apollo/client/react';
@@ -66,7 +66,7 @@ export const SettingsAgentEvalsTab = ({
 }: SettingsAgentEvalsTabProps) => {
   const [newInput, setNewInput] = useState('');
   const [inputToDelete, setInputToDelete] = useState<string | null>(null);
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { closeDropdown } = useCloseDropdown();
   const { enqueueToast } = useToast();
   const navigate = useNavigate();
@@ -119,7 +119,7 @@ export const SettingsAgentEvalsTab = ({
 
   const openDeleteModal = (id: string) => {
     setInputToDelete(id);
-    openModal(DELETE_EVAL_INPUT_MODAL_ID);
+    openDialog(DELETE_EVAL_INPUT_MODAL_ID);
   };
 
   const handleRunInput = (text: string, itemId: string) => {
@@ -200,8 +200,8 @@ export const SettingsAgentEvalsTab = ({
         )}
       </Section.Root>
 
-      <ConfirmationModal
-        modalInstanceId={DELETE_EVAL_INPUT_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={DELETE_EVAL_INPUT_MODAL_ID}
         title={t`Delete Evaluation Input`}
         subtitle={t`Are you sure you want to delete this evaluation input?`}
         onConfirmClick={handleDeleteInput}
