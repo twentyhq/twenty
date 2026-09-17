@@ -69,12 +69,13 @@ export const RoleAssignmentSection = ({
             <>
               <div id={config.tooltip?.anchorId}>
                 <Button
-                  Icon={IconPlus}
-                  title={config.buttonTitle()}
-                  variant="secondary"
-                  size="small"
+                  startIcon={<IconPlus />}
+                  size="sm"
                   disabled={allWorkspaceMembersHaveThisRole}
-                />
+                  variant="outline"
+                >
+                  {config.buttonTitle()}
+                </Button>
               </div>
               {config.tooltip && (
                 <AppTooltip

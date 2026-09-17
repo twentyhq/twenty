@@ -252,13 +252,12 @@ export const SettingsToolDetail = () => {
                   description={t`Delete this tool`}
                 />
                 <Button
-                  Icon={IconTrash}
-                  title={t`Delete`}
-                  accent="danger"
-                  size="small"
-                  variant="secondary"
+                  startIcon={<IconTrash />}
+                  size="sm"
                   onClick={() => openModal(DELETE_TOOL_MODAL_ID)}
-                />
+                  variant="outline"
+                  color="danger"
+                >{t`Delete`}</Button>
               </Section>
             )}
           </>

@@ -41,7 +41,7 @@ export const SettingsRoleAssignmentConfirmationModal = ({
       onClose={onClose}
       onConfirmClick={onConfirm}
       confirmButtonText={t`Confirm`}
-      confirmButtonAccent="danger"
+      confirmButtonColor="danger"
     />
   );
 };

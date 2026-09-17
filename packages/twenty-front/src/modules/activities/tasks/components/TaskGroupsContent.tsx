@@ -62,11 +62,10 @@ export const TaskGroupsContent = ({
         </AnimatedPlaceholderEmptyTextContainer>
         {isDefined(onCreateTask) && (
           <Button
-            Icon={IconPlus}
-            title={t`New task`}
-            variant="secondary"
+            startIcon={<IconPlus />}
             onClick={onCreateTask}
-          />
+            variant="outline"
+          >{t`New task`}</Button>
         )}
       </AnimatedPlaceholderEmptyContainer>
     );

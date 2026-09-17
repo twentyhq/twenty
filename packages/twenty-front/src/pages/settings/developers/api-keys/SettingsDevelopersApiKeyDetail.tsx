@@ -289,10 +289,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
                   />
                   <StyledInputContainer>
                     <Button
-                      title={t`Regenerate Key`}
-                      Icon={IconRepeat}
+                      startIcon={<IconRepeat />}
                       onClick={() => openModal(REGENERATE_API_KEY_MODAL_ID)}
-                    />
+                    >{t`Regenerate Key`}</Button>
                     <StyledInfo>
                       {formatExpiration(apiKey?.expiresAt || '', true, false)}
                     </StyledInfo>
@@ -339,12 +338,11 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 description={t`Delete this integration`}
               />
               <Button
-                accent="danger"
-                variant="secondary"
-                title={t`Delete`}
-                Icon={IconTrash}
+                startIcon={<IconTrash />}
                 onClick={() => openModal(DELETE_API_KEY_MODAL_ID)}
-              />
+                variant="outline"
+                color="danger"
+              >{t`Delete`}</Button>
             </Section>
           </SettingsPageContainer>
         </SettingsPageLayout>

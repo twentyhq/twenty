@@ -1,5 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { executeWithRetry } from 'src/utils/execute-with-retry';
+
 type PersonNode = {
   lastContactAt?: string | null;
   lastContactItemMessage?: { id: string } | null;
@@ -13,40 +15,54 @@ export const recomputeCompanyLastContact = async (
   client: CoreApiClient,
   companyId: string,
 ): Promise<void> => {
-  const { people } = await client.query({
-    people: {
-      __args: {
-        filter: {
-          companyId: { eq: companyId },
-          lastContactAt: { is: 'NOT_NULL' },
+  const { people } = await executeWithRetry(() =>
+    client.query({
+      people: {
+        __args: {
+          filter: {
+            companyId: { eq: companyId },
+            lastContactAt: { is: 'NOT_NULL' },
+          },
+          orderBy: [{ lastContactAt: 'DescNullsLast' }],
+          first: 1,
         },
-        orderBy: [{ lastContactAt: 'DescNullsLast' }],
-        first: 1,
-      },
-      edges: {
-        node: {
-          lastContactAt: true,
-          lastContactItemMessage: { id: true },
-          lastContactItemCalendarEvent: { id: true },
+        edges: {
+          node: {
+            lastContactAt: true,
+            lastContactItemMessage: { id: true },
+            lastContactItemCalendarEvent: { id: true },
+          },
         },
       },
-    },
-  });
+    }),
+  );
 
   const topPerson = (people?.edges?.[0]?.node as PersonNode | undefined) ?? {};
 
-  await client.mutation({
-    updateCompany: {
-      __args: {
-        id: companyId,
-        data: {
-          lastContactAt: topPerson.lastContactAt ?? null,
-          lastContactItemMessageId: topPerson.lastContactItemMessage?.id ?? null,
-          lastContactItemCalendarEventId:
-            topPerson.lastContactItemCalendarEvent?.id ?? null,
+  await executeWithRetry(() =>
+    client.mutation({
+      updateCompany: {
+        __args: {
+          id: companyId,
+          data: {
+            lastContactAt: topPerson.lastContactAt ?? null,
+            lastContactItemMessageId:
+              topPerson.lastContactItemMessage?.id ?? null,
+            lastContactItemCalendarEventId:
+              topPerson.lastContactItemCalendarEvent?.id ?? null,
+          },
         },
+        id: true,
       },
-      id: true,
-    },
-  });
+    }),
+  );
+};
+
+export const recomputeCompaniesLastContact = async (
+  client: CoreApiClient,
+  companyIds: string[],
+): Promise<void> => {
+  for (const companyId of companyIds) {
+    await recomputeCompanyLastContact(client, companyId);
+  }
 };

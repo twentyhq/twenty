@@ -80,13 +80,12 @@ export const SettingsAdminChats = () => {
           {hasMore && !isDefined(error) && (
             <StyledShowMoreContainer>
               <Button
-                title={t`Show more`}
-                Icon={IconDotsVertical}
+                startIcon={<IconDotsVertical />}
                 onClick={handleShowMore}
                 disabled={isShowMoreDisabled}
-                size="small"
-                variant="secondary"
-              />
+                size="sm"
+                variant="outline"
+              >{t`Show more`}</Button>
             </StyledShowMoreContainer>
           )}
         </Section>

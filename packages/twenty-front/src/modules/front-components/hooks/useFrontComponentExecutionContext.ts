@@ -58,6 +58,12 @@ const FRONT_COMPONENT_CLIPBOARD_RATE_LIMIT_MS = 1000;
 
 const FRONT_COMPONENT_UPLOAD_FILE_NAME_MAX_LENGTH = 200;
 
+const CONFIRM_BUTTON_ACCENT_TO_COLOR = {
+  blue: 'accent',
+  default: 'neutral',
+  danger: 'danger',
+} as const;
+
 type OpenSidePanelPageParams = Parameters<
   FrontComponentHostCommunicationApi['openSidePanelPage']
 >[0];
@@ -389,7 +395,7 @@ export const useFrontComponentExecutionContext = ({
         title,
         subtitle,
         confirmButtonText,
-        confirmButtonAccent,
+        confirmButtonColor: CONFIRM_BUTTON_ACCENT_TO_COLOR[confirmButtonAccent],
       });
     };
 

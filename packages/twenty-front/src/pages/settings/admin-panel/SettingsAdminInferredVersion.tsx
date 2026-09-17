@@ -99,11 +99,10 @@ export const SettingsAdminInferredVersion = () => {
           />
           <StyledRefreshButtonContainer>
             <Button
-              variant="secondary"
-              title={t`Refresh status`}
               onClick={handleRefreshUpgradeStatus}
               disabled={isRefreshingUpgradeStatus || isLoadingUpgradeStatus}
-            />
+              variant="outline"
+            >{t`Refresh status`}</Button>
           </StyledRefreshButtonContainer>
         </Section>
       </SettingsPageContainer>

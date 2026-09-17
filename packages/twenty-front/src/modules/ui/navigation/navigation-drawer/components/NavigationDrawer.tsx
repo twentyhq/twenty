@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
-import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
@@ -50,24 +49,18 @@ const StyledAnimatedContainer = styled.div<{
   }
 `;
 
-// The header takes a tighter gap than the sections below it so that the mode
-// switcher row starts where the page card header ends in the next column.
 const StyledContainer = styled.div<{
   isExpanded?: boolean;
 }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
   height: 100%;
-  padding: ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[4]}
-    ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[4]};
   width: ${({ isExpanded }) =>
     isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
-    padding-left: ${themeCssVariables.spacing[2]};
-    padding-right: ${themeCssVariables.spacing[2]};
   }
 `;
 
@@ -75,11 +68,13 @@ const StyledContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[2]};
   min-height: 0;
+  padding-left: ${themeCssVariables.spacing[2]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     gap: ${themeCssVariables.spacing[4]};
+    padding-right: ${themeCssVariables.spacing[2]};
   }
 `;
 
@@ -89,7 +84,6 @@ export const NavigationDrawer = ({
 }: NavigationDrawerProps) => {
   const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
-  const isSettingsDrawer = useIsSettingsDrawer();
   const isExpanded = useNavigationDrawerExpanded();
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
@@ -132,13 +126,11 @@ export const NavigationDrawer = ({
         isResizing={isResizing}
       >
         <StyledContainer isExpanded={isExpanded}>
-          <NavigationDrawerHeader
-            showCollapseButton={isMobile || !isSettingsDrawer}
-          />
+          <NavigationDrawerHeader />
           <StyledContent>{children}</StyledContent>
         </StyledContainer>
 
-        {isNavigationDrawerExpanded && !isMobile && !isSettingsDrawer && (
+        {isNavigationDrawerExpanded && !isMobile && (
           <ResizablePanelEdge
             side="right"
             constraints={NAVIGATION_DRAWER_CONSTRAINTS}

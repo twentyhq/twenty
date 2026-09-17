@@ -1,13 +1,13 @@
+import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { createContext } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
-import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 export type CommandMenuContextType = {
   displayType: 'button' | 'listItem' | 'dropdownItem';
   containerType: CommandMenuItemContainerType;
-  commandMenuItems: CommandMenuItemFieldsFragment[];
+  commandMenuItems: CommandMenuItemDefinition[];
   commandMenuContextApi: CommandMenuContextApi;
   isInPreviewMode: boolean;
 };

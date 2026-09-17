@@ -59,16 +59,13 @@ export const ViewPickerEditButton = () => {
   if (viewPickerMode === 'edit') {
     return (
       <Button
-        title={t`Delete`}
         onClick={destroyViewFromCurrentState}
-        accent="danger"
         fullWidth
-        size="small"
-        justify="center"
-        focus={false}
-        variant="secondary"
+        size="sm"
         disabled={viewPickerIsPersisting || isLastView}
-      />
+        variant="outline"
+        color="danger"
+      >{t`Delete`}</Button>
     );
   }
 
@@ -78,13 +75,12 @@ export const ViewPickerEditButton = () => {
   ) {
     return (
       <Button
-        title={t`Go to Settings`}
         onClick={navigateToSelectSettings}
-        size="small"
-        accent="blue"
+        size="sm"
         fullWidth
-        justify="center"
-      />
+        variant="solid"
+        color="accent"
+      >{t`Go to Settings`}</Button>
     );
   }
 
@@ -94,18 +90,17 @@ export const ViewPickerEditButton = () => {
   ) {
     return (
       <Button
-        title={t`Create`}
         onClick={createViewFromCurrentState}
-        accent="blue"
         fullWidth
-        size="small"
-        justify="center"
+        size="sm"
         disabled={
           viewPickerIsPersisting ||
           (viewPickerType === ViewType.KANBAN &&
             viewPickerMainGroupByFieldMetadataId === '')
         }
-      />
+        variant="solid"
+        color="accent"
+      >{t`Create`}</Button>
     );
   }
 };

@@ -1,12 +1,10 @@
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
-import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage';
 import { SidePanelCoreWorkflowFiltersPage } from '@/object-core/workflows/components/SidePanelCoreWorkflowFiltersPage';
 import { SidePanelCoreWorkflowVersionPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionPage';
 import { SidePanelCoreWorkflowVersionsPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage';
 import { SidePanelSettingsMetadataTranslationsPage } from '@/settings/translations/components/SidePanelSettingsMetadataTranslationsPage';
 import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRoutedPage';
-import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
 import { SidePanelEmailBlockSettingsPage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage';
 import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAiPage';
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
@@ -90,11 +88,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
     SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
     <SidePanelPageLayoutRecordPageWidgetTypeSelect />,
   ],
-  [
-    SidePanelPages.NavigationMenuItemEdit,
-    <SidePanelNavigationMenuItemEditPage />,
-  ],
-  [SidePanelPages.NavigationMenuAddItem, <SidePanelNewSidebarItemPage />],
   [SidePanelPages.CommandMenuEdit, <SidePanelCommandMenuItemEditPage />],
   [SidePanelPages.ComposeCalendarEvent, <SidePanelComposeCalendarEventPage />],
   [SidePanelPages.ComposeEmail, <SidePanelComposeEmailPage />],
