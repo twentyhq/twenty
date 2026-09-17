@@ -5,8 +5,12 @@ import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 
 import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStatusRenderer';
+import { AiChatToolPartRenderer } from '@/ai/components/AiChatToolPartRenderer';
 import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
+import { useToolWidgetByName } from '@/ai/hooks/useToolWidgetByName';
+import { type ToolWidget } from '@/ai/types/tool-widget.type';
+import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
 import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai/utils/isHiddenCompleteWorkspaceSetupToolPart';
@@ -17,6 +21,7 @@ import {
   type ExtendedUIMessagePart,
   isSucceededCompleteWorkspaceSetupToolPart,
 } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMessagePartsContainer = styled.div`
@@ -27,9 +32,11 @@ const StyledMessagePartsContainer = styled.div`
 
 const MessagePartRenderer = ({
   part,
+  widgetByToolName,
   isStreaming,
 }: {
   part: ExtendedUIMessagePart;
+  widgetByToolName: Map<string, ToolWidget>;
   isStreaming: boolean;
 }) => {
   switch (part.type) {
@@ -63,7 +70,19 @@ const MessagePartRenderer = ({
           );
         }
 
-        return <ToolStepRenderer toolPart={part} isStreaming={isStreaming} />;
+        const widget = widgetByToolName.get(getEffectiveToolName(part));
+
+        if (!isDefined(widget)) {
+          return <ToolStepRenderer toolPart={part} isStreaming={isStreaming} />;
+        }
+
+        return (
+          <AiChatToolPartRenderer
+            toolPart={part}
+            widget={widget}
+            isStreaming={isStreaming}
+          />
+        );
       }
       return null;
   }
@@ -78,6 +97,8 @@ export const AiChatAssistantMessageRenderer = ({
   isLastMessageStreaming: boolean;
   hasError?: boolean;
 }) => {
+  const widgetByToolName = useToolWidgetByName();
+
   const hasCodeExecutionData = messageParts.some(
     (part) => part.type === 'data-code-execution',
   );
@@ -90,7 +111,15 @@ export const AiChatAssistantMessageRenderer = ({
       !isHiddenCompleteWorkspaceSetupToolPart(part) &&
       !(hasCodeExecutionData && isCodeInterpreterToolPart(part)),
   );
-  const renderItems = groupContiguousThinkingStepParts(filteredParts);
+  // A call that has a widget and has finished running renders on its own,
+  // rather than folded into the collapsed step group.
+  const renderItems = groupContiguousThinkingStepParts(
+    filteredParts,
+    (part) =>
+      isToolUIPart(part) &&
+      part.state === 'output-available' &&
+      widgetByToolName.has(getEffectiveToolName(part)),
+  );
 
   const lastRenderItemIndex = renderItems.length - 1;
 
@@ -127,6 +156,7 @@ export const AiChatAssistantMessageRenderer = ({
             <MessagePartRenderer
               key={index}
               part={renderItem.part}
+              widgetByToolName={widgetByToolName}
               isStreaming={isLastMessageStreaming}
             />
           ),

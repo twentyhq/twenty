@@ -1,4 +1,5 @@
 import {
+  type CallToolFunction,
   type CloseSidePanelFunction,
   type CopyToClipboardFunction,
   type EnqueueSnackbarFunction,
@@ -25,6 +26,7 @@ export type WorkerFrontComponentHostCommunicationApi = {
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
   uploadFile?: UploadFileFunction;
+  callTool?: CallToolFunction;
   storageSet?: StorageSetFunction;
   storageDelete?: StorageDeleteFunction;
   storageClear?: StorageClearFunction;

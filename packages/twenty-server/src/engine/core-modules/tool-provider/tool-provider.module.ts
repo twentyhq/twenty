@@ -40,6 +40,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
 
+import { ToolCallResolver } from './resolvers/tool-call.resolver';
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
@@ -80,6 +81,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
   ],
   providers: [
     ToolIndexResolver,
+    ToolCallResolver,
     ToolExecutorService,
     RecordFilesResolverService,
     provideWorkspaceScopedRepository(FileEntity),

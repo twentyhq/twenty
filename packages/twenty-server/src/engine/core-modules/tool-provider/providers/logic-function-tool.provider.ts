@@ -49,13 +49,26 @@ export class LogicFunctionToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
 
-    const { flatLogicFunctionMaps, flatObjectMetadataMaps } =
+    const { flatLogicFunctionMaps, flatObjectMetadataMaps, flatFrontComponentMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: context.workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps', 'flatObjectMetadataMaps'],
+          flatMapsKeys: [
+            'flatLogicFunctionMaps',
+            'flatObjectMetadataMaps',
+            'flatFrontComponentMaps',
+          ],
         },
       );
+
+    const resolveWidgetFrontComponentId = (
+      frontComponentUniversalIdentifier: string | undefined,
+    ) =>
+      isDefined(frontComponentUniversalIdentifier)
+        ? flatFrontComponentMaps.byUniversalIdentifier[
+            frontComponentUniversalIdentifier
+          ]?.id
+        : undefined;
 
     const resolveObjectLabel = (objectUniversalIdentifier: string) =>
       flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier]
@@ -86,6 +99,9 @@ export class LogicFunctionToolProvider implements ToolProvider {
           kind: 'logic_function',
           logicFunctionId: logicFunction.id,
         },
+        frontComponentId: resolveWidgetFrontComponentId(
+          logicFunction.toolTriggerSettings?.frontComponentUniversalIdentifier,
+        ),
       };
 
       if (includeSchemas) {

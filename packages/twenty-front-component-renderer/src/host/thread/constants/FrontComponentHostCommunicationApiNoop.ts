@@ -12,6 +12,11 @@ export const FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP: FrontComponentHostComm
     updateProgress: async () => {},
     copyToClipboard: async () => {},
     uploadFile: async () => ({ status: 'failed', reason: 'upload-failed' }),
+    callTool: async () => ({
+      success: false,
+      message: 'No host is connected',
+      error: 'NO_HOST',
+    }),
     storageSet: async () => {},
     storageDelete: async () => {},
     storageClear: async () => {},
