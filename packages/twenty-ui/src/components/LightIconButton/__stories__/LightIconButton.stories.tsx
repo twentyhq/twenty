@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { IconSearch } from '@ui/icon';
 import { IconButton } from '@ui/components/IconButton/IconButton';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
@@ -20,7 +20,18 @@ const meta: Meta<typeof LightIconButton> = {
 export default meta;
 type Story = StoryObj<typeof LightIconButton>;
 
-export const Default: Story = { decorators: [ComponentDecorator] };
+export const Default: Story = {
+  decorators: [ComponentDecorator],
+  args: { onClick: fn() },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search',
+    });
+
+    await userEvent.click(button);
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
 
 export const Appearance: Story = {
   ...Default,
@@ -126,6 +137,22 @@ export const Catalog: CatalogStory<Story, typeof LightIconButton> = {
         },
       ],
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const buttons = canvas.getAllByRole('button', { name: 'Search' });
+
+    for (const button of buttons) {
+      await expect(button).toBeVisible();
+    }
+
+    await expect(canvas.getAllByRole('button', { pressed: true })).toHaveLength(
+      4,
+    );
+    await expect(canvas.getAllByRole('button', { busy: true })).toHaveLength(4);
+    await expect(
+      buttons.filter((button) => button.hasAttribute('disabled')),
+    ).toHaveLength(8);
   },
 };
 export const CatalogDark: CatalogStory<Story, typeof LightIconButton> = {
