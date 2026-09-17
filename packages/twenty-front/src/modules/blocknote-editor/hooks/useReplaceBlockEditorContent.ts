@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
-import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { readStoredBlocknote } from '@/blocknote-editor/utils/readStoredBlocknote';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';

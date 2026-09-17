@@ -50,4 +50,49 @@ describe('convertTipTapBlocksToMarkdown', () => {
   it('should return undefined when a block is not a TipTap node', () => {
     expect(convertTipTapBlocksToMarkdown('[{"foo":"bar"}]')).toBeUndefined();
   });
+
+  it('should leave a blocknote body carrying a mention alone', () => {
+    const blocknoteBody = JSON.stringify([
+      {
+        id: 'b1',
+        type: 'paragraph',
+        props: {},
+        children: [],
+        content: [
+          { type: 'text', text: 'Hello ', styles: {} },
+          { type: 'mention', props: { label: 'John Doe' } },
+        ],
+      },
+    ]);
+
+    expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();
+  });
+
+  it('should leave a blocknote list alone', () => {
+    const blocknoteBody = JSON.stringify([
+      {
+        id: 'b1',
+        type: 'bulletListItem',
+        props: {},
+        children: [],
+        content: [{ type: 'text', text: 'call the client', styles: {} }],
+      },
+    ]);
+
+    expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();
+  });
+
+  it('should leave a blocknote table alone, whose content is not an array', () => {
+    const blocknoteBody = JSON.stringify([
+      {
+        id: 'b1',
+        type: 'table',
+        props: {},
+        children: [],
+        content: { type: 'tableContent', rows: [] },
+      },
+    ]);
+
+    expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();
+  });
 });
