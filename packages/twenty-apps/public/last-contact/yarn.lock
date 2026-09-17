@@ -1396,10 +1396,12 @@ __metadata:
     "@sniptt/guards": "npm:^0.2.0"
     "@types/node": "npm:^24.7.2"
     "@types/react": "npm:^19.0.0"
+    "@types/semver": "npm:^7"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     oxlint: "npm:^0.16.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    semver: "npm:^7.8.5"
     twenty-client-sdk: "npm:2.40.0"
     twenty-sdk: "npm:2.40.0"
     twenty-ui: "npm:1.0.0-alpha.1"
@@ -1480,6 +1482,13 @@ __metadata:
   dependencies:
     csstype: "npm:^3.2.2"
   checksum: 10c0/b554eab715bb14e581f0ae60e5cefe91e1a5e06c31022b543a9806cf224aa056f21e4fb46208e46eb934d86ca0b247ebc82377192a0dead303cb28b8764c6e67
+  languageName: node
+  linkType: hard
+
+"@types/semver@npm:^7":
+  version: 7.8.0
+  resolution: "@types/semver@npm:7.8.0"
+  checksum: 10c0/46a1f38e36013448b279798e8b134e7e8de3b3630b1f40683903b9d57d36dd1d70838515570ed9a149fa09e9c381b9e39319b58d7b9f3b929b42ae2becff7aa3
   languageName: node
   linkType: hard
 

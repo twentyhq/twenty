@@ -58,7 +58,6 @@ export class WorkflowVersionStepCreationWorkspaceService {
           type: stepType,
           workspaceId,
           position,
-          workflowVersionId,
           id,
           defaultSettings,
         },
@@ -68,7 +67,10 @@ export class WorkflowVersionStepCreationWorkspaceService {
       await this.workflowSchemaWorkspaceService.enrichOutputSchema({
         step: builtStep,
         workspaceId,
-        workflowVersionId,
+        workflowVersionContent: {
+          trigger: existingTrigger,
+          steps: existingSteps,
+        },
       });
 
     const { updatedSteps, updatedTrigger } = insertStep({

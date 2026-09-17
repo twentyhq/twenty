@@ -3,7 +3,6 @@ import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplic
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
-import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -32,14 +31,13 @@ import {
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
   FindOneApplicationByUniversalIdentifierDocument,
+  FindOneApplicationDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
-import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
-import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
 const AVAILABLE_APPLICATION_DETAIL_ID = 'available-application-detail';
 
@@ -62,7 +60,6 @@ export const SettingsAvailableApplicationDetails = () => {
       universalIdentifier: availableApplicationId,
       onCompleted: handleInstallCompleted,
     });
-  const { upgrade, isUpgrading } = useUpgradeApplication();
   const { copyMarketplaceAppLink } = useCopyMarketplaceAppLink();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
@@ -89,6 +86,16 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const application = applicationData?.findOneApplication;
 
+  const { data: installedApplicationData } = useQuery(
+    FindOneApplicationDocument,
+    {
+      variables: { id: application?.id ?? '' },
+      skip: !application?.id,
+    },
+  );
+
+  const installedApplication = installedApplicationData?.findOneApplication;
+
   const detail = detailData?.findMarketplaceAppDetail;
   const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
     | Manifest
@@ -99,35 +106,15 @@ export const SettingsAvailableApplicationDetails = () => {
   const currentVersion = application?.version;
   const latestAvailableVersion = detail?.latestAvailableVersion;
 
-  const sourceType = detail?.sourceType;
-  const isNpmApp = sourceType === ApplicationRegistrationSourceType.NPM;
-  const registrationId = detail?.id;
+  const isNpmApp = detail?.sourceType === ApplicationRegistrationSourceType.NPM;
   const sourcePackageUrl =
     isNpmApp && detail?.sourcePackage
       ? `https://www.npmjs.com/package/${detail.sourcePackage}`
       : undefined;
 
   const isUnlisted = isDefined(detail) && !detail.isListed;
-  const isAlreadyInstalled = isDefined(application);
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
-
-  const hasUpdate =
-    isUpgradableApplicationSourceType(sourceType) &&
-    isDefined(latestAvailableVersion) &&
-    isDefined(currentVersion) &&
-    isNewerSemver(latestAvailableVersion, currentVersion);
-
-  const handleUpgrade = async () => {
-    if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {
-      return;
-    }
-
-    await upgrade({
-      appRegistrationId: registrationId,
-      targetVersion: latestAvailableVersion,
-    });
-  };
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -173,9 +160,13 @@ export const SettingsAvailableApplicationDetails = () => {
       case 'content':
         return (
           <SettingsApplicationDetailContentTab
-            applicationId={detail.universalIdentifier}
+            applicationId={
+              installedApplication?.id ?? detail.universalIdentifier
+            }
+            installedApplication={installedApplication ?? undefined}
             manifestContent={manifest}
             applicationInfo={{
+              id: installedApplication?.id,
               name: displayName,
               logoUrl: detail.logoUrl,
               universalIdentifier: detail.universalIdentifier,
@@ -226,14 +217,10 @@ export const SettingsAvailableApplicationDetails = () => {
         actionButton={
           isDefined(detail) ? (
             <SettingsApplicationActionButton
-              isInstalled={isAlreadyInstalled}
+              installedApplicationId={application?.id}
               canInstallMarketplaceApps={canInstallMarketplaceApps}
               onInstall={requestInstall}
               isInstalling={isInstalling}
-              hasUpdate={hasUpdate}
-              latestAvailableVersion={latestAvailableVersion ?? undefined}
-              onUpgrade={handleUpgrade}
-              isUpgrading={isUpgrading}
             />
           ) : undefined
         }

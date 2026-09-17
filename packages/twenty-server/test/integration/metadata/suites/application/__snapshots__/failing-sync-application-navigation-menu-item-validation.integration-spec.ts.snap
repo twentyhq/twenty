@@ -198,6 +198,11 @@ exports[`Sync application should fail on invalid navigation menu items when sync
               "message": "A valid viewUniversalIdentifier is required for VIEW type",
               "userFriendlyMessage": "A valid viewUniversalIdentifier is required for VIEW type",
             },
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "Target view not found",
+              "userFriendlyMessage": "Target view not found",
+            },
           ],
           "flatEntityMinimalInformation": {
             "name": "View with malformed identifier",
@@ -234,6 +239,11 @@ exports[`Sync application should fail on invalid navigation menu items when sync
               "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
               "message": "A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type",
               "userFriendlyMessage": "A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type",
+            },
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "Target object metadata not found",
+              "userFriendlyMessage": "Target object not found",
             },
           ],
           "flatEntityMinimalInformation": {
