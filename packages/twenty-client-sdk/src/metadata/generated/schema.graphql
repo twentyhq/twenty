@@ -82,6 +82,12 @@ type ApplicationTokenPair {
   applicationRefreshToken: AuthToken!
 }
 
+type FrontComponentSettingsTab {
+  label: String
+  icon: String
+  position: Int
+}
+
 type FrontComponent {
   id: UUID!
   name: String!
@@ -96,6 +102,7 @@ type FrontComponent {
   updatedAt: DateTime!
   isHeadless: Boolean!
   usesSdkClient: Boolean!
+  settingsTab: FrontComponentSettingsTab
   applicationTokenPair: ApplicationTokenPair
   applicationVariables: JSON
   frontComponentSharedDependenciesChecksum: String

@@ -5,8 +5,8 @@ export type Scalars = {
     DateTime: string,
     Boolean: boolean,
     JSON: Record<string, unknown>,
-    Float: number,
     Int: number,
+    Float: number,
     ConnectionCursor: any,
     JSONObject: any,
     BigInt: any,
@@ -81,6 +81,13 @@ export interface ApplicationTokenPair {
     __typename: 'ApplicationTokenPair'
 }
 
+export interface FrontComponentSettingsTab {
+    label?: Scalars['String']
+    icon?: Scalars['String']
+    position?: Scalars['Int']
+    __typename: 'FrontComponentSettingsTab'
+}
+
 export interface FrontComponent {
     id: Scalars['UUID']
     name: Scalars['String']
@@ -95,6 +102,7 @@ export interface FrontComponent {
     updatedAt: Scalars['DateTime']
     isHeadless: Scalars['Boolean']
     usesSdkClient: Scalars['Boolean']
+    settingsTab?: FrontComponentSettingsTab
     applicationTokenPair?: ApplicationTokenPair
     applicationVariables?: Scalars['JSON']
     frontComponentSharedDependenciesChecksum?: Scalars['String']
@@ -3676,6 +3684,14 @@ export interface ApplicationTokenPairGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface FrontComponentSettingsTabGenqlSelection{
+    label?: boolean | number
+    icon?: boolean | number
+    position?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface FrontComponentGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -3690,6 +3706,7 @@ export interface FrontComponentGenqlSelection{
     updatedAt?: boolean | number
     isHeadless?: boolean | number
     usesSdkClient?: boolean | number
+    settingsTab?: FrontComponentSettingsTabGenqlSelection
     applicationTokenPair?: ApplicationTokenPairGenqlSelection
     applicationVariables?: boolean | number
     frontComponentSharedDependenciesChecksum?: boolean | number
@@ -7860,6 +7877,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isApplicationTokenPair = (obj?: { __typename?: any } | null): obj is ApplicationTokenPair => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationTokenPair"')
       return ApplicationTokenPair_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const FrontComponentSettingsTab_possibleTypes: string[] = ['FrontComponentSettingsTab']
+    export const isFrontComponentSettingsTab = (obj?: { __typename?: any } | null): obj is FrontComponentSettingsTab => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponentSettingsTab"')
+      return FrontComponentSettingsTab_possibleTypes.includes(obj.__typename)
     }
     
 

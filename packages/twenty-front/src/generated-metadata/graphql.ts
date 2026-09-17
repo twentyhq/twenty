@@ -2290,6 +2290,7 @@ export type FrontComponent = {
   id: Scalars['UUID']['output'];
   isHeadless: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
+  settingsTab?: Maybe<FrontComponentSettingsTab>;
   sourceComponentPath: Scalars['String']['output'];
   universalIdentifier?: Maybe<Scalars['UUID']['output']>;
   updatedAt: Scalars['DateTime']['output'];
@@ -2301,6 +2302,13 @@ export type FrontComponentConfiguration = {
   configurationType: WidgetConfigurationType;
   frontComponentId: Scalars['UUID']['output'];
   headerCommandMenuItemUniversalIdentifiers?: Maybe<Array<Scalars['UUID']['output']>>;
+};
+
+export type FrontComponentSettingsTab = {
+  __typename?: 'FrontComponentSettingsTab';
+  icon?: Maybe<Scalars['String']['output']>;
+  label?: Maybe<Scalars['String']['output']>;
+  position?: Maybe<Scalars['Int']['output']>;
 };
 
 export type FullName = {
