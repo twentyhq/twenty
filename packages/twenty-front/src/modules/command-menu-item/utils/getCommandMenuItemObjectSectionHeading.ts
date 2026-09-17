@@ -13,7 +13,8 @@ export const getCommandMenuItemObjectSectionHeading = ({
   commandMenuContextApi: CommandMenuContextApi;
   fallbackHeading: string;
 }): string => {
-  const objectLabelPlural = commandMenuContextApi.objectMetadataItem.labelPlural;
+  const objectLabelPlural =
+    commandMenuContextApi.objectMetadataItem.labelPlural;
 
   return isNonEmptyString(objectLabelPlural)
     ? capitalize(objectLabelPlural)
