@@ -80,27 +80,20 @@ export class ObjectMetadataService {
 
     // Renaming an object rewrites indexes and morph fields on the objects
     // related to it, so two renames in one batch can emit the same index twice
-    // and the transpiler rejects the duplicate. Renames go one at a time, each
-    // against freshly recomputed maps.
+    // and the transpiler rejects the duplicate. Splitting the batch into one
+    // migration per object would work around that, but each migration commits
+    // separately and a later failure would leave the workspace half updated,
+    // so a batch that cannot be applied in one migration is refused instead.
     const hasRename = updateObjectInputs.some(
       ({ update }) =>
         isDefined(update.nameSingular) || isDefined(update.namePlural),
     );
 
-    if (hasRename) {
-      const updatedFlatObjectMetadatas: FlatObjectMetadata[] = [];
-
-      for (const updateObjectInput of updateObjectInputs) {
-        updatedFlatObjectMetadatas.push(
-          await this.updateOneObject({
-            updateObjectInput,
-            workspaceId,
-            ownerFlatApplication,
-          }),
-        );
-      }
-
-      return updatedFlatObjectMetadatas;
+    if (hasRename && updateObjectInputs.length > 1) {
+      throw new ObjectMetadataException(
+        'Cannot rename an object in a batch of several objects, send renames one at a time',
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      );
     }
 
     return await this.updateObjectsInOneMigration({

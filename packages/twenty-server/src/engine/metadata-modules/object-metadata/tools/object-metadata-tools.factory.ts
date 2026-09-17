@@ -406,24 +406,44 @@ export class ObjectMetadataToolsFactory {
           }>;
         }) => {
           try {
-            await this.objectMetadataService.updateManyObjects({
-              updateObjectInputs: parameters.objects.map(
-                ({ id, icon, ...update }) => {
-                  const normalizedIcon = normalizeIconName(icon);
+            const updateObjectInputs = parameters.objects.map(
+              ({ id, icon, ...update }) => {
+                const normalizedIcon = normalizeIconName(icon);
 
-                  return {
-                    id,
-                    update: {
-                      ...update,
-                      ...(isDefined(normalizedIcon)
-                        ? { icon: normalizedIcon }
-                        : {}),
-                    },
-                  };
-                },
+                return {
+                  id,
+                  update: {
+                    ...update,
+                    ...(isDefined(normalizedIcon)
+                      ? { icon: normalizedIcon }
+                      : {}),
+                  },
+                };
+              },
+            );
+
+            // updateManyObjects refuses a batch mixing a rename with anything
+            // else, because renames cannot share one migration.
+            const isRename = ({
+              update,
+            }: (typeof updateObjectInputs)[number]) =>
+              isDefined(update.nameSingular) || isDefined(update.namePlural);
+
+            await this.objectMetadataService.updateManyObjects({
+              updateObjectInputs: updateObjectInputs.filter(
+                (updateObjectInput) => !isRename(updateObjectInput),
               ),
               workspaceId,
             });
+
+            for (const updateObjectInput of updateObjectInputs.filter(
+              isRename,
+            )) {
+              await this.objectMetadataService.updateOneObject({
+                updateObjectInput,
+                workspaceId,
+              });
+            }
 
             return true;
           } catch (error) {
