@@ -1,4 +1,3 @@
-import { AlreadyReportedError } from '@/error-handler/errors/AlreadyReportedError';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 
 describe('getToastOptionsFromError', () => {
@@ -26,14 +25,6 @@ describe('getToastOptionsFromError', () => {
       onClose,
     });
     expect(onClose).not.toHaveBeenCalled();
-  });
-
-  it('suppresses failures the user has already been told about', () => {
-    expect(
-      getToastOptionsFromError({
-        error: new AlreadyReportedError(new Error('Connection lost')),
-      }),
-    ).toBeUndefined();
   });
 
   it('suppresses aborted requests even when custom content is provided', () => {

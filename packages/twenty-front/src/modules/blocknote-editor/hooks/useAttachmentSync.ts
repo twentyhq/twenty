@@ -57,7 +57,6 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
     );
 
     if (attachmentPathsToRestore.length > 0) {
-      // The fetch already reported its failure; the renames below must still run.
       const softDeletedAttachments = (await findSoftDeletedAttachments().catch(
         () => null,
       )) as Attachment[] | null;

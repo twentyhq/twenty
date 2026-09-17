@@ -1,4 +1,3 @@
-import { AlreadyReportedError } from '@/error-handler/errors/AlreadyReportedError';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { isErrorLike } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
@@ -19,10 +18,7 @@ export const getToastOptionsFromError = ({
 }: GetToastOptionsFromErrorParams): ToastOptions | undefined => {
   const errorLike = isErrorLike(error) ? error : undefined;
 
-  if (
-    errorLike?.name === 'AbortError' ||
-    error instanceof AlreadyReportedError
-  ) {
+  if (errorLike?.name === 'AbortError') {
     return;
   }
 

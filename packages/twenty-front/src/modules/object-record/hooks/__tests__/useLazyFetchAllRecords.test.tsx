@@ -1,4 +1,3 @@
-import { AlreadyReportedError } from '@/error-handler/errors/AlreadyReportedError';
 import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { type MockedResponse } from '@apollo/client/testing';
@@ -235,7 +234,6 @@ describe('useLazyFetchAllRecords', () => {
     });
 
     await expect(res).rejects.toThrow('Internal server error');
-    await expect(res).rejects.toBeInstanceOf(AlreadyReportedError);
 
     await waitFor(() => {
       expect(result.current.isDownloading).toBe(false);

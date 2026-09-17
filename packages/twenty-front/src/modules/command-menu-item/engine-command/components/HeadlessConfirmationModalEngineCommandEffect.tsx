@@ -87,8 +87,6 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
       } finally {
-        // Unmount even on failure, otherwise the headless command stays mounted
-        // and can never be triggered again.
         unmountCommand(commandMenuItemId);
       }
     };
