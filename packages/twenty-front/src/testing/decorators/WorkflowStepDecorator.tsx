@@ -1,4 +1,3 @@
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useLoadMockedMetadata } from '~/testing/hooks/useLoadMockedMetadata';
@@ -14,6 +13,7 @@ import { type Decorator } from '@storybook/react-vite';
 import { useAtomValue, useStore } from 'jotai';
 import { useEffect, useState, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ToastProvider } from 'twenty-ui/primitives/feedback';
 import {
   mockedWorkflow,
   mockedWorkflowNodeId,
@@ -115,11 +115,9 @@ const WorkflowStepDecoratorContent = ({
 };
 
 export const WorkflowStepDecorator: Decorator = (Story) => (
-  <SnackBarComponentInstanceContext.Provider
-    value={{ instanceId: 'workflow-step-snack-bar' }}
-  >
+  <ToastProvider>
     <WorkflowStepDecoratorContent>
       <Story />
     </WorkflowStepDecoratorContent>
-  </SnackBarComponentInstanceContext.Provider>
+  </ToastProvider>
 );

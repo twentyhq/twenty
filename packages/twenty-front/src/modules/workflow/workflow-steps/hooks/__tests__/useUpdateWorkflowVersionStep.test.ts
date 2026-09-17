@@ -228,9 +228,12 @@ describe('useUpdateWorkflowVersionStep', () => {
         step: { id: 'step-1', type: 'CODE' },
       }),
     );
-    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-      apolloError: error,
-    });
+    expect(mockEnqueueToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variant: 'error',
+        children: 'Core save failed',
+      }),
+    );
     expect(
       jotaiStore.get(workflowDiagramComponentState.atomFamily(instance))?.edges,
     ).toEqual([]);

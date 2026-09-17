@@ -1,6 +1,6 @@
 # Core workflow frontend rollout
 
-This frontend depends on the core-ID API in #26068. Keep `IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED` disabled for general rollout until the dependencies below are satisfied. This change does not switch the background execution engine.
+This frontend uses the core-ID API merged through #26068, and this branch is rebased onto that merge. Keep `IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED` disabled for general rollout until the dependencies below are satisfied. This change does not switch the background execution engine.
 
 ## Definition ownership and rollback
 
@@ -29,13 +29,13 @@ Deliver the backend contract and frontend consumer together in a separate follow
 
 B-async (#26098) must make the shared execution engine, automated triggers and webhook resolution consume core definitions independently of the UI flag. Core webhook URLs contain a core workflow ID; deployed webhook ingress must accept that ID while preserving existing workspace-ID URLs. Completion of a core API request alone does not establish that scheduled or queued execution has migrated.
 
-After #26068 merges, rebase and retarget this frontend PR onto `main`, then reconcile it with the latest #26098. The branches currently overlap in core-version UI/context and generated GraphQL, workflow lifecycle/list services, and instance-command registration. Resolve those integrations without moving execution-engine work into this PR. Verify the combined result rather than relying on this branch's earlier acceptance: rerun the complete create → edit → activate → run → inspect flow, command-menu lifecycle after the upstream core-only rename/deletion cleanup, connected If/Else duplication after its upstream fix, and ON → OFF → ON rollback behavior against the integrated backend.
+This frontend PR is rebased and retargeted onto `main` after #26068 merged. The currently published #26098 head (`c90111feb3fd9324a571bf4d0fb1fb8118a6e213`) predates that merge and conflicts with the integrated API and frontend branch. B-async must publish a reconciled head without moving execution-engine work into this PR. The branches overlap in core-version UI/context and generated GraphQL, workflow lifecycle/list services, and instance-command registration. Verify the combined result rather than relying on either branch's standalone acceptance: rerun the complete create → edit → activate → run → inspect flow, command-menu lifecycle after the core-only rename/deletion cleanup, connected If/Else duplication, and ON → OFF → ON rollback behavior against the integrated backend.
 
-## Upstream duplication dependency
+## Integrated duplication verification
 
-Browser acceptance exposed a failure in #26068's `CoreWorkflowMutationWorkspaceService.cloneVersionContent`: it remaps normal `nextStepIds` and iterator `initialLoopStepIds`, but leaves If/Else `settings.input.branches[*].nextStepIds` pointing at the original steps. Duplicating a workflow containing connected If/Else branches is rejected by the core content validator because the copied branches reference steps absent from the new version. Plain manual/form duplication succeeds.
+Browser acceptance exposed a failure in the earlier #26068 implementation: connected If/Else branch destinations were left pointing at the original steps during workflow duplication. The merged API now remaps those destinations through `remapDuplicatedStepDestinations`.
 
-Reproduce with manual trigger → iterator → If/Else → form, then Duplicate Workflow. The same failure occurs when calling `duplicateCoreWorkflow` directly with the source core workflow/version IDs. Fix the core clone API and add its regression coverage in #26068, then reverify the frontend flow here after integration; this frontend does not duplicate that backend service.
+The upstream regression suite covering regular, iterator and If/Else destinations passes on this rebased branch. Browser re-verification of manual trigger → iterator → If/Else → form duplication remains part of final-stack acceptance with the reconciled B-async branch.
 
 MCP rekeying and the A1bis constraints remain separate follow-up work. They are not prerequisites for completing this flag-gated frontend PR, but the full migration must not claim them as covered here.
 
@@ -61,7 +61,7 @@ Tested this branch on `apple.localhost:4001` against its server/worker and local
 | Errors and permissions | A Guest without workflow permission saw explicit denial. A malformed core ID showed an error/retry state. A deleted workflow showed missing-record state. Neither used workspace fallback. Stopping the local server left a failed rename in the input; after restarting, retrying without retyping saved that name. |
 | ID boundaries | Completed workspace run `de3f9855-6c0a-4820-bee1-1407afb6b572` retained its ID and referenced core workflow `c3546f66-d16f-465f-93ca-a82f3db536b6` / version `13f37ddc-3620-49a4-b92d-a2e9b4ca6225`. A business-record UUID in the webhook payload was preserved unchanged. |
 
-Incomplete acceptance is explicit: connected If/Else workflow duplication fails in the upstream clone API described above. Code source persisted, but executing its Lambda build failed because the local AWS SSO session had expired. Actual webhook/automated execution remains B-async acceptance. Core definition remote updates, remote deletion and reconnect remain blocked on the missing SSE contract and consumer; workspace run SSE was observed updating the completed run.
+Incomplete acceptance is explicit: the merged backend If/Else duplication regression passes, while browser verification on the final combined frontend/API/B-async stack remains pending. Code source persisted, but executing its Lambda build failed because the local AWS SSO session had expired. Actual webhook/automated execution remains B-async acceptance. Core definition remote updates, remote deletion and reconnect remain blocked on the missing SSE contract and consumer; workspace run SSE was observed updating the completed run.
 
 ### Screenshots
 

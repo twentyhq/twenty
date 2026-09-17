@@ -1,7 +1,8 @@
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
@@ -9,7 +10,7 @@ import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/gener
 
 export const useWorkflowEditorMutationErrorHandler = (instanceId?: string) => {
   const store = useStore();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const flowState = useAtomComponentStateCallbackState(
     flowComponentState,
     instanceId,
@@ -20,7 +21,7 @@ export const useWorkflowEditorMutationErrorHandler = (instanceId?: string) => {
   );
 
   return (error: Error) => {
-    enqueueErrorSnackBar({ apolloError: error });
+    enqueueToast(getToastOptionsFromError({ error }));
     const flow = store.get(flowState);
     if (isDefined(flow)) {
       store.set(

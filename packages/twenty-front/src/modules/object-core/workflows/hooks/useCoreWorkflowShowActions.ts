@@ -1,9 +1,9 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import {
   UpdateCoreWorkflowDocument,
@@ -25,7 +25,7 @@ export const useCoreWorkflowShowActions = ({
     ValidateCoreWorkflowVersionDocument,
     { client },
   );
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const renameWorkflow = async (name: string) => {
     if (name === currentName) {
@@ -36,8 +36,9 @@ export const useCoreWorkflowShowActions = ({
       await invalidateCoreWorkflowVersions(client);
       return true;
     } catch (mutationError) {
-      enqueueErrorSnackBar({
-        message:
+      enqueueToast({
+        variant: 'error',
+        children:
           mutationError instanceof Error
             ? mutationError.message
             : t`Could not save workflow`,
@@ -54,10 +55,11 @@ export const useCoreWorkflowShowActions = ({
       await validateVersion({
         variables: { coreWorkflowVersionId: coreWorkflowVersionId },
       });
-      enqueueSuccessSnackBar({ message: t`Workflow is valid` });
+      enqueueToast({ variant: 'success', children: t`Workflow is valid` });
     } catch (mutationError) {
-      enqueueErrorSnackBar({
-        message:
+      enqueueToast({
+        variant: 'error',
+        children:
           mutationError instanceof Error
             ? mutationError.message
             : t`Could not save workflow`,

@@ -57,16 +57,14 @@ export const CoreWorkflowShowToolbar = ({
       />
     )}
     <Button
-      title={t`Validate`}
-      size="small"
+      size="sm"
       disabled={!isDefined(selectedVersionId) || isValidating}
       onClick={onValidate}
-    />
-    <Button
-      title={t`Refresh`}
-      size="small"
-      Icon={IconRefresh}
-      onClick={onRefresh}
-    />
+    >
+      {t`Validate`}
+    </Button>
+    <Button size="sm" startIcon={<IconRefresh />} onClick={onRefresh}>
+      {t`Refresh`}
+    </Button>
   </StyledToolbar>
 );
