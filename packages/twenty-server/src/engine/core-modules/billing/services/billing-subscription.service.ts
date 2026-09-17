@@ -29,7 +29,6 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
-import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
@@ -69,7 +68,6 @@ export class BillingSubscriptionService {
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly billingUsageCacheService: BillingUsageCacheService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
@@ -325,8 +323,6 @@ export class BillingSubscriptionService {
       billingSubscription.workspaceId,
       updatedSubscription.id,
     );
-
-    await this.billingUsageCacheService.flushAvailableCredits(workspace.id);
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'currentBillingSubscription',

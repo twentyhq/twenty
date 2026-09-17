@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { And, type EntityManager, IsNull, LessThan, MoreThan } from 'typeorm';
+import { type EntityManager, IsNull, LessThan, MoreThan } from 'typeorm';
 
 import {
   BillingException,
@@ -162,29 +162,6 @@ export class BillingCreditGrantService {
       ],
       order: { createdAt: 'ASC' },
     });
-  }
-
-  // The one place that says when a credit balance stops being trustworthy
-  // before the period is out: an operator-set expiry falling inside it would
-  // otherwise go unnoticed until the next one, and the workspace would keep
-  // spending credits that already lapsed.
-  async findEarliestExpiryBefore({
-    workspaceId,
-    boundary,
-  }: {
-    workspaceId: string;
-    boundary: Date;
-  }): Promise<Date | null> {
-    const [row] = await this.billingCreditGrantRepository.find(workspaceId, {
-      where: {
-        revokedAt: IsNull(),
-        expiresAt: And(MoreThan(new Date()), LessThan(boundary)),
-      },
-      order: { expiresAt: 'ASC' },
-      take: 1,
-    });
-
-    return row?.expiresAt ?? null;
   }
 
   // The previous transition pulled every grant it closed back to the instant

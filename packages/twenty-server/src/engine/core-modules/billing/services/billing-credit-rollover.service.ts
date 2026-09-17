@@ -86,7 +86,7 @@ export class BillingCreditRolloverService {
   private async carryGrantsForward(
     params: ProcessRolloverParams & { usageMicro: number },
   ): Promise<void> {
-    const { workspaceId, nextPeriodStart, nextAllowanceMicro } = params;
+    const { workspaceId, nextAllowanceMicro } = params;
 
     const rolloverCapMultiplier = this.twentyConfigService.get(
       'BILLING_ROLLOVER_TOTAL_CAP_MULTIPLIER',
@@ -106,9 +106,7 @@ export class BillingCreditRolloverService {
 
     await this.billingCreditService.refreshWorkspaceCreditState({
       workspaceId,
-      availableDeltaMicro: carriedForwardMicro,
-      isReplay: hasReplayedGrant,
-      adjustmentKey: buildRolloverAdjustmentKey(nextPeriodStart),
+      isReplay: hasReplayedGrant && carriedForwardMicro === 0,
     });
   }
 
@@ -198,9 +196,6 @@ export class BillingCreditRolloverService {
     return { carriedForwardMicro, hasReplayedGrant };
   }
 }
-
-const buildRolloverAdjustmentKey = (nextPeriodStart: Date): string =>
-  `rollover:${nextPeriodStart.toISOString()}`;
 
 // Stripe redelivers webhooks, so the whole transition has to be replayable.
 const buildCarryForwardIdempotencyKey = ({

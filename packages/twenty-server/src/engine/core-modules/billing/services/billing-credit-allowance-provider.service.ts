@@ -28,8 +28,8 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
     super();
   }
 
-  async isCreditAllowanceEnabled(workspaceId: string): Promise<boolean> {
-    return this.billingUsageService.isAllowanceCounterEnabled(workspaceId);
+  async isCreditAllowanceEnabled(): Promise<boolean> {
+    return this.twentyConfigService.get('IS_BILLING_ENABLED');
   }
 
   async getCreditAllowancePeriod(
