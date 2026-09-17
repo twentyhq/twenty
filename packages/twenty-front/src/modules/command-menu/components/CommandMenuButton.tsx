@@ -2,11 +2,12 @@ import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
 import { type MouseEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 
 export type CommandMenuButtonProps = {
   command: {
@@ -70,15 +71,17 @@ export const CommandMenuButton = ({
           </NavigationButton>
         ) : (
           <IconButton
-            Icon={command.Icon}
-            size="small"
-            variant="primary"
-            accent={buttonAccent}
-            to={to}
+            size="sm"
+            variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
+            color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
+            render={isDefined(to) ? <Link to={to} /> : undefined}
+            href={to}
             onClick={onClick}
             disabled={disabled}
-            ariaLabel={command.label}
-          />
+            aria-label={command.label}
+          >
+            <command.Icon />
+          </IconButton>
         )}
       </div>
     </Tooltip>

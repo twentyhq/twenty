@@ -68,7 +68,7 @@ export const AiChatPageHeader = () => {
       ) : (
         <StyledHeaderTitle>{isNewChat ? t`New chat` : null}</StyledHeaderTitle>
       )}
-      {isMobile && <AiChatCloseButton variant="primary" />}
+      {isMobile && <AiChatCloseButton />}
       <AiChatThreadDeleteConfirmationModal
         surface={AI_CHAT_THREAD_ACTIONS_SURFACE.PAGE_HEADER}
       />

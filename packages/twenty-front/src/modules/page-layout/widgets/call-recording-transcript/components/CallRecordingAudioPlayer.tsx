@@ -9,7 +9,8 @@ import {
   IconPlayerPause,
   IconPlayerPlay,
 } from 'twenty-ui/icon';
-import { Button, IconButton, Slider } from 'twenty-ui/primitives/input';
+import { Button, Slider } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledAudioBar = styled.div`
@@ -140,6 +141,8 @@ export const CallRecordingAudioPlayer = ({
     }
   };
 
+  const PlaybackIcon = isPlaying ? IconPlayerPause : IconPlayerPlay;
+
   return (
     <StyledAudioBar>
       <audio
@@ -183,19 +186,16 @@ export const CallRecordingAudioPlayer = ({
       ) : (
         <>
           <IconButton
-            ariaLabel={isPlaying ? t`Pause` : t`Play`}
-            Icon={
-              isStalled
-                ? undefined
-                : isPlaying
-                  ? IconPlayerPause
-                  : IconPlayerPlay
-            }
-            size="small"
-            variant="tertiary"
+            aria-label={isPlaying ? t`Pause` : t`Play`}
+            size="sm"
+            variant="ghost"
             onClick={handleTogglePlayback}
           >
-            {isStalled && <CircularProgressBar barWidth={2} size={24} />}
+            {isStalled ? (
+              <CircularProgressBar barWidth={2} size={24} />
+            ) : (
+              <PlaybackIcon />
+            )}
           </IconButton>
           <StyledTrack>
             {isDurationKnown ? (
