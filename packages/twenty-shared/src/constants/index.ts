@@ -37,6 +37,8 @@ export { EMAIL_IMAGE_MIME_TYPES } from './EmailImageMimeTypes';
 export { EMAIL_SENDING_PROVIDERS } from './EmailSendingProviders';
 export type { EnterpriseInstanceType } from './EnterpriseInstanceType';
 export { ENTERPRISE_INSTANCE_TYPE } from './EnterpriseInstanceType';
+export type { EnterpriseServerBindingRejectionCode } from './EnterpriseServerBindingRejectionCode';
+export { ENTERPRISE_SERVER_BINDING_REJECTION_CODE } from './EnterpriseServerBindingRejectionCode';
 export { EVERYONE_PRINCIPAL_ID } from './EveryonePrincipalId';
 export { EXCLUDED_FIELD_NAMES_FROM_AGENT_TOOL_SCHEMA } from './ExcludedFieldNamesFromAgentToolSchema';
 export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountAggregateOperation';

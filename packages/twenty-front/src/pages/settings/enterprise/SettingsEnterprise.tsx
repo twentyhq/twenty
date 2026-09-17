@@ -28,6 +28,7 @@ import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import {
   ENTERPRISE_INSTANCE_TYPE,
+  ENTERPRISE_SERVER_BINDING_REJECTION_CODE,
   type EnterpriseInstanceType,
 } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
@@ -52,11 +53,21 @@ const RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID =
 const getSlotInUseInstanceType = (
   error: unknown,
 ): EnterpriseInstanceType | null => {
-  if (isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER')) {
+  if (
+    isGraphqlErrorOfType(
+      error,
+      ENTERPRISE_SERVER_BINDING_REJECTION_CODE.BOUND_TO_ANOTHER_SERVER,
+    )
+  ) {
     return ENTERPRISE_INSTANCE_TYPE.PRODUCTION;
   }
 
-  if (isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE')) {
+  if (
+    isGraphqlErrorOfType(
+      error,
+      ENTERPRISE_SERVER_BINDING_REJECTION_CODE.DEV_SLOT_IN_USE,
+    )
+  ) {
     return ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT;
   }
 
@@ -306,14 +317,9 @@ export const SettingsEnterprise = ({
         });
       }
     } catch (error) {
-      const isServerBindingRejection =
-        isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER') ||
-        isGraphqlErrorOfType(error, 'ENTERPRISE_MISSING_SERVER_ID') ||
-        isGraphqlErrorOfType(
-          error,
-          'ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION',
-        ) ||
-        isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE');
+      const isServerBindingRejection = Object.values(
+        ENTERPRISE_SERVER_BINDING_REJECTION_CODE,
+      ).some((rejectionCode) => isGraphqlErrorOfType(error, rejectionCode));
 
       if (isServerBindingRejection) {
         setSlotInUseInstanceType(getSlotInUseInstanceType(error));
@@ -400,10 +406,13 @@ export const SettingsEnterprise = ({
         await loadCurrentUser();
         enqueueToast(getToastOptionsFromError({ error, duration: 10000 }));
       } else if (
-        isGraphqlErrorOfType(error, 'ENTERPRISE_MISSING_SERVER_ID') ||
         isGraphqlErrorOfType(
           error,
-          'ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION',
+          ENTERPRISE_SERVER_BINDING_REJECTION_CODE.MISSING_SERVER_ID,
+        ) ||
+        isGraphqlErrorOfType(
+          error,
+          ENTERPRISE_SERVER_BINDING_REJECTION_CODE.DEV_REQUIRES_ACTIVE_PRODUCTION,
         ) ||
         isGraphqlErrorOfType(error, 'ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED')
       ) {
@@ -557,7 +566,12 @@ export const SettingsEnterprise = ({
             variant: 'error',
             children: t`Could not update the instance type`,
           });
-        } else if (isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE')) {
+        } else if (
+          isGraphqlErrorOfType(
+            error,
+            ENTERPRISE_SERVER_BINDING_REJECTION_CODE.DEV_SLOT_IN_USE,
+          )
+        ) {
           developmentSlotInUseError = error;
           setSlotInUseInstanceType(ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT);
         }

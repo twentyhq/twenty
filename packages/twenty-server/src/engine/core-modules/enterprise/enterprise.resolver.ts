@@ -3,6 +3,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import {
+  ENTERPRISE_SERVER_BINDING_REJECTION_CODE,
+  type EnterpriseServerBindingRejectionCode,
+} from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EnterpriseLicenseInfoDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-license-info.dto';
@@ -22,13 +26,11 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 // Server-binding rejections that should surface as an activation failure with
-// their own user-facing message (rather than being silently swallowed).
-const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
-  EnterpriseExceptionCode.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER,
-  EnterpriseExceptionCode.ENTERPRISE_MISSING_SERVER_ID,
-  EnterpriseExceptionCode.ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION,
-  EnterpriseExceptionCode.ENTERPRISE_DEV_SLOT_IN_USE,
-];
+// their own user-facing message (rather than being silently swallowed). The
+// satisfies keeps every shared rejection code covered by the exception enum.
+const SERVER_BINDING_REJECTION_CODES = Object.values(
+  ENTERPRISE_SERVER_BINDING_REJECTION_CODE,
+) satisfies `${EnterpriseExceptionCode}`[];
 
 @Resolver()
 @UsePipes(ResolverValidationPipe)
@@ -46,7 +48,7 @@ export class EnterpriseResolver {
     if (
       isDefined(rejectionCode) &&
       SERVER_BINDING_REJECTION_CODES.includes(
-        rejectionCode as EnterpriseExceptionCode,
+        rejectionCode as EnterpriseServerBindingRejectionCode,
       )
     ) {
       throw new EnterpriseException(

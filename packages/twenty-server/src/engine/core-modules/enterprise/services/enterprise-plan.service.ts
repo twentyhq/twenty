@@ -6,7 +6,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
+import {
+  ENTERPRISE_INSTANCE_TYPE,
+  ENTERPRISE_SERVER_BINDING_REJECTION_CODE,
+} from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -45,9 +48,6 @@ export class EnterprisePlanService implements OnModuleInit {
   private cachedValidityPayload: EnterpriseValidityPayload | null = null;
   private cachedKeyPayload: EnterpriseKeyPayload | null = null;
   private lastRefreshRejectionCode: string | null = null;
-
-  static readonly ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE =
-    'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER';
 
   static readonly ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED_CODE =
     'ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED';
@@ -302,7 +302,7 @@ export class EnterprisePlanService implements OnModuleInit {
         // recoverable: the existing token simply expires without reissue.
         if (
           errorData.code ===
-          EnterprisePlanService.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE
+          ENTERPRISE_SERVER_BINDING_REJECTION_CODE.BOUND_TO_ANOTHER_SERVER
         ) {
           await this.revokeStoredValidityToken();
         }
