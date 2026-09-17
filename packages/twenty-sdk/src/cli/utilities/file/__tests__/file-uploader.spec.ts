@@ -11,12 +11,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // so the backslash-normalization test below is meaningful even when run on Linux
 vi.mock('path', async (importOriginal) => {
   const actual = await importOriginal<typeof PathModule>();
+  const patched = { ...actual, relative: actual.win32.relative };
 
-  return {
-    ...actual,
-    default: { ...actual.default, relative: actual.win32.relative },
-    relative: actual.win32.relative,
-  };
+  return { ...patched, default: patched };
 });
 
 const mockCreateApplicationFileUploads = vi.fn();
