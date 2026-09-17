@@ -18,13 +18,13 @@ import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/wo
 export type SystemRelationHolderNameSingular =
   (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number];
 
-export type MissingSystemRelationIndexPlan = {
+export type MissingSystemRelationIndex = {
   holderFlatObjectMetadata: FlatObjectMetadata;
   joinColumnName: string;
   universalFlatIndexMetadata: UniversalFlatIndexMetadata;
 };
 
-type BuildMissingSystemRelationIndexPlansArgs = Pick<
+type BuildMissingSystemRelationIndexesArgs = Pick<
   AllFlatEntityMaps,
   'flatFieldMetadataMaps' | 'flatIndexMaps'
 > & {
@@ -38,7 +38,7 @@ type BuildMissingSystemRelationIndexPlansArgs = Pick<
 const collectLeadingIndexedFieldMetadataIds = ({
   flatIndexMaps,
   objectMetadataId,
-}: Pick<BuildMissingSystemRelationIndexPlansArgs, 'flatIndexMaps'> & {
+}: Pick<BuildMissingSystemRelationIndexesArgs, 'flatIndexMaps'> & {
   objectMetadataId: string;
 }): Set<string> =>
   new Set(
@@ -54,12 +54,12 @@ const collectLeadingIndexedFieldMetadataIds = ({
       .filter(isDefined),
   );
 
-export const buildMissingSystemRelationIndexPlans = ({
+export const buildMissingSystemRelationIndexes = ({
   flatFieldMetadataMaps,
   flatIndexMaps,
   holderFlatObjectMetadataByNameSingular,
   twentyStandardApplicationUniversalIdentifier,
-}: BuildMissingSystemRelationIndexPlansArgs): MissingSystemRelationIndexPlan[] =>
+}: BuildMissingSystemRelationIndexesArgs): MissingSystemRelationIndex[] =>
   Object.entries(holderFlatObjectMetadataByNameSingular).flatMap(
     ([holderNameSingular, holderFlatObjectMetadata]) => {
       const targetMorphId =

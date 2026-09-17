@@ -9,10 +9,10 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
-  buildMissingSystemRelationIndexPlans,
-  type MissingSystemRelationIndexPlan,
+  buildMissingSystemRelationIndexes,
+  type MissingSystemRelationIndex,
   type SystemRelationHolderNameSingular,
-} from 'src/database/commands/upgrade-version-command/2-42/utils/build-missing-system-relation-index-plans.util';
+} from 'src/database/commands/upgrade-version-command/2-42/utils/build-missing-system-relation-indexes.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -89,7 +89,7 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
         { workspaceId },
       );
 
-    const plans = buildMissingSystemRelationIndexPlans({
+    const missingIndexes = buildMissingSystemRelationIndexes({
       flatFieldMetadataMaps,
       flatIndexMaps,
       holderFlatObjectMetadataByNameSingular,
@@ -97,7 +97,7 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
         twentyStandardFlatApplication.universalIdentifier,
     });
 
-    if (plans.length === 0) {
+    if (missingIndexes.length === 0) {
       this.logger.log(
         `System relation indexes already present for workspace ${workspaceId}, skipping`,
       );
@@ -105,18 +105,18 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
       return;
     }
 
-    const planContexts = plans.map((plan) => ({
-      plan,
+    const indexesToCreate = missingIndexes.map((missingIndex) => ({
+      missingIndex,
       ...getWorkspaceSchemaContextForMigration({
         workspaceId,
-        objectMetadata: plan.holderFlatObjectMetadata,
+        objectMetadata: missingIndex.holderFlatObjectMetadata,
       }),
     }));
 
     if (isDryRun) {
-      for (const { plan, tableName } of planContexts) {
+      for (const { missingIndex, tableName } of indexesToCreate) {
         this.logger.log(
-          `[DRY RUN] Would create index ${plan.universalFlatIndexMetadata.name} on ${tableName}(${plan.joinColumnName}) for workspace ${workspaceId}`,
+          `[DRY RUN] Would create index ${missingIndex.universalFlatIndexMetadata.name} on ${tableName}(${missingIndex.joinColumnName}) for workspace ${workspaceId}`,
         );
       }
 
@@ -130,22 +130,22 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
       await queryRunner.connect();
       isQueryRunnerConnected = true;
 
-      for (const { plan, schemaName, tableName } of planContexts) {
+      for (const { missingIndex, schemaName, tableName } of indexesToCreate) {
         await this.workspaceSchemaManagerService.indexManager.createIndex({
           queryRunner,
           schemaName,
           tableName,
           index: {
-            name: plan.universalFlatIndexMetadata.name,
-            columns: [plan.joinColumnName],
-            isUnique: plan.universalFlatIndexMetadata.isUnique,
-            type: plan.universalFlatIndexMetadata.indexType,
+            name: missingIndex.universalFlatIndexMetadata.name,
+            columns: [missingIndex.joinColumnName],
+            isUnique: missingIndex.universalFlatIndexMetadata.isUnique,
+            type: missingIndex.universalFlatIndexMetadata.indexType,
           },
           concurrently: true,
         });
 
         this.logger.log(
-          `Created index ${plan.universalFlatIndexMetadata.name} on ${tableName}(${plan.joinColumnName}) for workspace ${workspaceId}`,
+          `Created index ${missingIndex.universalFlatIndexMetadata.name} on ${tableName}(${missingIndex.joinColumnName}) for workspace ${workspaceId}`,
         );
       }
     } finally {
@@ -154,27 +154,27 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
       }
     }
 
-    const plansByApplicationUniversalIdentifier = new Map<
+    const missingIndexesByApplicationUniversalIdentifier = new Map<
       string,
-      MissingSystemRelationIndexPlan[]
+      MissingSystemRelationIndex[]
     >();
 
-    for (const plan of plans) {
+    for (const missingIndex of missingIndexes) {
       const { applicationUniversalIdentifier } =
-        plan.universalFlatIndexMetadata;
+        missingIndex.universalFlatIndexMetadata;
 
-      plansByApplicationUniversalIdentifier.set(applicationUniversalIdentifier, [
-        ...(plansByApplicationUniversalIdentifier.get(
+      missingIndexesByApplicationUniversalIdentifier.set(applicationUniversalIdentifier, [
+        ...(missingIndexesByApplicationUniversalIdentifier.get(
           applicationUniversalIdentifier,
         ) ?? []),
-        plan,
+        missingIndex,
       ]);
     }
 
     for (const [
       applicationUniversalIdentifier,
-      applicationPlans,
-    ] of plansByApplicationUniversalIdentifier) {
+      applicationMissingIndexes,
+    ] of missingIndexesByApplicationUniversalIdentifier) {
       const result =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
@@ -183,7 +183,7 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
             applicationUniversalIdentifier,
             allFlatEntityOperationByMetadataName: {
               index: {
-                flatEntityToCreate: applicationPlans.map(
+                flatEntityToCreate: applicationMissingIndexes.map(
                   ({ universalFlatIndexMetadata }) =>
                     universalFlatIndexMetadata,
                 ),
@@ -202,7 +202,7 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
     }
 
     this.logger.log(
-      `Backfilled ${plans.length} system relation index(es) for workspace ${workspaceId}`,
+      `Backfilled ${missingIndexes.length} system relation index(es) for workspace ${workspaceId}`,
     );
   }
 }

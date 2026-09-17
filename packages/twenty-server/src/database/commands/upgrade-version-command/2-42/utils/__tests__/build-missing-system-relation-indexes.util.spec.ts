@@ -9,9 +9,9 @@ import {
 } from 'twenty-shared/types';
 
 import {
-  buildMissingSystemRelationIndexPlans,
+  buildMissingSystemRelationIndexes,
   type SystemRelationHolderNameSingular,
-} from 'src/database/commands/upgrade-version-command/2-42/utils/build-missing-system-relation-index-plans.util';
+} from 'src/database/commands/upgrade-version-command/2-42/utils/build-missing-system-relation-indexes.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -148,9 +148,9 @@ const buildArgs = (targetLegs: TargetLegSpecification[]) => {
   };
 };
 
-describe('buildMissingSystemRelationIndexPlans', () => {
-  it('plans an index for an app-owned target leg that has none, on every holder', () => {
-    const plans = buildMissingSystemRelationIndexPlans(
+describe('buildMissingSystemRelationIndexes', () => {
+  it('returns an index for an app-owned target leg that has none, on every holder', () => {
+    const missingIndexes = buildMissingSystemRelationIndexes(
       buildArgs(
         DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map((holderNameSingular) => ({
           holderNameSingular,
@@ -160,7 +160,7 @@ describe('buildMissingSystemRelationIndexPlans', () => {
     );
 
     expect(
-      plans.map(({ holderFlatObjectMetadata, joinColumnName }) => [
+      missingIndexes.map(({ holderFlatObjectMetadata, joinColumnName }) => [
         holderFlatObjectMetadata.nameSingular,
         joinColumnName,
       ]),
@@ -171,7 +171,7 @@ describe('buildMissingSystemRelationIndexPlans', () => {
       ['taskTarget', 'targetSalesActionItemId'],
     ]);
 
-    const [{ universalFlatIndexMetadata }] = plans;
+    const [{ universalFlatIndexMetadata }] = missingIndexes;
 
     expect(universalFlatIndexMetadata.applicationUniversalIdentifier).toBe(
       CUSTOM_APP_UID,
@@ -200,7 +200,7 @@ describe('buildMissingSystemRelationIndexPlans', () => {
   });
 
   it('skips legs already leading an index but not legs only in second position', () => {
-    const plans = buildMissingSystemRelationIndexPlans(
+    const missingIndexes = buildMissingSystemRelationIndexes(
       buildArgs([
         {
           holderNameSingular: 'timelineActivity',
@@ -215,13 +215,13 @@ describe('buildMissingSystemRelationIndexPlans', () => {
       ]),
     );
 
-    expect(plans.map(({ joinColumnName }) => joinColumnName)).toEqual([
+    expect(missingIndexes.map(({ joinColumnName }) => joinColumnName)).toEqual([
       'targetStripeCustomerId',
     ]);
   });
 
   it('leaves standard-owned legs, foreign morph ids and one-to-many sides alone', () => {
-    const plans = buildMissingSystemRelationIndexPlans(
+    const missingIndexes = buildMissingSystemRelationIndexes(
       buildArgs([
         {
           holderNameSingular: 'timelineActivity',
@@ -241,6 +241,6 @@ describe('buildMissingSystemRelationIndexPlans', () => {
       ]),
     );
 
-    expect(plans).toEqual([]);
+    expect(missingIndexes).toEqual([]);
   });
 });
