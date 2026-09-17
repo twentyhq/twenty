@@ -1,6 +1,5 @@
-import { t } from '@lingui/core/macro';
+import { getCommandMenuItemProgressLabel } from '@/command-menu-item/utils/getCommandMenuItemProgressLabel';
 import { type Nullable } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 export const getCommandMenuButtonLabel = ({
   shortLabel,
@@ -14,9 +13,7 @@ export const getCommandMenuButtonLabel = ({
   shouldHideLabel: boolean;
 }): string | undefined => {
   if (isLoading) {
-    return isDefined(progress) && progress > 0
-      ? `${Math.round(progress)}%`
-      : t`Preparing…`;
+    return getCommandMenuItemProgressLabel(progress);
   }
 
   if (shouldHideLabel) {

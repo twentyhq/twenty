@@ -11,13 +11,12 @@ import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFron
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useContext } from 'react';
+import { isValidElement, useContext } from 'react';
+import { ENGINE_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap';
+import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import {
-  EngineComponentKey,
-  FeatureFlagKey,
-} from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemClick = ({
   item,
@@ -79,15 +78,12 @@ export const useCommandMenuItemClick = ({
         return;
       }
 
+      const engineComponent = isDefined(item.engineComponentKey)
+        ? ENGINE_COMPONENT_KEY_COMPONENT_MAP[item.engineComponentKey]
+        : undefined;
       const isExport =
-        isDefined(item.engineComponentKey) &&
-        [
-          EngineComponentKey.EXPORT_RECORDS,
-          EngineComponentKey.EXPORT_VIEW,
-          EngineComponentKey.EXPORT_FROM_RECORD_INDEX,
-          EngineComponentKey.EXPORT_FROM_RECORD_SHOW,
-          EngineComponentKey.EXPORT_MULTIPLE_RECORDS,
-        ].includes(item.engineComponentKey);
+        isValidElement(engineComponent) &&
+        engineComponent.type === ExportRecordsCommand;
       if (!isExport || !isAsyncCsvExportEnabled) {
         closeCommandMenu();
       }

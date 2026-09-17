@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { getCommandMenuItemProgressLabel } from '@/command-menu-item/utils/getCommandMenuItemProgressLabel';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -19,7 +19,7 @@ export const CommandListItemLoader = ({ progress }: { progress: number }) => {
   return (
     <StyledContainer>
       <StyledProgressText>
-        {progress > 0 ? `${Math.round(progress)}%` : t`Preparing…`}
+        {getCommandMenuItemProgressLabel(progress)}
       </StyledProgressText>
       <Loader />
     </StyledContainer>
