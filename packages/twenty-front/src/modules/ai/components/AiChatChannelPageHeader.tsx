@@ -84,7 +84,10 @@ export const AiChatChannelPageHeader = ({
           color="accent"
           onClick={() => switchToNewChat()}
         >{t`New chat`}</Button>
-        <AiChatChannelMenu channel={channel} />
+        <AiChatChannelMenu
+          channel={channel}
+          surface={AI_CHAT_THREAD_ACTIONS_SURFACE.PAGE_HEADER}
+        />
       </StyledActions>
     </StyledHeader>
   );

@@ -14,6 +14,7 @@ import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { AiChatChannelMembersDropdownContent } from '@/ai/components/AiChatChannelMembersDropdownContent';
 import { AiChatChannelNameForm } from '@/ai/components/AiChatChannelNameForm';
 import { AI_CHAT_CHANNEL_DELETE_MODAL_ID } from '@/ai/constants/AiChatChannelDeleteModalId';
+import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import {
   AI_CHAT_CHANNEL_MENU_PAGE,
   type AiChatChannelMenuPage,
@@ -34,16 +35,24 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-export const getAiChatChannelMenuDropdownId = (channelId: string) =>
-  `ai-chat-channel-menu-${channelId}`;
+// The same channel's menu is mounted in the sidebar and on its page at the
+// same time, so the dropdown id carries the surface to open only one of them.
+export const getAiChatChannelMenuDropdownId = (
+  channelId: string,
+  surface: AiChatThreadActionsSurface,
+) => `ai-chat-channel-menu-${surface}-${channelId}`;
 
 type AiChatChannelMenuProps = {
   channel: FlatAgentChatChannel;
+  surface: AiChatThreadActionsSurface;
 };
 
-export const AiChatChannelMenu = ({ channel }: AiChatChannelMenuProps) => {
+export const AiChatChannelMenu = ({
+  channel,
+  surface,
+}: AiChatChannelMenuProps) => {
   const { t } = useLingui();
-  const dropdownId = getAiChatChannelMenuDropdownId(channel.id);
+  const dropdownId = getAiChatChannelMenuDropdownId(channel.id, surface);
   const { closeDropdown } = useCloseDropdown();
   const { openModal } = useModal();
   const [page, setPage] = useState<AiChatChannelMenuPage>(

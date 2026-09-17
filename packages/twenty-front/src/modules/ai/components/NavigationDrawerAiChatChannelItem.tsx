@@ -2,6 +2,7 @@ import {
   AiChatChannelMenu,
   getAiChatChannelMenuDropdownId,
 } from '@/ai/components/AiChatChannelMenu';
+import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatChannelIdFromPath } from '@/ai/hooks/useAiChatChannelIdFromPath';
 import { useNavigateToAiChatChannelPage } from '@/ai/hooks/useNavigateToAiChatChannelPage';
 import { getAiChatChannelIcon } from '@/ai/utils/getAiChatChannelIcon';
@@ -21,7 +22,10 @@ export const NavigationDrawerAiChatChannelItem = ({
   const { navigateToAiChatChannelPage } = useNavigateToAiChatChannelPage();
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    getAiChatChannelMenuDropdownId(channel.id),
+    getAiChatChannelMenuDropdownId(
+      channel.id,
+      AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER,
+    ),
   );
 
   const isActive = currentChannelId === channel.id;
@@ -33,7 +37,12 @@ export const NavigationDrawerAiChatChannelItem = ({
       active={isActive}
       onClick={() => navigateToAiChatChannelPage(channel.id)}
       isRightOptionsDropdownOpen={isDropdownOpen}
-      rightOptions={<AiChatChannelMenu channel={channel} />}
+      rightOptions={
+        <AiChatChannelMenu
+          channel={channel}
+          surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
+        />
+      }
     />
   );
 };
