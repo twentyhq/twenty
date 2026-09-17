@@ -30,6 +30,7 @@ import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
 /**
  * rest/apiKeys is deprecated, use rest/metadata/apiKeys instead
@@ -41,7 +42,11 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
 )
-@UseFilters(PermissionsRestApiExceptionFilter, RestApiExceptionFilter)
+@UseFilters(
+  PermissionsRestApiExceptionFilter,
+  RestApiExceptionFilter,
+  AuthRestApiExceptionFilter,
+)
 export class ApiKeyController {
   constructor(private readonly apiKeyService: ApiKeyService) {}
 
