@@ -44,7 +44,7 @@ describe('completeAndChargeCallRecording', () => {
     });
     expect(chargeCreditsMock).toHaveBeenCalledTimes(1);
     expect(chargeCreditsMock).toHaveBeenCalledWith({
-      operation: 'recordMeeting',
+      operation: 'recordCall',
       creditsUsedMicro: 1_000_000,
       quantity: 60,
     });

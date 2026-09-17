@@ -24,7 +24,7 @@ describe('chargeCompletedCallRecording', () => {
     });
 
     expect(chargeCreditsMock).toHaveBeenCalledWith({
-      operation: 'recordMeeting',
+      operation: 'recordCall',
       creditsUsedMicro: 500_000,
       quantity: 30,
     });
@@ -41,7 +41,7 @@ describe('chargeCompletedCallRecording', () => {
 
     expect(applicationConfig.config.billing?.operations?.[operation]).toEqual({
       operationType: 'CALL_RECORDING',
-      label: 'Meeting recording',
+      label: 'Call recording',
     });
   });
 
