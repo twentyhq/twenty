@@ -24,6 +24,7 @@ import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/d
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { validateUpdateObjectInputs } from 'src/engine/metadata-modules/object-metadata/utils/validate-update-object-inputs.util';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -35,6 +36,12 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 const MAX_OBJECTS_PER_BATCH_UPDATE = 100;
+
+const NON_BATCHABLE_UPDATE_PROPERTIES = [
+  'nameSingular',
+  'namePlural',
+  'labelIdentifierFieldMetadataId',
+] as const;
 
 @Injectable()
 export class ObjectMetadataService {
@@ -69,6 +76,8 @@ export class ObjectMetadataService {
       );
     }
 
+    validateUpdateObjectInputs(updateObjectInputs);
+
     const objectMetadataIds = updateObjectInputs.map(({ id }) => id);
 
     if (new Set(objectMetadataIds).size !== objectMetadataIds.length) {
@@ -78,20 +87,26 @@ export class ObjectMetadataService {
       );
     }
 
-    // Renaming an object rewrites indexes and morph fields on the objects
-    // related to it, so two renames in one batch can emit the same index twice
-    // and the transpiler rejects the duplicate. Splitting the batch into one
-    // migration per object would work around that, but each migration commits
-    // separately and a later failure would leave the workspace half updated,
-    // so a batch that cannot be applied in one migration is refused instead.
-    const hasRename = updateObjectInputs.some(
+    // These rewrite state beyond the object itself, so several of them in one
+    // migration either collide or hold locks across tables: a rename rewrites
+    // indexes and morph fields on related objects and can emit the same index
+    // twice, and a new label identifier rebuilds the search vector, rewriting
+    // the table and holding it locked until the whole batch commits. Splitting
+    // into one migration per object would commit each separately and leave the
+    // workspace half updated on a later failure, so the batch is refused.
+    const [nonBatchableUpdatedProperty] = updateObjectInputs.flatMap(
       ({ update }) =>
-        isDefined(update.nameSingular) || isDefined(update.namePlural),
+        NON_BATCHABLE_UPDATE_PROPERTIES.filter((property) =>
+          isDefined(update[property]),
+        ),
     );
 
-    if (hasRename && updateObjectInputs.length > 1) {
+    if (
+      isDefined(nonBatchableUpdatedProperty) &&
+      updateObjectInputs.length > 1
+    ) {
       throw new ObjectMetadataException(
-        'Cannot rename an object in a batch of several objects, send renames one at a time',
+        `Cannot update ${nonBatchableUpdatedProperty} in a batch of several objects, send it one at a time`,
         ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
       );
     }
