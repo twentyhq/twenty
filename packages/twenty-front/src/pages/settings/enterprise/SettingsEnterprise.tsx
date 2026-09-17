@@ -49,6 +49,20 @@ import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 const RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID =
   'release-enterprise-binding-confirmation-modal';
 
+const getSlotInUseInstanceType = (
+  error: unknown,
+): EnterpriseInstanceType | null => {
+  if (isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER')) {
+    return ENTERPRISE_INSTANCE_TYPE.PRODUCTION;
+  }
+
+  if (isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE')) {
+    return ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT;
+  }
+
+  return null;
+};
+
 type SettingsEnterpriseProps = {
   isAdminPanelTab?: boolean;
 };
@@ -140,7 +154,8 @@ export const SettingsEnterprise = ({
   }>(ENTERPRISE_PORTAL_SESSION);
   const [isRefreshingToken, setIsRefreshingToken] = useState(false);
   const [isReleasing, setIsReleasing] = useState(false);
-  const [isBoundToAnotherServer, setIsBoundToAnotherServer] = useState(false);
+  const [slotInUseInstanceType, setSlotInUseInstanceType] =
+    useState<EnterpriseInstanceType | null>(null);
   const { openDialog } = useDialog();
   const { enqueueToast } = useToast();
   const { loadCurrentUser } = useLoadCurrentUser();
@@ -301,9 +316,7 @@ export const SettingsEnterprise = ({
         isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE');
 
       if (isServerBindingRejection) {
-        setIsBoundToAnotherServer(
-          isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER'),
-        );
+        setSlotInUseInstanceType(getSlotInUseInstanceType(error));
         await loadCurrentUser();
         enqueueToast(getToastOptionsFromError({ error, duration: 10000 }));
       } else if (
@@ -367,7 +380,7 @@ export const SettingsEnterprise = ({
       const { data } = await refreshValidityTokenMutation();
 
       if (data?.refreshEnterpriseValidityToken === true) {
-        setIsBoundToAnotherServer(false);
+        setSlotInUseInstanceType(null);
         enqueueToast({
           variant: 'success',
           children: t`Validity token refreshed successfully`,
@@ -380,10 +393,10 @@ export const SettingsEnterprise = ({
         });
       }
     } catch (error) {
-      if (
-        isGraphqlErrorOfType(error, 'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER')
-      ) {
-        setIsBoundToAnotherServer(true);
+      const slotInUse = getSlotInUseInstanceType(error);
+
+      if (isDefined(slotInUse)) {
+        setSlotInUseInstanceType(slotInUse);
         await loadCurrentUser();
         enqueueToast(getToastOptionsFromError({ error, duration: 10000 }));
       } else if (
@@ -392,7 +405,6 @@ export const SettingsEnterprise = ({
           error,
           'ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION',
         ) ||
-        isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE') ||
         isGraphqlErrorOfType(error, 'ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED')
       ) {
         enqueueToast(getToastOptionsFromError({ error, duration: 10000 }));
@@ -407,14 +419,53 @@ export const SettingsEnterprise = ({
     }
   }, [refreshValidityTokenMutation, enqueueToast, loadCurrentUser, t]);
 
+  const restoreInstanceType = useCallback(
+    async (
+      previousInstanceType: EnterpriseInstanceType,
+      previousIsInstanceTypeFromDb: boolean,
+    ) => {
+      if (previousIsInstanceTypeFromDb) {
+        await updateInstanceTypeVariable(previousInstanceType, true);
+      } else {
+        await deleteInstanceTypeVariable();
+      }
+      setInstanceType(previousInstanceType);
+      setIsInstanceTypeFromDb(previousIsInstanceTypeFromDb);
+    },
+    [updateInstanceTypeVariable, deleteInstanceTypeVariable],
+  );
+
   const handleReleaseBinding = useCallback(async () => {
     setIsReleasing(true);
+    const previousInstanceType = instanceType;
+    const previousIsInstanceTypeFromDb = isInstanceTypeFromDb;
+    // The release frees the slot matching the calling server's instance type,
+    // so this server must be registered as development to free the dev slot.
+    const shouldSwitchToDevelopment =
+      slotInUseInstanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT &&
+      instanceType !== ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT;
+    let hasSwitchedToDevelopment = false;
+    let hasTransferred = false;
 
     try {
+      if (shouldSwitchToDevelopment) {
+        await updateInstanceTypeVariable(
+          ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT,
+          isInstanceTypeFromDb,
+        );
+        hasSwitchedToDevelopment = true;
+      }
+
       const result = await releaseServerBindingMutation();
 
       if (result.data?.releaseEnterpriseServerBinding.isValid === true) {
-        setIsBoundToAnotherServer(false);
+        hasTransferred = true;
+
+        if (hasSwitchedToDevelopment) {
+          setInstanceType(ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT);
+          setIsInstanceTypeFromDb(true);
+        }
+        setSlotInUseInstanceType(null);
         enqueueToast({
           variant: 'success',
           children: t`Organization key transferred to this server`,
@@ -442,9 +493,27 @@ export const SettingsEnterprise = ({
         });
       }
     } finally {
+      if (hasSwitchedToDevelopment && !hasTransferred) {
+        try {
+          await restoreInstanceType(
+            previousInstanceType,
+            previousIsInstanceTypeFromDb,
+          );
+        } catch {
+          enqueueToast({
+            variant: 'error',
+            children: t`Could not revert the instance type change.`,
+          });
+        }
+      }
       setIsReleasing(false);
     }
   }, [
+    instanceType,
+    isInstanceTypeFromDb,
+    slotInUseInstanceType,
+    updateInstanceTypeVariable,
+    restoreInstanceType,
     releaseServerBindingMutation,
     enqueueToast,
     fetchSubscriptionStatus,
@@ -459,6 +528,7 @@ export const SettingsEnterprise = ({
       const previousIsInstanceTypeFromDb = isInstanceTypeFromDb;
       let instanceUpdateSuccess = false;
       let tokenRefreshSuccess = false;
+      let developmentSlotInUseError: unknown = null;
 
       try {
         await updateInstanceTypeVariable(
@@ -470,6 +540,10 @@ export const SettingsEnterprise = ({
         setIsInstanceTypeFromDb(true);
         await loadCurrentUser();
 
+        await refreshValidityTokenMutation();
+        tokenRefreshSuccess = true;
+        setSlotInUseInstanceType(null);
+
         enqueueToast({
           variant: 'success',
           children:
@@ -477,31 +551,35 @@ export const SettingsEnterprise = ({
               ? t`Registered as a development instance. This instance will not be billed.`
               : t`Switched to a production instance.`,
         });
-
-        await refreshValidityTokenMutation();
-        tokenRefreshSuccess = true;
-      } catch {
+      } catch (error) {
         if (!instanceUpdateSuccess) {
           enqueueToast({
             variant: 'error',
             children: t`Could not update the instance type`,
           });
+        } else if (isGraphqlErrorOfType(error, 'ENTERPRISE_DEV_SLOT_IN_USE')) {
+          developmentSlotInUseError = error;
+          setSlotInUseInstanceType(ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT);
         }
       } finally {
         if (instanceUpdateSuccess && !tokenRefreshSuccess) {
           try {
-            if (previousIsInstanceTypeFromDb) {
-              await updateInstanceTypeVariable(previousInstanceType, true);
-            } else {
-              await deleteInstanceTypeVariable();
-            }
-            setInstanceType(previousInstanceType);
-            setIsInstanceTypeFromDb(previousIsInstanceTypeFromDb);
+            await restoreInstanceType(
+              previousInstanceType,
+              previousIsInstanceTypeFromDb,
+            );
             await loadCurrentUser();
-            enqueueToast({
-              variant: 'error',
-              children: t`Could not refresh validity token - reverted the instance type change.`,
-            });
+            enqueueToast(
+              isDefined(developmentSlotInUseError)
+                ? getToastOptionsFromError({
+                    error: developmentSlotInUseError,
+                    duration: 10000,
+                  })
+                : {
+                    variant: 'error',
+                    children: t`Could not refresh validity token - reverted the instance type change.`,
+                  },
+            );
           } catch {
             enqueueToast({
               variant: 'error',
@@ -515,7 +593,7 @@ export const SettingsEnterprise = ({
     [
       instanceType,
       updateInstanceTypeVariable,
-      deleteInstanceTypeVariable,
+      restoreInstanceType,
       isInstanceTypeFromDb,
       refreshValidityTokenMutation,
       loadCurrentUser,
@@ -556,11 +634,22 @@ export const SettingsEnterprise = ({
     </Section.Root>
   );
 
+  const isDevelopmentSlotInUse =
+    slotInUseInstanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT;
+
   const transferSection = (
     <Section.Root>
       <Section.Header
-        title={t`Key in use on another server`}
-        description={t`This Organization key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one.`}
+        title={
+          isDevelopmentSlotInUse
+            ? t`Development slot in use on another server`
+            : t`Key in use on another server`
+        }
+        description={
+          isDevelopmentSlotInUse
+            ? t`The development instance slot of this Organization key is held by a different server. Releasing it here will register this server as the development instance instead.`
+            : t`This Organization key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one.`
+        }
       />
       <Button
         startIcon={<IconKey />}
@@ -717,7 +806,7 @@ export const SettingsEnterprise = ({
               )}
             </SubscriptionInfoContainer>
           </Section.Root>
-          {isBoundToAnotherServer && transferSection}
+          {isDefined(slotInUseInstanceType) && transferSection}
           <Section.Root>
             <Section.Header
               title={t`Manage billing information`}
@@ -998,7 +1087,11 @@ export const SettingsEnterprise = ({
       <ConfirmationDialog
         dialogId={RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID}
         title={t`Release & transfer Organization key`}
-        subtitle={t`This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?`}
+        subtitle={
+          isDevelopmentSlotInUse
+            ? t`The development instance slot of this Organization key is currently held by a different server. Transferring it here will release it from that server and register this server as the development instance. Are you sure you want to continue?`
+            : t`This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?`
+        }
         confirmButtonText={t`Release & transfer`}
         confirmButtonColor="accent"
         loading={isReleasing}
