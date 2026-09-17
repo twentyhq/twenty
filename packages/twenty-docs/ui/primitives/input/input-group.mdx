@@ -1,0 +1,99 @@
+---
+title: InputGroup
+description: Add prefixes, suffixes, and actions around a text input.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import InputGroupReference from '/snippets/ui/generated/input/input-group.mdx';
+
+`InputGroup` gives an [Input](/ui/primitives/input/input) a shared border and optional leading or trailing content. Set `size` on the group to size both the container and its input.
+
+<StoryEmbed
+  storyId="ui-input-inputgroup--default"
+  title="InputGroup example"
+  height={240}
+/>
+
+## Anatomy
+
+Place the input inside `InputGroup` and keep field labels and messages outside the shared border.
+
+```text
+Field.Root
+├── Field.Label
+├── InputGroup
+│   └── Input
+└── Field.Description
+```
+
+| Part or slot                                  | Requirement          | Purpose                                                                  |
+| --------------------------------------------- | -------------------- | ------------------------------------------------------------------------ |
+| `InputGroup`                                  | Required             | Supplies the shared border, layout, and size.                            |
+| `Input` as `children`                         | Required             | Owns the input value, native attributes, and editing behavior.           |
+| `startElement`                                | Optional prop        | Adds a prefix, icon, or other content before the input.                  |
+| `endElement`                                  | Optional prop        | Adds a suffix or action after the input.                                 |
+| `Field.Root`, `Label`, `Description`, `Error` | Optional composition | Associates a label, helper text, and validation feedback with the input. |
+
+`startElement` and `endElement` are React node props, not separate components. `InputGroup` does not supply a label or manage validation. Give the input an accessible name, either through `Field.Label` or its own labeling attributes.
+
+## Prefix and suffix
+
+```tsx
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+
+export const WebsiteField = () => (
+  <Field.Root name="website">
+    <Field.Label>Website</Field.Label>
+    <InputGroup startElement={<span aria-hidden>https://</span>}>
+      <Input placeholder="example.com" />
+    </InputGroup>
+    <Field.Description>Enter the domain without https://.</Field.Description>
+  </Field.Root>
+);
+```
+
+`startElement` and `endElement` accept React nodes. Prefixes and suffixes are visual content; the input's submitted value contains only what the user enters.
+
+## Trailing action
+
+```tsx
+import { useState } from 'react';
+import { Button, Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+
+export const PasswordField = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Field.Root name="password">
+      <Field.Label>Password</Field.Label>
+      <InputGroup
+        endElement={
+          <Button
+            type="button"
+            aria-label={visible ? 'Hide password' : 'Show password'}
+            variant="ghost"
+            size="sm"
+            onClick={() => setVisible(!visible)}
+          >
+            {visible ? 'Hide' : 'Show'}
+          </Button>
+        }
+      >
+        <Input
+          type={visible ? 'text' : 'password'}
+          autoComplete="current-password"
+        />
+      </InputGroup>
+    </Field.Root>
+  );
+};
+```
+
+Put labels, validation, and value handling on the field or input. Give adornment buttons their own accessible names and use `type="button"` when they should not submit the form. The group supports `sm` and `md` sizes and defaults to `md`.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<InputGroupReference />

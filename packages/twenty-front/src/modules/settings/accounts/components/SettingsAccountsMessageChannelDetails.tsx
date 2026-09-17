@@ -8,9 +8,9 @@ import {
   type MessageFolderImportPolicy,
 } from 'twenty-shared/types';
 import { IconBriefcase, IconUsers } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
@@ -105,31 +105,16 @@ export const SettingsAccountsMessageChannelDetails = ({
       )}
       {!isGroupMailbox && (
         <Section>
-          <Card rounded>
-            <SettingsOptionCardContentSwitch
-              Icon={IconUsers}
-              title={t`Exclude group emails`}
-              description={t`Don't sync emails from team@ support@ noreply@...`}
-              checked={messageChannel.excludeGroupEmails}
-              onChange={() =>
-                handleIsGroupEmailExcludedToggle(
-                  !messageChannel.excludeGroupEmails,
-                )
-              }
-            />
-          </Card>
+          <H2Title
+            title={t`Visibility`}
+            description={t`Define what will be visible to other users in your workspace`}
+          />
+          <SettingsAccountsMessageVisibilityCard
+            value={messageChannel.visibility}
+            onChange={handleVisibilityChange}
+          />
         </Section>
       )}
-      <Section>
-        <H2Title
-          title={t`Visibility`}
-          description={t`Define what will be visible to other users in your workspace`}
-        />
-        <SettingsAccountsMessageVisibilityCard
-          value={messageChannel.visibility}
-          onChange={handleVisibilityChange}
-        />
-      </Section>
       <Section>
         <H2Title
           title={t`Contact auto-creation`}
@@ -141,7 +126,23 @@ export const SettingsAccountsMessageChannelDetails = ({
         />
       </Section>
       <Section>
+        <H2Title
+          title={t`Options`}
+          description={t`Configure what emails should get synced`}
+        />
         <Card rounded>
+          <SettingsOptionCardContentSwitch
+            Icon={IconUsers}
+            title={t`Exclude group emails`}
+            description={t`Don't import emails from team@ support@ noreply@...`}
+            divider
+            checked={messageChannel.excludeGroupEmails}
+            onChange={() =>
+              handleIsGroupEmailExcludedToggle(
+                !messageChannel.excludeGroupEmails,
+              )
+            }
+          />
           <SettingsOptionCardContentSwitch
             Icon={IconBriefcase}
             title={t`Exclude non-professional emails`}

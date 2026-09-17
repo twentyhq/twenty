@@ -1,12 +1,11 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { LightButton, MainButton } from 'twenty-ui/components';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import {
   AnimatedButton,
   AnimatedLightIconButton,
   Button,
   ButtonGroup,
-  CardPicker,
-  Checkbox,
   ColorPickerButton,
   ColorSchemeCard,
   ColorSchemePicker,
@@ -19,21 +18,21 @@ import {
   IconButtonGroup,
   IconListViewGrip,
   InsideButton,
-  LightButton,
   LightIconButton,
   LightIconButtonGroup,
-  MainButton,
-  Radio,
-  RadioGroup,
   RoundedIconButton,
   SearchInput,
   SegmentedControl,
-  Slider,
   StyledTabContainer,
   TabButton,
   TabContent,
+  CardPicker,
+  Checkbox,
+  Radio,
+  RadioGroup,
+  Slider,
   Switch,
-} from 'twenty-ui/input';
+} from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import {
@@ -57,13 +56,13 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Button',
-    node: <Button title="Button" onClick={() => {}} />,
+    node: <Button onClick={() => {}}>{'Button'}</Button>,
   },
   {
     name: 'ButtonGroup',
     node: (
       <ButtonGroup>
-        {[<Button key="a" title="A" />, <Button key="b" title="B" />]}
+        {[<Button key="a">{'A'}</Button>, <Button key="b">{'B'}</Button>]}
       </ButtonGroup>
     ),
   },
@@ -158,7 +157,7 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'LightButton',
-    node: <LightButton title="Light" />,
+    node: <LightButton>{'Light'}</LightButton>,
   },
   {
     name: 'LightIconButton',
@@ -174,7 +173,7 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'MainButton',
-    node: <MainButton title="Main" />,
+    node: <MainButton>{'Main'}</MainButton>,
   },
   {
     name: 'Radio',
@@ -258,7 +257,10 @@ const INPUT_ENTRIES: GalleryEntry[] = [
 
 const InputGallery = () => (
   <ThemeProvider colorScheme="light">
-    <ComponentGallery title="twenty-ui/input" entries={INPUT_ENTRIES} />
+    <ComponentGallery
+      title="twenty-ui/primitives/input + twenty-ui/components"
+      entries={INPUT_ENTRIES}
+    />
   </ThemeProvider>
 );
 
@@ -266,6 +268,6 @@ export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000107',
   name: 'twenty-ui-input-gallery',
   description:
-    'Renders every twenty-ui/input component (except monaco CodeEditor) in the sandbox',
+    'Renders input primitives and shared button presets in the sandbox',
   component: InputGallery,
 });

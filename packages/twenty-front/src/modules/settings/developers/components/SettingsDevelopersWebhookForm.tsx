@@ -1,3 +1,4 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { Controller, FormProvider } from 'react-hook-form';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -19,9 +20,9 @@ import {
   isValidUrl,
 } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
 import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
@@ -64,7 +65,15 @@ export const SettingsDevelopersWebhookForm = ({
   };
 
   if ((loading && !isCreationMode) || isDefined(error)) {
-    return <SettingsSkeletonLoader />;
+    return (
+      <>
+        <ToastOnQueryErrorEffect
+          error={error}
+          message={t`Failed to load webhook`}
+        />
+        <SettingsSkeletonLoader />
+      </>
+    );
   }
 
   const descriptionTextAreaId = `${webhookId}-description`;
@@ -199,12 +208,11 @@ export const SettingsDevelopersWebhookForm = ({
                 description={t`Delete this webhook`}
               />
               <Button
-                accent="danger"
-                variant="secondary"
-                title={t`Delete`}
-                Icon={IconTrash}
+                startIcon={<IconTrash />}
                 onClick={() => openModal(DELETE_WEBHOOK_MODAL_ID)}
-              />
+                variant="outline"
+                color="danger"
+              >{t`Delete`}</Button>
             </Section>
           )}
         </SettingsPageContainer>

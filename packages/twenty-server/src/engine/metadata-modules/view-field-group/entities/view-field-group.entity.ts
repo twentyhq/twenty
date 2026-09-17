@@ -19,6 +19,7 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
 
 export type ViewFieldGroupOverrides = {
+  isActive?: boolean;
   name?: string;
   position?: number;
   isVisible?: boolean;

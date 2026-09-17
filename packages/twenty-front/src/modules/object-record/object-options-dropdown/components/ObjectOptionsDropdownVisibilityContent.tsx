@@ -22,8 +22,8 @@ import {
   IconCircleDashed,
   IconCopy,
 } from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/surfaces';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { AppTooltip } from 'twenty-ui/primitives/surfaces';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import {
   ViewVisibility,
   PermissionFlagType,

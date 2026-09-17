@@ -11,8 +11,8 @@ import { useContext, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { IconSearch } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

@@ -185,9 +185,6 @@
             },
             "appsOperations": {
               "label": "操作"
-            },
-            "appsTranslations": {
-              "label": "翻译"
             }
           }
         },

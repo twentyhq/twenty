@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconHeart, IconHeartOff, IconPlus } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 

@@ -2,7 +2,7 @@ import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 
 import { useLingui } from '@lingui/react/macro';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { InlineBanner } from 'twenty-ui/feedback';
+import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { SettingsApplicationRegistrationGeneralInfo } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo';
 
 import { SettingsAdminApplicationRegistrationClaims } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims';

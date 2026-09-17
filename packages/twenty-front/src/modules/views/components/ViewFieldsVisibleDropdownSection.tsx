@@ -15,7 +15,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const ViewFieldsVisibleDropdownSection = () => {

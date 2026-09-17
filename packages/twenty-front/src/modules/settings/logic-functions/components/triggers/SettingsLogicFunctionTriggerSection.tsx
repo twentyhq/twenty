@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { H2Title } from 'twenty-ui/typography';
-import { Switch } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.div`

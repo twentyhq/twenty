@@ -7,15 +7,15 @@ import {
   InputLabel,
   AnimatedLightIconButton,
   LightIconButton,
-} from 'twenty-ui/input';
+} from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
 import { IconChevronDown, IconPlus, IconVariable, IconX } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { MenuItem } from 'twenty-ui/navigation';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
 type WorkflowOutputSchemaBuilderProps = {

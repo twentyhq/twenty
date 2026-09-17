@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { Suspense, lazy } from 'react';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/primitives/layout';
 
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
 

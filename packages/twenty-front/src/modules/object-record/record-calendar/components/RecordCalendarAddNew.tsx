@@ -17,7 +17,7 @@ import { type Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonContainer = styled.div`
@@ -90,7 +90,7 @@ export const RecordCalendarAddNew = ({
   return (
     <StyledButtonContainer>
       <Button
-        ariaLabel={t`Create record`}
+        aria-label={t`Create record`}
         onClick={async (event) => {
           event.stopPropagation();
 
@@ -106,10 +106,10 @@ export const RecordCalendarAddNew = ({
             [calendarFieldMetadataItem.name]: startValue,
           });
         }}
-        size="medium"
+        size="md"
         type="button"
-        variant="tertiary"
-        Icon={() => <IconPlus size={theme.icon.size.sm} />}
+        startIcon={<IconPlus size={theme.icon.size.sm} />}
+        variant="ghost"
       />
     </StyledButtonContainer>
   );

@@ -18,8 +18,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconForbid, IconX, useIcons } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { type ReadonlyDeep } from 'type-fest';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 

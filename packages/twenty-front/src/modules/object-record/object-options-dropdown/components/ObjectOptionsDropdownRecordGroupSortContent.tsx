@@ -24,7 +24,7 @@ import {
   IconSortAZ,
   IconSortZA,
 } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
   const { currentContentId, onContentChange, dropdownId } =

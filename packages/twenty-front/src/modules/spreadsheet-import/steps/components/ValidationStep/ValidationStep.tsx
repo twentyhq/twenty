@@ -21,12 +21,12 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { ModalContent } from 'twenty-ui/surfaces';
+import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
-import { Button, Switch } from 'twenty-ui/input';
+import { Button, Switch } from 'twenty-ui/primitives/input';
 import { generateColumns } from './components/columns';
 import { type ImportedStructuredRowMetadata } from './types';
 
@@ -277,7 +277,7 @@ export const ValidationStep = ({
           { title: t`Cancel` },
           {
             title: t`Submit`,
-            variant: 'primary',
+            variant: 'outline',
             onClick: submitData,
             role: 'confirm',
           },
@@ -330,12 +330,10 @@ export const ValidationStep = ({
             </StyledErrorSwitch>
             <StyledButtonContainer>
               <Button
-                Icon={IconTrash}
-                title={t`Remove`}
-                accent="default"
+                startIcon={<IconTrash />}
                 onClick={deleteSelectedRows}
                 disabled={selectedRows.size === 0}
-              />
+              >{t`Remove`}</Button>
             </StyledButtonContainer>
           </StyledToolbar>
         </StyledContentWrapper>

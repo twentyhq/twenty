@@ -24,6 +24,7 @@ import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
 
 export type TimelineActivityTypeOverrides = {
+  isActive?: boolean;
   label?: string;
   icon?: string | null;
   translations?: Partial<

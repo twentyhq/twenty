@@ -98,6 +98,15 @@ describe('coreWorkflow mutations (e2e)', () => {
     expect(listedCoreWorkflow?.statuses).toEqual(['DRAFT']);
     expect(listedCoreWorkflow?.workspaceWorkflowId).toBe(workspaceWorkflowId);
 
+    const storedCoreWorkflowRows = await global.testDataSource.query(
+      `SELECT "workspaceWorkflowId" FROM core."workflow" WHERE "id" = $1`,
+      [coreWorkflowId],
+    );
+
+    expect(storedCoreWorkflowRows[0]?.workspaceWorkflowId).toBe(
+      workspaceWorkflowId,
+    );
+
     const workspaceWorkflowResponse = await graphql(
       `
         query GetWorkflow($id: UUID!) {

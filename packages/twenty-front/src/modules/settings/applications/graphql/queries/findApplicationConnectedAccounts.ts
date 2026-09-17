@@ -12,7 +12,6 @@ export const FIND_APPLICATION_CONNECTED_ACCOUNTS = gql`
       connectionProviderId
       name
       visibility
-      isOwnedByCurrentUser
       lastCredentialsRefreshedAt
       createdAt
       updatedAt

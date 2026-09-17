@@ -1,8 +1,9 @@
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/data-display';
 import { useIcons } from 'twenty-ui/icon';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
@@ -75,9 +76,12 @@ export const SidePanelFolderInfo = () => {
           }
           clickableComponent={
             <StyledClickableIconWrapper>
-              <TintedIconTile
+              <ColoredIcon
                 Icon={FolderIconComponent}
-                color={selectedItem.color}
+                color={
+                  selectedItem.color ??
+                  DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
+                }
               />
             </StyledClickableIconWrapper>
           }

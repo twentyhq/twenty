@@ -24,7 +24,7 @@ import {
   IconRelationManyToMany,
   useIcons,
 } from 'twenty-ui/icon';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

@@ -1,14 +1,3 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { useMutation } from '@apollo/client/react';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { v4 } from 'uuid';
-import { Button } from 'twenty-ui/input';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
-
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CREDIT_GRANT_EXPIRY_OPTIONS } from '@/settings/admin-panel/constants/CreditGrantExpiryOptions';
 import { CREDIT_GRANT_TYPE_LABELS } from '@/settings/admin-panel/constants/CreditGrantTypeLabels';
@@ -19,8 +8,23 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useMutation } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import {
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+} from 'twenty-ui/primitives/layout';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { v4 } from 'uuid';
 import { BillingCreditGrantType } from '~/generated-admin/graphql';
+
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 type SettingsAdminWorkspaceCreditGrantModalProps = {
   modalInstanceId: string;
@@ -57,7 +61,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
 }: SettingsAdminWorkspaceCreditGrantModalProps) => {
   const { t } = useLingui();
   const { closeModal } = useModal();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const apolloAdminClient = useApolloAdminClient();
 
   const [amount, setAmount] = useState('');
@@ -130,14 +134,13 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
         },
       });
 
-      enqueueSuccessSnackBar({
-        message: t`Granted ${parsedAmount} credits to this workspace.`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Granted ${parsedAmount} credits to this workspace.`,
       });
       handleClose();
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
@@ -224,20 +227,16 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
       <StyledModalActions>
         <Button
           onClick={handleClose}
-          variant="secondary"
-          title={t`Cancel`}
           fullWidth
-          justify="center"
-        />
+          variant="outline"
+        >{t`Cancel`}</Button>
         <Button
           onClick={handleSubmit}
-          variant="primary"
-          accent="blue"
-          title={t`Grant`}
           disabled={!isAmountValid || loading}
           fullWidth
-          justify="center"
-        />
+          variant="solid"
+          color="accent"
+        >{t`Grant`}</Button>
       </StyledModalActions>
     </ModalStatefulWrapper>
   );

@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -10,10 +12,9 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconEye, IconPlus, IconSparkle2 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { H2Title } from 'twenty-ui/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectTable';
 
 const SETTINGS_DATA_MODEL_HERO_INSTANCE_ID_PREFIX = 'settings-data-model-hero';
@@ -40,21 +41,20 @@ export const SettingsObjects = () => {
       actionButton={
         isDDLLocked ? (
           <Button
-            Icon={IconPlus}
-            title={t`Add object`}
-            accent="blue"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             disabled
-          />
+            variant="solid"
+            color="accent"
+          >{t`Add object`}</Button>
         ) : (
-          <UndecoratedLink to={getSettingsPath(SettingsPath.NewObject)}>
-            <Button
-              Icon={IconPlus}
-              title={t`Add object`}
-              accent="blue"
-              size="small"
-            />
-          </UndecoratedLink>
+          <NavigationButton
+            to={getSettingsPath(SettingsPath.NewObject)}
+            startIcon={<IconPlus />}
+            size="sm"
+            variant="solid"
+            color="accent"
+          >{t`Add object`}</NavigationButton>
         )
       }
       links={[
@@ -87,14 +87,12 @@ export const SettingsObjects = () => {
             title={t`Visualize data model`}
             description={t`See your data structure as an interactive diagram`}
           />
-          <UndecoratedLink to={getSettingsPath(SettingsPath.ObjectOverview)}>
-            <Button
-              title={t`Visualize`}
-              variant="secondary"
-              size="medium"
-              Icon={IconEye}
-            />
-          </UndecoratedLink>
+          <NavigationButton
+            to={getSettingsPath(SettingsPath.ObjectOverview)}
+            size="md"
+            startIcon={<IconEye />}
+            variant="outline"
+          >{t`Visualize`}</NavigationButton>
         </Section>
       </SettingsPageContainer>
     </SettingsPageLayout>

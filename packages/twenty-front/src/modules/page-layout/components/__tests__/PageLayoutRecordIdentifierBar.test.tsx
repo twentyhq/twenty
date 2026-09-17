@@ -28,7 +28,7 @@ jest.mock('@/page-layout/hooks/useOpenPageLayoutTabSettings', () => ({
   }),
 }));
 
-jest.mock('twenty-ui/input', () => ({
+jest.mock('twenty-ui/primitives/input', () => ({
   IconButtonWithTooltip: ({
     ariaLabel,
     onClick,

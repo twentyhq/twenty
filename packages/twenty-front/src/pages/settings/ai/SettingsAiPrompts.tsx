@@ -14,8 +14,8 @@ import {
   getValidTimeZoneOrUndefined,
   isDefined,
 } from 'twenty-shared/utils';
-import { H2Title, H3Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { H2Title, H3Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
 import { formatNumber } from '~/utils/format/formatNumber';

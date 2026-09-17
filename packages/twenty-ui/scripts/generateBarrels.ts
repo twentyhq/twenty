@@ -60,16 +60,18 @@ const createTypeScriptFile = ({
   );
 };
 
-const getLastPathFolder = (pathStr: string) => path.basename(pathStr);
+const getModuleName = (moduleDirectory: string) =>
+  slash(path.relative(SRC_PATH, moduleDirectory));
 
 const getSubDirectoryPaths = (directoryPath: string): string[] => {
-  const pattern = slash(path.join(directoryPath, '*/'));
-  return globSync(pattern, {
+  return globSync('*/', {
     ignore: [...EXCLUDED_DIRECTORIES],
-    cwd: SRC_PATH,
+    cwd: directoryPath,
     nodir: false,
     maxDepth: 1,
-  }).sort((a, b) => a.localeCompare(b));
+  })
+    .map((directory) => path.resolve(directoryPath, directory))
+    .sort((a, b) => a.localeCompare(b));
 };
 
 const partitionFileExportsByType = (declarations: DeclarationOccurrence[]) => {
@@ -103,7 +105,16 @@ const partitionFileExportsByType = (declarations: DeclarationOccurrence[]) => {
 const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
   return exportByBarrel.map<createTypeScriptFileArgs>(
     ({ barrel: { moduleDirectory }, allFileExports }) => {
-      const content = allFileExports
+      const childModuleDirectories = exportByBarrel
+        .map(({ barrel }) => barrel.moduleDirectory)
+        .filter((directory) => path.dirname(directory) === moduleDirectory);
+      const fileExports = allFileExports
+        .filter(
+          ({ file }) =>
+            !childModuleDirectories.some((directory) =>
+              file.startsWith(`${directory}${path.sep}`),
+            ),
+        )
         .sort((a, b) => a.file.localeCompare(b.file))
         .map(({ exports, file }) => {
           const { otherDeclarations, typeAndInterfaceDeclarations } =
@@ -133,6 +144,12 @@ const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
             .filter((el) => el !== '')
             .join('\n');
         })
+        .join('\n');
+      const childModuleExports = childModuleDirectories.map(
+        (directory) => `export * from './${path.basename(directory)}';`,
+      );
+      const content = [fileExports, ...childModuleExports]
+        .filter((entry) => entry !== '')
         .join('\n');
 
       return {
@@ -202,7 +219,7 @@ type ExportsConfig = Record<string, ExportOccurrence | string>;
 const generateModulePackageExports = (moduleDirectories: string[]) => {
   return moduleDirectories.reduce<ExportsConfig>(
     (acc, moduleDirectory) => {
-      const moduleName = getLastPathFolder(moduleDirectory);
+      const moduleName = getModuleName(moduleDirectory);
       if (moduleName === undefined) {
         throw new Error(
           `Should never occur, moduleName is undefined ${moduleDirectory}`,
@@ -229,7 +246,7 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
 const computePackageJsonFilesAndExportsConfig = (
   moduleDirectories: string[],
 ) => {
-  const entrypoints = moduleDirectories.map(getLastPathFolder);
+  const entrypoints = moduleDirectories.map(getModuleName);
   const exports = {
     '.': {
       types: './dist/index.d.ts',
@@ -252,6 +269,7 @@ const computePackageJsonFilesAndExportsConfig = (
     typesVersions: { '*': typesVersionsEntries },
     files: [
       'dist',
+      'LICENSE',
       '!dist/individual',
       '!dist/individual/**',
       '!dist/**/*.map',
@@ -472,7 +490,7 @@ type ExportByBarrel = {
 const retrieveExportsByBarrel = (barrelDirectories: string[]) => {
   return barrelDirectories.map<ExportByBarrel>((moduleDirectory) => {
     const moduleExportsPerFile = findAllExports(moduleDirectory);
-    const moduleName = getLastPathFolder(moduleDirectory);
+    const moduleName = getModuleName(moduleDirectory);
     if (!moduleName) {
       throw new Error(
         `Should never occur moduleName not found ${moduleDirectory}`,
@@ -494,7 +512,7 @@ const INDIVIDUAL_ENTRY_FILENAME = 'individual-entry';
 
 const getRootBarrelModuleNames = (moduleDirectories: string[]) =>
   moduleDirectories
-    .map(getLastPathFolder)
+    .map(getModuleName)
     .filter((moduleName) => !ROOT_BARREL_EXCLUDED_MODULES.includes(moduleName));
 
 const generateRootBarrel = (
@@ -523,10 +541,14 @@ const generateIndividualEntry = (
 
 const main = () => {
   const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
-  const exportsByBarrel = retrieveExportsByBarrel(moduleDirectories);
+  const barrelDirectories = [
+    ...moduleDirectories,
+    ...getSubDirectoryPaths(path.join(SRC_PATH, 'primitives')),
+  ].sort((first, second) => first.localeCompare(second));
+  const exportsByBarrel = retrieveExportsByBarrel(barrelDirectories);
   const moduleIndexFiles = generateModuleIndexFiles(exportsByBarrel);
   const packageJsonConfig =
-    computePackageJsonFilesAndExportsConfig(moduleDirectories);
+    computePackageJsonFilesAndExportsConfig(barrelDirectories);
   const nxBuildOutputsPath = computeProjectNxBuildOutputsPath();
 
   updateNxProjectConfigurationBuildOutputs(nxBuildOutputsPath);

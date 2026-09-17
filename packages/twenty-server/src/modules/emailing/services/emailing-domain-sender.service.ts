@@ -167,6 +167,7 @@ export class EmailingDomainSenderService {
       entries: entries.map((entry) => ({
         recipientIndex: deliverableRecipientIndexes[entry.recipientIndex],
         messageId: entry.messageId,
+        headerMessageId: entry.headerMessageId,
         errorMessage: entry.errorMessage,
       })),
       suppressedRecipientIndexes,

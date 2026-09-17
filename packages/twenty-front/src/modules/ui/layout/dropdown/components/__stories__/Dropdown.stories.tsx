@@ -21,8 +21,8 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof Dropdown> = {
@@ -30,7 +30,7 @@ const meta: Meta<typeof Dropdown> = {
   component: Dropdown,
   decorators: [ComponentDecorator, (Story) => <Story />],
   args: {
-    clickableComponent: <Button title="Open Dropdown" />,
+    clickableComponent: <Button>{'Open Dropdown'}</Button>,
     dropdownOffset: { x: 0, y: 8 },
     dropdownId: 'test-dropdown-id',
   },

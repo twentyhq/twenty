@@ -8,7 +8,7 @@ import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZInde
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
-import { IconListViewGrip } from 'twenty-ui/input';
+import { IconListViewGrip } from 'twenty-ui/primitives/input';
 
 const StyledContainer = styled.div`
   border-color: transparent;

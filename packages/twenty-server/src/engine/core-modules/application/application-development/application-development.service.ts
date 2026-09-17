@@ -31,7 +31,6 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 
 const APP_SYNC_LOCK_OPTIONS = { ttl: 60_000, ms: 500, maxRetries: 120 };
 
@@ -64,7 +63,7 @@ export class ApplicationDevelopmentService {
     await this.throttlePerApplication(universalIdentifier, workspaceId);
 
     const applicationRegistration =
-      await this.findOwnedApplicationRegistrationOrThrow({
+      await this.applicationRegistrationService.findOneOwnedByWorkspaceOrThrow({
         universalIdentifier,
         workspaceId,
       });
@@ -144,7 +143,7 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    await this.findOwnedApplicationRegistrationOrThrow({
+    await this.applicationRegistrationService.findOneOwnedByWorkspaceOrThrow({
       universalIdentifier: manifest.application.universalIdentifier,
       workspaceId,
     });
@@ -230,6 +229,11 @@ export class ApplicationDevelopmentService {
       );
     }
 
+    await this.applicationRegistrationService.findOneOwnedByWorkspaceOrThrow({
+      universalIdentifier: applicationUniversalIdentifier,
+      workspaceId,
+    });
+
     return await this.fileStorageService.writeFile({
       sourceFile: await getFileBuffer(),
       fileFolder,
@@ -246,7 +250,7 @@ export class ApplicationDevelopmentService {
     inferDeletionFromMissingEntities: boolean,
   ): Promise<WorkspaceMigrationDTO> {
     const applicationRegistration =
-      await this.findOwnedApplicationRegistrationOrThrow({
+      await this.applicationRegistrationService.findOneOwnedByWorkspaceOrThrow({
         universalIdentifier: manifest.application.universalIdentifier,
         workspaceId,
       });
@@ -297,37 +301,6 @@ export class ApplicationDevelopmentService {
       APP_DEV_RATE_LIMIT_MAX,
       APP_DEV_RATE_LIMIT_WINDOW_MS,
     );
-  }
-
-  private async findOwnedApplicationRegistrationOrThrow({
-    universalIdentifier,
-    workspaceId,
-  }: {
-    universalIdentifier: string;
-    workspaceId: string;
-  }): Promise<ApplicationRegistrationEntity> {
-    const existingRegistration =
-      await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
-        universalIdentifier,
-      );
-
-    if (!existingRegistration) {
-      throw new ApplicationException(
-        `No registration found for "${universalIdentifier}". Create one first with createApplicationRegistration.`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    if (existingRegistration.ownerWorkspaceId !== workspaceId) {
-      throw new ApplicationException(
-        !isDefined(existingRegistration.ownerWorkspaceId)
-          ? `"${universalIdentifier}" is registered on this instance but claimed by no workspace. Claim its ownership before developing on it.`
-          : `"${universalIdentifier}" is registered to another workspace. Change the universalIdentifier in your manifest, or transfer the registration from the owning workspace.`,
-        ApplicationExceptionCode.FORBIDDEN,
-      );
-    }
-
-    return existingRegistration;
   }
 
   private async syncRegistrationMetadata(

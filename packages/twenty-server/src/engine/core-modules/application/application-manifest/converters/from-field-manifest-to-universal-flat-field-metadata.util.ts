@@ -1,5 +1,5 @@
 import { type FieldManifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
   MetadataWritability,
@@ -15,6 +15,7 @@ import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata
 import { isAuditLoggableFieldType } from 'src/engine/metadata-modules/field-metadata/utils/is-audit-loggable-field-type.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
+import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
@@ -74,6 +75,18 @@ const resolveManifestFieldIsSearchable = ({
   );
 };
 
+const resolveManifestFieldOptions = (
+  fieldManifest: FieldManifest,
+): UniversalFlatFieldMetadata['options'] => {
+  if (!isDefined(fieldManifest.options)) {
+    return null;
+  }
+
+  return isFieldMetadataSelectKind(fieldManifest.type)
+    ? sanitizeSelectOptionColors(fieldManifest.options)
+    : fieldManifest.options;
+};
+
 export const fromFieldManifestToUniversalFlatFieldMetadata = ({
   fieldManifest,
   applicationUniversalIdentifier,
@@ -112,7 +125,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     description: fieldManifest.description ?? null,
     icon: fieldManifest.icon ?? null,
     overrides: null,
-    options: fieldManifest.options ?? null,
+    options: resolveManifestFieldOptions(fieldManifest),
     defaultValue,
     universalSettings: fieldManifest.universalSettings ?? null,
     isActive: true,

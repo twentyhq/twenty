@@ -5,8 +5,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
+import { IconButton } from 'twenty-ui/primitives/input';
+import { MenuItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 type SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps = {
   roleId: string;

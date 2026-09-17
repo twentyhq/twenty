@@ -1,3 +1,4 @@
+import { type EmailOperation } from 'twenty-shared/types';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -5,8 +6,6 @@ import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow
 import { truncateStringToUtf8ByteBudget } from 'src/utils/truncate-string-to-utf8-byte-budget.util';
 
 const MAX_BODY_PREVIEW_BYTES = 8_000;
-
-export type EmailStepLogMode = 'SEND' | 'DRAFT';
 
 const splitRecipients = (raw: string | undefined): string[] => {
   if (raw === undefined || raw === null) {
@@ -88,7 +87,7 @@ export const buildEmailStepLog = ({
   output,
   durationMs,
 }: {
-  mode: EmailStepLogMode;
+  mode: EmailOperation;
   input: WorkflowSendEmailActionInput;
   output: ToolOutput;
   durationMs: number;

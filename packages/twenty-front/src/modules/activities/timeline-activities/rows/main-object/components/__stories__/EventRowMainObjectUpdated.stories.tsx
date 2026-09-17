@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const meta: Meta<typeof EventRowMainObjectUpdated> = {
@@ -40,7 +40,7 @@ const meta: Meta<typeof EventRowMainObjectUpdated> = {
   decorators: [
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     RouterDecorator,
   ],
 };

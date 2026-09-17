@@ -7,12 +7,12 @@ import { getMockCreateObjectInput } from 'test/integration/metadata/suites/objec
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { findViewGroups } from 'test/integration/metadata/suites/view-group/utils/find-view-groups.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
-import { FieldMetadataType, ViewType } from 'twenty-shared/types';
-
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+  FieldMetadataType,
+  ViewType,
+} from 'twenty-shared/types';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 

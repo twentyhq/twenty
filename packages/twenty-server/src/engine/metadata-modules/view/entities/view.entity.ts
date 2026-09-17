@@ -38,6 +38,7 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
 
 export type ViewOverrides = {
+  isActive?: boolean;
   name?: string;
   type?: ViewType;
   icon?: string;

@@ -1,7 +1,7 @@
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { getLinkFaviconUrl, isDefined } from 'twenty-shared/utils';
-import { getIconTileColorShades } from 'twenty-ui/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -11,41 +11,21 @@ const failedFaviconUrls = new Set<string>();
 
 const StyledCompositeContainer = styled.div`
   align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
-  height: 16px;
+  height: calc(${themeCssVariables.icon.size.md} * 1px);
   justify-content: center;
   position: relative;
-  width: 16px;
-`;
-
-const StyledMainIconWrapper = styled.div<{
-  $backgroundColor: string;
-  $borderColor?: string;
-  $noBackgroundOrBorder?: boolean;
-}>`
-  align-items: center;
-  background-color: ${({ $backgroundColor, $noBackgroundOrBorder }) =>
-    $noBackgroundOrBorder ? 'transparent' : $backgroundColor};
-  border: ${({ $borderColor, $noBackgroundOrBorder }) =>
-    $noBackgroundOrBorder || !$borderColor
-      ? 'none'
-      : `1px solid ${$borderColor}`};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  overflow: hidden;
-  position: absolute;
+  width: calc(${themeCssVariables.icon.size.md} * 1px);
 `;
 
 const StyledFaviconImage = styled.img`
-  height: 100%;
+  display: block;
+  flex-shrink: 0;
+  height: calc(${themeCssVariables.icon.size.md} * 1px);
   object-fit: contain;
-  width: 100%;
+  width: calc(${themeCssVariables.icon.size.md} * 1px);
 `;
 
 const StyledLinkOverlay = styled.div<{ $backgroundColor: string }>`
@@ -82,34 +62,23 @@ export const LinkIconWithLinkOverlay = ({
   const showFavicon =
     isDefined(faviconUrl) && !isKnownFailed && localFailedLink !== linkKey;
 
-  const linkStyle = getIconTileColorShades(
-    navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
-  );
-
   return (
     <StyledCompositeContainer>
-      <StyledMainIconWrapper
-        $backgroundColor={linkStyle.backgroundColor}
-        $borderColor={linkStyle.borderColor}
-        $noBackgroundOrBorder={showFavicon}
-      >
-        {showFavicon ? (
-          <StyledFaviconImage
-            src={faviconUrl}
-            alt=""
-            onError={() => {
-              if (isDefined(link)) failedFaviconUrls.add(link);
-              setLocalFailedLink(linkKey);
-            }}
-          />
-        ) : (
-          <DefaultIcon
-            size="14px"
-            stroke={theme.icon.stroke.md}
-            color={linkStyle.iconColor}
-          />
-        )}
-      </StyledMainIconWrapper>
+      {showFavicon ? (
+        <StyledFaviconImage
+          src={faviconUrl}
+          alt=""
+          onError={() => {
+            if (isDefined(link)) failedFaviconUrls.add(link);
+            setLocalFailedLink(linkKey);
+          }}
+        />
+      ) : (
+        <ColoredIcon
+          Icon={DefaultIcon}
+          color={navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK}
+        />
+      )}
       <StyledLinkOverlay $backgroundColor={themeCssVariables.grayScale.gray4}>
         <LinkIcon
           size="14px"

@@ -2,12 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import {
-  FeatureFlagKey,
-  MetadataReadability,
-  ObjectRecord,
-} from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { MetadataReadability, ObjectRecord } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   Brackets,
   FindOptionsRelations,
@@ -50,8 +46,8 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { ShareWithService } from 'src/engine/record-share/services/share-with.service';
-import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
+import { ShareWithService } from 'src/engine/core-modules/record-share/services/share-with.service';
+import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
@@ -80,8 +76,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const isPrivateObject =
       queryRunnerContext.flatObjectMetadata.readability ===
       MetadataReadability.PRIVATE;
+    const isGatedThroughRecordShares =
+      isPrivateObject ||
+      queryRunnerContext.flatObjectMetadata.readability ===
+        MetadataReadability.INHERITED;
 
-    if (isPrivateObject) {
+    // An inherited record is reachable through its parent, so shareWith stays
+    // optional there and is checked only when given
+    if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
@@ -91,7 +93,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     if (
       !isDefined(queryRunnerContext.transactionScope) &&
-      (isPrivateObject ||
+      (isGatedThroughRecordShares ||
         containsNestedRelationCreate(
           args.data,
           getNestedRelationFieldNames({
@@ -158,7 +160,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       repository:
-        isPrivateObject && isDefined(queryRunnerContext.transactionScope)
+        isGatedThroughRecordShares &&
+        isDefined(queryRunnerContext.transactionScope)
           ? queryRunnerContext.transactionScope.getRepository(
               flatObjectMetadata.nameSingular,
               { shouldBypassPermissionChecks: true },
@@ -608,7 +611,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const { authContext, flatObjectMetadata, repository, transactionScope } =
       queryRunnerContext;
 
-    if (flatObjectMetadata.readability !== MetadataReadability.PRIVATE) {
+    if (!this.shouldInsertRecordSharesForCreatedRecords(queryRunnerContext)) {
       return;
     }
 
@@ -623,14 +626,26 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     });
   }
 
+  private shouldInsertRecordSharesForCreatedRecords(
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): boolean {
+    switch (queryRunnerContext.flatObjectMetadata.readability) {
+      case MetadataReadability.PRIVATE:
+        return true;
+      // An inherited record gets its creator's share row like a PRIVATE one,
+      // but one created while the flag is off must keep following its parent
+      // once the flag turns on instead of becoming readable by everyone
+      case MetadataReadability.INHERITED:
+        return this.isRecordSharingEnabled(queryRunnerContext);
+      default:
+        return false;
+    }
+  }
+
   private isRecordSharingEnabled(
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): boolean {
-    return (
-      queryRunnerContext.featureFlagsMap[
-        FeatureFlagKey.IS_RECORD_SHARING_ENABLED
-      ] ?? false
-    );
+    return queryRunnerContext.isRecordSharingEnabled;
   }
 
   private resolveNestedRelationsForCreate({

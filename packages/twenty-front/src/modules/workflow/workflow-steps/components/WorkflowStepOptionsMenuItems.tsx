@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopyPlus, IconPencil, IconTrash } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowStepOptionsMenuItemsProps = {
   selectedItemId: string | null;

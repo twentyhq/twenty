@@ -1,15 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ComponentProps } from 'react';
-import {
-  AI_MODEL_EFFORT_LABELS,
-  isAiModelEffort,
-  parseAiModelVariantId,
-} from 'twenty-shared/ai';
+import { isAiModelEffort, parseAiModelVariantId } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { IconWand } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AUTOMATIC_MODEL_PIN } from '@/settings/ai/constants/AutomaticModelPin';
+import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
 import { type PinnableAiModel } from '@/settings/ai/types/PinnableAiModel';
 import { getAiModelPinOptions } from '@/settings/ai/utils/getAiModelPinOptions';
 import { Select } from '@/ui/input/components/Select';
@@ -17,10 +15,12 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 
 const DEFAULT_EFFORT = '';
 
-const StyledRow = styled.div`
+const StyledRow = styled.div<{ hasEffortSelect: boolean }>`
   align-items: flex-end;
-  display: flex;
+  display: grid;
   gap: ${themeCssVariables.spacing[2]};
+  grid-template-columns: ${({ hasEffortSelect }) =>
+    hasEffortSelect ? 'minmax(0, 1fr) 96px' : 'minmax(0, 1fr)'};
 `;
 
 type AiModelPinSelectProps = {
@@ -76,19 +76,26 @@ export const AiModelPinSelect = ({
   };
 
   return (
-    <StyledRow>
+    <StyledRow hasEffortSelect={efforts.length > 0}>
       <Select
         dropdownId={dropdownId}
         label={label}
         description={description}
         value={isDefined(modelId) ? baseModelId : AUTOMATIC_MODEL_PIN}
         onChange={handleModelChange}
-        options={getAiModelPinOptions({ aiModels, keepModelId: baseModelId })}
-        emptyOption={
-          isDefined(emptyOptionLabel)
-            ? { value: AUTOMATIC_MODEL_PIN, label: emptyOptionLabel }
-            : undefined
-        }
+        showIconInControl={isDefined(modelId)}
+        options={[
+          ...(isDefined(emptyOptionLabel)
+            ? [
+                {
+                  value: AUTOMATIC_MODEL_PIN,
+                  label: emptyOptionLabel,
+                  Icon: IconWand,
+                },
+              ]
+            : []),
+          ...getAiModelPinOptions({ aiModels, keepModelId: baseModelId }),
+        ]}
         withSearchInput
         disabled={disabled}
         selectSizeVariant={selectSizeVariant}
@@ -100,10 +107,15 @@ export const AiModelPinSelect = ({
           value={effort ?? DEFAULT_EFFORT}
           onChange={handleEffortChange}
           options={[
-            { value: DEFAULT_EFFORT, label: t`Default reasoning` },
+            {
+              value: DEFAULT_EFFORT,
+              label: t`Default`,
+              fullLabel: t`Reasoning: Default`,
+            },
             ...efforts.map((availableEffort) => ({
               value: availableEffort,
-              label: AI_MODEL_EFFORT_LABELS[availableEffort],
+              label: getAiModelEffortLabel(availableEffort),
+              fullLabel: t`Reasoning: ${getAiModelEffortLabel(availableEffort)}`,
             })),
           ]}
           disabled={disabled}

@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ResourceCreditPriceSelector } from '@/settings/billing/components/internal/ResourceCreditPriceSelector';
@@ -27,11 +29,10 @@ import {
   IconExternalLink,
   IconInfoCircle,
 } from 'twenty-ui/icon';
-import { ProgressBar } from 'twenty-ui/feedback';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { H2Title } from 'twenty-ui/typography';
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import {
   PermissionFlagType,
@@ -304,19 +305,15 @@ export const SettingsBillingCreditsSection = ({
         </StyledCreditsCardBody>
       </StyledSettingsBillingCard>
       <StyledCreditUsageFooterActions>
-        <UndecoratedLink to={getSettingsPath(SettingsPath.Usage)}>
-          <Button
-            Icon={IconChartBar}
-            title={t`View usage`}
-            variant="secondary"
-            size="small"
-          />
-        </UndecoratedLink>
+        <NavigationButton
+          to={getSettingsPath(SettingsPath.Usage)}
+          startIcon={<IconChartBar />}
+          size="sm"
+          variant="outline"
+        >{t`View usage`}</NavigationButton>
         <Button
-          Icon={IconExternalLink}
-          title={t`How credits work`}
-          variant="secondary"
-          size="small"
+          startIcon={<IconExternalLink />}
+          size="sm"
           onClick={() =>
             window.open(
               creditsDocumentationUrl,
@@ -324,7 +321,8 @@ export const SettingsBillingCreditsSection = ({
               'noopener,noreferrer',
             )
           }
-        />
+          variant="outline"
+        >{t`How credits work`}</Button>
       </StyledCreditUsageFooterActions>
     </Section>
   );

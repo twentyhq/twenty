@@ -9,9 +9,9 @@ import { useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconLayoutDashboard, IconPencil, IconSparkle2 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import coverDark from '~/pages/settings/layout/assets/cover-dark.png';
 import coverLight from '~/pages/settings/layout/assets/cover-light.png';
 
@@ -64,13 +64,12 @@ export const SettingsLayout = () => {
                 description={t`Customize how your workspace looks.`}
                 action={
                   <Button
-                    title={t`Customize`}
-                    variant="primary"
-                    accent="blue"
-                    size="small"
-                    Icon={IconPencil}
+                    size="sm"
+                    startIcon={<IconPencil />}
                     onClick={handleCustomize}
-                  />
+                    variant="solid"
+                    color="accent"
+                  >{t`Customize`}</Button>
                 }
               />
             }

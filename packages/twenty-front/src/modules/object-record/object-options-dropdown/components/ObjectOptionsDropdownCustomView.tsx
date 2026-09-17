@@ -34,8 +34,8 @@ import {
   IconShare,
   IconTrash,
 } from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/surfaces';
-import { MenuItem } from 'twenty-ui/navigation';
+import { AppTooltip } from 'twenty-ui/primitives/surfaces';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 interface ObjectOptionsDropdownCustomViewProps {

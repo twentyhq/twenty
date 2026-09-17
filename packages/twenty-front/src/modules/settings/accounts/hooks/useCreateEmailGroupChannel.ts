@@ -5,12 +5,13 @@ import {
   type MessageChannelType,
   type MessageChannelVisibility,
 } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { CREATE_EMAIL_GROUP_CHANNEL } from '@/settings/accounts/graphql/mutations/createEmailGroupChannel';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
 import { GET_ALL_EMAILING_DOMAINS } from '@/settings/emailing-domains/graphql/queries/getAllEmailingDomains';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 type CreateEmailGroupChannelResult = {
   createEmailGroupChannel: {
@@ -35,7 +36,7 @@ type CreateEmailGroupChannelVariables = {
 };
 
 export const useCreateEmailGroupChannel = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [mutate, { loading, error }] = useMutation<
     CreateEmailGroupChannelResult,
@@ -52,7 +53,7 @@ export const useCreateEmailGroupChannel = () => {
     mutate({
       variables: { input: { handle, displayName } },
       onError: (mutationError) => {
-        enqueueErrorSnackBar({ apolloError: mutationError });
+        enqueueToast(getToastOptionsFromError({ error: mutationError }));
       },
     });
 

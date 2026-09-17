@@ -2,14 +2,14 @@ import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useCom
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { IconMail } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
+} from 'twenty-ui/primitives/feedback';
 
 export const EmptyInboxPlaceholder = () => {
   const { t } = useLingui();
@@ -29,12 +29,11 @@ export const EmptyInboxPlaceholder = () => {
         </AnimatedPlaceholderEmptySubTitle>
       </AnimatedPlaceholderEmptyTextContainer>
       <Button
-        Icon={IconMail}
-        title={t`Send Email`}
-        variant="secondary"
+        startIcon={<IconMail />}
         onClick={openComposer}
         disabled={loading}
-      />
+        variant="outline"
+      >{t`Send Email`}</Button>
     </AnimatedPlaceholderEmptyContainer>
   );
 };

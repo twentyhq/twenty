@@ -11,7 +11,7 @@ import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/obje
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
-import { Field, type SelectOption } from 'twenty-ui/input';
+import { Field, type SelectOption } from 'twenty-ui/primitives/input';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -21,7 +21,7 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { isArray } from '@sniptt/guards';
 import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { VisibilityHidden } from 'twenty-ui/accessibility';
+import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

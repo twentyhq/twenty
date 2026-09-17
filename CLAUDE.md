@@ -20,8 +20,6 @@ Where this repo differs from your defaults:
 - Import icons from `twenty-ui/icon`, never directly from `@tabler/icons-react`; action and status concepts should use their action or status icons.
 - Test behavior, not implementation: query by user-visible text/roles, `@testing-library/user-event` for interactions.
 
-Longer-form guides remain in `.cursor/rules/` (from the Cursor era).
-
 ## Commands
 
 ```bash

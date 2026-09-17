@@ -1,0 +1,1 @@
+export const INITIAL_OBJECT_VIEW_POSITION = 1;

@@ -4,7 +4,7 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { TextVariableEditor } from '@/object-record/record-field/ui/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/ui/form-types/hooks/useTextVariableEditor';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { Field } from 'twenty-ui/input';
+import { Field } from 'twenty-ui/primitives/input';
 import { t } from '@lingui/core/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';

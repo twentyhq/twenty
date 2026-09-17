@@ -33,7 +33,7 @@ type Story = StoryObj<typeof HeaderIdentifier>;
 
 export const Record: Story = {
   args: {
-    avatar: { placeholder: 'Acme', type: 'rounded', onClick: fn() },
+    avatar: { name: 'Acme', shape: 'circle', onClick: fn() },
     title: 'Acme',
     label: 'Created 2 days ago',
   },

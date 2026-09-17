@@ -137,6 +137,8 @@ export {
   joinVariablePath,
   parseVariablePath,
 } from './utils/variable-path.util';
+export { MALFORMED_WORKFLOW_VALIDATION_ISSUE_CODES } from './validation/constants/malformed-workflow-validation-issue-codes.constant';
+export { NON_ACTIVABLE_WORKFLOW_VALIDATION_ISSUE_CODES } from './validation/constants/non-activable-workflow-validation-issue-codes.constant';
 export { isIfElseStepInput } from './validation/guards/isIfElseStepInput';
 export { isIteratorStepInput } from './validation/guards/isIteratorStepInput';
 export type {

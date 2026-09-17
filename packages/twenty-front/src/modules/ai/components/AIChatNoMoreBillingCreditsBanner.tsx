@@ -110,7 +110,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
           subtitle={t`Upgrade to ${nextResourceCreditsAmount ?? ''} credits for $${nextResourceCreditPrice ?? ''}/${nextTierInterval ?? ''}.`}
           onConfirmClick={upgradeCreditPlan}
           confirmButtonText={t`Upgrade`}
-          confirmButtonAccent="blue"
+          confirmButtonColor="accent"
           loading={isUpgrading}
         />
       )}

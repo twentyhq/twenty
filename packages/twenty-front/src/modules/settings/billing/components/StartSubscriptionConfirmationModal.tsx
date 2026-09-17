@@ -29,7 +29,7 @@ export const StartSubscriptionConfirmationModal = ({
       }
       onConfirmClick={onConfirmClick}
       confirmButtonText={needsCreditCard ? t`Add credit card` : t`Confirm`}
-      confirmButtonAccent="blue"
+      confirmButtonColor="accent"
       loading={loading}
     />
   );

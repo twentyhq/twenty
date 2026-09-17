@@ -21,8 +21,8 @@ import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/Dra
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Callout } from 'twenty-ui/feedback';
-import { Switch } from 'twenty-ui/input';
+import { Callout } from 'twenty-ui/primitives/feedback';
+import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const COMPOSER_LABEL_MIN_WIDTH = '80px';
