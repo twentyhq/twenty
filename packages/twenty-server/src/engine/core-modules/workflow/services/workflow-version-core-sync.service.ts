@@ -602,13 +602,11 @@ export class WorkflowVersionCoreSyncService {
             where: { workflowId },
           });
 
-          for (const version of versions) {
-            await this.mirrorWorkflowVersionWrite({
-              workspaceId,
-              transactionScope,
-              workflowVersion: version,
-            });
-          }
+          await this.mirrorWorkflowVersionWrites({
+            workspaceId,
+            transactionScope,
+            workflowVersions: versions,
+          });
         },
       );
     }, buildSystemAuthContext(workspaceId));
