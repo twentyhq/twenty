@@ -14,8 +14,8 @@ const StyledChip = styled.button`
   color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: inline-flex;
-  font-family: inherit;
   flex-shrink: 0;
+  font-family: inherit;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
   gap: ${themeCssVariables.spacing[1]};
