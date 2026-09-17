@@ -199,6 +199,11 @@ export class CoreWorkflowLifecycleWorkspaceService {
             `SELECT id FROM "${getWorkspaceSchemaName(workspaceId)}"."workflowVersion" WHERE "workflowId" = $1 ORDER BY id FOR NO KEY UPDATE`,
             [resolved.workspaceWorkflowId],
           );
+          const [lockedCoreWorkflow] = await transactionScope.executeRawQuery(
+            `SELECT "lastPublishedCoreWorkflowVersionId" FROM core."workflow"
+               WHERE "id" = $1 AND "workspaceId" = $2 FOR NO KEY UPDATE`,
+            [coreWorkflow.id, workspaceId],
+          );
 
           const unchangedVersion = await transactionScope.executeRawQuery(
             `SELECT id FROM core."workflowVersion" WHERE id = $1 AND "workspaceId" = $2
@@ -240,18 +245,33 @@ export class CoreWorkflowLifecycleWorkspaceService {
             );
           }
 
-          if (typeof activeVersions[0]?.id === 'string') {
+          const previousCoreWorkflowVersionId =
+            typeof activeVersions[0]?.id === 'string'
+              ? activeVersions[0].id
+              : typeof lockedCoreWorkflow?.lastPublishedCoreWorkflowVersionId ===
+                    'string' &&
+                  lockedCoreWorkflow.lastPublishedCoreWorkflowVersionId !==
+                    coreWorkflowVersion.id
+                ? lockedCoreWorkflow.lastPublishedCoreWorkflowVersionId
+                : null;
+
+          if (isDefined(previousCoreWorkflowVersionId)) {
             previousResolved = await this.resolveCoreVersionWithWorkflowOrThrow(
               {
                 workspaceId,
-                coreWorkflowVersionId: activeVersions[0].id,
+                coreWorkflowVersionId: previousCoreWorkflowVersionId,
               },
             );
 
-            await this.disableAutomatedTrigger({
-              resolved: previousResolved,
-              transactionScope,
-            });
+            if (
+              previousResolved.coreWorkflowVersion.status ===
+              CoreWorkflowVersionStatus.ACTIVE
+            ) {
+              await this.disableAutomatedTrigger({
+                resolved: previousResolved,
+                transactionScope,
+              });
+            }
             await this.writeVersionStatusInTransaction({
               transactionScope,
               workspaceId,

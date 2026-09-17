@@ -1,4 +1,4 @@
-import { type CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
+import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { randomUUID } from 'node:crypto';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
@@ -524,18 +524,15 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     jest
       .spyOn(cache, 'hashGetValues')
       .mockResolvedValue([JSON.stringify(oldEntry), JSON.stringify(newEntry)]);
-    const deduplicator =
-      getAppProviderByClassName<CronTriggerDeduplicationService>(
-        'CronTriggerDeduplicationService',
-      );
     const dispatchTime = new Date();
-    const shouldDispatch = deduplicator.shouldDispatch.bind(deduplicator);
+    const shouldDispatch =
+      CronTriggerDeduplicationService.prototype.shouldDispatch;
 
     jest
-      .spyOn(deduplicator, 'shouldDispatch')
-      .mockImplementation((key, pattern) =>
-        shouldDispatch(key, pattern, dispatchTime),
-      );
+      .spyOn(CronTriggerDeduplicationService.prototype, 'shouldDispatch')
+      .mockImplementation(function (key, pattern) {
+        return shouldDispatch.call(this, key, pattern, dispatchTime);
+      });
     await cron.handle();
     await cron.handle();
 
