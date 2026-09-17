@@ -1,14 +1,17 @@
 import 'twenty-ui/style.css';
 
 import styled from '@emotion/styled';
+import { isUndefined } from '@sniptt/guards';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
+import { useBackfillStatus } from 'src/front-components/hooks/use-backfill-status';
 import { useRequestBackfill } from 'src/front-components/hooks/use-request-backfill';
 import { getBackfillFeedback } from 'src/front-components/utils/get-backfill-feedback.util';
+import { getBackfillProgressMessage } from 'src/front-components/utils/get-backfill-progress-message.util';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -18,14 +21,28 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
+const StyledProgress = styled.div`
+  color: ${() => themeCssVariables.font.color.tertiary};
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.sm};
+  margin-top: ${() => themeCssVariables.spacing[2]};
+`;
+
 export const LastContactSettings = () => {
   const { requestBackfill, isRequestingBackfill } = useRequestBackfill();
+  const { backfillStatus, refetchBackfillStatus } = useBackfillStatus();
+
+  const isRunInFlight =
+    backfillStatus?.status === 'enqueueing' ||
+    backfillStatus?.status === 'running';
+  const progressMessage = getBackfillProgressMessage(backfillStatus);
 
   const handleBackfillClick = async () => {
     const outcome = await requestBackfill();
     const feedback = getBackfillFeedback(outcome);
 
     enqueueSnackbar({ message: feedback.message, variant: feedback.variant });
+    refetchBackfillStatus();
   };
 
   return (
@@ -37,9 +54,12 @@ export const LastContactSettings = () => {
         />
         <Button
           title={isRequestingBackfill ? 'Starting…' : 'Run backfill'}
-          disabled={isRequestingBackfill}
+          disabled={isRequestingBackfill || isRunInFlight}
           onClick={handleBackfillClick}
         />
+        {!isUndefined(progressMessage) && (
+          <StyledProgress>{progressMessage}</StyledProgress>
+        )}
       </Section>
     </StyledContainer>
   );

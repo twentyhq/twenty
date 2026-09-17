@@ -20,7 +20,7 @@ On **Companies** and **Opportunities** you also get **Last contact** and **Last 
 
 ## ⚙️ Settings
 
-- **Run backfill** — recomputes every column from your synced emails and meetings. It runs once on install; use the button in the app settings after connecting a new mailbox or calendar.
+- **Run backfill** — recomputes every column from your synced emails and meetings. It runs once on install; use the button in the app settings after connecting a new mailbox or calendar. The panel counts the work down while it runs, and flags any batch that failed.
 
 ## 💳 Billing
 

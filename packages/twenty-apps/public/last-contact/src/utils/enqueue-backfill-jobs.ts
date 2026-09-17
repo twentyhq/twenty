@@ -3,6 +3,7 @@ import { enqueueJob } from 'twenty-sdk/logic-function';
 
 import {
   type BackfillPhase,
+  type BackfillPhasePlan,
   BACKFILL_PHASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS,
   BACKFILL_PHASE_ORDER,
   BACKFILL_PHASE_QUERY_FIELD,
@@ -20,8 +21,6 @@ const MAX_ENQUEUE_DELAY_MS = 7 * 24 * 60 * 60 * 1_000;
 // a batch that dies mid-run can safely be retried by the queue rather than
 // leaving its records unbackfilled.
 const BACKFILL_JOB_RETRY_LIMIT = 3;
-
-type BackfillPhasePlan = { phase: BackfillPhase; count: number; batches: number };
 
 const countPhaseRecords = async (
   client: CoreApiClient,
@@ -41,30 +40,31 @@ const countPhaseRecords = async (
 // at once and overwhelm the API rate limiting.
 export const enqueueBackfillJobs = async (
   client: CoreApiClient,
-): Promise<BackfillPhasePlan[]> => {
+): Promise<{ plans: BackfillPhasePlan[]; jobIds: string[] }> => {
   const batchSize = getBackfillBatchSize();
   const sleepMs = getBackfillSleepMs();
 
   const plans: BackfillPhasePlan[] = [];
-  let enqueuedCount = 0;
+  const jobIds: string[] = [];
 
   for (const phase of BACKFILL_PHASE_ORDER) {
     const count = await countPhaseRecords(client, phase);
     const batches = Math.ceil(count / batchSize);
 
     for (let batchId = 0; batchId < batches; batchId++) {
-      await enqueueJob({
+      const { jobId } = await enqueueJob({
         logicFunctionUniversalIdentifier:
           BACKFILL_PHASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS[phase],
         payload: { batchId },
-        delayMs: Math.min(enqueuedCount * sleepMs, MAX_ENQUEUE_DELAY_MS),
+        delayMs: Math.min(jobIds.length * sleepMs, MAX_ENQUEUE_DELAY_MS),
         retryLimit: BACKFILL_JOB_RETRY_LIMIT,
       });
-      enqueuedCount++;
+
+      jobIds.push(jobId);
     }
 
     plans.push({ phase, count, batches });
   }
 
-  return plans;
+  return { plans, jobIds };
 };
