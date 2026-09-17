@@ -30,6 +30,7 @@ import { type CoreWorkflowVersionWriteService } from 'src/engine/core-modules/wo
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 
 import { type CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
+import { type WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schema = getWorkspaceSchemaName(workspaceId);
@@ -282,6 +283,72 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(run.state.flow.steps).toEqual(fixture.steps);
     }
   });
+
+  it.each(
+    Object.values(WorkflowActionType).flatMap((actionType) =>
+      [false, true].map((isCoreEnabled) => ({ actionType, isCoreEnabled })),
+    ),
+  )(
+    'dispatches $actionType from the API selected with the core flag set to $isCoreEnabled',
+    async ({ actionType, isCoreEnabled }) => {
+      const flags = global.workflowTestServices.flags;
+      const featureFlag = FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED;
+      const original = await flags.isFeatureEnabled(featureFlag, workspaceId);
+      const step = {
+        id: randomUUID(),
+        name: `${actionType} dispatch marker`,
+        type: actionType,
+        valid: true,
+        settings: {
+          ...settings,
+          input:
+            actionType === WorkflowActionType.IF_ELSE
+              ? { branches: [] }
+              : actionType === WorkflowActionType.ITERATOR
+                ? { initialLoopStepIds: [] }
+                : actionType === WorkflowActionType.CODE
+                  ? { logicFunctionId: randomUUID() }
+                  : {},
+        },
+        nextStepIds: [],
+      } as WorkflowAction;
+      const execute = jest.fn().mockResolvedValue({
+        result:
+          actionType === WorkflowActionType.ITERATOR
+            ? { hasProcessedAllItems: true }
+            : { actionType },
+      });
+      const actionFactory = getAppProviderByClassName<WorkflowActionFactory>(
+        'WorkflowActionFactory',
+      );
+
+      jest.spyOn(actionFactory, 'get').mockReturnValue({ execute });
+
+      try {
+        await flags.upsertWorkspaceFeatureFlag({
+          workspaceId,
+          featureFlag,
+          value: isCoreEnabled,
+        });
+        const fixture = await createFixture({ steps: [step] });
+        const run = await waitForRun(
+          await runFixture(fixture, !isCoreEnabled),
+          'COMPLETED',
+        );
+
+        expect(actionFactory.get).toHaveBeenCalledWith(actionType);
+        expect(execute).toHaveBeenCalledTimes(1);
+        expect(run.state.flow.steps[0].type).toBe(actionType);
+        expect(run.state.stepInfos[step.id].status).toBe('SUCCESS');
+      } finally {
+        await flags.upsertWorkspaceFeatureFlag({
+          workspaceId,
+          featureFlag,
+          value: original,
+        });
+      }
+    },
+  );
 
   it.each([false, true])(
     'bills the core-owned spender mapping (mirrorless=%s)',
