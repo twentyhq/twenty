@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/metadata';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { SyncMessageRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789652500000-sync-message-record-page.command';
+import { SyncMessageRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789652804002-sync-message-record-page.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';

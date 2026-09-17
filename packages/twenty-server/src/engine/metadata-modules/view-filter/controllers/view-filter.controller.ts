@@ -38,6 +38,7 @@ import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/servi
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-child-entity-permission.guard';
 import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-child-entity-permission.guard';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
 @Controller(`${ApiPath.Rest}/metadata/viewFilters`)
 @UseGuards(WorkspaceAuthGuard)
@@ -46,6 +47,7 @@ import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view
   ViewFilterRestApiExceptionFilter,
   FlatEntityMapsRestApiExceptionFilter,
   WorkspaceMigrationRunnerRestApiExceptionFilter,
+  AuthRestApiExceptionFilter,
 )
 export class ViewFilterController {
   constructor(private readonly viewFilterService: ViewFilterService) {}
