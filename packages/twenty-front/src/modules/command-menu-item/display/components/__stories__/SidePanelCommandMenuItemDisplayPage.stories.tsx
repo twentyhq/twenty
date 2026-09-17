@@ -241,7 +241,7 @@ export const EmptySearchWithAllPinnedItemsInHeader: Story = {
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
-    expect(canvas.queryByText('Delete')).not.toBeInTheDocument();
+    expect(await canvas.findByText('Delete')).toBeVisible();
   },
 };
 
@@ -260,7 +260,7 @@ export const WhitespaceOnlySearchWithAllPinnedItemsInHeader: Story = {
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
-    expect(canvas.queryByText('Delete')).not.toBeInTheDocument();
+    expect(await canvas.findByText('Delete')).toBeVisible();
   },
 };
 
