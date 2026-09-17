@@ -42,6 +42,9 @@ jobs:
       - name: Check generated theme artifacts are up to date
         if: matrix.task == 'lint'
         run: npx nx generate:check twenty-ui
+      - name: Check optional peer dependencies stay out of the root entry point
+        if: matrix.task == 'pack-size'
+        run: npx nx test:package twenty-ui
   ui-sb-build:
     needs: changed-files-check
     if: >-

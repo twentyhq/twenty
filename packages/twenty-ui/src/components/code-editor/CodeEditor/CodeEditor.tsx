@@ -1,11 +1,7 @@
-import Editor, {
-  loader,
-  type EditorProps,
-  type Monaco,
-} from '@monaco-editor/react';
+import Editor, { loader, type Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/primitives/feedback/Loader/Loader';
-import { BASE_CODE_EDITOR_THEME_ID } from '@ui/primitives/input/CodeEditor/constants/BaseCodeEditorThemeId';
-import { getBaseCodeEditorTheme } from '@ui/primitives/input/CodeEditor/utils/getBaseCodeEditorTheme';
+import { BASE_CODE_EDITOR_THEME_ID } from '@ui/components/code-editor/CodeEditor/constants/BaseCodeEditorThemeId';
+import { getBaseCodeEditorTheme } from '@ui/components/code-editor/CodeEditor/utils/getBaseCodeEditorTheme';
 import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
 import { useResizeHandle } from '@ui/primitives/layout/ResizeHandle/hooks/useResizeHandle';
 import {
@@ -18,9 +14,7 @@ import { type KeyboardEvent, useEffect, useState } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './CodeEditor.module.scss';
-
-type CodeEditorVariant = 'default' | 'with-header' | 'borderless';
-type CodeEditorContentPadding = 'default' | 'comfortable';
+import { type CodeEditorProps } from './types/CodeEditorProps';
 
 // Left alone, `@monaco-editor/loader` downloads Monaco from a CDN at runtime,
 // which puts a second Monaco — pinned to a different version than the one we
@@ -60,20 +54,6 @@ const setCodeEditorTheme = (
     getBaseCodeEditorTheme(theme, colorScheme),
   );
   monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
-};
-
-type CodeEditorProps = Pick<
-  EditorProps,
-  'value' | 'language' | 'onMount' | 'onValidate' | 'height' | 'options'
-> & {
-  onChange?: (value: string) => void;
-  setMarkers?: (value: string) => editor.IMarkerData[];
-  variant?: CodeEditorVariant;
-  isLoading?: boolean;
-  transparentBackground?: boolean;
-  resizable?: boolean;
-  contentPadding?: CodeEditorContentPadding;
-  autoHeight?: boolean;
 };
 
 export const CodeEditor = ({
