@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
@@ -18,6 +19,12 @@ const StyledEmailThreadMessageSender = styled.div`
   justify-content: space-between;
 `;
 
+const StyledUnknownSender = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+  padding: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledThreadMessageSentAt = styled.div`
   align-items: flex-end;
   color: ${themeCssVariables.font.color.tertiary};
@@ -26,7 +33,7 @@ const StyledThreadMessageSentAt = styled.div`
 `;
 
 type EmailThreadMessageSenderProps = {
-  sender: EmailThreadMessageParticipant;
+  sender?: EmailThreadMessageParticipant;
   sentAt: string | null;
 };
 
@@ -55,7 +62,11 @@ export const EmailThreadMessageSender = ({
 
   return (
     <StyledEmailThreadMessageSender>
-      <ParticipantChip participant={sender} variant="bold" />
+      {isDefined(sender) ? (
+        <ParticipantChip participant={sender} variant="bold" />
+      ) : (
+        <StyledUnknownSender>{t`Unknown sender`}</StyledUnknownSender>
+      )}
       {sentAtContent}
     </StyledEmailThreadMessageSender>
   );
