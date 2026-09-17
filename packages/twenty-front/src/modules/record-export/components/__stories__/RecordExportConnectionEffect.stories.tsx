@@ -7,7 +7,6 @@ import { useState } from 'react';
 import { expect, spyOn, userEvent, waitFor, within } from 'storybook/test';
 import { IconFileExport } from 'twenty-ui/icon';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { RecordExportStatus } from '~/generated-metadata/graphql';
 
 const ExportExample = () => {
   const [connection] = useState(createRecordExportConnection);
@@ -55,19 +54,17 @@ const ExportExample = () => {
 const exportHandler = (finish: 'completed' | 'interrupted' | 'wait') =>
   http.post(`${REACT_APP_SERVER_BASE_URL}/metadata`, () => {
     const encoder = new TextEncoder();
-    const event = (status: RecordExportStatus) =>
+    const event = (progress: number) =>
       encoder.encode(
         `event: next\ndata: ${JSON.stringify({
           data: {
             exportRecords: {
               id: 'export',
               filename: 'person.csv',
-              status,
-              processedRecordCount: 42,
-              totalRecordCount: 100,
+              progress,
               downloadUrl:
-                status === RecordExportStatus.COMPLETED
-                  ? '/record-exports/export/download?token=token'
+                progress === 100
+                  ? '/file/record-export/export?token=token'
                   : null,
             },
           },
@@ -75,13 +72,13 @@ const exportHandler = (finish: 'completed' | 'interrupted' | 'wait') =>
       );
     const body = new ReadableStream({
       async start(controller) {
-        controller.enqueue(event(RecordExportStatus.PROCESSING));
+        controller.enqueue(event(42));
         if (finish === 'wait') {
           return;
         }
         await new Promise((resolve) => setTimeout(resolve, 1000));
         if (finish === 'completed') {
-          controller.enqueue(event(RecordExportStatus.COMPLETED));
+          controller.enqueue(event(100));
         }
         controller.enqueue(encoder.encode('event: complete\ndata: null\n\n'));
         controller.close();
@@ -117,7 +114,7 @@ export const AutomaticDownload: Story = {
       });
       expect(download.mock.instances[0]).toHaveAttribute(
         'href',
-        '/record-exports/export/download?token=token',
+        '/file/record-export/export?token=token',
       );
       await waitFor(() =>
         expect(canvas.getByRole('button', { name: 'Export' })).toBeEnabled(),

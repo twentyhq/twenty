@@ -17,12 +17,3 @@ export type RecordExportProgress = {
   totalRecordCount: number | null;
   errorMessage?: string;
 };
-
-export type RecordExportResult = RecordExportProgress & {
-  fileId: string;
-};
-
-export type RecordExportDownload = RecordExport &
-  RecordExportResult & {
-    expiresAt: number;
-  };

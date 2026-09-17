@@ -2499,15 +2499,11 @@ export interface WorkspaceMigration {
 export interface RecordExport {
     id: Scalars['UUID']
     filename: Scalars['String']
-    status: RecordExportStatus
-    processedRecordCount: Scalars['Int']
-    totalRecordCount?: Scalars['Int']
+    progress: Scalars['Int']
     errorMessage?: Scalars['String']
     downloadUrl?: Scalars['String']
     __typename: 'RecordExport'
 }
-
-export type RecordExportStatus = 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED'
 
 export interface PublicDomain {
     id: Scalars['UUID']
@@ -6221,9 +6217,7 @@ export interface WorkspaceMigrationGenqlSelection{
 export interface RecordExportGenqlSelection{
     id?: boolean | number
     filename?: boolean | number
-    status?: boolean | number
-    processedRecordCount?: boolean | number
-    totalRecordCount?: boolean | number
+    progress?: boolean | number
     errorMessage?: boolean | number
     downloadUrl?: boolean | number
     __typename?: boolean | number
@@ -10911,13 +10905,6 @@ export const enumFileFolder = {
    AppTarball: 'AppTarball' as const,
    GeneratedSdkClient: 'GeneratedSdkClient' as const,
    Dpa: 'Dpa' as const
-}
-
-export const enumRecordExportStatus = {
-   QUEUED: 'QUEUED' as const,
-   PROCESSING: 'PROCESSING' as const,
-   COMPLETED: 'COMPLETED' as const,
-   FAILED: 'FAILED' as const
 }
 
 export const enumEmailingDomainStatus = {

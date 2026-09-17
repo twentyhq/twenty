@@ -2883,18 +2883,9 @@ type WorkspaceMigration {
 type RecordExport {
   id: UUID!
   filename: String!
-  status: RecordExportStatus!
-  processedRecordCount: Int!
-  totalRecordCount: Int
+  progress: Int!
   errorMessage: String
   downloadUrl: String
-}
-
-enum RecordExportStatus {
-  QUEUED
-  PROCESSING
-  COMPLETED
-  FAILED
 }
 
 type PublicDomain {
