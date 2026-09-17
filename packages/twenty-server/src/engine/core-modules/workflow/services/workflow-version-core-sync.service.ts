@@ -12,6 +12,7 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { CoreWorkflowEventService } from 'src/engine/core-modules/workflow/services/core-workflow-event.service';
 import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -39,6 +40,7 @@ export class WorkflowVersionCoreSyncService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPositionService: RecordPositionService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
+    private readonly coreWorkflowEventService: CoreWorkflowEventService,
   ) {}
 
   async upsertToCore(
@@ -112,7 +114,36 @@ export class WorkflowVersionCoreSyncService {
       coreVersionIdByWorkspaceRecordId,
     );
 
+    this.publishUpsertedVersionEvents(
+      workspaceId,
+      coreRows.map((coreRow) => ({
+        id: coreRow.id,
+        coreWorkflowId: coreRow.coreWorkflowId,
+        isNewCoreVersion: coreVersionIdByWorkspaceRecordId.has(
+          coreRow.workspaceWorkflowVersionId,
+        ),
+      })),
+    );
+
     await this.invalidateAutomatedTriggerMaps(workspaceId);
+  }
+
+  private publishUpsertedVersionEvents(
+    workspaceId: string,
+    upsertedVersions: {
+      id: string;
+      coreWorkflowId: string | null;
+      isNewCoreVersion: boolean;
+    }[],
+  ): void {
+    this.coreWorkflowEventService.publishWorkflowEvents({
+      workspaceId,
+      events: upsertedVersions.map((version) => ({
+        operation: version.isNewCoreVersion ? 'created' : 'updated',
+        coreWorkflowId: version.coreWorkflowId,
+        coreWorkflowVersionId: version.id,
+      })),
+    });
   }
 
   // Same caller-writable column as coreWorkflowId, see WorkflowCoreSyncService.
@@ -149,11 +180,35 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
+    const versionsToDelete = await this.coreWorkflowVersionRepository.find(
+      workspaceId,
+      {
+        where: { id: In(coreWorkflowVersionIds) },
+        select: { id: true, coreWorkflowId: true },
+      },
+    );
+
     await this.coreWorkflowVersionRepository.delete(workspaceId, {
       id: In(coreWorkflowVersionIds),
     });
 
+    this.publishDeletedVersionEvents(workspaceId, versionsToDelete);
+
     await this.invalidateAutomatedTriggerMaps(workspaceId);
+  }
+
+  private publishDeletedVersionEvents(
+    workspaceId: string,
+    deletedVersions: { id: string; coreWorkflowId: string | null }[],
+  ): void {
+    this.coreWorkflowEventService.publishWorkflowEvents({
+      workspaceId,
+      events: deletedVersions.map((version) => ({
+        operation: 'deleted',
+        coreWorkflowId: version.coreWorkflowId,
+        coreWorkflowVersionId: version.id,
+      })),
+    });
   }
 
   async findCoreVersionById(
@@ -246,6 +301,20 @@ export class WorkflowVersionCoreSyncService {
         coreWorkflowVersionId,
         transactionScope,
       );
+    }
+
+    if (isDefined(coreWorkflowId)) {
+      this.coreWorkflowEventService.publishWorkflowEventsAfterCommit({
+        workspaceId,
+        transactionScope,
+        events: [
+          {
+            operation: isNewLink ? 'created' : 'updated',
+            coreWorkflowId,
+            coreWorkflowVersionId,
+          },
+        ],
+      });
     }
 
     return { coreWorkflowVersionId };
@@ -490,9 +559,19 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
+    const versionsToDelete = await this.coreWorkflowVersionRepository.find(
+      workspaceId,
+      {
+        where: { workflowId: In(workflowIds) },
+        select: { id: true, coreWorkflowId: true },
+      },
+    );
+
     await this.coreWorkflowVersionRepository.delete(workspaceId, {
       workflowId: In(workflowIds),
     });
+
+    this.publishDeletedVersionEvents(workspaceId, versionsToDelete);
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
   }

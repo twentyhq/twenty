@@ -11,6 +11,7 @@ import {
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { CoreWorkflowEventService } from 'src/engine/core-modules/workflow/services/core-workflow-event.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -40,6 +41,7 @@ export class CoreWorkflowVersionWriteService {
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowEventService: CoreWorkflowEventService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
@@ -134,12 +136,27 @@ export class CoreWorkflowVersionWriteService {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
-          await transactionScope.executeRawQuery(
+          const updatedRows = (await transactionScope.executeRawQuery(
             `UPDATE core."workflowVersion"
              SET ${setClauses.join(', ')}, "updatedAt" = now()
-             WHERE "id" = $1 AND "workspaceId" = $2`,
+             WHERE "id" = $1 AND "workspaceId" = $2
+             RETURNING "coreWorkflowId"`,
             parameters,
-          );
+          )) as { coreWorkflowId: string | null }[];
+
+          const updatedCoreWorkflowId = updatedRows[0]?.coreWorkflowId;
+
+          this.coreWorkflowEventService.publishWorkflowEventsAfterCommit({
+            workspaceId,
+            transactionScope,
+            events: [
+              {
+                operation: 'updated',
+                coreWorkflowId: updatedCoreWorkflowId,
+                coreWorkflowVersionId,
+              },
+            ],
+          });
 
           const mirrorUpdateResult = await transactionScope
             .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
@@ -218,6 +235,18 @@ export class CoreWorkflowVersionWriteService {
               workspaceWorkflowVersionId,
             ],
           );
+
+          this.coreWorkflowEventService.publishWorkflowEventsAfterCommit({
+            workspaceId,
+            transactionScope,
+            events: [
+              {
+                operation: 'created',
+                coreWorkflowId,
+                coreWorkflowVersionId,
+              },
+            ],
+          });
 
           await transactionScope
             .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
