@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { TabButton } from 'twenty-ui/primitives/input';
+import { TabListButton } from '@/ui/layout/tab-list/components/TabListButton';
 
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { TAB_LIST_ROW_HEIGHT_CSS_VARIABLE } from '@/ui/layout/tab-list/constants/TabListRowHeightCssVariable';
@@ -18,19 +18,22 @@ export const TabMoreButton = ({
   hiddenTabsCount,
   active,
   className,
+  disableTestId,
 }: {
   hiddenTabsCount: number;
   active: boolean;
   className?: string;
+  disableTestId?: boolean;
 }) => {
   return (
     <StyledTabMoreButtonContainer>
-      <TabButton
+      <TabListButton
         id="tab-more-button"
         active={active}
         title={`+${hiddenTabsCount} ${t`More`}`}
         RightIcon={IconChevronDown}
         className={className}
+        disableTestId={disableTestId}
       />
     </StyledTabMoreButtonContainer>
   );

@@ -6,7 +6,7 @@ import { styled } from '@linaria/react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { TabButton } from 'twenty-ui/primitives/input';
+import { TabListButton } from '@/ui/layout/tab-list/components/TabListButton';
 import { IconColorSwatch, IconCreditCard, IconGauge } from 'twenty-ui/icon';
 
 const StyledTabBar = styled.div`
@@ -37,21 +37,21 @@ export const SettingsBillingTabBar = () => {
 
   return (
     <StyledTabBar>
-      <TabButton
+      <TabListButton
         id="billing"
         title={t`Billing`}
         LeftIcon={IconCreditCard}
         active={isTabActive(billingPath)}
         to={billingPath}
       />
-      <TabButton
+      <TabListButton
         id="plans"
         title={t`Plans`}
         LeftIcon={IconColorSwatch}
         active={isTabActive(plansPath)}
         to={plansPath}
       />
-      <TabButton
+      <TabListButton
         id="limits"
         title={t`Limits`}
         LeftIcon={IconGauge}

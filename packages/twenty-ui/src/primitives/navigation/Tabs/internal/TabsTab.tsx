@@ -4,12 +4,13 @@ import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from '../Tabs.module.scss';
 import { type TabsTabProps } from '../types/TabsTabProps';
-import { isRenderableSlot } from './isRenderableSlot';
+import { TabsTabContent } from './TabsTabContent';
 
 export const TabsTab = ({
   className,
   children,
   startIcon,
+  endIcon,
   badge,
   size = 'sm',
   ...props
@@ -19,14 +20,8 @@ export const TabsTab = ({
     className={mergeClassNames(styles.tab, className)}
     data-size={size}
   >
-    <span className={styles.content}>
-      {isRenderableSlot(startIcon) && (
-        <span className={styles.startIcon} aria-hidden>
-          {startIcon}
-        </span>
-      )}
-      <span className={styles.label}>{children}</span>
-      {isRenderableSlot(badge) && <span className={styles.badge}>{badge}</span>}
-    </span>
+    <TabsTabContent startIcon={startIcon} endIcon={endIcon} badge={badge}>
+      {children}
+    </TabsTabContent>
   </TabsPrimitive.Tab>
 );

@@ -8,6 +8,7 @@ export type TabsTabProps = TabsPrimitive.Tab.Props & {
   startIcon?: ReactNode;
   /** Content rendered after the label, such as a count. */
   badge?: ReactNode;
+  endIcon?: ReactNode;
   /** Visual size of the tab. */
   size?: TabsSize;
 };

@@ -124,3 +124,7 @@ Use `keepMounted` on a panel when its contents must remain mounted while inactiv
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
 
 <TabsReference />
+
+## Route links and adjacent actions
+
+Use [TabButton](/ui/components/tab-button) for route navigation and actions such as adding a tab or opening a menu. Keep those controls outside `Tabs.List`, whose children represent content selection. `Tabs.Tab` supports `startIcon`, `endIcon`, and `badge` slots for icons, decorative avatars, and counts.

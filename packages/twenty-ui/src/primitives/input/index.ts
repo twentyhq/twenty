@@ -108,12 +108,6 @@ export type { SliderValueProps } from './Slider/types/SliderValueProps';
 export { Switch } from './Switch/Switch';
 export type { SwitchProps } from './Switch/types/SwitchProps';
 export type { SwitchSize } from './Switch/types/SwitchSize';
-export type { TabContentProps } from './TabButton/TabButton';
-export {
-  StyledTabContainer,
-  TabContent,
-  TabButton,
-} from './TabButton/TabButton';
 export { Textarea } from './Textarea/Textarea';
 export type { TextareaProps } from './Textarea/types/TextareaProps';
 export type { ColorScheme } from './types/ColorScheme';

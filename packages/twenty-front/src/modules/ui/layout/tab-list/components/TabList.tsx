@@ -1,10 +1,8 @@
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
-import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { useScrollActiveTabIntoView } from '@/ui/layout/tab-list/hooks/useScrollActiveTabIntoView';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
-import { SCROLLABLE_TAB_ROW_CSS } from '@/ui/layout/tab-list/styles/ScrollableTabRowCSS';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
@@ -16,7 +14,8 @@ import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { TabButton } from 'twenty-ui/primitives/input';
+import { TabListRow } from '@/ui/layout/tab-list/components/TabListRow';
+import { TabListButton } from '@/ui/layout/tab-list/components/TabListButton';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
@@ -51,15 +50,6 @@ const StyledInnerContainer = styled.div<{ $centerTabs: boolean }>`
 const StyledDropdownContainer = styled.div`
   align-items: center;
   display: flex;
-`;
-
-const StyledTabContainer = styled.div<{ isScrollable: boolean }>`
-  display: flex;
-  gap: ${TAB_LIST_GAP}px;
-  max-width: 100%;
-  overflow-x: ${({ isScrollable }) => (isScrollable ? 'auto' : 'hidden')};
-  position: relative;
-  ${SCROLLABLE_TAB_ROW_CSS}
 `;
 
 const StyledNodeDimension = styled(NodeDimension)`
@@ -193,12 +183,16 @@ export const TabList = ({
         <StyledContainer className={className}>
           <StyledNodeDimension onDimensionChange={onContainerWidthChange}>
             <StyledInnerContainer $centerTabs={centerTabs && !shouldScrollTabs}>
-              <StyledTabContainer
+              <TabListRow
                 ref={tabRowRef}
+                activeTabId={activeTabId}
+                behaveAsLinks={behaveAsLinks}
+                onSelectTab={handleTabSelect}
                 isScrollable={shouldScrollTabs}
               >
                 {renderedTabs.map((tab) => (
-                  <TabButton
+                  <TabListButton
+                    asTab={!behaveAsLinks}
                     key={tab.id}
                     id={tab.id}
                     title={tab.title}
@@ -224,7 +218,7 @@ export const TabList = ({
                     }
                   />
                 ))}
-              </StyledTabContainer>
+              </TabListRow>
 
               {shouldShowOverflowDropdown && (
                 <StyledDropdownContainer>

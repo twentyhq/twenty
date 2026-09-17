@@ -219,15 +219,14 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    expect(await canvas.findByRole('tab', { name: 'Overview' })).toBeVisible();
+    expect(canvas.getByRole('tab', { name: 'Forecasts' })).toBeVisible();
     expect(
-      await canvas.findByRole('button', { name: 'Overview' }),
-    ).toBeVisible();
-    expect(canvas.getByRole('button', { name: 'Forecasts' })).toBeVisible();
+      canvas.queryByRole('button', { name: 'Overview' }),
+    ).not.toBeInTheDocument();
 
     await userEvent.click(
-      within(canvas.getByRole('button', { name: 'Revenue' })).getByText(
-        'Revenue',
-      ),
+      within(canvas.getByRole('tab', { name: 'Revenue' })).getByText('Revenue'),
     );
 
     await waitFor(() =>
@@ -293,4 +292,28 @@ export const IdentifierBarCenteredNarrow: Story = {
     centerTabs: true,
   },
   play: IdentifierBarNarrow.play,
+};
+
+export const KeyboardReorder: Story = {
+  args: { isReorderEnabled: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const overview = await canvas.findByRole('tab', { name: 'Overview' });
+
+    overview.focus();
+    await userEvent.keyboard('[Space]');
+    await userEvent.keyboard('{ArrowRight}');
+    await userEvent.keyboard('[Space]');
+
+    await waitFor(() => {
+      const draft = jotaiStore.get(
+        pageLayoutDraftComponentState.atomFamily({ instanceId: 'instance-id' }),
+      );
+      const orderedTitles = [...draft.tabs]
+        .sort((first, second) => first.position - second.position)
+        .map((tab) => tab.title);
+
+      expect(orderedTitles).toEqual(['Revenue', 'Overview', 'Forecasts']);
+    });
+  },
 };

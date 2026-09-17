@@ -5,7 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
-import { TabButton } from 'twenty-ui/primitives/input';
+import { TabListButton } from '@/ui/layout/tab-list/components/TabListButton';
 
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -427,7 +427,7 @@ export const PageLayoutTabList = ({
           addButtonMeasurement={
             addTabStrategy ? (
               <StyledAddButton>
-                <TabButton
+                <TabListButton
                   id="add-tab"
                   LeftIcon={IconPlus}
                   title={t`New Tab`}
@@ -502,7 +502,7 @@ export const PageLayoutTabList = ({
 
           {addTabStrategy?.mode === 'direct' && (
             <StyledAddButton>
-              <TabButton
+              <TabListButton
                 id="add-tab"
                 LeftIcon={IconPlus}
                 title={t`New Tab`}
@@ -516,7 +516,7 @@ export const PageLayoutTabList = ({
               <Dropdown
                 dropdownId={addTabDropdownId}
                 clickableComponent={
-                  <TabButton
+                  <TabListButton
                     id="add-tab"
                     LeftIcon={IconPlus}
                     title={t`New Tab`}

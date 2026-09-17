@@ -7,10 +7,8 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { StyledTabContainer, TabContent } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { PageLayoutTabListDragHandle } from '@/page-layout/components/PageLayoutTabListDragHandle';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 type PageLayoutTabListReorderableTabProps = {
@@ -23,13 +21,6 @@ type PageLayoutTabListReorderableTabProps = {
   widgetDropTargetWidgets?: PageLayoutWidget[];
   onSelect: () => void;
 };
-
-const StyledTabContentWrapper = styled.div<{ isHighlighted: boolean }>`
-  border-radius: ${themeCssVariables.border.radius.sm};
-  outline: ${({ isHighlighted }) =>
-    isHighlighted ? `1px solid ${themeCssVariables.color.blue}` : 'none'};
-  outline-offset: -1px;
-`;
 
 export const PageLayoutTabListReorderableTab = ({
   tab,
@@ -70,23 +61,18 @@ export const PageLayoutTabListReorderableTab = ({
       hasTransition={false}
       orientation="vertical"
     >
-      <StyledTabContainer
-        onClick={onSelect}
+      <PageLayoutTabListDragHandle
+        asTab
+        id={tab.id}
         active={isActive}
         disabled={disabled}
-      >
-        <StyledTabContentWrapper isHighlighted={isHighlighted}>
-          <TabContent
-            id={tab.id}
-            active={isActive}
-            disabled={disabled}
-            LeftIcon={tab.Icon}
-            title={tab.title}
-            logo={tab.logo}
-            pill={tab.pill}
-          />
-        </StyledTabContentWrapper>
-      </StyledTabContainer>
+        LeftIcon={tab.Icon}
+        title={tab.title}
+        logo={tab.logo}
+        pill={tab.pill}
+        isHighlighted={isHighlighted}
+        onClick={onSelect}
+      />
     </DragDropItemSortableCell>
   );
 
