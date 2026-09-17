@@ -3,6 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-sync-retry-initial-delay-ms.constant';
+import { WEBHOOK_SYNC_RETRY_JITTER } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-sync-retry-jitter.constant';
+import { WEBHOOK_SYNC_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-sync-retry-limit.constant';
 import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
 import { CalendarEventWebhookSyncJob } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/jobs/calendar-event-webhook-sync.job';
 import { type CalendarEventWebhookSyncJobData } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/types/calendar-event-webhook-sync-job-data.type';
@@ -38,6 +41,12 @@ export class WebhookSyncTriggerService {
           id: `messaging-message-webhook-sync:${workspaceId}:${messageChannelId}`,
           keepLastIfActive: true,
         },
+        retryLimit: WEBHOOK_SYNC_RETRY_LIMIT,
+        backoff: {
+          strategy: 'exponential',
+          initialDelayMilliseconds: WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
+          jitter: WEBHOOK_SYNC_RETRY_JITTER,
+        },
       },
     );
   }
@@ -62,6 +71,12 @@ export class WebhookSyncTriggerService {
         deduplication: {
           id: `calendar-event-webhook-sync:${workspaceId}:${calendarChannelId}`,
           keepLastIfActive: true,
+        },
+        retryLimit: WEBHOOK_SYNC_RETRY_LIMIT,
+        backoff: {
+          strategy: 'exponential',
+          initialDelayMilliseconds: WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
+          jitter: WEBHOOK_SYNC_RETRY_JITTER,
         },
       },
     );
