@@ -5,7 +5,6 @@ import { useCommandMenuAppActions } from '@/command-menu-item/display/hooks/useC
 import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMenuItemSection';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { groupCommandMenuItemsBySection } from '@/command-menu-item/utils/groupCommandMenuItemsBySection';
-import { resolveCommandMenuItemSection } from '@/command-menu-item/utils/resolveCommandMenuItemSection';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
@@ -68,17 +67,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     unpinnedCommandMenuItems,
   );
 
-  // Navigation is the long tail the navigation drawer already covers, so it
-  // waits for a query instead of sitting at the bottom of every page.
-  const sectionedCommandMenuItems = isSearchActive
-    ? matchingOtherItems
-    : matchingOtherItems.filter(
-        (item) => resolveCommandMenuItemSection(item) !== 'GO_TO',
-      );
-
   const commandMenuItemsBySection = useMemo(
-    () => groupCommandMenuItemsBySection(sectionedCommandMenuItems),
-    [sectionedCommandMenuItems],
+    () => groupCommandMenuItemsBySection(matchingOtherItems),
+    [matchingOtherItems],
   );
 
   const getSectionHeading = (section: CommandMenuItemSection) => {
@@ -114,7 +105,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const hasNoMatchingItems =
     !matchingPinnedItems.length &&
-    !sectionedCommandMenuItems.length &&
+    !matchingOtherItems.length &&
     appActions.length === 0 &&
     coreObjectsCommandIds.length === 0;
 

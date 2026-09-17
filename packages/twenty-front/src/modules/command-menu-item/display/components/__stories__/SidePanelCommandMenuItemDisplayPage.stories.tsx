@@ -337,7 +337,7 @@ export const SearchWithoutMatchingItemsAndWithFallback: Story = {
   },
 };
 
-export const NavigationIsHeldBackUntilSearch: Story = {
+export const NavigationSitsLastAtRest: Story = {
   decorators: [
     createDecorator({
       commandMenuItems: [...PINNED_ITEMS, OTHER_ITEM, NAVIGATION_ITEM],
@@ -349,13 +349,17 @@ export const NavigationIsHeldBackUntilSearch: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Import records')).toBeVisible();
-    expect(canvas.queryByText('Go to People')).not.toBeInTheDocument();
+    expect(await canvas.findByText('Go to People')).toBeVisible();
 
-    const headings = canvas.getAllByText(/^(This view|Workspace|Go to)$/);
+    const headings = canvas.getAllByText(
+      /^(Pinned|This view|Workspace|Go to)$/,
+    );
 
     expect(headings.map((heading) => heading.textContent)).toEqual([
+      'Pinned',
       'This view',
       'Workspace',
+      'Go to',
     ]);
   },
 };
