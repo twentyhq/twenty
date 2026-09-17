@@ -47,6 +47,16 @@ export const TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL: StandaloneRichTextConfigu
     },
   };
 
+export const TEST_STANDALONE_RICH_TEXT_CONFIG_TIPTAP_BODY: StandaloneRichTextConfigurationDTO =
+  {
+    configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
+    body: {
+      blocknote:
+        '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Checklist:"}]},{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"call the client"}]}]}]}]}',
+      markdown: null,
+    },
+  };
+
 export const INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY = {};
 
 export const INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE = {
