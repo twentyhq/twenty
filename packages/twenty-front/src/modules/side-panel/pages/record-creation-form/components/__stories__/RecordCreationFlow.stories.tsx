@@ -151,13 +151,7 @@ const RecordCreationFlow = ({ commandOrigin }: RecordCreationFlowProps) => {
         : member,
     );
     setIsReady(true);
-  }, [
-    applyChanges,
-    commandOrigin,
-    objectMetadataItem,
-    replaceDraft,
-    store,
-  ]);
+  }, [applyChanges, commandOrigin, objectMetadataItem, replaceDraft, store]);
 
   return isReady ? (
     <WorkspaceRouteObjectsContext.Provider
