@@ -14,6 +14,7 @@ const createHostThreadImportsStub = () =>
     updateProgress: jest.fn(),
     copyToClipboard: jest.fn(),
     uploadFile: jest.fn(),
+    callTool: jest.fn(),
     storageSet: jest.fn(),
     storageDelete: jest.fn(),
     storageClear: jest.fn(),
@@ -34,6 +35,7 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       );
 
     expect(Object.keys(hostCommunicationApi).sort()).toEqual([
+      'callTool',
       'closeSidePanel',
       'copyToClipboard',
       'enqueueSnackbar',
@@ -59,6 +61,7 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       hostThreadImports.unmountFrontComponent,
     );
     expect(hostCommunicationApi.uploadFile).toBe(hostThreadImports.uploadFile);
+    expect(hostCommunicationApi.callTool).toBe(hostThreadImports.callTool);
     expect(hostCommunicationApi.enqueueSnackbar).toBe(
       hostThreadImports.enqueueSnackbar,
     );
