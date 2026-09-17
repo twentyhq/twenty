@@ -101,6 +101,11 @@ export const Tooltip: Story = {
   },
 };
 
+export const TooltipDocumentation: Story = {
+  ...Tooltip,
+  play: undefined,
+};
+
 export const TooltipDisabled: Story = {
   ...Tooltip,
   args: { ...Tooltip.args, disabled: true, onClick: fn() },

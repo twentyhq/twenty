@@ -191,6 +191,11 @@ export const Framed: Story = {
     ).toBe(2);
   },
 };
+export const FramedDocumentation: Story = {
+  ...Framed,
+  play: undefined,
+};
+
 export const FramedDark: Story = {
   ...Framed,
   globals: { colorScheme: 'dark' },

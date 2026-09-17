@@ -24,7 +24,9 @@ export default meta;
 
 type Story = StoryObj<typeof Dialog.Title>;
 
-export const Documentation: Story = {
+export const Documentation: Story = {};
+
+export const Default: Story = {
   play: async () => {
     const dialog = within(document.body).getByRole('dialog', {
       name: 'Grant credits',
@@ -61,6 +63,6 @@ export const CustomTitle: Story = {
 };
 
 export const Dark: Story = {
-  ...Documentation,
+  ...Default,
   globals: { colorScheme: 'dark' },
 };
