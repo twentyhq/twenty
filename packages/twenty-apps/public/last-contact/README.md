@@ -18,6 +18,10 @@ On **People** you get:
 
 On **Companies** and **Opportunities** you also get **Last contact** and **Last contact item** columns.
 
+## ⚙️ Settings
+
+- **Run backfill** — recomputes every column from your synced emails and meetings. It runs once on install; use the button in the app settings after connecting a new mailbox or calendar.
+
 ## 💳 Billing
 
 **Free** — no credits, no metering.

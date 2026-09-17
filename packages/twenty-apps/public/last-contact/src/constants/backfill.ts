@@ -39,3 +39,9 @@ export const BACKFILL_SLEEP_MS_ENV_VAR_NAME = 'LAST_CONTACT_BACKFILL_SLEEP_MS';
 
 export const DEFAULT_BACKFILL_BATCH_SIZE = 200;
 export const DEFAULT_BACKFILL_SLEEP_MS = 1_000;
+
+// Route the settings panel posts to. The server serves app routes under /s.
+export const BACKFILL_ROUTE_PATH = '/last-contact/backfill';
+
+// Response the backfill route answers with once the run is enqueued.
+export const BACKFILL_STARTED_OUTCOME = 'started';

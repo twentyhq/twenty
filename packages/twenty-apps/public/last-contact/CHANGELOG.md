@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.0
+
+- Add a settings panel with a "Run backfill" button, so the backfill can be re-run on demand instead of only on install. The button posts to a new `POST /last-contact/backfill` route, which enqueues the same count-and-fan-out job the post-install hook runs.
+
 ## 1.4.0
 
 - Write a whole batch of records in one API call instead of one call per record. The application API rate limit is consumed once per operation and `updateMany` applies a single payload to everything it matches, so writing one timestamp per person, company or opportunity cost one call each: a full 200-event batch spent 435-585 calls against a budget of 500 per minute shared by every workspace on the instance. Reads are batched the same way, and each handler now costs about nine calls. The recency guard that used to be a filter on the update moved into the read that precedes it, and a record the read does not return is left out of the write rather than upserted back.
