@@ -24,21 +24,14 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { TRACKABLE_URL_PATTERN } from 'src/modules/emailing/constants/trackable-url-pattern.constant';
+import { CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN } from 'src/modules/emailing/constants/campaign-batch-variable-tag-pattern.constant';
+import { CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART } from 'src/modules/emailing/constants/campaign-tracking-tag-prefix-by-message-part.constant';
 import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
 
-const CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN = /\{\{v_[htu]_(\d+)\}\}/g;
-
-type CampaignMessagePart = 'HTML' | 'TEXT';
-
-const CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART: Record<
-  CampaignMessagePart,
-  string
-> = {
-  HTML: 'c_h',
-  TEXT: 'c_t',
-};
+type CampaignMessagePart =
+  keyof typeof CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART;
 
 type TrackedCampaignBatch = {
   template: EmailingDomainEmailTemplate;
