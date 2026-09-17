@@ -1,14 +1,17 @@
 import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
 
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
-import { ProgressBar } from 'twenty-ui/feedback';
+import { enqueueSnackbar, useColorScheme } from 'twenty-sdk/front-component';
+import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
+import { ProgressRing } from 'src/front-components/components/ProgressRing';
 import { useBackfillStatus } from 'src/front-components/hooks/use-backfill-status';
 import { useRequestBackfill } from 'src/front-components/hooks/use-request-backfill';
 import { getBackfillFeedback } from 'src/front-components/utils/get-backfill-feedback.util';
@@ -23,21 +26,26 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledProgress = styled.div`
+const StyledActionRow = styled.div`
+  align-items: center;
   display: flex;
-  flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[2]};
-  margin-top: ${() => themeCssVariables.spacing[3]};
-  max-width: ${() => themeCssVariables.spacing[32]};
+  gap: ${() => themeCssVariables.spacing[3]};
 `;
 
-const StyledProgressLabel = styled.div`
+// Mirrors the ring-and-caption row twenty-front uses for usage meters.
+const StyledProgressRow = styled.div`
+  align-items: center;
   color: ${() => themeCssVariables.font.color.tertiary};
+  display: flex;
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
+  font-weight: ${() => themeCssVariables.font.weight.medium};
+  gap: ${() => themeCssVariables.spacing[2]};
+  white-space: nowrap;
 `;
 
 export const LastContactSettings = () => {
+  const colorScheme = useColorScheme();
   const { requestBackfill, isRequestingBackfill } = useRequestBackfill();
   const { backfillStatus, refetchBackfillStatus } = useBackfillStatus();
 
@@ -55,31 +63,37 @@ export const LastContactSettings = () => {
     refetchBackfillStatus();
   };
 
+  // ThemeProvider applies the color-scheme class the theme CSS variables hang
+  // off, without which every token above resolves to nothing.
   return (
-    <StyledContainer>
-      <Section>
-        <H2Title
-          title="Backfill last contact"
-          description="Recomputes last contact on every existing person, company and opportunity from your synced emails and meetings. Runs in the background, and already runs once when the app is installed."
-        />
-        <Button
-          title={isRequestingBackfill ? 'Starting…' : 'Run backfill'}
-          disabled={isRequestingBackfill || isRunInFlight}
-          onClick={handleBackfillClick}
-        />
-        {!isUndefined(progressMessage) && (
-          <StyledProgress>
-            {!isUndefined(progressPercentage) && (
-              <ProgressBar
-                value={progressPercentage}
-                ariaLabel="Backfill progress"
-                withBorderRadius
-              />
+    <ThemeProvider colorScheme={colorScheme}>
+      <StyledContainer>
+        <Section>
+          <H2Title
+            title="Backfill last contact"
+            description="Recompute every record from your synced emails and meetings."
+          />
+          <StyledActionRow>
+            <Button
+              title="Run backfill"
+              Icon={IconRefresh}
+              variant="primary"
+              accent="blue"
+              disabled={isRequestingBackfill || isRunInFlight}
+              isLoading={isRequestingBackfill}
+              onClick={handleBackfillClick}
+            />
+            {!isUndefined(progressMessage) && (
+              <StyledProgressRow>
+                {!isUndefined(progressPercentage) && (
+                  <ProgressRing value={progressPercentage} />
+                )}
+                <span>{progressMessage}</span>
+              </StyledProgressRow>
             )}
-            <StyledProgressLabel>{progressMessage}</StyledProgressLabel>
-          </StyledProgress>
-        )}
-      </Section>
-    </StyledContainer>
+          </StyledActionRow>
+        </Section>
+      </StyledContainer>
+    </ThemeProvider>
   );
 };

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { getBackfillProgressMessage } from 'src/front-components/utils/get-backfill-progress-message.util';
 
+const STARTED_AT = '2026-09-17T14:00:00.000Z';
+
 describe('getBackfillProgressMessage', () => {
   it('says nothing when no run has been recorded', () => {
     expect(getBackfillProgressMessage({ status: 'idle' })).toBeUndefined();
@@ -12,16 +14,16 @@ describe('getBackfillProgressMessage', () => {
     expect(
       getBackfillProgressMessage({
         status: 'enqueueing',
-        startedAt: '2026-09-17T14:00:00.000Z',
+        startedAt: STARTED_AT,
       }),
-    ).toBe('Counting records to back fill…');
+    ).toBe('Counting records…');
   });
 
   it('counts completed batches while the run is in flight', () => {
     expect(
       getBackfillProgressMessage({
         status: 'running',
-        startedAt: '2026-09-17T14:00:00.000Z',
+        startedAt: STARTED_AT,
         progress: {
           total: 512,
           completed: 340,
@@ -30,32 +32,26 @@ describe('getBackfillProgressMessage', () => {
           pending: 170,
         },
       }),
-    ).toBe('Backfilling 340 of 512 batches.');
+    ).toBe('340 of 512 batches');
   });
 
-  it('calls out failed batches', () => {
+  it('calls out failures on a settled run', () => {
     expect(
       getBackfillProgressMessage({
         status: 'settled',
-        startedAt: '2026-09-17T14:00:00.000Z',
-        progress: {
-          total: 10,
-          completed: 9,
-          failed: 1,
-          running: 0,
-          pending: 0,
-        },
+        startedAt: STARTED_AT,
+        progress: { total: 10, completed: 9, failed: 1, running: 0, pending: 0 },
       }),
-    ).toBe('Last backfill finished 10 batches, 1 batch failed.');
+    ).toBe('10 batches done, 1 failed');
   });
 
-  it('keeps the singular readable', () => {
+  it('calls out failures while the run is still going', () => {
     expect(
       getBackfillProgressMessage({
-        status: 'settled',
-        startedAt: '2026-09-17T14:00:00.000Z',
-        progress: { total: 1, completed: 1, failed: 0, running: 0, pending: 0 },
+        status: 'running',
+        startedAt: STARTED_AT,
+        progress: { total: 10, completed: 4, failed: 1, running: 1, pending: 4 },
       }),
-    ).toBe('Last backfill finished 1 batch.');
+    ).toBe('4 of 10 batches, 1 failed');
   });
 });

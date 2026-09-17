@@ -3,7 +3,7 @@
 ## 1.5.0
 
 - Add a settings panel with a "Run backfill" button, so the backfill can be re-run on demand instead of only on install. The button posts to a new `POST /last-contact/backfill` route, which enqueues the same count-and-fan-out job the post-install hook runs.
-- Report the running backfill in that panel, with twenty-ui's progress bar and a count of the batch jobs as the queue works through them. Each run records its job ids, and `GET /last-contact/backfill/status` reads their queue state: `getJobs` refuses more than 200 ids at a time, so a run is read in pages, and a job the queue has already dropped counts as finished rather than stalling the count short of the total. The panel polls every three seconds while a run is in flight and stops once it settles, because each poll spends an application API call per 200 jobs against a budget shared by every workspace on the instance.
+- Report the running backfill in that panel, with a progress ring and a count of the batch jobs as the queue works through them. Each run records its job ids, and `GET /last-contact/backfill/status` reads their queue state: `getJobs` refuses more than 200 ids at a time, so a run is read in pages, and a job the queue has already dropped counts as finished rather than stalling the count short of the total. The panel polls every three seconds while a run is in flight and stops once it settles, because each poll spends an application API call per 200 jobs against a budget shared by every workspace on the instance.
 
 ## 1.4.0
 
