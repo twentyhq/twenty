@@ -19,11 +19,7 @@ export type WorkspaceDeletionApplicationUninstallJobData = {
   workspaceId: string;
 };
 
-@Processor([
-  MessageQueue.applicationLifecycleHookQueue,
-  // Jobs enqueued in version <=2.42.x land on the logic function queue, remove this queue once those jobs are drained
-  MessageQueue.logicFunctionQueue,
-])
+@Processor(MessageQueue.applicationLifecycleHookQueue)
 export class WorkspaceDeletionApplicationUninstallJob {
   constructor(
     @InjectRepository(WorkspaceEntity)

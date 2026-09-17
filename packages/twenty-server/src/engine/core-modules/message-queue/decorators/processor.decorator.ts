@@ -8,9 +8,9 @@ import {
 
 export interface MessageQueueProcessorOptions {
   /**
-   * Specifies the name of the queue, or queues, to subscribe to.
+   * Specifies the name of the queue to subscribe to.
    */
-  queueName: MessageQueue | MessageQueue[];
+  queueName: MessageQueue;
   /**
    * Specifies the lifetime of an injected Processor.
    */
@@ -18,12 +18,12 @@ export interface MessageQueueProcessorOptions {
 }
 
 export function Processor(
-  queueNameOrOptions: string | MessageQueue[] | MessageQueueProcessorOptions,
+  queueNameOrOptions: string | MessageQueueProcessorOptions,
 ): ClassDecorator {
   const options =
-    typeof queueNameOrOptions === 'string' || Array.isArray(queueNameOrOptions)
-      ? { queueName: queueNameOrOptions }
-      : queueNameOrOptions;
+    typeof queueNameOrOptions === 'object'
+      ? queueNameOrOptions
+      : { queueName: queueNameOrOptions };
 
   return (target: Function) => {
     SetMetadata(SCOPE_OPTIONS_METADATA, options)(target);
