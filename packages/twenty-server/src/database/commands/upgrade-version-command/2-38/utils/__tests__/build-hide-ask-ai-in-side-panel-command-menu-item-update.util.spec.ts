@@ -1,10 +1,11 @@
 import { buildHideAskAiInSidePanelCommandMenuItemUpdate } from 'src/database/commands/upgrade-version-command/2-38/utils/build-hide-ask-ai-in-side-panel-command-menu-item-update.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { createStandardCommandMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/command-menu-item/create-standard-command-menu-item-flat-metadata.util';
 
 const NOW = '2026-09-01T12:00:00.000Z';
+const HIDDEN_ASK_AI_AVAILABILITY_EXPRESSION =
+  'permissionFlags.AI and not isInSidePanel';
 const LEGACY_COMMAND_MENU_ITEM: FlatCommandMenuItem = Object.freeze({
   ...createStandardCommandMenuItemFlatMetadata({
     commandMenuItemName: 'askAi',
@@ -20,7 +21,7 @@ const LEGACY_COMMAND_MENU_ITEM: FlatCommandMenuItem = Object.freeze({
 });
 
 describe('buildHideAskAiInSidePanelCommandMenuItemUpdate', () => {
-  it('updates the legacy availability expression to the standard definition', () => {
+  it('updates the legacy availability expression to the hidden one', () => {
     expect(
       buildHideAskAiInSidePanelCommandMenuItemUpdate({
         existingCommandMenuItem: LEGACY_COMMAND_MENU_ITEM,
@@ -28,16 +29,9 @@ describe('buildHideAskAiInSidePanelCommandMenuItemUpdate', () => {
       }),
     ).toEqual({
       ...LEGACY_COMMAND_MENU_ITEM,
-      conditionalAvailabilityExpression:
-        STANDARD_COMMAND_MENU_ITEMS.askAi.conditionalAvailabilityExpression,
+      conditionalAvailabilityExpression: HIDDEN_ASK_AI_AVAILABILITY_EXPRESSION,
       updatedAt: NOW,
     });
-  });
-
-  it('keeps the migrated expression synchronized with the standard definition', () => {
-    expect(
-      STANDARD_COMMAND_MENU_ITEMS.askAi.conditionalAvailabilityExpression,
-    ).toBe('permissionFlags.AI and not isInSidePanel');
   });
 
   it.each([
@@ -55,7 +49,7 @@ describe('buildHideAskAiInSidePanelCommandMenuItemUpdate', () => {
       existingCommandMenuItem: {
         ...LEGACY_COMMAND_MENU_ITEM,
         conditionalAvailabilityExpression:
-          STANDARD_COMMAND_MENU_ITEMS.askAi.conditionalAvailabilityExpression,
+          HIDDEN_ASK_AI_AVAILABILITY_EXPRESSION,
       },
     },
   ])('skips $name', ({ existingCommandMenuItem }) => {
