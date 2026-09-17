@@ -1,6 +1,6 @@
 import { getCreditAvailability } from 'twenty-sdk/billing';
 
-import { CREDITS_UNAVAILABLE_FAILURE_REASONS } from 'src/logic-functions/constants/credits-unavailable-failure-reasons';
+import { FAILURE_REASON_BY_CREDIT_UNAVAILABLE_REASON } from 'src/logic-functions/constants/failure-reason-by-credit-unavailable-reason';
 
 export const getCreditsUnavailableFailureReason = async (): Promise<
   string | undefined
@@ -9,5 +9,5 @@ export const getCreditsUnavailableFailureReason = async (): Promise<
 
   return creditAvailability.hasAvailableCredits
     ? undefined
-    : CREDITS_UNAVAILABLE_FAILURE_REASONS[creditAvailability.reason];
+    : FAILURE_REASON_BY_CREDIT_UNAVAILABLE_REASON[creditAvailability.reason];
 };

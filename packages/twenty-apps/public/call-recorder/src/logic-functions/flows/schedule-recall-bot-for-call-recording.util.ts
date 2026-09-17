@@ -12,13 +12,13 @@ import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCreditsUnavailableFailureReason } from 'src/logic-functions/data/get-credits-unavailable-failure-reason.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { markCallRecordingNotRecorded } from 'src/logic-functions/data/mark-call-recording-not-recorded.util';
 import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
 import {
   computeRecallBotCreationIdempotencyKey,
   scheduleRecallBot,
 } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
-import { updateNonTerminalCallRecordingState } from 'src/logic-functions/data/update-non-terminal-call-recording-state.util';
 
 // The sole place a Recall bot is created. Only the deterministic-create winner and the stale-state cron call it, so one writer per meeting POSTs exactly one bot.
 export const scheduleRecallBotForCallRecording = async (
@@ -52,7 +52,7 @@ export const scheduleRecallBotForCallRecording = async (
     return false;
   }
 
-  // Too close to the join for the delayed check, so the verdict is read before a bot exists.
+  // A bot created this close to the join starts joining at once, so the verdict comes first.
   const isJoinWithinCreditCheckLead = isRecallBotJoinWithinCreditCheckLead({
     joinAt,
     now: new Date(),
@@ -62,17 +62,11 @@ export const scheduleRecallBotForCallRecording = async (
     : undefined;
 
   if (!isUndefined(creditsUnavailableFailureReason)) {
-    await updateNonTerminalCallRecordingState(client, {
+    await markCallRecordingNotRecorded({
+      client,
       callRecordingId: callRecording.id,
-      data: {
-        status: CallRecordingStatus.NOT_RECORDED,
-        callRecorderFailureReason: creditsUnavailableFailureReason,
-      },
+      failureReason: creditsUnavailableFailureReason,
     });
-
-    console.warn(
-      `[call-recorder] callRecording ${callRecording.id} will not be recorded: ${creditsUnavailableFailureReason}`,
-    );
 
     return false;
   }

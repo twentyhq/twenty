@@ -1,6 +1,6 @@
 import { type CreditUnavailableReason } from 'src/logic-functions/types/credit-unavailable-reason.type';
 
-export const CREDITS_UNAVAILABLE_FAILURE_REASONS: Record<
+export const FAILURE_REASON_BY_CREDIT_UNAVAILABLE_REASON: Record<
   CreditUnavailableReason,
   string
 > = {

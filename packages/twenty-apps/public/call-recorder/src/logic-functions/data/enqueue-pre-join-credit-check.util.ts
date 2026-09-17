@@ -24,7 +24,7 @@ export const enqueuePreJoinCreditCheck = async ({
       jobs: [
         {
           jobId: `credit-check.${callRecordingId}.${joinAtMilliseconds}`,
-          payload: { callRecordingId, joinAt },
+          payload: { callRecordingId },
         },
       ],
       retryLimit: ENQUEUED_JOB_RETRY_LIMIT,

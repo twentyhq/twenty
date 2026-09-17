@@ -90,18 +90,25 @@ class FakeCoreApiClient {
   }
 }
 
-const scheduleBot = (client: FakeCoreApiClient, meetingStartsAt: string) =>
+const scheduleBot = ({
+  client,
+  meetingStartsAt,
+}: {
+  client: FakeCoreApiClient;
+  meetingStartsAt: string;
+}) =>
   scheduleRecallBotForCallRecording(client as unknown as CoreApiClient, {
     callRecording: { id: 'call-recording-1' },
     calendarEvent: {
       id: 'calendar-event-1',
       title: 'Customer sync',
+      isCanceled: false,
       startsAt: meetingStartsAt,
       endsAt: '2026-01-01T14:00:00.000Z',
+      iCalUid: 'calendar-event-uid',
       conferenceLinkUrl: 'https://meet.example.com/customer-sync',
-    } as Parameters<
-      typeof scheduleRecallBotForCallRecording
-    >[1]['calendarEvent'],
+      callRecorderPreference: 'ON',
+    },
   });
 
 const createBotCalls = () =>
@@ -142,10 +149,10 @@ describe('scheduleRecallBotForCallRecording', () => {
   it('enqueues the credit check ten minutes before the join for a meeting that is far enough away', async () => {
     const client = new FakeCoreApiClient();
 
-    const didSchedule = await scheduleBot(
+    const didSchedule = await scheduleBot({
       client,
-      MEETING_IN_ONE_HOUR_STARTS_AT,
-    );
+      meetingStartsAt: MEETING_IN_ONE_HOUR_STARTS_AT,
+    });
 
     expect(didSchedule).toBe(true);
     expect(client.callRecording.externalBotId).toBe('recall-bot-1');
@@ -156,10 +163,7 @@ describe('scheduleRecallBotForCallRecording', () => {
       jobs: [
         {
           jobId: `credit-check.call-recording-1.${new Date('2026-01-01T12:59:00.000Z').getTime()}`,
-          payload: {
-            callRecordingId: 'call-recording-1',
-            joinAt: '2026-01-01T12:59:00.000Z',
-          },
+          payload: { callRecordingId: 'call-recording-1' },
         },
       ],
       retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
@@ -174,10 +178,10 @@ describe('scheduleRecallBotForCallRecording', () => {
     });
     const client = new FakeCoreApiClient();
 
-    const didSchedule = await scheduleBot(
+    const didSchedule = await scheduleBot({
       client,
-      MEETING_IN_FIVE_MINUTES_STARTS_AT,
-    );
+      meetingStartsAt: MEETING_IN_FIVE_MINUTES_STARTS_AT,
+    });
 
     expect(didSchedule).toBe(false);
     expect(createBotCalls()).toHaveLength(0);
@@ -193,10 +197,10 @@ describe('scheduleRecallBotForCallRecording', () => {
     getCreditAvailabilityMock.mockResolvedValue({ hasAvailableCredits: true });
     const client = new FakeCoreApiClient();
 
-    const didSchedule = await scheduleBot(
+    const didSchedule = await scheduleBot({
       client,
-      MEETING_IN_FIVE_MINUTES_STARTS_AT,
-    );
+      meetingStartsAt: MEETING_IN_FIVE_MINUTES_STARTS_AT,
+    });
 
     expect(didSchedule).toBe(true);
     expect(createBotCalls()).toHaveLength(1);
@@ -208,10 +212,10 @@ describe('scheduleRecallBotForCallRecording', () => {
     enqueueJobsMock.mockRejectedValue(new Error('queue unavailable'));
     const client = new FakeCoreApiClient();
 
-    const didSchedule = await scheduleBot(
+    const didSchedule = await scheduleBot({
       client,
-      MEETING_IN_ONE_HOUR_STARTS_AT,
-    );
+      meetingStartsAt: MEETING_IN_ONE_HOUR_STARTS_AT,
+    });
 
     expect(didSchedule).toBe(true);
     expect(client.callRecording.externalBotId).toBe('recall-bot-1');
