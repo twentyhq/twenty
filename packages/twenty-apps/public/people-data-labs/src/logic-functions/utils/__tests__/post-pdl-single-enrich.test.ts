@@ -32,12 +32,13 @@ const stubFetch = (response: FetchResponse | Error) => {
 
 describe('postPdlSingleEnrich', () => {
   beforeEach(() => {
-    process.env.PDL_API_KEY = 'secret-key';
+    vi.stubEnv('PDL_API_KEY', 'secret-key');
+    vi.stubEnv('PDL_CUSTOM_API_KEY', undefined);
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
-    delete process.env.PDL_API_KEY;
+    vi.unstubAllEnvs();
   });
 
   it('posts the params directly in the body (not wrapped under requests)', async () => {
@@ -53,6 +54,28 @@ describe('postPdlSingleEnrich', () => {
     expect(url).toBe('https://api.peopledatalabs.com/v5/person/enrich');
     expect(JSON.parse(init.body as string)).toEqual({ email: 'a@b.com' });
   });
+
+  it.each([undefined, '  customer-key  '])(
+    'uses the selected key for single requests when the custom key is %j',
+    async (customApiKey) => {
+      vi.stubEnv('PDL_CUSTOM_API_KEY', customApiKey);
+      const fetchMock = stubFetch(buildResponse(200, { status: 200, data: {} }));
+
+      await postPdlSingleEnrich({
+        path: '/person/enrich',
+        params: { email: 'a@b.com' },
+      });
+
+      expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
+        'https://api.peopledatalabs.com/v5/person/enrich',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'X-Api-Key': customApiKey?.trim() ?? 'secret-key',
+          }),
+        }),
+      );
+    },
+  );
 
   it('maps a 200 person match with a data envelope', async () => {
     stubFetch(

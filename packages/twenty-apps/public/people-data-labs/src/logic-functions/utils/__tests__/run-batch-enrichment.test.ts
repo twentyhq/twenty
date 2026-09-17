@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { chargeCredits } from 'twenty-sdk/billing';
 
@@ -133,6 +133,11 @@ const records = (...ids: string[]) => ids.map((id) => ({ id }));
 describe('runBatchEnrichment', () => {
   beforeEach(() => {
     vi.mocked(chargeCredits).mockClear();
+    vi.stubEnv('PDL_CUSTOM_API_KEY', undefined);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it('reads every id in one call and enriches the set in one batch', async () => {
@@ -440,6 +445,22 @@ describe('runBatchEnrichment', () => {
       quantity: 2,
       resourceContext: 'pdl/test',
     });
+  });
+
+  it('enriches every chunk without billing when a custom key is configured', async () => {
+    vi.stubEnv('PDL_CUSTOM_API_KEY', 'customer-key');
+    const ids = Array.from({ length: 150 }, (_unused, index) => `r${index}`);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: ids.map((id) => ({ id })) },
+      adapter: harness.adapter,
+    });
+
+    expect(result).toMatchObject({ matched: 150, success: true });
+    expect(harness.updateOne).toHaveBeenCalledTimes(150);
+    expect(chargeCredits).not.toHaveBeenCalled();
   });
 
   it('does not bill when no record matches', async () => {

@@ -10,7 +10,9 @@
 
 ## 💳 Billing
 
-Pay only for matches, in Twenty credits — **not found and skipped records are free.**
+By default, enrichment uses Twenty's People Data Labs API key. Pay only for matches in Twenty credits. **Not found and skipped records are free.**
 
 - **Person match:** $0.336
 - **Company match:** $0.12
+
+To use your own People Data Labs account, set the optional secret `PDL_CUSTOM_API_KEY` in Settings → Apps → People Data Labs. Enrichment uses this key and does not charge Twenty credits. Usage is billed through your People Data Labs account. Leave the variable empty to use Twenty's key and credit billing.

@@ -32,12 +32,13 @@ const stubFetch = (response: FetchResponse | Error) => {
 
 describe('postPdlBulkEnrich', () => {
   beforeEach(() => {
-    process.env.PDL_API_KEY = 'secret-key';
+    vi.stubEnv('PDL_API_KEY', 'secret-key');
+    vi.stubEnv('PDL_CUSTOM_API_KEY', undefined);
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
-    delete process.env.PDL_API_KEY;
+    vi.unstubAllEnvs();
   });
 
   it('sends one request wrapping every record under requests[].params', async () => {
@@ -51,6 +52,45 @@ describe('postPdlBulkEnrich', () => {
     expect(JSON.parse(init.body as string)).toEqual({
       requests: [{ params: { email: 'a@b.com' } }],
     });
+  });
+
+  it.each([undefined, '  customer-key  '])(
+    'uses the selected key for bulk requests when the custom key is %j',
+    async (customApiKey) => {
+      vi.stubEnv('PDL_CUSTOM_API_KEY', customApiKey);
+      const fetchMock = stubFetch(buildResponse(200, [{ status: 200, data: {} }]));
+
+      await postPdlBulkEnrich({
+        path: '/company/bulk',
+        requests: [{ website: 'example.com' }],
+      });
+
+      expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
+        'https://api.peopledatalabs.com/v5/company/bulk',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'X-Api-Key': customApiKey?.trim() ?? 'secret-key',
+          }),
+        }),
+      );
+    },
+  );
+
+  it('does not fall back to the managed key when the custom key is rejected', async () => {
+    vi.stubEnv('PDL_CUSTOM_API_KEY', 'invalid-customer-key');
+    const fetchMock = stubFetch(
+      buildResponse(401, { error: { message: 'Invalid API key' } }),
+    );
+
+    const results = await postPdlBulkEnrich({
+      path: '/company/bulk',
+      requests: [{ website: 'example.com' }],
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(results).toEqual([
+      { outcome: 'error', httpStatus: 401, message: 'Invalid API key' },
+    ]);
   });
 
   it('maps each response item to its aligned outcome', async () => {
