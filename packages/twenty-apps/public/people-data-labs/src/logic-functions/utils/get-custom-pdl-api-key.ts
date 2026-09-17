@@ -1,7 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { toText } from 'src/logic-functions/utils/to-text';
 
-export const getCustomPdlApiKey = (): string | undefined => {
-  const apiKey = process.env.PDL_CUSTOM_API_KEY?.trim();
-
-  return isNonEmptyString(apiKey) ? apiKey : undefined;
-};
+export const getCustomPdlApiKey = (): string | undefined =>
+  toText(process.env.PDL_CUSTOM_API_KEY);

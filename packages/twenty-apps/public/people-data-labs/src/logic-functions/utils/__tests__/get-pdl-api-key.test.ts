@@ -5,7 +5,7 @@ import { getPdlApiKey } from 'src/logic-functions/utils/get-pdl-api-key';
 
 describe('getPdlApiKey', () => {
   beforeEach(() => {
-    vi.stubEnv('PDL_API_KEY', '  twenty-key  ');
+    vi.stubEnv('PDL_API_KEY', '  default-key  ');
     vi.stubEnv('PDL_CUSTOM_API_KEY', undefined);
   });
 
@@ -14,18 +14,18 @@ describe('getPdlApiKey', () => {
   });
 
   it.each([undefined, '', '   '])(
-    'uses the Twenty-managed key when the custom key is %j',
+    'uses the default key when the custom key is %j',
     (customApiKey) => {
       vi.stubEnv('PDL_CUSTOM_API_KEY', customApiKey);
 
-      expect(getPdlApiKey()).toBe('twenty-key');
+      expect(getPdlApiKey()).toBe('default-key');
     },
   );
 
-  it.each([undefined, 'twenty-key'])(
-    'prefers the custom key when the Twenty-managed key is %j',
-    (managedApiKey) => {
-      vi.stubEnv('PDL_API_KEY', managedApiKey);
+  it.each([undefined, 'default-key'])(
+    'prefers the custom key when the default key is %j',
+    (defaultApiKey) => {
+      vi.stubEnv('PDL_API_KEY', defaultApiKey);
       vi.stubEnv('PDL_CUSTOM_API_KEY', '  customer-key  ');
 
       expect(getPdlApiKey()).toBe('customer-key');
@@ -33,11 +33,22 @@ describe('getPdlApiKey', () => {
   );
 
   it.each([undefined, '', '   '])(
-    'throws a PdlConfigError when neither key is usable and the managed key is %j',
-    (managedApiKey) => {
-      vi.stubEnv('PDL_API_KEY', managedApiKey);
+    'throws a PdlConfigError when neither key is usable and the default key is %j',
+    (defaultApiKey) => {
+      vi.stubEnv('PDL_API_KEY', defaultApiKey);
+      vi.stubEnv('PDL_CUSTOM_API_KEY', '');
 
       expect(() => getPdlApiKey()).toThrow(PdlConfigError);
+    },
+  );
+
+  it.each(['customer\nkey', 'customer-key​'])(
+    'throws a PdlConfigError without revealing the custom key %j',
+    (customApiKey) => {
+      vi.stubEnv('PDL_CUSTOM_API_KEY', customApiKey);
+
+      expect(() => getPdlApiKey()).toThrow(PdlConfigError);
+      expect(() => getPdlApiKey()).not.toThrow(/customer/);
     },
   );
 });

@@ -3,6 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { chargeCredits } from 'twenty-sdk/billing';
 
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
+import { postPdlBulkEnrich } from 'src/logic-functions/utils/post-pdl-enrich';
 import { runBatchEnrichment } from 'src/logic-functions/utils/run-batch-enrichment';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
@@ -138,6 +139,7 @@ describe('runBatchEnrichment', () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
   });
 
   it('reads every id in one call and enriches the set in one batch', async () => {
@@ -447,21 +449,48 @@ describe('runBatchEnrichment', () => {
     });
   });
 
-  it('enriches every chunk without billing when a custom key is configured', async () => {
-    vi.stubEnv('PDL_CUSTOM_API_KEY', 'customer-key');
-    const ids = Array.from({ length: 150 }, (_unused, index) => `r${index}`);
-    const harness = buildHarness(ids.map((id) => ({ id })));
+  it.each([
+    {
+      customApiKey: 'customer-key',
+      expectedApiKey: 'customer-key',
+      expectedChargeCount: 0,
+    },
+    { customApiKey: '', expectedApiKey: 'default-key', expectedChargeCount: 1 },
+  ])(
+    'charges credits only for matches enriched with the default key (sent $expectedApiKey)',
+    async ({ customApiKey, expectedApiKey, expectedChargeCount }) => {
+      vi.stubEnv('PDL_API_KEY', 'default-key');
+      vi.stubEnv('PDL_CUSTOM_API_KEY', customApiKey);
+      const fetchMock = vi.fn(async (_url: string, _init?: RequestInit) => ({
+        status: 200,
+        ok: true,
+        json: async () => [{ status: 200, data: { id: 'a' } }],
+      }));
+      vi.stubGlobal('fetch', fetchMock);
+      const harness = buildHarness([{ id: 'a' }]);
+      harness.enrichBatch.mockImplementation((params) =>
+        postPdlBulkEnrich<FakeData>({
+          path: '/company/enrich/bulk',
+          requests: params,
+        }),
+      );
 
-    const result = await runBatchEnrichment({
-      client: CLIENT,
-      input: { records: ids.map((id) => ({ id })) },
-      adapter: harness.adapter,
-    });
+      const result = await runBatchEnrichment({
+        client: CLIENT,
+        input: { records: records('a') },
+        adapter: harness.adapter,
+      });
 
-    expect(result).toMatchObject({ matched: 150, success: true });
-    expect(harness.updateOne).toHaveBeenCalledTimes(150);
-    expect(chargeCredits).not.toHaveBeenCalled();
-  });
+      expect(result).toMatchObject({ matched: 1, success: true });
+      expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({ 'X-Api-Key': expectedApiKey }),
+        }),
+      );
+      expect(chargeCredits).toHaveBeenCalledTimes(expectedChargeCount);
+    },
+  );
 
   it('does not bill when no record matches', async () => {
     const harness = buildHarness([

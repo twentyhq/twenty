@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
 import { postPdlBulkEnrich } from 'src/logic-functions/utils/post-pdl-enrich';
 
 type FetchResponse = {
@@ -54,11 +55,18 @@ describe('postPdlBulkEnrich', () => {
     });
   });
 
-  it.each([undefined, '  customer-key  '])(
-    'uses the selected key for bulk requests when the custom key is %j',
-    async (customApiKey) => {
+  it.each([
+    { customApiKey: undefined, expectedApiKey: 'secret-key' },
+    { customApiKey: '', expectedApiKey: 'secret-key' },
+    { customApiKey: '   ', expectedApiKey: 'secret-key' },
+    { customApiKey: '  customer-key  ', expectedApiKey: 'customer-key' },
+  ])(
+    'sends $expectedApiKey for bulk requests when the custom key is $customApiKey',
+    async ({ customApiKey, expectedApiKey }) => {
       vi.stubEnv('PDL_CUSTOM_API_KEY', customApiKey);
-      const fetchMock = stubFetch(buildResponse(200, [{ status: 200, data: {} }]));
+      const fetchMock = stubFetch(
+        buildResponse(200, [{ status: 200, data: {} }]),
+      );
 
       await postPdlBulkEnrich({
         path: '/company/bulk',
@@ -68,15 +76,28 @@ describe('postPdlBulkEnrich', () => {
       expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
         'https://api.peopledatalabs.com/v5/company/bulk',
         expect.objectContaining({
-          headers: expect.objectContaining({
-            'X-Api-Key': customApiKey?.trim() ?? 'secret-key',
-          }),
+          headers: expect.objectContaining({ 'X-Api-Key': expectedApiKey }),
         }),
       );
     },
   );
 
-  it('does not fall back to the managed key when the custom key is rejected', async () => {
+  it('rejects a custom key with invalid characters without calling PDL', async () => {
+    vi.stubEnv('PDL_CUSTOM_API_KEY', 'customer\nkey');
+    const fetchMock = stubFetch(
+      buildResponse(200, [{ status: 200, data: {} }]),
+    );
+
+    await expect(
+      postPdlBulkEnrich({
+        path: '/company/bulk',
+        requests: [{ website: 'example.com' }],
+      }),
+    ).rejects.toThrow(PdlConfigError);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('does not fall back to the default key when the custom key is rejected', async () => {
     vi.stubEnv('PDL_CUSTOM_API_KEY', 'invalid-customer-key');
     const fetchMock = stubFetch(
       buildResponse(401, { error: { message: 'Invalid API key' } }),

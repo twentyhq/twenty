@@ -59,29 +59,17 @@ describe('chargeMatchedEnrichments', () => {
     expect(chargeCredits).not.toHaveBeenCalled();
   });
 
-  it.each([
-    {
+  it('does not charge matches when a custom key is configured', async () => {
+    vi.stubEnv('PDL_CUSTOM_API_KEY', '  customer-key  ');
+
+    await chargeMatchedEnrichments({
+      matchedCount: 3,
       costPerMatchDollars: PERSON_MATCH_COST_DOLLARS,
       resourceContext: 'pdl/person',
-    },
-    {
-      costPerMatchDollars: COMPANY_MATCH_COST_DOLLARS,
-      resourceContext: 'pdl/company',
-    },
-  ])(
-    'does not charge $resourceContext matches when a custom key is configured',
-    async ({ costPerMatchDollars, resourceContext }) => {
-      vi.stubEnv('PDL_CUSTOM_API_KEY', '  customer-key  ');
+    });
 
-      await chargeMatchedEnrichments({
-        matchedCount: 3,
-        costPerMatchDollars,
-        resourceContext,
-      });
-
-      expect(chargeCredits).not.toHaveBeenCalled();
-    },
-  );
+    expect(chargeCredits).not.toHaveBeenCalled();
+  });
 
   it.each(['', '   '])(
     'charges matches when the custom key is %j',

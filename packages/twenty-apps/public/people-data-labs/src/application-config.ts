@@ -13,16 +13,17 @@ export default defineApplication({
   applicationVariables: {
     PDL_CUSTOM_API_KEY: {
       universalIdentifier: 'ac62542c-a807-4100-99d8-6c4a88b895cc',
-      label: 'People Data Labs API key',
+      label: 'Your People Data Labs API key',
       description:
-        'Optional API key for your People Data Labs account. When set, enrichment uses this key without charging Twenty credits. Leave blank to use Twenty credits.',
+        'Optional. When set, enrichment uses your People Data Labs account and matches are billed there instead of in Twenty credits. Leave empty to use the default key.',
       type: FieldType.TEXT,
       isSecret: true,
     },
   },
   serverVariables: {
     PDL_API_KEY: {
-      description: 'Twenty-managed People Data Labs API key',
+      description:
+        'Default People Data Labs API key, used by workspaces that have not set their own key',
       isSecret: true,
     },
   },

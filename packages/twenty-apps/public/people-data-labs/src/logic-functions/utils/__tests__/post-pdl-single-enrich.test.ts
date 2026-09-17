@@ -55,11 +55,18 @@ describe('postPdlSingleEnrich', () => {
     expect(JSON.parse(init.body as string)).toEqual({ email: 'a@b.com' });
   });
 
-  it.each([undefined, '  customer-key  '])(
-    'uses the selected key for single requests when the custom key is %j',
-    async (customApiKey) => {
+  it.each([
+    { customApiKey: undefined, expectedApiKey: 'secret-key' },
+    { customApiKey: '', expectedApiKey: 'secret-key' },
+    { customApiKey: '   ', expectedApiKey: 'secret-key' },
+    { customApiKey: '  customer-key  ', expectedApiKey: 'customer-key' },
+  ])(
+    'sends $expectedApiKey for single requests when the custom key is $customApiKey',
+    async ({ customApiKey, expectedApiKey }) => {
       vi.stubEnv('PDL_CUSTOM_API_KEY', customApiKey);
-      const fetchMock = stubFetch(buildResponse(200, { status: 200, data: {} }));
+      const fetchMock = stubFetch(
+        buildResponse(200, { status: 200, data: {} }),
+      );
 
       await postPdlSingleEnrich({
         path: '/person/enrich',
@@ -69,13 +76,33 @@ describe('postPdlSingleEnrich', () => {
       expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
         'https://api.peopledatalabs.com/v5/person/enrich',
         expect.objectContaining({
-          headers: expect.objectContaining({
-            'X-Api-Key': customApiKey?.trim() ?? 'secret-key',
-          }),
+          headers: expect.objectContaining({ 'X-Api-Key': expectedApiKey }),
         }),
       );
     },
   );
+
+  it('does not fall back to the default key when the custom key is rejected', async () => {
+    vi.stubEnv('PDL_CUSTOM_API_KEY', 'invalid-customer-key');
+    const fetchMock = stubFetch(
+      buildResponse(401, {
+        status: 401,
+        error: { message: 'Invalid API key' },
+      }),
+    );
+
+    const result = await postPdlSingleEnrich({
+      path: '/person/enrich',
+      params: { email: 'a@b.com' },
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(result).toEqual({
+      outcome: 'error',
+      httpStatus: 401,
+      message: 'Invalid API key',
+    });
+  });
 
   it('maps a 200 person match with a data envelope', async () => {
     stubFetch(

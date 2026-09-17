@@ -14,7 +14,9 @@ export const chargeMatchedEnrichments = async ({
   costPerMatchDollars: number;
   resourceContext: string;
 }): Promise<void> => {
-  if (matchedCount === 0 || isDefined(getCustomPdlApiKey())) {
+  const isBilledThroughCustomPdlAccount = isDefined(getCustomPdlApiKey());
+
+  if (matchedCount === 0 || isBilledThroughCustomPdlAccount) {
     return;
   }
 
