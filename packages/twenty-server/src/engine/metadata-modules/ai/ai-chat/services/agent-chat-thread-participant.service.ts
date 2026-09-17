@@ -75,9 +75,9 @@ export class AgentChatThreadParticipantService {
       workspaceId,
     });
 
-    await this.assertActorIsOwner({
+    await this.agentChatService.assertThreadOwner({
       threadId,
-      actorUserWorkspaceId,
+      userWorkspaceId: actorUserWorkspaceId,
       workspaceId,
     });
 
@@ -145,9 +145,9 @@ export class AgentChatThreadParticipantService {
     const isLeaving = actorUserWorkspaceId === userWorkspaceId;
 
     if (!isLeaving) {
-      await this.assertActorIsOwner({
+      await this.agentChatService.assertThreadOwner({
         threadId,
-        actorUserWorkspaceId,
+        userWorkspaceId: actorUserWorkspaceId,
         workspaceId,
       });
     }
@@ -262,28 +262,5 @@ export class AgentChatThreadParticipantService {
         ];
       }),
     );
-  }
-
-  private async assertActorIsOwner({
-    threadId,
-    actorUserWorkspaceId,
-    workspaceId,
-  }: {
-    threadId: string;
-    actorUserWorkspaceId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    const isOwner = await this.participantRepository.existsBy(workspaceId, {
-      threadId,
-      userWorkspaceId: actorUserWorkspaceId,
-      role: AgentChatThreadParticipantRole.OWNER,
-    });
-
-    if (!isOwner) {
-      throw new AiException(
-        'Only the thread owner can manage participants',
-        AiExceptionCode.THREAD_ACTION_NOT_ALLOWED,
-      );
-    }
   }
 }

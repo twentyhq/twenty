@@ -77,10 +77,8 @@ import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-cha
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
-import {
-  collectMessageAuthorUserWorkspaceIds,
-  injectMessageAuthors,
-} from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-authors.util';
+import { collectMessageAuthorUserWorkspaceIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-message-author-user-workspace-ids.util';
+import { injectMessageAuthors } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-authors.util';
 import {
   getCacheProviderOptions,
   getCallLevelProviderOptions,

@@ -826,8 +826,7 @@ export class AgentChatChannelService {
   private isUniqueViolation(error: unknown): boolean {
     return (
       error instanceof QueryFailedError &&
-      (error as QueryFailedError & { code?: string }).code ===
-        POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
+      error.driverError?.code === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
     );
   }
 

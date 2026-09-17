@@ -1,9 +1,7 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import {
-  collectMessageAuthorUserWorkspaceIds,
-  injectMessageAuthors,
-} from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-authors.util';
+import { collectMessageAuthorUserWorkspaceIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-message-author-user-workspace-ids.util';
+import { injectMessageAuthors } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-authors.util';
 
 const DISPLAY_NAMES = new Map([
   ['tim', 'Tim Apple'],

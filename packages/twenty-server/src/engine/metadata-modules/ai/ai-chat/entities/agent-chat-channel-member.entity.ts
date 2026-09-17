@@ -22,7 +22,7 @@ import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration
 })
 @Entity({ name: 'agentChatChannelMember', schema: 'core' })
 @Index(
-  'IDX_AGENT_CHAT_CHANNEL_MEMBER_CHANNEL_ID_USER_WORKSPACE_ID_UNIQUE',
+  'IDX_AGENT_CHAT_CHANNEL_MEMBER_CHANNEL_USER_WORKSPACE_UNIQUE',
   ['channelId', 'userWorkspaceId'],
   { unique: true },
 )

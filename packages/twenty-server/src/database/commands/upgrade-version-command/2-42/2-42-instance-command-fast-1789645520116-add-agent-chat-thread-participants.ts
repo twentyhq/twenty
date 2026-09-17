@@ -21,7 +21,7 @@ export class AddAgentChatThreadParticipantsFastInstanceCommand implements FastIn
     );
 
     await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_AGENT_CHAT_THREAD_PARTICIPANT_THREAD_ID_USER_WORKSPACE_ID_UNIQUE" ON "core"."agentChatThreadParticipant" ("threadId", "userWorkspaceId")`,
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_AGENT_CHAT_THREAD_PARTICIPANT_THREAD_USER_WORKSPACE_UNIQUE" ON "core"."agentChatThreadParticipant" ("threadId", "userWorkspaceId")`,
     );
 
     await queryRunner.query(
@@ -38,21 +38,21 @@ export class AddAgentChatThreadParticipantsFastInstanceCommand implements FastIn
 
     await queryRunner.query(
       `ALTER TABLE "core"."agentChatThreadParticipant"
-       ADD CONSTRAINT "FK_AGENT_CHAT_THREAD_PARTICIPANT_WORKSPACE_ID"
+       ADD CONSTRAINT "FK_70c958ec40d39b0333697d19c5a"
        FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
 
     await queryRunner.query(
       `ALTER TABLE "core"."agentChatThreadParticipant"
-       ADD CONSTRAINT "FK_AGENT_CHAT_THREAD_PARTICIPANT_THREAD_ID"
+       ADD CONSTRAINT "FK_4e72c75eb6e4d7bd139b9d9a59b"
        FOREIGN KEY ("threadId") REFERENCES "core"."agentChatThread"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
 
     await queryRunner.query(
       `ALTER TABLE "core"."agentChatThreadParticipant"
-       ADD CONSTRAINT "FK_AGENT_CHAT_THREAD_PARTICIPANT_USER_WORKSPACE_ID"
+       ADD CONSTRAINT "FK_16af4c3153ef1310ca2ba085a34"
        FOREIGN KEY ("userWorkspaceId") REFERENCES "core"."userWorkspace"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
