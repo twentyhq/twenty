@@ -51,7 +51,6 @@ type TrackingRecipient = {
 type PrepareBatchArgs = {
   workspaceId: string;
   emailingDomainId: string;
-  messageCampaignId: string;
   template: EmailingDomainEmailTemplate;
   plainTextSourceHtml: string;
   variableNames: string[];
@@ -73,7 +72,6 @@ export class CampaignTrackingContentService {
   async prepareBatch({
     workspaceId,
     emailingDomainId,
-    messageCampaignId,
     template,
     plainTextSourceHtml,
     variableNames,
@@ -112,7 +110,6 @@ export class CampaignTrackingContentService {
 
     const shortLinkIdByIdentity = await this.registerShortLinks({
       workspaceId,
-      messageCampaignId,
       urlTemplates,
       variableNames,
       recipients,
@@ -170,13 +167,11 @@ export class CampaignTrackingContentService {
 
   private async registerShortLinks({
     workspaceId,
-    messageCampaignId,
     urlTemplates,
     variableNames,
     recipients,
   }: {
     workspaceId: string;
-    messageCampaignId: string;
     urlTemplates: string[];
     variableNames: string[];
     recipients: TrackingRecipient[];
@@ -207,9 +202,8 @@ export class CampaignTrackingContentService {
       return new Map();
     }
 
-    return this.shortLinkService.registerCampaignLinks({
+    return this.shortLinkService.registerLinks({
       workspaceId,
-      messageCampaignId,
       links: [...linkByIdentity.values()],
     });
   }
