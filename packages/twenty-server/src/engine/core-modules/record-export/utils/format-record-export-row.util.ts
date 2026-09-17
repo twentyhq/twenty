@@ -9,10 +9,13 @@ import {
 
 import { type RecordExportColumn } from 'src/engine/core-modules/record-export/types/record-export-column.type';
 
-export const formatRecordExportRow = (
-  columns: RecordExportColumn[],
-  record: Record<string, unknown>,
-): string =>
+export const formatRecordExportRow = ({
+  columns,
+  record,
+}: {
+  columns: RecordExportColumn[];
+  record: Record<string, unknown>;
+}): string =>
   columns
     .map((column) => {
       let value = record[column.fieldName];

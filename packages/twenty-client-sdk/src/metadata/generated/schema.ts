@@ -9674,7 +9674,7 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordExport"')
       return RecordExport_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PublicDomain_possibleTypes: string[] = ['PublicDomain']

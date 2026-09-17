@@ -1,4 +1,6 @@
 import { v4 } from 'uuid';
+import { z } from 'zod';
+import { type JobState } from 'bullmq/dist/esm/types';
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import {
   BadRequestException,
@@ -28,13 +30,22 @@ import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/
 import {
   type RecordExport,
   type RecordExportDownload,
-  type RecordExportProgress,
   type RecordExportResult,
 } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 import { RecordExportQueryWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-query.workspace-service';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const recordExportProgressSchema = z.object({
+  processedRecordCount: z.number().int().nonnegative(),
+  totalRecordCount: z.number().int().nonnegative().nullable(),
+  errorMessage: z.string().optional(),
+});
+
+const recordExportResultSchema = recordExportProgressSchema.extend({
+  fileId: z.uuid(),
+});
 
 @Injectable()
 export class RecordExportWorkspaceService {
@@ -102,20 +113,13 @@ export class RecordExportWorkspaceService {
   ): Promise<RecordExportDTO & { result?: RecordExportResult }> {
     const jobs = await this.messageQueueService.getJobs<RecordExport>([jobId]);
     const job = jobs[jobId];
-    const progress = job?.progress as RecordExportProgress | undefined;
-    const result = job?.result as RecordExportResult | undefined;
+    const progress = recordExportProgressSchema.safeParse(job?.progress).data;
+    const result = recordExportResultSchema.safeParse(job?.result).data;
     const interrupted =
       !isDefined(job) ||
       (job.state === 'completed' && !isDefined(result?.fileId)) ||
       Date.now() - recordExport.createdAt > RECORD_EXPORT_MAX_DURATION_MS;
-    const status =
-      interrupted || job.state === 'failed'
-        ? RecordExportStatus.FAILED
-        : job.state === 'completed'
-          ? RecordExportStatus.COMPLETED
-          : job.state === 'active'
-            ? RecordExportStatus.PROCESSING
-            : RecordExportStatus.QUEUED;
+    const status = this.getStatus({ state: job?.state, interrupted });
     return {
       id: recordExport.id,
       filename: recordExport.filename,
@@ -131,6 +135,28 @@ export class RecordExportWorkspaceService {
           : null,
       result,
     };
+  }
+
+  private getStatus({
+    state,
+    interrupted,
+  }: {
+    state: JobState | undefined;
+    interrupted: boolean;
+  }): RecordExportStatus {
+    if (interrupted || state === 'failed') {
+      return RecordExportStatus.FAILED;
+    }
+
+    if (state === 'completed') {
+      return RecordExportStatus.COMPLETED;
+    }
+
+    if (state === 'active') {
+      return RecordExportStatus.PROCESSING;
+    }
+
+    return RecordExportStatus.QUEUED;
   }
 
   async prepareDownload(
