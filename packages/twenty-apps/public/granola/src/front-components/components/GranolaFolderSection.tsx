@@ -17,20 +17,17 @@ export const GranolaFolderSection = () => {
     GranolaFoldersResult | undefined
   >(undefined);
   const [isLoading, setIsLoading] = useState(true);
-  // Picker key: a reload remounts it so its local selection restarts from the server's.
-  const [loadCount, setLoadCount] = useState(0);
 
+  // The picker unmounts while the folders load, so a click cannot race the reload.
   const loadFolders = async () => {
     setIsLoading(true);
+    setFoldersResult(undefined);
 
-    try {
-      const loadedFoldersResult = await fetchGranolaFoldersOrThrow();
+    const loadedFoldersResult = await fetchGranolaFoldersOrThrow().catch(
+      () => undefined,
+    );
 
-      setFoldersResult(loadedFoldersResult);
-      setLoadCount((current) => current + 1);
-    } catch {
-      setFoldersResult(undefined);
-    }
+    setFoldersResult(loadedFoldersResult);
     setIsLoading(false);
   };
 
@@ -46,7 +43,6 @@ export const GranolaFolderSection = () => {
       <StyledSettingsSectionStack>
         {isDefined(foldersResult) && (
           <GranolaFolderPicker
-            key={loadCount}
             foldersResult={foldersResult}
             onSaveError={loadFolders}
           />
