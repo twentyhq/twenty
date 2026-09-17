@@ -1,3 +1,4 @@
+import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { FeatureFlagKey, NavigationMenuItemType } from 'twenty-shared/types';
@@ -57,6 +58,9 @@ export const NavigationMenuItemFolderSubItem = ({
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+  );
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
@@ -81,6 +85,7 @@ export const NavigationMenuItemFolderSubItem = ({
     objectMetadataItems,
     views,
     lastVisitedViewPerObjectMetadataItem,
+    isInitialObjectViewEnabled,
   });
   const objectNameSingular = getNavigationMenuItemObjectNameSingular(
     navigationMenuItem,
@@ -137,24 +142,26 @@ export const NavigationMenuItemFolderSubItem = ({
     : viewSecondaryLabel;
 
   return (
-    <NavigationDrawerSubItem
-      secondaryLabel={secondaryLabel}
-      label={label}
-      Icon={() => (
-        <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
-      )}
-      to={isDragging || isEditable ? undefined : computedLink}
-      onClick={handleClick}
-      active={isActive}
-      isSelectedInEditMode={isEditHighlightedInNavigationMenu}
-      subItemState={getNavigationSubItemLeftAdornment({
-        index,
-        arrayLength,
-        selectedIndex,
-      })}
-      rightOptions={rightOptions}
-      isDragging={isDragging}
-      triggerEvent="CLICK"
-    />
+    <NavigationMenuItemEditable item={navigationMenuItem}>
+      <NavigationDrawerSubItem
+        secondaryLabel={secondaryLabel}
+        label={label}
+        Icon={() => (
+          <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
+        )}
+        to={isDragging || isEditable ? undefined : computedLink}
+        onClick={handleClick}
+        active={isActive}
+        isSelectedInEditMode={isEditHighlightedInNavigationMenu}
+        subItemState={getNavigationSubItemLeftAdornment({
+          index,
+          arrayLength,
+          selectedIndex,
+        })}
+        rightOptions={rightOptions}
+        isDragging={isDragging}
+        triggerEvent="CLICK"
+      />
+    </NavigationMenuItemEditable>
   );
 };

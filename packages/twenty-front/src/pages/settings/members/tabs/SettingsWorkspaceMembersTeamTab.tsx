@@ -1,3 +1,4 @@
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -27,7 +28,7 @@ import {
   IconHierarchy,
   IconListDetails,
 } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { H2Title } from 'twenty-ui/primitives/typography';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
@@ -255,21 +256,20 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                         size="sm"
                       />
                     </StyledIconWrapper>
-                    <StyledTextContainerWithEllipsis
-                      id={`hover-text-${workspaceMember.id}`}
-                    >
-                      {workspaceMember.name.firstName +
-                        ' ' +
-                        workspaceMember.name.lastName}
-                    </StyledTextContainerWithEllipsis>
-                    <AppTooltip
-                      anchorSelect={`#hover-text-${workspaceMember.id}`}
-                      title={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
-                      noArrow
-                      place="top"
-                      positionStrategy="fixed"
+                    <Tooltip
+                      content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+                      side="top"
+                      positionMethod="fixed"
                       delay={TooltipDelay.shortDelay}
-                    />
+                    >
+                      <StyledTextContainerWithEllipsis
+                        id={`hover-text-${workspaceMember.id}`}
+                      >
+                        {workspaceMember.name.firstName +
+                          ' ' +
+                          workspaceMember.name.lastName}
+                      </StyledTextContainerWithEllipsis>
+                    </Tooltip>
                   </TableCell>
                   <TableCell>
                     <StyledTextContainerWithEllipsis>

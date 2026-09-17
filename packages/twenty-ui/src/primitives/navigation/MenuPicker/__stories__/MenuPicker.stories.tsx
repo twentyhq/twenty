@@ -1,6 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconChartPie } from '@ui/icon';
-import { TooltipDelay } from '@ui/primitives/surfaces';
 import { MenuPicker } from '@ui/primitives/navigation/MenuPicker/MenuPicker';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { type ReactNode } from 'react';
@@ -107,7 +106,7 @@ export const AllStates: Story = {
           icon={IconChartPie}
           label="Tooltip"
           tooltipContent="Tooltip"
-          tooltipDelay={TooltipDelay.mediumDelay}
+          tooltipDelay={500}
         />
       </div>
     </div>

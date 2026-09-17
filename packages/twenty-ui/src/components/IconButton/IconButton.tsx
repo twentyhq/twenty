@@ -1,12 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useId } from 'react';
 
 import { Button } from '@ui/primitives/input/Button/Button';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from '@ui/primitives/surfaces/AppTooltip/AppTooltip';
+import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from './IconButton.module.scss';
@@ -16,14 +11,13 @@ export const IconButton = ({
   children,
   className,
   tooltip,
-  tooltipPlace = TooltipPosition.Bottom,
-  tooltipDelay = TooltipDelay.longDelay,
+  tooltipPlace = 'bottom',
+  tooltipDelay = 1000,
   tooltipOffset = 5,
   disabled,
   loading,
   ...props
 }: IconButtonProps) => {
-  const tooltipId = useId();
   const hasTooltip = isNonEmptyString(tooltip);
   const isDisabled = disabled || loading;
   const button = (
@@ -31,7 +25,6 @@ export const IconButton = ({
       {...props}
       disabled={disabled}
       loading={loading}
-      data-tooltip-trigger={hasTooltip || undefined}
       startIcon={<span className={styles.icon}>{children}</span>}
       className={mergeClassNames(styles.button, className)}
     />
@@ -42,22 +35,17 @@ export const IconButton = ({
   }
 
   return (
-    <>
-      <span className={styles.tooltipAnchor} data-tooltip-id={tooltipId}>
-        {button}
-      </span>
-      <AppTooltip
-        anchorSelect={
-          isDisabled
-            ? `[data-tooltip-id='${tooltipId}']`
-            : `[data-tooltip-id='${tooltipId}'] > [data-tooltip-trigger]`
-        }
-        title={tooltip}
-        delay={tooltipDelay}
-        place={tooltipPlace}
-        offset={tooltipOffset}
-        noArrow
-      />
-    </>
+    <Tooltip
+      content={tooltip}
+      delay={tooltipDelay}
+      side={tooltipPlace}
+      sideOffset={tooltipOffset}
+    >
+      {isDisabled ? (
+        <span className={styles.tooltipAnchor}>{button}</span>
+      ) : (
+        button
+      )}
+    </Tooltip>
   );
 };
