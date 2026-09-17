@@ -1,3 +1,4 @@
+import { v4 } from 'uuid';
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import {
   BadRequestException,
@@ -20,10 +21,16 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   RECORD_EXPORT_MAX_DURATION_MS,
-  RECORD_EXPORT_MISSING_JOB_TIMEOUT_MS,
+  RECORD_EXPORT_DOWNLOAD_TTL_MS,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
+import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
-import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
+import {
+  type RecordExport,
+  type RecordExportDownload,
+  type RecordExportProgress,
+  type RecordExportResult,
+} from 'src/engine/core-modules/record-export/types/record-export.type';
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 import { RecordExportQueryWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-query.workspace-service';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
@@ -56,50 +63,87 @@ export class RecordExportWorkspaceService {
     });
     const workspaceId = requester.workspace.id;
 
-    const recordExport = await this.recordExportCacheService.create({
+    const recordExport: RecordExport = {
+      id: v4(),
+      createdAt: Date.now(),
       workspaceId,
       userWorkspaceId: requester.userWorkspaceId,
       workspaceMemberId: requester.workspaceMemberId,
       parameters,
       filename: `${context.queryRunnerContext.flatObjectMetadata.nameSingular}.csv`,
-    });
-
+    };
+    await this.recordExportCacheService.acquireLease(recordExport);
     return recordExport;
   }
 
-  async enqueue(recordExport: RecordExport): Promise<void> {
-    const workspaceId = recordExport.workspaceId;
+  async enqueue(recordExport: RecordExport): Promise<string> {
     try {
       const jobId = await this.messageQueueService.add(
         'GenerateRecordExportJob',
-        { workspaceId, recordExportId: recordExport.id },
+        recordExport,
         { id: recordExport.id },
       );
-
       if (!isDefined(jobId)) {
         throw new RecordExportException(
           'The export could not be queued',
           'QUEUE_UNAVAILABLE',
         );
       }
-
-      await this.recordExportCacheService.update({
-        workspaceId,
-        id: recordExport.id,
-        condition: {},
-        changes: { jobId },
-      });
+      return jobId;
     } catch (error) {
-      await this.recordExportCacheService.update({
-        workspaceId,
-        id: recordExport.id,
-        condition: { statuses: [RecordExportStatus.QUEUED] },
-        changes: {
-          status: RecordExportStatus.FAILED,
-          errorMessage: t`The export could not be queued. Please try again.`,
-        },
-      });
+      await this.cancel(recordExport);
       throw error;
+    }
+  }
+
+  async getProgress(
+    recordExport: RecordExport,
+    jobId: string,
+  ): Promise<RecordExportDTO & { result?: RecordExportResult }> {
+    const jobs = await this.messageQueueService.getJobs<RecordExport>([jobId]);
+    const job = jobs[jobId];
+    const progress = job?.progress as RecordExportProgress | undefined;
+    const result = job?.result as RecordExportResult | undefined;
+    const interrupted =
+      !isDefined(job) ||
+      (job.state === 'completed' && !isDefined(result?.fileId)) ||
+      Date.now() - recordExport.createdAt > RECORD_EXPORT_MAX_DURATION_MS;
+    const status =
+      interrupted || job.state === 'failed'
+        ? RecordExportStatus.FAILED
+        : job.state === 'completed'
+          ? RecordExportStatus.COMPLETED
+          : job.state === 'active'
+            ? RecordExportStatus.PROCESSING
+            : RecordExportStatus.QUEUED;
+    return {
+      id: recordExport.id,
+      filename: recordExport.filename,
+      status,
+      processedRecordCount:
+        result?.processedRecordCount ?? progress?.processedRecordCount ?? 0,
+      totalRecordCount:
+        result?.totalRecordCount ?? progress?.totalRecordCount ?? null,
+      errorMessage:
+        status === RecordExportStatus.FAILED
+          ? (progress?.errorMessage ??
+            t`The export was interrupted. Please try again.`)
+          : null,
+      result,
+    };
+  }
+
+  async prepareDownload(
+    recordExport: RecordExport,
+    result: RecordExportResult,
+  ): Promise<void> {
+    const created = await this.recordExportCacheService.createDownload({
+      ...recordExport,
+      ...result,
+      expiresAt: Date.now() + RECORD_EXPORT_DOWNLOAD_TTL_MS,
+    });
+    if (!created) {
+      throw new NotFoundException(t`Export not found.`);
     }
   }
 
@@ -125,59 +169,14 @@ export class RecordExportWorkspaceService {
   }: {
     workspaceId: string;
     id: string;
-  }): Promise<RecordExport> {
-    const recordExport = await this.recordExportCacheService.findOne({
+  }): Promise<RecordExportDownload> {
+    const recordExport = await this.recordExportCacheService.findDownload({
       workspaceId,
       id,
     });
 
     if (!isDefined(recordExport)) {
       throw new NotFoundException(t`Export not found.`);
-    }
-
-    return recordExport;
-  }
-
-  async reconcile(recordExport: RecordExport): Promise<RecordExport> {
-    if (
-      ![RecordExportStatus.QUEUED, RecordExportStatus.PROCESSING].includes(
-        recordExport.status,
-      )
-    ) {
-      return recordExport;
-    }
-
-    const jobs = isDefined(recordExport.jobId)
-      ? await this.messageQueueService.getJobs([recordExport.jobId])
-      : {};
-    const job = isDefined(recordExport.jobId)
-      ? jobs[recordExport.jobId]
-      : undefined;
-    const age = Date.now() - recordExport.createdAt.getTime();
-
-    if (
-      job?.state === 'failed' ||
-      job?.state === 'completed' ||
-      (!isDefined(job) && age > RECORD_EXPORT_MISSING_JOB_TIMEOUT_MS) ||
-      age > RECORD_EXPORT_MAX_DURATION_MS
-    ) {
-      await this.recordExportCacheService.update({
-        workspaceId: recordExport.workspaceId,
-        id: recordExport.id,
-        condition: {
-          statuses: [RecordExportStatus.QUEUED, RecordExportStatus.PROCESSING],
-          attemptId: recordExport.attemptId,
-        },
-        changes: {
-          status: RecordExportStatus.FAILED,
-          errorMessage: t`The export was interrupted. Please try again.`,
-        },
-      });
-      const updated = await this.findOrThrow({
-        workspaceId: recordExport.workspaceId,
-        id: recordExport.id,
-      });
-      return updated;
     }
 
     return recordExport;
@@ -224,17 +223,11 @@ export class RecordExportWorkspaceService {
     return `${this.twentyConfigService.get('SERVER_URL')}/record-exports/${recordExport.id}/download?token=${token}`;
   }
 
-  assertDownloadable(recordExport: RecordExport): void {
-    if (recordExport.expiresAt.getTime() <= Date.now()) {
+  assertDownloadable(recordExport: RecordExportDownload): void {
+    if (recordExport.expiresAt <= Date.now()) {
       throw new BadRequestException(
         t`This export has expired. Please create a new export.`,
       );
-    }
-    if (
-      recordExport.status !== RecordExportStatus.COMPLETED ||
-      !isDefined(recordExport.filePath)
-    ) {
-      throw new BadRequestException(t`This export is not ready to download.`);
     }
   }
 

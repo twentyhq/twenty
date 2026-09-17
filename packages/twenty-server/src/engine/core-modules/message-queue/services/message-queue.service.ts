@@ -103,7 +103,7 @@ export class MessageQueueService {
   }
 
   work<T extends MessageQueueJobData>(
-    handler: (job: MessageQueueJob<T>) => Promise<void> | void,
+    handler: (job: MessageQueueJob<T>) => Promise<unknown> | unknown,
     options?: MessageQueueWorkerOptions,
   ): void {
     this.driver.work(this.queueName, handler, options);

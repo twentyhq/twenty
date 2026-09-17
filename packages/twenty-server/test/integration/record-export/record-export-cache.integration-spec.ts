@@ -11,9 +11,8 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import {
   RECORD_EXPORT_CONNECTION_TTL_MS,
   RECORD_EXPORT_DOWNLOAD_TTL_MS,
-  RECORD_EXPORT_MAX_DURATION_MS,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
-import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
+import { type RecordExportDownload } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 
 describe('record export Redis lifetime', () => {
@@ -21,7 +20,13 @@ describe('record export Redis lifetime', () => {
   let cache: CacheStorageService;
   let exports: RecordExportCacheService;
   let workspaceId: string;
-  const input = () => ({
+  const input = (): RecordExportDownload => ({
+    id: v4(),
+    createdAt: Date.now(),
+    expiresAt: Date.now() + RECORD_EXPORT_DOWNLOAD_TTL_MS,
+    fileId: v4(),
+    processedRecordCount: 12,
+    totalRecordCount: 12,
     workspaceId,
     userWorkspaceId: 'owner',
     workspaceMemberId: 'member',
@@ -32,7 +37,7 @@ describe('record export Redis lifetime', () => {
       filter: { id: { in: [] } },
     },
   });
-  const recordKey = (id: string) => `{${workspaceId}}:export:${id}`;
+  const recordKey = (id: string) => `{${workspaceId}}:download:${id}`;
   const leaseKey = () => `{${workspaceId}}:active`;
   const script = (source: string, keys: string[], args: string[] = []) =>
     cache.runScript<number>({
@@ -67,257 +72,119 @@ describe('record export Redis lifetime', () => {
     await redis.quit();
   });
 
-  it('expires abandoned connections without letting worker state keep them alive', async () => {
-    const recordExport = await exports.create(input());
+  it('expires an abandoned connection and refuses to revive it', async () => {
+    const recordExport = input();
+    await exports.acquireLease(recordExport);
     const ttl = await script("return redis.call('PTTL', KEYS[1])", [
       leaseKey(),
     ]);
     expect(ttl).toBeGreaterThan(RECORD_EXPORT_CONNECTION_TTL_MS - 1000);
-    expect(ttl).toBeLessThanOrEqual(RECORD_EXPORT_CONNECTION_TTL_MS);
-    expect(
-      await script("return redis.call('PTTL', KEYS[1])", [
-        recordKey(recordExport.id),
-      ]),
-    ).toBeGreaterThan(RECORD_EXPORT_MAX_DURATION_MS - 1000);
     await script("return redis.call('PEXPIRE', KEYS[1], 1)", [leaseKey()]);
     await setTimeout(20);
-    expect(await cache.get(recordKey(recordExport.id))).toBeDefined();
-    expect(
-      await exports.findOne({
-        workspaceId,
-        id: recordExport.id,
-        keepAlive: true,
-      }),
-    ).toBeUndefined();
-    expect(
-      await exports.update({
-        workspaceId,
-        id: recordExport.id,
-        condition: {},
-        changes: { status: RecordExportStatus.COMPLETED },
-      }),
-    ).toBe(false);
-    await expect(exports.create(input())).resolves.toBeDefined();
+    expect(await exports.renewLease(recordExport)).toBe(false);
+    expect(await exports.createDownload(recordExport)).toBe(false);
   });
 
-  it('admits only one concurrent export per workspace', async () => {
+  it('allows only one concurrent export in a workspace', async () => {
     const results = await Promise.allSettled([
-      exports.create(input()),
-      exports.create(input()),
+      exports.acquireLease(input()),
+      exports.acquireLease(input()),
     ]);
-    expect(
-      results.filter((result) => result.status === 'fulfilled'),
-    ).toHaveLength(1);
-    const rejected = results.find(
-      (result) => result.status === 'rejected',
-    ) as PromiseRejectedResult;
-    expect(rejected.reason).toBeInstanceOf(ConflictException);
+    expect(results.filter(({ status }) => status === 'fulfilled')).toHaveLength(
+      1,
+    );
+    const rejected = results.find((result) => result.status === 'rejected');
+    expect(rejected?.reason).toBeInstanceOf(ConflictException);
   });
 
-  it('keeps parameters intact and only renews TTL from the connection', async () => {
-    const recordExport = await exports.create(input());
-    await script("return redis.call('PEXPIRE', KEYS[1], 10000)", [leaseKey()]);
-    await exports.update({
-      workspaceId,
-      id: recordExport.id,
-      condition: {},
-      changes: { processedRecordCount: 12 },
-    });
+  it('renews the lease only from the connection heartbeat', async () => {
+    const recordExport = input();
+    await exports.acquireLease(recordExport);
+    await script("return redis.call('PEXPIRE', KEYS[1], 2000)", [leaseKey()]);
+    expect(await exports.isConnected(recordExport)).toBe(true);
     expect(
       await script("return redis.call('PTTL', KEYS[1])", [leaseKey()]),
-    ).toBeLessThanOrEqual(10000);
-    const restored = await exports.findOne({
-      workspaceId,
-      id: recordExport.id,
-      keepAlive: true,
-    });
-    expect(restored?.parameters).toEqual(input().parameters);
-    expect(restored?.createdAt).toBeInstanceOf(Date);
-    expect(restored?.processedRecordCount).toBe(12);
+    ).toBeLessThanOrEqual(2000);
+    expect(await exports.renewLease(recordExport)).toBe(true);
     expect(
       await script("return redis.call('PTTL', KEYS[1])", [leaseKey()]),
-    ).toBeGreaterThan(29000);
-    expect(
-      await exports.findOne({
-        workspaceId: 'another-workspace',
-        id: recordExport.id,
-      }),
-    ).toBeUndefined();
+    ).toBeGreaterThan(RECORD_EXPORT_CONNECTION_TTL_MS - 1000);
   });
 
-  it('fences obsolete workers and never recreates cancelled state', async () => {
-    const recordExport = await exports.create(input());
-    await exports.update({
-      workspaceId,
-      id: recordExport.id,
-      condition: {},
-      changes: { attemptId: 'old', status: RecordExportStatus.PROCESSING },
-    });
-    await exports.update({
-      workspaceId,
-      id: recordExport.id,
-      condition: {},
-      changes: { attemptId: 'new' },
-    });
-    expect(
-      await exports.update({
-        workspaceId,
-        id: recordExport.id,
-        condition: { attemptId: 'old' },
-        changes: { status: RecordExportStatus.COMPLETED },
-      }),
-    ).toBe(false);
-    await exports.delete({ workspaceId, id: recordExport.id });
-    expect(
-      await exports.update({
-        workspaceId,
-        id: recordExport.id,
-        condition: {},
-        changes: { processedRecordCount: 100 },
-      }),
-    ).toBe(false);
-    expect(
-      await exports.findOne({
-        workspaceId,
-        id: recordExport.id,
-        keepAlive: true,
-      }),
-    ).toBeUndefined();
+  it('does not let an old connection renew or release a replacement lease', async () => {
+    const oldExport = input();
+    const replacement = input();
+    await exports.acquireLease(oldExport);
+    await exports.releaseLease(oldExport);
+    await exports.acquireLease(replacement);
+    expect(await exports.renewLease(oldExport)).toBe(false);
+    await exports.delete(oldExport);
+    expect(await exports.createDownload(oldExport)).toBe(false);
+    expect(await exports.isConnected(replacement)).toBe(true);
   });
 
-  it('preserves concurrent updates to progress and queue handoff', async () => {
-    const recordExport = await exports.create(input());
-    const runScript = cache.runScript.bind(cache);
-    let releaseUpdates = () => {};
-    const updatesReady = new Promise<void>((resolve) => {
-      releaseUpdates = resolve;
-    });
-    let updates = 0;
-    jest.spyOn(cache, 'runScript').mockImplementation(async (options) => {
-      if (options.script.name === 'record-export:update' && ++updates <= 2) {
-        if (updates === 2) {
-          releaseUpdates();
-        }
-        await updatesReady;
-      }
-      return runScript(options);
-    });
-    expect(
-      await Promise.all([
-        exports.update({
-          workspaceId,
-          id: recordExport.id,
-          condition: {},
-          changes: { jobId: 'queued-job' },
-        }),
-        exports.update({
-          workspaceId,
-          id: recordExport.id,
-          condition: {},
-          changes: { processedRecordCount: 1000 },
-        }),
-      ]),
-    ).toEqual([true, true]);
-    expect(
-      await exports.findOne({ workspaceId, id: recordExport.id }),
-    ).toMatchObject({
-      jobId: 'queued-job',
-      processedRecordCount: 1000,
-    });
-  });
-
-  it.each(['disconnect', 'expiry', 'replacement worker'] as const)(
-    'rejects completion when %s happens after the worker reads state',
-    async (interruption) => {
-      const recordExport = await exports.create(input());
-      await exports.update({
-        workspaceId,
-        id: recordExport.id,
-        condition: {},
-        changes: { attemptId: 'old', status: RecordExportStatus.PROCESSING },
-      });
-      const runScript = cache.runScript.bind(cache);
-      let releaseCompletion = () => {};
-      const completionGate = new Promise<void>((resolve) => {
-        releaseCompletion = resolve;
-      });
-      let notifyCompletion = () => {};
-      const completionReady = new Promise<void>((resolve) => {
-        notifyCompletion = resolve;
-      });
-      jest.spyOn(cache, 'runScript').mockImplementationOnce(async (options) => {
-        notifyCompletion();
-        await completionGate;
-        return runScript(options);
-      });
-      const completion = exports.update({
-        workspaceId,
-        id: recordExport.id,
-        condition: {
-          statuses: [RecordExportStatus.PROCESSING],
-          attemptId: 'old',
-        },
-        changes: { status: RecordExportStatus.COMPLETED, filePath: 'old.csv' },
-      });
-      try {
-        await completionReady;
-        if (interruption === 'disconnect') {
-          await exports.delete({ workspaceId, id: recordExport.id });
-          await exports.create(input());
-        } else if (interruption === 'expiry') {
-          await script("return redis.call('PEXPIRE', KEYS[1], 1)", [
-            leaseKey(),
-          ]);
-          await setTimeout(20);
-          await exports.create(input());
-        } else {
-          await exports.update({
-            workspaceId,
-            id: recordExport.id,
-            condition: {},
-            changes: { attemptId: 'new' },
-          });
-        }
-      } finally {
-        releaseCompletion();
-      }
-      expect(await completion).toBe(false);
-      const remaining = await exports.findOne({
-        workspaceId,
-        id: recordExport.id,
-        keepAlive: true,
-      });
-      if (interruption === 'replacement worker') {
-        expect(remaining).toMatchObject({
-          attemptId: 'new',
-          status: RecordExportStatus.PROCESSING,
-        });
+  it.each(['before', 'after'])(
+    'cannot publish a download %s cancellation',
+    async (order) => {
+      const recordExport = input();
+      await exports.acquireLease(recordExport);
+      if (order === 'before') {
+        expect(await exports.createDownload(recordExport)).toBe(true);
+        await exports.delete(recordExport);
       } else {
-        expect(remaining).toBeUndefined();
+        await exports.delete(recordExport);
+        expect(await exports.createDownload(recordExport)).toBe(false);
       }
-      await expect(exports.create(input())).rejects.toThrow(ConflictException);
+      expect(await exports.findDownload(recordExport)).toBeUndefined();
     },
   );
 
-  it('retains a completed file for five minutes and protects a newer active export', async () => {
-    const first = await exports.create(input());
-    await exports.update({
-      workspaceId,
-      id: first.id,
-      condition: {},
-      changes: { status: RecordExportStatus.COMPLETED },
+  it('cannot publish a download during cancellation', async () => {
+    const recordExport = input();
+    await exports.acquireLease(recordExport);
+    const del = cache.del.bind(cache);
+    jest.spyOn(cache, 'del').mockImplementationOnce(async (key) => {
+      expect(await exports.createDownload(recordExport)).toBe(false);
+      return del(key);
     });
-    const second = await exports.create(input());
+    await exports.delete(recordExport);
+    expect(await exports.findDownload(recordExport)).toBeUndefined();
+  });
+
+  it('keeps a completed ticket for five minutes independently of the next export', async () => {
+    const recordExport = input();
+    await exports.acquireLease(recordExport);
+    expect(await exports.createDownload(recordExport)).toBe(true);
+    await exports.releaseLease(recordExport);
+    const next = input();
+    await exports.acquireLease(next);
+    expect(await exports.findDownload(recordExport)).toEqual(recordExport);
     const ttl = await script("return redis.call('PTTL', KEYS[1])", [
-      recordKey(first.id),
+      recordKey(recordExport.id),
     ]);
     expect(ttl).toBeGreaterThan(RECORD_EXPORT_DOWNLOAD_TTL_MS - 1000);
-    await exports.findOne({ workspaceId, id: first.id, keepAlive: true });
+    expect(ttl).toBeLessThanOrEqual(RECORD_EXPORT_DOWNLOAD_TTL_MS);
+    await script("return redis.call('PEXPIRE', KEYS[1], 1)", [
+      recordKey(recordExport.id),
+    ]);
+    await setTimeout(20);
+    expect(await exports.claimDownload(recordExport)).toBe(false);
+    expect(await exports.isConnected(next)).toBe(true);
+  });
+
+  it('grants only one download claim and never grants a canceled ticket', async () => {
+    const recordExport = input();
+    await exports.acquireLease(recordExport);
+    await exports.createDownload(recordExport);
     expect(
-      await script("return redis.call('PTTL', KEYS[1])", [recordKey(first.id)]),
-    ).toBeGreaterThan(RECORD_EXPORT_DOWNLOAD_TTL_MS - 1000);
-    await exports.delete({ workspaceId, id: first.id });
-    await expect(exports.create(input())).rejects.toThrow(ConflictException);
-    expect(await exports.findOne({ workspaceId, id: second.id })).toBeDefined();
+      (
+        await Promise.all([
+          exports.claimDownload(recordExport),
+          exports.claimDownload(recordExport),
+        ])
+      ).sort(),
+    ).toEqual([false, true]);
+    await exports.delete(recordExport);
+    expect(await exports.claimDownload(recordExport)).toBe(false);
   });
 });
