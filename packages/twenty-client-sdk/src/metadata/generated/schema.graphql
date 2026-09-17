@@ -3370,6 +3370,8 @@ type AgentChatThread {
   title: String
   channelId: UUID
   ownerUserWorkspaceId: UUID!
+  workflowRunId: UUID
+  workflowStepId: String
   totalCacheReadTokens: Int!
   totalInputTokens: Int!
   totalOutputTokens: Int!

@@ -67,7 +67,7 @@ export const WorkflowRunStepConversation = ({
           : t`The agent worked in a conversation you can read and reply to.`}
       </StyledText>
       <Button
-        Icon={IconMessage}
+        startIcon={<IconMessage />}
         title={isWaitingForAnswer ? t`Answer in the conversation` : t`Open conversation`}
         variant="secondary"
         size="small"

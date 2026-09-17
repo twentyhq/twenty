@@ -2971,6 +2971,8 @@ export interface AgentChatThread {
     title?: Scalars['String']
     channelId?: Scalars['UUID']
     ownerUserWorkspaceId: Scalars['UUID']
+    workflowRunId?: Scalars['UUID']
+    workflowStepId?: Scalars['String']
     totalCacheReadTokens: Scalars['Int']
     totalInputTokens: Scalars['Int']
     totalOutputTokens: Scalars['Int']
@@ -6772,6 +6774,8 @@ export interface AgentChatThreadGenqlSelection{
     title?: boolean | number
     channelId?: boolean | number
     ownerUserWorkspaceId?: boolean | number
+    workflowRunId?: boolean | number
+    workflowStepId?: boolean | number
     totalCacheReadTokens?: boolean | number
     totalInputTokens?: boolean | number
     totalOutputTokens?: boolean | number

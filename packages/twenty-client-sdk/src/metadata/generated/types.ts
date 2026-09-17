@@ -6655,6 +6655,12 @@ export default {
             "ownerUserWorkspaceId": [
                 3
             ],
+            "workflowRunId": [
+                3
+            ],
+            "workflowStepId": [
+                1
+            ],
             "totalCacheReadTokens": [
                 28
             ],

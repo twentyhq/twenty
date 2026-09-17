@@ -412,6 +412,30 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
+    const thread = await this.threadRepository.findOne(workspace.id, {
+      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
+    });
+
+    if (!isDefined(thread)) {
+      throw new AiException(
+        'Thread not found',
+        AiExceptionCode.THREAD_NOT_FOUND,
+      );
+    }
+
+    // A workflow run's question resumes the run, not a chat stream: the
+    // agent's own model and the workflow's credits apply, not the chat's.
+    if (isDefined(thread.workflowRunId)) {
+      const answer = await this.agentRunThreadService.answerRunQuestion({
+        thread,
+        messageId,
+        answers,
+        userWorkspaceId,
+      });
+
+      return { messageId: answer.messageId, queued: false };
+    }
+
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
         'No AI models are available. Configure at least one AI provider.',
@@ -431,29 +455,6 @@ export class AgentChatResolver {
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: { userWorkspaceId },
     });
-
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
-    });
-
-    if (!isDefined(thread)) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
-
-    // A workflow run's question resumes the run, not a chat stream.
-    if (isDefined(thread.workflowRunId)) {
-      const answer = await this.agentRunThreadService.answerRunQuestion({
-        thread,
-        messageId,
-        answers,
-        userWorkspaceId,
-      });
-
-      return { messageId: answer.messageId, queued: false };
-    }
 
     const { streamId, turnId } =
       await this.agentChatStreamingService.answerPendingQuestionAndResumeStream(
