@@ -58,23 +58,28 @@ const CoreWorkflowEditor = ({
     coreWorkflowVersionId,
   );
 
-  if (loading && !isDefined(coreWorkflowVersion)) return <Loader />;
-  if (isDefined(error))
+  if (loading && !isDefined(coreWorkflowVersion)) {
+    return <Loader />;
+  }
+  if (isDefined(error)) {
     return (
       <WorkspaceRouteUnavailable>{t`Could not load this workflow version.`}</WorkspaceRouteUnavailable>
     );
+  }
   if (
     !isDefined(coreWorkflowVersion) ||
     coreWorkflowVersion.coreWorkflowId !== coreWorkflowId
-  )
+  ) {
     return (
       <WorkspaceRouteUnavailable>{t`Workflow version not found.`}</WorkspaceRouteUnavailable>
     );
+  }
 
-  if (readonly)
+  if (readonly) {
     return (
       <CoreWorkflowVersionCard coreWorkflowVersionId={coreWorkflowVersionId} />
     );
+  }
 
   return (
     <WorkflowVisualizerComponentInstanceContext.Provider
@@ -132,14 +137,15 @@ const CoreWorkflowShowContent = ({
   if (
     (loading && !isDefined(record)) ||
     (versions.loading && versions.coreWorkflowVersions.length === 0)
-  )
+  ) {
     return (
       <>
         {resource}
         <Loader />
       </>
     );
-  if (isDefined(error) || isDefined(versions.error))
+  }
+  if (isDefined(error) || isDefined(versions.error)) {
     return (
       <>
         {resource}
@@ -152,13 +158,15 @@ const CoreWorkflowShowContent = ({
         </WorkspaceRouteUnavailable>
       </>
     );
-  if (!isDefined(record))
+  }
+  if (!isDefined(record)) {
     return (
       <>
         {resource}
         <WorkspaceRouteUnavailable>{t`Workflow not found.`}</WorkspaceRouteUnavailable>
       </>
     );
+  }
 
   return (
     <CommandMenuComponentInstanceContext.Provider
@@ -241,10 +249,13 @@ const WorkspaceWorkflowShowRedirect = ({
     variables: { coreWorkflowId },
     fetchPolicy: 'network-only',
   });
-  if (loading) return <Loader />;
+  if (loading) {
+    return <Loader />;
+  }
   const workspaceWorkflowId = data?.coreWorkflow?.workspaceWorkflowId;
-  if (isDefined(error) || !isDefined(workspaceWorkflowId))
+  if (isDefined(error) || !isDefined(workspaceWorkflowId)) {
     return <WorkspaceRouteUnavailable />;
+  }
   return (
     <Navigate
       replace
@@ -260,11 +271,14 @@ export const WorkflowCoreShowPage = () => {
   const { coreWorkflowId } = useParams<{ coreWorkflowId: string }>();
   const isCore = useIsWorkflowCoreEnabled();
   const hasPermission = useHasPermissionFlag(PermissionFlagType.WORKFLOWS);
-  if (!hasPermission)
+  if (!hasPermission) {
     return (
       <WorkspaceRouteUnavailable>{t`You do not have permission to access workflows.`}</WorkspaceRouteUnavailable>
     );
-  if (!isDefined(coreWorkflowId)) return <WorkspaceRouteUnavailable />;
+  }
+  if (!isDefined(coreWorkflowId)) {
+    return <WorkspaceRouteUnavailable />;
+  }
   return isCore ? (
     <CoreWorkflowShowContent
       key={coreWorkflowId}

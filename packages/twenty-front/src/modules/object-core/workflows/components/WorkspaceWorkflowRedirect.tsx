@@ -23,9 +23,12 @@ export const WorkspaceWorkflowRedirect = ({
     },
   );
 
-  if (loading) return <Loader />;
-  if (isDefined(error) || !isDefined(data?.coreWorkflow))
+  if (loading) {
+    return <Loader />;
+  }
+  if (isDefined(error) || !isDefined(data?.coreWorkflow)) {
     return <WorkspaceRouteUnavailable />;
+  }
 
   return (
     <Navigate

@@ -28,7 +28,9 @@ export const useCoreWorkflowShowActions = ({
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const renameWorkflow = async (name: string) => {
-    if (name === currentName) return true;
+    if (name === currentName) {
+      return true;
+    }
     try {
       await updateWorkflow({ variables: { input: { coreWorkflowId, name } } });
       await invalidateCoreWorkflowVersions(client);
@@ -45,7 +47,9 @@ export const useCoreWorkflowShowActions = ({
   };
 
   const validate = async () => {
-    if (!isDefined(coreWorkflowVersionId)) return;
+    if (!isDefined(coreWorkflowVersionId)) {
+      return;
+    }
     try {
       await validateVersion({
         variables: { coreWorkflowVersionId: coreWorkflowVersionId },
