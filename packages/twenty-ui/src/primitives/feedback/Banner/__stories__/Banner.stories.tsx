@@ -78,13 +78,14 @@ export const Default: Story = {
           <Button
             size="sm"
             variant="outline"
-            color={args.color === 'danger' ? 'danger' : 'accent'}
-            style={{
-              color:
-                args.variant === 'primary'
-                  ? 'var(--t-font-color-inverted)'
-                  : undefined,
-            }}
+            color={
+              args.variant === 'primary'
+                ? 'neutral'
+                : getButtonColor(args.color)
+            }
+            className={
+              args.variant === 'primary' ? styles.invertedButton : undefined
+            }
           >
             {'Reconnect'}
           </Button>
@@ -109,13 +110,12 @@ export const Catalog: CatalogStory<Story, typeof Banner> = {
         <Button
           size="sm"
           variant="outline"
-          color={args.color === 'danger' ? 'danger' : 'accent'}
-          style={{
-            color:
-              args.variant === 'primary'
-                ? 'var(--t-font-color-inverted)'
-                : undefined,
-          }}
+          color={
+            args.variant === 'primary' ? 'neutral' : getButtonColor(args.color)
+          }
+          className={
+            args.variant === 'primary' ? styles.invertedButton : undefined
+          }
         >
           {'Reconnect'}
         </Button>

@@ -37,7 +37,6 @@ import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import {
   EngineComponentKey,
-  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
@@ -55,14 +54,10 @@ const LAYOUT_ID = 'record-creation-story-layout';
 const TAB_ID = 'record-creation-story-tab';
 
 type RecordCreationFlowProps = {
-  isFormEnabled: boolean;
   commandOrigin?: 'task' | 'no-object';
 };
 
-const RecordCreationFlow = ({
-  isFormEnabled,
-  commandOrigin,
-}: RecordCreationFlowProps) => {
+const RecordCreationFlow = ({ commandOrigin }: RecordCreationFlowProps) => {
   const store = useStore();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: 'company',
@@ -149,29 +144,14 @@ const RecordCreationFlow = ({
       );
     }
     applyChanges();
-    store.set(currentWorkspaceState.atom, {
-      ...mockCurrentWorkspace,
-      featureFlags: [
-        {
-          key: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-          value: isFormEnabled,
-        },
-      ],
-    });
+    store.set(currentWorkspaceState.atom, mockCurrentWorkspace);
     store.set(currentWorkspaceMemberState.atom, (member) =>
       isDefined(member)
         ? { ...member, openRecordIn: OpenRecordIn.SIDE_PANEL }
         : member,
     );
     setIsReady(true);
-  }, [
-    applyChanges,
-    commandOrigin,
-    isFormEnabled,
-    objectMetadataItem,
-    replaceDraft,
-    store,
-  ]);
+  }, [applyChanges, commandOrigin, objectMetadataItem, replaceDraft, store]);
 
   return isReady ? (
     <WorkspaceRouteObjectsContext.Provider
@@ -285,7 +265,6 @@ const meta = {
     RouterDecorator,
     ComponentDecorator,
   ],
-  args: { isFormEnabled: true },
   parameters: {
     container: { width: 420, height: 600 },
     msw: {
@@ -372,28 +351,6 @@ export const Cancel: Story = {
     await expect(await canvas.findByText('Creation cancelled')).toBeVisible();
     await expect(createCompanyRequest).not.toHaveBeenCalled();
     await expect(onRecordCreated).not.toHaveBeenCalled();
-  },
-};
-
-export const FlagDisabled: Story = {
-  args: { isFormEnabled: false },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await userEvent.click(
-      await canvas.findByRole('button', { name: /Create company/ }),
-    );
-    await waitFor(() =>
-      expect(canvas.getByRole('status')).toHaveTextContent(
-        'Created Filter default with 10 employees',
-      ),
-    );
-    await expect(
-      canvas.queryByTestId('record-creation-form-create-button'),
-    ).not.toBeInTheDocument();
-    await expect(createCompanyRequest).toHaveBeenCalledTimes(1);
-    await expect(createCompanyRequest).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'Filter default', employees: 10 }),
-    );
   },
 };
 

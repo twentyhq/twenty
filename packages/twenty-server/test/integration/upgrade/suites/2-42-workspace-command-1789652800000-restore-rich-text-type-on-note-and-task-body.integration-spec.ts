@@ -6,7 +6,7 @@ import { STANDARD_OBJECT_FIELDS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
-import { type RestoreRichTextTypeOnNoteAndTaskBodyCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789637700000-restore-rich-text-type-on-note-and-task-body.command';
+import { type RestoreRichTextTypeOnNoteAndTaskBodyCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789652800000-restore-rich-text-type-on-note-and-task-body.command';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
@@ -40,7 +40,7 @@ const listTasksWithBody = () =>
     }),
   );
 
-describe('2-42 workspace command 1789637700000 - RestoreRichTextTypeOnNoteAndTaskBodyCommand (integration)', () => {
+describe('2-42 workspace command 1789652800000 - RestoreRichTextTypeOnNoteAndTaskBodyCommand (integration)', () => {
   let command: RestoreRichTextTypeOnNoteAndTaskBodyCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
   let workspaceMigrationRunnerService: WorkspaceMigrationRunnerService;
