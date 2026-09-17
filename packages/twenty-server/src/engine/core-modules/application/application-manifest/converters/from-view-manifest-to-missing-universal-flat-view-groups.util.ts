@@ -19,16 +19,22 @@ export const fromViewManifestToMissingUniversalFlatViewGroups = ({
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatViewGroup[] => {
+  const declaredViewGroups = viewManifest.groups ?? [];
   const declaredFieldValues = new Set(
-    (viewManifest.groups ?? []).map(({ fieldValue }) => fieldValue),
+    declaredViewGroups.map(({ fieldValue }) => fieldValue),
+  );
+  const highestDeclaredPosition = Math.max(
+    -1,
+    ...declaredViewGroups.map(({ position }) => position),
   );
 
   return computeViewGroupPropertiesFromMainGroupByFieldMetadata({
     mainGroupByFieldMetadata,
   })
     .filter(({ fieldValue }) => !declaredFieldValues.has(fieldValue))
-    .map((viewGroupProperties) => ({
+    .map((viewGroupProperties, index) => ({
       ...viewGroupProperties,
+      position: highestDeclaredPosition + 1 + index,
       universalIdentifier: getViewGroupUniversalIdentifier({
         applicationUniversalIdentifier,
         viewUniversalIdentifier: viewManifest.universalIdentifier,

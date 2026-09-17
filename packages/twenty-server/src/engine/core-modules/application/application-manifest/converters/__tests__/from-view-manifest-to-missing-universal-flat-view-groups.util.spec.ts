@@ -95,6 +95,26 @@ describe('fromViewManifestToMissingUniversalFlatViewGroups', () => {
     ).toEqual(['SINGAPORE', '']);
   });
 
+  it('should position the created view groups after the declared ones', () => {
+    expect(
+      computeMissingViewGroups({
+        viewManifest: {
+          ...VIEW_MANIFEST,
+          groups: [
+            {
+              universalIdentifier: '55555555-5555-4555-8555-555555555555',
+              fieldValue: 'SINGAPORE',
+              position: 0,
+            },
+          ],
+        },
+      }).map(({ fieldValue, position }) => ({ fieldValue, position })),
+    ).toEqual([
+      { fieldValue: 'AUSTRALIA', position: 1 },
+      { fieldValue: '', position: 2 },
+    ]);
+  });
+
   it('should compute the same universal identifiers on every call', () => {
     expect(computeMissingViewGroups()).toEqual(computeMissingViewGroups());
   });

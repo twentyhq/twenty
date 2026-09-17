@@ -206,14 +206,18 @@ describe('Manifest sync - grouped views', () => {
     const view = await findGroupedView();
 
     expect(
-      view.viewGroups.find(({ fieldValue }) => fieldValue === 'SINGAPORE'),
-    ).toMatchObject({ position: 0, isVisible: false });
-
-    expect(view.viewGroups.map(({ fieldValue }) => fieldValue).sort()).toEqual([
-      '',
-      'AUSTRALIA',
-      'NEW_ZEALAND',
-      'SINGAPORE',
+      view.viewGroups
+        .map(({ fieldValue, position, isVisible }) => ({
+          fieldValue,
+          position,
+          isVisible,
+        }))
+        .sort((a, b) => a.position - b.position),
+    ).toEqual([
+      { fieldValue: 'SINGAPORE', position: 0, isVisible: false },
+      { fieldValue: 'AUSTRALIA', position: 1, isVisible: true },
+      { fieldValue: 'NEW_ZEALAND', position: 2, isVisible: true },
+      { fieldValue: '', position: 3, isVisible: true },
     ]);
   }, 60000);
 });
