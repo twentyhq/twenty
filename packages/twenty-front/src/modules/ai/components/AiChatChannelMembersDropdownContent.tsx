@@ -114,14 +114,14 @@ export const AiChatChannelMembersDropdownContent = ({
                           : t`Remove ${fullName}`,
                         onClick: () =>
                           isCurrentUserRow && isDefined(currentUserWorkspaceId)
-                            ? leaveChatChannel(
+                            ? leaveChatChannel({
                                 channelId,
-                                currentUserWorkspaceId,
-                              )
-                            : removeChatChannelMember(
+                                userWorkspaceId: currentUserWorkspaceId,
+                              })
+                            : removeChatChannelMember({
                                 channelId,
-                                member.userWorkspaceId,
-                              ),
+                                userWorkspaceId: member.userWorkspaceId,
+                              }),
                       },
                     ]
                   : undefined
@@ -152,10 +152,10 @@ export const AiChatChannelMembersDropdownContent = ({
                     key={workspaceMember.id}
                     onClick={() => {
                       if (isDefined(workspaceMember.userWorkspaceId)) {
-                        void addChatChannelMember(
+                        void addChatChannelMember({
                           channelId,
-                          workspaceMember.userWorkspaceId,
-                        );
+                          userWorkspaceId: workspaceMember.userWorkspaceId,
+                        });
                       }
                     }}
                     avatar={{

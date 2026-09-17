@@ -1,4 +1,5 @@
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_CHANNEL_DELETE_MODAL_ID } from '@/ai/constants/AiChatChannelDeleteModalId';
 import { useAiChatChannelIdFromPath } from '@/ai/hooks/useAiChatChannelIdFromPath';
@@ -17,14 +18,16 @@ export const AiChatChannelDeleteConfirmationModal = () => {
     useAtomState(aiChatChannelPendingDeleteState);
 
   const handleDelete = async () => {
-    if (aiChatChannelPendingDelete === null) return;
+    if (!isDefined(aiChatChannelPendingDelete)) {
+      return;
+    }
 
     const { channelId } = aiChatChannelPendingDelete;
     const isDeleted = await deleteChatChannel(channelId);
 
     setAiChatChannelPendingDelete(null);
 
-    if (isDeleted === true && currentChannelId === channelId) {
+    if (isDeleted && currentChannelId === channelId) {
       navigateToAiChatPage();
     }
   };

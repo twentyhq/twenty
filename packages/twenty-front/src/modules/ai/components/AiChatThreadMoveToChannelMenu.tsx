@@ -36,7 +36,7 @@ export const AiChatThreadMoveToChannelMenu = ({
     onBack();
 
     if (channelId !== currentChannelId) {
-      await setChatThreadChannel(threadId, channelId);
+      await setChatThreadChannel({ threadId, channelId });
     }
   };
 

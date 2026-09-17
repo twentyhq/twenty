@@ -434,6 +434,16 @@ export class AgentChatChannelService {
       channel,
       memberIdsBefore,
     );
+    // Captured before the delete so a member joining meanwhile is diffed as a
+    // new reader rather than folded into the previous audience.
+    const threadRecipientsBefore =
+      channel.visibility === AgentChatChannelVisibility.PRIVATE
+        ? new Map(
+            (
+              await this.getChannelThreadsWithRecipients(channelId, workspaceId)
+            ).map(({ thread, recipients }) => [thread.id, recipients]),
+          )
+        : null;
 
     const wasDeleted = await this.deleteMemberKeepingAnAdmin({
       member,
@@ -446,21 +456,12 @@ export class AgentChatChannelService {
 
     await this.broadcastMember('deleted', member, recipientsBefore);
 
-    if (channel.visibility === AgentChatChannelVisibility.PRIVATE) {
+    if (isDefined(threadRecipientsBefore)) {
       await this.broadcastChannel('deleted', channel, [userWorkspaceId]);
       await this.broadcastChannelThreadsAccessChange({
         channelId,
         workspaceId,
-        recipientsBeforeByThreadId: new Map(
-          (
-            await this.getChannelThreadsWithRecipients(channelId, workspaceId)
-          ).map(({ thread, recipients }) => [
-            thread.id,
-            isDefined(recipients)
-              ? [...new Set([...recipients, userWorkspaceId])]
-              : undefined,
-          ]),
-        ),
+        recipientsBeforeByThreadId: threadRecipientsBefore,
       });
     }
 

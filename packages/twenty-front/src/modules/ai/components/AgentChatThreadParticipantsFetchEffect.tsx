@@ -18,7 +18,7 @@ export const AgentChatThreadParticipantsFetchEffect = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
   const isNewThread =
-    currentAiChatThread === null ||
+    !isDefined(currentAiChatThread) ||
     currentAiChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
 
   const setAgentChatThreadParticipants = useSetAtomComponentFamilyState(
@@ -37,7 +37,7 @@ export const AgentChatThreadParticipantsFetchEffect = () => {
     GetChatThreadParticipantsDocument,
     {
       variables: { threadId: currentAiChatThread ?? '' },
-      skip: !isDefined(currentAiChatThread) || isNewThread,
+      skip: isNewThread,
       onDataLoaded: handleDataLoaded,
     },
   );

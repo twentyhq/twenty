@@ -126,16 +126,16 @@ describe('AiChatChannelMembersDropdownContent', () => {
     expect(screen.getByText('Add people')).toBeVisible();
 
     await user.click(screen.getByText('Phil Schiler'));
-    expect(addChatChannelMember).toHaveBeenCalledWith(
-      CHANNEL_ID,
-      PHIL.userWorkspaceId,
-    );
+    expect(addChatChannelMember).toHaveBeenCalledWith({
+      channelId: CHANNEL_ID,
+      userWorkspaceId: PHIL.userWorkspaceId,
+    });
 
     await user.click(screen.getByRole('button', { name: 'Remove Jony Ive' }));
-    expect(removeChatChannelMember).toHaveBeenCalledWith(
-      CHANNEL_ID,
-      JONY.userWorkspaceId,
-    );
+    expect(removeChatChannelMember).toHaveBeenCalledWith({
+      channelId: CHANNEL_ID,
+      userWorkspaceId: JONY.userWorkspaceId,
+    });
   });
 
   it('only lets a member leave', async () => {
@@ -148,9 +148,9 @@ describe('AiChatChannelMembersDropdownContent', () => {
     ).toBeNull();
 
     await user.click(screen.getByRole('button', { name: 'Leave channel' }));
-    expect(leaveChatChannel).toHaveBeenCalledWith(
-      CHANNEL_ID,
-      JONY.userWorkspaceId,
-    );
+    expect(leaveChatChannel).toHaveBeenCalledWith({
+      channelId: CHANNEL_ID,
+      userWorkspaceId: JONY.userWorkspaceId,
+    });
   });
 });

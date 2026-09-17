@@ -78,14 +78,14 @@ export const AiChatChannelMenu = ({ channel }: AiChatChannelMenuProps) => {
       return;
     }
 
-    const hasLeft = await leaveChatChannel(
-      channel.id,
-      currentWorkspaceMember.userWorkspaceId,
-    );
+    const hasLeft = await leaveChatChannel({
+      channelId: channel.id,
+      userWorkspaceId: currentWorkspaceMember.userWorkspaceId,
+    });
 
     // Leaving a private channel revokes access to its page.
     if (
-      hasLeft === true &&
+      hasLeft &&
       channel.visibility === AgentChatChannelVisibility.PRIVATE &&
       currentChannelId === channel.id
     ) {

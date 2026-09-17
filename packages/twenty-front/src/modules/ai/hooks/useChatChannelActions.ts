@@ -92,7 +92,7 @@ export const useChatChannelActions = () => {
         variables: { id: channelId },
       });
 
-      if (data?.deleteChatChannel === true) {
+      if (data?.deleteChatChannel) {
         removeMembers(getChannelMembers(channelId).map((member) => member.id));
         removeChannel(channelId);
       }
@@ -114,13 +114,19 @@ export const useChatChannelActions = () => {
       return member;
     });
 
-  const leaveChatChannel = (channelId: string, userWorkspaceId: string) =>
+  const leaveChatChannel = ({
+    channelId,
+    userWorkspaceId,
+  }: {
+    channelId: string;
+    userWorkspaceId: string;
+  }) =>
     runOrToast(async () => {
       const { data } = await leaveChatChannelMutation({
         variables: { id: channelId },
       });
 
-      if (data?.leaveChatChannel === true) {
+      if (data?.leaveChatChannel) {
         removeMembers(
           getChannelMembers(channelId)
             .filter((member) => member.userWorkspaceId === userWorkspaceId)
@@ -131,7 +137,13 @@ export const useChatChannelActions = () => {
       return data?.leaveChatChannel ?? false;
     });
 
-  const addChatChannelMember = (channelId: string, userWorkspaceId: string) =>
+  const addChatChannelMember = ({
+    channelId,
+    userWorkspaceId,
+  }: {
+    channelId: string;
+    userWorkspaceId: string;
+  }) =>
     runOrToast(async () => {
       const { data } = await addChatChannelMemberMutation({
         variables: { channelId, userWorkspaceId },
@@ -145,16 +157,19 @@ export const useChatChannelActions = () => {
       return member;
     });
 
-  const removeChatChannelMember = (
-    channelId: string,
-    userWorkspaceId: string,
-  ) =>
+  const removeChatChannelMember = ({
+    channelId,
+    userWorkspaceId,
+  }: {
+    channelId: string;
+    userWorkspaceId: string;
+  }) =>
     runOrToast(async () => {
       const { data } = await removeChatChannelMemberMutation({
         variables: { channelId, userWorkspaceId },
       });
 
-      if (data?.removeChatChannelMember === true) {
+      if (data?.removeChatChannelMember) {
         removeMembers(
           getChannelMembers(channelId)
             .filter((member) => member.userWorkspaceId === userWorkspaceId)
@@ -165,7 +180,13 @@ export const useChatChannelActions = () => {
       return data?.removeChatChannelMember ?? false;
     });
 
-  const setChatThreadChannel = (threadId: string, channelId: string | null) =>
+  const setChatThreadChannel = ({
+    threadId,
+    channelId,
+  }: {
+    threadId: string;
+    channelId: string | null;
+  }) =>
     runOrToast(async () => {
       const { data } = await setChatThreadChannelMutation({
         variables: { threadId, channelId },
