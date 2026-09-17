@@ -1,7 +1,7 @@
 import { noticeMessage } from '../utils/noticeMessage';
 import { Banner } from '@ui/primitives/feedback/Banner/Banner';
 import { Notification } from './Notification';
-import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import { IconButton } from '@ui/components/IconButton/IconButton';
 import { i18n } from '@lingui/core';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { IconX } from 'twenty-ui/icon';
@@ -36,12 +36,13 @@ export const Notice = ({ state, command }: ActionProps) =>
         )}
         <IconButton
           className="notice-close"
-          variant="tertiary"
-          ariaLabel={i18n._('Dismiss message')}
+          variant="ghost"
+          aria-label={i18n._('Dismiss message')}
           onClick={() => void command({ type: 'dismiss-error' })}
-          size="medium"
-          Icon={IconX}
-        />
+          size="md"
+        >
+          <IconX />
+        </IconButton>
       </Banner>
     </div>
   ) : null;

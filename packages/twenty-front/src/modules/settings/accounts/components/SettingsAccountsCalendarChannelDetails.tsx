@@ -5,9 +5,8 @@ import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { IconUserPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type CalendarChannelVisibility } from '~/generated/graphql';
@@ -46,8 +45,8 @@ export const SettingsAccountsCalendarChannelDetails = ({
 
   return (
     <StyledDetailsContainer>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Event visibility`}
           description={t`Define what will be visible to other users in your workspace`}
         />
@@ -55,9 +54,9 @@ export const SettingsAccountsCalendarChannelDetails = ({
           value={calendarChannel.visibility}
           onChange={handleVisibilityChange}
         />
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Contact auto-creation`}
           description={t`Automatically create contacts for people you've participated in an event with.`}
         />
@@ -74,7 +73,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
             }}
           />
         </Card>
-      </Section>
+      </Section.Root>
     </StyledDetailsContainer>
   );
 };

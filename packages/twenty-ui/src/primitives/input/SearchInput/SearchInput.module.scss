@@ -5,6 +5,14 @@
   width: 100%;
 }
 
+.filterButton {
+  @include square-button;
+}
+
+.filterIcon {
+  display: flex;
+}
+
 .inputContainer {
   align-items: center;
   background-color: var(--t-background-transparent-lighter);

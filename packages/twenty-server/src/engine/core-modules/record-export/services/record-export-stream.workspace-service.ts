@@ -5,7 +5,10 @@ import { setTimeout } from 'node:timers/promises';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { RECORD_EXPORT_PROGRESS_INTERVAL_MS } from 'src/engine/core-modules/record-export/constants/record-export.constants';
+import {
+  RECORD_EXPORT_PROGRESS_INTERVAL_MS,
+  RECORD_EXPORT_MAX_DURATION_MS,
+} from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
@@ -36,19 +39,27 @@ export class RecordExportStreamWorkspaceService {
       requestTokenHash,
     });
     let downloadReady = false;
+    let jobId: string;
 
     async function* events(
       signal: AbortSignal,
     ): AsyncGenerator<RecordExportDTO> {
       while (!signal.aborted) {
-        const current =
-          await service.recordExportWorkspaceService.findOrThrow(recordExport);
-        const updated =
-          await service.recordExportWorkspaceService.reconcile(current);
+        const updated = await service.recordExportWorkspaceService.getProgress(
+          recordExport,
+          jobId,
+        );
         if (signal.aborted) {
           return;
         }
-        if (updated.status === RecordExportStatus.COMPLETED) {
+        if (
+          updated.status === RecordExportStatus.COMPLETED &&
+          isDefined(updated.result)
+        ) {
+          await service.recordExportWorkspaceService.prepareDownload(
+            recordExport,
+            updated.result,
+          );
           const downloadUrl =
             await service.recordExportWorkspaceService.getDownloadUrl({
               id: updated.id,
@@ -76,29 +87,29 @@ export class RecordExportStreamWorkspaceService {
       heartbeatErrorBehavior: 'close',
       heartbeatIntervalMs: RECORD_EXPORT_PROGRESS_INTERVAL_MS,
       onHeartbeat: async () => {
-        const current = await this.recordExportCacheService.findOne({
-          workspaceId: recordExport.workspaceId,
-          id: recordExport.id,
-          keepAlive: true,
-        });
-        if (!isDefined(current) || current.expiresAt.getTime() <= Date.now()) {
+        if (downloadReady) {
+          return false;
+        }
+        if (
+          Date.now() - recordExport.createdAt > RECORD_EXPORT_MAX_DURATION_MS ||
+          !(await this.recordExportCacheService.renewLease(recordExport))
+        ) {
           throw new BadRequestException(
             t`The export was interrupted. Please try again.`,
           );
         }
-        return (
-          current.status !== RecordExportStatus.COMPLETED &&
-          current.status !== RecordExportStatus.FAILED
-        );
+        return true;
       },
       onCleanup: async () => {
-        if (!downloadReady) {
+        if (downloadReady) {
+          await this.recordExportCacheService.releaseLease(recordExport);
+        } else {
           await this.recordExportWorkspaceService.cancel(recordExport);
         }
       },
     });
     try {
-      await this.recordExportWorkspaceService.enqueue(recordExport);
+      jobId = await this.recordExportWorkspaceService.enqueue(recordExport);
     } catch (error) {
       await stream.return?.();
       throw error;

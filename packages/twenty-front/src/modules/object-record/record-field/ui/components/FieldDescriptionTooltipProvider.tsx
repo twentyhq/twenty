@@ -1,10 +1,8 @@
 import { FieldDescriptionTooltipContext } from '@/object-record/record-field/ui/contexts/FieldDescriptionTooltipContext';
-import { type ReactNode, useId, useMemo, useState } from 'react';
-import {
-  AppTooltip,
-  type AppTooltipProps,
-  TooltipDelay,
-} from 'twenty-ui/primitives/surfaces';
+import { type FieldDescriptionTooltipContent } from '@/object-record/record-field/ui/types/FieldDescriptionTooltipContent';
+import { type ReactNode, useRef, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 type FieldDescriptionTooltipProviderProps = {
   children: ReactNode;
@@ -13,26 +11,49 @@ type FieldDescriptionTooltipProviderProps = {
 export const FieldDescriptionTooltipProvider = ({
   children,
 }: FieldDescriptionTooltipProviderProps) => {
-  const tooltipId = useId();
-  const [tooltipContent, setTooltipContent] = useState<
-    Pick<AppTooltipProps, 'title' | 'description'>
-  >({});
-  const contextValue = useMemo(
-    () => ({ tooltipId, setTooltipContent }),
-    [tooltipId],
+  const activeTriggerRef = useRef<Element>(null);
+  const [tooltipHandle] = useState(() =>
+    Tooltip.createHandle<FieldDescriptionTooltipContent>(),
   );
 
   return (
-    <FieldDescriptionTooltipContext.Provider value={contextValue}>
-      {children}
-      <AppTooltip
-        anchorSelect={`[data-tooltip-id='${tooltipId}']`}
-        title={tooltipContent.title}
-        description={tooltipContent.description}
-        delay={TooltipDelay.longDelay}
-        place="bottom"
-        positionStrategy="fixed"
-      />
+    <FieldDescriptionTooltipContext.Provider value={tooltipHandle}>
+      <Tooltip.Root
+        handle={tooltipHandle}
+        onOpenChange={(...openChangeArguments) => {
+          const [open, eventDetails] = openChangeArguments;
+          if (open) {
+            activeTriggerRef.current = eventDetails.trigger ?? null;
+
+            return;
+          }
+
+          const activeTrigger = activeTriggerRef.current;
+          const shouldKeepTooltipOpen =
+            eventDetails.reason === 'trigger-hover' &&
+            isDefined(activeTrigger) &&
+            activeTrigger.ownerDocument.activeElement === activeTrigger;
+
+          if (shouldKeepTooltipOpen) {
+            eventDetails.cancel();
+
+            return;
+          }
+
+          activeTriggerRef.current = null;
+        }}
+      >
+        {({ payload }) => (
+          <>
+            {children}
+            <Tooltip.Popup side="bottom" positionMethod="fixed">
+              <Tooltip.Content description={payload?.description}>
+                {payload?.title}
+              </Tooltip.Content>
+            </Tooltip.Popup>
+          </>
+        )}
+      </Tooltip.Root>
     </FieldDescriptionTooltipContext.Provider>
   );
 };

@@ -1,5 +1,4 @@
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
-import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
 import {
   Controller,
   ConflictException,
@@ -115,15 +114,8 @@ export class RecordExportController {
       throw error;
     }
 
-    const claimed = await this.recordExportCacheService.update({
-      workspaceId: recordExport.workspaceId,
-      id: recordExport.id,
-      condition: {
-        statuses: [RecordExportStatus.COMPLETED],
-        downloadStarted: false,
-      },
-      changes: { downloadStarted: true },
-    });
+    const claimed =
+      await this.recordExportCacheService.claimDownload(recordExport);
     if (!claimed) {
       throw new ConflictException(
         t`This export download has already started or expired.`,
@@ -132,7 +124,7 @@ export class RecordExportController {
 
     const resource = this.recordExportWorkspaceService.getFileResource({
       workspaceId: recordExport.workspaceId,
-      resourcePath: recordExport.filePath!,
+      resourcePath: `${recordExport.id}/${recordExport.fileId}.csv`,
     });
     response.setHeader('Cache-Control', 'private, no-store');
     const contentDisposition = `attachment; filename="${recordExport.filename.replace(/["\r\n\\]/g, '_')}"`;

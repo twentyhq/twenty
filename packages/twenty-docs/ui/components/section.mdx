@@ -1,0 +1,52 @@
+---
+title: Section
+description: Group content with a heading, supporting description, and optional action.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SectionReference from '/snippets/ui/generated/components/section.mdx';
+
+`Section.Root` groups related content. `Section.Header` combines [Heading](/ui/primitives/typography/heading) with a description and an optional `adornment`. Descriptions are ordinary text associated with the heading, so they do not add levels to the document outline.
+
+<StoryEmbed
+  storyId="ui-components-section--documentation"
+  title="Section example"
+  height={200}
+/>
+
+## Add a description and action
+
+```tsx
+import { Section } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceSection = () => (
+  <Section.Root>
+    <Section.Header
+      title="Workspace settings"
+      description="Manage your workspace name and preferences."
+      adornment={<Button>Edit workspace</Button>}
+    />
+    <Text>Workspace preferences appear here.</Text>
+  </Section.Root>
+);
+```
+
+`Section.Root` defaults to a full-width `div` with left alignment and the primary text color. Use `align`, `color`, and `fullWidth` to adjust the content wrapper.
+
+`Section.Header` can also be used by itself. Its `level`, `size`, and `color` configure the heading and default to `2`, `md`, and `primary`. The header has one spacing-4 margin after it. Use native `style` or `className` to adjust that spacing.
+
+## Description overflow
+
+String descriptions preserve line breaks, turn URLs into links, and show up to five lines. Set `descriptionLineClamp` to a positive integer to choose another limit. Hovering or focusing an overflowing description reveals its full text; Escape dismisses the tooltip.
+
+Pass a React node for richer supporting content. Rich descriptions render as supplied, without automatic truncation or tooltips.
+
+## Composition
+
+Both parts forward native attributes, refs, class names, styles, and `render` to their outer element. For example, `Section.Root render={<section aria-label="Workspace settings" />}` provides a named section, and `Section.Header render={<header />}` uses a header container.
+
+## Props
+
+<SectionReference />

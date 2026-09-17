@@ -497,6 +497,13 @@
     "isNumber": false
   },
   {
+    "path": "boxShadow.sidebar",
+    "cssVariable": "--t-box-shadow-sidebar",
+    "light": "-4px 4px 4px 0px rgba(0, 0, 0, 0.005)",
+    "dark": "-4px 4px 4px 0px rgba(0, 0, 0, 0.03)",
+    "isNumber": false
+  },
+  {
     "path": "boxShadow.strong",
     "cssVariable": "--t-box-shadow-strong",
     "light": "2px 4px 16px 0px color(display-p3 0 0 0 / 0.161), 0px 2px 4px 0px color(display-p3 0 0 0 / 0.078)",

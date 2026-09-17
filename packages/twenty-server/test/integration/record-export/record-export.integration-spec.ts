@@ -48,7 +48,10 @@ import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/
 import { type RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 import { type RecordExportQueryWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-query.workspace-service';
 import { type RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
-import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
+import {
+  type RecordExport,
+  type RecordExportDownload,
+} from 'src/engine/core-modules/record-export/types/record-export.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -154,11 +157,11 @@ describe('record export lifecycle (integration)', () => {
   };
   const getExport = (id: string) =>
     exports.findOrThrow({ workspaceId: SEED_APPLE_WORKSPACE_ID, id });
-  const fileExists = (recordExport: RecordExport) =>
+  const fileExists = (recordExport: RecordExportDownload) =>
     storage.checkFileExists(
       exports.getFileResource({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
-        resourcePath: recordExport.filePath!,
+        resourcePath: `${recordExport.id}/${recordExport.fileId}.csv`,
       }),
     );
   const changeRole = async (updatePayload: {
@@ -332,7 +335,7 @@ describe('record export lifecycle (integration)', () => {
       'SELECT id, status, size, "mimeType" FROM core.file WHERE "workspaceId" = $1 AND path = $2',
       [
         SEED_APPLE_WORKSPACE_ID,
-        `${FileFolder.RecordExport}/${stored.filePath}`,
+        `${FileFolder.RecordExport}/${stored.id}/${stored.fileId}.csv`,
       ],
     );
     expect(file).toMatchObject({ status: 'UPLOADED', mimeType: 'text/csv' });
@@ -358,7 +361,7 @@ describe('record export lifecycle (integration)', () => {
     );
     await waitUntil(async () => !(await fileExists(stored)));
     expect(
-      await cache.findOne({
+      await cache.findDownload({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         id: recordExport.id,
       }),
@@ -384,12 +387,10 @@ describe('record export lifecycle (integration)', () => {
     connection.dispose();
     await waitUntil(
       async () =>
-        !isDefined(
-          await cache.findOne({
-            workspaceId: SEED_APPLE_WORKSPACE_ID,
-            id: recordExport.id,
-          }),
-        ),
+        !(await cache.isConnected({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          id: recordExport.id,
+        })),
     );
     const next = await exportToCompletion();
     await download(next).expect(200);
@@ -430,9 +431,9 @@ describe('record export lifecycle (integration)', () => {
     const queue = global.app.get<MessageQueueService>(
       getQueueToken(MessageQueue.recordExportQueue),
     );
-    const create = cache.create.bind(cache);
+    const create = exports.create.bind(exports);
     let failed: RecordExport | undefined;
-    jest.spyOn(cache, 'create').mockImplementation(async (parameters) => {
+    jest.spyOn(exports, 'create').mockImplementation(async (parameters) => {
       const recordExport = await create(parameters);
       exportIds.add(recordExport.id);
       failed = recordExport;
@@ -450,9 +451,8 @@ describe('record export lifecycle (integration)', () => {
         }),
       ),
     ).rejects.toThrow('Queue unavailable');
-    expect((await getExport(failed!.id)).status).toBe(
-      RecordExportStatus.FAILED,
-    );
+    expect(await cache.isConnected(failed!)).toBe(false);
+    expect(await cache.findDownload(failed!)).toBeUndefined();
     const next = await exportToCompletion();
     await download(next).expect(200);
   });
@@ -482,7 +482,7 @@ describe('record export lifecycle (integration)', () => {
       exportIds.add(recordExport.id);
       notifyEnqueue(recordExport);
       await enqueueGate;
-      await enqueue(recordExport);
+      return enqueue(recordExport);
     });
     const readPage = query.readPage.bind(query);
     let releasePage = () => {};
@@ -510,7 +510,7 @@ describe('record export lifecycle (integration)', () => {
           args: [],
         });
         await setTimeout(2500);
-        expect(await cache.findOne(recordExport)).toBeDefined();
+        expect(await cache.isConnected(recordExport)).toBe(true);
       };
       await assertLeaseSurvives();
       releaseEnqueue();
@@ -518,11 +518,50 @@ describe('record export lifecycle (integration)', () => {
       expect((await events.next()).done).toBe(false);
       await assertLeaseSurvives();
       await events.return?.();
-      expect(await cache.findOne(recordExport)).toBeUndefined();
+      expect(await cache.isConnected(recordExport)).toBe(false);
     } finally {
       releaseEnqueue();
       releasePage();
       const events = await subscription;
+      await events.return?.();
+    }
+  });
+
+  it('retrieves completed worker output when the SSE consumer missed all progress', async () => {
+    const ready = await exportToCompletion();
+    const requester = await query.resolveRequester(await getExport(ready.id));
+    const streams =
+      getAppProviderByClassName<RecordExportStreamWorkspaceService>(
+        'RecordExportStreamWorkspaceService',
+      );
+    const enqueue = exports.enqueue.bind(exports);
+    let recordExport: RecordExport;
+    let jobId: string;
+    jest.spyOn(exports, 'enqueue').mockImplementation(async (created) => {
+      recordExport = created;
+      exportIds.add(created.id);
+      jobId = await enqueue(created);
+      return jobId;
+    });
+    const events = await streams.stream({
+      parameters: input,
+      authContext: requester,
+      requestTokenHash: hashUserSessionToken(APPLE_JANE_ADMIN_ACCESS_TOKEN),
+    });
+    try {
+      await waitUntil(
+        async () =>
+          (await exports.getProgress(recordExport, jobId)).status ===
+          RecordExportStatus.COMPLETED,
+      );
+      expect(await cache.findDownload(recordExport!)).toBeUndefined();
+      const completed = await events.next();
+      expect(completed.value).toMatchObject({
+        status: RecordExportStatus.COMPLETED,
+        processedRecordCount: companies.length,
+      });
+      await download(completed.value).expect(200);
+    } finally {
       await events.return?.();
     }
   });
@@ -565,7 +604,7 @@ describe('record export lifecycle (integration)', () => {
       .spyOn(storage, 'readFile')
       .mockRejectedValueOnce(new Error('Storage unavailable'));
     await download(recordExport).expect(500);
-    expect(await cache.findOne(stored)).toBeUndefined();
+    expect(await cache.findDownload(stored)).toBeUndefined();
     expect(await fileExists(stored)).toBe(false);
   });
 
@@ -761,7 +800,7 @@ describe('record export lifecycle (integration)', () => {
     await expect(download(recordExport)).rejects.toThrow();
     await waitUntil(async () => !(await fileExists(stored)));
     expect(
-      await cache.findOne({
+      await cache.findDownload({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         id: stored.id,
       }),
@@ -784,7 +823,7 @@ describe('record export lifecycle (integration)', () => {
     await client.get(url.pathname + url.search).expect(403);
     await download(recordExport, APPLE_JONY_MEMBER_ACCESS_TOKEN).expect(403);
     await download(recordExport, otherToken.token).expect(403);
-    expect((await getExport(recordExport.id)).downloadStarted).toBe(false);
+    expect(await getExport(recordExport.id)).toEqual(stored);
     expect(await fileExists(stored)).toBe(true);
     await download(recordExport).expect(200);
   });
@@ -896,14 +935,14 @@ describe('record export lifecycle (integration)', () => {
       }
       const response = await download(recordExport).expect(403);
       expect(response.text).not.toContain(companies[1].id);
-      expect(await cache.findOne(stored)).toBeUndefined();
+      expect(await cache.findDownload(stored)).toBeUndefined();
       if (cleanupFails) {
         expect(await fileExists(stored)).toBe(true);
         await globalThis.testDataSource.query(
           'UPDATE core.file SET "createdAt" = $3 WHERE "workspaceId" = $1 AND path = $2',
           [
             stored.workspaceId,
-            `${FileFolder.RecordExport}/${stored.filePath}`,
+            `${FileFolder.RecordExport}/${stored.id}/${stored.fileId}.csv`,
             new Date(Date.now() - 61 * 60_000),
           ],
         );
@@ -955,7 +994,7 @@ describe('record export lifecycle (integration)', () => {
         exports.getDownloadUrl({ id: stored.id, authContext: requester }),
       ).rejects.toThrow('Access permissions have changed');
       await download(ready).expect(403);
-      expect(await cache.findOne(stored)).toBeUndefined();
+      expect(await cache.findDownload(stored)).toBeUndefined();
       expect(await fileExists(stored)).toBe(false);
     },
   );

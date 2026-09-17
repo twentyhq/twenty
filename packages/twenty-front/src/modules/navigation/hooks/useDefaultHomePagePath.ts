@@ -4,6 +4,7 @@ import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metad
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { getFirstNavigationMenuItemLink } from '@/navigation/utils/getFirstNavigationMenuItemLink';
+import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
@@ -13,6 +14,8 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -38,6 +41,9 @@ export const useDefaultHomePagePath = () => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const navigationMenuItemsInDisplayOrder = useNavigationMenuItemSectionItems();
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+  );
 
   const readableNonSystemObjectMetadataItems = useMemo(
     () =>
@@ -50,13 +56,18 @@ export const useDefaultHomePagePath = () => {
     [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
   );
 
-  const getFirstView = useCallback(
+  const getTargetViewId = useCallback(
     (objectMetadataItemId: string | undefined | null) => {
-      return views.find(
-        (view) => view.objectMetadataId === objectMetadataItemId,
-      );
+      const { firstSelectableViewId, indexViewId, firstAvailableViewId } =
+        computeObjectViewTargetIds({
+          views,
+          objectMetadataId: objectMetadataItemId ?? undefined,
+          isInitialObjectViewEnabled,
+        });
+
+      return firstSelectableViewId ?? indexViewId ?? firstAvailableViewId;
     },
-    [views],
+    [views, isInitialObjectViewEnabled],
   );
 
   const firstNavigationMenuItemLink = useMemo(
@@ -66,12 +77,14 @@ export const useDefaultHomePagePath = () => {
         objectMetadataItems,
         views,
         objectPermissionsByObjectMetadataId,
+        isInitialObjectViewEnabled,
       }),
     [
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       views,
       navigationMenuItemsInDisplayOrder,
+      isInitialObjectViewEnabled,
     ],
   );
 
@@ -82,10 +95,10 @@ export const useDefaultHomePagePath = () => {
       return null;
     }
 
-    const view = getFirstView(firstObjectMetadataItem.id);
+    const viewId = getTargetViewId(firstObjectMetadataItem.id);
 
-    return { objectMetadataItem: firstObjectMetadataItem, view };
-  }, [getFirstView, readableNonSystemObjectMetadataItems]);
+    return { objectMetadataItem: firstObjectMetadataItem, viewId };
+  }, [getTargetViewId, readableNonSystemObjectMetadataItems]);
 
   const defaultHomePagePath = useMemo(() => {
     if (!isDefined(currentUser)) {
@@ -118,8 +131,8 @@ export const useDefaultHomePagePath = () => {
     return getAppPath(
       AppPath.RecordIndexPage,
       { objectNamePlural: firstObjectPathInfo.objectMetadataItem?.namePlural },
-      firstObjectPathInfo.view?.id
-        ? { viewId: firstObjectPathInfo.view.id }
+      isDefined(firstObjectPathInfo.viewId)
+        ? { viewId: firstObjectPathInfo.viewId }
         : undefined,
     );
   }, [

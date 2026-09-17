@@ -146,6 +146,7 @@ export const FormSelectFieldInput = ({
             onChange={onSelect}
             callToActionButton={callToActionButton}
             fullWidth
+            renderAsTag
             hasRightElement={isDefined(VariablePicker) && !readonly}
             withSearchInput
             disabled={readonly}

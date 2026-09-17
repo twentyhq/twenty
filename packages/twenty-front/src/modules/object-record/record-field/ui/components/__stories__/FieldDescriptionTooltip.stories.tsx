@@ -43,40 +43,45 @@ export const Hover: Story = {
 
     await userEvent.unhover(firstLabel);
     await userEvent.hover(secondLabel);
-    await waitFor(() =>
-      expect(tooltip).toHaveTextContent(
-        'The team member responsible for this company',
-      ),
+    await waitFor(
+      () =>
+        expect(body.getByRole('tooltip')).toHaveTextContent(
+          'The team member responsible for this company',
+        ),
+      { timeout: 5000 },
     );
     expect(body.getAllByRole('tooltip')).toHaveLength(1);
-    expect(tooltip).not.toHaveTextContent('The company website URL');
+    expect(body.getByRole('tooltip')).not.toHaveTextContent(
+      'The company website URL',
+    );
   },
 };
 
 export const KeyboardFocus: Story = {
   play: async ({ canvasElement }) => {
+    const user = userEvent.setup();
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const firstLabel = canvas.getByText('Domain Name');
     const secondLabel = canvas.getByText('Account Owner');
 
-    await userEvent.tab();
+    await user.tab();
     expect(firstLabel).toHaveFocus();
     expect(firstLabel).toHaveAccessibleDescription('The company website URL');
-    await userEvent.hover(firstLabel);
-    await userEvent.unhover(firstLabel);
+    await user.hover(firstLabel);
+    await user.unhover(firstLabel);
     const tooltip = await body.findByRole('tooltip', undefined, {
       timeout: 5000,
     });
     await waitFor(() => expect(tooltip).toBeVisible());
 
-    await userEvent.hover(firstLabel);
-    await userEvent.unhover(firstLabel);
+    await user.hover(firstLabel);
+    await user.unhover(firstLabel);
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(tooltip).toBeVisible();
     expect(firstLabel).toHaveFocus();
 
-    await userEvent.tab();
+    await user.tab();
     expect(secondLabel).toHaveFocus();
     await waitFor(() =>
       expect(tooltip).toHaveTextContent(
@@ -84,7 +89,7 @@ export const KeyboardFocus: Story = {
       ),
     );
 
-    await userEvent.tab();
+    await user.tab();
     await waitFor(() => expect(body.queryByRole('tooltip')).toBeNull());
   },
 };
