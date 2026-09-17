@@ -245,6 +245,7 @@ export class UsageLimitService {
       return this.usageLimitStockService.dropStockCounters({
         workspaceId: usageLimit.workspaceId,
         resourceType: usageLimit.resourceType,
+        operationType: usageLimit.operationType,
         spenderType: usageLimit.spenderType,
         spenderId: usageLimit.spenderId,
       });

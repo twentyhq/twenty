@@ -13,6 +13,7 @@ export const buildStockCounter = ({
   key: buildStockCounterKey({
     workspaceId,
     resourceType: limit.resourceType,
+    operationType: limit.operationType,
     spenderType: limit.spenderType,
     spenderId: limit.spenderId,
     meter: limit.meter,

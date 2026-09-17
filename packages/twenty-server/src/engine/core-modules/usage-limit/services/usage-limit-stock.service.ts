@@ -139,11 +139,13 @@ export class UsageLimitStockService {
   async dropStockCounters({
     workspaceId,
     resourceType,
+    operationType,
     spenderType,
     spenderId,
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
+    operationType: UsageOperationType;
     spenderType: SpenderType;
     spenderId: string;
   }) {
@@ -151,6 +153,7 @@ export class UsageLimitStockService {
       buildStockCounterKey({
         workspaceId,
         resourceType,
+        operationType,
         spenderType,
         spenderId,
         meter,
@@ -168,6 +171,7 @@ export class UsageLimitStockService {
             buildStockDefaultCounterKey({
               workspaceId,
               resourceType,
+              operationType,
               spenderType,
               meter: stockLimitDefault.meter,
               limitValue: stockLimitDefault.limitValue,

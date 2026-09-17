@@ -18,6 +18,7 @@ export const buildStockDefaultCounter = ({
   key: buildStockDefaultCounterKey({
     workspaceId,
     resourceType,
+    operationType,
     spenderType: stockLimitDefault.spenderType,
     meter: stockLimitDefault.meter,
     limitValue: stockLimitDefault.limitValue,
