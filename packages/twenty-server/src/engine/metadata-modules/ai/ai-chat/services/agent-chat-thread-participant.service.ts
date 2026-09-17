@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread-participant.entity';
 import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -16,9 +17,10 @@ import {
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-export type AgentChatThreadParticipantDisplayName = {
-  userWorkspaceId: string;
-  displayName: string;
+export type AgentChatThreadSharingContext = {
+  isShared: boolean;
+  channelName: string | null;
+  participantNames: string[];
 };
 
 @Injectable()
@@ -26,6 +28,8 @@ export class AgentChatThreadParticipantService {
   constructor(
     @InjectWorkspaceScopedRepository(AgentChatThreadParticipantEntity)
     private readonly participantRepository: WorkspaceScopedRepository<AgentChatThreadParticipantEntity>,
+    @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
+    private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
@@ -187,42 +191,72 @@ export class AgentChatThreadParticipantService {
     return true;
   }
 
-  // Names the model sees on user messages of a shared thread. Falls back to
-  // the email so a member without a name still reads as a distinct person.
-  async getParticipantDisplayNames({
+  // What the model needs to know about who is in the thread. A thread is
+  // shared once a second participant joins or once it lives in a channel.
+  async getThreadSharingContext({
     threadId,
     workspaceId,
   }: {
     threadId: string;
     workspaceId: string;
-  }): Promise<AgentChatThreadParticipantDisplayName[]> {
-    const participants = await this.participantRepository.find(workspaceId, {
-      where: { threadId },
-      select: ['userWorkspaceId'],
+  }): Promise<AgentChatThreadSharingContext> {
+    const [thread, participants] = await Promise.all([
+      this.threadRepository.findOne(workspaceId, {
+        where: { id: threadId },
+        relations: ['channel'],
+      }),
+      this.participantRepository.find(workspaceId, {
+        where: { threadId },
+        select: ['userWorkspaceId'],
+      }),
+    ]);
+
+    const channel = thread?.channel ?? null;
+    const participantNames = await this.getDisplayNamesByUserWorkspaceIds({
+      userWorkspaceIds: participants.map(
+        (participant) => participant.userWorkspaceId,
+      ),
+      workspaceId,
     });
 
-    if (participants.length === 0) {
-      return [];
+    return {
+      isShared: participants.length > 1 || isDefined(channel),
+      channelName: channel?.name ?? null,
+      participantNames: [...participantNames.values()],
+    };
+  }
+
+  // Falls back to the email so a member without a name still reads as a
+  // distinct person.
+  async getDisplayNamesByUserWorkspaceIds({
+    userWorkspaceIds,
+    workspaceId,
+  }: {
+    userWorkspaceIds: string[];
+    workspaceId: string;
+  }): Promise<Map<string, string>> {
+    const uniqueUserWorkspaceIds = [...new Set(userWorkspaceIds)];
+
+    if (uniqueUserWorkspaceIds.length === 0) {
+      return new Map();
     }
 
     const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: {
-        id: In(participants.map((participant) => participant.userWorkspaceId)),
-        workspaceId,
-      },
+      where: { id: In(uniqueUserWorkspaceIds), workspaceId },
       relations: ['user'],
     });
 
-    return userWorkspaces.map((userWorkspace) => {
-      const fullName =
-        `${userWorkspace.user?.firstName ?? ''} ${userWorkspace.user?.lastName ?? ''}`.trim();
+    return new Map(
+      userWorkspaces.map((userWorkspace) => {
+        const fullName =
+          `${userWorkspace.user?.firstName ?? ''} ${userWorkspace.user?.lastName ?? ''}`.trim();
 
-      return {
-        userWorkspaceId: userWorkspace.id,
-        displayName:
+        return [
+          userWorkspace.id,
           fullName.length > 0 ? fullName : (userWorkspace.user?.email ?? ''),
-      };
-    });
+        ];
+      }),
+    );
   }
 
   private async assertActorIsOwner({

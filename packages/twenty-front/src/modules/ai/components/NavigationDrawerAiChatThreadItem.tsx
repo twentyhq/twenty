@@ -70,6 +70,7 @@ export const NavigationDrawerAiChatThreadItem = ({
         <AiChatThreadItemMenu
           threadId={thread.id}
           threadTitle={displayLabel}
+          channelId={thread.channelId}
           isArchived={isArchived}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
           onRenameRequested={startRename}

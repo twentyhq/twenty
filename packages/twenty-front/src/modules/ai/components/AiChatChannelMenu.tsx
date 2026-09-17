@@ -1,0 +1,161 @@
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  IconDotsVertical,
+  IconLogout,
+  IconPencil,
+  IconTrash,
+  IconUsers,
+} from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
+
+import { AiChatChannelMembersDropdownContent } from '@/ai/components/AiChatChannelMembersDropdownContent';
+import { AiChatChannelNameForm } from '@/ai/components/AiChatChannelNameForm';
+import { AI_CHAT_CHANNEL_DELETE_MODAL_ID } from '@/ai/constants/AiChatChannelDeleteModalId';
+import {
+  AI_CHAT_CHANNEL_MENU_PAGE,
+  type AiChatChannelMenuPage,
+} from '@/ai/constants/AiChatChannelMenuPage';
+import { useChatChannelActions } from '@/ai/hooks/useChatChannelActions';
+import { useChatChannels } from '@/ai/hooks/useChatChannels';
+import { aiChatChannelPendingDeleteState } from '@/ai/states/aiChatChannelPendingDeleteState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { type FlatAgentChatChannel } from '@/metadata-store/types/FlatAgentChatChannel';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+
+export const getAiChatChannelMenuDropdownId = (channelId: string) =>
+  `ai-chat-channel-menu-${channelId}`;
+
+type AiChatChannelMenuProps = {
+  channel: FlatAgentChatChannel;
+};
+
+export const AiChatChannelMenu = ({ channel }: AiChatChannelMenuProps) => {
+  const { t } = useLingui();
+  const dropdownId = getAiChatChannelMenuDropdownId(channel.id);
+  const { closeDropdown } = useCloseDropdown();
+  const { openModal } = useModal();
+  const [page, setPage] = useState<AiChatChannelMenuPage>(
+    AI_CHAT_CHANNEL_MENU_PAGE.ROOT,
+  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const { isCurrentUserChannelAdmin } = useChatChannels();
+  const { updateChatChannel, leaveChatChannel } = useChatChannelActions();
+  const setAiChatChannelPendingDelete = useSetAtomState(
+    aiChatChannelPendingDeleteState,
+  );
+
+  const isAdmin = isCurrentUserChannelAdmin(channel.id);
+  const goToRoot = () => setPage(AI_CHAT_CHANNEL_MENU_PAGE.ROOT);
+
+  const handleRename = async (name: string) => {
+    const updatedChannel = await updateChatChannel(channel.id, { name });
+
+    if (isDefined(updatedChannel)) {
+      closeDropdown(dropdownId);
+      goToRoot();
+    }
+  };
+
+  const handleLeave = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    closeDropdown(dropdownId);
+
+    if (isDefined(currentWorkspaceMember?.userWorkspaceId)) {
+      await leaveChatChannel(
+        channel.id,
+        currentWorkspaceMember.userWorkspaceId,
+      );
+    }
+  };
+
+  const handleDelete = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    closeDropdown(dropdownId);
+    setAiChatChannelPendingDelete({
+      channelId: channel.id,
+      channelName: channel.name,
+    });
+    openModal(AI_CHAT_CHANNEL_DELETE_MODAL_ID);
+  };
+
+  const renderPage = () => {
+    switch (page) {
+      case AI_CHAT_CHANNEL_MENU_PAGE.MEMBERS:
+        return (
+          <AiChatChannelMembersDropdownContent
+            channelId={channel.id}
+            onBack={goToRoot}
+          />
+        );
+      case AI_CHAT_CHANNEL_MENU_PAGE.RENAME:
+        return (
+          <AiChatChannelNameForm
+            title={t`Rename channel`}
+            initialName={channel.name}
+            submitLabel={t`Rename`}
+            onBack={goToRoot}
+            onSubmit={handleRename}
+          />
+        );
+      case AI_CHAT_CHANNEL_MENU_PAGE.ROOT:
+      default:
+        return (
+          <DropdownContent>
+            <DropdownMenuItemsContainer>
+              <MenuItem
+                text={t`Members`}
+                LeftIcon={IconUsers}
+                onClick={() => setPage(AI_CHAT_CHANNEL_MENU_PAGE.MEMBERS)}
+              />
+              {isAdmin && (
+                <MenuItem
+                  text={t`Rename`}
+                  LeftIcon={IconPencil}
+                  onClick={() => setPage(AI_CHAT_CHANNEL_MENU_PAGE.RENAME)}
+                />
+              )}
+              <MenuItem
+                text={t`Leave channel`}
+                LeftIcon={IconLogout}
+                onClick={handleLeave}
+              />
+              {isAdmin && (
+                <MenuItem
+                  accent="danger"
+                  text={t`Delete channel`}
+                  LeftIcon={IconTrash}
+                  onClick={handleDelete}
+                />
+              )}
+            </DropdownMenuItemsContainer>
+          </DropdownContent>
+        );
+    }
+  };
+
+  return (
+    <Dropdown
+      dropdownId={dropdownId}
+      dropdownPlacement="bottom-end"
+      onClose={goToRoot}
+      clickableComponent={
+        <LightIconButton
+          aria-label={t`Channel actions`}
+          Icon={IconDotsVertical}
+          accent="tertiary"
+          size="small"
+        />
+      }
+      dropdownComponents={renderPage()}
+    />
+  );
+};

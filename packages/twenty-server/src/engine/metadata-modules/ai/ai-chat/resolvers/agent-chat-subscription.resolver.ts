@@ -21,6 +21,7 @@ import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai
 import { AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-stream-reap-check-interval-ms.constant';
 import { AgentChatEventDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-event.dto';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { buildThreadAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-access-where.util';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
@@ -52,7 +53,7 @@ export class AgentChatSubscriptionResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, participants: { userWorkspaceId } },
+      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
       select: ['id'],
     });
 

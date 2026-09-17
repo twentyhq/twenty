@@ -4,6 +4,7 @@ import { type QueryRunner } from 'typeorm';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import {
   AGENT_CHAT_THREAD_DATA_SEED_IDS,
+  APPLE_AGENT_CHAT_CHANNEL_SEEDS,
   APPLE_AGENT_CHAT_CONVERSATION_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/agent-chat-seeds.constant';
 import {
@@ -12,10 +13,13 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { AgentChatChannelMemberRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-member-role.enum';
 import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
 
 const agentChatThreadTableName = 'agentChatThread';
 const agentChatThreadParticipantTableName = 'agentChatThreadParticipant';
+const agentChatChannelTableName = 'agentChatChannel';
+const agentChatChannelMemberTableName = 'agentChatChannelMember';
 const agentTurnTableName = 'agentTurn';
 const agentMessageTableName = 'agentMessage';
 const agentMessagePartTableName = 'agentMessagePart';
@@ -75,6 +79,10 @@ const seedChatThreads = async ({
       ? 'Explore your workspace'
       : 'Portfolio performance';
 
+  if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
+    await seedChatChannels({ queryRunner, schemaName, workspaceId, now });
+  }
+
   await queryRunner.manager
     .createQueryBuilder()
     .insert()
@@ -128,6 +136,10 @@ const seedChatThreads = async ({
           },
         ].map((thread) => ({
           ...thread,
+          channelId:
+            APPLE_AGENT_CHAT_CONVERSATION_SEEDS.find(
+              (conversation) => conversation.threadId === thread.id,
+            )?.channelId ?? null,
           workspaceId,
           userWorkspaceId,
           createdAt: now,
@@ -154,6 +166,77 @@ const seedChatThreads = async ({
   });
 
   return { threadId, ownerUserWorkspaceId: userWorkspaceId };
+};
+
+type SeedChatChannelsArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+  now: Date;
+};
+
+const seedChatChannels = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+  now,
+}: SeedChatChannelsArgs) => {
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentChatChannelTableName}`, [
+      'id',
+      'workspaceId',
+      'name',
+      'visibility',
+      'createdByUserWorkspaceId',
+      'createdAt',
+      'updatedAt',
+    ])
+    .orIgnore()
+    .values(
+      APPLE_AGENT_CHAT_CHANNEL_SEEDS.map((channel) => ({
+        id: channel.id,
+        workspaceId,
+        name: channel.name,
+        visibility: channel.visibility,
+        createdByUserWorkspaceId: channel.adminUserWorkspaceId,
+        createdAt: now,
+        updatedAt: now,
+      })),
+    )
+    .execute();
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentChatChannelMemberTableName}`, [
+      'workspaceId',
+      'channelId',
+      'userWorkspaceId',
+      'role',
+      'createdAt',
+    ])
+    .orIgnore()
+    .values(
+      APPLE_AGENT_CHAT_CHANNEL_SEEDS.flatMap((channel) => [
+        {
+          workspaceId,
+          channelId: channel.id,
+          userWorkspaceId: channel.adminUserWorkspaceId,
+          role: AgentChatChannelMemberRole.ADMIN,
+          createdAt: now,
+        },
+        ...channel.memberUserWorkspaceIds.map((memberUserWorkspaceId) => ({
+          workspaceId,
+          channelId: channel.id,
+          userWorkspaceId: memberUserWorkspaceId,
+          role: AgentChatChannelMemberRole.MEMBER,
+          createdAt: now,
+        })),
+      ]),
+    )
+    .execute();
 };
 
 type SeedChatThreadParticipantsArgs = {

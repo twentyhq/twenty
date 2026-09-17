@@ -1,8 +1,11 @@
+import { useAtomValue } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatThreadParticipantsComponentFamilyState } from '@/ai/states/agentChatThreadParticipantsComponentFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AgentChatThreadParticipantRole } from '~/generated-metadata/graphql';
@@ -16,6 +19,12 @@ export const useChatThreadParticipants = (threadId: string | null) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
+  );
+  const threadsStoreEntry = useAtomValue(
+    metadataStoreState.atomFamily('agentChatThreads'),
+  );
+  const thread = (threadsStoreEntry.current as FlatAgentChatThread[]).find(
+    (candidate) => candidate.id === threadId,
   );
 
   const participantsWithMember = participants.flatMap((participant) => {
@@ -34,7 +43,10 @@ export const useChatThreadParticipants = (threadId: string | null) => {
   const isCurrentUserOwner =
     currentParticipant?.role === AgentChatThreadParticipantRole.OWNER;
 
-  const isSharedThread = participants.length > 1;
+  // A thread in a channel is readable by every channel member, so authors
+  // matter even with a single participant row.
+  const isSharedThread =
+    participants.length > 1 || isDefined(thread?.channelId);
 
   return {
     participants,

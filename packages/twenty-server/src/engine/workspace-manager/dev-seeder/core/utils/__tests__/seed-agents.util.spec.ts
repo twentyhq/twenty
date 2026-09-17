@@ -14,14 +14,15 @@ type SeedRow = {
   messageId?: string;
   role?: string;
   userWorkspaceId?: string;
+  channelId?: string | null;
   authorUserWorkspaceId?: string | null;
   createdAt: Date;
 };
 
 describe('seedAgents', () => {
   it.each([
-    [SEED_APPLE_WORKSPACE_ID, 3, 24, 12, 5],
-    [SEED_YCOMBINATOR_WORKSPACE_ID, 1, 4, 2, 1],
+    [SEED_APPLE_WORKSPACE_ID, 3, 24, 12, 5, 2, 5],
+    [SEED_YCOMBINATOR_WORKSPACE_ID, 1, 4, 2, 1, 0, 0],
   ])(
     'keeps messages, turns, and parts in their owning conversation for %s',
     async (
@@ -30,6 +31,8 @@ describe('seedAgents', () => {
       messageCount,
       turnCount,
       participantCount,
+      channelCount,
+      channelMemberCount,
     ) => {
       const tables = new Map<string, SeedRow[]>();
       let tableName: string;
@@ -75,12 +78,28 @@ describe('seedAgents', () => {
       const messages = tables.get('core.agentMessage') ?? [];
       const parts = tables.get('core.agentMessagePart') ?? [];
       const participants = tables.get('core.agentChatThreadParticipant') ?? [];
+      const channels = tables.get('core.agentChatChannel') ?? [];
+      const channelMembers = tables.get('core.agentChatChannelMember') ?? [];
 
       expect(threads).toHaveLength(threadCount);
       expect(messages).toHaveLength(messageCount);
       expect(parts).toHaveLength(messageCount);
       expect(turns).toHaveLength(turnCount);
       expect(participants).toHaveLength(participantCount);
+      expect(channels).toHaveLength(channelCount);
+      expect(channelMembers).toHaveLength(channelMemberCount);
+      for (const thread of threads) {
+        if (thread.channelId) {
+          expect(channels).toContainEqual(
+            expect.objectContaining({ id: thread.channelId, workspaceId }),
+          );
+        }
+      }
+      for (const channelMember of channelMembers) {
+        expect(channels).toContainEqual(
+          expect.objectContaining({ id: channelMember.channelId }),
+        );
+      }
       for (const thread of threads) {
         expect(participants).toContainEqual(
           expect.objectContaining({

@@ -5,6 +5,8 @@ export const GET_CHAT_THREADS = gql`
     chatThreads {
       id
       title
+      channelId
+      ownerUserWorkspaceId
       totalCacheReadTokens
       totalInputTokens
       totalOutputTokens

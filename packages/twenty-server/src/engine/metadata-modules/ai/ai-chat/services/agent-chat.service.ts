@@ -24,9 +24,13 @@ import {
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
+import { AgentChatChannelMemberEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel-member.entity';
+import { AgentChatChannelEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel.entity';
 import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread-participant.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-visibility.enum';
 import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
+import { buildThreadAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-access-where.util';
 import {
   AiException,
   AiExceptionCode,
@@ -45,6 +49,8 @@ const serializeThreadForBroadcast = (
 ) => ({
   id: thread.id,
   title: thread.title,
+  channelId: thread.channelId,
+  ownerUserWorkspaceId: thread.userWorkspaceId,
   totalInputTokens: thread.totalInputTokens,
   totalOutputTokens: thread.totalOutputTokens,
   totalCacheReadTokens: thread.totalCacheReadTokens,
@@ -79,6 +85,10 @@ export class AgentChatService {
     private readonly codeInterpreterService: CodeInterpreterService,
     @InjectWorkspaceScopedRepository(AgentChatThreadParticipantEntity)
     private readonly participantRepository: WorkspaceScopedRepository<AgentChatThreadParticipantEntity>,
+    @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
+    private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
+    @InjectWorkspaceScopedRepository(AgentChatChannelMemberEntity)
+    private readonly channelMemberRepository: WorkspaceScopedRepository<AgentChatChannelMemberEntity>,
   ) {}
 
   async createThread({
@@ -120,7 +130,7 @@ export class AgentChatService {
     recipientUserWorkspaceIds,
   }: {
     thread: AgentChatThreadEntity;
-    recipientUserWorkspaceIds: string[];
+    recipientUserWorkspaceIds: string[] | undefined;
   }): Promise<void> {
     const lastMessageAt = await this.getLastMessageAtForThread({
       threadId: thread.id,
@@ -148,7 +158,7 @@ export class AgentChatService {
     recipientUserWorkspaceIds,
   }: {
     thread: AgentChatThreadEntity;
-    recipientUserWorkspaceIds: string[];
+    recipientUserWorkspaceIds: string[] | undefined;
   }): Promise<void> {
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: thread.workspaceId,
@@ -176,11 +186,117 @@ export class AgentChatService {
     workspaceId: string;
   }) {
     return this.threadRepository.findOne(workspaceId, {
-      where: {
-        id: threadId,
-        participants: { userWorkspaceId },
-      },
+      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
     });
+  }
+
+  // Readers of a thread: its participants plus the members of its channel.
+  // Undefined means everyone in the workspace, which is what a public
+  // channel grants and what the broadcaster treats as workspace-wide.
+  async getThreadRecipientUserWorkspaceIds({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<string[] | undefined> {
+    const [thread, participantUserWorkspaceIds] = await Promise.all([
+      this.threadRepository.findOne(workspaceId, {
+        where: { id: threadId },
+        select: ['id', 'channelId'],
+      }),
+      this.getParticipantUserWorkspaceIds({ threadId, workspaceId }),
+    ]);
+
+    if (!isDefined(thread?.channelId)) {
+      return participantUserWorkspaceIds;
+    }
+
+    const channel = await this.channelRepository.findOne(workspaceId, {
+      where: { id: thread.channelId },
+      select: ['id', 'visibility'],
+    });
+
+    if (channel?.visibility === AgentChatChannelVisibility.PUBLIC) {
+      return undefined;
+    }
+
+    const channelMembers = await this.channelMemberRepository.find(
+      workspaceId,
+      {
+        where: { channelId: thread.channelId },
+        select: ['userWorkspaceId'],
+      },
+    );
+
+    return [
+      ...new Set([
+        ...participantUserWorkspaceIds,
+        ...channelMembers.map((member) => member.userWorkspaceId),
+      ]),
+    ];
+  }
+
+  // Tells every stream what changed for it when a thread's readers change:
+  // new readers get a created event, lost readers a deleted one, and the
+  // rest an update carrying the fields that changed.
+  async broadcastThreadAccessChange({
+    thread,
+    recipientsBefore,
+    recipientsAfter,
+    updatedFields,
+  }: {
+    thread: AgentChatThreadEntity;
+    recipientsBefore: string[] | undefined;
+    recipientsAfter: string[] | undefined;
+    updatedFields: (keyof AgentChatThreadDTO)[];
+  }): Promise<void> {
+    if (!isDefined(recipientsAfter)) {
+      await this.broadcastThreadUpdated(thread, updatedFields, {
+        userWorkspaceIds: undefined,
+      });
+
+      return;
+    }
+
+    if (!isDefined(recipientsBefore)) {
+      await this.broadcastThreadDeletedToRecipients({
+        thread,
+        recipientUserWorkspaceIds: undefined,
+      });
+      await this.broadcastThreadCreatedToRecipients({
+        thread,
+        recipientUserWorkspaceIds: recipientsAfter,
+      });
+
+      return;
+    }
+
+    const before = new Set(recipientsBefore);
+    const after = new Set(recipientsAfter);
+    const added = recipientsAfter.filter((id) => !before.has(id));
+    const removed = recipientsBefore.filter((id) => !after.has(id));
+    const kept = recipientsAfter.filter((id) => before.has(id));
+
+    if (added.length > 0) {
+      await this.broadcastThreadCreatedToRecipients({
+        thread,
+        recipientUserWorkspaceIds: added,
+      });
+    }
+
+    if (kept.length > 0) {
+      await this.broadcastThreadUpdated(thread, updatedFields, {
+        userWorkspaceIds: kept,
+      });
+    }
+
+    if (removed.length > 0) {
+      await this.broadcastThreadDeletedToRecipients({
+        thread,
+        recipientUserWorkspaceIds: removed,
+      });
+    }
   }
 
   async assertThreadOwner({
@@ -258,13 +374,24 @@ export class AgentChatService {
       .select('thread.id', 'id')
       .addSelect('MAX(message.createdAt)', 'last_message_at')
       .leftJoin('thread.messages', 'message', 'message.isHidden = false')
-      .innerJoin(
+      .leftJoin(
         'thread.participants',
         'participant',
         'participant.userWorkspaceId = :userWorkspaceId',
         { userWorkspaceId },
       )
+      .leftJoin('thread.channel', 'channel')
+      .leftJoin(
+        'channel.members',
+        'channelMember',
+        'channelMember.userWorkspaceId = :userWorkspaceId',
+        { userWorkspaceId },
+      )
       .where('thread.workspaceId = :workspaceId', { workspaceId })
+      .andWhere(
+        '(participant.id IS NOT NULL OR channelMember.id IS NOT NULL OR channel.visibility = :publicVisibility)',
+        { publicVisibility: AgentChatChannelVisibility.PUBLIC },
+      )
       .groupBy('thread.id')
       .orderBy('last_message_at', 'DESC', 'NULLS LAST')
       .addOrderBy('thread.updatedAt', 'DESC')
@@ -1111,9 +1238,8 @@ export class AgentChatService {
     await this.assertThreadOwner({ threadId, userWorkspaceId, workspaceId });
 
     // Participants cascade away with the thread, so collect recipients first.
-    const recipientUserWorkspaceIds = await this.getParticipantUserWorkspaceIds(
-      { threadId, workspaceId },
-    );
+    const recipientUserWorkspaceIds =
+      await this.getThreadRecipientUserWorkspaceIds({ threadId, workspaceId });
 
     const result = await this.threadRepository.delete(workspaceId, {
       id: threadId,
@@ -1196,16 +1322,19 @@ export class AgentChatService {
   private async broadcastThreadUpdated(
     thread: AgentChatThreadEntity,
     updatedFields: (keyof AgentChatThreadDTO)[],
+    recipients?: { userWorkspaceIds: string[] | undefined },
   ): Promise<void> {
     const [lastMessageAt, recipientUserWorkspaceIds] = await Promise.all([
       this.getLastMessageAtForThread({
         threadId: thread.id,
         workspaceId: thread.workspaceId,
       }),
-      this.getParticipantUserWorkspaceIds({
-        threadId: thread.id,
-        workspaceId: thread.workspaceId,
-      }),
+      isDefined(recipients)
+        ? Promise.resolve(recipients.userWorkspaceIds)
+        : this.getThreadRecipientUserWorkspaceIds({
+            threadId: thread.id,
+            workspaceId: thread.workspaceId,
+          }),
     ]);
 
     await this.workspaceEventBroadcaster.broadcast({

@@ -77,7 +77,10 @@ import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-cha
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
-import { injectMessageAuthors } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-authors.util';
+import {
+  collectMessageAuthorUserWorkspaceIds,
+  injectMessageAuthors,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-authors.util';
 import {
   getCacheProviderOptions,
   getCallLevelProviderOptions,
@@ -351,16 +354,26 @@ export class ChatExecutionService {
       userContext.timezone,
     );
 
-    const threadParticipants = isDefined(threadId)
-      ? await this.agentChatThreadParticipantService.getParticipantDisplayNames(
-          { threadId, workspaceId: workspace.id },
-        )
-      : [];
+    const threadSharingContext = isDefined(threadId)
+      ? await this.agentChatThreadParticipantService.getThreadSharingContext({
+          threadId,
+          workspaceId: workspace.id,
+        })
+      : undefined;
 
-    processedMessages = injectMessageAuthors(
-      processedMessages,
-      threadParticipants,
-    );
+    if (threadSharingContext?.isShared === true) {
+      processedMessages = injectMessageAuthors(processedMessages, {
+        isShared: true,
+        displayNameByUserWorkspaceId:
+          await this.agentChatThreadParticipantService.getDisplayNamesByUserWorkspaceIds(
+            {
+              userWorkspaceIds:
+                collectMessageAuthorUserWorkspaceIds(processedMessages),
+              workspaceId: workspace.id,
+            },
+          ),
+      });
+    }
 
     const systemPrompt = buildFullSystemPrompt({
       toolCatalog,
@@ -373,7 +386,7 @@ export class ChatExecutionService {
       },
       workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
       userContext,
-      threadParticipants,
+      threadSharingContext,
       isWorkspaceSetupThread,
     });
 

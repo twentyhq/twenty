@@ -1,11 +1,14 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { injectMessageAuthors } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-authors.util';
+import {
+  collectMessageAuthorUserWorkspaceIds,
+  injectMessageAuthors,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-authors.util';
 
-const PARTICIPANTS = [
-  { userWorkspaceId: 'tim', displayName: 'Tim Apple' },
-  { userWorkspaceId: 'jony', displayName: 'Jony Ive' },
-];
+const DISPLAY_NAMES = new Map([
+  ['tim', 'Tim Apple'],
+  ['jony', 'Jony Ive'],
+]);
 
 const buildUserMessage = (
   authorUserWorkspaceId: string | null,
@@ -21,7 +24,7 @@ describe('injectMessageAuthors', () => {
   it('prefixes user messages with their author in a shared thread', () => {
     const [timMessage, jonyMessage] = injectMessageAuthors(
       [buildUserMessage('tim', 'hello'), buildUserMessage('jony', 'hi')],
-      PARTICIPANTS,
+      { isShared: true, displayNameByUserWorkspaceId: DISPLAY_NAMES },
     );
 
     expect(timMessage.parts[0]).toEqual({
@@ -35,10 +38,15 @@ describe('injectMessageAuthors', () => {
     expect(timMessage.parts[1]).toEqual({ type: 'text', text: 'hello' });
   });
 
-  it('leaves messages untouched when the thread has a single participant', () => {
+  it('leaves messages untouched when the thread is private', () => {
     const messages = [buildUserMessage('tim', 'hello')];
 
-    expect(injectMessageAuthors(messages, [PARTICIPANTS[0]])).toBe(messages);
+    expect(
+      injectMessageAuthors(messages, {
+        isShared: false,
+        displayNameByUserWorkspaceId: DISPLAY_NAMES,
+      }),
+    ).toBe(messages);
   });
 
   it('skips assistant messages and messages without a known author', () => {
@@ -50,10 +58,24 @@ describe('injectMessageAuthors', () => {
 
     const result = injectMessageAuthors(
       [assistantMessage, buildUserMessage(null, 'legacy')],
-      PARTICIPANTS,
+      { isShared: true, displayNameByUserWorkspaceId: DISPLAY_NAMES },
     );
 
     expect(result[0]).toBe(assistantMessage);
     expect(result[1].parts).toEqual([{ type: 'text', text: 'legacy' }]);
+  });
+});
+
+describe('collectMessageAuthorUserWorkspaceIds', () => {
+  it('returns the distinct authors of user messages', () => {
+    expect(
+      collectMessageAuthorUserWorkspaceIds([
+        buildUserMessage('tim', 'a'),
+        buildUserMessage('jony', 'b'),
+        buildUserMessage('tim', 'c'),
+        buildUserMessage(null, 'd'),
+        { id: 'x', role: 'assistant', parts: [] },
+      ]),
+    ).toEqual(['tim', 'jony']);
   });
 });

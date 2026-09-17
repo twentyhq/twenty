@@ -22,6 +22,7 @@ describe('groupThreadsByDate', () => {
     'updatedAt' | 'id' | 'lastMessageAt'
   > = {
     title: 'Test Thread',
+    ownerUserWorkspaceId: 'owner-user-workspace-id',
     createdAt: twoDaysAgo.toISOString(),
     totalInputTokens: 0,
     totalOutputTokens: 0,

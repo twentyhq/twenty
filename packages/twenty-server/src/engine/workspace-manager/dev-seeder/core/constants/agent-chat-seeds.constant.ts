@@ -1,5 +1,10 @@
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
+export const AGENT_CHAT_CHANNEL_DATA_SEED_IDS = {
+  APPLE_SALES_CHANNEL: '20202020-0000-4000-8000-000000000201',
+  APPLE_LEADERSHIP_CHANNEL: '20202020-0000-4000-8000-000000000202',
+};
+
 export const AGENT_CHAT_THREAD_DATA_SEED_IDS = {
   APPLE_DEFAULT_THREAD: '20202020-0000-4000-8000-000000000011',
   APPLE_IMPORT_THREAD: '20202020-0000-4000-8000-000000000013',
@@ -7,9 +12,41 @@ export const AGENT_CHAT_THREAD_DATA_SEED_IDS = {
   YCOMBINATOR_DEFAULT_THREAD: '20202020-0000-4000-8000-000000000012',
 };
 
+type AgentChatChannelSeed = {
+  id: string;
+  name: string;
+  visibility: 'public' | 'private';
+  adminUserWorkspaceId: string;
+  memberUserWorkspaceIds: string[];
+};
+
+// A public channel the whole workspace can browse and a private one with an
+// invited membership, so the dev workspace shows both access models.
+export const APPLE_AGENT_CHAT_CHANNEL_SEEDS: AgentChatChannelSeed[] = [
+  {
+    id: AGENT_CHAT_CHANNEL_DATA_SEED_IDS.APPLE_SALES_CHANNEL,
+    name: 'Sales',
+    visibility: 'public',
+    adminUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+    memberUserWorkspaceIds: [
+      USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      USER_WORKSPACE_DATA_SEED_IDS.JONY,
+    ],
+  },
+  {
+    id: AGENT_CHAT_CHANNEL_DATA_SEED_IDS.APPLE_LEADERSHIP_CHANNEL,
+    name: 'Leadership',
+    visibility: 'private',
+    adminUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
+    memberUserWorkspaceIds: [USER_WORKSPACE_DATA_SEED_IDS.JANE],
+  },
+];
+
 type AgentChatConversationSeed = {
   threadId: string;
   exchanges: [string, string][];
+  // Channel the thread lives in; every channel member can read it.
+  channelId?: string;
   // Members invited by the thread owner; the owner is always a participant.
   memberUserWorkspaceIds?: string[];
   // Author of the user message of an exchange, by exchange index. Defaults to the owner.
@@ -20,6 +57,7 @@ export const APPLE_AGENT_CHAT_CONVERSATION_SEEDS: AgentChatConversationSeed[] =
   [
     {
       threadId: AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_IMPORT_THREAD,
+      channelId: AGENT_CHAT_CHANNEL_DATA_SEED_IDS.APPLE_SALES_CHANNEL,
       exchanges: [
         [
           'Help me prepare a company import.',
@@ -59,11 +97,11 @@ export const APPLE_AGENT_CHAT_CONVERSATION_SEEDS: AgentChatConversationSeed[] =
       threadId: AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_FOLLOW_UP_THREAD,
       memberUserWorkspaceIds: [
         USER_WORKSPACE_DATA_SEED_IDS.JONY,
-        USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+        USER_WORKSPACE_DATA_SEED_IDS.JANE,
       ],
       exchangeAuthorUserWorkspaceIds: {
         1: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-        2: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+        2: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       },
       exchanges: [
         [
@@ -76,7 +114,7 @@ export const APPLE_AGENT_CHAT_CONVERSATION_SEEDS: AgentChatConversationSeed[] =
         ],
         [
           'Can you add a short note on which accounts Tim and Jony each own so we split the follow-ups?',
-          'Sure. Tim owns the renewals due this month, Jony owns the open product questions, and Phil covers the accounts without a recent meeting. Each person can take the follow-ups in their column and tick them off here.',
+          'Sure. Tim owns the renewals due this month, Jony owns the open product questions, and Jane covers the accounts without a recent meeting. Each person can take the follow-ups in their column and tick them off here.',
         ],
       ],
     },

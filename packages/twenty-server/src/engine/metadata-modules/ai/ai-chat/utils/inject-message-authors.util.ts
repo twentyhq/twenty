@@ -1,22 +1,33 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadParticipantDisplayName } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+export const collectMessageAuthorUserWorkspaceIds = (
+  messages: ExtendedUIMessage[],
+): string[] => [
+  ...new Set(
+    messages.flatMap((message) => {
+      const authorUserWorkspaceId = message.metadata?.authorUserWorkspaceId;
+
+      return message.role === 'user' && isDefined(authorUserWorkspaceId)
+        ? [authorUserWorkspaceId]
+        : [];
+    }),
+  ),
+];
 
 export const injectMessageAuthors = (
   messages: ExtendedUIMessage[],
-  threadParticipants: AgentChatThreadParticipantDisplayName[],
+  {
+    isShared,
+    displayNameByUserWorkspaceId,
+  }: {
+    isShared: boolean;
+    displayNameByUserWorkspaceId: Map<string, string>;
+  },
 ): ExtendedUIMessage[] => {
-  if (threadParticipants.length < 2) {
+  if (!isShared) {
     return messages;
   }
-
-  const displayNameByUserWorkspaceId = new Map(
-    threadParticipants.map((participant) => [
-      participant.userWorkspaceId,
-      participant.displayName,
-    ]),
-  );
 
   return messages.map((message) => {
     if (message.role !== 'user') {

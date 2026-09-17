@@ -1,5 +1,7 @@
 import { Field, Float, HideField, ID, Int, ObjectType } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 @ObjectType('AgentChatThread')
 export class AgentChatThreadDTO {
   @Field(() => ID)
@@ -7,6 +9,13 @@ export class AgentChatThreadDTO {
 
   @Field({ nullable: true })
   title: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  channelId: string | null;
+
+  // The creator keeps the owner role for the life of the thread.
+  @Field(() => UUIDScalarType)
+  ownerUserWorkspaceId: string;
 
   @Field(() => Int)
   totalCacheReadTokens: number;

@@ -5,6 +5,8 @@ export const CREATE_CHAT_THREAD = gql`
     createChatThread {
       id
       title
+      channelId
+      ownerUserWorkspaceId
       createdAt
       updatedAt
     }

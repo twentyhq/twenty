@@ -26,6 +26,7 @@ import {
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { buildThreadAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-access-where.util';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
@@ -172,10 +173,7 @@ export class AgentChatStreamingService {
     | { queued: true; messageId: string }
   > {
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: {
-        id: threadId,
-        participants: { userWorkspaceId },
-      },
+      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!thread) {
@@ -414,7 +412,7 @@ export class AgentChatStreamingService {
     modelId?: string;
   }): Promise<{ streamId: string; messageId: string; turnId: string }> {
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, participants: { userWorkspaceId } },
+      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!thread) {

@@ -74,6 +74,7 @@ describe('useSelectAiChatThread', () => {
       totalCacheReadTokens: 80,
       totalInputCredits: 0.125,
       totalOutputCredits: 0.05,
+      ownerUserWorkspaceId: 'owner-user-workspace-id',
     } satisfies AgentChatThread;
     const metadataAtom = metadataStoreState.atomFamily('agentChatThreads');
     jotaiStore.set(metadataAtom, {

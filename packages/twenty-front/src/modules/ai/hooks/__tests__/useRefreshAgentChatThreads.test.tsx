@@ -18,6 +18,7 @@ const buildThread = (id: string, title: string): AgentChatThread => ({
   __typename: 'AgentChatThread',
   id,
   title,
+  ownerUserWorkspaceId: 'owner-user-workspace-id',
   createdAt: '2026-09-07T00:00:00.000Z',
   updatedAt: '2026-09-07T00:00:00.000Z',
   lastMessageAt: '2026-09-07T00:00:00.000Z',

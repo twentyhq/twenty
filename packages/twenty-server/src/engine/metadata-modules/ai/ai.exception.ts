@@ -13,6 +13,11 @@ export enum AiExceptionCode {
   THREAD_NOT_FOUND = 'THREAD_NOT_FOUND',
   THREAD_PARTICIPANT_NOT_FOUND = 'THREAD_PARTICIPANT_NOT_FOUND',
   THREAD_ACTION_NOT_ALLOWED = 'THREAD_ACTION_NOT_ALLOWED',
+  CHANNEL_NOT_FOUND = 'CHANNEL_NOT_FOUND',
+  CHANNEL_MEMBER_NOT_FOUND = 'CHANNEL_MEMBER_NOT_FOUND',
+  CHANNEL_ACTION_NOT_ALLOWED = 'CHANNEL_ACTION_NOT_ALLOWED',
+  CHANNEL_NAME_ALREADY_EXISTS = 'CHANNEL_NAME_ALREADY_EXISTS',
+  INVALID_CHANNEL_NAME = 'INVALID_CHANNEL_NAME',
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
   CONTEXT_WINDOW_EXCEEDED = 'CONTEXT_WINDOW_EXCEEDED',
   INVALID_CHAT_THREAD_TITLE = 'INVALID_CHAT_THREAD_TITLE',
@@ -48,6 +53,16 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This person is not part of the chat thread.`;
     case AiExceptionCode.THREAD_ACTION_NOT_ALLOWED:
       return msg`Only the owner of the chat thread can do this.`;
+    case AiExceptionCode.CHANNEL_NOT_FOUND:
+      return msg`Channel not found.`;
+    case AiExceptionCode.CHANNEL_MEMBER_NOT_FOUND:
+      return msg`This person is not a member of the channel.`;
+    case AiExceptionCode.CHANNEL_ACTION_NOT_ALLOWED:
+      return msg`You are not allowed to do this in this channel.`;
+    case AiExceptionCode.CHANNEL_NAME_ALREADY_EXISTS:
+      return msg`A channel with this name already exists.`;
+    case AiExceptionCode.INVALID_CHANNEL_NAME:
+      return msg`Channel name cannot be empty.`;
     case AiExceptionCode.WORKSPACE_NOT_FOUND:
       return msg`Workspace not found.`;
     case AiExceptionCode.CONTEXT_WINDOW_EXCEEDED:

@@ -1,4 +1,6 @@
 import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
+import { type FlatAgentChatChannel } from '@/metadata-store/types/FlatAgentChatChannel';
+import { type FlatAgentChatChannelMember } from '@/metadata-store/types/FlatAgentChatChannelMember';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { type FlatApplication } from '@/metadata-store/types/FlatApplication';
 import { type FlatCommandMenuItem } from '@/metadata-store/types/FlatCommandMenuItem';
@@ -51,5 +53,7 @@ export type MetadataEntityTypeMap = {
   rowLevelPermissionPredicates: FlatRowLevelPermissionPredicate;
   rowLevelPermissionPredicateGroups: FlatRowLevelPermissionPredicateGroup;
   agentChatThreads: FlatAgentChatThread;
+  agentChatChannels: FlatAgentChatChannel;
+  agentChatChannelMembers: FlatAgentChatChannelMember;
   applications: FlatApplication;
 };

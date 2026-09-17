@@ -89,6 +89,8 @@ export const WorkspaceSetupChatKickoffEffect = () => {
         const workspaceSetupThread: FlatAgentChatThread = {
           id: thread.id,
           title: thread.title ?? null,
+          channelId: thread.channelId ?? null,
+          ownerUserWorkspaceId: thread.ownerUserWorkspaceId,
           createdAt: thread.createdAt,
           updatedAt: thread.updatedAt,
           conversationSize: thread.conversationSize,

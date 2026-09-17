@@ -95,6 +95,7 @@ describe('AgentChatThreadInitializationEffect', () => {
             contextWindowTokens: 1000,
             totalInputCredits: 0.125,
             totalOutputCredits: 0.05,
+            ownerUserWorkspaceId: 'owner-user-workspace-id',
           } satisfies AgentChatThread,
         ],
       });

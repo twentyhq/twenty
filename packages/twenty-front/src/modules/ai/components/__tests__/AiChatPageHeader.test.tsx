@@ -52,6 +52,7 @@ const THREAD: AgentChatThread = {
   __typename: 'AgentChatThread',
   id: 'thread-1',
   title: 'Best leads',
+  ownerUserWorkspaceId: 'owner-user-workspace-id',
   createdAt: '2026-09-01T00:00:00.000Z',
   updatedAt: '2026-09-01T00:00:00.000Z',
   lastMessageAt: '2026-09-01T00:00:00.000Z',

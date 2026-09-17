@@ -6,6 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useChatThreadParticipants } from '@/ai/hooks/useChatThreadParticipants';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { getWorkspaceMemberFullName } from '@/ai/utils/getWorkspaceMemberFullName';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledAuthorRow = styled.div`
@@ -29,30 +30,34 @@ export const AiChatMessageAuthor = ({
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
-  const { participantsWithMember, isSharedThread } = useChatThreadParticipants(
+  const { isSharedThread } = useChatThreadParticipants(
     agentChatDisplayedThread,
+  );
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
   );
 
   if (!isSharedThread || !isDefined(authorUserWorkspaceId)) {
     return null;
   }
 
-  const author = participantsWithMember.find(
-    ({ participant }) => participant.userWorkspaceId === authorUserWorkspaceId,
+  const author = currentWorkspaceMembers.find(
+    (workspaceMember) =>
+      workspaceMember.userWorkspaceId === authorUserWorkspaceId,
   );
 
   if (!isDefined(author)) {
     return null;
   }
 
-  const fullName = getWorkspaceMemberFullName(author.workspaceMember);
+  const fullName = getWorkspaceMemberFullName(author);
 
   return (
     <StyledAuthorRow>
       <Avatar
-        src={author.workspaceMember.avatarUrl}
+        src={author.avatarUrl}
         name={fullName}
-        colorSeed={author.workspaceMember.id}
+        colorSeed={author.id}
         size="sm"
         shape="circle"
       />

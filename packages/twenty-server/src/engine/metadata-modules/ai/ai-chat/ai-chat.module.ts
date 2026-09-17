@@ -29,9 +29,12 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
+import { AgentChatChannelMemberEntity } from './entities/agent-chat-channel-member.entity';
+import { AgentChatChannelEntity } from './entities/agent-chat-channel.entity';
 import { AgentChatThreadParticipantEntity } from './entities/agent-chat-thread-participant.entity';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { StreamAgentChatJob } from './jobs/stream-agent-chat.job';
+import { AgentChatChannelResolver } from './resolvers/agent-chat-channel.resolver';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
 import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
 import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
@@ -40,6 +43,7 @@ import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-s
 import { AgentChatEventPublisherService } from './services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from './services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
+import { AgentChatChannelService } from './services/agent-chat-channel.service';
 import { AgentChatThreadParticipantService } from './services/agent-chat-thread-participant.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
@@ -53,6 +57,8 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     TypeOrmModule.forFeature([
       AgentChatThreadEntity,
       AgentChatThreadParticipantEntity,
+      AgentChatChannelEntity,
+      AgentChatChannelMemberEntity,
       FileEntity,
       UserWorkspaceEntity,
       WorkspaceEntity,
@@ -81,11 +87,13 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatEventPublisherService,
     AgentChatStreamHeartbeatService,
     AgentChatResolver,
+    AgentChatChannelResolver,
     AgentChatSubscriptionResolver,
     WorkspaceSetupChatResolver,
     AgentChatService,
     AgentChatStreamingService,
     AgentChatThreadParticipantService,
+    AgentChatChannelService,
     WorkspaceSetupChatService,
     AgentTitleGenerationService,
     ChatExecutionService,
@@ -95,6 +103,8 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AiGraphqlApiExceptionInterceptor,
     provideWorkspaceScopedRepository(AgentChatThreadEntity),
     provideWorkspaceScopedRepository(AgentChatThreadParticipantEntity),
+    provideWorkspaceScopedRepository(AgentChatChannelEntity),
+    provideWorkspaceScopedRepository(AgentChatChannelMemberEntity),
     provideWorkspaceScopedRepository(AgentTurnEntity),
     provideWorkspaceScopedRepository(AgentMessageEntity),
     provideWorkspaceScopedRepository(AgentMessagePartEntity),
@@ -104,6 +114,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatService,
     AgentChatStreamingService,
     AgentChatThreadParticipantService,
+    AgentChatChannelService,
     TypeOrmModule.forFeature([AgentChatThreadEntity]),
   ],
 })

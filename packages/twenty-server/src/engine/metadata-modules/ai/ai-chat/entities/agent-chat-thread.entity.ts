@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_AGENT_CHAT_CHANNELS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-channels-upgrade-command-name.constant';
 import { ADD_LAST_STREAM_ERROR_TO_AGENT_CHAT_THREAD_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-last-stream-error-to-agent-chat-thread-upgrade-command-name.constant';
 import { ADD_PENDING_QUESTION_MESSAGE_ID_TO_AGENT_CHAT_THREAD_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-pending-question-message-id-to-agent-chat-thread-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -17,6 +18,7 @@ import { nullableBigintColumnTransformer } from 'src/engine/core-modules/usage-l
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
+import { AgentChatChannelEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel.entity';
 import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread-participant.entity';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -48,6 +50,20 @@ export class AgentChatThreadEntity {
 
   @Column({ nullable: true, type: 'varchar' })
   title: string;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AGENT_CHAT_CHANNELS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'uuid', nullable: true })
+  @Index('IDX_AGENT_CHAT_THREAD_CHANNEL_ID')
+  channelId: string | null;
+
+  @ManyToOne(() => AgentChatChannelEntity, (channel) => channel.threads, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'channelId' })
+  channel: EntityRelation<AgentChatChannelEntity> | null;
 
   @Column({ type: 'int', default: 0 })
   totalInputTokens: number;

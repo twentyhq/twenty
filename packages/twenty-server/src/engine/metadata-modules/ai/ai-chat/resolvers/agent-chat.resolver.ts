@@ -36,6 +36,7 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
+import { buildThreadAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-access-where.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -242,7 +243,7 @@ export class AgentChatResolver {
     });
 
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, participants: { userWorkspaceId } },
+      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!isDefined(thread)) {
@@ -413,7 +414,7 @@ export class AgentChatResolver {
     });
 
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, participants: { userWorkspaceId } },
+      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!isDefined(thread)) {
@@ -453,7 +454,7 @@ export class AgentChatResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId, participants: { userWorkspaceId } },
+      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
@@ -542,7 +543,7 @@ export class AgentChatResolver {
     workspaceId: string,
   ): Promise<void> {
     const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId, participants: { userWorkspaceId } },
+      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
@@ -576,7 +577,10 @@ export class AgentChatResolver {
     }
 
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: message.threadId, participants: { userWorkspaceId } },
+      where: buildThreadAccessWhere({
+        id: message.threadId,
+        userWorkspaceId,
+      }),
     });
 
     if (!isDefined(thread)) {
@@ -612,6 +616,11 @@ export class AgentChatResolver {
       userWorkspaceId,
       workspace.aiAdditionalInstructions ?? undefined,
     );
+  }
+
+  @ResolveField(() => UUIDScalarType)
+  ownerUserWorkspaceId(@Parent() thread: AgentChatThreadEntity): string {
+    return thread.userWorkspaceId;
   }
 
   @ResolveField(() => Float)

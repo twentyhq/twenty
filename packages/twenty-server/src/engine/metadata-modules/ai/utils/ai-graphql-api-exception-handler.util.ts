@@ -18,6 +18,8 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.AGENT_NOT_FOUND:
       case AiExceptionCode.THREAD_NOT_FOUND:
       case AiExceptionCode.THREAD_PARTICIPANT_NOT_FOUND:
+      case AiExceptionCode.CHANNEL_NOT_FOUND:
+      case AiExceptionCode.CHANNEL_MEMBER_NOT_FOUND:
       case AiExceptionCode.WORKSPACE_NOT_FOUND:
       case AiExceptionCode.MESSAGE_NOT_FOUND:
       case AiExceptionCode.ROLE_NOT_FOUND:
@@ -28,15 +30,18 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.INVALID_CHAT_THREAD_TITLE:
       case AiExceptionCode.QUESTION_NOT_PENDING:
       case AiExceptionCode.INVALID_QUESTION_ANSWER:
+      case AiExceptionCode.INVALID_CHANNEL_NAME:
         throw new UserInputError(error);
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
+      case AiExceptionCode.CHANNEL_NAME_ALREADY_EXISTS:
         throw new ConflictError(error);
       case AiExceptionCode.AGENT_IS_STANDARD:
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
       case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED:
       case AiExceptionCode.RUN_AGENT_NOT_ALLOWED:
       case AiExceptionCode.THREAD_ACTION_NOT_ALLOWED:
+      case AiExceptionCode.CHANNEL_ACTION_NOT_ALLOWED:
         throw new ForbiddenError(error);
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
       case AiExceptionCode.API_KEY_NOT_CONFIGURED:
