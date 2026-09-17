@@ -1,5 +1,6 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { WorkflowVariablesDropdownStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems';
 import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
@@ -13,11 +14,7 @@ import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/icon';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownVariableButtonContainer = styled.div<{
@@ -98,7 +95,12 @@ export const WorkflowVariablesDropdown = ({
 
   if (disabled === true || noAvailableVariables) {
     return (
-      <>
+      <Tooltip
+        content={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}
+        side="top"
+        delay={TooltipDelay.mediumDelay}
+        sideOffset={5}
+      >
         <StyledDropdownVariableButtonContainer
           disabled={true}
           data-variable-picker-disabled-anchor={dropdownId}
@@ -108,15 +110,7 @@ export const WorkflowVariablesDropdown = ({
             color={theme.font.color.light}
           />
         </StyledDropdownVariableButtonContainer>
-        <AppTooltip
-          anchorSelect={`[data-variable-picker-disabled-anchor="${dropdownId}"]`}
-          title={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}
-          place={TooltipPosition.Top}
-          delay={TooltipDelay.mediumDelay}
-          offset={5}
-          noArrow
-        />
-      </>
+      </Tooltip>
     );
   }
 

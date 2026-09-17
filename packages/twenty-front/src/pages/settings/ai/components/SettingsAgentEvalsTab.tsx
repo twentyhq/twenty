@@ -15,6 +15,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   IconDotsVertical,
@@ -24,7 +25,6 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidv4 } from 'uuid';
@@ -130,7 +130,7 @@ export const SettingsAgentEvalsTab = ({
 
   return (
     <>
-      <Section>
+      <Section.Root>
         <StyledInputContainer>
           <TextInput
             placeholder={t`Add test input for evaluation (e.g., "Find all customers in NY")`}
@@ -195,7 +195,7 @@ export const SettingsAgentEvalsTab = ({
         ) : (
           <StyledEmptyMessage>{t`No evaluation inputs yet. Add your first test input above.`}</StyledEmptyMessage>
         )}
-      </Section>
+      </Section.Root>
 
       <ConfirmationModal
         modalInstanceId={DELETE_EVAL_INPUT_MODAL_ID}
