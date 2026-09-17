@@ -3,7 +3,7 @@ import { StyledHoverableMenuItemBase } from '@ui/primitives/navigation/MenuItem/
 import { type MenuItemAccent } from '@ui/primitives/navigation/MenuItem/types/MenuItemAccent';
 
 import { type IconComponent } from '@ui/icon';
-import { LightIconButtonGroup } from '@ui/primitives/input/LightIconButtonGroup/LightIconButtonGroup';
+import { LightIconButtonGroup } from '@ui/primitives/input';
 import { type ReactNode } from 'react';
 import { type MenuItemDraggableGripMode } from '@ui/primitives/navigation/MenuItem/types/MenuItemDraggableGripMode';
 import { type MenuItemIconButton } from '@ui/primitives/navigation/MenuItem/MenuItem';
