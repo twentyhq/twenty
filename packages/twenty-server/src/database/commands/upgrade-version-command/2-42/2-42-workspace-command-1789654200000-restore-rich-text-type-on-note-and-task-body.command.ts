@@ -20,7 +20,7 @@ const BODY_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECT_FIELDS.task.bodyV2.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.42.0', 1789652800000)
+@RegisteredWorkspaceCommand('2.42.0', 1789654200000)
 @Command({
   name: 'upgrade:2-42:restore-rich-text-type-on-note-and-task-body',
   description:

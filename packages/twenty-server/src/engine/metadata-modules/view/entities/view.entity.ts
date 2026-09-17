@@ -28,6 +28,7 @@ import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/com
 import { ADD_VIEW_KANBAN_COLUMN_WIDTH_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/add-view-kanban-column-width-upgrade-command-name.constant';
 import { ADD_CALENDAR_END_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-22/add-calendar-end-field-metadata-id-to-view-upgrade-command-name.constant';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -274,6 +275,12 @@ export class ViewEntity
     (viewFilterGroup) => viewFilterGroup.view,
   )
   viewFilterGroups: Relation<ViewFilterGroupEntity[]>;
+
+  @OneToMany(
+    () => NavigationMenuItemEntity,
+    (navigationMenuItem) => navigationMenuItem.view,
+  )
+  navigationMenuItems: Relation<NavigationMenuItemEntity[]>;
 }
 
 const VIEW_OVERRIDABLE_COLUMNS_UPGRADE_COMMAND_NAME =

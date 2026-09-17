@@ -1,3 +1,5 @@
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -6,7 +8,7 @@ import { STANDARD_OBJECT_FIELDS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
-import { type RestoreRichTextTypeOnNoteAndTaskBodyCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789652800000-restore-rich-text-type-on-note-and-task-body.command';
+import { type RestoreRichTextTypeOnNoteAndTaskBodyCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789654200000-restore-rich-text-type-on-note-and-task-body.command';
 import { invalidateFieldMetadataCache } from 'src/database/commands/upgrade-version-command/utils/invalidate-field-metadata-cache.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -28,17 +30,36 @@ const RUN_ON_WORKSPACE_ARGS = {
   total: 1,
 };
 
-const listTasksWithBody = () =>
+const listTasksWithBody = (filter?: object) =>
   makeGraphqlAPIRequest(
     findManyOperationFactory({
       objectMetadataSingularName: 'task',
       objectMetadataPluralName: 'tasks',
       gqlFields: 'id bodyV2 { markdown }',
+      filter,
       first: 1,
     }),
   );
 
-describe('2-42 workspace command 1789652800000 - RestoreRichTextTypeOnNoteAndTaskBodyCommand (integration)', () => {
+const createTask = () =>
+  makeGraphqlAPIRequest(
+    createOneOperationFactory({
+      objectMetadataSingularName: 'task',
+      gqlFields: 'id',
+      data: { title: 'Task created after the body type was restored' },
+    }),
+  );
+
+const destroyTask = (taskId: string) =>
+  makeGraphqlAPIRequest(
+    destroyOneOperationFactory({
+      objectMetadataSingularName: 'task',
+      gqlFields: 'id',
+      recordId: taskId,
+    }),
+  );
+
+describe('2-42 workspace command 1789654200000 - RestoreRichTextTypeOnNoteAndTaskBodyCommand (integration)', () => {
   let command: RestoreRichTextTypeOnNoteAndTaskBodyCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
   let workspaceMigrationRunnerService: WorkspaceMigrationRunnerService;
@@ -124,10 +145,14 @@ describe('2-42 workspace command 1789652800000 - RestoreRichTextTypeOnNoteAndTas
       FieldMetadataType.RICH_TEXT,
     ]);
 
-    const response = await listTasksWithBody();
+    const createdTaskId: string = (await createTask()).body.data.createTask.id;
+
+    const response = await listTasksWithBody({ id: { eq: createdTaskId } });
+
+    await destroyTask(createdTaskId);
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.tasks.edges.length).toBeGreaterThan(0);
+    expect(response.body.data.tasks.edges).toHaveLength(1);
   });
 
   it('is a no-op once the fields are already RICH_TEXT', async () => {
