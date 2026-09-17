@@ -28,10 +28,11 @@ export const useCoreWorkflowShowActions = ({
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const renameWorkflow = async (name: string) => {
-    if (name === currentName) return;
+    if (name === currentName) return true;
     try {
       await updateWorkflow({ variables: { input: { coreWorkflowId, name } } });
       await invalidateCoreWorkflowVersions(client);
+      return true;
     } catch (mutationError) {
       enqueueErrorSnackBar({
         message:
@@ -39,6 +40,7 @@ export const useCoreWorkflowShowActions = ({
             ? mutationError.message
             : t`Could not save workflow`,
       });
+      return false;
     }
   };
 

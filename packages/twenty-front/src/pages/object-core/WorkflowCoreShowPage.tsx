@@ -179,8 +179,13 @@ const CoreWorkflowShowContent = ({
                 value={editedName ?? record.name ?? ''}
                 onChange={setEditedName}
                 onBlur={async (event) => {
-                  await renameWorkflow(event.target.value);
-                  setEditedName(undefined);
+                  const name = event.target.value;
+                  const didSave = await renameWorkflow(name);
+                  if (didSave) {
+                    setEditedName((currentName) =>
+                      currentName === name ? undefined : currentName,
+                    );
+                  }
                 }}
               />
             }
