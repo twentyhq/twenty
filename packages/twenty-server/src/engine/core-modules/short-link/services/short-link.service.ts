@@ -18,13 +18,11 @@ export class ShortLinkService {
     private readonly globalShortLinkRepository: Repository<ShortLinkEntity>,
   ) {}
 
-  async registerCampaignLinks({
+  async registerLinks({
     workspaceId,
-    messageCampaignId,
     links,
   }: {
     workspaceId: string;
-    messageCampaignId: string;
     links: { url: string; authoredUrl: string }[];
   }): Promise<Map<string, string>> {
     const linkHashes = links.map(hashShortLink);
@@ -36,7 +34,6 @@ export class ShortLinkService {
       .values(
         links.map((link, index) => ({
           workspaceId,
-          messageCampaignId,
           url: link.url,
           authoredUrl: link.authoredUrl,
           urlHash: linkHashes[index],
@@ -46,7 +43,7 @@ export class ShortLinkService {
       .execute();
 
     const persistedLinks = await this.shortLinkRepository.find(workspaceId, {
-      where: { messageCampaignId, urlHash: In(linkHashes) },
+      where: { urlHash: In(linkHashes) },
     });
 
     return new Map(persistedLinks.map((link) => [link.urlHash, link.id]));
