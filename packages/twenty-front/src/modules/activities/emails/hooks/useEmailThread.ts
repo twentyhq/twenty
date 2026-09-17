@@ -79,8 +79,9 @@ export const useEmailThread = (threadId: string | null) => {
     }
   }, [messages, isMessagesFetchComplete]);
 
-  const { records: messageSenders, loading: messageSendersLoading } =
+  const { records: messageSenders } =
     useFindManyRecords<EmailThreadMessageParticipant>({
+      limit: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.variables.limit,
       filter: {
         messageId: {
           in: messages.map(({ id }) => id),
@@ -139,9 +140,13 @@ export const useEmailThread = (threadId: string | null) => {
   const messagesWithSender: EmailThreadMessageWithSender[] = messages.map(
     (message) => ({
       ...message,
-      sender: messageSenders.find(
-        (messageSender) => messageSender.messageId === message.id,
-      ),
+      sender:
+        messageSenders.find(
+          (messageSender) => messageSender.messageId === message.id,
+        ) ??
+        message.messageParticipants.find(
+          (participant) => participant.role === MessageParticipantRole.FROM,
+        ),
     }),
   );
 
@@ -155,8 +160,7 @@ export const useEmailThread = (threadId: string | null) => {
     connectedAccountId,
     connectedAccountHandle,
     connectedAccountProvider,
-    threadLoading:
-      threadRecordLoading || messagesLoading || messageSendersLoading,
+    threadLoading: threadRecordLoading || messagesLoading,
     messageChannelLoading,
     lastMessageExternalId,
     fetchMoreMessages,
