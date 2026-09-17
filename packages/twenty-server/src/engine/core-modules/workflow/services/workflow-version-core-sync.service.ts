@@ -97,6 +97,7 @@ export class WorkflowVersionCoreSyncService {
           : null,
         steps: workflowVersion.steps ?? null,
         status: workflowVersion.status as unknown as WorkflowVersionStatus,
+        workspaceWorkflowVersionId: workflowVersion.id,
         universalIdentifier: uuidv4(),
         applicationId,
       };
@@ -212,13 +213,14 @@ export class WorkflowVersionCoreSyncService {
     // and steps overwritten.
     await transactionScope.executeRawQuery(
       `INSERT INTO core."workflowVersion"
-         ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "coreWorkflowId")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "coreWorkflowId", "workspaceWorkflowVersionId")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        ON CONFLICT ("id") DO UPDATE SET
          "triggers" = EXCLUDED."triggers",
          "steps" = EXCLUDED."steps",
          "status" = EXCLUDED."status",
-         "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId")
+         "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId"),
+         "workspaceWorkflowVersionId" = EXCLUDED."workspaceWorkflowVersionId"
        WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId"`,
       [
         coreWorkflowVersionId,
@@ -234,6 +236,7 @@ export class WorkflowVersionCoreSyncService {
         uuidv4(),
         resolvedApplicationId,
         coreWorkflowId,
+        workflowVersion.id,
       ],
     );
 
