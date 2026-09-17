@@ -11,6 +11,10 @@ import {
   buildPersonAggregates,
   pickPersonLastContact,
 } from 'src/utils/person-last-contact-aggregation';
+import {
+  type RecordUpsert,
+  upsertRecordsInBatches,
+} from 'src/utils/upsert-records-in-batches';
 
 type OpportunityNode = { id: string; pointOfContactId: string | null };
 
@@ -43,6 +47,8 @@ const handler = async ({ batchId }: BackfillBatchPayload): Promise<object> => {
   ];
   const aggByPersonId = await buildPersonAggregates(client, personIds);
 
+  const upserts: RecordUpsert[] = [];
+
   for (const node of nodes) {
     const lastContact = node.pointOfContactId
       ? pickPersonLastContact(aggByPersonId.get(node.pointOfContactId))
@@ -52,15 +58,10 @@ const handler = async ({ batchId }: BackfillBatchPayload): Promise<object> => {
       continue;
     }
 
-    await executeWithRetry(() =>
-      client.mutation({
-        updateOpportunity: {
-          __args: { id: node.id, data: buildRelatedUpdateData(lastContact) },
-          id: true,
-        },
-      }),
-    );
+    upserts.push({ id: node.id, ...buildRelatedUpdateData(lastContact) });
   }
+
+  await upsertRecordsInBatches(client, 'createOpportunities', upserts);
 
   return { batchId, count: nodes.length };
 };

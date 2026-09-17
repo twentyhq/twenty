@@ -9,6 +9,7 @@ import {
   applyMeetingInteractions,
   type CalendarEventParticipantLink,
 } from 'src/utils/apply-meeting-interactions';
+import { executeWithRetry } from 'src/utils/execute-with-retry';
 
 const QUERY_MAX_RECORDS = 200;
 
@@ -28,33 +29,37 @@ const handler = async (): Promise<void> => {
   let calendarEventsHasNextPage = true;
 
   while (calendarEventsHasNextPage) {
-    const { calendarEvents } = await client.query({
-      calendarEvents: {
-        __args: {
-          filter: {
-            and: [
-              { startsAt: { gt: windowStart.toISOString() } },
-              { startsAt: { lte: now.toISOString() } },
-              { isCanceled: { eq: false } },
-            ],
+    const { calendarEvents } = await executeWithRetry(() =>
+      client.query({
+        calendarEvents: {
+          __args: {
+            filter: {
+              and: [
+                { startsAt: { gt: windowStart.toISOString() } },
+                { startsAt: { lte: now.toISOString() } },
+                { isCanceled: { eq: false } },
+              ],
+            },
+            first: QUERY_MAX_RECORDS,
+            after: calendarEventsCursor,
           },
-          first: QUERY_MAX_RECORDS,
-          after: calendarEventsCursor,
-        },
-        edges: {
-          node: {
-            id: true,
+          edges: {
+            node: {
+              id: true,
+            },
+          },
+          pageInfo: {
+            hasNextPage: true,
+            endCursor: true,
           },
         },
-        pageInfo: {
-          hasNextPage: true,
-          endCursor: true,
-        },
-      },
-    });
+      }),
+    );
 
     calendarEventIds.push(
-      ...(calendarEvents?.edges.map((edge: { node: { id: string } }) => edge.node.id) ?? []),
+      ...(calendarEvents?.edges.map(
+        (edge: { node: { id: string } }) => edge.node.id,
+      ) ?? []),
     );
     calendarEventsHasNextPage = calendarEvents?.pageInfo.hasNextPage ?? false;
     calendarEventsCursor = calendarEvents?.pageInfo.endCursor ?? undefined;
@@ -69,25 +74,27 @@ const handler = async (): Promise<void> => {
   let participantsHasNextPage = true;
 
   while (participantsHasNextPage) {
-    const { calendarEventParticipants } = await client.query({
-      calendarEventParticipants: {
-        __args: {
-          filter: { calendarEventId: { in: calendarEventIds } },
-          first: QUERY_MAX_RECORDS,
-          after: participantsCursor,
-        },
-        edges: {
-          node: {
-            personId: true,
-            calendarEventId: true,
+    const { calendarEventParticipants } = await executeWithRetry(() =>
+      client.query({
+        calendarEventParticipants: {
+          __args: {
+            filter: { calendarEventId: { in: calendarEventIds } },
+            first: QUERY_MAX_RECORDS,
+            after: participantsCursor,
+          },
+          edges: {
+            node: {
+              personId: true,
+              calendarEventId: true,
+            },
+          },
+          pageInfo: {
+            hasNextPage: true,
+            endCursor: true,
           },
         },
-        pageInfo: {
-          hasNextPage: true,
-          endCursor: true,
-        },
-      },
-    });
+      }),
+    );
 
     for (const edge of calendarEventParticipants?.edges ?? []) {
       const { personId, calendarEventId } = edge.node;
