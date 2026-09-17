@@ -668,7 +668,7 @@ export class AgentChatChannelService {
               ? threadRecipients.filter((id) => id !== userWorkspaceId)
               : threadRecipients,
           recipientsAfter: threadRecipients,
-          updatedFields: ['channelId'],
+          updatedFields: [],
         });
       }
     }
@@ -699,7 +699,7 @@ export class AgentChatChannelService {
           ? recipientsBeforeByThreadId.get(thread.id)
           : participantUserWorkspaceIds,
         recipientsAfter: recipients,
-        updatedFields: ['channelId'],
+        updatedFields: [],
       });
     }
   }

@@ -306,7 +306,9 @@ export class AgentChatService {
       });
     }
 
-    if (kept.length > 0) {
+    // Readers who keep the thread only hear about it when one of its own
+    // fields changed; a pure audience change is nothing for them to apply.
+    if (kept.length > 0 && updatedFields.length > 0) {
       await this.broadcastThreadUpdated(thread, updatedFields, {
         userWorkspaceIds: kept,
       });
