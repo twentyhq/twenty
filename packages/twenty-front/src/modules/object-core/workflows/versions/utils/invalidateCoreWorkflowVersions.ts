@@ -28,5 +28,6 @@ export const invalidateCoreWorkflowVersions = async (
       GetCoreWorkflowDocument,
       GetCoreWorkflowsDocument,
     ],
+    onQueryUpdated: (query) => query.options.fetchPolicy !== 'standby',
   });
 };

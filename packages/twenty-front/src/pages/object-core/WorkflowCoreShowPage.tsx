@@ -3,6 +3,7 @@ import { useCoreWorkflowShowActions } from '@/object-core/workflows/hooks/useCor
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useState } from 'react';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -102,6 +103,7 @@ const CoreWorkflowShowContent = ({
   });
   const versions = useCoreWorkflowVersions(coreWorkflowId);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [editedName, setEditedName] = useState<string>();
   const requestedVersionId = searchParams.get('version');
   const currentVersion =
     versions.coreWorkflowVersions.find(({ status }) => status === 'DRAFT') ??
@@ -173,10 +175,13 @@ const CoreWorkflowShowContent = ({
             icon={<IconSettingsAutomation />}
             title={
               <TextInput
-                key={`${coreWorkflowId}-${record.name}`}
-                aria-label={t`Workflow name`}
-                defaultValue={record.name ?? ''}
-                onBlur={(event) => renameWorkflow(event.target.value)}
+                placeholder={t`Workflow name`}
+                value={editedName ?? record.name ?? ''}
+                onChange={setEditedName}
+                onBlur={async (event) => {
+                  await renameWorkflow(event.target.value);
+                  setEditedName(undefined);
+                }}
               />
             }
             actionButton={
