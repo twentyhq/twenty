@@ -433,13 +433,20 @@ describe('SyncMessageRecordPageCommand', () => {
   });
 
   it('throws when the migration fails, so the upgrade does not record success', async () => {
+    const failedResult = { status: 'fail' };
+
     mockWorkspaceCache();
-    validateBuildAndRunLegacyWorkspaceMigrationMock.mockResolvedValue({
-      status: 'fail',
-    });
+    validateBuildAndRunLegacyWorkspaceMigrationMock.mockResolvedValue(
+      failedResult,
+    );
 
     await expect(runOnWorkspace()).rejects.toThrow(
       `Failed to sync the message record page for workspace ${WORKSPACE_ID}`,
     );
+    // the typed exception is what carries the failed build result to callers
+    await expect(runOnWorkspace()).rejects.toMatchObject({
+      name: 'WorkspaceMigrationBuilderException',
+      failedWorkspaceMigrationBuildResult: failedResult,
+    });
   });
 });

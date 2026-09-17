@@ -19,6 +19,7 @@ import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-f
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -277,8 +278,9 @@ export class SyncMessageRecordPageCommand extends ProvisionedWorkspaceCommandRun
       );
 
     if (result.status === 'fail') {
-      throw new Error(
-        `Failed to sync the message record page for workspace ${workspaceId}: ${JSON.stringify(result, null, 2)}`,
+      throw new WorkspaceMigrationBuilderException(
+        result,
+        `Failed to sync the message record page for workspace ${workspaceId}`,
       );
     }
 
