@@ -344,7 +344,12 @@ const innerAppDevOnce = async (
     return { success: false, error: buildSyncError(syncResult, verbose) };
   }
 
-  // metadata is applied above even when some files fail to upload, so objects/fields/views are never silently skipped
+  if (!planRendered) {
+    onPlan?.(formatSyncActionsPlan(syncResult.data.actions));
+  }
+
+  // metadata is applied above even when some files fail to upload, so objects/fields/views are never silently skipped;
+  // the plan is rendered first so destructive actions are visible even when this return follows
   if (uploadFailures.length > 0) {
     return {
       success: false,
@@ -356,10 +361,6 @@ const innerAppDevOnce = async (
         ].join('\n'),
       },
     };
-  }
-
-  if (!planRendered) {
-    onPlan?.(formatSyncActionsPlan(syncResult.data.actions));
   }
 
   onProgress?.('Generating API client...');

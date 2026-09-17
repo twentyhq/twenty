@@ -1,10 +1,23 @@
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import type * as PathModule from 'node:path';
 
 import { OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// forces path.relative() to behave as it would on a real Windows machine, regardless of the CI/dev host OS,
+// so the backslash-normalization test below is meaningful even when run on Linux
+vi.mock('path', async (importOriginal) => {
+  const actual = await importOriginal<typeof PathModule>();
+
+  return {
+    ...actual,
+    default: { ...actual.default, relative: actual.win32.relative },
+    relative: actual.win32.relative,
+  };
+});
 
 const mockCreateApplicationFileUploads = vi.fn();
 const mockCompleteApplicationFileUploads = vi.fn();

@@ -127,4 +127,32 @@ describe('appDevOnce', () => {
       expect(result.error.message).toContain('storage refused');
     }
   });
+
+  it('still renders the applied plan, including destructive actions, when a file upload fails', async () => {
+    mockSyncApplication.mockResolvedValue({
+      success: true,
+      data: {
+        actions: [
+          {
+            type: 'delete',
+            metadataName: 'objectMetadata',
+            universalIdentifier: 'deleted-object',
+          },
+        ],
+      },
+    });
+    mockUploadFiles.mockResolvedValue([
+      {
+        builtPath: 'front-components/main-page.tsx',
+        error: 'storage refused',
+      },
+    ]);
+
+    const onPlan = vi.fn();
+
+    await appDevOnce({ appPath: '/fake/app', force: true, onPlan });
+
+    expect(onPlan).toHaveBeenCalledTimes(1);
+    expect(onPlan.mock.calls[0][0]).toContain('delete');
+  });
 });
