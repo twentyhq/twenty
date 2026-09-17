@@ -1,7 +1,7 @@
-import { Avatar } from 'twenty-ui/data-display';
-import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { MenuItemSelectAvatar } from 'twenty-ui/primitives/navigation';
 
-import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/hooks/useEmailRecipientSuggestions';
+import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/types/EmailRecipientSuggestion';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -34,11 +34,11 @@ export const EmailRecipientSuggestionMenuItem = ({
         focused={isSelectedItemId}
         avatar={
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(suggestion.avatarUrl)}
-            placeholder={suggestion.label}
-            placeholderColorSeed={suggestion.avatarColorSeed}
+            src={getAbsoluteImageUrl(suggestion.avatarUrl)}
+            name={suggestion.label}
+            colorSeed={suggestion.avatarColorSeed}
             size="md"
-            type="rounded"
+            shape="circle"
           />
         }
       />

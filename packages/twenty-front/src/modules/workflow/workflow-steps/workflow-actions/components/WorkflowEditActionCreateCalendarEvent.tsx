@@ -20,8 +20,8 @@ import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/feedback';
-import { type SelectOption } from 'twenty-ui/input';
+import { Callout } from 'twenty-ui/primitives/feedback';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { IconPlus } from 'twenty-ui/icon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

@@ -44,10 +44,10 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         fieldName: 'id',
         type: FieldMetadataType.UUID,
         label: i18nLabel(
-          msg({ message: `Id`, context: 'fieldMetadata.label' }),
+          msg({ message: `ID`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
-          msg({ message: `Id`, context: 'fieldMetadata.description' }),
+          msg({ message: `ID`, context: 'fieldMetadata.description' }),
         ),
         icon: 'Icon123',
         isSystem: true,

@@ -1,3 +1,4 @@
+import { StyledCenteredButton } from '@/ui/layout/modal/components/StyledCenteredButton';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -11,15 +12,12 @@ import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
-import {
-  ConfirmationModal,
-  StyledCenteredButton,
-} from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
-import { parseThemeColor } from 'twenty-ui/utilities';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 
 type SettingsUpdateDataModelObjectAboutFormProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -58,7 +56,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       namePlural,
       nameSingular,
       ...(isCustomObject
-        ? { color: parseThemeColor(objectMetadataItem.color) }
+        ? { color: getObjectColorWithFallback(objectMetadataItem) }
         : {}),
     },
   });
@@ -88,18 +86,16 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         title={t`Translate or rename?`}
         subtitle={t`You are editing the ${currentLanguageLabel} translation. Renaming instead changes the source label, for every language.`}
         confirmButtonText={t`Only in ${currentLanguageLabel}`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
         hideCancelButton
         onConfirmClick={saveAsTranslation}
         onClose={cancelPendingSave}
         AdditionalButtons={
           <StyledCenteredButton
-            title={t`Rename for all languages`}
-            variant="secondary"
             fullWidth
-            justify="center"
             onClick={handleRenameForAllLanguages}
-          />
+            variant="outline"
+          >{t`Rename for all languages`}</StyledCenteredButton>
         }
       />
     </FormProvider>

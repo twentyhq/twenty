@@ -15,8 +15,8 @@ import {
   IconTypography,
   IconVariable,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { Button, LightIconButton } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockInsertionRecipes';
@@ -316,10 +316,9 @@ export const AdvancedTextEditorInsertRail = ({
               {t`Paste a link to a hosted image`}
             </StyledImageHint>
             <Button
-              title={t`Insert image`}
-              size="small"
+              size="sm"
               onClick={handleInsertImage}
-            />
+            >{t`Insert image`}</Button>
           </StyledImageForm>
         </StyledPopover>
       )}

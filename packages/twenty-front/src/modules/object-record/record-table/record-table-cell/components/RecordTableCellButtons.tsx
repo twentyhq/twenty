@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from 'twenty-ui/icon';
-import { LightIconButtonGroup } from 'twenty-ui/input';
+import { LightIconButtonGroup } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedContainer } from 'twenty-ui/layout';
+import { AnimatedContainer } from 'twenty-ui/primitives/layout';
 
 const StyledButtonContainer = styled.div`
   /* Buttons stay concentric with the frame: its radius minus the 1px border.
@@ -24,6 +24,7 @@ const StyledButtonContainer = styled.div`
 type RecordTableCellButtonsProps = {
   onClick?: () => void;
   Icon: IconComponent;
+  ariaLabel?: string;
 }[];
 
 export const RecordTableCellButtons = ({

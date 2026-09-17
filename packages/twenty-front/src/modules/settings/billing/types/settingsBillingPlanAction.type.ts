@@ -1,8 +1,11 @@
 import { type IconComponent } from 'twenty-ui/icon';
-import { type ButtonAccent, type ButtonVariant } from 'twenty-ui/input';
+import {
+  type ButtonColor,
+  type ButtonVariant,
+} from 'twenty-ui/primitives/input';
 
 export type SettingsBillingPlanAction = {
-  accent?: ButtonAccent;
+  color?: ButtonColor;
   disabled?: boolean;
   Icon?: IconComponent;
   isLoading?: boolean;

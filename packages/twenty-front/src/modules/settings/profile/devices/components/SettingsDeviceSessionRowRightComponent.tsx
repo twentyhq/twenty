@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { SettingsDeviceSessionRowDropdownMenu } from '@/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { type CurrentUserSessionsQuery } from '~/generated-metadata/graphql';
 
 type UserSessionListItem =

@@ -19,9 +19,13 @@ import {
   IconWebhook,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import {
+  Button,
+  CodeEditor,
+  CoreEditorHeader,
+} from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TriggerButton = {
@@ -138,12 +142,15 @@ export const SettingsLogicFunctionTestTab = ({
               {triggerButtons.map((trigger) => (
                 <Button
                   key={trigger.kind}
-                  Icon={trigger.Icon}
-                  title={trigger.label}
-                  variant="secondary"
-                  size="small"
+                  startIcon={
+                    isDefined(trigger.Icon) ? <trigger.Icon /> : undefined
+                  }
+                  size="sm"
                   onClick={() => fillSamplePayload(trigger.kind)}
-                />
+                  variant="outline"
+                >
+                  {trigger.label}
+                </Button>
               ))}
             </StyledTriggerButtonRow>
           </div>
@@ -153,14 +160,13 @@ export const SettingsLogicFunctionTestTab = ({
             title={t`Input`}
             rightNodes={[
               <Button
-                title={t`Run Function`}
-                variant="primary"
-                accent="blue"
-                size="small"
-                Icon={IconPlayerPlay}
+                size="sm"
+                startIcon={<IconPlayerPlay />}
                 onClick={handleExecute}
                 disabled={isTesting}
-              />,
+                variant="solid"
+                color="accent"
+              >{t`Run Function`}</Button>,
             ]}
           />
           <CodeEditor

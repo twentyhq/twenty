@@ -34,6 +34,8 @@ for lang_dir in "$DOCS_DIR"/*/ ; do
     "s|href=\"/developers/|href=\"/l/$lang_code/developers/|g" {} \;
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
     "s|href=\"/twenty-ui/|href=\"/l/$lang_code/twenty-ui/|g" {} \;
+  find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
+    "s|href=\"/ui/|href=\"/l/$lang_code/ui/|g" {} \;
 
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
     "s|](/getting-started/|](/l/$lang_code/getting-started/|g" {} \;
@@ -43,6 +45,8 @@ for lang_dir in "$DOCS_DIR"/*/ ; do
     "s|](/developers/|](/l/$lang_code/developers/|g" {} \;
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
     "s|](/twenty-ui/|](/l/$lang_code/twenty-ui/|g" {} \;
+  find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
+    "s|](/ui/|](/l/$lang_code/ui/|g" {} \;
 
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
     "s|https://docs\.twenty\.com/getting-started/|https://docs.twenty.com/l/$lang_code/getting-started/|g" {} \;
@@ -52,6 +56,8 @@ for lang_dir in "$DOCS_DIR"/*/ ; do
     "s|https://docs\.twenty\.com/developers/|https://docs.twenty.com/l/$lang_code/developers/|g" {} \;
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
     "s|https://docs\.twenty\.com/twenty-ui/|https://docs.twenty.com/l/$lang_code/twenty-ui/|g" {} \;
+  find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
+    "s|https://docs\.twenty\.com/ui/|https://docs.twenty.com/l/$lang_code/ui/|g" {} \;
 
   find "$lang_dir" -name "*.bak" -type f -delete
 

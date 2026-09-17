@@ -7,7 +7,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconLanguage } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsTranslationsButtonProps = {
   target: SettingsTranslationsSidePanelTarget;
@@ -24,10 +24,8 @@ export const SettingsTranslationsButton = ({
 
   return (
     <Button
-      Icon={IconLanguage}
-      title={t`Edit translations`}
-      variant="secondary"
-      size="small"
+      startIcon={<IconLanguage />}
+      size="sm"
       onClick={() => {
         setSettingsTranslationsSidePanelTarget(target);
         navigateSidePanel({
@@ -37,6 +35,7 @@ export const SettingsTranslationsButton = ({
           resetNavigationStack: true,
         });
       }}
-    />
+      variant="outline"
+    >{t`Edit translations`}</Button>
   );
 };

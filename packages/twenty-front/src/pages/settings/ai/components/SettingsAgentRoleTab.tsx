@@ -11,9 +11,9 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
@@ -155,12 +155,11 @@ export const SettingsAgentRoleTab = ({
             description={t`Create a role to define permissions for this agent.`}
           />
           <Button
-            Icon={IconPlus}
-            title={t`Create Role`}
-            variant="secondary"
+            startIcon={<IconPlus />}
             onClick={handleCreateRole}
             disabled={disabled || isCreatingRole}
-          />
+            variant="outline"
+          >{t`Create Role`}</Button>
         </>
       ) : (
         <>

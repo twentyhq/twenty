@@ -1,0 +1,75 @@
+name: CD Storybook UI
+
+on:
+  push:
+    branches: [main]
+    tags: ['sdk/v*', 'ui/v*']
+    paths:
+      - .github/workflows/cd-storybook-ui.yaml
+      - .github/actions/yarn-install/**
+      - package.json
+      - yarn.lock
+      - nx.json
+      - tsconfig.base.json
+      - packages/twenty-ui/**
+      - packages/twenty-shared/**
+      - packages/twenty-docs/**
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref == 'refs/heads/main' }}
+
+jobs:
+  build:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Build public Storybook
+        run: npx nx storybook:build twenty-ui --configuration=docs
+
+      - name: Check embedded stories against the build
+        run: npx tsx packages/twenty-docs/scripts/check-ui-story-embeds.mts packages/twenty-ui/storybook-static/index.json
+
+      - name: Upload public Storybook
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: storybook-twenty-ui-public
+          path: packages/twenty-ui/storybook-static
+          if-no-files-found: error
+          retention-days: 7
+
+  dispatch:
+    needs: build
+    permissions: {}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Mint twenty-factory dispatch token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty-factory
+          permission-actions: write
+
+      - name: Request Storybook deployment
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          SOURCE_RUN_ID: ${{ github.run_id }}
+        run: |
+          gh workflow run deploy-storybook-ui.yaml --repo twentyhq/twenty-factory --ref main \
+            -f source_run_id="$SOURCE_RUN_ID"

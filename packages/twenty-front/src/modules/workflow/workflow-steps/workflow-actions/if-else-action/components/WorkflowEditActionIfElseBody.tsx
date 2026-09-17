@@ -1,4 +1,4 @@
-import { InputLabel, Button } from 'twenty-ui/input';
+import { InputLabel, Button } from 'twenty-ui/primitives/input';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
@@ -27,7 +27,7 @@ import { Fragment } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { IconPlus } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/layout';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -261,14 +261,13 @@ export const WorkflowEditActionIfElseBody = ({
                 <>
                   <HorizontalSeparator noMargin />
                   <Button
-                    Icon={IconPlus}
-                    title={t`Add route`}
-                    variant="secondary"
-                    size="small"
+                    startIcon={<IconPlus />}
+                    size="sm"
                     onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
                       handleAddRoute(event)
                     }
-                  />
+                    variant="outline"
+                  >{t`Add route`}</Button>
                 </>
               )}
               <WorkflowIfElseBranchEditor

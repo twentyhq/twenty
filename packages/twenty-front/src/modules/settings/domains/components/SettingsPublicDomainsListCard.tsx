@@ -7,7 +7,7 @@ import { selectedPublicDomainState } from '@/settings/domains/states/selectedPub
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { IconWorld } from 'twenty-ui/icon';
 import { useQuery } from '@apollo/client/react';
 import {

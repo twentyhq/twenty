@@ -11,9 +11,9 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
+} from 'twenty-ui/primitives/feedback';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 const StyledNotesContainer = styled.div`
   display: flex;
@@ -56,11 +56,10 @@ export const NotesCardContent = ({
         </AnimatedPlaceholderEmptyTextContainer>
         {isDefined(onCreateNote) && (
           <Button
-            Icon={IconPlus}
-            title={t`New note`}
-            variant="secondary"
+            startIcon={<IconPlus />}
             onClick={onCreateNote}
-          />
+            variant="outline"
+          >{t`New note`}</Button>
         )}
       </AnimatedPlaceholderEmptyContainer>
     );

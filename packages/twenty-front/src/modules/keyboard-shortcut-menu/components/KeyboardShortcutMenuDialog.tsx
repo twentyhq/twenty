@@ -4,7 +4,7 @@ import {
   StyledHeading,
 } from './KeyboardShortcutMenuStyles';
 import { t } from '@lingui/core/macro';
-import { IconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/primitives/input';
 import { IconX } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 

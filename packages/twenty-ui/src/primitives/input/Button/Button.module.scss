@@ -1,0 +1,172 @@
+@use 'sass:map';
+
+.button {
+  @include focus-ring;
+
+  --tw-button-background: var(--t-background-transparent-lighter);
+  --tw-button-border: var(--t-background-transparent-light);
+  --tw-button-color: var(--t-font-color-secondary);
+  --tw-button-hover: var(--t-background-tertiary);
+  --tw-button-active: var(--t-background-quaternary);
+
+  align-items: center;
+  background: var(--tw-button-background);
+  block-size: var(--t-spacing-8);
+  border: 1px solid var(--tw-button-border);
+  border-radius: var(--t-border-radius-md);
+  box-sizing: border-box;
+  color: var(--tw-button-color);
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-md);
+  font-weight: var(--tw-button-font-weight, var(--t-font-weight-medium));
+  justify-content: center;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  padding: 0 var(--tw-button-padding-inline, var(--t-spacing-2));
+  position: relative;
+  text-decoration: none;
+  transition: background 0.1s ease;
+  vertical-align: middle;
+  white-space: nowrap;
+
+  &[data-size='sm'] {
+    block-size: var(--t-spacing-6);
+  }
+  &[data-full-width] {
+    inline-size: 100%;
+  }
+  &[data-elevated] {
+    box-shadow: var(--t-box-shadow-light);
+  }
+  &[data-variant='solid'] {
+    --tw-button-background: var(--t-background-primary-inverted);
+    --tw-button-border: var(--t-background-transparent-strong);
+    --tw-button-color: var(--t-font-color-inverted);
+    --tw-button-hover: var(--t-background-primary-inverted-hover);
+    --tw-button-active: var(--t-background-primary-inverted-hover);
+  }
+  &[data-variant='ghost'] {
+    --tw-button-background: transparent;
+    --tw-button-border: transparent;
+    --tw-button-hover: var(--t-background-transparent-light);
+    --tw-button-active: var(--t-background-transparent-medium);
+  }
+  &[data-variant='soft'] {
+    --tw-button-background: var(--t-background-transparent-light);
+    --tw-button-border: transparent;
+    --tw-button-hover: var(--t-background-transparent-medium);
+    --tw-button-active: var(--t-background-transparent-strong);
+  }
+  &:not([data-disabled]) {
+    @include hover-capable {
+      &:hover {
+        background: var(--tw-button-hover);
+      }
+    }
+    &:active {
+      background: var(--tw-button-active);
+    }
+  }
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  &[data-loading] {
+    cursor: progress;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+$colors: (
+  'accent': (
+    base: var(--t-color-blue),
+    text: var(--t-color-blue),
+    border: var(--t-accent-primary),
+    hover: var(--t-color-blue10),
+    active: var(--t-color-blue12),
+    soft: var(--t-accent-tertiary),
+    soft-hover: var(--t-accent-secondary),
+  ),
+  'danger': (
+    base: var(--t-color-red),
+    text: var(--t-color-red11),
+    border: var(--t-border-color-danger),
+    hover: var(--t-color-red8),
+    active: var(--t-color-red10),
+    soft: var(--t-background-danger),
+    soft-hover: var(--t-color-red3),
+  ),
+  'success': (
+    base: var(--t-color-green9),
+    text: var(--t-color-green9),
+    border: var(--t-color-green9),
+    hover: var(--t-color-green10),
+    active: var(--t-color-green12),
+    soft: var(--t-color-green3),
+    soft-hover: var(--t-color-green4),
+  ),
+);
+
+@each $color, $tokens in $colors {
+  .button[data-color='#{$color}'] {
+    --tw-button-color: #{map.get($tokens, text)};
+    --tw-button-hover: #{map.get($tokens, soft)};
+    --tw-button-active: #{map.get($tokens, soft-hover)};
+
+    &[data-variant='solid'] {
+      --tw-button-background: #{map.get($tokens, base)};
+      --tw-button-border: var(--t-background-transparent-light);
+      --tw-button-color: color(display-p3 1 1 1);
+      --tw-button-hover: #{map.get($tokens, hover)};
+      --tw-button-active: #{map.get($tokens, active)};
+    }
+    &[data-variant='outline'] {
+      --tw-button-background: transparent;
+      --tw-button-border: #{map.get($tokens, border)};
+    }
+    &[data-variant='soft'] {
+      --tw-button-background: #{map.get($tokens, soft)};
+      --tw-button-hover: #{map.get($tokens, soft-hover)};
+    }
+  }
+}
+
+.content {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--t-spacing-1);
+  justify-content: inherit;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.icon {
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+
+  & > svg {
+    block-size: calc(var(--t-icon-size-sm) * 1px);
+    inline-size: calc(var(--t-icon-size-sm) * 1px);
+  }
+}
+.hidden {
+  opacity: 0;
+}
+.loader {
+  align-items: center;
+  display: flex;
+  inline-size: var(--t-spacing-6);
+  inset: 0;
+  margin: auto;
+  position: absolute;
+}

@@ -6,7 +6,7 @@ import {
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { LightButton } from 'twenty-ui/input';
+import { LightButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiModelTierSlider } from '@/ai/components/AiModelTierSlider';
@@ -94,17 +94,16 @@ export const AiModelPicker = ({
         </StyledHint>
         {!isAdvancedOpen && !disabled && (
           <LightButton
-            title={t`Advanced`}
-            accent="tertiary"
+            emphasis="subtle"
             onClick={() => setIsAdvancedOpen(true)}
-          />
+          >{t`Advanced`}</LightButton>
         )}
       </StyledFooter>
       {isAdvancedOpen && (
         <AiModelPinSelect
           dropdownId="ai-model-picker-pinned-model"
           label={t`Pin a specific model`}
-          description={t`Overrides the tier above until you switch back to automatic`}
+          description={t`Overrides the mode above until you switch back to automatic`}
           modelId={hasPinnedModel ? modelId : null}
           onChange={(pinnedModelId) =>
             onModelIdChange(

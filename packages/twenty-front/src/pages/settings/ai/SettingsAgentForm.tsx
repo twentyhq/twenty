@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';

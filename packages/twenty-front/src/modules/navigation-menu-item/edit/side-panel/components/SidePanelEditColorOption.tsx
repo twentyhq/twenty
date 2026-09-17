@@ -11,7 +11,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize } from 'twenty-shared/utils';
 import { IconColorSwatch } from 'twenty-ui/icon';
-import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
+import { DEFAULT_COLOR_LABELS } from 'twenty-ui/primitives/navigation';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

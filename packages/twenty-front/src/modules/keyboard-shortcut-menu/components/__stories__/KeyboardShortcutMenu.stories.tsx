@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
@@ -19,7 +19,7 @@ const meta: Meta<typeof KeyboardShortcutMenu> = {
       }, [openKeyboardShortcutMenu]);
       return <Story />;
     },
-    SnackBarDecorator,
+    ToastDecorator,
     ComponentWithRouterDecorator,
   ],
 };

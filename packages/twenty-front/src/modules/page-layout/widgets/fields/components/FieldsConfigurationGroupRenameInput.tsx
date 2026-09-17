@@ -4,7 +4,7 @@ import { Key } from 'ts-key-enum';
 
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -65,12 +65,11 @@ export const FieldsConfigurationGroupRenameInput = ({
         placeholder={t`Group name`}
       />
       <Button
-        variant="primary"
-        accent="blue"
-        size="small"
-        title={t`Done`}
+        size="sm"
         onClick={handleSave}
-      />
+        variant="solid"
+        color="accent"
+      >{t`Done`}</Button>
     </StyledContainer>
   );
 };

@@ -21,6 +21,7 @@ import {
   type ResolvableTimelineActivityType,
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 const EMPTY_NON_AUDIT_LOGGED_FIELD_NAMES: ReadonlySet<string> = new Set();
 
@@ -165,7 +166,12 @@ export class TimelineActivityRoutingPlanService {
       });
 
     const activeTimelineActivityTypes = effectiveTimelineActivityTypes.filter(
-      (timelineActivityType) => timelineActivityType.isActive,
+      (timelineActivityType) =>
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'timelineActivityType',
+          flatEntity: timelineActivityType,
+          property: 'isActive',
+        }),
     );
     const throughRules = activeTimelineActivityTypes
       .map((timelineActivityType): TimelineActivityRule | undefined => {

@@ -1,6 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
+import { SITE_URLS } from '@/platform/site-urls';
 import { type PlansHostingMode } from '@/pricing-state';
 
 export type PlansBillingPeriod = 'monthly' | 'yearly';
@@ -153,11 +154,11 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
     },
     cta: {
       cloud: {
-        href: 'https://app.twenty.com/welcome',
+        href: SITE_URLS.appWelcome,
         label: msg`Start for free`,
       },
       selfHost: {
-        href: 'https://app.twenty.com/welcome',
+        href: SITE_URLS.docsSelfHostLicense,
         label: msg`Start for free`,
       },
     },
@@ -192,11 +193,11 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
     },
     cta: {
       cloud: {
-        href: 'https://app.twenty.com/welcome',
+        href: SITE_URLS.appWelcome,
         label: msg`Start for free`,
       },
       selfHost: {
-        href: 'https://app.twenty.com/welcome',
+        href: SITE_URLS.docsSelfHost,
         label: msg`Start for free`,
       },
     },

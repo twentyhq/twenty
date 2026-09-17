@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/icon';
-import { IconButtonWithTooltip } from 'twenty-ui/input';
+import { IconButtonWithTooltip } from 'twenty-ui/primitives/input';
 import {
   getOsControlSymbol,
   getOsShortcutSeparator,

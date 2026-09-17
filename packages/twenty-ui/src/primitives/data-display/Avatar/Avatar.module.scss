@@ -1,0 +1,102 @@
+// Size values mirror AVATAR_PROPERTIES_BY_SIZE (constants/AvatarPropertiesBySize.ts)
+.root {
+  @include focus-ring;
+  padding: 0;
+  font-family: inherit;
+  align-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  user-select: none;
+  border-radius: var(--t-border-radius-xs);
+  border: var(--tw-avatar-border, none);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  color: var(--tw-avatar-color);
+  background: var(--tw-avatar-background);
+
+  &[data-shape='rounded-square'] {
+    border-radius: var(--t-border-radius-sm);
+  }
+
+  &[data-shape='circle'] {
+    border-radius: 50%;
+    corner-shape: round;
+  }
+
+  &[data-clickable]:not([data-disabled]) {
+    cursor: pointer;
+  }
+
+  @include hover-capable {
+    &[data-clickable]:not([data-disabled]):hover {
+      box-shadow: 0 0 0 4px var(--t-background-transparent-light);
+    }
+  }
+}
+
+.root[data-size='xl'] {
+  font-size: 16px;
+  block-size: 40px;
+  inline-size: 40px;
+}
+
+.root[data-size='lg'] {
+  font-size: 13px;
+  block-size: 24px;
+  inline-size: 24px;
+}
+
+.root[data-size='md'] {
+  font-size: 12px;
+  block-size: 16px;
+  inline-size: 16px;
+}
+
+.root[data-size='sm'] {
+  font-size: 10px;
+  block-size: 14px;
+  inline-size: 14px;
+}
+
+.root[data-size='xs'] {
+  font-size: 8px;
+  block-size: 12px;
+  inline-size: 12px;
+}
+
+.root[data-pulsing] {
+  animation: avatarPulsing 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes avatarPulsing {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root[data-pulsing] {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+.image {
+  object-fit: cover;
+  block-size: 100%;
+  inline-size: 100%;
+}
+.fallback {
+  font-weight: var(--t-font-weight-medium);
+}
+.icon {
+  display: flex;
+  & > svg {
+    inline-size: calc(var(--t-icon-size-xl) * 1px);
+    block-size: calc(var(--t-icon-size-xl) * 1px);
+  }
+}

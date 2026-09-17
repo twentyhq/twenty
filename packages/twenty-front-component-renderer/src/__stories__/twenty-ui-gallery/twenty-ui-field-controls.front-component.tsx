@@ -4,10 +4,10 @@ import {
   Field,
   Input,
   InputGroup,
+  Textarea,
   InputHint,
   InputLabel,
-  Textarea,
-} from 'twenty-ui/input';
+} from 'twenty-ui/primitives/input';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 

@@ -1,4 +1,4 @@
-import { Field } from 'twenty-ui/input';
+import { Field } from 'twenty-ui/primitives/input';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { css } from '@linaria/core';
@@ -14,7 +14,7 @@ import React, {
   useState,
 } from 'react';
 import { type IconComponent, IconEye, IconEyeOff } from 'twenty-ui/icon';
-import { AutogrowWrapper } from 'twenty-ui/layout';
+import { AutogrowWrapper } from 'twenty-ui/primitives/layout';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

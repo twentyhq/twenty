@@ -9,12 +9,12 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Avatar, Status } from 'twenty-ui/data-display';
-import { Info } from 'twenty-ui/feedback';
+import { Avatar, Status } from 'twenty-ui/primitives/data-display';
+import { Info } from 'twenty-ui/primitives/feedback';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
@@ -71,9 +71,10 @@ export const SettingsApplicationConnectionsSection = ({
               adornment={
                 isNonEmptyString(provider.logoUrl) ? (
                   <Avatar
-                    type="app"
-                    avatarUrl={getAbsoluteImageUrl(provider.logoUrl)}
-                    placeholder={provider.displayName}
+                    shape="square"
+                    variant="outline"
+                    src={getAbsoluteImageUrl(provider.logoUrl)}
+                    name={provider.displayName}
                   />
                 ) : undefined
               }
@@ -112,6 +113,7 @@ export const SettingsApplicationConnectionsSection = ({
                       )}
                     >
                       <TableCell
+                        color={themeCssVariables.font.color.primary}
                         clickable
                         minWidth="0"
                         overflow="hidden"
@@ -159,11 +161,8 @@ export const SettingsApplicationConnectionsSection = ({
             {isClientCredentialsConfigured && (
               <StyledFooter>
                 <Button
-                  title={t`Add connection`}
-                  Icon={IconPlus}
-                  variant="secondary"
-                  accent="default"
-                  size="small"
+                  startIcon={<IconPlus />}
+                  size="sm"
                   onClick={() =>
                     triggerAppOAuth({
                       applicationId,
@@ -171,7 +170,8 @@ export const SettingsApplicationConnectionsSection = ({
                       visibility: 'workspace',
                     })
                   }
-                />
+                  variant="outline"
+                >{t`Add connection`}</Button>
               </StyledFooter>
             )}
           </Section>

@@ -6,8 +6,8 @@ import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { styled } from '@linaria/react';
 import { type JSX } from 'react';
 import { AppPath } from 'twenty-shared/types';
-import { AnimatedEaseIn } from 'twenty-ui/layout';
-import { ModalContent } from 'twenty-ui/surfaces';
+import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
+import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 

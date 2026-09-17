@@ -13,9 +13,9 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
+} from 'twenty-ui/primitives/feedback';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -62,11 +62,10 @@ export const TaskGroupsContent = ({
         </AnimatedPlaceholderEmptyTextContainer>
         {isDefined(onCreateTask) && (
           <Button
-            Icon={IconPlus}
-            title={t`New task`}
-            variant="secondary"
+            startIcon={<IconPlus />}
             onClick={onCreateTask}
-          />
+            variant="outline"
+          >{t`New task`}</Button>
         )}
       </AnimatedPlaceholderEmptyContainer>
     );

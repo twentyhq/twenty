@@ -1,0 +1,27 @@
+import { type IconComponent } from '@ui/icon/types/IconComponent';
+import { Tag } from '@ui/primitives/data-display/Tag/Tag';
+import { type ThemeColor } from '@ui/theme';
+import { isDefined } from '@ui/utilities/utils/isDefined';
+
+type SelectDisplayProps = {
+  color: ThemeColor | 'transparent';
+  label: string;
+  Icon?: IconComponent;
+  preventPadding?: boolean;
+};
+
+export const SelectDisplay = ({
+  color,
+  label,
+  Icon,
+  preventPadding,
+}: SelectDisplayProps) => (
+  <Tag
+    preventShrink
+    color={color}
+    startIcon={isDefined(Icon) ? <Icon /> : undefined}
+    preventPadding={preventPadding}
+  >
+    {label}
+  </Tag>
+);

@@ -2,7 +2,7 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   VisibilityHidden,
   VisibilityHiddenInput,
-} from 'twenty-ui/accessibility';
+} from 'twenty-ui/primitives/accessibility';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 import {
   H1Title,
@@ -15,7 +15,7 @@ import {
   StyledText,
   StyledTextContent,
   StyledTextWrapper,
-} from 'twenty-ui/typography';
+} from 'twenty-ui/primitives/typography';
 
 import {
   ComponentGallery,
@@ -72,7 +72,7 @@ const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
 const TypographyGallery = () => (
   <ThemeProvider colorScheme="light">
     <ComponentGallery
-      title="twenty-ui/typography + accessibility"
+      title="twenty-ui/primitives/typography + accessibility"
       entries={TYPOGRAPHY_ENTRIES}
     />
   </ThemeProvider>
@@ -82,6 +82,6 @@ export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000104',
   name: 'twenty-ui-typography-gallery',
   description:
-    'Renders every twenty-ui/typography and accessibility component in the sandbox',
+    'Renders every twenty-ui/primitives/typography and accessibility component in the sandbox',
   component: TypographyGallery,
 });

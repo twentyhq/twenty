@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsPaginationControlsProps = {
@@ -36,20 +36,18 @@ export const SettingsPaginationControls = ({
   return (
     <StyledContainer>
       <Button
-        title={t`Previous`}
-        variant="secondary"
-        size="small"
+        size="sm"
         disabled={page === 0 || isLoading}
         onClick={() => onPageChange(page - 1)}
-      />
+        variant="outline"
+      >{t`Previous`}</Button>
       <div>{t`Page ${page + 1} of ${pageCount}`}</div>
       <Button
-        title={t`Next`}
-        variant="secondary"
-        size="small"
+        size="sm"
         disabled={isNextDisabled || isLoading}
         onClick={() => onPageChange(page + 1)}
-      />
+        variant="outline"
+      >{t`Next`}</Button>
     </StyledContainer>
   );
 };

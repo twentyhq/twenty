@@ -52,7 +52,17 @@ jobs:
         ports:
           - 6379:6379
     env:
+      # All four get the CI version and are built. Only the three libraries are
+      # published before the template lockfile is generated; create-twenty-app is
+      # published after it, carrying that lockfile in its tarball.
       PUBLISHABLE_PACKAGES: twenty-client-sdk twenty-ui twenty-sdk create-twenty-app
+      LIBRARY_PACKAGES: twenty-client-sdk twenty-ui twenty-sdk
+      # Deliberately beyond any realistic policy rather than a value anyone would
+      # set. With a working template lockfile nothing is resolved, so no gate of
+      # any length applies and this number is inert; it only bites if the lockfile
+      # stops shipping, and picking a large one means this job still catches that
+      # however long a real consumer's gate happens to be.
+      SCAFFOLD_AGE_GATE: 30d
       TWENTY_API_URL: http://localhost:3000
       TWENTY_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik
     steps:
@@ -89,19 +99,33 @@ jobs:
             sleep 1
           done
 
-      - name: Publish packages to local registry
+      - name: Publish libraries to local registry
         run: |
           yarn config set npmRegistryServer http://localhost:4873
           yarn config set unsafeHttpWhitelist --json '["localhost"]'
           yarn config set npmAuthToken ci-auth-token
 
-          for pkg in $PUBLISHABLE_PACKAGES; do
+          for pkg in $LIBRARY_PACKAGES; do
             cd packages/$pkg
             yarn npm publish --tag ci
             cd ../..
           done
 
+      - name: Generate template lockfile
+        run: |
+          npx nx run create-twenty-app:generate-template-lock \
+            --releaseVersion=$CI_VERSION --registry=http://localhost:4873
+
+      - name: Publish create-twenty-app to local registry
+        run: |
+          cd packages/create-twenty-app
+          yarn npm publish --tag ci
+
       - name: Scaffold app using published create-twenty-app
+        env:
+          YARN_NPM_MINIMAL_AGE_GATE: ${{ env.SCAFFOLD_AGE_GATE }}
+          YARN_NPM_REGISTRY_SERVER: http://localhost:4873
+          YARN_UNSAFE_HTTP_WHITELIST: localhost
         run: |
           npm install -g create-twenty-app@$CI_VERSION --registry http://localhost:4873
           create-twenty-app --version
@@ -109,12 +133,33 @@ jobs:
           cd /tmp/e2e-test-workspace
           create-twenty-app test-app --display-name "Test scaffolded app" --description "E2E test scaffolded app" --url http://localhost:3000
 
-      - name: Install scaffolded app dependencies
+      - name: Verify scaffolded app ships a usable lockfile
+        env:
+          YARN_NPM_MINIMAL_AGE_GATE: ${{ env.SCAFFOLD_AGE_GATE }}
+          YARN_NPM_REGISTRY_SERVER: http://localhost:4873
+          YARN_UNSAFE_HTTP_WHITELIST: localhost
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          echo 'npmRegistryServer: "http://localhost:4873"' >> .yarnrc.yml
-          echo 'unsafeHttpWhitelist: ["localhost"]' >> .yarnrc.yml
-          YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install --no-immutable
+
+          if [ ! -f yarn.lock ]; then
+            echo "::error::The scaffolded app has no yarn.lock"
+            exit 1
+          fi
+
+          if ! grep -q '^__metadata:' yarn.lock; then
+            echo "::error::The scaffolded yarn.lock is not a Yarn 4 lockfile"
+            exit 1
+          fi
+
+          for pkg in $LIBRARY_PACKAGES; do
+            if ! grep -q "resolution: \"$pkg@npm:$CI_VERSION\"" yarn.lock; then
+              echo "::error::$pkg@$CI_VERSION is missing from the scaffolded lockfile"
+              exit 1
+            fi
+          done
+
+          # What the generated project's own CI workflow runs.
+          yarn install --immutable
 
       - name: Verify installed app versions
         run: |

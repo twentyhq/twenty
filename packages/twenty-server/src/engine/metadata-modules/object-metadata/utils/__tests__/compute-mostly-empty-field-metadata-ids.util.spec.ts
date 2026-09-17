@@ -13,6 +13,8 @@ const buildFieldMetadata = (
   type: FieldMetadataType.TEXT,
   isActive: true,
   isSystem: false,
+  applicationUniversalIdentifier: '20202020-aaaa-4aaa-8aaa-000000000001',
+  overrides: null,
   ...overrides,
 });
 

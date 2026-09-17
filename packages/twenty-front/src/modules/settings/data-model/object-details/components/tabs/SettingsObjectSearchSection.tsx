@@ -3,10 +3,11 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SEARCH_VECTOR_FIELD_NAME } from '@/object-record/constants/SearchVectorFieldName';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+
 import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
 import { canBeSearchable } from '@/settings/data-model/fields/forms/utils/canBeSearchable';
+
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -20,6 +21,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useState } from 'react';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import {
@@ -29,9 +31,9 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
-import { Card } from 'twenty-ui/surfaces';
+import { Button, LightIconButton } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsObjectSearchSectionProps = {
@@ -111,7 +113,7 @@ export const SettingsObjectSearchSection = ({
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
   const { closeDropdown } = useCloseDropdown();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const isConfigurableSearchFieldsEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED,
@@ -173,8 +175,9 @@ export const SettingsObjectSearchSection = ({
     });
 
     if (result.status === 'successful') {
-      enqueueSuccessSnackBar({
-        message: value
+      enqueueToast({
+        variant: 'success',
+        children: value
           ? t`Field added to search`
           : t`Field removed from search`,
       });
@@ -257,12 +260,11 @@ export const SettingsObjectSearchSection = ({
             dropdownOffset={{ x: 0, y: 8 }}
             clickableComponent={
               <Button
-                Icon={IconPlus}
-                title={t`Add field`}
-                size="small"
-                variant="secondary"
+                startIcon={<IconPlus />}
+                size="sm"
                 disabled={addableFields.length === 0}
-              />
+                variant="outline"
+              >{t`Add field`}</Button>
             }
             dropdownComponents={
               <DropdownContent>

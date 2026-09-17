@@ -1,14 +1,14 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconDotsVertical, IconLogout } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { LightIconButton } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import {
   CurrentUserSessionsDocument,
   RevokeUserSessionDocument,
@@ -23,7 +23,7 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
 }: SettingsDeviceSessionRowDropdownMenuProps) => {
   const dropdownId = `settings-device-session-row-${userSessionId}`;
 
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { closeDropdown } = useCloseDropdown();
 
   const [revokeUserSession] = useMutation(RevokeUserSessionDocument, {
@@ -35,9 +35,12 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
 
     try {
       await revokeUserSession({ variables: { userSessionId } });
-      enqueueSuccessSnackBar({ message: t`Device logged out` });
+      enqueueToast({ variant: 'success', children: t`Device logged out` });
     } catch {
-      enqueueErrorSnackBar({ message: t`Failed to log out this device` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to log out this device`,
+      });
     }
   };
 

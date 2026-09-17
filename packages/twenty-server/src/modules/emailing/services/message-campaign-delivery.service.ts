@@ -35,10 +35,12 @@ import { EmailingDomainSenderService } from 'src/modules/emailing/services/email
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
+import { buildCampaignThreadExternalId } from 'src/modules/emailing/utils/build-campaign-thread-external-id.util';
 import { resolveCampaignSendFailure } from 'src/modules/emailing/utils/resolve-campaign-send-failure.util';
 import { renderCampaignEmail } from 'src/modules/emailing/utils/render-campaign-email.util';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { buildOutboundThreadingHeaders } from 'src/modules/messaging/message-outbound-manager/utils/build-outbound-threading-headers.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -309,6 +311,12 @@ export class MessageCampaignDeliveryService {
       variables,
     });
 
+    const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
+    const threadExternalId = buildCampaignThreadExternalId({
+      messageId,
+      fromAddress,
+    });
+
     const result = await this.sendOrRecordFailure({
       messageId,
       claimToken,
@@ -316,13 +324,14 @@ export class MessageCampaignDeliveryService {
       workspaceId,
       emailingDomainId,
       email: {
-        from: campaign.fromAddress?.primaryEmail ?? '',
+        from: fromAddress,
         to: [recipientEmail],
         subject,
         text: plainText,
         html,
         sendKind: 'MARKETING',
         unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
+        headers: buildOutboundThreadingHeaders({ threadExternalId }),
       },
     });
 
@@ -352,7 +361,7 @@ export class MessageCampaignDeliveryService {
     }
 
     await messageRepository.update(messageId, {
-      headerMessageId: result.messageId,
+      headerMessageId: result.headerMessageId ?? result.messageId,
       subject,
       text: plainText,
     });
@@ -371,13 +380,13 @@ export class MessageCampaignDeliveryService {
         );
       });
 
-    await this.linkMessageToProviderThread({
+    await this.linkMessageToProviderMessage({
       messageId,
       providerMessageId: result.messageId,
     });
   }
 
-  private async linkMessageToProviderThread({
+  private async linkMessageToProviderMessage({
     messageId,
     providerMessageId,
   }: {
@@ -392,10 +401,7 @@ export class MessageCampaignDeliveryService {
 
     await associationRepository.update(
       { messageId },
-      {
-        messageExternalId: providerMessageId,
-        messageThreadExternalId: providerMessageId,
-      },
+      { messageExternalId: providerMessageId },
     );
   }
 

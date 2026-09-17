@@ -1,10 +1,10 @@
 ---
 title: Overview
-description: Build, test, and ship your app — CLI commands, integration tests, CI, and publishing to a server or to npm.
+description: Build, test, and ship your app — CLI commands, integration tests, CI, translations, and publishing to a server or to npm.
 icon: "rocket"
 ---
 
-The **operations layer** is everything you do *to* your app rather than *with* it: invoking CLI commands, running integration tests against a real Twenty server, configuring CI, and shipping releases — either as a tarball deployed to a single server or as an npm package listed in the marketplace.
+The **operations layer** is everything you do *to* your app rather than *with* it: invoking CLI commands, running integration tests against a real Twenty server, configuring CI, translating its strings, and shipping releases — either as a tarball deployed to a single server or as an npm package listed in the marketplace.
 
 ```text
    develop ─▶ test ─▶ build ─▶ deploy / publish
@@ -25,6 +25,9 @@ The **operations layer** is everything you do *to* your app rather than *with* i
   </Card>
   <Card title="Testing" icon="flask" href="/developers/extend/apps/operations/testing">
     Vitest setup, integration tests, type checking, CI workflow.
+  </Card>
+  <Card title="Translations" icon="language" href="/developers/extend/apps/operations/translations">
+    Mark strings, extract catalogs, ship your app in several languages.
   </Card>
   <Card title="Publishing" icon="upload" href="/developers/extend/apps/operations/publishing">
     Build, deploy a tarball, publish to npm, install.

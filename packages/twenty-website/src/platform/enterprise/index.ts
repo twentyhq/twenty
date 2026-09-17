@@ -50,6 +50,6 @@ export {
   type ResolveServerBindingInput,
   type ServerBindingDecision,
 } from './resolve-server-binding';
-export { signEnterpriseKey } from './sign-enterprise-key';
+export { signEnterpriseKey } from './sign-organization-key';
 export { signValidityToken } from './sign-validity-token';
-export { verifyEnterpriseKey } from './verify-enterprise-key';
+export { verifyEnterpriseKey } from './verify-organization-key';

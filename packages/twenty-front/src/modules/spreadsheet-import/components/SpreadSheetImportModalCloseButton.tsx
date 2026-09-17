@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/primitives/input';
 
 const StyledCloseButtonContainer = styled.div`
   align-items: center;
