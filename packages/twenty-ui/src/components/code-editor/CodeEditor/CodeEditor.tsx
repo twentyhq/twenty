@@ -4,8 +4,8 @@ import Editor, {
   type Monaco,
 } from '@monaco-editor/react';
 import { Loader } from '@ui/primitives/feedback/Loader/Loader';
-import { BASE_CODE_EDITOR_THEME_ID } from '@ui/code-editor/CodeEditor/constants/BaseCodeEditorThemeId';
-import { getBaseCodeEditorTheme } from '@ui/code-editor/CodeEditor/utils/getBaseCodeEditorTheme';
+import { BASE_CODE_EDITOR_THEME_ID } from '@ui/components/code-editor/CodeEditor/constants/BaseCodeEditorThemeId';
+import { getBaseCodeEditorTheme } from '@ui/components/code-editor/CodeEditor/utils/getBaseCodeEditorTheme';
 import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
 import { useResizeHandle } from '@ui/primitives/layout/ResizeHandle/hooks/useResizeHandle';
 import {

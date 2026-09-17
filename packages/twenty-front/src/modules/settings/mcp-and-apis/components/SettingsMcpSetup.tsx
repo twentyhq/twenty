@@ -12,8 +12,7 @@ import {
   isHttpsUrl,
 } from '@/settings/mcp-and-apis/utils/mcpSetup';
 import { Section } from 'twenty-ui/components';
-import { CodeEditor } from 'twenty-ui/code-editor';
-import { CoreEditorHeader } from 'twenty-ui/primitives/input';
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -76,7 +75,7 @@ export const SettingsMcpSetup = () => {
                 title={t`Manual configuration`}
                 description={t`Access your workspace data from your favorite MCP client like Claude, Codex or Cursor.`}
               />
-              <CoreEditorHeader
+              <CodeEditorHeader
                 leftNodes={[
                   <StyledMcpEditorHeaderTitle key="mcp-editor-header-title">
                     <StyledMcpIcon aria-hidden />

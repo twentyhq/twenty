@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconPencil } from 'twenty-ui/icon';
-import { CodeEditor } from 'twenty-ui/code-editor';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { FloatingIconButton } from 'twenty-ui/primitives/input';
 import {
   JsonTree,

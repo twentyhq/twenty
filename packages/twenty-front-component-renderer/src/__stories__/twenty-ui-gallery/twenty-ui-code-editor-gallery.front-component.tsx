@@ -1,6 +1,6 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useState } from 'react';
-import { CodeEditor } from 'twenty-ui/code-editor';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 // KNOWN ISSUE: CodeEditor wraps @monaco-editor/react, which lazy-loads the

@@ -9,7 +9,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/code-editor';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { MenuItemMultiSelect } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ConfigVariableType } from '~/generated-admin/graphql';

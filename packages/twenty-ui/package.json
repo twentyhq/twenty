@@ -111,15 +111,15 @@
       "import": "./dist/assets.mjs",
       "require": "./dist/assets.cjs"
     },
-    "./code-editor": {
-      "types": "./dist/code-editor/index.d.ts",
-      "import": "./dist/code-editor.mjs",
-      "require": "./dist/code-editor.cjs"
-    },
     "./components": {
       "types": "./dist/components/index.d.ts",
       "import": "./dist/components.mjs",
       "require": "./dist/components.cjs"
+    },
+    "./components/code-editor": {
+      "types": "./dist/components/code-editor/index.d.ts",
+      "import": "./dist/components/code-editor.mjs",
+      "require": "./dist/components/code-editor.cjs"
     },
     "./icon": {
       "types": "./dist/icon/index.d.ts",
@@ -207,11 +207,11 @@
       "assets": [
         "dist/assets/index.d.ts"
       ],
-      "code-editor": [
-        "dist/code-editor/index.d.ts"
-      ],
       "components": [
         "dist/components/index.d.ts"
+      ],
+      "components/code-editor": [
+        "dist/components/code-editor/index.d.ts"
       ],
       "icon": [
         "dist/icon/index.d.ts"

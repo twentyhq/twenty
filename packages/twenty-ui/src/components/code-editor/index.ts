@@ -10,3 +10,5 @@
 export { CodeEditor } from './CodeEditor/CodeEditor';
 export { BASE_CODE_EDITOR_THEME_ID } from './CodeEditor/constants/BaseCodeEditorThemeId';
 export { getBaseCodeEditorTheme } from './CodeEditor/utils/getBaseCodeEditorTheme';
+export { CodeEditorHeader } from './CodeEditorHeader/CodeEditorHeader';
+export type { CodeEditorHeaderProps } from './CodeEditorHeader/types/CodeEditorHeaderProps';

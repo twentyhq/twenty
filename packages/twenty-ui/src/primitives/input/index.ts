@@ -26,8 +26,6 @@ export type { CheckboxProps } from './Checkbox/types/CheckboxProps';
 export type { CheckboxShape } from './Checkbox/types/CheckboxShape';
 export type { CheckboxSize } from './Checkbox/types/CheckboxSize';
 export type { CheckboxVariant } from './Checkbox/types/CheckboxVariant';
-export { CoreEditorHeader } from './CodeEditorHeader/CodeEditorHeader';
-export type { CoreEditorHeaderProps } from './CodeEditorHeader/types/CoreEditorHeaderProps';
 export { ColorPickerButton } from './ColorPickerButton/ColorPickerButton';
 export type {
   ColorSchemeSegmentProps,

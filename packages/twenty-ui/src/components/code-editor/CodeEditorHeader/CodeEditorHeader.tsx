@@ -1,11 +1,11 @@
-import { type CoreEditorHeaderProps } from './types/CoreEditorHeaderProps';
+import { type CodeEditorHeaderProps } from './types/CodeEditorHeaderProps';
 import styles from './CodeEditorHeader.module.scss';
 
-export const CoreEditorHeader = ({
+export const CodeEditorHeader = ({
   title,
   leftNodes,
   rightNodes,
-}: CoreEditorHeaderProps) => {
+}: CodeEditorHeaderProps) => {
   return (
     <div className={styles.editorHeader}>
       <div className={styles.elementContainer}>
