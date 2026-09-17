@@ -32,8 +32,7 @@ export const getToastOptionsFromError = ({
       ? getErrorMessageFromApolloError(errorLike)
       : t`An error occurred.`);
 
-  // Nested handlers often report the same failure; while its toast is visible, a repeat collapses into it.
-  // A conflict carries a record-specific action, so conflicts on different records stay separate.
+  // Nested handlers report the same failure twice; a conflict's action is record-specific, so its record id keeps it apart.
   const defaultDedupeKey =
     typeof children === 'string'
       ? isDefined(conflictingRecord)
