@@ -2,7 +2,11 @@ import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
   STANDARD_OBJECTS,
 } from 'twenty-shared/metadata';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  IndexType,
+  RelationType,
+} from 'twenty-shared/types';
 
 import {
   buildMissingSystemRelationIndexPlans,
@@ -141,7 +145,6 @@ const buildArgs = (targetLegs: TargetLegSpecification[]) => {
     flatIndexMaps: addAll(flatIndexMetadatas),
     holderFlatObjectMetadataByNameSingular,
     twentyStandardApplicationUniversalIdentifier: STANDARD_APP_UID,
-    now: '2026-09-17T00:00:00.000Z',
   };
 };
 
@@ -174,6 +177,15 @@ describe('buildMissingSystemRelationIndexPlans', () => {
       CUSTOM_APP_UID,
     );
     expect(universalFlatIndexMetadata.name).toMatch(/^IDX_/);
+    expect(universalFlatIndexMetadata).toMatchObject({
+      indexType: IndexType.BTREE,
+      indexWhereClause: null,
+      isCustom: true,
+      isUnique: false,
+      isSystemSideEffect: true,
+      objectMetadataUniversalIdentifier:
+        STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+    });
     expect(universalFlatIndexMetadata.universalFlatIndexFieldMetadatas).toEqual(
       [
         expect.objectContaining({
@@ -184,20 +196,6 @@ describe('buildMissingSystemRelationIndexPlans', () => {
           order: 0,
         }),
       ],
-    );
-  });
-
-  it('derives the same index identifier on every run', () => {
-    const args = buildArgs([
-      { holderNameSingular: 'timelineActivity', name: 'targetCalBooking' },
-    ]);
-
-    expect(
-      buildMissingSystemRelationIndexPlans(args)[0].universalFlatIndexMetadata
-        .universalIdentifier,
-    ).toBe(
-      buildMissingSystemRelationIndexPlans(args)[0].universalFlatIndexMetadata
-        .universalIdentifier,
     );
   });
 

@@ -22,14 +22,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
-// Objects synced by applications before the objectSystemRelationsOnCreate
-// handler minted indexes kept their target* legs on timelineActivity,
-// attachment, noteTarget and taskTarget but never got the join column index,
-// so every timeline or attachment read on those objects seq-scans the holder
-// table. The 2-38 provisioning command skips them because both field legs
-// already exist. Physical indexes are created CONCURRENTLY first so large
-// holder tables keep accepting writes, then the migration persists the
-// metadata and its CREATE INDEX IF NOT EXISTS finds them in place.
 @RegisteredWorkspaceCommand('2.42.0', 1789663454000)
 @Command({
   name: 'upgrade:2-42:backfill-missing-system-relation-indexes',
@@ -103,7 +95,6 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
       holderFlatObjectMetadataByNameSingular,
       twentyStandardApplicationUniversalIdentifier:
         twentyStandardFlatApplication.universalIdentifier,
-      now: new Date().toISOString(),
     });
 
     if (plans.length === 0) {
