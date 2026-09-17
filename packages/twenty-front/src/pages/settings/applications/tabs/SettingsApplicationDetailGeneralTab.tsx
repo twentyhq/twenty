@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { IconShoppingBag, IconUpload } from 'twenty-ui/icon';
+import { IconArrowUp, IconShoppingBag } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import {
@@ -84,9 +84,8 @@ export const SettingsApplicationDetailGeneralTab = ({
       ? [
           <Button
             key="upgrade"
-            startIcon={<IconUpload />}
+            startIcon={<IconArrowUp />}
             variant="outline"
-            color="accent"
             size="sm"
             onClick={onUpgrade}
             disabled={isUpgrading}

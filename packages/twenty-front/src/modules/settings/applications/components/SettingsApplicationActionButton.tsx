@@ -18,7 +18,7 @@ export const SettingsApplicationActionButton = ({
   onInstall,
   isInstalling,
 }: SettingsApplicationActionButtonProps) => {
-  if (isDefined(installedApplicationId) && isInstalling !== true) {
+  if (isDefined(installedApplicationId) && !isInstalling) {
     return (
       <Button
         startIcon={<IconSettings />}

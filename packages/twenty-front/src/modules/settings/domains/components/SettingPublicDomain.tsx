@@ -9,6 +9,7 @@ import { useCheckPublicDomainValidRecords } from '@/settings/domains/hooks/useCh
 import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useMutation, useQuery } from '@apollo/client/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -141,7 +142,7 @@ export const SettingPublicDomain = () => {
   const validationSchema = getDomainValidationSchema();
 
   const onCreate = async () => {
-    if (!isDefined(newPublicDomain) || !isDefined(applicationId)) {
+    if (!isDefined(newPublicDomain) || !isNonEmptyString(applicationId)) {
       return;
     }
 

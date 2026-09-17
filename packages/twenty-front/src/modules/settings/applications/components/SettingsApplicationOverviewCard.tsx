@@ -90,7 +90,11 @@ export const SettingsApplicationOverviewCard = ({
   actions,
 }: SettingsApplicationOverviewCardProps) => {
   return (
-    <StyledCard rounded fullWidth>
+    <StyledCard
+      rounded
+      fullWidth
+      backgroundColor={themeCssVariables.background.secondary}
+    >
       <StyledIdentity>
         <AppChip
           applicationId={applicationId}
