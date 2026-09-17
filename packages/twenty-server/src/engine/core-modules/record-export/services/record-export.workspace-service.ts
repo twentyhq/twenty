@@ -17,6 +17,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { z } from 'zod';
 
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -51,10 +52,7 @@ import { RecordExportException } from 'src/engine/core-modules/record-export/rec
 import { type RecordExportColumn } from 'src/engine/core-modules/record-export/types/record-export-column.type';
 import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-modules/record-export/types/record-export-download-token-jwt-payload.type';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
-import {
-  type RecordExport,
-  type RecordExportProgress,
-} from 'src/engine/core-modules/record-export/types/record-export.type';
+import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { buildRecordExportColumns } from 'src/engine/core-modules/record-export/utils/build-record-export-columns.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
@@ -90,6 +88,12 @@ const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheKeyName[] = [
   'flatObjectMetadataMaps',
   'flatFieldMetadataMaps',
 ];
+
+const recordExportProgressSchema = z.object({
+  processedRecordCount: z.number().int().nonnegative(),
+  totalRecordCount: z.number().int().nonnegative().nullable(),
+  errorMessage: z.string().optional(),
+});
 
 @Injectable()
 export class RecordExportWorkspaceService {
@@ -242,7 +246,7 @@ export class RecordExportWorkspaceService {
   ): Promise<RecordExportDTO> {
     const jobs = await this.messageQueueService.getJobs<RecordExport>([jobId]);
     const job = jobs[jobId];
-    const progress = job?.progress as RecordExportProgress | undefined;
+    const progress = recordExportProgressSchema.safeParse(job?.progress).data;
     const update: RecordExportDTO = {
       id: recordExport.id,
       filename: recordExport.filename,

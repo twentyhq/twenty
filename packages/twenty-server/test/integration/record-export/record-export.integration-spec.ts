@@ -565,37 +565,54 @@ describe('record export lifecycle (integration)', () => {
     }
   });
 
-  it('does not offer an uploaded file when its worker failed to complete', async () => {
-    const ready = await exportToCompletion();
-    const queue = global.app.get<MessageQueueService>(
-      getQueueToken(MessageQueue.recordExportQueue),
-    );
-    const claims = await authorization(ready);
-    const recordExport: RecordExport = {
-      ...claims,
-      id: ready.id,
-      parameters: input,
-      createdAt: Date.now(),
-    };
-    jest.spyOn(queue, 'getJobs').mockResolvedValue({
-      job: {
-        id: 'job',
-        data: recordExport,
-        state: 'failed',
-        attemptsMade: 1,
-        timestamp: Date.now(),
-        progress: {
-          processedRecordCount: companies.length,
-          totalRecordCount: companies.length,
-        },
+  it.each([
+    {
+      progress: {
+        processedRecordCount: companies.length,
+        totalRecordCount: companies.length,
       },
-    });
-    const update = await exports.getProgress(recordExport, 'job');
-    expect(await fileExists(await getExport(ready.id))).toBe(true);
-    expect(update.downloadUrl).toBeUndefined();
-    expect(update.errorMessage).toContain('interrupted');
-    expect(update.progress).toBe(99);
-  });
+      expectedProgress: 99,
+    },
+    {
+      progress: {
+        processedRecordCount: 'invalid',
+        totalRecordCount: companies.length,
+        errorMessage: 42,
+      },
+      expectedProgress: 0,
+    },
+    { progress: undefined, expectedProgress: 0 },
+  ])(
+    'does not offer an uploaded file when its worker failed with progress $progress',
+    async ({ progress, expectedProgress }) => {
+      const ready = await exportToCompletion();
+      const queue = global.app.get<MessageQueueService>(
+        getQueueToken(MessageQueue.recordExportQueue),
+      );
+      const claims = await authorization(ready);
+      const recordExport: RecordExport = {
+        ...claims,
+        id: ready.id,
+        parameters: input,
+        createdAt: Date.now(),
+      };
+      jest.spyOn(queue, 'getJobs').mockResolvedValue({
+        job: {
+          id: 'job',
+          data: recordExport,
+          state: 'failed',
+          attemptsMade: 1,
+          timestamp: Date.now(),
+          progress,
+        },
+      });
+      const update = await exports.getProgress(recordExport, 'job');
+      expect(await fileExists(await getExport(ready.id))).toBe(true);
+      expect(update.downloadUrl).toBeUndefined();
+      expect(update.errorMessage).toContain('interrupted');
+      expect(update.progress).toBe(expectedProgress);
+    },
+  );
 
   it('allows concurrent cleanup of the same completed export', async () => {
     const ready = await exportToCompletion();
