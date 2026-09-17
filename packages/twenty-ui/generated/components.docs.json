@@ -126,34 +126,6 @@
     ]
   },
   {
-    "name": "IconButtonGroup",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/icon-button-group",
-    "props": [
-      {
-        "name": "color",
-        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Shared semantic color that overrides the color of buttons in the group."
-      },
-      {
-        "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-      },
-      {
-        "name": "variant",
-        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
-        "required": false,
-        "defaultValue": "ghost",
-        "description": "Shared surface treatment that overrides the variant of buttons in the group."
-      }
-    ]
-  },
-  {
     "name": "IconButton",
     "entryPoint": "twenty-ui/components",
     "slug": "input/icon-button",
@@ -633,6 +605,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Shared semantic color that overrides the color of buttons in the group."
+      },
+      {
+        "name": "framed",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Add a translucent frame with padding and concentric corners. Button sizes and appearance remain independent unless set on the group."
       },
       {
         "name": "render",

@@ -23,13 +23,6 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS,
   },
   {
-    name: 'IconButtonGroup',
-    source: 'components/IconButtonGroup/IconButtonGroup.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'input/icon-button-group',
-    propDescriptions: BUTTON_GROUP_PROP_DESCRIPTIONS,
-  },
-  {
     name: 'IconButton',
     source: 'components/IconButton/IconButton.tsx',
     entryPoint: 'twenty-ui/components',

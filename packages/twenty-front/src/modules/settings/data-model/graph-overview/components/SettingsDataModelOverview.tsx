@@ -32,7 +32,8 @@ import {
   IconPlus,
   IconX,
 } from 'twenty-ui/icon';
-import { IconButtonGroup, LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const nodeTypes: NodeTypes = {
@@ -211,11 +212,14 @@ export const SettingsDataModelOverview = () => {
         proOptions={{ hideAttribution: true }}
       >
         <Background />
-        <IconButtonGroup
+        <ButtonGroup
+          framed
+          attached={false}
           className="react-flow__panel react-flow__controls bottom left horizontal"
           aria-label={t`Diagram controls`}
         >
           <LightIconButton
+            size="xs"
             emphasis="subtle"
             aria-label={t`Zoom in`}
             onClick={() => zoomIn()}
@@ -223,6 +227,7 @@ export const SettingsDataModelOverview = () => {
             <IconPlus />
           </LightIconButton>
           <LightIconButton
+            size="xs"
             emphasis="subtle"
             aria-label={t`Zoom out`}
             onClick={() => zoomOut()}
@@ -230,6 +235,7 @@ export const SettingsDataModelOverview = () => {
             <IconMinus />
           </LightIconButton>
           <LightIconButton
+            size="xs"
             emphasis="subtle"
             aria-label={t`Fit view`}
             onClick={() => fitView()}
@@ -237,6 +243,7 @@ export const SettingsDataModelOverview = () => {
             <IconMaximize />
           </LightIconButton>
           <LightIconButton
+            size="xs"
             emphasis="subtle"
             aria-label={t`Lock diagram`}
             aria-pressed={!isInteractive}
@@ -244,7 +251,7 @@ export const SettingsDataModelOverview = () => {
           >
             {isInteractive ? <IconLockOpen /> : <IconLock />}
           </LightIconButton>
-        </IconButtonGroup>
+        </ButtonGroup>
       </ReactFlow>
     </StyledContainer>
   );

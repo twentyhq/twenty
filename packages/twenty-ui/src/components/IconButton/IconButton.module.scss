@@ -1,14 +1,14 @@
 .button {
   @include square-button;
 
-  --tw-button-size: var(--tw-icon-button-size, var(--t-spacing-8));
+  --tw-button-size: var(--t-spacing-8);
 
   &[data-icon-size='sm'] {
-    --tw-button-size: var(--tw-icon-button-size, var(--t-spacing-6));
+    --tw-button-size: var(--t-spacing-6);
   }
 
   &[data-icon-size='xs'] {
-    --tw-button-size: var(--tw-icon-button-size, var(--t-spacing-5));
+    --tw-button-size: var(--t-spacing-5);
   }
 
   &[data-shape='round'] {

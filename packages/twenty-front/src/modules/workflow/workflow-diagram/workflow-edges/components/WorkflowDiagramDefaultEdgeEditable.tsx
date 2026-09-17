@@ -138,6 +138,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
           >
             <WorkflowDiagramEdgeButtonGroup selected={nodeCreationStarted}>
               <LightIconButton
+                size="xs"
                 emphasis="subtle"
                 aria-label={t`Insert action`}
                 onClick={handleNodeButtonClick}
@@ -146,6 +147,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
               </LightIconButton>
               {deletable !== false && (
                 <LightIconButton
+                  size="xs"
                   emphasis="subtle"
                   aria-label={t`Delete connection`}
                   onClick={handleDeleteBranch}

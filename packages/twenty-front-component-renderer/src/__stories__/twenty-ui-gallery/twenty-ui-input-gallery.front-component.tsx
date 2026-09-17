@@ -1,7 +1,6 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   IconButton,
-  IconButtonGroup,
   LightIconButton,
   LightButton,
   MainButton,
@@ -144,13 +143,13 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'IconButtonGroup',
+    name: 'ButtonGroup (framed)',
     node: (
-      <IconButtonGroup aria-label="Record actions">
-        <LightIconButton aria-label="Delete" emphasis="subtle">
+      <ButtonGroup framed attached={false} aria-label="Record actions">
+        <LightIconButton size="xs" aria-label="Delete" emphasis="subtle">
           <IconTrash />
         </LightIconButton>
-      </IconButtonGroup>
+      </ButtonGroup>
     ),
   },
   {

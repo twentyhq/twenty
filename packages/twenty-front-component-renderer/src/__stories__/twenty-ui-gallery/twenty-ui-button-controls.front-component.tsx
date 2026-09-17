@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   IconButton,
-  IconButtonGroup,
   LightIconButton,
   LightButton,
   MainButton,
@@ -42,12 +41,13 @@ const ButtonControls = () => {
         <Button onClick={handleClick}>First action</Button>
         <Button onClick={handleClick}>Second action</Button>
       </ButtonGroup>
-      <IconButtonGroup aria-label="Icon actions">
-        <LightIconButton aria-label="Add item" onClick={handleClick}>
+      <ButtonGroup framed attached={false} aria-label="Icon actions">
+        <LightIconButton size="xs" aria-label="Add item" onClick={handleClick}>
           <IconPlus />
         </LightIconButton>
         <span>
           <LightIconButton
+            size="xs"
             aria-label="Unavailable item"
             disabled
             onClick={handleClick}
@@ -55,7 +55,7 @@ const ButtonControls = () => {
             <IconPlus />
           </LightIconButton>
         </span>
-      </IconButtonGroup>
+      </ButtonGroup>
       <IconButton
         aria-label="Send"
         shape="round"

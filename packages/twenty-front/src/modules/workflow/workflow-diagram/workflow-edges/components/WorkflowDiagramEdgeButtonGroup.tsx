@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
-import { IconButtonGroup } from 'twenty-ui/components';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledIconButtonGroupContainer = styled.div`
+const StyledButtonGroupContainer = styled.div`
   pointer-events: all;
 `;
 
-const StyledSelectedIconButtonGroupContainer = styled.div`
+const StyledSelectedButtonGroupContainer = styled.div`
   background-color: ${themeCssVariables.color.blue2};
   border-color: ${themeCssVariables.color.blue};
   pointer-events: all;
@@ -23,12 +23,14 @@ export const WorkflowDiagramEdgeButtonGroup = ({
   children,
 }: WorkflowDiagramEdgeButtonGroupProps) => {
   const Container = selected
-    ? StyledSelectedIconButtonGroupContainer
-    : StyledIconButtonGroupContainer;
+    ? StyledSelectedButtonGroupContainer
+    : StyledButtonGroupContainer;
 
   return (
     <Container>
-      <IconButtonGroup className="nodrag nopan">{children}</IconButtonGroup>
+      <ButtonGroup framed attached={false} className="nodrag nopan">
+        {children}
+      </ButtonGroup>
     </Container>
   );
 };

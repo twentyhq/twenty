@@ -10,8 +10,6 @@
 export { IconButton } from './IconButton/IconButton';
 export type { IconButtonProps } from './IconButton/types/IconButtonProps';
 export type { IconButtonSize } from './IconButton/types/IconButtonSize';
-export { IconButtonGroup } from './IconButtonGroup/IconButtonGroup';
-export type { IconButtonGroupProps } from './IconButtonGroup/types/IconButtonGroupProps';
 export { LightButton } from './LightButton/LightButton';
 export type { LightButtonProps } from './LightButton/types/LightButtonProps';
 export { LightIconButton } from './LightIconButton/LightIconButton';
