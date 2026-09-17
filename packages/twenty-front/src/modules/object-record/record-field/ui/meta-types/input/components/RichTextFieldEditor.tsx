@@ -6,7 +6,7 @@ import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
 import { useReplaceBlockEditorContent } from '@/blocknote-editor/hooks/useReplaceBlockEditorContent';
-import { readStoredBlocknote } from '@/blocknote-editor/utils/readStoredBlocknote';
+import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyWithSignedUrls';
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -116,12 +116,12 @@ export const RichTextFieldEditor = ({
       ]
     : null;
 
-  const { blocks: initialBody, hasUnreadableStoredValue } = useMemo(() => {
+  const initialBody = useMemo(() => {
     if (!isDefined(fieldValue)) {
-      return { blocks: undefined, hasUnreadableStoredValue: false };
+      return undefined;
     }
 
-    return readStoredBlocknote(
+    return parseInitialBlocknote(
       fieldValue?.blocknote,
       `Failed to parse body for field ${fieldName} on record ${recordId}`,
     );
@@ -153,7 +153,7 @@ export const RichTextFieldEditor = ({
       persistDebounceMs: 300,
       resetKey: recordId,
       onPersist: ({ blocknote }) => {
-        if (isRecordFieldReadOnly === true || hasUnreadableStoredValue) return;
+        if (isRecordFieldReadOnly === true) return;
 
         const preparedBlocknote = prepareBodyWithSignedUrls(blocknote);
 
