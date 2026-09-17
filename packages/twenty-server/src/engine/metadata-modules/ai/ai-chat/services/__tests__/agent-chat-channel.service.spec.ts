@@ -114,7 +114,13 @@ const buildService = ({
     }),
     assertThreadOwner: jest.fn().mockResolvedValue(undefined),
     getThreadRecipientUserWorkspaceIds: jest.fn().mockResolvedValue([ADMIN_ID]),
-    getParticipantUserWorkspaceIds: jest.fn().mockResolvedValue([ADMIN_ID]),
+    getParticipantUserWorkspaceIdsByThreadId: jest
+      .fn()
+      .mockImplementation(({ threadIds }: { threadIds: string[] }) =>
+        Promise.resolve(
+          new Map(threadIds.map((threadId) => [threadId, [ADMIN_ID]])),
+        ),
+      ),
     broadcastThreadAccessChange: jest.fn().mockResolvedValue(undefined),
   };
   const workspaceEventBroadcaster = {
@@ -301,6 +307,49 @@ describe('AgentChatChannelService', () => {
       expect.objectContaining({
         recipientsBefore: [ADMIN_ID],
         recipientsAfter: undefined,
+        updatedFields: ['channelId'],
+      }),
+    );
+  });
+
+  it('resolves the readers of every thread in a channel with batched lookups on delete', async () => {
+    const { service, threadRepository, agentChatService } = buildService({
+      visibility: AgentChatChannelVisibility.PRIVATE,
+    });
+
+    threadRepository.find.mockResolvedValue([
+      { id: 'thread-1', channelId: CHANNEL_ID },
+      { id: 'thread-2', channelId: CHANNEL_ID },
+    ]);
+
+    await expect(
+      service.deleteChannel({
+        channelId: CHANNEL_ID,
+        userWorkspaceId: ADMIN_ID,
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).resolves.toBe(true);
+
+    expect(
+      agentChatService.getParticipantUserWorkspaceIdsByThreadId,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      agentChatService.getParticipantUserWorkspaceIdsByThreadId,
+    ).toHaveBeenCalledWith({
+      threadIds: ['thread-1', 'thread-2'],
+      workspaceId: WORKSPACE_ID,
+    });
+    expect(
+      agentChatService.getThreadRecipientUserWorkspaceIds,
+    ).not.toHaveBeenCalled();
+    expect(agentChatService.broadcastThreadAccessChange).toHaveBeenCalledTimes(
+      2,
+    );
+    expect(agentChatService.broadcastThreadAccessChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        thread: expect.objectContaining({ id: 'thread-1', channelId: null }),
+        recipientsBefore: [ADMIN_ID, MEMBER_ID],
+        recipientsAfter: [ADMIN_ID],
         updatedFields: ['channelId'],
       }),
     );

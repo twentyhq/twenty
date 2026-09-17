@@ -358,6 +358,35 @@ export class AgentChatService {
     return participants.map((participant) => participant.userWorkspaceId);
   }
 
+  async getParticipantUserWorkspaceIdsByThreadId({
+    threadIds,
+    workspaceId,
+  }: {
+    threadIds: string[];
+    workspaceId: string;
+  }): Promise<Map<string, string[]>> {
+    const participantUserWorkspaceIdsByThreadId = new Map<string, string[]>(
+      threadIds.map((threadId) => [threadId, []]),
+    );
+
+    if (threadIds.length === 0) {
+      return participantUserWorkspaceIdsByThreadId;
+    }
+
+    const participants = await this.participantRepository.find(workspaceId, {
+      where: { threadId: In(threadIds) },
+      select: ['threadId', 'userWorkspaceId'],
+    });
+
+    for (const participant of participants) {
+      participantUserWorkspaceIdsByThreadId
+        .get(participant.threadId)
+        ?.push(participant.userWorkspaceId);
+    }
+
+    return participantUserWorkspaceIdsByThreadId;
+  }
+
   async getThreadById({
     threadId,
     userWorkspaceId,

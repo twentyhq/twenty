@@ -34,6 +34,12 @@ type ChannelActor = {
   workspaceId: string;
 };
 
+type ChannelThreadWithRecipients = {
+  thread: AgentChatThreadEntity;
+  participantUserWorkspaceIds: string[];
+  recipients: string[] | undefined;
+};
+
 const serializeChannelForBroadcast = (channel: AgentChatChannelEntity) => ({
   id: channel.id,
   name: channel.name,
@@ -279,17 +285,17 @@ export class AgentChatChannelService {
 
     await this.broadcastChannel('deleted', channel, recipientsBefore);
 
-    // Threads fall back to private (the FK nulls channelId), so readers who
-    // only had channel access lose the thread.
-    for (const { thread, recipients } of threadsBefore) {
+    // Threads fall back to private (the FK nulls channelId), so only their
+    // participants keep them and readers who came through the channel lose them.
+    for (const {
+      thread,
+      recipients,
+      participantUserWorkspaceIds,
+    } of threadsBefore) {
       await this.agentChatService.broadcastThreadAccessChange({
         thread: { ...thread, channelId: null },
         recipientsBefore: recipients,
-        recipientsAfter:
-          await this.agentChatService.getThreadRecipientUserWorkspaceIds({
-            threadId: thread.id,
-            workspaceId,
-          }),
+        recipientsAfter: participantUserWorkspaceIds,
         updatedFields: ['channelId'],
       });
     }
@@ -672,41 +678,62 @@ export class AgentChatChannelService {
       workspaceId,
     );
 
-    for (const { thread, recipients } of threads) {
+    for (const { thread, recipients, participantUserWorkspaceIds } of threads) {
       await this.agentChatService.broadcastThreadAccessChange({
         thread,
+        // A thread that entered the channel after the snapshot was taken was
+        // only readable by its participants before.
         recipientsBefore: recipientsBeforeByThreadId?.has(thread.id)
           ? recipientsBeforeByThreadId.get(thread.id)
-          : await this.agentChatService.getParticipantUserWorkspaceIds({
-              threadId: thread.id,
-              workspaceId,
-            }),
+          : participantUserWorkspaceIds,
         recipientsAfter: recipients,
         updatedFields: ['channelId'],
       });
     }
   }
 
+  // Readers are resolved for all of a channel's threads in four queries at
+  // most, so admin actions do not fan out one lookup per thread.
   private async getChannelThreadsWithRecipients(
     channelId: string,
     workspaceId: string,
-  ): Promise<
-    { thread: AgentChatThreadEntity; recipients: string[] | undefined }[]
-  > {
-    const threads = await this.threadRepository.find(workspaceId, {
-      where: { channelId },
-    });
+  ): Promise<ChannelThreadWithRecipients[]> {
+    const [channel, threads] = await Promise.all([
+      this.channelRepository.findOne(workspaceId, {
+        where: { id: channelId },
+        select: ['id', 'visibility'],
+      }),
+      this.threadRepository.find(workspaceId, { where: { channelId } }),
+    ]);
 
-    return Promise.all(
-      threads.map(async (thread) => ({
+    const isPublic = channel?.visibility === AgentChatChannelVisibility.PUBLIC;
+
+    const [participantUserWorkspaceIdsByThreadId, memberUserWorkspaceIds] =
+      await Promise.all([
+        this.agentChatService.getParticipantUserWorkspaceIdsByThreadId({
+          threadIds: threads.map((thread) => thread.id),
+          workspaceId,
+        }),
+        isPublic ? [] : this.getMemberUserWorkspaceIds(channelId, workspaceId),
+      ]);
+
+    return threads.map((thread) => {
+      const participantUserWorkspaceIds =
+        participantUserWorkspaceIdsByThreadId.get(thread.id) ?? [];
+
+      return {
         thread,
-        recipients:
-          await this.agentChatService.getThreadRecipientUserWorkspaceIds({
-            threadId: thread.id,
-            workspaceId,
-          }),
-      })),
-    );
+        participantUserWorkspaceIds,
+        recipients: isPublic
+          ? undefined
+          : [
+              ...new Set([
+                ...participantUserWorkspaceIds,
+                ...memberUserWorkspaceIds,
+              ]),
+            ],
+      };
+    });
   }
 
   private async broadcastChannelAccessChange({
