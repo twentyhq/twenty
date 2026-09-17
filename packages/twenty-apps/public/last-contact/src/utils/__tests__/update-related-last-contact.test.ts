@@ -8,8 +8,10 @@ const MESSAGE_ID = '22222222-2222-2222-2222-222222222222';
 const OLDER_MESSAGE_ID = '55555555-5555-5555-5555-555555555555';
 const CALENDAR_EVENT_ID = '66666666-6666-6666-6666-666666666666';
 const COMPANY_ID = '33333333-3333-3333-3333-333333333333';
+const OPPORTUNITY_ID = '77777777-7777-7777-7777-777777777777';
 const OCCURRED_AT = '2026-06-10T09:00:00.000Z';
 const OLDER_OCCURRED_AT = '2026-06-01T09:00:00.000Z';
+const NEWER_OCCURRED_AT = '2026-06-20T09:00:00.000Z';
 
 type Client = {
   query: ReturnType<typeof vi.fn>;
@@ -23,16 +25,24 @@ const buildPage = (nodes: Record<string, unknown>[]) => ({
 
 const buildClient = ({
   people = [],
+  companies = [{ id: COMPANY_ID, lastContactAt: null }],
   opportunities = [],
 }: {
   people?: Record<string, unknown>[];
+  companies?: Record<string, unknown>[];
   opportunities?: Record<string, unknown>[];
 }): Client => ({
-  query: vi.fn().mockImplementation((query) =>
-    query.people
-      ? Promise.resolve({ people: buildPage(people) })
-      : Promise.resolve({ opportunities: buildPage(opportunities) }),
-  ),
+  query: vi.fn().mockImplementation((query) => {
+    if (query.people) {
+      return Promise.resolve({ people: buildPage(people) });
+    }
+
+    if (query.companies) {
+      return Promise.resolve({ companies: buildPage(companies) });
+    }
+
+    return Promise.resolve({ opportunities: buildPage(opportunities) });
+  }),
   mutation: vi.fn().mockResolvedValue({}),
 });
 
@@ -41,40 +51,39 @@ let client: Client;
 beforeEach(() => {
   client = buildClient({
     people: [{ id: PERSON_ID, companyId: COMPANY_ID }],
-    opportunities: [{ id: 'opportunity-1', pointOfContactId: PERSON_ID }],
+    opportunities: [
+      {
+        id: OPPORTUNITY_ID,
+        pointOfContactId: PERSON_ID,
+        lastContactAt: null,
+      },
+    ],
   });
 });
 
-const findMutation = (name: string) =>
-  client.mutation.mock.calls.find((call) => call[0][name])?.[0][name];
+const findUpsertData = (name: string) =>
+  client.mutation.mock.calls.find((call) => call[0][name])?.[0][name].__args
+    .data;
+
+const emailContact = (occurredAt = OCCURRED_AT, itemId = MESSAGE_ID) =>
+  new Map([[PERSON_ID, { occurredAt, itemId, kind: 'email' as const }]]);
 
 describe('updateRelatedLastContactForPeople', () => {
   it('updates the company and point-of-contact opportunities for an email', async () => {
-    await updateRelatedLastContactForPeople(
-      client as never,
-      new Map([
-        [
-          PERSON_ID,
-          { occurredAt: OCCURRED_AT, itemId: MESSAGE_ID, kind: 'email' as const },
-        ],
-      ]),
-    );
+    await updateRelatedLastContactForPeople(client as never, emailContact());
 
     const expectedData = {
       lastContactAt: OCCURRED_AT,
       lastContactItemMessageId: MESSAGE_ID,
       lastContactItemCalendarEventId: null,
     };
-    expect(findMutation('updateCompanies').__args.data).toEqual(expectedData);
-    expect(findMutation('updateCompanies').__args.filter.and[0]).toEqual({
-      id: { eq: COMPANY_ID },
-    });
-    expect(findMutation('updateOpportunities').__args.data).toEqual(
-      expectedData,
-    );
-    expect(findMutation('updateOpportunities').__args.filter.and[0]).toEqual({
-      pointOfContactId: { eq: PERSON_ID },
-    });
+
+    expect(findUpsertData('createCompanies')).toEqual([
+      { id: COMPANY_ID, ...expectedData },
+    ]);
+    expect(findUpsertData('createOpportunities')).toEqual([
+      { id: OPPORTUNITY_ID, ...expectedData },
+    ]);
   });
 
   it('sets the calendar event item for a meeting', async () => {
@@ -92,58 +101,69 @@ describe('updateRelatedLastContactForPeople', () => {
       ]),
     );
 
-    expect(findMutation('updateCompanies').__args.data).toEqual({
-      lastContactAt: OCCURRED_AT,
-      lastContactItemMessageId: null,
-      lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
-    });
+    expect(findUpsertData('createCompanies')).toEqual([
+      {
+        id: COMPANY_ID,
+        lastContactAt: OCCURRED_AT,
+        lastContactItemMessageId: null,
+        lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
+      },
+    ]);
   });
 
-  it('only guards against newer contacts', async () => {
-    await updateRelatedLastContactForPeople(
-      client as never,
-      new Map([
-        [
-          PERSON_ID,
-          { occurredAt: OCCURRED_AT, itemId: MESSAGE_ID, kind: 'email' as const },
-        ],
-      ]),
-    );
-
-    const expectedGuard = {
-      or: [
-        { lastContactAt: { is: 'NULL' } },
-        { lastContactAt: { lt: OCCURRED_AT } },
+  it('leaves a company and an opportunity already contacted more recently alone', async () => {
+    client = buildClient({
+      people: [{ id: PERSON_ID, companyId: COMPANY_ID }],
+      companies: [{ id: COMPANY_ID, lastContactAt: NEWER_OCCURRED_AT }],
+      opportunities: [
+        {
+          id: OPPORTUNITY_ID,
+          pointOfContactId: PERSON_ID,
+          lastContactAt: NEWER_OCCURRED_AT,
+        },
       ],
-    };
-    expect(findMutation('updateCompanies').__args.filter.and[1]).toEqual(
-      expectedGuard,
-    );
-    expect(findMutation('updateOpportunities').__args.filter.and[1]).toEqual(
-      expectedGuard,
-    );
+    });
+
+    await updateRelatedLastContactForPeople(client as never, emailContact());
+
+    expect(findUpsertData('createCompanies')).toBeUndefined();
+    expect(findUpsertData('createOpportunities')).toBeUndefined();
   });
 
   it('skips the company update when the person has no company but still updates opportunities', async () => {
     client = buildClient({
       people: [{ id: PERSON_ID, companyId: null }],
-      opportunities: [{ id: 'opportunity-1', pointOfContactId: PERSON_ID }],
+      opportunities: [
+        {
+          id: OPPORTUNITY_ID,
+          pointOfContactId: PERSON_ID,
+          lastContactAt: null,
+        },
+      ],
     });
 
-    await updateRelatedLastContactForPeople(
-      client as never,
-      new Map([
-        [
-          PERSON_ID,
-          { occurredAt: OCCURRED_AT, itemId: MESSAGE_ID, kind: 'email' as const },
-        ],
-      ]),
-    );
+    await updateRelatedLastContactForPeople(client as never, emailContact());
 
-    expect(findMutation('updateCompanies')).toBeUndefined();
-    expect(findMutation('updateOpportunities').__args.filter.and[0]).toEqual({
-      pointOfContactId: { eq: PERSON_ID },
+    expect(findUpsertData('createCompanies')).toBeUndefined();
+    expect(findUpsertData('createOpportunities')).toEqual([
+      {
+        id: OPPORTUNITY_ID,
+        lastContactAt: OCCURRED_AT,
+        lastContactItemMessageId: MESSAGE_ID,
+        lastContactItemCalendarEventId: null,
+      },
+    ]);
+  });
+
+  it('leaves out a company that no longer exists rather than upserting it back', async () => {
+    client = buildClient({
+      people: [{ id: PERSON_ID, companyId: COMPANY_ID }],
+      companies: [],
     });
+
+    await updateRelatedLastContactForPeople(client as never, emailContact());
+
+    expect(findUpsertData('createCompanies')).toBeUndefined();
   });
 
   it('updates a shared company once, with the most recent contact of its people', async () => {
@@ -172,14 +192,13 @@ describe('updateRelatedLastContactForPeople', () => {
       ]),
     );
 
-    const companyUpdates = client.mutation.mock.calls.filter(
-      ([mutation]) => mutation.updateCompanies,
-    );
-    expect(companyUpdates).toHaveLength(1);
-    expect(companyUpdates[0][0].updateCompanies.__args.data).toEqual({
-      lastContactAt: OCCURRED_AT,
-      lastContactItemMessageId: MESSAGE_ID,
-      lastContactItemCalendarEventId: null,
-    });
+    expect(findUpsertData('createCompanies')).toEqual([
+      {
+        id: COMPANY_ID,
+        lastContactAt: OCCURRED_AT,
+        lastContactItemMessageId: MESSAGE_ID,
+        lastContactItemCalendarEventId: null,
+      },
+    ]);
   });
 });

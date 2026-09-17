@@ -1,10 +1,9 @@
+import { Heading } from '@ui/primitives/typography/Heading/Heading';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconChartPie } from '@ui/icon';
-import { TooltipDelay } from '@ui/primitives/surfaces';
 import { MenuPicker } from '@ui/primitives/navigation/MenuPicker/MenuPicker';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { type ReactNode } from 'react';
-import { H3Title } from '@ui/primitives/typography/H3Title/H3Title';
 
 import styles from './MenuPicker.stories.module.scss';
 
@@ -55,7 +54,11 @@ export const WithoutLabel: Story = {
 };
 
 const SectionTitle = ({ children }: { children?: ReactNode }) => {
-  return <H3Title className={styles.title} title={children} />;
+  return (
+    <Heading className={styles.title} level={3} size="lg">
+      {children}
+    </Heading>
+  );
 };
 
 export const AllStates: Story = {
@@ -107,7 +110,7 @@ export const AllStates: Story = {
           icon={IconChartPie}
           label="Tooltip"
           tooltipContent="Tooltip"
-          tooltipDelay={TooltipDelay.mediumDelay}
+          tooltipDelay={500}
         />
       </div>
     </div>

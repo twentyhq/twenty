@@ -23,6 +23,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   type IconComponent,
   IconFlag,
@@ -35,9 +36,7 @@ import {
   IconWorld,
 } from 'twenty-ui/icon';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { RoundedLink } from 'twenty-ui/primitives/navigation';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import {
   type AdminAiModelConfig,
   SetAdminAiModelEnabledDocument,
@@ -320,8 +319,8 @@ export const SettingsAdminAiProviderDetail = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={provider?.label ?? providerName ?? ''}
             description={provider?.npm ?? ''}
           />
@@ -333,10 +332,10 @@ export const SettingsAdminAiProviderDetail = () => {
               gridAutoColumns="120px 1fr"
             />
           )}
-        </Section>
+        </Section.Root>
 
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Models`}
             description={
               isCustomProvider
@@ -403,11 +402,11 @@ export const SettingsAdminAiProviderDetail = () => {
               variant="outline"
             >{t`Add Model`}</NavigationButton>
           )}
-        </Section>
+        </Section.Root>
 
         {isCustomProvider && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Danger zone`}
               description={t`Remove this provider and disconnect all its models`}
             />
@@ -417,7 +416,7 @@ export const SettingsAdminAiProviderDetail = () => {
               variant="outline"
               color="danger"
             >{t`Remove provider`}</Button>
-          </Section>
+          </Section.Root>
         )}
       </SettingsPageContainer>
 

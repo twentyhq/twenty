@@ -10,9 +10,9 @@ import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   DeleteUserAccountDocument,
@@ -70,7 +70,7 @@ export const DeleteAccount = () => {
 
   return (
     <>
-      <H2Title
+      <Section.Header
         title={t`Danger zone`}
         description={
           userHasMultipleWorkspaces
