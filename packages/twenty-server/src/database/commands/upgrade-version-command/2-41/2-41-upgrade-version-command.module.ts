@@ -5,7 +5,6 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { CorrectStandardFieldAcronymCasingCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789331219041-correct-standard-field-acronym-casing.command';
 import { BackfillWorkspaceWorkflowIdOnWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789350000002-backfill-workspace-workflow-id-on-workflows.command';
 import { BackfillCoreVersionPointersCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789370101009-backfill-core-version-pointers.command';
-import { BackfillWorkspaceWorkflowVersionIdCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789642800001-backfill-workspace-workflow-version-id.command';
 import { MakeStandardChildObjectsInheritedCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789373200001-make-standard-child-objects-inherited.command';
 import { MakeNotesAndTasksInheritTheirTargetsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789373200002-make-notes-and-tasks-inherit-their-targets.command';
 import { BackfillTimelineActivityMessageCampaignIndexesCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789461462000-backfill-timeline-activity-message-campaign-indexes.command';
@@ -39,7 +38,6 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     CorrectStandardFieldAcronymCasingCommand,
     BackfillWorkspaceWorkflowIdOnWorkflowsCommand,
     BackfillCoreVersionPointersCommand,
-    BackfillWorkspaceWorkflowVersionIdCommand,
     MakeStandardChildObjectsInheritedCommand,
     MakeNotesAndTasksInheritTheirTargetsCommand,
     BackfillTimelineActivityMessageCampaignIndexesCommand,
