@@ -10,6 +10,7 @@ import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai
 import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { sanitizeModelDisplayName } from 'src/engine/metadata-modules/ai/ai-chat/utils/sanitize-model-display-name.util';
 import {
   AiException,
   AiExceptionCode,
@@ -221,7 +222,9 @@ export class AgentChatThreadParticipantService {
 
     return {
       isShared: participants.length > 1 || isDefined(channel),
-      channelName: channel?.name ?? null,
+      channelName: isDefined(channel)
+        ? sanitizeModelDisplayName(channel.name)
+        : null,
       participantNames: [...participantNames.values()],
     };
   }
@@ -253,7 +256,9 @@ export class AgentChatThreadParticipantService {
 
         return [
           userWorkspace.id,
-          fullName.length > 0 ? fullName : (userWorkspace.user?.email ?? ''),
+          sanitizeModelDisplayName(
+            fullName.length > 0 ? fullName : (userWorkspace.user?.email ?? ''),
+          ),
         ];
       }),
     );

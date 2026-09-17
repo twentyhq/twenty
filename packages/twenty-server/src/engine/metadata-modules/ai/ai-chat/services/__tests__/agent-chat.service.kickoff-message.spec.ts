@@ -39,6 +39,7 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
     {} as never,
     {} as never,
     {} as never,
+    {} as never,
   );
 
   return { service, messageRepository, turnRepository, messagePartRepository };

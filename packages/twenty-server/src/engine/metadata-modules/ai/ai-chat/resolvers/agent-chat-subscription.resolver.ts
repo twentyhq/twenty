@@ -78,7 +78,12 @@ export class AgentChatSubscriptionResolver {
 
     let lastReapCheckAt = 0;
 
-    return wrapAsyncIteratorWithLifecycle(iterator, {
+    // Access is granted when the subscription opens, so a reader who is
+    // later removed from the thread or its channel has to be cut off here:
+    // the Redis channel is shared by every reader of the thread.
+    const wrappedIterator: AsyncIterableIterator<{
+      onAgentChatEvent: AgentChatEventDTO;
+    }> = wrapAsyncIteratorWithLifecycle(iterator, {
       initialValue: keepalivePayload,
       onHeartbeat: async () => {
         if (
@@ -86,6 +91,19 @@ export class AgentChatSubscriptionResolver {
           AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS
         ) {
           lastReapCheckAt = Date.now();
+
+          const hasAccess = await this.hasThreadAccess(
+            workspace.id,
+            threadId,
+            userWorkspaceId,
+          );
+
+          if (!hasAccess) {
+            await wrappedIterator.return?.();
+
+            return false;
+          }
+
           await this.reapWatchedStreamIfDead(workspace.id, threadId);
         }
 
@@ -99,6 +117,24 @@ export class AgentChatSubscriptionResolver {
       },
       heartbeatIntervalMs: AGENT_CHAT_KEEPALIVE_INTERVAL_MS,
     });
+
+    return wrappedIterator;
+  }
+
+  private async hasThreadAccess(
+    workspaceId: string,
+    threadId: string,
+    userWorkspaceId: string,
+  ): Promise<boolean> {
+    const thread = await this.threadRepository
+      .findOne(workspaceId, {
+        where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
+        select: ['id'],
+      })
+      // A transient database error must not tear down every open stream.
+      .catch(() => ({ id: threadId }));
+
+    return isDefined(thread);
   }
 
   private async reapWatchedStreamIfDead(

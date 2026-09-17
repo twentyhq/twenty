@@ -49,7 +49,9 @@ const buildService = ({
     delete: jest.fn().mockResolvedValue({ affected: 1 }),
     insertAndReturnOne: jest.fn(),
     update: jest.fn(),
+    withManager: jest.fn(),
   };
+  channelRepository.withManager.mockReturnValue(channelRepository);
   const memberRepository = {
     findOne: jest
       .fn()
@@ -85,13 +87,23 @@ const buildService = ({
       andWhere: jest.fn().mockReturnThis(),
       getExists: jest.fn().mockResolvedValue(false),
     }),
+    withManager: jest.fn(),
   };
+  memberRepository.withManager.mockReturnValue(memberRepository);
   const threadRepository = {
     find: jest.fn().mockResolvedValue([]),
     update: jest.fn().mockResolvedValue({ affected: 1 }),
   };
+  const entityManager = { query: jest.fn().mockResolvedValue(undefined) };
   const userWorkspaceRepository = {
     findOne: jest.fn().mockResolvedValue({ id: OUTSIDER_ID }),
+    manager: {
+      transaction: jest
+        .fn()
+        .mockImplementation((run: (manager: unknown) => Promise<unknown>) =>
+          run(entityManager),
+        ),
+    },
   };
   const agentChatService = {
     getThreadById: jest.fn().mockResolvedValue({
@@ -125,6 +137,7 @@ const buildService = ({
     threadRepository,
     agentChatService,
     workspaceEventBroadcaster,
+    entityManager,
   };
 };
 
@@ -187,8 +200,8 @@ describe('AgentChatChannelService', () => {
     });
   });
 
-  it('keeps the last admin in the channel', async () => {
-    const { service } = buildService();
+  it('keeps the last admin in the channel, under a per-channel lock', async () => {
+    const { service, entityManager, memberRepository } = buildService();
 
     await expect(
       service.leaveChannel({
@@ -199,6 +212,40 @@ describe('AgentChatChannelService', () => {
     ).rejects.toMatchObject({
       code: AiExceptionCode.CHANNEL_ACTION_NOT_ALLOWED,
     });
+    expect(entityManager.query).toHaveBeenCalledWith(
+      expect.stringContaining('pg_advisory_xact_lock'),
+      [`agentChatChannel:${CHANNEL_ID}`],
+    );
+    expect(memberRepository.delete).not.toHaveBeenCalled();
+  });
+
+  it('creates the channel and its first admin in one transaction', async () => {
+    const { service, channelRepository, memberRepository, entityManager } =
+      buildService();
+
+    channelRepository.insertAndReturnOne.mockResolvedValue(
+      buildChannel(AgentChatChannelVisibility.PRIVATE),
+    );
+
+    await service.createChannel({
+      input: {
+        name: ' Deal room ',
+        visibility: AgentChatChannelVisibility.PRIVATE,
+      },
+      userWorkspaceId: ADMIN_ID,
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(channelRepository.withManager).toHaveBeenCalledWith(entityManager);
+    expect(memberRepository.withManager).toHaveBeenCalledWith(entityManager);
+    expect(channelRepository.insertAndReturnOne).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      expect.objectContaining({ name: 'Deal room' }),
+    );
+    expect(memberRepository.insertAndReturnOne).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      expect.objectContaining({ role: AgentChatChannelMemberRole.ADMIN }),
+    );
   });
 
   it('lets a member leave a private channel and drops the channel from their list', async () => {

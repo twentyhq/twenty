@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { QueryFailedError, Repository } from 'typeorm';
+import { type EntityManager, QueryFailedError, Repository } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
@@ -128,22 +128,34 @@ export class AgentChatChannelService {
   }: ChannelActor & { input: ChannelInput }): Promise<AgentChatChannelEntity> {
     const name = this.normalizeChannelName(input.name);
 
-    const channel = await this.insertChannelOrThrow(workspaceId, {
-      name,
-      visibility: input.visibility ?? AgentChatChannelVisibility.PUBLIC,
-      targetObjectMetadataId: input.targetObjectMetadataId ?? null,
-      targetRecordId: input.targetRecordId ?? null,
-      createdByUserWorkspaceId: userWorkspaceId,
-    });
+    // A channel without an admin cannot be managed, so the channel and its
+    // first admin are written in one transaction.
+    const { channel, adminMember } =
+      await this.userWorkspaceRepository.manager.transaction(
+        async (entityManager) => {
+          const createdChannel = await this.insertChannelOrThrow(
+            workspaceId,
+            {
+              name,
+              visibility: input.visibility ?? AgentChatChannelVisibility.PUBLIC,
+              targetObjectMetadataId: input.targetObjectMetadataId ?? null,
+              targetRecordId: input.targetRecordId ?? null,
+              createdByUserWorkspaceId: userWorkspaceId,
+            },
+            entityManager,
+          );
 
-    const adminMember = await this.memberRepository.insertAndReturnOne(
-      workspaceId,
-      {
-        channelId: channel.id,
-        userWorkspaceId,
-        role: AgentChatChannelMemberRole.ADMIN,
-      },
-    );
+          const createdAdminMember = await this.memberRepository
+            .withManager(entityManager)
+            .insertAndReturnOne(workspaceId, {
+              channelId: createdChannel.id,
+              userWorkspaceId,
+              role: AgentChatChannelMemberRole.ADMIN,
+            });
+
+          return { channel: createdChannel, adminMember: createdAdminMember };
+        },
+      );
 
     const recipients = this.getChannelRecipients(channel, [userWorkspaceId]);
 
@@ -189,6 +201,20 @@ export class AgentChatChannelService {
       ...(isDefined(input.visibility) ? { visibility: input.visibility } : {}),
     };
 
+    const isVisibilityChanging =
+      isDefined(updates.visibility) &&
+      updates.visibility !== channel.visibility;
+
+    // Thread readers depend on the visibility, so their pre-change sets are
+    // captured while the old visibility is still what the database says.
+    const threadRecipientsBefore = isVisibilityChanging
+      ? new Map(
+          (
+            await this.getChannelThreadsWithRecipients(channelId, workspaceId)
+          ).map(({ thread, recipients }) => [thread.id, recipients]),
+        )
+      : undefined;
+
     if (Object.keys(updates).length > 0) {
       await this.updateChannelOrThrow(
         workspaceId,
@@ -210,10 +236,11 @@ export class AgentChatChannelService {
       updatedFields: Object.keys(updates),
     });
 
-    if (channel.visibility !== updatedChannel.visibility) {
+    if (isVisibilityChanging) {
       await this.broadcastChannelThreadsAccessChange({
         channelId,
         workspaceId,
+        recipientsBeforeByThreadId: threadRecipientsBefore,
       });
     }
 
@@ -392,32 +419,11 @@ export class AgentChatChannelService {
       );
     }
 
-    if (member.role === AgentChatChannelMemberRole.ADMIN) {
-      if (!isLeaving) {
-        throw new AiException(
-          'Channel admins cannot be removed by someone else',
-          AiExceptionCode.CHANNEL_ACTION_NOT_ALLOWED,
-        );
-      }
-
-      const otherAdminExists = await this.memberRepository
-        .createQueryBuilder('member')
-        .where('member.workspaceId = :workspaceId', { workspaceId })
-        .andWhere('member.channelId = :channelId', { channelId })
-        .andWhere('member.role = :role', {
-          role: AgentChatChannelMemberRole.ADMIN,
-        })
-        .andWhere('member.userWorkspaceId != :userWorkspaceId', {
-          userWorkspaceId,
-        })
-        .getExists();
-
-      if (!otherAdminExists) {
-        throw new AiException(
-          'The last admin cannot leave a channel; delete it instead',
-          AiExceptionCode.CHANNEL_ACTION_NOT_ALLOWED,
-        );
-      }
+    if (member.role === AgentChatChannelMemberRole.ADMIN && !isLeaving) {
+      throw new AiException(
+        'Channel admins cannot be removed by someone else',
+        AiExceptionCode.CHANNEL_ACTION_NOT_ALLOWED,
+      );
     }
 
     const memberIdsBefore = await this.getMemberUserWorkspaceIds(
@@ -429,11 +435,12 @@ export class AgentChatChannelService {
       memberIdsBefore,
     );
 
-    const result = await this.memberRepository.delete(workspaceId, {
-      id: member.id,
+    const wasDeleted = await this.deleteMemberKeepingAnAdmin({
+      member,
+      workspaceId,
     });
 
-    if ((result.affected ?? 0) === 0) {
+    if (!wasDeleted) {
       return false;
     }
 
@@ -523,6 +530,56 @@ export class AgentChatChannelService {
     return updatedThread;
   }
 
+  // Two admins leaving at the same time must not both pass the "another
+  // admin remains" check, so the check and the delete run under a per-channel
+  // advisory lock inside one transaction.
+  private async deleteMemberKeepingAnAdmin({
+    member,
+    workspaceId,
+  }: {
+    member: AgentChatChannelMemberEntity;
+    workspaceId: string;
+  }): Promise<boolean> {
+    return this.userWorkspaceRepository.manager.transaction(
+      async (entityManager) => {
+        await entityManager.query(
+          'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+          [`agentChatChannel:${member.channelId}`],
+        );
+
+        const memberRepository =
+          this.memberRepository.withManager(entityManager);
+
+        if (member.role === AgentChatChannelMemberRole.ADMIN) {
+          const otherAdminExists = await memberRepository
+            .createQueryBuilder('member')
+            .where('member.workspaceId = :workspaceId', { workspaceId })
+            .andWhere('member.channelId = :channelId', {
+              channelId: member.channelId,
+            })
+            .andWhere('member.role = :role', {
+              role: AgentChatChannelMemberRole.ADMIN,
+            })
+            .andWhere('member.id != :memberId', { memberId: member.id })
+            .getExists();
+
+          if (!otherAdminExists) {
+            throw new AiException(
+              'The last admin cannot leave a channel; delete it instead',
+              AiExceptionCode.CHANNEL_ACTION_NOT_ALLOWED,
+            );
+          }
+        }
+
+        const result = await memberRepository.delete(workspaceId, {
+          id: member.id,
+        });
+
+        return (result.affected ?? 0) > 0;
+      },
+    );
+  }
+
   private async insertMember({
     channel,
     userWorkspaceId,
@@ -542,11 +599,31 @@ export class AgentChatChannelService {
       return existingMember;
     }
 
-    const member = await this.memberRepository.insertAndReturnOne(workspaceId, {
-      channelId: channel.id,
-      userWorkspaceId,
-      role,
-    });
+    let member: AgentChatChannelMemberEntity;
+
+    try {
+      member = await this.memberRepository.insertAndReturnOne(workspaceId, {
+        channelId: channel.id,
+        userWorkspaceId,
+        role,
+      });
+    } catch (error) {
+      // A concurrent join or invite already created the row.
+      if (!this.isUniqueViolation(error)) {
+        throw error;
+      }
+
+      const concurrentlyInsertedMember = await this.memberRepository.findOne(
+        workspaceId,
+        { where: { channelId: channel.id, userWorkspaceId } },
+      );
+
+      if (!isDefined(concurrentlyInsertedMember)) {
+        throw error;
+      }
+
+      return concurrentlyInsertedMember;
+    }
 
     const recipients = this.getChannelRecipients(
       channel,
@@ -719,12 +796,12 @@ export class AgentChatChannelService {
   private async insertChannelOrThrow(
     workspaceId: string,
     values: QueryDeepPartialEntity<AgentChatChannelEntity>,
+    entityManager: EntityManager,
   ): Promise<AgentChatChannelEntity> {
     try {
-      return await this.channelRepository.insertAndReturnOne(
-        workspaceId,
-        values,
-      );
+      return await this.channelRepository
+        .withManager(entityManager)
+        .insertAndReturnOne(workspaceId, values);
     } catch (error) {
       throw this.mapUniqueViolation(error);
     }
@@ -746,12 +823,16 @@ export class AgentChatChannelService {
     }
   }
 
-  private mapUniqueViolation(error: unknown): unknown {
-    if (
+  private isUniqueViolation(error: unknown): boolean {
+    return (
       error instanceof QueryFailedError &&
       (error as QueryFailedError & { code?: string }).code ===
         POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
-    ) {
+    );
+  }
+
+  private mapUniqueViolation(error: unknown): unknown {
+    if (this.isUniqueViolation(error)) {
       return new AiException(
         'A channel with this name already exists',
         AiExceptionCode.CHANNEL_NAME_ALREADY_EXISTS,

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import {
   ASK_QUESTIONS_TOOL_NAME,
@@ -8,7 +9,7 @@ import {
   ExtendedUIMessage,
 } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In, IsNull, Not } from 'typeorm';
+import { DataSource, In, IsNull, Not } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
@@ -89,6 +90,8 @@ export class AgentChatService {
     private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
     @InjectWorkspaceScopedRepository(AgentChatChannelMemberEntity)
     private readonly channelMemberRepository: WorkspaceScopedRepository<AgentChatChannelMemberEntity>,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   async createThread({
@@ -102,20 +105,29 @@ export class AgentChatService {
     id?: string;
     title?: string;
   }) {
-    const savedThread = await this.threadRepository.insertAndReturnOne(
-      workspaceId,
-      {
-        ...(isDefined(id) ? { id } : {}),
-        ...(isDefined(title) ? { title } : {}),
-        userWorkspaceId,
+    // The owner row is what grants access, so a thread must never exist
+    // without it: both rows land in one transaction.
+    const savedThread = await this.coreDataSource.transaction(
+      async (entityManager) => {
+        const thread = await this.threadRepository
+          .withManager(entityManager)
+          .insertAndReturnOne(workspaceId, {
+            ...(isDefined(id) ? { id } : {}),
+            ...(isDefined(title) ? { title } : {}),
+            userWorkspaceId,
+          });
+
+        await this.participantRepository
+          .withManager(entityManager)
+          .insert(workspaceId, {
+            threadId: thread.id,
+            userWorkspaceId,
+            role: AgentChatThreadParticipantRole.OWNER,
+          });
+
+        return thread;
       },
     );
-
-    await this.participantRepository.insert(workspaceId, {
-      threadId: savedThread.id,
-      userWorkspaceId,
-      role: AgentChatThreadParticipantRole.OWNER,
-    });
 
     await this.broadcastThreadCreatedToRecipients({
       thread: savedThread,
