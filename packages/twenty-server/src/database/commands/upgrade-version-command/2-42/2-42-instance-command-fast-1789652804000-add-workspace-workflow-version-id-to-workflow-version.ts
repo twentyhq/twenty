@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.42.0', 1789642900000)
+@RegisteredInstanceCommand('2.42.0', 1789652804000)
 export class AddWorkspaceWorkflowVersionIdToWorkflowVersionFastInstanceCommand
   implements FastInstanceCommand
 {

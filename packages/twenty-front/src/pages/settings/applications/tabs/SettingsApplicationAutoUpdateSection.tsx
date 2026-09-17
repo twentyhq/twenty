@@ -8,7 +8,7 @@ import { IconRefresh } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateApplicationDocument } from '~/generated-metadata/graphql';
 
-export const SettingsApplicationGeneralSection = ({
+export const SettingsApplicationAutoUpdateSection = ({
   applicationId,
   autoUpgrade,
 }: {
@@ -37,7 +37,7 @@ export const SettingsApplicationGeneralSection = ({
 
   return (
     <Section.Root>
-      <Section.Header title={t`General`} />
+      <Section.Header title={t`Auto update`} />
       <Card rounded fullWidth>
         <SettingsOptionCardContentSwitch
           Icon={IconRefresh}

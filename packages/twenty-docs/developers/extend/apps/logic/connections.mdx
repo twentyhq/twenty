@@ -25,7 +25,7 @@ export default defineConnectionProvider({
   displayName: 'Linear',
   icon: 'IconBrandLinear',
   // Optional: a logo bundled in your app's public/ folder, shown next to the
-  // provider in the per-app settings tab.
+  // provider in the app's General tab.
   logo: 'public/linear-logomark.svg',
   type: 'oauth',
   oauth: {
@@ -82,11 +82,11 @@ export default defineApplication({
 Key points:
 
 - `name` is the unique identifier string used in `listConnections({ providerName })` (kebab-case, must match `^[a-z][a-z0-9-]*$`).
-- `displayName` shows in the per-app settings tab and in the AI tool list.
-- `logo` is a path to an asset bundled in your app's `public/` folder, served through the app's public assets. When omitted, the settings tab falls back to a placeholder built from `displayName`.
+- `displayName` shows in the app's General tab and in the AI tool list.
+- `logo` is a path to an asset bundled in your app's `public/` folder, served through the app's public assets. When omitted, the General tab falls back to a placeholder built from `displayName`.
 - `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
 - Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
-- Until both `serverVariables` are filled in, the per-app settings tab shows a "needs server admin" hint and the "Add connection" button is disabled.
+- Until both `serverVariables` are filled in, the app's General tab shows a "needs server admin" hint and the "Add connection" button is disabled.
 - `type: 'oauth'` is the only supported value today. The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside `oauth`.
 
 The OAuth callback URL your provider needs to whitelist is:

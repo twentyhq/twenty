@@ -1,6 +1,10 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { chunk } from 'src/utils/chunk';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
+import { type RecordUpsert } from 'src/utils/upsert-records-in-batches';
+
+const PAGE_SIZE = 200;
 
 export type InteractionKind = 'email' | 'meeting';
 export type InteractionDirection = 'outbound' | 'inbound';
@@ -10,6 +14,14 @@ export type Interaction = {
   itemId: string;
   workspaceMemberId: string | null;
 } & ({ kind: 'email'; direction: InteractionDirection } | { kind: 'meeting' });
+
+export type PersonLastContactState = {
+  lastContactAt?: string | null;
+  lastOutboundAt?: string | null;
+  lastInboundAt?: string | null;
+  lastEmail?: { receivedAt: string | null } | null;
+  lastMeeting?: { startsAt: string | null } | null;
+};
 
 const isNewer = (
   candidate: string,
@@ -39,38 +51,64 @@ export const pickLatestInteraction = (
   interactions: Interaction[],
 ): Interaction | undefined => pickLatest(interactions);
 
-export const updatePersonForInteractions = async (
+export const collectPersonLastContactState = async (
   client: CoreApiClient,
+  personIds: string[],
+): Promise<Map<string, PersonLastContactState>> => {
+  const stateByPersonId = new Map<string, PersonLastContactState>();
+
+  for (const ids of chunk(personIds, PAGE_SIZE)) {
+    let after: string | undefined;
+
+    do {
+      const { people } = await executeWithRetry(() =>
+        client.query({
+          people: {
+            __args: { filter: { id: { in: ids } }, first: PAGE_SIZE, after },
+            edges: {
+              node: {
+                id: true,
+                lastContactAt: true,
+                lastOutboundAt: true,
+                lastInboundAt: true,
+                lastEmail: { receivedAt: true },
+                lastMeeting: { startsAt: true },
+              },
+            },
+            pageInfo: { hasNextPage: true, endCursor: true },
+          },
+        }),
+      );
+
+      for (const edge of people?.edges ?? []) {
+        const { id, ...state } = edge.node as PersonLastContactState & {
+          id?: string | null;
+        };
+
+        if (id) {
+          stateByPersonId.set(id, state);
+        }
+      }
+
+      after = people?.pageInfo.hasNextPage
+        ? (people.pageInfo.endCursor ?? undefined)
+        : undefined;
+    } while (after);
+  }
+
+  return stateByPersonId;
+};
+
+export const buildPersonLastContactUpdate = (
   personId: string,
+  current: PersonLastContactState,
   interactions: Interaction[],
-): Promise<void> => {
+): RecordUpsert | undefined => {
   const latestContact = pickLatest(interactions);
 
   if (!latestContact) {
-    return;
+    return undefined;
   }
-
-  const { person } = await executeWithRetry(() =>
-    client.query({
-      person: {
-        __args: { filter: { id: { eq: personId } } },
-        id: true,
-        lastContactAt: true,
-        lastOutboundAt: true,
-        lastInboundAt: true,
-        lastEmail: { receivedAt: true },
-        lastMeeting: { startsAt: true },
-      },
-    }),
-  );
-
-  const current = (person ?? {}) as {
-    lastContactAt?: string | null;
-    lastOutboundAt?: string | null;
-    lastInboundAt?: string | null;
-    lastEmail?: { receivedAt: string | null } | null;
-    lastMeeting?: { startsAt: string | null } | null;
-  };
 
   const data: Record<string, string | null> = {};
   const occurredAt = latestContact.occurredAt;
@@ -124,63 +162,8 @@ export const updatePersonForInteractions = async (
   }
 
   if (Object.keys(data).length === 0) {
-    return;
+    return undefined;
   }
 
-  if ('lastContactAt' in data) {
-    const { updatePeople } = await executeWithRetry(() =>
-      client.mutation({
-        updatePeople: {
-          __args: {
-            data,
-            filter: {
-              and: [
-                { id: { eq: personId } },
-                {
-                  or: [
-                    { lastContactAt: { is: 'NULL' } },
-                    { lastContactAt: { lt: occurredAt } },
-                  ],
-                },
-              ],
-            },
-          },
-          id: true,
-        },
-      }),
-    );
-
-    if (Array.isArray(updatePeople) && updatePeople.length > 0) {
-      return;
-    }
-
-    const directionalData: Record<string, string | null> = { ...data };
-    delete directionalData.lastContactAt;
-    delete directionalData.lastContactById;
-    delete directionalData.lastContactItemMessageId;
-    delete directionalData.lastContactItemCalendarEventId;
-
-    if (Object.keys(directionalData).length === 0) {
-      return;
-    }
-
-    await executeWithRetry(() =>
-      client.mutation({
-        updatePerson: {
-          __args: { id: personId, data: directionalData },
-          id: true,
-        },
-      }),
-    );
-    return;
-  }
-
-  await executeWithRetry(() =>
-    client.mutation({
-      updatePerson: {
-        __args: { id: personId, data },
-        id: true,
-      },
-    }),
-  );
+  return { id: personId, ...data };
 };

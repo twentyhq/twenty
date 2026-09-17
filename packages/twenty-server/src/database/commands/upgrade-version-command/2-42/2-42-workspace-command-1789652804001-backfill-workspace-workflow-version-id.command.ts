@@ -8,7 +8,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-@RegisteredWorkspaceCommand('2.42.0', 1789642900001)
+@RegisteredWorkspaceCommand('2.42.0', 1789652804001)
 @Command({
   name: 'upgrade:2-42:backfill-workspace-workflow-version-id',
   description:

@@ -55,13 +55,18 @@ describe('recomputeOpportunitiesLastContact', () => {
 
     await recomputeOpportunitiesLastContact(client as never, [OPPORTUNITY_ID]);
 
-    expect(client.mutation.mock.calls[0][0].updateOpportunity.__args).toEqual({
-      id: OPPORTUNITY_ID,
-      data: {
-        lastContactAt: OCCURRED_AT,
-        lastContactItemMessageId: MESSAGE_ID,
-        lastContactItemCalendarEventId: null,
-      },
+    expect(
+      client.mutation.mock.calls[0][0].createOpportunities.__args,
+    ).toEqual({
+      upsert: true,
+      data: [
+        {
+          id: OPPORTUNITY_ID,
+          lastContactAt: OCCURRED_AT,
+          lastContactItemMessageId: MESSAGE_ID,
+          lastContactItemCalendarEventId: null,
+        },
+      ],
     });
   });
 
@@ -74,15 +79,18 @@ describe('recomputeOpportunitiesLastContact', () => {
 
     expect(client.query).toHaveBeenCalledTimes(1);
     expect(
-      client.mutation.mock.calls[0][0].updateOpportunity.__args.data,
-    ).toEqual({
-      lastContactAt: null,
-      lastContactItemMessageId: null,
-      lastContactItemCalendarEventId: null,
-    });
+      client.mutation.mock.calls[0][0].createOpportunities.__args.data,
+    ).toEqual([
+      {
+        id: OPPORTUNITY_ID,
+        lastContactAt: null,
+        lastContactItemMessageId: null,
+        lastContactItemCalendarEventId: null,
+      },
+    ]);
   });
 
-  it('resolves a whole batch with one opportunity query and one people query', async () => {
+  it('resolves a whole batch with one opportunity query, one people query and one write', async () => {
     client = buildClient({
       opportunities: [
         { id: OPPORTUNITY_ID, pointOfContactId: PERSON_ID },
@@ -104,9 +112,10 @@ describe('recomputeOpportunitiesLastContact', () => {
     ]);
 
     expect(client.query).toHaveBeenCalledTimes(2);
+    expect(client.mutation).toHaveBeenCalledTimes(1);
     expect(
-      client.mutation.mock.calls.map(
-        ([mutation]) => mutation.updateOpportunity.__args.id,
+      client.mutation.mock.calls[0][0].createOpportunities.__args.data.map(
+        (record: { id: string }) => record.id,
       ),
     ).toEqual([OPPORTUNITY_ID, OTHER_OPPORTUNITY_ID]);
   });
