@@ -95,7 +95,10 @@ export const CommandMenuContextProviderContent = ({
         ),
       )
       .map((item) =>
-        resolveCommandMenuItemPinning(item, commandMenuContextApiForAvailability),
+        resolveCommandMenuItemPinning(
+          item,
+          commandMenuContextApiForAvailability,
+        ),
       );
 
     return mergeGlobalRecordCreationCommandMenuItems({
