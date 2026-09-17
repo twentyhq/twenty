@@ -380,6 +380,46 @@ describe('InboxItemToolCallService', () => {
       expect(inboxTransitionService.transition).not.toHaveBeenCalled();
     });
 
+    // A skip that lands while the plan is being read is the person's veto on
+    // that step alone, not another run taking over the plan
+    it('should skip a call rejected after the plan was read and run the rest', async () => {
+      const first = buildToolCall({ id: 'first' });
+      const second = buildToolCall({
+        id: 'second',
+        position: 1,
+        toolName: 'create_task',
+      });
+      const rejectedFirst = {
+        ...first,
+        status: InboxItemToolCallStatus.REJECTED,
+      };
+
+      givenToolCalls(
+        [first, second],
+        [
+          rejectedFirst,
+          { ...second, status: InboxItemToolCallStatus.EXECUTED },
+        ],
+      );
+      inboxItemToolCallRepository.findOne.mockImplementation(
+        async (_workspaceId: string, options: { where: { id: string } }) =>
+          options.where.id === 'first'
+            ? rejectedFirst
+            : { ...second, resolvedAt: claimTimeOf('second') },
+      );
+      inboxItemToolCallRepository.update.mockResolvedValueOnce({ affected: 0 });
+
+      await service.runAll({ ...actorArgs, inboxItemId: INBOX_ITEM_ID });
+
+      expect(inboxToolCallExecutionService.execute).toHaveBeenCalledTimes(1);
+      expect(inboxToolCallExecutionService.execute).toHaveBeenCalledWith(
+        expect.objectContaining({ toolName: 'create_task' }),
+      );
+      expect(inboxTransitionService.transition).toHaveBeenCalledWith(
+        expect.objectContaining({ transition: { kind: 'CLEAR' } }),
+      );
+    });
+
     // Two people pressing the button at once must not send the email twice
     it('should not run a call another run claimed first', async () => {
       const first = buildToolCall({ id: 'first' });

@@ -149,6 +149,18 @@ export class InboxItemToolCallService {
       );
 
       if ((claim.affected ?? 0) === 0) {
+        // A step skipped since the plan was read is the person's call and
+        // leaves the rest of the plan theirs to run; anything else that took
+        // the row is another run, which owns the rest.
+        const currentToolCall = await this.inboxItemToolCallRepository.findOne(
+          workspaceId,
+          { where: { id: toolCall.id } },
+        );
+
+        if (currentToolCall?.status === InboxItemToolCallStatus.REJECTED) {
+          continue;
+        }
+
         break;
       }
 
