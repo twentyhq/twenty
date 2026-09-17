@@ -1,8 +1,13 @@
 import { type ViewManifest } from 'twenty-shared/application';
-import { FieldMetadataType, ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 
 import { fromViewManifestToMissingUniversalFlatViewGroups } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-missing-universal-flat-view-groups.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+
+type MainGroupByFieldMetadata = Pick<
+  UniversalFlatFieldMetadata,
+  'options' | 'isNullable'
+>;
 
 const APP_UID = '11111111-1111-4111-8111-111111111111';
 const VIEW_UID = '22222222-2222-4222-8222-222222222222';
@@ -17,8 +22,7 @@ const VIEW_MANIFEST: ViewManifest = {
   mainGroupByFieldMetadataUniversalIdentifier: MARKET_FIELD_UID,
 };
 
-const MARKET_FIELD_METADATA = {
-  type: FieldMetadataType.SELECT,
+const MARKET_FIELD_METADATA: MainGroupByFieldMetadata = {
   isNullable: true,
   options: [
     {
@@ -36,14 +40,14 @@ const MARKET_FIELD_METADATA = {
       position: 1,
     },
   ],
-} as unknown as UniversalFlatFieldMetadata;
+};
 
 const computeMissingViewGroups = ({
   viewManifest = VIEW_MANIFEST,
   mainGroupByFieldMetadata = MARKET_FIELD_METADATA,
 }: {
   viewManifest?: ViewManifest;
-  mainGroupByFieldMetadata?: UniversalFlatFieldMetadata;
+  mainGroupByFieldMetadata?: MainGroupByFieldMetadata;
 } = {}) =>
   fromViewManifestToMissingUniversalFlatViewGroups({
     viewManifest,

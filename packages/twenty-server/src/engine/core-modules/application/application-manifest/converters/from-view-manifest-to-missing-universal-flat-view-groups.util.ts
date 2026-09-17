@@ -15,7 +15,10 @@ export const fromViewManifestToMissingUniversalFlatViewGroups = ({
   now,
 }: {
   viewManifest: ViewManifest;
-  mainGroupByFieldMetadata: FlatFieldMetadata | UniversalFlatFieldMetadata;
+  mainGroupByFieldMetadata: Pick<
+    FlatFieldMetadata | UniversalFlatFieldMetadata,
+    'options' | 'isNullable'
+  >;
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatViewGroup[] => {
