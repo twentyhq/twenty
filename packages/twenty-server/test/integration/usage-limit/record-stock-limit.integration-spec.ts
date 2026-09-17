@@ -17,8 +17,6 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const SCHEMA_NAME = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const HEADROOM = 2;
 
-// Rockets rather than people: the seeded workspace runs a workflow on every
-// person upsert, and its run row is itself a record the stock charges.
 describe('Record stock limit', () => {
   let usageLimitRepository: Repository<UsageLimitEntity>;
   let redis: Awaited<ReturnType<typeof createClient>>;
@@ -60,8 +58,6 @@ describe('Record stock limit', () => {
       }),
     );
 
-  // The same recount the stock service runs when its counter is cold: every
-  // object table of the schema, timeline activities left out.
   const countRecords = async (): Promise<number> => {
     const tables: { table_name: string }[] = await global.testDataSource.query(
       `SELECT table_name FROM information_schema.tables
@@ -89,8 +85,6 @@ describe('Record stock limit', () => {
     }
   };
 
-  // A cold counter re-warms from the table counts, so every test starts with
-  // the full headroom whatever the previous one charged or released.
   const dropStockCounter = () =>
     dropKeys(`*{${SEED_APPLE_WORKSPACE_ID}}:stock:RECORD:*`);
 
