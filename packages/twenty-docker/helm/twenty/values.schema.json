@@ -69,7 +69,10 @@
       "properties": {
         "create": { "type": "boolean" },
         "name": { "type": "string" },
-        "annotations": { "type": "object" }
+        "annotations": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
       }
     },
 

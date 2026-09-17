@@ -9,7 +9,7 @@ fullnameOverride: ""
 
 # ServiceAccount used by the server and worker pods
 serviceAccount:
-  create: true
+  create: false  # set true to create a dedicated ServiceAccount instead of using the namespace's "default"
   name: ""  # defaults to the chart fullname if not set
   annotations: {}
   # eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/twenty-role
