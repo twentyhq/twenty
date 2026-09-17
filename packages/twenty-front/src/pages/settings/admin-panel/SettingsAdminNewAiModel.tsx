@@ -19,11 +19,10 @@ import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { Info, useToast } from 'twenty-ui/primitives/feedback';
 import { Checkbox, Switch } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
@@ -352,8 +351,8 @@ export const SettingsAdminNewAiModel = () => {
             />
           )}
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Model ID`}
               description={
                 showModelSelect
@@ -404,10 +403,10 @@ export const SettingsAdminNewAiModel = () => {
                 )}
               />
             )}
-          </Section>
+          </Section.Root>
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Label`}
               description={t`Display name for the model`}
             />
@@ -427,10 +426,10 @@ export const SettingsAdminNewAiModel = () => {
                 />
               )}
             />
-          </Section>
+          </Section.Root>
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Pricing`}
               description={t`Cost per million tokens (USD)`}
             />
@@ -462,10 +461,10 @@ export const SettingsAdminNewAiModel = () => {
                 )}
               />
             </StyledComboInputContainer>
-          </Section>
+          </Section.Root>
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Cache pricing`}
               description={t`Cost per million tokens for cached input (USD)`}
             />
@@ -497,10 +496,10 @@ export const SettingsAdminNewAiModel = () => {
                 )}
               />
             </StyledComboInputContainer>
-          </Section>
+          </Section.Root>
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Limits`}
               description={t`Token limits for context and output`}
             />
@@ -540,10 +539,10 @@ export const SettingsAdminNewAiModel = () => {
                 )}
               />
             </StyledComboInputContainer>
-          </Section>
+          </Section.Root>
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Supported input types`}
               description={t`Types of content this model can process besides text`}
             />
@@ -589,10 +588,10 @@ export const SettingsAdminNewAiModel = () => {
                 </StyledModalitiesContainer>
               )}
             />
-          </Section>
+          </Section.Root>
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Supports reasoning`}
               description={t`Whether this model supports chain-of-thought reasoning`}
             />
@@ -607,7 +606,7 @@ export const SettingsAdminNewAiModel = () => {
                 />
               )}
             />
-          </Section>
+          </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
     </form>

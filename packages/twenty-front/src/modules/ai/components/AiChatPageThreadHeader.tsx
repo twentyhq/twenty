@@ -3,7 +3,8 @@ import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -117,11 +118,12 @@ export const AiChatPageThreadHeader = ({
           onRenameRequested={startRename}
           clickableComponent={
             <IconButton
-              Icon={IconDotsVertical}
-              size="small"
-              variant="secondary"
-              ariaLabel={t`Chat actions`}
-            />
+              size="sm"
+              variant="outline"
+              aria-label={t`Chat actions`}
+            >
+              <IconDotsVertical />
+            </IconButton>
           }
         />
       </StyledActions>

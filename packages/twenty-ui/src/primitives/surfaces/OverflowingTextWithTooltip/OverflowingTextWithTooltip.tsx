@@ -1,22 +1,12 @@
-import {
-  type KeyboardEvent,
-  type ReactNode,
-  useId,
-  useRef,
-  useState,
-} from 'react';
-import { createPortal } from 'react-dom';
+import { memo, type MouseEvent, type ReactNode, useRef, useState } from 'react';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
+import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
+import { type TooltipSide } from '@ui/primitives/surfaces/Tooltip/types/TooltipSide';
 import { LinkifiedText } from '@ui/primitives/typography/LinkifiedText/LinkifiedText';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { isDefined } from '@ui/utilities/utils/isDefined';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from '@ui/primitives/surfaces/AppTooltip/AppTooltip';
 
 import styles from './OverflowingTextWithTooltip.module.scss';
 
@@ -24,8 +14,8 @@ type OverflowingTextWithTooltipProps = {
   size?: 'large' | 'small';
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
-  tooltipDelay?: TooltipDelay;
-  tooltipPlace?: TooltipPosition;
+  tooltipDelay?: number;
+  tooltipPlace?: TooltipSide;
   alwaysShowTooltip?: boolean;
   isFocusable?: boolean;
 } & (
@@ -39,142 +29,124 @@ type OverflowingTextWithTooltipProps = {
     }
 );
 
-export const OverflowingTextWithTooltip = ({
-  size = 'small',
-  text,
-  isTooltipMultiline,
-  displayedMaxRows,
-  tooltipContent,
-  tooltipDelay = TooltipDelay.mediumDelay,
-  tooltipPlace = TooltipPosition.Bottom,
-  alwaysShowTooltip = false,
-  isFocusable = false,
-}: OverflowingTextWithTooltipProps) => {
-  const textElementId = `title-id-${useId().replace(/:/g, '')}`;
+export const OverflowingTextWithTooltip = memo(
+  function OverflowingTextWithTooltip({
+    size = 'small',
+    text,
+    isTooltipMultiline,
+    displayedMaxRows,
+    tooltipContent,
+    tooltipDelay = 500,
+    tooltipPlace = 'bottom',
+    alwaysShowTooltip = false,
+    isFocusable = false,
+  }: OverflowingTextWithTooltipProps) {
+    const textRef = useRef<HTMLDivElement>(null);
 
-  const textRef = useRef<HTMLDivElement>(null);
+    const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
+    const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
-  const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
-  const [shouldRenderTooltip, setShouldRenderTooltip] = useState(false);
+    const updateOverflowState = () => {
+      const textElement = textRef.current;
+      const isOverflowing =
+        isDefined(textElement) &&
+        (textElement.scrollHeight > textElement.clientHeight ||
+          textElement.scrollWidth > textElement.clientWidth);
 
-  const handleShowTooltip = () => {
-    const isOverflowing = textRef.current
-      ? textRef.current?.scrollHeight > textRef.current?.clientHeight ||
-        textRef.current.scrollWidth > textRef.current.clientWidth
-      : false;
+      setIsTitleOverflowing(isOverflowing);
 
-    setIsTitleOverflowing(isOverflowing);
-    setShouldRenderTooltip(true);
-  };
+      return isOverflowing;
+    };
 
-  const handleHideTooltip = () => {
-    setIsTitleOverflowing(false);
-    setShouldRenderTooltip(false);
-  };
+    const handleOpenChange = (open: boolean) => {
+      if (!open) {
+        setIsTooltipOpen(false);
 
-  const handleMouseLeave = () => {
-    if (isFocusable && document.activeElement === textRef.current) {
-      return;
-    }
+        return;
+      }
 
-    handleHideTooltip();
-  };
+      const isOverflowing = updateOverflowState();
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (
-      event.key === 'Escape' &&
-      shouldRenderTooltip &&
-      (isTitleOverflowing || alwaysShowTooltip)
-    ) {
+      setIsTooltipOpen(isOverflowing || alwaysShowTooltip);
+    };
+
+    const handleTextClick = () => {
+      textRef.current?.focus();
+      handleOpenChange(true);
+    };
+
+    const handleTooltipClick = (event: MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
-      handleHideTooltip();
-    }
-  };
+      event.preventDefault();
+    };
 
-  const handleTextClick = () => {
-    textRef.current?.focus();
-    handleShowTooltip();
-  };
+    const tooltipText = isNonEmptyString(tooltipContent)
+      ? tooltipContent
+      : isNonEmptyString(text)
+        ? text
+        : null;
 
-  const handleTooltipClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-  };
+    const isMultiline = isDefined(displayedMaxRows);
 
-  const tooltipText = isNonEmptyString(tooltipContent)
-    ? tooltipContent
-    : isNonEmptyString(text)
-      ? text
-      : null;
+    return (
+      <Tooltip.Root
+        open={isTooltipOpen && isDefined(tooltipText)}
+        onOpenChange={(...openChangeArguments) => {
+          const [open, eventDetails] = openChangeArguments;
+          const shouldKeepTooltipOpen =
+            !open &&
+            eventDetails.reason === 'trigger-hover' &&
+            isFocusable &&
+            document.activeElement === textRef.current;
 
-  return (
-    <>
-      {isDefined(displayedMaxRows) ? (
-        <Text
-          lineClamp={displayedMaxRows || 1}
-          data-testid="tooltip"
-          data-content-overflowing={isTitleOverflowing ? '' : undefined}
-          className={clsx(
-            styles.overflowingMultilineText,
-            size === 'large' && styles.large,
-          )}
-          ref={textRef}
-          id={textElementId}
-          tabIndex={isFocusable ? 0 : undefined}
-          onFocus={isFocusable ? handleShowTooltip : undefined}
-          onBlur={isFocusable ? handleHideTooltip : undefined}
-          onKeyDown={isFocusable ? handleKeyDown : undefined}
-          onClick={isFocusable ? handleTextClick : undefined}
-          onMouseEnter={handleShowTooltip}
-          onMouseLeave={handleMouseLeave}
+          if (shouldKeepTooltipOpen) {
+            eventDetails.cancel();
+
+            return;
+          }
+
+          handleOpenChange(open);
+        }}
+        disabled={
+          !isDefined(tooltipText) || (!isTitleOverflowing && !alwaysShowTooltip)
+        }
+      >
+        <Tooltip.Trigger
+          delay={tooltipDelay}
+          closeOnClick={false}
+          render={
+            <Text
+              {...(isMultiline
+                ? { lineClamp: displayedMaxRows || 1 }
+                : { truncate: true })}
+              data-testid="tooltip"
+              data-content-overflowing={isTitleOverflowing ? '' : undefined}
+              className={clsx(
+                isMultiline
+                  ? styles.overflowingMultilineText
+                  : styles.overflowingText,
+                size === 'large' && styles.large,
+              )}
+              ref={textRef}
+              tabIndex={isFocusable ? 0 : undefined}
+              onPointerEnter={updateOverflowState}
+              onFocus={isFocusable ? () => handleOpenChange(true) : undefined}
+              onClick={isFocusable ? handleTextClick : undefined}
+            >
+              {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
+            </Text>
+          }
+        />
+        <Tooltip.Popup
+          className={isTooltipMultiline ? styles.multilineTooltip : undefined}
+          sideOffset={5}
+          side={tooltipPlace}
+          positionMethod="absolute"
+          onClick={handleTooltipClick}
         >
-          {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
-        </Text>
-      ) : (
-        <Text
-          truncate
-          data-testid="tooltip"
-          data-content-overflowing={isTitleOverflowing ? '' : undefined}
-          className={clsx(
-            styles.overflowingText,
-            size === 'large' && styles.large,
-          )}
-          ref={textRef}
-          id={textElementId}
-          tabIndex={isFocusable ? 0 : undefined}
-          onFocus={isFocusable ? handleShowTooltip : undefined}
-          onBlur={isFocusable ? handleHideTooltip : undefined}
-          onKeyDown={isFocusable ? handleKeyDown : undefined}
-          onClick={isFocusable ? handleTextClick : undefined}
-          onMouseEnter={handleShowTooltip}
-          onMouseLeave={handleMouseLeave}
-        >
-          {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
-        </Text>
-      )}
-
-      {shouldRenderTooltip &&
-        (isTitleOverflowing || alwaysShowTooltip) &&
-        isDefined(tooltipText) &&
-        createPortal(
-          // oxlint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-          <div onClick={handleTooltipClick}>
-            <AppTooltip
-              anchorSelect={`#${textElementId}`}
-              title={tooltipText}
-              className={
-                isTooltipMultiline ? styles.multilineTooltip : undefined
-              }
-              offset={5}
-              noArrow
-              place={tooltipPlace}
-              positionStrategy="absolute"
-              delay={tooltipDelay}
-              isOpen={true}
-            />
-          </div>,
-          document.body,
-        )}
-    </>
-  );
-};
+          {tooltipText}
+        </Tooltip.Popup>
+      </Tooltip.Root>
+    );
+  },
+);

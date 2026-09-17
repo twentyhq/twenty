@@ -1,12 +1,10 @@
 import { styled } from '@linaria/react';
-import React, { lazy, Suspense, useContext } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
-import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { useReadableNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useReadableNavigationMenuItems';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
@@ -58,14 +56,7 @@ export const WorkspaceSectionContainer = ({
   const views = useAtomStateValue(viewsSelector);
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const { addToNavigationFallbackDestination } = useContext(
-    NavigationDropTargetContext,
-  );
-
   const flatItems = items.filter((item) => !isDefined(item.folderId));
-  const isAddToNavigationDropTargetVisible =
-    addToNavigationFallbackDestination?.droppableId ===
-    NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS;
 
   const folderChildrenById = items.reduce<Map<string, NavigationMenuItem[]>>(
     (acc, item) => {
@@ -125,7 +116,6 @@ export const WorkspaceSectionContainer = ({
       onToggle={() => toggleNavigationSection()}
       rightIcon={rightIcon}
       alwaysShowRightIcon={isLayoutCustomizationModeEnabled}
-      forceExpanded={isAddToNavigationDropTargetVisible}
       contentWrapper={(children) => (
         <StyledWorkspaceSectionContentGapOffset>
           {children}

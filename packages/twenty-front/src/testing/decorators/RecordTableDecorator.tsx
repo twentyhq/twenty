@@ -9,6 +9,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -242,10 +243,12 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
             <InternalTableContextProviders
               objectMetadataItem={objectMetadataItem}
             >
-              <InternalTableStateLoaderEffect
-                objectMetadataItem={objectMetadataItem}
-              />
-              <Story />
+              <RecordCreationFormProvider>
+                <InternalTableStateLoaderEffect
+                  objectMetadataItem={objectMetadataItem}
+                />
+                <Story />
+              </RecordCreationFormProvider>
             </InternalTableContextProviders>
           </CommandMenuComponentInstanceContext.Provider>
         </RecordComponentInstanceContextsWrapper>

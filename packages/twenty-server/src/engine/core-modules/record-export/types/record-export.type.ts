@@ -1,4 +1,3 @@
-import { type RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 
 export type RecordExport = {
@@ -8,15 +7,20 @@ export type RecordExport = {
   workspaceMemberId: string;
   parameters: RecordExportParameters;
   filename: string;
-  status: RecordExportStatus;
+  createdAt: number;
+};
+
+export type RecordExportProgress = {
   processedRecordCount: number;
   totalRecordCount: number | null;
-  jobId: string | null;
-  attemptId: string | null;
-  filePath: string | null;
-  downloadStarted: boolean;
-  errorMessage: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  expiresAt: Date;
+  errorMessage?: string;
 };
+
+export type RecordExportResult = RecordExportProgress & {
+  fileId: string;
+};
+
+export type RecordExportDownload = RecordExport &
+  RecordExportResult & {
+    expiresAt: number;
+  };

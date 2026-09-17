@@ -14,6 +14,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useIdentifyActiveNavigationMenuItems = (): {
   activeNavigationMenuItemIds: string[];
@@ -26,6 +28,9 @@ export const useIdentifyActiveNavigationMenuItems = (): {
   const views = useAtomStateValue(viewsSelector);
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
+  );
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
   );
   const { activeObjectMetadataItems, objectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -73,6 +78,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
               objectMetadataItems,
               views,
               lastVisitedViewPerObjectMetadataItem,
+              isInitialObjectViewEnabled,
             });
           const lastClickedObjectMetadataId =
             getObjectMetadataForNavigationMenuItem(
@@ -110,6 +116,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
               objectMetadataItems,
               views,
               lastVisitedViewPerObjectMetadataItem,
+              isInitialObjectViewEnabled,
             });
             return link === currentPath;
           })
@@ -186,6 +193,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
       currentObjectMetadataItem,
       isOnRecordShowPage,
       contextStoreCurrentViewId,
+      isInitialObjectViewEnabled,
     ]);
 
   return { activeNavigationMenuItemIds, objectMetadataIdForOpenedSection };
