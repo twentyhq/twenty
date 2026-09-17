@@ -10,10 +10,11 @@ import { enqueueFathomMediaDownloadRequest } from 'src/logic-functions/utils/enq
 import { findCallRecordingMediaState } from 'src/logic-functions/utils/find-call-recording-media-state.util';
 import { findMatchingCalendarEvent } from 'src/logic-functions/utils/find-matching-calendar-event.util';
 import { formatFathomSummary } from 'src/logic-functions/utils/format-fathom-summary.util';
-import { getFathomMeetingTitle } from 'src/logic-functions/utils/get-fathom-meeting-title.util';
+import { generateFathomCallRecordingTitle } from 'src/logic-functions/utils/generate-fathom-call-recording-title.util';
 import { mapFathomTranscriptToEntries } from 'src/logic-functions/utils/map-fathom-transcript-to-entries.util';
 import { upsertCallRecording } from 'src/logic-functions/utils/upsert-call-recording.util';
 import { upsertFathomRecordingImport } from 'src/logic-functions/utils/upsert-fathom-recording-import.util';
+import { isDefined } from 'src/utils/is-defined';
 
 export const syncFathomMeetingToCallRecording = async ({
   coreApiClient,
@@ -39,7 +40,6 @@ export const syncFathomMeetingToCallRecording = async ({
     coreApiClient,
     meeting,
   });
-  const title = getFathomMeetingTitle(meeting);
   const callRecordingId = computeCallRecordingIdForFathomMeeting(
     meeting.recordingId,
   );
@@ -47,8 +47,10 @@ export const syncFathomMeetingToCallRecording = async ({
     coreApiClient,
     callRecordingId,
   });
+  const title = !isDefined(existingCallRecording)
+    ? await generateFathomCallRecordingTitle(meeting)
+    : undefined;
   const sharedFields: CallRecordingSyncFields = {
-    ...(isNonEmptyString(title) ? { title } : {}),
     recordingRequestStatus: 'REQUESTED',
     startedAt: meeting.recordingStartTime.toISOString(),
     endedAt: meeting.recordingEndTime.toISOString(),
@@ -77,7 +79,10 @@ export const syncFathomMeetingToCallRecording = async ({
   const upsertResult = await upsertCallRecording({
     coreApiClient,
     callRecordingId,
-    createFields: createCallRecordingFields,
+    createFields: {
+      ...createCallRecordingFields,
+      ...(isNonEmptyString(title) ? { title } : {}),
+    },
     updateFields: updateCallRecordingFields,
     expectedUpdatedAt: existingCallRecording?.updatedAt,
   });

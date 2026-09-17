@@ -5,6 +5,8 @@
 ## ✨ What you get
 
 - **Fathom transcripts, summaries, and action items saved when available**
+- **Impromptu titles keep Fathom's name with a short topic from the summary,
+  or the recording's date and time in UTC when a topic is unavailable**
 - **Recording video, or audio for audio-only calls, on the same record**
 - **Saved to a Call Recording, with calendar links for clear matches**
 - **New meetings synced as they happen**
@@ -13,8 +15,8 @@
 
 ## 💳 Billing
 
-**Free to run**: no per-seat, per-recording or per-import charge. AI actions use
-AI credits on the model's token usage.
+**Free to run**: no per-seat, per-recording or per-import charge. AI actions,
+including impromptu title generation, use AI credits on the model's token usage.
 
 ## 📌 Heads up
 
