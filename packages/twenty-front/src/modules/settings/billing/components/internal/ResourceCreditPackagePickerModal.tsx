@@ -171,11 +171,14 @@ const StyledCurrentValueText = styled.span`
 `;
 
 const StyledModalActions = styled.div`
-  display: grid;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  grid-auto-columns: minmax(0, 1fr);
-  grid-auto-flow: column;
   margin-top: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledActionSlot = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
 const PackageSummaryLabelText = ({ label }: { label: string }) => (
@@ -409,13 +412,22 @@ export const ResourceCreditPackagePickerModal = ({
         </StyledPackageDetails>
       </StyledPackageCard>
       <StyledModalActions>
-        <Button onClick={onCancel} variant="outline">{t`Cancel`}</Button>
-        <Button
-          onClick={onConfirm}
-          disabled={isConfirmDisabled}
-          variant="solid"
-          color="accent"
-        >{t`Confirm`}</Button>
+        <StyledActionSlot>
+          <Button
+            onClick={onCancel}
+            fullWidth
+            variant="outline"
+          >{t`Cancel`}</Button>
+        </StyledActionSlot>
+        <StyledActionSlot>
+          <Button
+            onClick={onConfirm}
+            fullWidth
+            disabled={isConfirmDisabled}
+            variant="solid"
+            color="accent"
+          >{t`Confirm`}</Button>
+        </StyledActionSlot>
       </StyledModalActions>
     </ModalStatefulWrapper>
   );

@@ -46,11 +46,14 @@ const StyledFields = styled.div`
 `;
 
 const StyledModalActions = styled.div`
-  display: grid;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  grid-auto-columns: minmax(0, 1fr);
-  grid-auto-flow: column;
   margin-top: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledActionSlot = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
 export const SettingsAdminWorkspaceCreditGrantModal = ({
@@ -223,13 +226,22 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
       </StyledFields>
 
       <StyledModalActions>
-        <Button onClick={handleClose} variant="outline">{t`Cancel`}</Button>
-        <Button
-          onClick={handleSubmit}
-          disabled={!isAmountValid || loading}
-          variant="solid"
-          color="accent"
-        >{t`Grant`}</Button>
+        <StyledActionSlot>
+          <Button
+            onClick={handleClose}
+            fullWidth
+            variant="outline"
+          >{t`Cancel`}</Button>
+        </StyledActionSlot>
+        <StyledActionSlot>
+          <Button
+            onClick={handleSubmit}
+            fullWidth
+            disabled={!isAmountValid || loading}
+            variant="solid"
+            color="accent"
+          >{t`Grant`}</Button>
+        </StyledActionSlot>
       </StyledModalActions>
     </ModalStatefulWrapper>
   );
