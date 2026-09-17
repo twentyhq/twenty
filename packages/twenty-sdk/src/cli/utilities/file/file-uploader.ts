@@ -22,6 +22,9 @@ export type FileUploadFailure = {
 
 const DIRECT_UPLOAD_CONCURRENCY = 10;
 
+// resource paths are sent to the server, which rejects backslashes (Windows path.relative output)
+const toPosixPath = (value: string): string => value.split('\\').join('/');
+
 const isMissingDirectUploadMutationError = (error: unknown): boolean => {
   const message = serializeError(error);
 
@@ -73,7 +76,7 @@ export class FileUploader {
   ): Promise<FileUploadFailure[]> {
     const builtPathByRelativePath = new Map<string, string>(
       batch.map(({ builtPath }) => [
-        relative(OUTPUT_DIR, builtPath),
+        toPosixPath(relative(OUTPUT_DIR, builtPath)),
         builtPath,
       ]),
     );
@@ -81,7 +84,7 @@ export class FileUploader {
     const uploadRequests: ApplicationFileUploadRequest[] = batch.map(
       ({ builtPath, fileFolder }) => ({
         fileFolder,
-        filePath: relative(OUTPUT_DIR, builtPath),
+        filePath: toPosixPath(relative(OUTPUT_DIR, builtPath)),
         size: fs.statSync(path.join(this.appPath, builtPath)).size,
       }),
     );
@@ -174,7 +177,7 @@ export class FileUploader {
     await this.runWithConcurrency(batch, async ({ builtPath, fileFolder }) => {
       const result = await this.apiService.uploadFile({
         filePath: path.join(this.appPath, builtPath),
-        builtHandlerPath: relative(OUTPUT_DIR, builtPath),
+        builtHandlerPath: toPosixPath(relative(OUTPUT_DIR, builtPath)),
         fileFolder,
         applicationUniversalIdentifier: this.applicationUniversalIdentifier,
       });

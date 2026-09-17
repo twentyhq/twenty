@@ -334,16 +334,6 @@ const innerAppDevOnce = async (
     })),
   );
 
-  if (uploadFailures.length > 0) {
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.SYNC_FAILED,
-        message: formatUploadFailures(uploadFailures).join('\n'),
-      },
-    };
-  }
-
   onProgress?.('Syncing manifest...');
 
   const syncResult = await apiService.syncApplication(manifest, {
@@ -352,6 +342,20 @@ const innerAppDevOnce = async (
 
   if (!syncResult.success) {
     return { success: false, error: buildSyncError(syncResult, verbose) };
+  }
+
+  // metadata is applied above even when some files fail to upload, so objects/fields/views are never silently skipped
+  if (uploadFailures.length > 0) {
+    return {
+      success: false,
+      error: {
+        code: APP_ERROR_CODES.SYNC_FAILED,
+        message: [
+          'Metadata synced, but some files failed to upload:',
+          ...formatUploadFailures(uploadFailures),
+        ].join('\n'),
+      },
+    };
   }
 
   if (!planRendered) {
