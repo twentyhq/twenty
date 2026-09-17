@@ -103,15 +103,15 @@ describe('2-5 slow instance command 1798000008000 - EncryptSensitiveConfigStorag
 
     expect(value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)).toBe(true);
     expect(
-      secretEncryptionService.decryptVersionedOrThrow(value as EncryptedString),
+      secretEncryptionService.decryptVersionedOrThrow(
+        value as EncryptedString,
+      ),
     ).toBe(plaintext);
   });
 
   it('leaves enc:v2 rows untouched and is idempotent across re-runs', async () => {
     const plaintext = 'smtp-already-v2-username';
-    const preexistingV2 = secretEncryptionService.encryptVersioned(
-      plaintext as PlaintextString,
-    );
+    const preexistingV2 = secretEncryptionService.encryptVersioned(plaintext as PlaintextString);
     const id = await seedRow(preexistingV2);
 
     await command.runDataMigration(dataSource);

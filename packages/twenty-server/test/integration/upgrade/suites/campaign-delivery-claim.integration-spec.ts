@@ -53,13 +53,7 @@ describe('campaignDelivery claim protocol (integration)', () => {
       `INSERT INTO "core"."campaignDelivery"
          ("id", "workspaceId", "campaignId", "personId", "recipientEmail", "state")
        VALUES ($1, $2, $3, $4, $5, 'QUEUED')`,
-      [
-        deliveryId,
-        workspaceId,
-        v4(),
-        v4(),
-        `claim-test-${deliveryId}@example.com`,
-      ],
+      [deliveryId, workspaceId, v4(), v4(), `claim-test-${deliveryId}@example.com`],
     );
 
     seededDeliveryIds.push(deliveryId);
