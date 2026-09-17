@@ -112,7 +112,8 @@ const CoreWorkflowShowContent = ({
   const requestedVersionId = searchParams.get('version');
   const currentVersion =
     versions.coreWorkflowVersions.find(({ status }) => status === 'DRAFT') ??
-    versions.coreWorkflowVersions[0];
+    versions.coreWorkflowVersions.find(({ status }) => status === 'ACTIVE') ??
+    versions.coreWorkflowVersions[versions.coreWorkflowVersions.length - 1];
   const selectedVersion = isDefined(requestedVersionId)
     ? versions.coreWorkflowVersions.find(({ id }) => id === requestedVersionId)
     : currentVersion;
