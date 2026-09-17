@@ -11,15 +11,10 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK } from 'src/modules/emailing/constants/campaign-engagement-capture-rate-limit-per-link.constant';
+import { CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_REQUESTER } from 'src/modules/emailing/constants/campaign-engagement-capture-rate-limit-per-requester.constant';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
-
-const CAPTURE_RATE_LIMIT_PER_LINK = { maxRequests: 60, windowMs: 60_000 };
-
-const CAPTURE_RATE_LIMIT_PER_REQUESTER = {
-  maxRequests: 600,
-  windowMs: 60_000,
-};
 
 @Injectable()
 export class CampaignEngagementCaptureService {
@@ -72,15 +67,15 @@ export class CampaignEngagementCaptureService {
       await this.throttlerService.tokenBucketThrottleOrThrow(
         `campaign-engagement:requester:${requesterIp ?? 'unknown-requester'}`,
         1,
-        CAPTURE_RATE_LIMIT_PER_REQUESTER.maxRequests,
-        CAPTURE_RATE_LIMIT_PER_REQUESTER.windowMs,
+        CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_REQUESTER.maxRequests,
+        CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_REQUESTER.windowMs,
       );
 
       await this.throttlerService.tokenBucketThrottleOrThrow(
         `campaign-engagement:${payload.deliveryId}:${payload.shortLinkId}`,
         1,
-        CAPTURE_RATE_LIMIT_PER_LINK.maxRequests,
-        CAPTURE_RATE_LIMIT_PER_LINK.windowMs,
+        CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK.maxRequests,
+        CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK.windowMs,
       );
 
       await this.messageQueueService.add<CampaignEngagementObservation>(

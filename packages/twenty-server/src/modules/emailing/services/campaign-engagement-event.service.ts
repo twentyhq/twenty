@@ -4,6 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { CAMPAIGN_ENGAGEMENT_INSERT_BUSY_TIMEOUT_MS } from 'src/modules/emailing/constants/campaign-engagement-insert-busy-timeout-ms.constant';
+import { SHORT_LINK_CLICK_TABLE } from 'src/modules/emailing/constants/short-link-click-table.constant';
 import { type CampaignEngagementActivityClass } from 'src/modules/emailing/types/campaign-engagement-activity-class.type';
 
 type ShortLinkClickEvent = {
@@ -15,9 +17,6 @@ type ShortLinkClickEvent = {
   occurredAt: string;
   activityClass: CampaignEngagementActivityClass;
 };
-
-const SHORT_LINK_CLICK_TABLE = 'shortLinkClick';
-const CAMPAIGN_ENGAGEMENT_INSERT_BUSY_TIMEOUT_MS = 1_000;
 
 @Injectable()
 export class CampaignEngagementEventService {
