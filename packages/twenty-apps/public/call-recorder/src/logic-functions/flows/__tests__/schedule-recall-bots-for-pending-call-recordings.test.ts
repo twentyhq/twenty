@@ -5,6 +5,13 @@ import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recal
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 import { computeRecallBotCreationIdempotencyKey } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 
+const enqueueJobsMock = vi.hoisted(() => vi.fn());
+
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  enqueueJobs: enqueueJobsMock,
+}));
+
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const UPCOMING_STARTS_AT = '2026-01-01T13:00:00.000Z';
@@ -198,6 +205,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
       buildAccessToken({ workspaceId: WORKSPACE_ID }),
     );
     fetchMock.mockReset();
+    enqueueJobsMock.mockReset();
     stubRecallApi();
   });
 

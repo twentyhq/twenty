@@ -7,7 +7,10 @@ import { type MeetingRecording } from 'src/logic-functions/types/meeting-recordi
 import { buildRecallBotAutomaticVideoOutput } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output.util';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
+import { isRecallBotJoinWithinCreditCheckLead } from 'src/logic-functions/domain/is-recall-bot-join-within-credit-check-lead.util';
+import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
+import { getCreditsUnavailableFailureReason } from 'src/logic-functions/data/get-credits-unavailable-failure-reason.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
 import {
@@ -15,6 +18,7 @@ import {
   scheduleRecallBot,
 } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { updateNonTerminalCallRecordingState } from 'src/logic-functions/data/update-non-terminal-call-recording-state.util';
 
 // The sole place a Recall bot is created. Only the deterministic-create winner and the stale-state cron call it, so one writer per meeting POSTs exactly one bot.
 export const scheduleRecallBotForCallRecording = async (
@@ -45,6 +49,31 @@ export const scheduleRecallBotForCallRecording = async (
     freshCallRecording.status !== CallRecordingStatus.SCHEDULED ||
     !isUndefined(freshCallRecording.externalBotId)
   ) {
+    return false;
+  }
+
+  // Too close to the join for the delayed check, so the verdict is read before a bot exists.
+  const isJoinWithinCreditCheckLead = isRecallBotJoinWithinCreditCheckLead({
+    joinAt,
+    now: new Date(),
+  });
+  const creditsUnavailableFailureReason = isJoinWithinCreditCheckLead
+    ? await getCreditsUnavailableFailureReason()
+    : undefined;
+
+  if (!isUndefined(creditsUnavailableFailureReason)) {
+    await updateNonTerminalCallRecordingState(client, {
+      callRecordingId: callRecording.id,
+      data: {
+        status: CallRecordingStatus.NOT_RECORDED,
+        callRecorderFailureReason: creditsUnavailableFailureReason,
+      },
+    });
+
+    console.warn(
+      `[call-recorder] callRecording ${callRecording.id} will not be recorded: ${creditsUnavailableFailureReason}`,
+    );
+
     return false;
   }
 
@@ -110,6 +139,13 @@ export const scheduleRecallBotForCallRecording = async (
     id: callRecording.id,
     data: { externalBotId: scheduleResult.externalBotId },
   });
+
+  if (!isJoinWithinCreditCheckLead) {
+    await enqueuePreJoinCreditCheck({
+      callRecordingId: callRecording.id,
+      joinAt,
+    });
+  }
 
   return true;
 };

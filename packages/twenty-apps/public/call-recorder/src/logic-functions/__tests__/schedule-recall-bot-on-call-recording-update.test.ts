@@ -14,6 +14,13 @@ vi.mock('twenty-client-sdk/core', () => ({
   },
 }));
 
+const enqueueJobsMock = vi.hoisted(() => vi.fn());
+
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  enqueueJobs: enqueueJobsMock,
+}));
+
 const fetchMock = vi.fn();
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
