@@ -105,41 +105,32 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
       return;
     }
 
+    const planContexts = plans.map((plan) => ({
+      plan,
+      ...getWorkspaceSchemaContextForMigration({
+        workspaceId,
+        objectMetadata: plan.holderFlatObjectMetadata,
+      }),
+    }));
+
+    if (isDryRun) {
+      for (const { plan, tableName } of planContexts) {
+        this.logger.log(
+          `[DRY RUN] Would create index ${plan.universalFlatIndexMetadata.name} on ${tableName}(${plan.joinColumnName}) for workspace ${workspaceId}`,
+        );
+      }
+
+      return;
+    }
+
     const queryRunner = dataSource.createQueryRunner();
     let isQueryRunnerConnected = false;
-    const createdPlans: MissingSystemRelationIndexPlan[] = [];
 
     try {
       await queryRunner.connect();
       isQueryRunnerConnected = true;
 
-      for (const plan of plans) {
-        const { schemaName, tableName } = getWorkspaceSchemaContextForMigration(
-          {
-            workspaceId,
-            objectMetadata: plan.holderFlatObjectMetadata,
-          },
-        );
-
-        const existingColumns = await dataSource.query<{ exists: 1 }[]>(
-          `SELECT 1 AS "exists" FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2 AND column_name = $3`,
-          [schemaName, tableName, plan.joinColumnName],
-        );
-
-        if (existingColumns.length === 0) {
-          this.logger.error(
-            `MANUAL REPAIR REQUIRED: column ${tableName}.${plan.joinColumnName} is missing in workspace ${workspaceId}, cannot index it`,
-          );
-          continue;
-        }
-
-        if (isDryRun) {
-          this.logger.log(
-            `[DRY RUN] Would create index ${plan.universalFlatIndexMetadata.name} on ${tableName}(${plan.joinColumnName}) for workspace ${workspaceId}`,
-          );
-          continue;
-        }
-
+      for (const { plan, schemaName, tableName } of planContexts) {
         await this.workspaceSchemaManagerService.indexManager.createIndex({
           queryRunner,
           schemaName,
@@ -153,8 +144,6 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
           concurrently: true,
         });
 
-        createdPlans.push(plan);
-
         this.logger.log(
           `Created index ${plan.universalFlatIndexMetadata.name} on ${tableName}(${plan.joinColumnName}) for workspace ${workspaceId}`,
         );
@@ -165,16 +154,12 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
       }
     }
 
-    if (createdPlans.length === 0) {
-      return;
-    }
-
     const plansByApplicationUniversalIdentifier = new Map<
       string,
       MissingSystemRelationIndexPlan[]
     >();
 
-    for (const plan of createdPlans) {
+    for (const plan of plans) {
       const { applicationUniversalIdentifier } =
         plan.universalFlatIndexMetadata;
 
@@ -217,7 +202,7 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
     }
 
     this.logger.log(
-      `Backfilled ${createdPlans.length} system relation index(es) for workspace ${workspaceId}`,
+      `Backfilled ${plans.length} system relation index(es) for workspace ${workspaceId}`,
     );
   }
 }
