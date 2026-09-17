@@ -91,6 +91,16 @@
         "command": "tsx scripts/checkPackSize.ts"
       }
     },
+    "test:package": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["build"],
+      "inputs": ["production"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx scripts/checkOptionalDependencies.ts"
+      }
+    },
     "clean": {
       "executor": "nx:run-commands",
       "options": { "command": "rimraf {projectRoot}/dist" }

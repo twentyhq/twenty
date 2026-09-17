@@ -11,7 +11,7 @@ import {
   buildMcpServerUrl,
   isHttpsUrl,
 } from '@/settings/mcp-and-apis/utils/mcpSetup';
-import { CodeEditor, CoreEditorHeader } from 'twenty-ui/primitives/input';
+import { CodeEditor, CoreEditorHeader } from 'twenty-ui/components/code-editor';
 import { Section } from 'twenty-ui/primitives/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/primitives/typography';

@@ -1,6 +1,7 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { IconButton, LightButton, MainButton } from 'twenty-ui/components';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
+import { CoreEditorHeader } from 'twenty-ui/components/code-editor';
 import {
   AnimatedButton,
   AnimatedLightIconButton,
@@ -9,7 +10,6 @@ import {
   ColorPickerButton,
   ColorSchemeCard,
   ColorSchemePicker,
-  CoreEditorHeader,
   FloatingButton,
   FloatingButtonGroup,
   FloatingIconButton,

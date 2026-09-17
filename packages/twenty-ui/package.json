@@ -31,6 +31,7 @@
   "devDependencies": {
     "@argos-ci/storybook": "6.2.3",
     "@fontsource/inter": "^5.2.8",
+    "@monaco-editor/react": "^4.7.0",
     "@prettier/sync": "^0.5.2",
     "@size-limit/preset-small-lib": "^12.1.0",
     "@storybook-community/storybook-addon-cookie": "^5.0.0",
@@ -51,6 +52,7 @@
     "esbuild": "^0.28.1",
     "glob": "^11.1.0",
     "jsdom": "^30.0.1",
+    "monaco-editor": "0.52.2",
     "prettier": "^3.1.1",
     "react": "^19.2.0",
     "react-docgen-typescript": "^2.2.2",
@@ -71,7 +73,6 @@
   "dependencies": {
     "@base-ui/react": "^1.8.0",
     "@base-ui/utils": "0.4.0",
-    "@monaco-editor/react": "^4.7.0",
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "clsx": "^2.1.1",
@@ -81,6 +82,7 @@
     "zod": "^4.1.11"
   },
   "peerDependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "monaco-editor": ">= 0.25.0 < 1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -113,6 +115,11 @@
       "types": "./dist/components/index.d.ts",
       "import": "./dist/components.mjs",
       "require": "./dist/components.cjs"
+    },
+    "./components/code-editor": {
+      "types": "./dist/components/code-editor/index.d.ts",
+      "import": "./dist/components/code-editor.mjs",
+      "require": "./dist/components/code-editor.cjs"
     },
     "./icon": {
       "types": "./dist/icon/index.d.ts",
@@ -203,6 +210,9 @@
       "components": [
         "dist/components/index.d.ts"
       ],
+      "components/code-editor": [
+        "dist/components/code-editor/index.d.ts"
+      ],
       "icon": [
         "dist/icon/index.d.ts"
       ],
@@ -251,6 +261,14 @@
       "utilities": [
         "dist/utilities/index.d.ts"
       ]
+    }
+  },
+  "peerDependenciesMeta": {
+    "@monaco-editor/react": {
+      "optional": true
+    },
+    "monaco-editor": {
+      "optional": true
     }
   }
 }

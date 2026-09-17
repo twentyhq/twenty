@@ -6,7 +6,7 @@ import {
   IconSquareRoundedCheck,
   IconSquareRoundedX,
 } from 'twenty-ui/icon';
-import { CodeEditor, CoreEditorHeader } from 'twenty-ui/primitives/input';
+import { CodeEditor, CoreEditorHeader } from 'twenty-ui/components/code-editor';
 import { AnimatedCircleLoading } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
