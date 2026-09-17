@@ -1,5 +1,8 @@
 import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
-import { SubscriptionInterval } from '~/generated-metadata/graphql';
+import {
+  BillingPlanKey,
+  SubscriptionInterval,
+} from '~/generated-metadata/graphql';
 import {
   assertIsDefinedOrThrow,
   capitalize,
@@ -32,7 +35,7 @@ export const useBillingWording = () => {
     isMonthly && asAdjective
       ? t`monthly`
       : asAdjective
-        ? t`yearly`
+        ? t`annual`
         : isMonthly
           ? t`month`
           : t`year`;
@@ -47,6 +50,9 @@ export const useBillingWording = () => {
       new Date(currentBillingSubscription.currentPeriodEnd),
     );
   };
+
+  const getBillingPlanLabel = (planKey: BillingPlanKey) =>
+    planKey === BillingPlanKey.ENTERPRISE ? t`Organization` : t`Pro`;
 
   const getIntervalLabelAsAdjectiveCapitalize = (isMonthlyPlan: boolean) => {
     return capitalize(getIntervalLabel(isMonthlyPlan, true));
@@ -69,6 +75,7 @@ export const useBillingWording = () => {
 
   return {
     getBeautifiedRenewDate,
+    getBillingPlanLabel,
     getIntervalLabel,
     getIntervalLabelAsAdjectiveCapitalize,
     getYearlyDiscountPercent,

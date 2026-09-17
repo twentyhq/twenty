@@ -5,10 +5,13 @@ import {
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
 
-export const isBillingSubscriptionChangeImmediate = (
-  change: BillingSubscriptionChange,
-  subscriptionStatus: SubscriptionStatus | undefined,
-) => {
+export const isBillingSubscriptionChangeImmediate = ({
+  change,
+  subscriptionStatus,
+}: {
+  change: BillingSubscriptionChange;
+  subscriptionStatus: SubscriptionStatus | undefined;
+}) => {
   if (subscriptionStatus === SubscriptionStatus.Trialing) {
     return true;
   }

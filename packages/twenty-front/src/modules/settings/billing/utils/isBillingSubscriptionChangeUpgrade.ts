@@ -5,16 +5,15 @@ import {
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
-export const isBillingSubscriptionChangeUpgrade = (
-  change: BillingSubscriptionChange,
-  {
-    upcomingInterval,
-    upcomingPlanKey,
-  }: {
-    upcomingInterval: SettingsBillingPlanInterval;
-    upcomingPlanKey: BillingPlanKey;
-  },
-) => {
+export const isBillingSubscriptionChangeUpgrade = ({
+  change,
+  upcomingInterval,
+  upcomingPlanKey,
+}: {
+  change: BillingSubscriptionChange;
+  upcomingInterval: SettingsBillingPlanInterval;
+  upcomingPlanKey: BillingPlanKey;
+}) => {
   switch (change.type) {
     case 'SWITCH_PLAN':
       return change.targetPlanKey === BillingPlanKey.ENTERPRISE;

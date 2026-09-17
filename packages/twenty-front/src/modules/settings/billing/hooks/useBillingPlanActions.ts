@@ -98,18 +98,33 @@ export const useBillingPlanActions = ({
     }
   };
 
-  const createChangeAction = (
-    change: BillingSubscriptionChange,
-    isUpgrade: boolean,
-  ): SettingsBillingPlanAction => ({
+  const getChangeIcon = ({
+    change,
+    isUpgrade,
+  }: {
+    change: BillingSubscriptionChange;
+    isUpgrade: boolean;
+  }) => {
+    if (
+      change.type === 'CANCEL_PLAN_SWITCH' ||
+      change.type === 'CANCEL_INTERVAL_SWITCH'
+    ) {
+      return IconCircleX;
+    }
+
+    return isUpgrade ? IconArrowUp : IconArrowDown;
+  };
+
+  const createChangeAction = ({
+    change,
+    isUpgrade,
+  }: {
+    change: BillingSubscriptionChange;
+    isUpgrade: boolean;
+  }): SettingsBillingPlanAction => ({
     color: isUpgrade ? 'accent' : 'neutral',
     disabled: isApplyingBillingSubscriptionChange,
-    Icon:
-      change.type === 'SWITCH_PLAN' || change.type === 'SWITCH_INTERVAL'
-        ? isUpgrade
-          ? IconArrowUp
-          : IconArrowDown
-        : IconCircleX,
+    Icon: getChangeIcon({ change, isUpgrade }),
     isLoading: isApplyingBillingSubscriptionChange,
     onClick: () => onBillingSubscriptionChangeRequested(change),
     title: getChangeTitle(change),
@@ -167,13 +182,14 @@ export const useBillingPlanActions = ({
       };
     }
 
-    return createChangeAction(
-      cell.change,
-      isBillingSubscriptionChangeUpgrade(cell.change, {
+    return createChangeAction({
+      change: cell.change,
+      isUpgrade: isBillingSubscriptionChangeUpgrade({
+        change: cell.change,
         upcomingInterval,
         upcomingPlanKey,
       }),
-    );
+    });
   };
 
   return {

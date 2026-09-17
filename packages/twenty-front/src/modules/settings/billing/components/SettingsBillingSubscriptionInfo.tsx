@@ -93,8 +93,11 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const nextCreditsByPeriod = nextResourceCreditPrice?.creditAmount ?? null;
 
-  const { getIntervalLabelAsAdjectiveCapitalize, getBeautifiedRenewDate } =
-    useBillingWording();
+  const {
+    getBeautifiedRenewDate,
+    getBillingPlanLabel,
+    getIntervalLabelAsAdjectiveCapitalize,
+  } = useBillingWording();
   const { getBillingSubscriptionChangeWording } =
     useBillingSubscriptionChangeWording();
   const {
@@ -255,7 +258,7 @@ export const SettingsBillingSubscriptionInfo = ({
   const totalIntervalSubtitle = isDefined(totalDisplay)
     ? currentInterval === SubscriptionInterval.Month
       ? t`/month`
-      : t`/month billed yearly`
+      : t`/month billed annually`
     : undefined;
   const scheduledChangeStartDate = isDefined(nextBillingPhase?.start_date)
     ? beautifyExactDate(nextBillingPhase.start_date * 1000)
@@ -286,10 +289,7 @@ export const SettingsBillingSubscriptionInfo = ({
           {
             Icon: IconTag,
             label: t`Plan`,
-            value:
-              nextPlan.planKey === BillingPlanKey.PRO
-                ? t`Pro`
-                : t`Organization`,
+            value: getBillingPlanLabel(nextPlan.planKey),
           },
         ]
       : []),

@@ -10,7 +10,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import {
-  BillingPlanKey,
   CancelSwitchBillingIntervalDocument,
   CancelSwitchBillingPlanDocument,
   SubscriptionInterval,
@@ -25,7 +24,7 @@ export const useApplyBillingSubscriptionChange = () => {
   const { applyCurrentWorkspaceBillingUpdate } =
     useApplyCurrentWorkspaceBillingUpdate();
   const { refetchResourceCreditUsage } = useGetResourceCreditUsage();
-  const { getBeautifiedRenewDate } = useBillingWording();
+  const { getBeautifiedRenewDate, getBillingPlanLabel } = useBillingWording();
 
   const [switchBillingPlanMutation] = useMutation(SwitchBillingPlanDocument);
   const [switchSubscriptionIntervalMutation] = useMutation(
@@ -71,31 +70,27 @@ export const useApplyBillingSubscriptionChange = () => {
   };
 
   const getSuccessMessage = (change: BillingSubscriptionChange) => {
-    const isImmediate = isBillingSubscriptionChangeImmediate(
+    const isImmediate = isBillingSubscriptionChangeImmediate({
       change,
       subscriptionStatus,
-    );
+    });
 
     switch (change.type) {
       case 'SWITCH_PLAN': {
-        const planLabel =
-          change.targetPlanKey === BillingPlanKey.ENTERPRISE
-            ? t`Organization`
-            : t`Pro`;
+        const planLabel = getBillingPlanLabel(change.targetPlanKey);
 
         return isImmediate
           ? t`Subscription has been switched to ${planLabel} Plan.`
           : t`Subscription will be switched to ${planLabel} Plan the ${getBeautifiedRenewDate()}.`;
       }
       case 'SWITCH_INTERVAL': {
-        const intervalLabel =
-          change.targetInterval === SubscriptionInterval.Year
-            ? t`Yearly`
-            : t`Monthly`;
+        if (change.targetInterval === SubscriptionInterval.Year) {
+          return t`Subscription has been switched to annual billing.`;
+        }
 
         return isImmediate
-          ? t`Subscription has been switched to ${intervalLabel}.`
-          : t`Subscription will be switched to ${intervalLabel} the ${getBeautifiedRenewDate()}.`;
+          ? t`Subscription has been switched to monthly billing.`
+          : t`Subscription will be switched to monthly billing the ${getBeautifiedRenewDate()}.`;
       }
       case 'CANCEL_PLAN_SWITCH':
         return t`Plan switching has been cancelled.`;

@@ -16,55 +16,64 @@ describe('isBillingSubscriptionChangeUpgrade', () => {
 
   it('treats switching to Organization or to annual as upgrades', () => {
     expect(
-      isBillingSubscriptionChangeUpgrade(
-        { type: 'SWITCH_PLAN', targetPlanKey: BillingPlanKey.ENTERPRISE },
-        proMonthlyUpcoming,
-      ),
+      isBillingSubscriptionChangeUpgrade({
+        change: {
+          type: 'SWITCH_PLAN',
+          targetPlanKey: BillingPlanKey.ENTERPRISE,
+        },
+        ...proMonthlyUpcoming,
+      }),
     ).toBe(true);
     expect(
-      isBillingSubscriptionChangeUpgrade(
-        { type: 'SWITCH_INTERVAL', targetInterval: SubscriptionInterval.Year },
-        proMonthlyUpcoming,
-      ),
+      isBillingSubscriptionChangeUpgrade({
+        change: {
+          type: 'SWITCH_INTERVAL',
+          targetInterval: SubscriptionInterval.Year,
+        },
+        ...proMonthlyUpcoming,
+      }),
     ).toBe(true);
     expect(
-      isBillingSubscriptionChangeUpgrade(
-        { type: 'SWITCH_PLAN', targetPlanKey: BillingPlanKey.PRO },
-        enterpriseYearlyUpcoming,
-      ),
+      isBillingSubscriptionChangeUpgrade({
+        change: { type: 'SWITCH_PLAN', targetPlanKey: BillingPlanKey.PRO },
+        ...enterpriseYearlyUpcoming,
+      }),
     ).toBe(false);
     expect(
-      isBillingSubscriptionChangeUpgrade(
-        { type: 'SWITCH_INTERVAL', targetInterval: SubscriptionInterval.Month },
-        enterpriseYearlyUpcoming,
-      ),
+      isBillingSubscriptionChangeUpgrade({
+        change: {
+          type: 'SWITCH_INTERVAL',
+          targetInterval: SubscriptionInterval.Month,
+        },
+        ...enterpriseYearlyUpcoming,
+      }),
     ).toBe(false);
   });
 
   it('treats cancelling a scheduled downgrade as an upgrade', () => {
     expect(
-      isBillingSubscriptionChangeUpgrade(
-        { type: 'CANCEL_PLAN_SWITCH' },
-        proMonthlyUpcoming,
-      ),
+      isBillingSubscriptionChangeUpgrade({
+        change: { type: 'CANCEL_PLAN_SWITCH' },
+        ...proMonthlyUpcoming,
+      }),
     ).toBe(true);
     expect(
-      isBillingSubscriptionChangeUpgrade(
-        { type: 'CANCEL_INTERVAL_SWITCH' },
-        proMonthlyUpcoming,
-      ),
+      isBillingSubscriptionChangeUpgrade({
+        change: { type: 'CANCEL_INTERVAL_SWITCH' },
+        ...proMonthlyUpcoming,
+      }),
     ).toBe(true);
     expect(
-      isBillingSubscriptionChangeUpgrade(
-        { type: 'CANCEL_PLAN_SWITCH' },
-        enterpriseYearlyUpcoming,
-      ),
+      isBillingSubscriptionChangeUpgrade({
+        change: { type: 'CANCEL_PLAN_SWITCH' },
+        ...enterpriseYearlyUpcoming,
+      }),
     ).toBe(false);
     expect(
-      isBillingSubscriptionChangeUpgrade(
-        { type: 'CANCEL_INTERVAL_SWITCH' },
-        enterpriseYearlyUpcoming,
-      ),
+      isBillingSubscriptionChangeUpgrade({
+        change: { type: 'CANCEL_INTERVAL_SWITCH' },
+        ...enterpriseYearlyUpcoming,
+      }),
     ).toBe(false);
   });
 });
