@@ -1,6 +1,6 @@
 import { type ToolUIPart } from 'ai';
 
-import { getToolOutputRecords } from '@/ai/utils/getToolOutputRecords';
+import { getToolRecordOutput } from '@/ai/utils/getToolRecordOutput';
 
 const buildToolPart = (
   state: string,
@@ -20,39 +20,53 @@ const recordReference = {
   displayName: 'Google',
 };
 
-describe('getToolOutputRecords', () => {
-  it('reads the record references a record tool answered with', () => {
+describe('getToolRecordOutput', () => {
+  it('reads the message and record references a record tool answered with', () => {
     expect(
-      getToolOutputRecords(
+      getToolRecordOutput(
         buildToolPart('output-available', {
           success: true,
+          message: 'Found 1 company record',
           recordReferences: [recordReference],
         }),
       ),
-    ).toEqual([recordReference]);
+    ).toEqual({
+      message: 'Found 1 company record',
+      recordReferences: [recordReference],
+    });
+  });
+
+  it('reads the references of an output that carries no message', () => {
+    expect(
+      getToolRecordOutput(
+        buildToolPart('output-available', {
+          recordReferences: [recordReference],
+        }),
+      ),
+    ).toEqual({ message: undefined, recordReferences: [recordReference] });
   });
 
   it('returns nothing while the call has not produced output', () => {
     expect(
-      getToolOutputRecords(buildToolPart('input-available', undefined)),
-    ).toEqual([]);
+      getToolRecordOutput(buildToolPart('input-available', undefined)),
+    ).toEqual({ message: undefined, recordReferences: [] });
   });
 
   it('returns nothing when the output carries no record references', () => {
     expect(
-      getToolOutputRecords(
+      getToolRecordOutput(
         buildToolPart('output-available', { success: true, result: { a: 1 } }),
       ),
-    ).toEqual([]);
+    ).toEqual({ message: undefined, recordReferences: [] });
   });
 
   it('returns nothing when a reference is malformed', () => {
     expect(
-      getToolOutputRecords(
+      getToolRecordOutput(
         buildToolPart('output-available', {
           recordReferences: [{ objectNameSingular: 'company' }],
         }),
       ),
-    ).toEqual([]);
+    ).toEqual({ message: undefined, recordReferences: [] });
   });
 });

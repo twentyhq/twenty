@@ -5,7 +5,7 @@ import { AiChatToolWidget } from '@/ai/components/AiChatToolWidget';
 import { ToolRecordsWidget } from '@/ai/components/ToolRecordsWidget';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { type ToolWidget } from '@/ai/types/tool-widget.type';
-import { getToolOutputRecords } from '@/ai/utils/getToolOutputRecords';
+import { getToolRecordOutput } from '@/ai/utils/getToolRecordOutput';
 
 type AiChatToolPartRendererProps = {
   toolPart: ToolUIPart | DynamicToolUIPart;
@@ -28,20 +28,18 @@ export const AiChatToolPartRenderer = ({
     );
   }
 
-  const records = getToolOutputRecords(toolPart);
+  const { message, recordReferences } = getToolRecordOutput(toolPart);
 
   // A record tool that matched nothing, or failed, has no records to show and
   // reads better as the step row it has always been.
-  if (!isNonEmptyArray(records)) {
+  if (!isNonEmptyArray(recordReferences)) {
     return <ToolStepRenderer toolPart={toolPart} isStreaming={isStreaming} />;
   }
 
-  const output = toolPart.output as { message?: string } | undefined;
-
   return (
     <ToolRecordsWidget
-      message={output?.message ?? ''}
-      recordReferences={records}
+      message={message ?? ''}
+      recordReferences={recordReferences}
     />
   );
 };

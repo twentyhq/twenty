@@ -3,12 +3,14 @@ import { Args, Field, Mutation, ObjectType } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
@@ -52,6 +54,7 @@ export class ToolCallResolver {
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<ToolCallResultDTO> {
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
@@ -59,13 +62,14 @@ export class ToolCallResolver {
       workspaceId: workspace.id,
     });
 
-    if (!roleId) {
-      return {
-        success: false,
-        message: 'No role is assigned to this member',
-        error: 'MISSING_ROLE',
-      };
-    }
+    // The person clicked the widget themselves, so what the call writes is
+    // theirs rather than an agent's or a workflow's.
+    const actorContext: ActorMetadata = {
+      source: FieldActorSource.MANUAL,
+      workspaceMemberId,
+      name: `${user.firstName} ${user.lastName}`.trim(),
+      context: {},
+    };
 
     const output = await this.toolRegistryService.resolveAndExecute(
       toolName,
@@ -73,6 +77,7 @@ export class ToolCallResolver {
       {
         workspaceId: workspace.id,
         roleId,
+        actorContext,
         userId: user.id,
         userWorkspaceId,
         locale,
