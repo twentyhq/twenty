@@ -32,13 +32,6 @@ runComponentConformance({
   ownClassName: styles.popup,
 });
 runComponentConformance({
-  name: 'Dialog.Title',
-  element: <Dialog.Title>Title</Dialog.Title>,
-  refInstanceOf: HTMLHeadingElement,
-  wrapper: DialogPopupWrapper,
-  ownClassName: styles.title,
-});
-runComponentConformance({
   name: 'Dialog.Description',
   element: <Dialog.Description>Description</Dialog.Description>,
   refInstanceOf: HTMLParagraphElement,

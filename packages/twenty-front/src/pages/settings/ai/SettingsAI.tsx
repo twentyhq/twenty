@@ -9,6 +9,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/components';
 import {
   IconBook,
   IconChartBar,
@@ -19,7 +20,6 @@ import {
   IconTool,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsAgentSkillsTab';
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
 import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
@@ -115,7 +115,7 @@ export const SettingsAI = () => {
     >
       <SettingsPageContainer>
         {!isModelsTab && (
-          <Section>
+          <Section.Root>
             <SettingsDiscoveryHeroCard
               lightSrc={AI_HERO_LIGHT}
               darkSrc={AI_HERO_DARK}
@@ -131,7 +131,7 @@ export const SettingsAI = () => {
               ]}
               playButtonAriaLabel={t`Watch AI demo`}
             />
-          </Section>
+          </Section.Root>
         )}
         {isOverviewTab && (
           <>

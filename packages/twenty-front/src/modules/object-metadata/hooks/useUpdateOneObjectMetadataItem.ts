@@ -27,12 +27,28 @@ export const useUpdateOneObjectMetadataItem = () => {
   const { updateInDraft, replaceDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
 
+  const refetchCommandMenuItems = async () => {
+    const commandMenuItemsResult = await client.query({
+      query: FindManyCommandMenuItemsDocument,
+      fetchPolicy: 'network-only',
+    });
+
+    replaceDraft(
+      'commandMenuItems',
+      commandMenuItemsResult.data?.commandMenuItems ?? [],
+    );
+    applyChanges();
+  };
+
   const updateOneObjectMetadataItem = async ({
     idToUpdate,
     updatePayload,
+    shouldRefetchCommandMenuItems = true,
   }: {
     idToUpdate: UpdateOneObjectInput['id'];
     updatePayload: UpdateOneObjectInput['update'];
+    // Callers updating several objects at once refetch once at the end instead.
+    shouldRefetchCommandMenuItems?: boolean;
   }): Promise<
     MetadataRequestResult<
       Awaited<ReturnType<typeof updateOneObjectMetadataItemMutation>>
@@ -56,16 +72,9 @@ export const useUpdateOneObjectMetadataItem = () => {
         ]);
         applyChanges();
 
-        const commandMenuItemsResult = await client.query({
-          query: FindManyCommandMenuItemsDocument,
-          fetchPolicy: 'network-only',
-        });
-
-        replaceDraft(
-          'commandMenuItems',
-          commandMenuItemsResult.data?.commandMenuItems ?? [],
-        );
-        applyChanges();
+        if (shouldRefetchCommandMenuItems) {
+          await refetchCommandMenuItems();
+        }
       }
 
       return {
@@ -91,6 +100,7 @@ export const useUpdateOneObjectMetadataItem = () => {
 
   return {
     updateOneObjectMetadataItem,
+    refetchCommandMenuItems,
     loading,
   };
 };

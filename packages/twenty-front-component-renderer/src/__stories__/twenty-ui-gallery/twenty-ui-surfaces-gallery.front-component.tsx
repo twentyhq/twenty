@@ -1,11 +1,12 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button } from 'twenty-ui/primitives/input';
 import {
-  AppTooltip,
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   OverflowingTextWithTooltip,
+  Tooltip,
 } from 'twenty-ui/primitives/surfaces';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
@@ -16,16 +17,13 @@ import {
 
 const SURFACES_ENTRIES: GalleryEntry[] = [
   {
-    name: 'AppTooltip',
+    name: 'Tooltip',
     node: (
-      <>
-        <span id="gallery-tooltip-anchor">Tooltip anchor</span>
-        <AppTooltip
-          anchorSelect="#gallery-tooltip-anchor"
-          title="Tooltip content"
-          isOpen={true}
-        />
-      </>
+      <Tooltip content="Tooltip content">
+        <span>
+          <Button>Tooltip anchor</Button>
+        </span>
+      </Tooltip>
     ),
   },
   {
@@ -51,7 +49,7 @@ const SURFACES_ENTRIES: GalleryEntry[] = [
 ];
 
 const SurfacesGallery = () => (
-  <ThemeProvider colorScheme="light">
+  <ThemeProvider colorScheme="light" applyToRoot={false}>
     <ComponentGallery
       title="twenty-ui/primitives/surfaces"
       entries={SURFACES_ENTRIES}

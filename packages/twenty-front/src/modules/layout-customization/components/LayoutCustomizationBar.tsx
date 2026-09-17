@@ -21,6 +21,11 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
+const StyledAnimatedContainer = styled(motion.div)`
+  flex-shrink: 0;
+  overflow: hidden;
+`;
+
 const StyledContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.color.blue};
@@ -97,7 +102,7 @@ const LayoutCustomizationBarContent = () => {
     : t`Layout customization`;
 
   return (
-    <motion.div
+    <StyledAnimatedContainer
       initial={{ height: 0, opacity: 0 }}
       animate={{ height: 'auto', opacity: 1 }}
       exit={{ height: 0, opacity: 0 }}
@@ -133,7 +138,7 @@ const LayoutCustomizationBarContent = () => {
           pageLayoutId={currentPageLayoutId}
         />
       )}
-    </motion.div>
+    </StyledAnimatedContainer>
   );
 };
 

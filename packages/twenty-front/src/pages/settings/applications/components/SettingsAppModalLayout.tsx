@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import React from 'react';
 
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
+import { Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { type ModalOverlay } from '@/ui/layout/modal/types/ModalOverlay';
 import { type ModalPadding } from '@/ui/layout/modal/types/ModalPadding';
 import { type ModalSize } from '@/ui/layout/modal/types/ModalSize';
@@ -105,9 +105,9 @@ const StyledAppModalSectionContainer = styled.div`
 export const StyledAppModalSection = ({
   children,
   ...props
-}: React.ComponentProps<typeof Section>) => (
+}: React.ComponentProps<typeof Section.Root>) => (
   <StyledAppModalSectionContainer>
     {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-    <Section {...props}>{children}</Section>
+    <Section.Root {...props}>{children}</Section.Root>
   </StyledAppModalSectionContainer>
 );

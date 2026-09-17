@@ -112,6 +112,8 @@ Nest another `Dialog.Root` inside a popup to open a second dialog. Closing the n
 
 To open one dialog from triggers outside `Root`, create a handle once with `Dialog.createHandle()` and pass it to `handle` on both `Root` and each `Trigger`. Trigger `payload` values are available in `Root`'s render function.
 
+`Title` uses `Heading` and defaults to an `h2` with large type, primary text color, centered alignment, and spacing-4 below it. Use `level` to change the heading level independently of `size`, or `color` to change its text color. Native `className`, `style`, refs, and `render` are forwarded to the heading. Keep a heading element when using `render`.
+
 ## Focus, scrolling, and dismissal
 
 `Root.modal` controls the interaction boundary:

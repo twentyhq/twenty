@@ -10,20 +10,17 @@ import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStateful
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
-import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledCenteredTitle = styled.div`
-  text-align: center;
-`;
-
-const StyledSectionContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[6]};
+const StyledDescription = styled(Dialog.Description)`
+  && {
+    color: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    margin-bottom: ${themeCssVariables.spacing[6]};
+  }
 `;
 
 const defaultConfirmButtonText = msg`Confirm`;
@@ -93,19 +90,14 @@ export const ConfirmationModal = ({
       narrowWidth
       autoHeight
     >
-      <StyledCenteredTitle>
-        <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
-      </StyledCenteredTitle>
-      <StyledSectionContainer>
-        <Section
-          alignment={SectionAlignment.Center}
-          fontColor={SectionFontColor.Primary}
-        >
+      <Dialog.Title>{title}</Dialog.Title>
+      <StyledDescription render={<div />}>
+        <Section.Root align="center" color="primary">
           {subtitle}
-        </Section>
-      </StyledSectionContainer>
+        </Section.Root>
+      </StyledDescription>
       {confirmationValue && (
-        <Section>
+        <Section.Root>
           <SettingsTextInput
             instanceId="confirmation-modal-input"
             dataTestId="confirmation-modal-input"
@@ -116,7 +108,7 @@ export const ConfirmationModal = ({
             disableHotkeys
             key={'input-' + confirmationValue}
           />
-        </Section>
+        </Section.Root>
       )}
       {!hideCancelButton && (
         <StyledCenteredButton

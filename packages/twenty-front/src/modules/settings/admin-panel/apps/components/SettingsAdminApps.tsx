@@ -21,6 +21,7 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconChevronRight,
   IconDotsVertical,
@@ -30,9 +31,7 @@ import {
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebounce } from 'use-debounce';
 import {
@@ -187,8 +186,8 @@ export const SettingsAdminApps = () => {
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`General`}
           description={t`Manage the marketplace application catalog`}
         />
@@ -200,9 +199,9 @@ export const SettingsAdminApps = () => {
           disabled={isSyncing}
           variant="outline"
         >{t`Synchronize catalog`}</Button>
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`All App Registrations`}
           description={t`All application registrations across the platform, including orphaned marketplace apps (${totalCount} matching)`}
         />
@@ -328,7 +327,7 @@ export const SettingsAdminApps = () => {
             >{t`Show more`}</Button>
           </StyledShowMoreContainer>
         )}
-      </Section>
+      </Section.Root>
     </>
   );
 };

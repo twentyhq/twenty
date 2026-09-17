@@ -16,7 +16,7 @@ import {
   IconDatabase,
   IconUserCircle,
 } from 'twenty-ui/icon';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
+import { Heading } from 'twenty-ui/primitives/typography';
 import { ModalContent } from '@/ui/layout/modal/components/ModalContent';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -57,7 +57,7 @@ const StyledHeader = styled.div`
   width: 100%;
 `;
 
-const StyledOAuthTitle = styled(H1Title)`
+const StyledOAuthTitle = styled(Heading)`
   margin: 0;
   max-width: min(100%, var(--oauth-modal-content-max-width));
   padding-bottom: ${themeCssVariables.spacing[1]};
@@ -247,10 +247,9 @@ export const Authorize = () => {
       <ModalContent isVerticallyCentered isHorizontallyCentered>
         <StyledCardWrapper>
           <ModalContent contentPadding={10}>
-            <StyledOAuthTitle
-              title={<Trans>Something went wrong</Trans>}
-              fontColor={H1TitleFontColor.Primary}
-            />
+            <StyledOAuthTitle level={2} size="lg">
+              <Trans>Something went wrong</Trans>
+            </StyledOAuthTitle>
             <StyledErrorText>
               {t`Unable to load application details. Please try again later.`}
             </StyledErrorText>
@@ -275,10 +274,9 @@ export const Authorize = () => {
           <AppConnectionHeader appLogoUrl={appLogoUrl} appName={appName} />
         </StyledHeader>
         <ModalContent contentPadding={10}>
-          <StyledOAuthTitle
-            title={<Trans>Connect {appName} to your account</Trans>}
-            fontColor={H1TitleFontColor.Primary}
-          />
+          <StyledOAuthTitle level={2} size="lg">
+            <Trans>Connect {appName} to your account</Trans>
+          </StyledOAuthTitle>
           {requestedScopes.length > 0 && (
             <StyledPermissionSection>
               <StyledPermissionIntro>

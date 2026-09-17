@@ -25,7 +25,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { AttachmentRow } from './AttachmentRow';
@@ -192,16 +192,20 @@ export const AttachmentList = ({
                 <StyledButtonContainer>
                   {hasDownloadPermission && (
                     <IconButton
-                      Icon={IconDownload}
+                      aria-label={t`Download attachment`}
                       onClick={handleDownload}
-                      size="small"
-                    />
+                      size="sm"
+                    >
+                      <IconDownload />
+                    </IconButton>
                   )}
                   <IconButton
-                    Icon={IconX}
+                    aria-label={t`Close preview`}
                     onClick={handleClosePreview}
-                    size="small"
-                  />
+                    size="sm"
+                  >
+                    <IconX />
+                  </IconButton>
                 </StyledButtonContainer>
               </StyledHeader>
             </ModalHeader>

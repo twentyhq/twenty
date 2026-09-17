@@ -60,6 +60,67 @@ export const Default: Story = {
     confirmButtonText: 'Delete',
     onConfirmClick: fn(),
   },
+  play: async ({ canvasElement }) => {
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole(
+      'dialog',
+      { name: 'Pariatur labore.' },
+    );
+    const title = within(dialog).getByRole('heading', { level: 2 });
+    const subtitle = within(dialog).getByText(
+      'Velit dolore aliquip laborum occaecat fugiat.',
+    );
+    const description = canvasElement.ownerDocument.getElementById(
+      dialog.getAttribute('aria-describedby') ?? '',
+    );
+
+    expect(dialog).toHaveAccessibleDescription(
+      'Velit dolore aliquip laborum occaecat fugiat.',
+    );
+    expect(getComputedStyle(dialog).width).toBe('272px');
+    expect(getComputedStyle(dialog).padding).toBe('24px');
+    expect(getComputedStyle(title).marginBlockEnd).toBe('16px');
+    expect(getComputedStyle(title).textAlign).toBe('center');
+    expect(title).toHaveAttribute('data-size', 'lg');
+    expect(getComputedStyle(subtitle).textAlign).toBe('center');
+    expect(getComputedStyle(subtitle).color).toBe(
+      getComputedStyle(dialog).color,
+    );
+    expect(getComputedStyle(subtitle).lineHeight).toBe(
+      getComputedStyle(dialog).lineHeight,
+    );
+    expect(description).not.toBeNull();
+    expect(getComputedStyle(description!).marginBottom).toBe('24px');
+  },
+};
+
+export const RichSubtitle: Story = {
+  args: {
+    ...Default.args,
+    subtitle: (
+      <div>
+        <p>Remove this record.</p>
+        <ul>
+          <li>Files will be removed.</li>
+        </ul>
+      </div>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole(
+      'dialog',
+      { name: 'Pariatur labore.' },
+    );
+    const description = canvasElement.ownerDocument.getElementById(
+      dialog.getAttribute('aria-describedby') ?? '',
+    );
+
+    expect(dialog).toHaveAccessibleDescription(
+      'Remove this record. Files will be removed.',
+    );
+    expect(description?.tagName).toBe('DIV');
+    expect(within(dialog).getByRole('list')).toBeVisible();
+    expect(dialog.querySelector('p p, p div, p ul')).toBeNull();
+  },
 };
 
 export const InputConfirmation: Story = {

@@ -1,10 +1,8 @@
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { render, screen, waitFor } from '@testing-library/react';
 
 jest.mock('@/navigation/hooks/useIsNavigationDrawerContentExpanded');
-jest.mock('@/navigation/hooks/useIsSettingsPage');
 
 const NavigationModes = () => (
   <NavigationDrawerAnimatedCollapseWrapper>
@@ -14,18 +12,17 @@ const NavigationModes = () => (
 
 describe('NavigationDrawerAnimatedCollapseWrapper', () => {
   beforeEach(() => {
-    jest.mocked(useIsNavigationDrawerContentExpanded).mockReturnValue(false);
-    jest.mocked(useIsSettingsPage).mockReturnValue(true);
+    jest.mocked(useIsNavigationDrawerContentExpanded).mockReturnValue(true);
   });
 
-  it('keeps its children mounted while collapsing and expanding around settings', async () => {
+  it('keeps its children mounted while collapsing and expanding the drawer', async () => {
     const { rerender } = render(<NavigationModes />);
     const navigationModesButton = screen.getByRole('button', {
       name: 'Navigation modes',
     });
     const animatedContainer = navigationModesButton.parentElement;
 
-    jest.mocked(useIsSettingsPage).mockReturnValue(false);
+    jest.mocked(useIsNavigationDrawerContentExpanded).mockReturnValue(false);
     rerender(<NavigationModes />);
 
     await waitFor(() => {
@@ -40,7 +37,7 @@ describe('NavigationDrawerAnimatedCollapseWrapper', () => {
       navigationModesButton,
     );
 
-    jest.mocked(useIsSettingsPage).mockReturnValue(true);
+    jest.mocked(useIsNavigationDrawerContentExpanded).mockReturnValue(true);
     rerender(<NavigationModes />);
 
     await waitFor(() => {

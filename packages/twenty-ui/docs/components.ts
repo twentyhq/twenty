@@ -2,12 +2,26 @@ import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
+import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
+import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
+import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
+import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
+import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
+import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
+import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'IconButton',
+    source: 'components/IconButton/IconButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'input/icon-button',
+    propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
+  },
   {
     name: 'MainButton',
     source: 'components/MainButton/MainButton.tsx',
@@ -114,6 +128,7 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/dialog',
     propDescriptions: DIALOG_PROP_DESCRIPTIONS,
+    partPropDescriptions: { Title: DIALOG_TITLE_PROP_DESCRIPTIONS },
   },
   {
     name: 'AlertDialog',
@@ -132,6 +147,16 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Popover/Popover.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/popover',
+  },
+  {
+    name: 'Tooltip',
+    source: 'primitives/surfaces/Tooltip/Tooltip.tsx',
+    entryPoint: 'twenty-ui/primitives/surfaces',
+    slug: 'surfaces/tooltip',
+    parts: ['Root', 'Trigger', 'Popup', 'Content', 'Provider'],
+    propDescriptions: TOOLTIP_PROP_DESCRIPTIONS,
+    propDefaults: { sideOffset: '10' },
+    partPropDescriptions: TOOLTIP_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'Toast',
@@ -172,5 +197,22 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/data-display',
     slug: 'data-display/status',
     propDescriptions: STATUS_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Heading',
+    source: 'primitives/typography/Heading/Heading.tsx',
+    entryPoint: 'twenty-ui/primitives/typography',
+    slug: 'typography/heading',
+    propDescriptions: HEADING_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Section',
+    source: 'components/Section/Section.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/section',
+    partPropDescriptions: {
+      Root: SECTION_ROOT_PROP_DESCRIPTIONS,
+      Header: SECTION_HEADER_PROP_DESCRIPTIONS,
+    },
   },
 ] as const;

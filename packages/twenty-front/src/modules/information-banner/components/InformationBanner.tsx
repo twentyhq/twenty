@@ -4,6 +4,7 @@ import { InformationBannerComponentInstanceContext } from '@/information-banner/
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 import { t } from '@lingui/core/macro';
 import {
   Banner,
@@ -11,7 +12,8 @@ import {
   type BannerVariant,
 } from 'twenty-ui/primitives/feedback';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -19,7 +21,7 @@ const StyledText = styled.div`
   min-width: 0;
 `;
 
-const StyledInvertedIconButton = styled(IconButton)`
+const INVERTED_ICON_BUTTON_CLASS_NAME = css`
   color: ${themeCssVariables.font.color.inverted} !important;
 `;
 
@@ -94,22 +96,25 @@ export const InformationBanner = ({
           </StyledContent>
           {onClose &&
             (isPrimary ? (
-              <StyledInvertedIconButton
-                Icon={IconX}
-                size="small"
-                variant="tertiary"
+              <IconButton
+                className={INVERTED_ICON_BUTTON_CLASS_NAME}
+                size="sm"
+                variant="ghost"
                 onClick={onClose}
-                ariaLabel={t`Close banner`}
-              />
+                aria-label={t`Close banner`}
+              >
+                <IconX />
+              </IconButton>
             ) : (
               <IconButton
-                Icon={IconX}
-                size="small"
-                variant="tertiary"
-                accent={buttonAccent}
+                size="sm"
+                variant="ghost"
+                color={buttonAccent === 'blue' ? 'accent' : 'danger'}
                 onClick={onClose}
-                ariaLabel={t`Close banner`}
-              />
+                aria-label={t`Close banner`}
+              >
+                <IconX />
+              </IconButton>
             ))}
         </Banner>
       )}

@@ -1,3 +1,6 @@
 import { type Dialog as DialogPrimitive } from '@base-ui/react/dialog';
 
-export type DialogTitleProps = DialogPrimitive.Title.Props;
+import { type HeadingProps } from '@ui/primitives/typography/Heading/types/HeadingProps';
+
+export type DialogTitleProps = Omit<DialogPrimitive.Title.Props, 'color'> &
+  Pick<HeadingProps, 'level' | 'size' | 'color'>;

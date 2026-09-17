@@ -1,3 +1,4 @@
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { MOBILE_NAVIGATION_BAR_CLEARANCE } from '@/navigation/constants/MobileNavigationBarClearance';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { AdvancedSettingsSwitch } from '@/ui/input/components/AdvancedSettingsSwitch';
@@ -29,6 +30,7 @@ const advancedSettingsSwitchClassName = css`
 export const SettingsNavigationDrawerContent = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
+  const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
   const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useAtomState(
     isAdvancedModeEnabledState,
   );
@@ -46,6 +48,7 @@ export const SettingsNavigationDrawerContent = () => {
             isAdvancedModeEnabled={isAdvancedModeEnabled}
             setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
             label={t`Advanced`}
+            isCompact={!isNavigationDrawerExpanded}
           />
         </NavigationDrawerSection>
       </StyledAdvancedSwitchFixedContent>
