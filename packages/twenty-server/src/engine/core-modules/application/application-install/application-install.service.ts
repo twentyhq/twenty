@@ -69,7 +69,7 @@ export class ApplicationInstallService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly cacheLockService: CacheLockService,
     @InjectMessageQueue(MessageQueue.applicationLifecycleHookQueue)
-    private readonly applicationLifecycleHookQueueService: MessageQueueService,
+    private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -630,7 +630,7 @@ export class ApplicationInstallService {
     );
 
     if (!shouldRunSynchronously) {
-      await this.applicationLifecycleHookQueueService.add<ApplicationLifecycleHookJobData>(
+      await this.messageQueueService.add<ApplicationLifecycleHookJobData>(
         ApplicationLifecycleHookJob.name,
         {
           logicFunctionId: flatLogicFunction.id,
