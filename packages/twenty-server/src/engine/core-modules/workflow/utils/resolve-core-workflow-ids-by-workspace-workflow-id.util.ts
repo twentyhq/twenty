@@ -15,7 +15,7 @@ export const resolveCoreWorkflowIdsByWorkspaceWorkflowId = async ({
   executeQuery: (
     query: string,
     parameters?: unknown[],
-  ) => Promise<CoreWorkflowReverseRow[]>;
+  ) => Promise<Record<string, unknown>[]>;
   workspaceId: string;
   workspaceWorkflowIds: string[];
 }): Promise<Map<string, string>> => {
@@ -29,13 +29,13 @@ export const resolveCoreWorkflowIdsByWorkspaceWorkflowId = async ({
     return coreWorkflowIdByWorkspaceWorkflowId;
   }
 
-  const reverseMappedCoreWorkflows = await executeQuery(
+  const reverseMappedCoreWorkflows = (await executeQuery(
     `SELECT DISTINCT ON ("workspaceWorkflowId") "workspaceWorkflowId", "id"
      FROM core."workflow"
      WHERE "workspaceId" = $1 AND "workspaceWorkflowId" = ANY($2::uuid[])
      ORDER BY "workspaceWorkflowId", "createdAt" ASC, "id" ASC`,
     [workspaceId, workspaceWorkflowIds],
-  );
+  )) as CoreWorkflowReverseRow[];
 
   for (const coreWorkflow of reverseMappedCoreWorkflows) {
     if (isNonEmptyString(coreWorkflow.workspaceWorkflowId)) {
