@@ -50509,6 +50509,7 @@ __metadata:
     "@argos-ci/storybook": "npm:6.2.3"
     "@base-ui/react": "npm:^1.8.0"
     "@base-ui/utils": "npm:0.4.0"
+    "@fontsource/dm-mono": "npm:^5.2.7"
     "@fontsource/inter": "npm:^5.2.8"
     "@monaco-editor/react": "npm:^4.7.0"
     "@prettier/sync": "npm:^0.5.2"

@@ -30,6 +30,7 @@
   ],
   "devDependencies": {
     "@argos-ci/storybook": "6.2.3",
+    "@fontsource/dm-mono": "^5.2.7",
     "@fontsource/inter": "^5.2.8",
     "@monaco-editor/react": "^4.7.0",
     "@prettier/sync": "^0.5.2",
