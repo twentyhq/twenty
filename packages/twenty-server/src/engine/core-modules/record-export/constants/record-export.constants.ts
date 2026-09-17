@@ -1,5 +1,3 @@
-import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
-
 export const RECORD_EXPORT_PAGE_SIZE = 1000;
 export const RECORD_EXPORT_MAX_DURATION_MS = 60 * 60 * 1000;
 export const RECORD_EXPORT_MAX_FILE_BYTES = 1024 * 1024 * 1024;
@@ -8,12 +6,3 @@ export const RECORD_EXPORT_DOWNLOAD_TTL_MS = 5 * 60 * 1000;
 export const RECORD_EXPORT_PROGRESS_INTERVAL_MS = 1000;
 export const RECORD_EXPORT_MISSING_JOB_TIMEOUT_MS = 60_000;
 export const RECORD_EXPORT_REQUESTER_REFRESH_INTERVAL_MS = 5_000;
-
-export const RECORD_EXPORT_CLEANUP_JOB_OPTIONS: QueueJobOptions = {
-  delay: RECORD_EXPORT_CONNECTION_TTL_MS,
-  retryLimit: 10,
-  backoff: {
-    strategy: 'exponential',
-    initialDelayMilliseconds: 60_000,
-  },
-};

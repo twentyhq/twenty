@@ -1,9 +1,11 @@
 import { RecordExportStreamWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-stream.workspace-service';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
-import { DeleteRecordExportJob } from 'src/engine/core-modules/record-export/jobs/delete-record-export.job';
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { GenerateRecordExportJob } from 'src/engine/core-modules/record-export/jobs/generate-record-export.job';
@@ -18,6 +20,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([FileEntity]),
     CoreCommonApiModule,
     FeatureFlagModule,
     JwtModule,
@@ -31,7 +34,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordExportResolver,
     RecordExportStreamWorkspaceService,
     RecordExportCacheService,
-    DeleteRecordExportJob,
+    provideWorkspaceScopedRepository(FileEntity),
     RecordExportWorkspaceService,
     RecordExportQueryWorkspaceService,
     GenerateRecordExportJob,
