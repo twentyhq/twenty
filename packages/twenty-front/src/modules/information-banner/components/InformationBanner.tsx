@@ -62,7 +62,7 @@ export const InformationBanner = ({
   );
 
   const isPrimary = variant === 'primary';
-  const buttonAccent = color === 'danger' ? 'danger' : 'blue';
+  const buttonColor = color === 'danger' ? 'danger' : 'accent';
 
   return (
     <InformationBannerComponentInstanceContext.Provider
@@ -88,7 +88,7 @@ export const InformationBanner = ({
                 onClick={buttonOnClick}
                 disabled={isButtonDisabled}
                 variant="outline"
-                color={buttonAccent === 'blue' ? 'accent' : 'danger'}
+                color={isPrimary ? 'neutral' : buttonColor}
               >
                 {buttonTitle}
               </Button>
@@ -109,7 +109,7 @@ export const InformationBanner = ({
               <IconButton
                 size="sm"
                 variant="ghost"
-                color={buttonAccent === 'blue' ? 'accent' : 'danger'}
+                color={buttonColor}
                 onClick={onClose}
                 aria-label={t`Close banner`}
               >
