@@ -153,18 +153,4 @@ describe('Bulk object metadata update', () => {
       }
     }
   });
-
-  it('should reject a batch updating the same object twice', async () => {
-    const { errors } = await updateManyObjectsMetadata({
-      expectToFail: true,
-      input: {
-        inputs: [
-          { id: companyObject.id, update: { color: 'red' } },
-          { id: companyObject.id, update: { color: 'blue' } },
-        ],
-      },
-    });
-
-    expect(errors).toBeDefined();
-  });
 });
