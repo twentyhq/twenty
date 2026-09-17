@@ -4,10 +4,9 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPublicDomainsListCard } from '@/settings/domains/components/SettingsPublicDomainsListCard';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { Section } from 'twenty-ui/components';
 import { IconCopy } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContent = styled.div`
@@ -26,8 +25,8 @@ export const SettingsApplicationFunctionDomainSection = ({
   const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`App URL`}
         description={t`This app's routes are served from this URL. Add a custom domain to use your own.`}
       />
@@ -45,6 +44,6 @@ export const SettingsApplicationFunctionDomainSection = ({
         />
         <SettingsPublicDomainsListCard applicationId={applicationId} />
       </StyledContent>
-    </Section>
+    </Section.Root>
   );
 };

@@ -6,8 +6,7 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsApplicationCommandMenuItemSettingsTabProps = {
@@ -118,8 +117,8 @@ export const SettingsApplicationCommandMenuItemSettingsTab = ({
   ];
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Details`}
         description={t`Configuration of this command menu item`}
       />
@@ -141,6 +140,6 @@ export const SettingsApplicationCommandMenuItemSettingsTab = ({
           ))}
         </TableSection>
       </Table>
-    </Section>
+    </Section.Root>
   );
 };

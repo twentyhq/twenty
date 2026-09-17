@@ -1,11 +1,12 @@
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 const StyledTagContainer = styled.div`
   width: 100%;
@@ -33,25 +34,21 @@ export const RecordGroupAggregateDropdownButton = ({
 
   return (
     <StyledHeaderContainer>
-      <StyledHeaderDropdownButton id={dropdownId} isUnfolded={isDropdownOpen}>
-        <>
+      <Tooltip
+        content={tooltip ?? ''}
+        side="right"
+        positionMethod="fixed"
+        delay={TooltipDelay.mediumDelay}
+        disabled={isDropdownOpen}
+      >
+        <StyledHeaderDropdownButton id={dropdownId} isUnfolded={isDropdownOpen}>
           <StyledTagContainer>
             <Tag color="transparent" weight="regular">
               {isDefined(value) ? value.toString() : '-'}
             </Tag>
           </StyledTagContainer>
-          {!isDropdownOpen && (
-            <AppTooltip
-              anchorSelect={`#${dropdownId}`}
-              title={tooltip ?? ''}
-              noArrow
-              place="right"
-              positionStrategy="fixed"
-              delay={TooltipDelay.mediumDelay}
-            />
-          )}
-        </>
-      </StyledHeaderDropdownButton>
+        </StyledHeaderDropdownButton>
+      </Tooltip>
     </StyledHeaderContainer>
   );
 };

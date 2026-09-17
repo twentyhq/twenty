@@ -11,10 +11,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconEye, IconPlus, IconSparkle2 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectTable';
 
 const SETTINGS_DATA_MODEL_HERO_INSTANCE_ID_PREFIX = 'settings-data-model-hero';
@@ -66,7 +65,7 @@ export const SettingsObjects = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
+        <Section.Root>
           <SettingsDiscoveryHeroCard
             lightSrc={LightCoverImage}
             darkSrc={DarkCoverImage}
@@ -74,16 +73,16 @@ export const SettingsObjects = () => {
             tabs={heroTabs}
             playButtonAriaLabel={t`Watch data model demo`}
           />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Objects`}
             description={t`Manage objects, fields and relationships`}
           />
           <SettingsObjectTable objectMetadataItems={objectMetadataItems} />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Visualize data model`}
             description={t`See your data structure as an interactive diagram`}
           />
@@ -93,7 +92,7 @@ export const SettingsObjects = () => {
             startIcon={<IconEye />}
             variant="outline"
           >{t`Visualize`}</NavigationButton>
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

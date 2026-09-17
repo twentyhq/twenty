@@ -11,9 +11,6 @@ import {
   AutogrowWrapper,
   HorizontalSeparator,
   ResizeHandle,
-  Section,
-  SectionAlignment,
-  SectionFontColor,
 } from 'twenty-ui/primitives/layout';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
@@ -73,17 +70,6 @@ const LAYOUT_ENTRIES: GalleryEntry[] = [
   {
     name: 'ResizeHandle',
     node: <ResizeHandle />,
-  },
-  {
-    name: 'Section',
-    node: (
-      <Section
-        alignment={SectionAlignment.Left}
-        fontColor={SectionFontColor.Primary}
-      >
-        Section
-      </Section>
-    ),
   },
 ];
 

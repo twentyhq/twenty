@@ -20,9 +20,11 @@ const StyledContainer = styled.div`
 export const MultiSelectDisplay = ({
   values,
   options,
+  className,
 }: {
   values: FieldMultiSelectValue | undefined;
   options: SelectOption[];
+  className?: string;
 }) => {
   const selectedOptions = values
     ? options?.filter((option) => values.includes(option.value))
@@ -31,7 +33,7 @@ export const MultiSelectDisplay = ({
   if (!isDefined(selectedOptions)) return null;
 
   return (
-    <StyledContainer>
+    <StyledContainer className={className}>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           preventShrink

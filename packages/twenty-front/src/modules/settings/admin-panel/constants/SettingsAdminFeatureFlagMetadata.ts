@@ -54,10 +54,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Credit allowance quotas`,
     description: msg`Use the quota engine to enforce credit allowances.`,
   },
-  [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
-    label: msg`Record creation form`,
-    description: msg`Use a dedicated form when creating records.`,
-  },
   [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: {
     label: msg`Record sharing`,
     description: msg`Allow sharing individual records with workspace members.`,
