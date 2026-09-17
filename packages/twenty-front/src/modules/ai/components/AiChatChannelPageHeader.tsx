@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
@@ -40,6 +41,13 @@ const StyledTitle = styled.div`
   padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
+const StyledDescription = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  flex: 1;
+  font-weight: ${themeCssVariables.font.weight.regular};
+  min-width: 0;
+`;
+
 const StyledActions = styled.div`
   align-items: center;
   display: flex;
@@ -72,6 +80,11 @@ export const AiChatChannelPageHeader = ({
       <StyledTitle>
         <ChannelIcon size={16} />
         <OverflowingTextWithTooltip text={channel.name} />
+        {isDefined(channel.description) && !isMobile && (
+          <StyledDescription>
+            <OverflowingTextWithTooltip text={channel.description} />
+          </StyledDescription>
+        )}
       </StyledTitle>
       <StyledActions>
         <AiChatThreadFilterDropdown

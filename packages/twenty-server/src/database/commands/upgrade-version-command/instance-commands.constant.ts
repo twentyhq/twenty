@@ -196,6 +196,7 @@ import { AddAppMessageChannelUniqueHandleFastInstanceCommand } from 'src/databas
 import { AddAgentChatThreadParticipantsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789653152702-add-agent-chat-thread-participants';
 import { BackfillAgentChatThreadParticipantsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1789653152703-backfill-agent-chat-thread-participants';
 import { AddAgentChatChannelsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789653152704-add-agent-chat-channels';
+import { AddAgentChatChannelRolesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789658820136-add-agent-chat-channel-roles';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -394,4 +395,5 @@ export const INSTANCE_COMMANDS = [
   AddAgentChatThreadParticipantsFastInstanceCommand,
   BackfillAgentChatThreadParticipantsSlowInstanceCommand,
   AddAgentChatChannelsFastInstanceCommand,
+  AddAgentChatChannelRolesFastInstanceCommand,
 ];

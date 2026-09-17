@@ -8,22 +8,36 @@ import { useChatChannels } from '@/ai/hooks/useChatChannels';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
   AddChatChannelMemberDocument,
+  AddChatChannelRoleDocument,
   type AgentChatChannelVisibility,
   CreateChatChannelDocument,
   DeleteChatChannelDocument,
   JoinChatChannelDocument,
   LeaveChatChannelDocument,
   RemoveChatChannelMemberDocument,
+  RemoveChatChannelRoleDocument,
   SetChatThreadChannelDocument,
   UpdateChatChannelDocument,
 } from '~/generated-metadata/graphql';
 
+type ChatChannelInput = {
+  name?: string;
+  description?: string | null;
+  visibility?: AgentChatChannelVisibility;
+};
+
 export const useChatChannelActions = () => {
   const { enqueueToast } = useToast();
-  const { upsertChannel, removeChannel, upsertMember, removeMembers } =
-    useApplyAgentChatChannelStoreChange();
+  const {
+    upsertChannel,
+    removeChannel,
+    upsertMember,
+    removeMembers,
+    upsertRole,
+    removeRoles,
+  } = useApplyAgentChatChannelStoreChange();
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
-  const { getChannelMembers } = useChatChannels();
+  const { getChannelMembers, getChannelRoles } = useChatChannels();
 
   const [createChatChannelMutation] = useMutation(CreateChatChannelDocument);
   const [updateChatChannelMutation] = useMutation(UpdateChatChannelDocument);
@@ -35,6 +49,10 @@ export const useChatChannelActions = () => {
   );
   const [removeChatChannelMemberMutation] = useMutation(
     RemoveChatChannelMemberDocument,
+  );
+  const [addChatChannelRoleMutation] = useMutation(AddChatChannelRoleDocument);
+  const [removeChatChannelRoleMutation] = useMutation(
+    RemoveChatChannelRoleDocument,
   );
   const [setChatThreadChannelMutation] = useMutation(
     SetChatThreadChannelDocument,
@@ -52,10 +70,12 @@ export const useChatChannelActions = () => {
     }
   };
 
-  const createChatChannel = (input: {
-    name: string;
-    visibility: AgentChatChannelVisibility;
-  }) =>
+  const createChatChannel = (
+    input: ChatChannelInput & {
+      name: string;
+      visibility: AgentChatChannelVisibility;
+    },
+  ) =>
     runOrToast(async () => {
       const { data } = await createChatChannelMutation({
         variables: { input },
@@ -69,10 +89,7 @@ export const useChatChannelActions = () => {
       return channel;
     });
 
-  const updateChatChannel = (
-    channelId: string,
-    input: { name?: string; visibility?: AgentChatChannelVisibility },
-  ) =>
+  const updateChatChannel = (channelId: string, input: ChatChannelInput) =>
     runOrToast(async () => {
       const { data } = await updateChatChannelMutation({
         variables: { id: channelId, input },
@@ -94,6 +111,9 @@ export const useChatChannelActions = () => {
 
       if (data?.deleteChatChannel) {
         removeMembers(getChannelMembers(channelId).map((member) => member.id));
+        removeRoles(
+          getChannelRoles(channelId).map((channelRole) => channelRole.id),
+        );
         removeChannel(channelId);
       }
 
@@ -180,6 +200,49 @@ export const useChatChannelActions = () => {
       return data?.removeChatChannelMember ?? false;
     });
 
+  const addChatChannelRole = ({
+    channelId,
+    roleId,
+  }: {
+    channelId: string;
+    roleId: string;
+  }) =>
+    runOrToast(async () => {
+      const { data } = await addChatChannelRoleMutation({
+        variables: { channelId, roleId },
+      });
+      const channelRole = data?.addChatChannelRole;
+
+      if (isDefined(channelRole)) {
+        upsertRole(channelRole);
+      }
+
+      return channelRole;
+    });
+
+  const removeChatChannelRole = ({
+    channelId,
+    roleId,
+  }: {
+    channelId: string;
+    roleId: string;
+  }) =>
+    runOrToast(async () => {
+      const { data } = await removeChatChannelRoleMutation({
+        variables: { channelId, roleId },
+      });
+
+      if (data?.removeChatChannelRole) {
+        removeRoles(
+          getChannelRoles(channelId)
+            .filter((channelRole) => channelRole.roleId === roleId)
+            .map((channelRole) => channelRole.id),
+        );
+      }
+
+      return data?.removeChatChannelRole ?? false;
+    });
+
   const setChatThreadChannel = ({
     threadId,
     channelId,
@@ -212,6 +275,8 @@ export const useChatChannelActions = () => {
     leaveChatChannel,
     addChatChannelMember,
     removeChatChannelMember,
+    addChatChannelRole,
+    removeChatChannelRole,
     setChatThreadChannel,
   };
 };

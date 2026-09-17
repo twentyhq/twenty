@@ -13,6 +13,7 @@ const buildChannel = (visibility: AgentChatChannelVisibility) => ({
   id: CHANNEL_ID,
   workspaceId: WORKSPACE_ID,
   name: 'Sales',
+  description: null,
   visibility,
   targetObjectMetadataId: null,
   targetRecordId: null,
@@ -106,6 +107,11 @@ const buildService = ({
     },
   };
   const agentChatService = {
+    getChannelReaderUserWorkspaceIds: jest
+      .fn()
+      .mockImplementation(() =>
+        Promise.resolve(memberRows.map((member) => member.userWorkspaceId)),
+      ),
     getThreadById: jest.fn().mockResolvedValue({
       id: 'thread-id',
       workspaceId: WORKSPACE_ID,
@@ -126,6 +132,27 @@ const buildService = ({
   const workspaceEventBroadcaster = {
     broadcast: jest.fn().mockResolvedValue(undefined),
   };
+  const channelRoleRepository = {
+    findOne: jest.fn().mockResolvedValue(null),
+    find: jest.fn().mockResolvedValue([]),
+    insertAndReturnOne: jest.fn().mockImplementation((_workspaceId, values) =>
+      Promise.resolve({
+        id: 'new-channel-role',
+        ...values,
+        workspaceId: WORKSPACE_ID,
+        createdAt: new Date(),
+      }),
+    ),
+    delete: jest.fn().mockResolvedValue({ affected: 1 }),
+  };
+  const roleRepository = {
+    existsBy: jest.fn().mockResolvedValue(true),
+    find: jest.fn().mockResolvedValue([]),
+  };
+  const roleTargetRepository = {
+    find: jest.fn().mockResolvedValue([]),
+    existsBy: jest.fn().mockResolvedValue(false),
+  };
 
   const service = new AgentChatChannelService(
     channelRepository as never,
@@ -134,6 +161,9 @@ const buildService = ({
     userWorkspaceRepository as never,
     agentChatService as never,
     workspaceEventBroadcaster as never,
+    channelRoleRepository as never,
+    roleRepository as never,
+    roleTargetRepository as never,
   );
 
   return {
@@ -143,6 +173,9 @@ const buildService = ({
     threadRepository,
     agentChatService,
     workspaceEventBroadcaster,
+    channelRoleRepository,
+    roleRepository,
+    roleTargetRepository,
     entityManager,
   };
 };
@@ -352,6 +385,234 @@ describe('AgentChatChannelService', () => {
         recipientsAfter: [ADMIN_ID],
         updatedFields: ['channelId'],
       }),
+    );
+  });
+
+  it('grants a role on a private channel and tells the users it brings in', async () => {
+    const {
+      service,
+      agentChatService,
+      channelRoleRepository,
+      workspaceEventBroadcaster,
+    } = buildService({ visibility: AgentChatChannelVisibility.PRIVATE });
+
+    // The readers grow once the row exists, as the database would report.
+    let readerIds = [ADMIN_ID, MEMBER_ID];
+
+    agentChatService.getChannelReaderUserWorkspaceIds.mockImplementation(() =>
+      Promise.resolve([...readerIds]),
+    );
+    channelRoleRepository.insertAndReturnOne.mockImplementation(
+      (_workspaceId, values) => {
+        readerIds = [...readerIds, OUTSIDER_ID];
+
+        return Promise.resolve({
+          id: 'new-channel-role',
+          ...values,
+          workspaceId: WORKSPACE_ID,
+          createdAt: new Date(),
+        });
+      },
+    );
+
+    const channelRole = await service.addRole({
+      channelId: CHANNEL_ID,
+      roleId: 'role-id',
+      actorUserWorkspaceId: ADMIN_ID,
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(channelRole).toMatchObject({
+      channelId: CHANNEL_ID,
+      roleId: 'role-id',
+    });
+    expect(channelRoleRepository.insertAndReturnOne).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      { channelId: CHANNEL_ID, roleId: 'role-id' },
+    );
+    expect(workspaceEventBroadcaster.broadcast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        events: [
+          expect.objectContaining({
+            type: 'created',
+            entityName: 'agentChatChannel',
+            recipientUserWorkspaceIds: [OUTSIDER_ID],
+          }),
+        ],
+      }),
+    );
+    expect(workspaceEventBroadcaster.broadcast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        events: [
+          expect.objectContaining({
+            type: 'created',
+            entityName: 'agentChatChannelRole',
+            recipientUserWorkspaceIds: [ADMIN_ID, MEMBER_ID, OUTSIDER_ID],
+          }),
+        ],
+      }),
+    );
+  });
+
+  it('only lets admins grant roles, and only roles people can hold', async () => {
+    const { service, roleRepository } = buildService();
+
+    await expect(
+      service.addRole({
+        channelId: CHANNEL_ID,
+        roleId: 'role-id',
+        actorUserWorkspaceId: MEMBER_ID,
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).rejects.toMatchObject({
+      code: AiExceptionCode.CHANNEL_ACTION_NOT_ALLOWED,
+    });
+
+    roleRepository.existsBy.mockResolvedValueOnce(false);
+
+    await expect(
+      service.addRole({
+        channelId: CHANNEL_ID,
+        roleId: 'agent-only-role',
+        actorUserWorkspaceId: ADMIN_ID,
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.ROLE_NOT_FOUND });
+  });
+
+  it('revokes a role and drops the private channel for the users it alone let in', async () => {
+    const {
+      service,
+      agentChatService,
+      channelRoleRepository,
+      workspaceEventBroadcaster,
+    } = buildService({ visibility: AgentChatChannelVisibility.PRIVATE });
+
+    channelRoleRepository.findOne.mockResolvedValueOnce({
+      id: 'channel-role-id',
+      channelId: CHANNEL_ID,
+      roleId: 'role-id',
+      workspaceId: WORKSPACE_ID,
+      createdAt: new Date(),
+    });
+    let readerIds = [ADMIN_ID, MEMBER_ID, OUTSIDER_ID];
+
+    agentChatService.getChannelReaderUserWorkspaceIds.mockImplementation(() =>
+      Promise.resolve([...readerIds]),
+    );
+    channelRoleRepository.delete.mockImplementation(() => {
+      readerIds = [ADMIN_ID, MEMBER_ID];
+
+      return Promise.resolve({ affected: 1 });
+    });
+
+    await expect(
+      service.removeRole({
+        channelId: CHANNEL_ID,
+        roleId: 'role-id',
+        actorUserWorkspaceId: ADMIN_ID,
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).resolves.toBe(true);
+
+    expect(channelRoleRepository.delete).toHaveBeenCalledWith(WORKSPACE_ID, {
+      id: 'channel-role-id',
+    });
+    expect(workspaceEventBroadcaster.broadcast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        events: [
+          expect.objectContaining({
+            type: 'deleted',
+            entityName: 'agentChatChannelRole',
+            recipientUserWorkspaceIds: [ADMIN_ID, MEMBER_ID, OUTSIDER_ID],
+          }),
+        ],
+      }),
+    );
+    expect(workspaceEventBroadcaster.broadcast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        events: [
+          expect.objectContaining({
+            type: 'deleted',
+            entityName: 'agentChatChannel',
+            recipientUserWorkspaceIds: [OUTSIDER_ID],
+          }),
+        ],
+      }),
+    );
+  });
+
+  it('reports a role that is not on the channel', async () => {
+    const { service } = buildService();
+
+    await expect(
+      service.removeRole({
+        channelId: CHANNEL_ID,
+        roleId: 'role-id',
+        actorUserWorkspaceId: ADMIN_ID,
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.CHANNEL_ROLE_NOT_FOUND });
+  });
+
+  it('keeps the channel for a member who leaves but still holds one of its roles', async () => {
+    const {
+      service,
+      channelRoleRepository,
+      roleTargetRepository,
+      workspaceEventBroadcaster,
+    } = buildService({ visibility: AgentChatChannelVisibility.PRIVATE });
+
+    channelRoleRepository.find.mockResolvedValueOnce([{ roleId: 'role-id' }]);
+    roleTargetRepository.existsBy.mockResolvedValueOnce(true);
+
+    await expect(
+      service.leaveChannel({
+        channelId: CHANNEL_ID,
+        userWorkspaceId: MEMBER_ID,
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).resolves.toBe(true);
+
+    expect(workspaceEventBroadcaster.broadcast).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        events: [
+          expect.objectContaining({
+            type: 'deleted',
+            entityName: 'agentChatChannel',
+          }),
+        ],
+      }),
+    );
+  });
+
+  it('trims the purpose line and clears it when emptied', async () => {
+    const { service, channelRepository } = buildService();
+
+    await service.updateChannel({
+      channelId: CHANNEL_ID,
+      input: { description: '  Deal research  ' },
+      userWorkspaceId: ADMIN_ID,
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(channelRepository.update).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      { id: CHANNEL_ID },
+      { description: 'Deal research' },
+    );
+
+    await service.updateChannel({
+      channelId: CHANNEL_ID,
+      input: { description: '   ' },
+      userWorkspaceId: ADMIN_ID,
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(channelRepository.update).toHaveBeenLastCalledWith(
+      WORKSPACE_ID,
+      { id: CHANNEL_ID },
+      { description: null },
     );
   });
 

@@ -15,6 +15,7 @@ import { type AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent
 import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { type AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
 import { type AgentChatChannelMemberEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel-member.entity';
+import { type AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel-role.entity';
 import { type AgentChatChannelEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel.entity';
 import { type AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread-participant.entity';
 import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
@@ -36,6 +37,7 @@ export type AllNonWorkspaceRelatedEntity =
   | AgentChatThreadParticipantEntity
   | AgentChatChannelEntity
   | AgentChatChannelMemberEntity
+  | AgentChatChannelRoleEntity
   | AgentMessagePartEntity
   | AgentMessageEntity
   | AgentTurnEntity

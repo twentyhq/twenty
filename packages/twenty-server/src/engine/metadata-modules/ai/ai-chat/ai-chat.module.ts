@@ -28,8 +28,11 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
 import { AgentChatChannelMemberEntity } from './entities/agent-chat-channel-member.entity';
+import { AgentChatChannelRoleEntity } from './entities/agent-chat-channel-role.entity';
 import { AgentChatChannelEntity } from './entities/agent-chat-channel.entity';
 import { AgentChatThreadParticipantEntity } from './entities/agent-chat-thread-participant.entity';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
@@ -59,6 +62,9 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
       AgentChatThreadParticipantEntity,
       AgentChatChannelEntity,
       AgentChatChannelMemberEntity,
+      AgentChatChannelRoleEntity,
+      RoleEntity,
+      RoleTargetEntity,
       FileEntity,
       UserWorkspaceEntity,
       WorkspaceEntity,
@@ -105,6 +111,9 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     provideWorkspaceScopedRepository(AgentChatThreadParticipantEntity),
     provideWorkspaceScopedRepository(AgentChatChannelEntity),
     provideWorkspaceScopedRepository(AgentChatChannelMemberEntity),
+    provideWorkspaceScopedRepository(AgentChatChannelRoleEntity),
+    provideWorkspaceScopedRepository(RoleEntity),
+    provideWorkspaceScopedRepository(RoleTargetEntity),
     provideWorkspaceScopedRepository(AgentTurnEntity),
     provideWorkspaceScopedRepository(AgentMessageEntity),
     provideWorkspaceScopedRepository(AgentMessagePartEntity),

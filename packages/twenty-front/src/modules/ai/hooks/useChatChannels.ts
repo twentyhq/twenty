@@ -1,10 +1,12 @@
 import { useAtomValue } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { agentChatCurrentUserRoleIdsState } from '@/ai/states/agentChatCurrentUserRoleIdsState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatAgentChatChannel } from '@/metadata-store/types/FlatAgentChatChannel';
 import { type FlatAgentChatChannelMember } from '@/metadata-store/types/FlatAgentChatChannelMember';
+import { type FlatAgentChatChannelRole } from '@/metadata-store/types/FlatAgentChatChannelRole';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   AgentChatChannelMemberRole,
@@ -18,10 +20,17 @@ export const useChatChannels = () => {
   const membersStoreEntry = useAtomValue(
     metadataStoreState.atomFamily('agentChatChannelMembers'),
   );
+  const rolesStoreEntry = useAtomValue(
+    metadataStoreState.atomFamily('agentChatChannelRoles'),
+  );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const agentChatCurrentUserRoleIds = useAtomStateValue(
+    agentChatCurrentUserRoleIdsState,
+  );
 
   const channels = channelsStoreEntry.current as FlatAgentChatChannel[];
   const members = membersStoreEntry.current as FlatAgentChatChannelMember[];
+  const channelRoles = rolesStoreEntry.current as FlatAgentChatChannelRole[];
   const currentUserWorkspaceId = currentWorkspaceMember?.userWorkspaceId;
 
   const currentUserMembershipByChannelId = new Map(
@@ -30,29 +39,43 @@ export const useChatChannels = () => {
       .map((member) => [member.channelId, member]),
   );
 
+  const currentUserRoleIdSet = new Set(agentChatCurrentUserRoleIds);
+  const channelIdsReadThroughRole = new Set(
+    channelRoles
+      .filter((channelRole) => currentUserRoleIdSet.has(channelRole.roleId))
+      .map((channelRole) => channelRole.channelId),
+  );
+
+  const isCurrentUserChannelMember = (channelId: string) =>
+    currentUserMembershipByChannelId.has(channelId);
+
+  // The server only lists a private channel to its readers, so one that is
+  // neither joined nor granted through a known role is still read: the
+  // user's roles may have changed since they were loaded.
+  const isCurrentUserChannelReader = (channel: FlatAgentChatChannel) =>
+    isCurrentUserChannelMember(channel.id) ||
+    channelIdsReadThroughRole.has(channel.id) ||
+    channel.visibility === AgentChatChannelVisibility.PRIVATE;
+
   const sortedChannels = [...channels].sort((left, right) =>
     left.name.localeCompare(right.name),
   );
 
-  const joinedChannels = sortedChannels.filter((channel) =>
-    currentUserMembershipByChannelId.has(channel.id),
-  );
+  const joinedChannels = sortedChannels.filter(isCurrentUserChannelReader);
 
   const browsableChannels = sortedChannels.filter(
-    (channel) =>
-      channel.visibility === AgentChatChannelVisibility.PUBLIC &&
-      !currentUserMembershipByChannelId.has(channel.id),
+    (channel) => !isCurrentUserChannelReader(channel),
   );
 
   const getChannelMembers = (channelId: string) =>
     members.filter((member) => member.channelId === channelId);
 
+  const getChannelRoles = (channelId: string) =>
+    channelRoles.filter((channelRole) => channelRole.channelId === channelId);
+
   const isCurrentUserChannelAdmin = (channelId: string) =>
     currentUserMembershipByChannelId.get(channelId)?.role ===
     AgentChatChannelMemberRole.ADMIN;
-
-  const isCurrentUserChannelMember = (channelId: string) =>
-    currentUserMembershipByChannelId.has(channelId);
 
   const findChannelById = (channelId: string | null | undefined) =>
     isDefined(channelId)
@@ -65,6 +88,7 @@ export const useChatChannels = () => {
     browsableChannels,
     loading: channelsStoreEntry.status === 'empty',
     getChannelMembers,
+    getChannelRoles,
     isCurrentUserChannelAdmin,
     isCurrentUserChannelMember,
     findChannelById,

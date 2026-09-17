@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AiChatChannelComposer } from '@/ai/components/AiChatChannelComposer';
 import { AiChatChannelDeleteConfirmationModal } from '@/ai/components/AiChatChannelDeleteConfirmationModal';
 import { AiChatChannelPageHeader } from '@/ai/components/AiChatChannelPageHeader';
 import { AiChatChannelThreadList } from '@/ai/components/AiChatChannelThreadList';
@@ -22,7 +23,7 @@ const StyledPanel = styled.div`
   overflow: hidden;
 `;
 
-const StyledBody = styled.div`
+const StyledFeed = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -60,9 +61,10 @@ export const AiChatChannelPage = () => {
   return (
     <StyledPanel>
       <AiChatChannelPageHeader channel={channel} />
-      <StyledBody>
+      <StyledFeed>
         <AiChatChannelThreadList channelId={channel.id} />
-      </StyledBody>
+      </StyledFeed>
+      <AiChatChannelComposer channelId={channel.id} />
       {/* Thread items on this page use the side panel action surface. */}
       <AiChatThreadDeleteConfirmationModal
         surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}

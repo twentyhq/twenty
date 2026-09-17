@@ -15,30 +15,39 @@ export const AGENT_CHAT_THREAD_DATA_SEED_IDS = {
 type AgentChatChannelSeed = {
   id: string;
   name: string;
+  description: string;
   visibility: 'public' | 'private';
   adminUserWorkspaceId: string;
   memberUserWorkspaceIds: string[];
+  // Whether holders of the workspace admin role read the channel as well.
+  isReadableByWorkspaceAdmins: boolean;
 };
 
 // A public channel the whole workspace can browse and a private one with an
-// invited membership, so the dev workspace shows both access models.
+// invited membership plus a role, so the dev workspace shows every access
+// model.
 export const APPLE_AGENT_CHAT_CHANNEL_SEEDS: AgentChatChannelSeed[] = [
   {
     id: AGENT_CHAT_CHANNEL_DATA_SEED_IDS.APPLE_SALES_CHANNEL,
     name: 'Sales',
+    description: 'Pipeline questions, deal research and outreach drafts.',
     visibility: 'public',
     adminUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
     memberUserWorkspaceIds: [
       USER_WORKSPACE_DATA_SEED_IDS.JANE,
       USER_WORKSPACE_DATA_SEED_IDS.JONY,
     ],
+    isReadableByWorkspaceAdmins: false,
   },
   {
     id: AGENT_CHAT_CHANNEL_DATA_SEED_IDS.APPLE_LEADERSHIP_CHANNEL,
     name: 'Leadership',
+    description:
+      'Board prep, forecasts and anything not ready to share widely.',
     visibility: 'private',
     adminUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
     memberUserWorkspaceIds: [USER_WORKSPACE_DATA_SEED_IDS.JANE],
+    isReadableByWorkspaceAdmins: true,
   },
 ];
 

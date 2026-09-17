@@ -1,7 +1,7 @@
 export const AI_CHAT_CHANNEL_MENU_PAGE = {
   ROOT: 'root',
   MEMBERS: 'members',
-  RENAME: 'rename',
+  EDIT: 'edit',
 } as const;
 
 export type AiChatChannelMenuPage =

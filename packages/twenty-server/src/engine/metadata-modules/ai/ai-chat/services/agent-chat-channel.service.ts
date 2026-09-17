@@ -2,12 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type EntityManager, QueryFailedError, Repository } from 'typeorm';
+import {
+  type EntityManager,
+  In,
+  type ObjectLiteral,
+  QueryFailedError,
+  Repository,
+  type SelectQueryBuilder,
+} from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentChatChannelMemberEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel-member.entity';
+import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel-role.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatChannelMemberRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-member-role.enum';
@@ -19,12 +27,15 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 type ChannelInput = {
   name?: string;
+  description?: string | null;
   visibility?: AgentChatChannelVisibility;
   targetObjectMetadataId?: string | null;
   targetRecordId?: string | null;
@@ -44,6 +55,7 @@ type ChannelThreadWithRecipients = {
 const serializeChannelForBroadcast = (channel: AgentChatChannelEntity) => ({
   id: channel.id,
   name: channel.name,
+  description: channel.description,
   visibility: channel.visibility,
   targetObjectMetadataId: channel.targetObjectMetadataId,
   targetRecordId: channel.targetRecordId,
@@ -60,6 +72,15 @@ const serializeMemberForBroadcast = (member: AgentChatChannelMemberEntity) => ({
   createdAt: member.createdAt,
 });
 
+const serializeRoleForBroadcast = (
+  channelRole: AgentChatChannelRoleEntity,
+) => ({
+  id: channelRole.id,
+  channelId: channelRole.channelId,
+  roleId: channelRole.roleId,
+  createdAt: channelRole.createdAt,
+});
+
 @Injectable()
 export class AgentChatChannelService {
   constructor(
@@ -73,6 +94,12 @@ export class AgentChatChannelService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
+    @InjectWorkspaceScopedRepository(AgentChatChannelRoleEntity)
+    private readonly channelRoleRepository: WorkspaceScopedRepository<AgentChatChannelRoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
   ) {}
 
   async getChannelsForUser({
@@ -91,22 +118,62 @@ export class AgentChatChannelService {
     userWorkspaceId,
     workspaceId,
   }: ChannelActor): Promise<AgentChatChannelMemberEntity[]> {
-    return this.memberRepository
-      .createQueryBuilder('member')
-      .innerJoin('member.channel', 'channel')
-      .leftJoin(
-        'channel.members',
-        'viewer',
-        'viewer.userWorkspaceId = :userWorkspaceId',
-        { userWorkspaceId },
-      )
-      .where('member.workspaceId = :workspaceId', { workspaceId })
-      .andWhere(
-        '(channel.visibility = :publicVisibility OR viewer.id IS NOT NULL)',
-        { publicVisibility: AgentChatChannelVisibility.PUBLIC },
-      )
+    return this.addChannelVisibilityToViewer(
+      this.memberRepository
+        .createQueryBuilder('member')
+        .innerJoin('member.channel', 'channel')
+        .where('member.workspaceId = :workspaceId', { workspaceId }),
+      userWorkspaceId,
+    )
       .orderBy('member.createdAt', 'ASC')
       .getMany();
+  }
+
+  // Roles granted on every channel the user can see, so the client can show
+  // who reads a channel through a role and whether it is one of the user's.
+  async getChannelRolesForUser({
+    userWorkspaceId,
+    workspaceId,
+  }: ChannelActor): Promise<AgentChatChannelRoleEntity[]> {
+    return this.addChannelVisibilityToViewer(
+      this.channelRoleRepository
+        .createQueryBuilder('channelRole')
+        .innerJoin('channelRole.channel', 'channel')
+        .where('channelRole.workspaceId = :workspaceId', { workspaceId }),
+      userWorkspaceId,
+    )
+      .orderBy('channelRole.createdAt', 'ASC')
+      .getMany();
+  }
+
+  // Roles a channel admin can grant on a channel: the ones that can be held
+  // by people, listed with only what the picker needs to show.
+  async getAssignableRoles(
+    workspaceId: string,
+  ): Promise<Pick<RoleEntity, 'id' | 'label' | 'icon'>[]> {
+    const roles = await this.roleRepository.find(workspaceId, {
+      where: { canBeAssignedToUsers: true },
+      select: ['id', 'label', 'icon'],
+      order: { label: 'ASC' },
+    });
+
+    return roles.map((role) => ({
+      id: role.id,
+      label: role.label,
+      icon: role.icon,
+    }));
+  }
+
+  async getRoleIdsForUser({
+    userWorkspaceId,
+    workspaceId,
+  }: ChannelActor): Promise<string[]> {
+    const roleTargets = await this.roleTargetRepository.find(workspaceId, {
+      where: { userWorkspaceId },
+      select: ['roleId'],
+    });
+
+    return roleTargets.map((roleTarget) => roleTarget.roleId);
   }
 
   async getAccessibleChannelById({
@@ -144,6 +211,7 @@ export class AgentChatChannelService {
             workspaceId,
             {
               name,
+              description: this.normalizeChannelDescription(input.description),
               visibility: input.visibility ?? AgentChatChannelVisibility.PUBLIC,
               targetObjectMetadataId: input.targetObjectMetadataId ?? null,
               targetRecordId: input.targetRecordId ?? null,
@@ -189,21 +257,24 @@ export class AgentChatChannelService {
 
     await this.assertChannelAdmin({ channelId, userWorkspaceId, workspaceId });
 
-    const memberIdsBefore = await this.getMemberUserWorkspaceIds(
+    const readerIdsBefore = await this.getReaderUserWorkspaceIds(
       channelId,
       workspaceId,
     );
     const recipientsBefore = this.getChannelRecipients(
       channel,
-      memberIdsBefore,
+      readerIdsBefore,
     );
 
     const updates: Pick<
       Partial<AgentChatChannelEntity>,
-      'name' | 'visibility'
+      'name' | 'description' | 'visibility'
     > = {
       ...(isDefined(input.name)
         ? { name: this.normalizeChannelName(input.name) }
+        : {}),
+      ...(input.description !== undefined
+        ? { description: this.normalizeChannelDescription(input.description) }
         : {}),
       ...(isDefined(input.visibility) ? { visibility: input.visibility } : {}),
     };
@@ -235,7 +306,7 @@ export class AgentChatChannelService {
     const updatedChannel = { ...channel, ...updates, updatedAt: new Date() };
     const recipientsAfter = this.getChannelRecipients(
       updatedChannel,
-      memberIdsBefore,
+      readerIdsBefore,
     );
 
     await this.broadcastChannelAccessChange({
@@ -271,7 +342,7 @@ export class AgentChatChannelService {
 
     const recipientsBefore = this.getChannelRecipients(
       channel,
-      await this.getMemberUserWorkspaceIds(channelId, workspaceId),
+      await this.getReaderUserWorkspaceIds(channelId, workspaceId),
     );
     const threadsBefore = await this.getChannelThreadsWithRecipients(
       channelId,
@@ -435,13 +506,13 @@ export class AgentChatChannelService {
       );
     }
 
-    const memberIdsBefore = await this.getMemberUserWorkspaceIds(
+    const readerIdsBefore = await this.getReaderUserWorkspaceIds(
       channelId,
       workspaceId,
     );
     const recipientsBefore = this.getChannelRecipients(
       channel,
-      memberIdsBefore,
+      readerIdsBefore,
     );
     // Captured before the delete so a member joining meanwhile is diffed as a
     // new reader rather than folded into the previous audience.
@@ -466,7 +537,215 @@ export class AgentChatChannelService {
     await this.broadcastMember('deleted', member, recipientsBefore);
 
     if (isDefined(threadRecipientsBefore)) {
-      await this.broadcastChannel('deleted', channel, [userWorkspaceId]);
+      // A member who also holds one of the channel's roles keeps reading it.
+      const isStillReader = await this.isChannelRoleHolder({
+        channelId,
+        userWorkspaceId,
+        workspaceId,
+      });
+
+      if (!isStillReader) {
+        await this.broadcastChannel('deleted', channel, [userWorkspaceId]);
+      }
+
+      await this.broadcastChannelThreadsAccessChange({
+        channelId,
+        workspaceId,
+        recipientsBeforeByThreadId: threadRecipientsBefore,
+      });
+    }
+
+    return true;
+  }
+
+  async addRole({
+    channelId,
+    roleId,
+    actorUserWorkspaceId,
+    workspaceId,
+  }: {
+    channelId: string;
+    roleId: string;
+    actorUserWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<AgentChatChannelRoleEntity> {
+    const channel = await this.getAccessibleChannelById({
+      channelId,
+      userWorkspaceId: actorUserWorkspaceId,
+      workspaceId,
+    });
+
+    await this.assertChannelAdmin({
+      channelId,
+      userWorkspaceId: actorUserWorkspaceId,
+      workspaceId,
+    });
+
+    const isRoleAssignable = await this.roleRepository.existsBy(workspaceId, {
+      id: roleId,
+      canBeAssignedToUsers: true,
+    });
+
+    if (!isRoleAssignable) {
+      throw new AiException('Role not found', AiExceptionCode.ROLE_NOT_FOUND);
+    }
+
+    const existingChannelRole = await this.channelRoleRepository.findOne(
+      workspaceId,
+      { where: { channelId, roleId } },
+    );
+
+    if (isDefined(existingChannelRole)) {
+      return existingChannelRole;
+    }
+
+    const isPrivate = channel.visibility === AgentChatChannelVisibility.PRIVATE;
+    const readerIdsBefore = isPrivate
+      ? await this.getReaderUserWorkspaceIds(channelId, workspaceId)
+      : [];
+    const threadRecipientsBefore = isPrivate
+      ? new Map(
+          (
+            await this.getChannelThreadsWithRecipients(channelId, workspaceId)
+          ).map(({ thread, recipients }) => [thread.id, recipients]),
+        )
+      : null;
+
+    let channelRole: AgentChatChannelRoleEntity;
+
+    try {
+      channelRole = await this.channelRoleRepository.insertAndReturnOne(
+        workspaceId,
+        { channelId, roleId },
+      );
+    } catch (error) {
+      // A concurrent grant already created the row.
+      if (!this.isUniqueViolation(error)) {
+        throw error;
+      }
+
+      const concurrentlyInsertedChannelRole =
+        await this.channelRoleRepository.findOne(workspaceId, {
+          where: { channelId, roleId },
+        });
+
+      if (!isDefined(concurrentlyInsertedChannelRole)) {
+        throw error;
+      }
+
+      return concurrentlyInsertedChannelRole;
+    }
+
+    const readerIdsAfter = await this.getReaderUserWorkspaceIds(
+      channelId,
+      workspaceId,
+    );
+
+    if (isDefined(threadRecipientsBefore)) {
+      const gainingUserWorkspaceIds = readerIdsAfter.filter(
+        (id) => !readerIdsBefore.includes(id),
+      );
+
+      if (gainingUserWorkspaceIds.length > 0) {
+        await this.broadcastChannel(
+          'created',
+          channel,
+          gainingUserWorkspaceIds,
+        );
+      }
+    }
+
+    await this.broadcastRole(
+      'created',
+      channelRole,
+      this.getChannelRecipients(channel, readerIdsAfter),
+    );
+
+    if (isDefined(threadRecipientsBefore)) {
+      await this.broadcastChannelThreadsAccessChange({
+        channelId,
+        workspaceId,
+        recipientsBeforeByThreadId: threadRecipientsBefore,
+      });
+    }
+
+    return channelRole;
+  }
+
+  async removeRole({
+    channelId,
+    roleId,
+    actorUserWorkspaceId,
+    workspaceId,
+  }: {
+    channelId: string;
+    roleId: string;
+    actorUserWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const channel = await this.getAccessibleChannelById({
+      channelId,
+      userWorkspaceId: actorUserWorkspaceId,
+      workspaceId,
+    });
+
+    await this.assertChannelAdmin({
+      channelId,
+      userWorkspaceId: actorUserWorkspaceId,
+      workspaceId,
+    });
+
+    const channelRole = await this.channelRoleRepository.findOne(workspaceId, {
+      where: { channelId, roleId },
+    });
+
+    if (!isDefined(channelRole)) {
+      throw new AiException(
+        'Channel role not found',
+        AiExceptionCode.CHANNEL_ROLE_NOT_FOUND,
+      );
+    }
+
+    const readerIdsBefore = await this.getReaderUserWorkspaceIds(
+      channelId,
+      workspaceId,
+    );
+    const recipientsBefore = this.getChannelRecipients(
+      channel,
+      readerIdsBefore,
+    );
+    const threadRecipientsBefore =
+      channel.visibility === AgentChatChannelVisibility.PRIVATE
+        ? new Map(
+            (
+              await this.getChannelThreadsWithRecipients(channelId, workspaceId)
+            ).map(({ thread, recipients }) => [thread.id, recipients]),
+          )
+        : null;
+
+    const result = await this.channelRoleRepository.delete(workspaceId, {
+      id: channelRole.id,
+    });
+
+    if ((result.affected ?? 0) === 0) {
+      return false;
+    }
+
+    await this.broadcastRole('deleted', channelRole, recipientsBefore);
+
+    if (isDefined(threadRecipientsBefore)) {
+      const readerIdsAfter = await this.getReaderUserWorkspaceIds(
+        channelId,
+        workspaceId,
+      );
+      const losingUserWorkspaceIds = readerIdsBefore.filter(
+        (id) => !readerIdsAfter.includes(id),
+      );
+
+      if (losingUserWorkspaceIds.length > 0) {
+        await this.broadcastChannel('deleted', channel, losingUserWorkspaceIds);
+      }
+
       await this.broadcastChannelThreadsAccessChange({
         channelId,
         workspaceId,
@@ -646,7 +925,7 @@ export class AgentChatChannelService {
 
     const recipients = this.getChannelRecipients(
       channel,
-      await this.getMemberUserWorkspaceIds(channel.id, workspaceId),
+      await this.getReaderUserWorkspaceIds(channel.id, workspaceId),
     );
 
     if (channel.visibility === AgentChatChannelVisibility.PRIVATE) {
@@ -730,13 +1009,13 @@ export class AgentChatChannelService {
 
     const isPublic = channel?.visibility === AgentChatChannelVisibility.PUBLIC;
 
-    const [participantUserWorkspaceIdsByThreadId, memberUserWorkspaceIds] =
+    const [participantUserWorkspaceIdsByThreadId, readerUserWorkspaceIds] =
       await Promise.all([
         this.agentChatService.getParticipantUserWorkspaceIdsByThreadId({
           threadIds: threads.map((thread) => thread.id),
           workspaceId,
         }),
-        isPublic ? [] : this.getMemberUserWorkspaceIds(channelId, workspaceId),
+        isPublic ? [] : this.getReaderUserWorkspaceIds(channelId, workspaceId),
       ]);
 
     return threads.map((thread) => {
@@ -751,7 +1030,7 @@ export class AgentChatChannelService {
           : [
               ...new Set([
                 ...participantUserWorkspaceIds,
-                ...memberUserWorkspaceIds,
+                ...readerUserWorkspaceIds,
               ]),
             ],
       };
@@ -792,23 +1071,68 @@ export class AgentChatChannelService {
 
   private getChannelRecipients(
     channel: Pick<AgentChatChannelEntity, 'visibility'>,
-    memberUserWorkspaceIds: string[],
+    readerUserWorkspaceIds: string[],
   ): string[] | undefined {
     return channel.visibility === AgentChatChannelVisibility.PUBLIC
       ? undefined
-      : memberUserWorkspaceIds;
+      : readerUserWorkspaceIds;
   }
 
-  private async getMemberUserWorkspaceIds(
+  private getReaderUserWorkspaceIds(
     channelId: string,
     workspaceId: string,
   ): Promise<string[]> {
-    const members = await this.memberRepository.find(workspaceId, {
+    return this.agentChatService.getChannelReaderUserWorkspaceIds({
+      channelId,
+      workspaceId,
+    });
+  }
+
+  private async isChannelRoleHolder({
+    channelId,
+    userWorkspaceId,
+    workspaceId,
+  }: ChannelActor & { channelId: string }): Promise<boolean> {
+    const channelRoles = await this.channelRoleRepository.find(workspaceId, {
       where: { channelId },
-      select: ['userWorkspaceId'],
+      select: ['roleId'],
     });
 
-    return members.map((member) => member.userWorkspaceId);
+    if (channelRoles.length === 0) {
+      return false;
+    }
+
+    return this.roleTargetRepository.existsBy(workspaceId, {
+      roleId: In(channelRoles.map((channelRole) => channelRole.roleId)),
+      userWorkspaceId,
+    });
+  }
+
+  // Restricts a query on rows of a channel to the channels the viewer reads:
+  // public ones, those they are a member of and those one of their roles
+  // reads. The query must already join the channel under the "channel" alias.
+  private addChannelVisibilityToViewer<TEntity extends ObjectLiteral>(
+    query: SelectQueryBuilder<TEntity>,
+    userWorkspaceId: string,
+  ): SelectQueryBuilder<TEntity> {
+    return query
+      .leftJoin(
+        'channel.members',
+        'viewer',
+        'viewer.userWorkspaceId = :userWorkspaceId',
+        { userWorkspaceId },
+      )
+      .leftJoin('channel.roles', 'viewerChannelRole')
+      .leftJoin(
+        RoleTargetEntity,
+        'viewerRoleTarget',
+        'viewerRoleTarget.roleId = viewerChannelRole.roleId AND viewerRoleTarget.userWorkspaceId = :userWorkspaceId',
+        { userWorkspaceId },
+      )
+      .andWhere(
+        '(channel.visibility = :publicVisibility OR viewer.id IS NOT NULL OR viewerRoleTarget.id IS NOT NULL)',
+        { publicVisibility: AgentChatChannelVisibility.PUBLIC },
+      );
   }
 
   private async assertChannelAdmin({
@@ -841,6 +1165,14 @@ export class AgentChatChannelService {
     }
 
     return trimmed;
+  }
+
+  private normalizeChannelDescription(
+    description: string | null | undefined,
+  ): string | null {
+    const trimmed = description?.trim() ?? '';
+
+    return trimmed.length === 0 ? null : trimmed;
   }
 
   private async insertChannelOrThrow(
@@ -930,6 +1262,28 @@ export class AgentChatChannelService {
           type,
           entityName: 'agentChatChannelMember',
           recordId: member.id,
+          recipientUserWorkspaceIds,
+          properties:
+            type === 'deleted' ? { before: serialized } : { after: serialized },
+        },
+      ],
+    });
+  }
+
+  private async broadcastRole(
+    type: 'created' | 'deleted',
+    channelRole: AgentChatChannelRoleEntity,
+    recipientUserWorkspaceIds: string[] | undefined,
+  ): Promise<void> {
+    const serialized = serializeRoleForBroadcast(channelRole);
+
+    await this.workspaceEventBroadcaster.broadcast({
+      workspaceId: channelRole.workspaceId,
+      events: [
+        {
+          type,
+          entityName: 'agentChatChannelRole',
+          recordId: channelRole.id,
           recipientUserWorkspaceIds,
           properties:
             type === 'deleted' ? { before: serialized } : { after: serialized },

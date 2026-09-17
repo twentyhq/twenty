@@ -21,8 +21,8 @@ type SeedRow = {
 
 describe('seedAgents', () => {
   it.each([
-    [SEED_APPLE_WORKSPACE_ID, 3, 24, 12, 5, 2, 5],
-    [SEED_YCOMBINATOR_WORKSPACE_ID, 1, 4, 2, 1, 0, 0],
+    [SEED_APPLE_WORKSPACE_ID, 3, 24, 12, 5, 2, 5, 1],
+    [SEED_YCOMBINATOR_WORKSPACE_ID, 1, 4, 2, 1, 0, 0, 0],
   ])(
     'keeps messages, turns, and parts in their owning conversation for %s',
     async (
@@ -33,6 +33,7 @@ describe('seedAgents', () => {
       participantCount,
       channelCount,
       channelMemberCount,
+      channelRoleCount,
     ) => {
       const tables = new Map<string, SeedRow[]>();
       let tableName: string;
@@ -80,6 +81,7 @@ describe('seedAgents', () => {
       const participants = tables.get('core.agentChatThreadParticipant') ?? [];
       const channels = tables.get('core.agentChatChannel') ?? [];
       const channelMembers = tables.get('core.agentChatChannelMember') ?? [];
+      const channelRoles = tables.get('core.agentChatChannelRole') ?? [];
 
       expect(threads).toHaveLength(threadCount);
       expect(messages).toHaveLength(messageCount);
@@ -88,6 +90,15 @@ describe('seedAgents', () => {
       expect(participants).toHaveLength(participantCount);
       expect(channels).toHaveLength(channelCount);
       expect(channelMembers).toHaveLength(channelMemberCount);
+      expect(channelRoles).toHaveLength(channelRoleCount);
+      for (const channelRole of channelRoles) {
+        expect(channelRole).toEqual(
+          expect.objectContaining({ roleId: 'role-id', workspaceId }),
+        );
+        expect(channels).toContainEqual(
+          expect.objectContaining({ id: channelRole.channelId }),
+        );
+      }
       for (const thread of threads) {
         if (thread.channelId) {
           expect(channels).toContainEqual(

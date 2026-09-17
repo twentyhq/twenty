@@ -9,6 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 const StyledForm = styled.div`
@@ -18,33 +19,45 @@ const StyledForm = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-type AiChatChannelNameFormProps = {
+export type AiChatChannelFormValues = {
+  name: string;
+  description: string | null;
+};
+
+type AiChatChannelFormProps = {
   title: string;
   initialName?: string;
+  initialDescription?: string | null;
   submitLabel: string;
   onBack: () => void;
-  onSubmit: (name: string) => Promise<void> | void;
+  onSubmit: (values: AiChatChannelFormValues) => Promise<void> | void;
   children?: React.ReactNode;
 };
 
-export const AiChatChannelNameForm = ({
+export const AiChatChannelForm = ({
   title,
   initialName = '',
+  initialDescription = null,
   submitLabel,
   onBack,
   onSubmit,
   children,
-}: AiChatChannelNameFormProps) => {
+}: AiChatChannelFormProps) => {
   const { t } = useLingui();
   const [name, setName] = useState(initialName);
+  const [description, setDescription] = useState(initialDescription ?? '');
   const trimmedName = name.trim();
+  const trimmedDescription = description.trim();
 
   const handleSubmit = () => {
     if (trimmedName.length === 0) {
       return;
     }
 
-    void onSubmit(trimmedName);
+    void onSubmit({
+      name: trimmedName,
+      description: trimmedDescription.length > 0 ? trimmedDescription : null,
+    });
   };
 
   return (
@@ -72,6 +85,14 @@ export const AiChatChannelNameForm = ({
           }}
           fullWidth
           autoFocus
+        />
+        <TextArea
+          textAreaId="ai-chat-channel-description"
+          value={description}
+          onChange={setDescription}
+          placeholder={t`What is this channel for? (optional)`}
+          minRows={2}
+          maxRows={4}
         />
         {children}
         <Button

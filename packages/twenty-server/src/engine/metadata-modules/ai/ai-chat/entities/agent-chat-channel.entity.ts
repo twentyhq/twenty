@@ -11,10 +11,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_AGENT_CHAT_CHANNEL_ROLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-channel-roles-upgrade-command-name.constant';
 import { ADD_AGENT_CHAT_CHANNELS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-channels-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentChatChannelMemberEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel-member.entity';
+import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel-role.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-visibility.enum';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -49,6 +51,12 @@ export class AgentChatChannelEntity {
   @Column({ type: 'varchar', default: AgentChatChannelVisibility.PUBLIC })
   visibility: AgentChatChannelVisibility;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AGENT_CHAT_CHANNEL_ROLES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'text', nullable: true })
+  description: string | null;
+
   // A channel can be anchored to a CRM record (a deal room on an opportunity,
   // an account channel on a company). Both stay null for a free-form channel.
   @Column({ type: 'uuid', nullable: true })
@@ -69,6 +77,12 @@ export class AgentChatChannelEntity {
 
   @OneToMany(() => AgentChatChannelMemberEntity, (member) => member.channel)
   members: EntityRelation<AgentChatChannelMemberEntity[]>;
+
+  @OneToMany(
+    () => AgentChatChannelRoleEntity,
+    (channelRole) => channelRole.channel,
+  )
+  roles: EntityRelation<AgentChatChannelRoleEntity[]>;
 
   @OneToMany(() => AgentChatThreadEntity, (thread) => thread.channel)
   threads: Relation<AgentChatThreadEntity[]>;

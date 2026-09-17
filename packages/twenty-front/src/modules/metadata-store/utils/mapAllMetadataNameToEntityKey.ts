@@ -28,6 +28,7 @@ const METADATA_NAME_TO_ENTITY_KEY: Record<string, MetadataEntityKey> = {
   agentChatThread: 'agentChatThreads',
   agentChatChannel: 'agentChatChannels',
   agentChatChannelMember: 'agentChatChannelMembers',
+  agentChatChannelRole: 'agentChatChannelRoles',
   application: 'applications',
 };
 

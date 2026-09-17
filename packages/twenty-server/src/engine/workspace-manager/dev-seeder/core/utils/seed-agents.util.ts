@@ -20,6 +20,7 @@ const agentChatThreadTableName = 'agentChatThread';
 const agentChatThreadParticipantTableName = 'agentChatThreadParticipant';
 const agentChatChannelTableName = 'agentChatChannel';
 const agentChatChannelMemberTableName = 'agentChatChannelMember';
+const agentChatChannelRoleTableName = 'agentChatChannelRole';
 const agentTurnTableName = 'agentTurn';
 const agentMessageTableName = 'agentMessage';
 const agentMessagePartTableName = 'agentMessagePart';
@@ -51,12 +52,14 @@ type SeedChatThreadsArgs = {
   queryRunner: QueryRunner;
   schemaName: string;
   workspaceId: string;
+  adminRoleId: string;
 };
 
 const seedChatThreads = async ({
   queryRunner,
   schemaName,
   workspaceId,
+  adminRoleId,
 }: SeedChatThreadsArgs) => {
   let threadId: string;
   let userWorkspaceId: string;
@@ -80,7 +83,13 @@ const seedChatThreads = async ({
       : 'Portfolio performance';
 
   if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
-    await seedChatChannels({ queryRunner, schemaName, workspaceId, now });
+    await seedChatChannels({
+      queryRunner,
+      schemaName,
+      workspaceId,
+      adminRoleId,
+      now,
+    });
   }
 
   await queryRunner.manager
@@ -172,6 +181,7 @@ type SeedChatChannelsArgs = {
   queryRunner: QueryRunner;
   schemaName: string;
   workspaceId: string;
+  adminRoleId: string;
   now: Date;
 };
 
@@ -179,6 +189,7 @@ const seedChatChannels = async ({
   queryRunner,
   schemaName,
   workspaceId,
+  adminRoleId,
   now,
 }: SeedChatChannelsArgs) => {
   await queryRunner.manager
@@ -188,6 +199,7 @@ const seedChatChannels = async ({
       'id',
       'workspaceId',
       'name',
+      'description',
       'visibility',
       'createdByUserWorkspaceId',
       'createdAt',
@@ -199,6 +211,7 @@ const seedChatChannels = async ({
         id: channel.id,
         workspaceId,
         name: channel.name,
+        description: channel.description,
         visibility: channel.visibility,
         createdByUserWorkspaceId: channel.adminUserWorkspaceId,
         createdAt: now,
@@ -236,6 +249,32 @@ const seedChatChannels = async ({
         })),
       ]),
     )
+    .execute();
+
+  const channelRoles = APPLE_AGENT_CHAT_CHANNEL_SEEDS.filter(
+    (channel) => channel.isReadableByWorkspaceAdmins,
+  ).map((channel) => ({
+    workspaceId,
+    channelId: channel.id,
+    roleId: adminRoleId,
+    createdAt: now,
+  }));
+
+  if (channelRoles.length === 0) {
+    return;
+  }
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentChatChannelRoleTableName}`, [
+      'workspaceId',
+      'channelId',
+      'roleId',
+      'createdAt',
+    ])
+    .orIgnore()
+    .values(channelRoles)
     .execute();
 };
 
@@ -613,6 +652,7 @@ export const seedAgents = async ({
     queryRunner,
     schemaName,
     workspaceId,
+    adminRoleId: chatReferenceIds.roleId,
   });
 
   await seedChatMessages({

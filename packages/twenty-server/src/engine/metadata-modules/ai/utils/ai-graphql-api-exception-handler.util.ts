@@ -20,6 +20,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.THREAD_PARTICIPANT_NOT_FOUND:
       case AiExceptionCode.CHANNEL_NOT_FOUND:
       case AiExceptionCode.CHANNEL_MEMBER_NOT_FOUND:
+      case AiExceptionCode.CHANNEL_ROLE_NOT_FOUND:
       case AiExceptionCode.WORKSPACE_NOT_FOUND:
       case AiExceptionCode.MESSAGE_NOT_FOUND:
       case AiExceptionCode.ROLE_NOT_FOUND:

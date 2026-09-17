@@ -10,7 +10,10 @@ import {
 import { LightIconButton } from 'twenty-ui/primitives/input';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
-import { AiChatChannelNameForm } from '@/ai/components/AiChatChannelNameForm';
+import {
+  AiChatChannelForm,
+  type AiChatChannelFormValues,
+} from '@/ai/components/AiChatChannelForm';
 import {
   AI_CHAT_CHANNELS_MENU_PAGE,
   type AiChatChannelsMenuPage,
@@ -42,8 +45,15 @@ export const AiChatChannelsMenu = () => {
 
   const goToRoot = () => setPage(AI_CHAT_CHANNELS_MENU_PAGE.ROOT);
 
-  const handleCreate = async (name: string) => {
-    const channel = await createChatChannel({ name, visibility });
+  const handleCreate = async ({
+    name,
+    description,
+  }: AiChatChannelFormValues) => {
+    const channel = await createChatChannel({
+      name,
+      description,
+      visibility,
+    });
 
     if (channel) {
       closeDropdown(AI_CHAT_CHANNELS_MENU_DROPDOWN_ID);
@@ -61,7 +71,7 @@ export const AiChatChannelsMenu = () => {
     switch (page) {
       case AI_CHAT_CHANNELS_MENU_PAGE.CREATE:
         return (
-          <AiChatChannelNameForm
+          <AiChatChannelForm
             title={t`New channel`}
             submitLabel={t`Create channel`}
             onBack={goToRoot}
@@ -81,7 +91,7 @@ export const AiChatChannelsMenu = () => {
               selected={visibility === AgentChatChannelVisibility.PRIVATE}
               onClick={() => setVisibility(AgentChatChannelVisibility.PRIVATE)}
             />
-          </AiChatChannelNameForm>
+          </AiChatChannelForm>
         );
       case AI_CHAT_CHANNELS_MENU_PAGE.BROWSE:
         return (
@@ -105,8 +115,9 @@ export const AiChatChannelsMenu = () => {
                     key={channel.id}
                     LeftIcon={getAiChatChannelIcon(channel.visibility)}
                     text={channel.name}
-                    contextualText={t`Join`}
+                    contextualText={channel.description ?? undefined}
                     contextualTextPosition="right"
+                    RightIcon={IconPlus}
                     onClick={() => handleJoin(channel.id)}
                   />
                 ))

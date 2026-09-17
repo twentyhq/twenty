@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isAiChatAreaPath } from '~/utils/isAiChatAreaPath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
 
 type SidePanelAskAiHandoffEffectProps = {
@@ -20,7 +20,7 @@ export const SidePanelAskAiHandoffEffect = ({
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   useLayoutEffect(() => {
-    if (isAiChatPath(pathname)) {
+    if (isAiChatAreaPath(pathname)) {
       return;
     }
 

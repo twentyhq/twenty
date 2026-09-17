@@ -26,6 +26,7 @@ import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
 import { AgentChatChannelMemberEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel-member.entity';
+import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel-role.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel.entity';
 import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread-participant.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
@@ -42,12 +43,35 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
+import { type AgentChatThreadLastMessageSummary } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-message-summary.type';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
 
+const LAST_MESSAGE_PREVIEW_MAX_LENGTH = 200;
+
+const EMPTY_LAST_MESSAGE_SUMMARY: AgentChatThreadLastMessageSummary = {
+  lastMessageAt: null,
+  lastMessagePreview: null,
+  lastMessageRole: null,
+  lastMessageAuthorUserWorkspaceId: null,
+};
+
+const toLastMessagePreview = (text: string | null): string | null => {
+  const normalized = text?.replace(/\s+/g, ' ').trim() ?? '';
+
+  if (normalized.length === 0) {
+    return null;
+  }
+
+  return normalized.length > LAST_MESSAGE_PREVIEW_MAX_LENGTH
+    ? `${normalized.slice(0, LAST_MESSAGE_PREVIEW_MAX_LENGTH - 1)}…`
+    : normalized;
+};
+
 const serializeThreadForBroadcast = (
   thread: AgentChatThreadEntity,
-  lastMessageAt: Date | null,
+  lastMessageSummary: AgentChatThreadLastMessageSummary,
 ) => ({
   id: thread.id,
   title: thread.title,
@@ -62,7 +86,7 @@ const serializeThreadForBroadcast = (
   totalInputCredits: toDisplayCredits(thread.totalInputCredits),
   totalOutputCredits: toDisplayCredits(thread.totalOutputCredits),
   deletedAt: thread.deletedAt,
-  lastMessageAt,
+  ...lastMessageSummary,
   createdAt: thread.createdAt,
   updatedAt: thread.updatedAt,
 });
@@ -91,6 +115,10 @@ export class AgentChatService {
     private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
     @InjectWorkspaceScopedRepository(AgentChatChannelMemberEntity)
     private readonly channelMemberRepository: WorkspaceScopedRepository<AgentChatChannelMemberEntity>,
+    @InjectWorkspaceScopedRepository(AgentChatChannelRoleEntity)
+    private readonly channelRoleRepository: WorkspaceScopedRepository<AgentChatChannelRoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -165,7 +193,7 @@ export class AgentChatService {
     thread: AgentChatThreadEntity;
     recipientUserWorkspaceIds: string[] | undefined;
   }): Promise<void> {
-    const lastMessageAt = await this.getLastMessageAtForThread({
+    const lastMessageSummary = await this.getLastMessageSummaryForThread({
       threadId: thread.id,
       workspaceId: thread.workspaceId,
     });
@@ -179,7 +207,7 @@ export class AgentChatService {
           recordId: thread.id,
           recipientUserWorkspaceIds,
           properties: {
-            after: serializeThreadForBroadcast(thread, lastMessageAt),
+            after: serializeThreadForBroadcast(thread, lastMessageSummary),
           },
         },
       ],
@@ -202,7 +230,10 @@ export class AgentChatService {
           recordId: thread.id,
           recipientUserWorkspaceIds,
           properties: {
-            before: serializeThreadForBroadcast(thread, null),
+            before: serializeThreadForBroadcast(
+              thread,
+              EMPTY_LAST_MESSAGE_SUMMARY,
+            ),
           },
         },
       ],
@@ -254,18 +285,59 @@ export class AgentChatService {
       return undefined;
     }
 
-    const channelMembers = await this.channelMemberRepository.find(
-      workspaceId,
-      {
-        where: { channelId: thread.channelId },
-        select: ['userWorkspaceId'],
-      },
-    );
+    const channelReaderUserWorkspaceIds =
+      await this.getChannelReaderUserWorkspaceIds({
+        channelId: thread.channelId,
+        workspaceId,
+      });
 
     return [
       ...new Set([
         ...participantUserWorkspaceIds,
-        ...channelMembers.map((member) => member.userWorkspaceId),
+        ...channelReaderUserWorkspaceIds,
+      ]),
+    ];
+  }
+
+  // Everyone who reads a channel without being public: its members plus the
+  // users holding one of its roles.
+  async getChannelReaderUserWorkspaceIds({
+    channelId,
+    workspaceId,
+  }: {
+    channelId: string;
+    workspaceId: string;
+  }): Promise<string[]> {
+    const [members, channelRoles] = await Promise.all([
+      this.channelMemberRepository.find(workspaceId, {
+        where: { channelId },
+        select: ['userWorkspaceId'],
+      }),
+      this.channelRoleRepository.find(workspaceId, {
+        where: { channelId },
+        select: ['roleId'],
+      }),
+    ]);
+
+    const roleTargets =
+      channelRoles.length > 0
+        ? await this.roleTargetRepository.find(workspaceId, {
+            where: {
+              roleId: In(channelRoles.map((channelRole) => channelRole.roleId)),
+              userWorkspaceId: Not(IsNull()),
+            },
+            select: ['userWorkspaceId'],
+          })
+        : [];
+
+    return [
+      ...new Set([
+        ...members.map((member) => member.userWorkspaceId),
+        ...roleTargets.flatMap((roleTarget) =>
+          isDefined(roleTarget.userWorkspaceId)
+            ? [roleTarget.userWorkspaceId]
+            : [],
+        ),
       ]),
     ];
   }
@@ -432,7 +504,7 @@ export class AgentChatService {
   }: {
     userWorkspaceId: string;
     workspaceId: string;
-  }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
+  }): Promise<(AgentChatThreadEntity & AgentChatThreadLastMessageSummary)[]> {
     const rankedThreads = await this.threadRepository
       .createQueryBuilder('thread')
       .select('thread.id', 'id')
@@ -451,9 +523,16 @@ export class AgentChatService {
         'channelMember.userWorkspaceId = :userWorkspaceId',
         { userWorkspaceId },
       )
+      .leftJoin('channel.roles', 'channelRole')
+      .leftJoin(
+        RoleTargetEntity,
+        'channelRoleTarget',
+        'channelRoleTarget.roleId = channelRole.roleId AND channelRoleTarget.userWorkspaceId = :userWorkspaceId',
+        { userWorkspaceId },
+      )
       .where('thread.workspaceId = :workspaceId', { workspaceId })
       .andWhere(
-        '(participant.id IS NOT NULL OR channelMember.id IS NOT NULL OR channel.visibility = :publicVisibility)',
+        '(participant.id IS NOT NULL OR channelMember.id IS NOT NULL OR channelRoleTarget.id IS NOT NULL OR channel.visibility = :publicVisibility)',
         { publicVisibility: AgentChatChannelVisibility.PUBLIC },
       )
       .groupBy('thread.id')
@@ -469,9 +548,15 @@ export class AgentChatService {
       (rankedThread) => rankedThread.id,
     );
 
-    const threads = await this.threadRepository.find(workspaceId, {
-      where: { id: In(rankedThreadIds) },
-    });
+    const [threads, lastMessageSummaryByThreadId] = await Promise.all([
+      this.threadRepository.find(workspaceId, {
+        where: { id: In(rankedThreadIds) },
+      }),
+      this.getLastMessageSummaryByThreadId({
+        threadIds: rankedThreadIds,
+        workspaceId,
+      }),
+    ]);
 
     const threadById = new Map(threads.map((thread) => [thread.id, thread]));
 
@@ -479,28 +564,83 @@ export class AgentChatService {
       const thread = threadById.get(rankedThread.id);
 
       return thread
-        ? [{ ...thread, lastMessageAt: rankedThread.last_message_at ?? null }]
+        ? [
+            {
+              ...thread,
+              ...(lastMessageSummaryByThreadId.get(thread.id) ??
+                EMPTY_LAST_MESSAGE_SUMMARY),
+            },
+          ]
         : [];
     });
   }
 
-  async getLastMessageAtForThread({
+  async getLastMessageSummaryForThread({
     threadId,
     workspaceId,
   }: {
     threadId: string;
     workspaceId: string;
-  }): Promise<Date | null> {
-    const result = await this.messageRepository
-      .createQueryBuilder('message')
-      .select('MAX(message.createdAt)', 'last_message_at')
-      .where(
-        'message.threadId = :threadId AND message.workspaceId = :workspaceId AND message.isHidden = false',
-        { threadId, workspaceId },
-      )
-      .getRawOne<{ last_message_at: Date | null }>();
+  }): Promise<AgentChatThreadLastMessageSummary> {
+    const summaryByThreadId = await this.getLastMessageSummaryByThreadId({
+      threadIds: [threadId],
+      workspaceId,
+    });
 
-    return result?.last_message_at ?? null;
+    return summaryByThreadId.get(threadId) ?? EMPTY_LAST_MESSAGE_SUMMARY;
+  }
+
+  // The latest visible message of each thread with its first text part, in
+  // one query, so thread lists can show who said what last.
+  async getLastMessageSummaryByThreadId({
+    threadIds,
+    workspaceId,
+  }: {
+    threadIds: string[];
+    workspaceId: string;
+  }): Promise<Map<string, AgentChatThreadLastMessageSummary>> {
+    if (threadIds.length === 0) {
+      return new Map();
+    }
+
+    const rows = await this.messageRepository
+      .createQueryBuilder('message')
+      .distinctOn(['message.threadId'])
+      .select('message.threadId', 'threadId')
+      .addSelect('message.role', 'role')
+      .addSelect('message.authorUserWorkspaceId', 'authorUserWorkspaceId')
+      .addSelect('message.createdAt', 'createdAt')
+      .addSelect('part.textContent', 'textContent')
+      .leftJoin(
+        'message.parts',
+        'part',
+        "part.type = 'text' AND part.textContent IS NOT NULL",
+      )
+      .where('message.threadId IN (:...threadIds)', { threadIds })
+      .andWhere('message.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('message.isHidden = false')
+      .orderBy('message.threadId')
+      .addOrderBy('message.createdAt', 'DESC')
+      .addOrderBy('part.orderIndex', 'ASC')
+      .getRawMany<{
+        threadId: string;
+        role: AgentMessageRole;
+        authorUserWorkspaceId: string | null;
+        createdAt: Date;
+        textContent: string | null;
+      }>();
+
+    return new Map(
+      rows.map((row) => [
+        row.threadId,
+        {
+          lastMessageAt: row.createdAt,
+          lastMessagePreview: toLastMessagePreview(row.textContent),
+          lastMessageRole: row.role,
+          lastMessageAuthorUserWorkspaceId: row.authorUserWorkspaceId,
+        },
+      ]),
+    );
   }
 
   async addMessage({
@@ -1388,8 +1528,8 @@ export class AgentChatService {
     updatedFields: (keyof AgentChatThreadDTO)[],
     recipients?: { userWorkspaceIds: string[] | undefined },
   ): Promise<void> {
-    const [lastMessageAt, recipientUserWorkspaceIds] = await Promise.all([
-      this.getLastMessageAtForThread({
+    const [lastMessageSummary, recipientUserWorkspaceIds] = await Promise.all([
+      this.getLastMessageSummaryForThread({
         threadId: thread.id,
         workspaceId: thread.workspaceId,
       }),
@@ -1411,7 +1551,7 @@ export class AgentChatService {
           recipientUserWorkspaceIds,
           properties: {
             updatedFields,
-            after: serializeThreadForBroadcast(thread, lastMessageAt),
+            after: serializeThreadForBroadcast(thread, lastMessageSummary),
           },
         },
       ],

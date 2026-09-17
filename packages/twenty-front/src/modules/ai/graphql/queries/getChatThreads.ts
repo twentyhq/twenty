@@ -16,6 +16,9 @@ export const GET_CHAT_THREADS = gql`
       totalOutputCredits
       deletedAt
       lastMessageAt
+      lastMessagePreview
+      lastMessageRole
+      lastMessageAuthorUserWorkspaceId
       createdAt
       updatedAt
     }

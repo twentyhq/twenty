@@ -14,6 +14,9 @@ export class AgentChatChannelDTO {
   @Field(() => AgentChatChannelVisibility)
   visibility: AgentChatChannelVisibility;
 
+  @Field(() => String, { nullable: true })
+  description: string | null;
+
   @Field(() => UUIDScalarType, { nullable: true })
   targetObjectMetadataId: string | null;
 

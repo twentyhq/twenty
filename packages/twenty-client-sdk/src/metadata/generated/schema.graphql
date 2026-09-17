@@ -3322,6 +3322,12 @@ type Skill {
   updatedAt: DateTime!
 }
 
+type AgentChatAssignableRole {
+  id: ID!
+  label: String!
+  icon: String
+}
+
 type AgentChatChannelMember {
   id: ID!
   channelId: UUID!
@@ -3335,10 +3341,18 @@ enum AgentChatChannelMemberRole {
   MEMBER
 }
 
+type AgentChatChannelRole {
+  id: ID!
+  channelId: UUID!
+  roleId: UUID!
+  createdAt: DateTime!
+}
+
 type AgentChatChannel {
   id: ID!
   name: String!
   visibility: AgentChatChannelVisibility!
+  description: String
   targetObjectMetadataId: UUID
   targetRecordId: UUID
   createdByUserWorkspaceId: UUID
@@ -3367,6 +3381,9 @@ type AgentChatThread {
   updatedAt: DateTime!
   deletedAt: DateTime
   lastMessageAt: DateTime
+  lastMessagePreview: String
+  lastMessageRole: String
+  lastMessageAuthorUserWorkspaceId: UUID
 }
 
 type AgentMessage {
@@ -3800,6 +3817,9 @@ type Query {
   getAiSystemPromptPreview: AiSystemPromptPreview!
   chatChannels: [AgentChatChannel!]!
   chatChannelMembers: [AgentChatChannelMember!]!
+  chatChannelRoles: [AgentChatChannelRole!]!
+  chatChannelAssignableRoles: [AgentChatAssignableRole!]!
+  chatCurrentUserRoleIds: [UUID!]!
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!
@@ -4144,6 +4164,8 @@ type Mutation {
   leaveChatChannel(id: UUID!): Boolean!
   addChatChannelMember(channelId: UUID!, userWorkspaceId: UUID!): AgentChatChannelMember!
   removeChatChannelMember(channelId: UUID!, userWorkspaceId: UUID!): Boolean!
+  addChatChannelRole(channelId: UUID!, roleId: UUID!): AgentChatChannelRole!
+  removeChatChannelRole(channelId: UUID!, roleId: UUID!): Boolean!
   setChatThreadChannel(threadId: UUID!, channelId: UUID): AgentChatThread!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   createSkill(input: CreateSkillInput!): Skill!
@@ -5428,6 +5450,7 @@ input AgentChatQuestionAnswerInput {
 input CreateAgentChatChannelInput {
   name: String!
   visibility: AgentChatChannelVisibility = PUBLIC
+  description: String
   targetObjectMetadataId: UUID
   targetRecordId: UUID
 }
@@ -5435,6 +5458,7 @@ input CreateAgentChatChannelInput {
 input UpdateAgentChatChannelInput {
   name: String
   visibility: AgentChatChannelVisibility
+  description: String
 }
 
 input CreateSkillInput {

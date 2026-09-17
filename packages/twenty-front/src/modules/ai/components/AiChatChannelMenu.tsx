@@ -12,7 +12,10 @@ import { LightIconButton } from 'twenty-ui/primitives/input';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { AiChatChannelMembersDropdownContent } from '@/ai/components/AiChatChannelMembersDropdownContent';
-import { AiChatChannelNameForm } from '@/ai/components/AiChatChannelNameForm';
+import {
+  AiChatChannelForm,
+  type AiChatChannelFormValues,
+} from '@/ai/components/AiChatChannelForm';
 import { AI_CHAT_CHANNEL_DELETE_MODAL_ID } from '@/ai/constants/AiChatChannelDeleteModalId';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import {
@@ -59,7 +62,8 @@ export const AiChatChannelMenu = ({
     AI_CHAT_CHANNEL_MENU_PAGE.ROOT,
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const { isCurrentUserChannelAdmin } = useChatChannels();
+  const { isCurrentUserChannelAdmin, isCurrentUserChannelMember } =
+    useChatChannels();
   const { updateChatChannel, leaveChatChannel } = useChatChannelActions();
   const { navigateToAiChatPage } = useNavigateToAiChatPage();
   const currentChannelId = useAiChatChannelIdFromPath();
@@ -68,10 +72,15 @@ export const AiChatChannelMenu = ({
   );
 
   const isAdmin = isCurrentUserChannelAdmin(channel.id);
+  // Someone reading the channel through a role has no membership to leave.
+  const isMember = isCurrentUserChannelMember(channel.id);
   const goToRoot = () => setPage(AI_CHAT_CHANNEL_MENU_PAGE.ROOT);
 
-  const handleRename = async (name: string) => {
-    const updatedChannel = await updateChatChannel(channel.id, { name });
+  const handleEdit = async ({ name, description }: AiChatChannelFormValues) => {
+    const updatedChannel = await updateChatChannel(channel.id, {
+      name,
+      description,
+    });
 
     if (isDefined(updatedChannel)) {
       closeDropdown(dropdownId);
@@ -121,14 +130,15 @@ export const AiChatChannelMenu = ({
             onBack={goToRoot}
           />
         );
-      case AI_CHAT_CHANNEL_MENU_PAGE.RENAME:
+      case AI_CHAT_CHANNEL_MENU_PAGE.EDIT:
         return (
-          <AiChatChannelNameForm
-            title={t`Rename channel`}
+          <AiChatChannelForm
+            title={t`Edit channel`}
             initialName={channel.name}
-            submitLabel={t`Rename`}
+            initialDescription={channel.description}
+            submitLabel={t`Save`}
             onBack={goToRoot}
-            onSubmit={handleRename}
+            onSubmit={handleEdit}
           />
         );
       case AI_CHAT_CHANNEL_MENU_PAGE.ROOT:
@@ -143,16 +153,18 @@ export const AiChatChannelMenu = ({
               />
               {isAdmin && (
                 <MenuItem
-                  text={t`Rename`}
+                  text={t`Edit channel`}
                   LeftIcon={IconPencil}
-                  onClick={() => setPage(AI_CHAT_CHANNEL_MENU_PAGE.RENAME)}
+                  onClick={() => setPage(AI_CHAT_CHANNEL_MENU_PAGE.EDIT)}
                 />
               )}
-              <MenuItem
-                text={t`Leave channel`}
-                LeftIcon={IconLogout}
-                onClick={handleLeave}
-              />
+              {isMember && (
+                <MenuItem
+                  text={t`Leave channel`}
+                  LeftIcon={IconLogout}
+                  onClick={handleLeave}
+                />
+              )}
               {isAdmin && (
                 <MenuItem
                   accent="danger"

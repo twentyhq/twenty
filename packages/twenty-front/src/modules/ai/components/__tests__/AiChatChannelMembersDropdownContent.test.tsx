@@ -13,18 +13,37 @@ import {
   type AgentChatChannel,
   type AgentChatChannelMember,
   AgentChatChannelMemberRole,
+  type AgentChatChannelRole,
   AgentChatChannelVisibility,
 } from '~/generated-metadata/graphql';
 
 const addChatChannelMember = jest.fn();
 const removeChatChannelMember = jest.fn();
 const leaveChatChannel = jest.fn();
+const addChatChannelRole = jest.fn();
+const removeChatChannelRole = jest.fn();
 
 jest.mock('@/ai/hooks/useChatChannelActions', () => ({
   useChatChannelActions: () => ({
     addChatChannelMember,
     removeChatChannelMember,
     leaveChatChannel,
+    addChatChannelRole,
+    removeChatChannelRole,
+  }),
+}));
+
+const SALES_ROLE = { id: 'role-sales', label: 'Sales rep', icon: null };
+const ADMIN_ROLE = {
+  id: 'role-admin',
+  label: 'Workspace admin',
+  icon: 'IconUserShield',
+};
+
+jest.mock('@/ai/hooks/useChatChannelAssignableRoles', () => ({
+  useChatChannelAssignableRoles: () => ({
+    assignableRoles: [ADMIN_ROLE, SALES_ROLE],
+    loading: false,
   }),
 }));
 
@@ -57,6 +76,7 @@ const CHANNEL: AgentChatChannel = {
   __typename: 'AgentChatChannel',
   id: CHANNEL_ID,
   name: 'Sales',
+  description: null,
   visibility: AgentChatChannelVisibility.PUBLIC,
   targetObjectMetadataId: null,
   targetRecordId: null,
@@ -94,6 +114,20 @@ const renderWithStore = (currentMember: typeof TIM) => {
   store.set(metadataStoreState.atomFamily('agentChatChannelMembers'), {
     current: members,
     draft: members,
+    status: 'up-to-date',
+  });
+  const channelRoles: AgentChatChannelRole[] = [
+    {
+      __typename: 'AgentChatChannelRole',
+      id: 'channel-role-sales',
+      channelId: CHANNEL_ID,
+      roleId: SALES_ROLE.id,
+      createdAt: '2026-09-01T00:00:00.000Z',
+    },
+  ];
+  store.set(metadataStoreState.atomFamily('agentChatChannelRoles'), {
+    current: channelRoles,
+    draft: channelRoles,
     status: 'up-to-date',
   });
 
@@ -136,6 +170,36 @@ describe('AiChatChannelMembersDropdownContent', () => {
       channelId: CHANNEL_ID,
       userWorkspaceId: JONY.userWorkspaceId,
     });
+  });
+
+  it('lets an admin grant and revoke roles', async () => {
+    const user = userEvent.setup();
+    renderWithStore(TIM);
+
+    expect(screen.getByText('Roles')).toBeVisible();
+    expect(screen.getByText('Sales rep')).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: 'Remove Sales rep' }));
+    expect(removeChatChannelRole).toHaveBeenCalledWith({
+      channelId: CHANNEL_ID,
+      roleId: SALES_ROLE.id,
+    });
+
+    await user.click(screen.getByText('Workspace admin'));
+    expect(addChatChannelRole).toHaveBeenCalledWith({
+      channelId: CHANNEL_ID,
+      roleId: ADMIN_ROLE.id,
+    });
+  });
+
+  it('shows granted roles to members without letting them change them', () => {
+    renderWithStore(JONY);
+
+    expect(screen.getByText('Sales rep')).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Remove Sales rep' }),
+    ).toBeNull();
+    expect(screen.queryByText('Give access to a role')).toBeNull();
   });
 
   it('only lets a member leave', async () => {

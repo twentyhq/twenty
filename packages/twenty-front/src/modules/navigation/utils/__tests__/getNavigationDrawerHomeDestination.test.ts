@@ -30,6 +30,15 @@ describe('getNavigationDrawerHomeDestination', () => {
     ).toBe(defaultHomePagePath);
   });
 
+  it('falls back to the default home page when the memorized url is a chat channel', () => {
+    expect(
+      getNavigationDrawerHomeDestination({
+        memorizedUrl: '/chat/channels/20202020-0687-4c41-b707-ed1bfca972a7',
+        defaultHomePagePath,
+      }),
+    ).toBe(defaultHomePagePath);
+  });
+
   it.each([null, undefined, ''])(
     'falls back to the default home page when the memorized url is %p',
     (memorizedUrl) => {

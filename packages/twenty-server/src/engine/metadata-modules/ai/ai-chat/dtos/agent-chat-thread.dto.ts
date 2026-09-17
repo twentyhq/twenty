@@ -52,6 +52,15 @@ export class AgentChatThreadDTO {
   @Field(() => Date, { nullable: true })
   lastMessageAt: Date | null;
 
+  @Field(() => String, { nullable: true })
+  lastMessagePreview: string | null;
+
+  @Field(() => String, { nullable: true })
+  lastMessageRole: string | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  lastMessageAuthorUserWorkspaceId: string | null;
+
   @HideField()
   userWorkspaceId: string;
 }

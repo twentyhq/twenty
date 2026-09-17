@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconLogout, IconX } from 'twenty-ui/icon';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/primitives/navigation';
 
+import { AiChatChannelRolesSection } from '@/ai/components/AiChatChannelRolesSection';
 import { useChatChannelActions } from '@/ai/hooks/useChatChannelActions';
 import { useChatChannels } from '@/ai/hooks/useChatChannels';
 import { getWorkspaceMemberFullName } from '@/ai/utils/getWorkspaceMemberFullName';
@@ -130,6 +131,7 @@ export const AiChatChannelMembersDropdownContent = ({
           );
         })}
       </DropdownMenuItemsContainer>
+      <AiChatChannelRolesSection channelId={channelId} />
       {isAdmin && (
         <>
           <DropdownMenuSeparator />

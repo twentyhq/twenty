@@ -12,7 +12,9 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AgentChatAssignableRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-assignable-role.dto';
 import { AgentChatChannelMemberDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-member.dto';
+import { AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-role.dto';
 import { AgentChatChannelDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel.dto';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
 import { CreateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/create-agent-chat-channel.input';
@@ -49,6 +51,37 @@ export class AgentChatChannelResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     return this.agentChatChannelService.getChannelMembersForUser({
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Query(() => [AgentChatChannelRoleDTO])
+  async chatChannelRoles(
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    return this.agentChatChannelService.getChannelRolesForUser({
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Query(() => [AgentChatAssignableRoleDTO])
+  async chatChannelAssignableRoles(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    return this.agentChatChannelService.getAssignableRoles(workspaceId);
+  }
+
+  // Which channels the user reads through a role is decided client side, so
+  // the client needs the user's own roles next to the channel roles.
+  @Query(() => [UUIDScalarType])
+  async chatCurrentUserRoleIds(
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string[]> {
+    return this.agentChatChannelService.getRoleIdsForUser({
       userWorkspaceId,
       workspaceId,
     });
@@ -148,6 +181,36 @@ export class AgentChatChannelResolver {
     return this.agentChatChannelService.removeMember({
       channelId,
       userWorkspaceId,
+      actorUserWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => AgentChatChannelRoleDTO)
+  async addChatChannelRole(
+    @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
+    @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
+    @AuthUserWorkspaceId() actorUserWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    return this.agentChatChannelService.addRole({
+      channelId,
+      roleId,
+      actorUserWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => Boolean)
+  async removeChatChannelRole(
+    @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
+    @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
+    @AuthUserWorkspaceId() actorUserWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<boolean> {
+    return this.agentChatChannelService.removeRole({
+      channelId,
+      roleId,
       actorUserWorkspaceId,
       workspaceId,
     });

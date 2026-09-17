@@ -15,6 +15,7 @@ export enum AiExceptionCode {
   THREAD_ACTION_NOT_ALLOWED = 'THREAD_ACTION_NOT_ALLOWED',
   CHANNEL_NOT_FOUND = 'CHANNEL_NOT_FOUND',
   CHANNEL_MEMBER_NOT_FOUND = 'CHANNEL_MEMBER_NOT_FOUND',
+  CHANNEL_ROLE_NOT_FOUND = 'CHANNEL_ROLE_NOT_FOUND',
   CHANNEL_ACTION_NOT_ALLOWED = 'CHANNEL_ACTION_NOT_ALLOWED',
   CHANNEL_NAME_ALREADY_EXISTS = 'CHANNEL_NAME_ALREADY_EXISTS',
   INVALID_CHANNEL_NAME = 'INVALID_CHANNEL_NAME',
@@ -57,6 +58,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Channel not found.`;
     case AiExceptionCode.CHANNEL_MEMBER_NOT_FOUND:
       return msg`This person is not a member of the channel.`;
+    case AiExceptionCode.CHANNEL_ROLE_NOT_FOUND:
+      return msg`This role is not part of the channel.`;
     case AiExceptionCode.CHANNEL_ACTION_NOT_ALLOWED:
       return msg`You are not allowed to do this in this channel.`;
     case AiExceptionCode.CHANNEL_NAME_ALREADY_EXISTS:

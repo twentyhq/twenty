@@ -34,6 +34,7 @@ import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/en
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
+import { type AgentChatThreadLastMessageSummary } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-message-summary.type';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
@@ -53,6 +54,9 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
+
+type ThreadWithOptionalLastMessageSummary = AgentChatThreadEntity &
+  Partial<AgentChatThreadLastMessageSummary>;
 
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
@@ -648,14 +652,50 @@ export class AgentChatResolver {
 
   @ResolveField('lastMessageAt', () => Date, { nullable: true })
   async lastMessageAt(
-    @Parent()
-    thread: AgentChatThreadEntity & { lastMessageAt?: Date | null },
+    @Parent() thread: ThreadWithOptionalLastMessageSummary,
   ): Promise<Date | null> {
+    return (await this.getLastMessageSummary(thread)).lastMessageAt;
+  }
+
+  @ResolveField('lastMessagePreview', () => String, { nullable: true })
+  async lastMessagePreview(
+    @Parent() thread: ThreadWithOptionalLastMessageSummary,
+  ): Promise<string | null> {
+    return (await this.getLastMessageSummary(thread)).lastMessagePreview;
+  }
+
+  @ResolveField('lastMessageRole', () => String, { nullable: true })
+  async lastMessageRole(
+    @Parent() thread: ThreadWithOptionalLastMessageSummary,
+  ): Promise<string | null> {
+    return (await this.getLastMessageSummary(thread)).lastMessageRole;
+  }
+
+  @ResolveField('lastMessageAuthorUserWorkspaceId', () => UUIDScalarType, {
+    nullable: true,
+  })
+  async lastMessageAuthorUserWorkspaceId(
+    @Parent() thread: ThreadWithOptionalLastMessageSummary,
+  ): Promise<string | null> {
+    return (await this.getLastMessageSummary(thread))
+      .lastMessageAuthorUserWorkspaceId;
+  }
+
+  // Lists precompute the summary in one query; a single thread fetches it.
+  private async getLastMessageSummary(
+    thread: ThreadWithOptionalLastMessageSummary,
+  ): Promise<AgentChatThreadLastMessageSummary> {
     if (thread.lastMessageAt !== undefined) {
-      return thread.lastMessageAt;
+      return {
+        lastMessageAt: thread.lastMessageAt ?? null,
+        lastMessagePreview: thread.lastMessagePreview ?? null,
+        lastMessageRole: thread.lastMessageRole ?? null,
+        lastMessageAuthorUserWorkspaceId:
+          thread.lastMessageAuthorUserWorkspaceId ?? null,
+      };
     }
 
-    return this.agentChatService.getLastMessageAtForThread({
+    return this.agentChatService.getLastMessageSummaryForThread({
       threadId: thread.id,
       workspaceId: thread.workspaceId,
     });

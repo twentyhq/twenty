@@ -36,6 +36,7 @@ export const ALL_METADATA_ENTITY_KEYS = [
   'agentChatThreads',
   'agentChatChannels',
   'agentChatChannelMembers',
+  'agentChatChannelRoles',
   'applications',
 ] as const;
 
