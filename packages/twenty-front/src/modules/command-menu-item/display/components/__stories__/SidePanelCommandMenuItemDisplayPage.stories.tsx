@@ -103,6 +103,13 @@ const PINNED_ITEMS = [
 ];
 
 const OTHER_ITEM = createCommandMenuItem({
+  id: 'story-import-records',
+  label: 'Import records',
+  icon: 'IconFileImport',
+  engineComponentKey: EngineComponentKey.IMPORT_RECORDS,
+});
+
+const NAVIGATION_ITEM = createCommandMenuItem({
   id: 'story-go-to-people',
   label: 'Go to People',
 });
@@ -269,7 +276,7 @@ export const EmptySearchWithOverflowingPinnedItems: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Delete')).toBeVisible();
-    expect(await canvas.findByText('Go to People')).toBeVisible();
+    expect(await canvas.findByText('Import records')).toBeVisible();
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
@@ -324,6 +331,47 @@ export const SearchWithoutMatchingItemsAndWithFallback: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Search records')).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
+    });
+  },
+};
+
+export const NavigationIsHeldBackUntilSearch: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [...PINNED_ITEMS, OTHER_ITEM, NAVIGATION_ITEM],
+      sidePanelSearch: '',
+      pinnedItemsContainerWidth: 1000,
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Import records')).toBeVisible();
+    expect(canvas.queryByText('Go to People')).not.toBeInTheDocument();
+
+    const headings = canvas.getAllByText(/^(This view|Workspace|Go to)$/);
+
+    expect(headings.map((heading) => heading.textContent)).toEqual([
+      'This view',
+      'Workspace',
+    ]);
+  },
+};
+
+export const NavigationIsFoundBySearch: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [...PINNED_ITEMS, OTHER_ITEM, NAVIGATION_ITEM],
+      sidePanelSearch: 'people',
+      pinnedItemsContainerWidth: 1000,
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Go to People')).toBeVisible();
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
