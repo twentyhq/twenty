@@ -68,10 +68,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     unpinnedCommandMenuItems,
   );
 
-  const commandMenuItemsBySection = useMemo(
-    () => groupCommandMenuItemsBySection(matchingOtherItems),
-    [matchingOtherItems],
-  );
+  const commandMenuItemsBySection =
+    groupCommandMenuItemsBySection(matchingOtherItems);
 
   const getSectionHeading = (section: CommandMenuItemSection) => {
     switch (section) {
