@@ -23,17 +23,21 @@ Before rollout, the SSE dependency must provide:
 - An ordering/revision mechanism and reconnect resynchronization, including missed deletions and draft replacement.
 - Lifecycle coverage for every writer: core mutations, legacy mirror writes, activation/deactivation, draft creation/discard, duplication and deletion.
 
-The frontend consumer must invalidate `coreWorkflows`, `coreWorkflowById`, `coreWorkflowVersionsByCoreWorkflowId` and `coreWorkflowVersionById`, reconcile removed selections and update open diagrams. It must not subscribe using workspace definition IDs. Local mutation refetches and the explicit Refresh action are implemented; remote live updates are not complete. Keep rollout blocked until that contract and consumer land and multi-session/reconnect tests pass.
+Deliver the backend contract and frontend consumer together in a separate follow-up PR, which may be stacked on this frontend PR. The consumer must invalidate `coreWorkflows`, `coreWorkflowById`, `coreWorkflowVersionsByCoreWorkflowId` and `coreWorkflowVersionById`, reconcile removed selections and update open diagrams. It must not subscribe using workspace definition IDs. Local mutation refetches and the explicit Refresh action are implemented; remote live updates are not complete. Keep general rollout blocked until that contract and consumer land and multi-session/reconnect tests pass.
 
 ## Execution dependency
 
-B-async must make the shared execution engine, automated triggers and webhook resolution consume core definitions independently of the UI flag. Core webhook URLs contain a core workflow ID; deployed webhook ingress must accept that ID while preserving existing workspace-ID URLs. Completion of a core API request alone does not establish that scheduled or queued execution has migrated.
+B-async (#26098) must make the shared execution engine, automated triggers and webhook resolution consume core definitions independently of the UI flag. Core webhook URLs contain a core workflow ID; deployed webhook ingress must accept that ID while preserving existing workspace-ID URLs. Completion of a core API request alone does not establish that scheduled or queued execution has migrated.
+
+After #26068 merges, rebase and retarget this frontend PR onto `main`, then reconcile it with the latest #26098. The branches currently overlap in core-version UI/context and generated GraphQL, workflow lifecycle/list services, and instance-command registration. Resolve those integrations without moving execution-engine work into this PR. Verify the combined result rather than relying on this branch's earlier acceptance: rerun the complete create → edit → activate → run → inspect flow, command-menu lifecycle after the upstream core-only rename/deletion cleanup, connected If/Else duplication after its upstream fix, and ON → OFF → ON rollback behavior against the integrated backend.
 
 ## Upstream duplication dependency
 
 Browser acceptance exposed a failure in #26068's `CoreWorkflowMutationWorkspaceService.cloneVersionContent`: it remaps normal `nextStepIds` and iterator `initialLoopStepIds`, but leaves If/Else `settings.input.branches[*].nextStepIds` pointing at the original steps. Duplicating a workflow containing connected If/Else branches is rejected by the core content validator because the copied branches reference steps absent from the new version. Plain manual/form duplication succeeds.
 
-Reproduce with manual trigger → iterator → If/Else → form, then Duplicate Workflow. The same failure occurs when calling `duplicateCoreWorkflow` directly with the source core workflow/version IDs. Fix the core clone API and add its regression coverage upstream before rollout; this frontend does not duplicate that backend service.
+Reproduce with manual trigger → iterator → If/Else → form, then Duplicate Workflow. The same failure occurs when calling `duplicateCoreWorkflow` directly with the source core workflow/version IDs. Fix the core clone API and add its regression coverage in #26068, then reverify the frontend flow here after integration; this frontend does not duplicate that backend service.
+
+MCP rekeying and the A1bis constraints remain separate follow-up work. They are not prerequisites for completing this flag-gated frontend PR, but the full migration must not claim them as covered here.
 
 ## Acceptance before enabling
 
