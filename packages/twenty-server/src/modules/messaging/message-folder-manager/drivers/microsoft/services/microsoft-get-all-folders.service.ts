@@ -65,8 +65,6 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
         .get()
         .catch(handleFetchError);
 
-      // Any failing page fails the whole discovery: a partial list would mark
-      // the missing folders for deletion.
       const folders: MicrosoftGraphFolder[] = [];
 
       await new PageIterator(
