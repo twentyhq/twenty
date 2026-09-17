@@ -62,16 +62,11 @@ export const PageLayoutTabListReorderableTab = ({
       orientation="vertical"
     >
       <PageLayoutTabListDragHandle
-        asTab
-        id={tab.id}
+        tab={tab}
         active={isActive}
         disabled={disabled}
-        LeftIcon={tab.Icon}
-        title={tab.title}
-        logo={tab.logo}
-        pill={tab.pill}
         isHighlighted={isHighlighted}
-        onClick={onSelect}
+        onSelect={onSelect}
       />
     </DragDropItemSortableCell>
   );

@@ -1,61 +1,33 @@
-import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { TabListButton } from '@/ui/layout/tab-list/components/TabListButton';
-import { type TabListButtonProps } from '@/ui/layout/tab-list/types/TabListButtonProps';
+import { TabListItem } from '@/ui/layout/tab-list/components/TabListItem';
+import { type TabListItemProps } from '@/ui/layout/tab-list/types/TabListItemProps';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 
-const StyledTabButton = styled(TabListButton)<{ isHighlighted: boolean }>`
-  & > span {
-    border-radius: ${themeCssVariables.border.radius.sm};
-    outline: ${({ isHighlighted }) =>
-      isHighlighted ? `1px solid ${themeCssVariables.color.blue}` : 'none'};
-    outline-offset: -1px;
-  }
-`;
-
 type PageLayoutTabListDragHandleProps = Pick<
-  TabListButtonProps,
-  | 'asTab'
-  | 'id'
-  | 'active'
-  | 'disabled'
-  | 'LeftIcon'
-  | 'title'
-  | 'logo'
-  | 'pill'
-  | 'onClick'
+  TabListItemProps,
+  'tab' | 'active' | 'disabled' | 'onSelect'
 > & {
   isHighlighted: boolean;
 };
 
 export const PageLayoutTabListDragHandle = ({
-  asTab,
-  id,
+  tab,
   active,
   disabled,
-  LeftIcon,
-  title,
-  logo,
-  pill,
   isHighlighted,
-  onClick,
+  onSelect,
 }: PageLayoutTabListDragHandleProps) => {
   const handleRef = useContext(DragDropItemSortableHandleRefContext);
 
   return (
-    <StyledTabButton
-      asTab={asTab}
-      id={id}
+    <TabListItem
+      mode="tab"
+      tab={tab}
       active={active}
       disabled={disabled}
-      LeftIcon={LeftIcon}
-      title={title}
-      logo={logo}
-      pill={pill}
-      isHighlighted={isHighlighted}
-      onClick={onClick}
+      highlighted={isHighlighted}
+      onSelect={onSelect}
       ref={handleRef}
       data-dnd-sortable-handle
     />

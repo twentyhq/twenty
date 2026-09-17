@@ -123,6 +123,7 @@ export const DOCUMENTED_COMPONENTS = [
     partPropDescriptions: {
       Tab: {
         endIcon: 'Decorative content after the label and before the badge.',
+        highlighted: 'Emphasizes the tab content without changing selection.',
       },
     },
   },

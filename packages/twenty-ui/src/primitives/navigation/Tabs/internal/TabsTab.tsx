@@ -12,6 +12,7 @@ export const TabsTab = ({
   startIcon,
   endIcon,
   badge,
+  highlighted = false,
   size = 'sm',
   ...props
 }: TabsTabProps) => (
@@ -19,6 +20,7 @@ export const TabsTab = ({
     {...props}
     className={mergeClassNames(styles.tab, className)}
     data-size={size}
+    data-highlighted={highlighted || undefined}
   >
     <TabsTabContent startIcon={startIcon} endIcon={endIcon} badge={badge}>
       {children}

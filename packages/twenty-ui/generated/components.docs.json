@@ -2458,6 +2458,13 @@
             "description": "Decorative content after the label and before the badge."
           },
           {
+            "name": "highlighted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Emphasizes the tab content without changing selection."
+          },
+          {
             "name": "nativeButton",
             "type": "boolean",
             "required": false,

@@ -15,7 +15,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { TabListRow } from '@/ui/layout/tab-list/components/TabListRow';
-import { TabListButton } from '@/ui/layout/tab-list/components/TabListButton';
+import { TabListItem } from '@/ui/layout/tab-list/components/TabListItem';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
@@ -191,31 +191,13 @@ export const TabList = ({
                 isScrollable={shouldScrollTabs}
               >
                 {renderedTabs.map((tab) => (
-                  <TabListButton
-                    asTab={!behaveAsLinks}
+                  <TabListItem
                     key={tab.id}
-                    id={tab.id}
-                    title={tab.title}
-                    LeftIcon={tab.Icon}
-                    logo={tab.logo}
+                    tab={tab}
+                    mode={behaveAsLinks ? 'link' : 'tab'}
                     active={tab.id === activeTabId}
                     disabled={tab.disabled ?? loading}
-                    pill={tab.pill}
-                    to={
-                      behaveAsLinks
-                        ? { search: location.search, hash: `#${tab.id}` }
-                        : undefined
-                    }
-                    state={behaveAsLinks ? location.state : undefined}
-                    replace={
-                      behaveAsLinks && workspaceSurface.type === 'side-panel'
-                    }
-                    tooltipContent={tab.tooltipContent}
-                    onClick={
-                      behaveAsLinks
-                        ? () => onChangeTab?.(tab.id)
-                        : () => handleTabSelect(tab.id)
-                    }
+                    onSelect={behaveAsLinks ? onChangeTab : handleTabSelect}
                   />
                 ))}
               </TabListRow>

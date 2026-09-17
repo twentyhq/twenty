@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { useLocation } from 'react-router-dom';
 import { TabListRow } from '@/ui/layout/tab-list/components/TabListRow';
-import { TabListButton } from '@/ui/layout/tab-list/components/TabListButton';
+import { TabListItem } from '@/ui/layout/tab-list/components/TabListItem';
 
 import { useScrollActiveTabIntoView } from '@/ui/layout/tab-list/hooks/useScrollActiveTabIntoView';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
@@ -10,7 +9,6 @@ import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/Pag
 import { PageLayoutTabListReorderableTab } from '@/page-layout/components/PageLayoutTabListReorderableTab';
 import { usePrerenderPageLayoutTabOnHover } from '@/page-layout/hooks/usePrerenderPageLayoutTabOnHover';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 
 type PageLayoutTabListVisibleTabsProps = {
@@ -50,8 +48,6 @@ export const PageLayoutTabListVisibleTabs = ({
   firstHiddenTabId,
   isScrollable,
 }: PageLayoutTabListVisibleTabsProps) => {
-  const location = useLocation();
-  const workspaceSurface = useWorkspaceSurface();
   const { tabRowRef } = useScrollActiveTabIntoView({
     activeTabId,
     isScrollable,
@@ -116,28 +112,13 @@ export const PageLayoutTabListVisibleTabs = ({
       isScrollable={isScrollable}
     >
       {visibleTabs.slice(0, visibleTabCount).map((tab) => (
-        <TabListButton
-          asTab={!behaveAsLinks}
+        <TabListItem
           key={tab.id}
-          id={tab.id}
-          title={tab.title}
-          LeftIcon={tab.Icon}
-          logo={tab.logo}
+          tab={tab}
+          mode={behaveAsLinks ? 'link' : 'tab'}
           active={tab.id === activeTabId}
           disabled={tab.disabled ?? loading}
-          pill={tab.pill}
-          to={
-            behaveAsLinks
-              ? { search: location.search, hash: `#${tab.id}` }
-              : undefined
-          }
-          state={behaveAsLinks ? location.state : undefined}
-          replace={behaveAsLinks && workspaceSurface.type === 'side-panel'}
-          onClick={
-            behaveAsLinks
-              ? () => onChangeTab?.(tab.id)
-              : () => onSelectTab(tab.id)
-          }
+          onSelect={behaveAsLinks ? onChangeTab : onSelectTab}
           onMouseEnter={
             tab.id === activeTabId || (tab.disabled ?? loading)
               ? undefined

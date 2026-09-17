@@ -5,8 +5,9 @@ import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { TabListButton } from '@/ui/layout/tab-list/components/TabListButton';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { NavigationLink } from '@/ui/input/components/NavigationLink';
+import { TabButton } from 'twenty-ui/components';
 import { IconColorSwatch, IconCreditCard, IconGauge } from 'twenty-ui/icon';
 
 const StyledTabBar = styled.div`
@@ -33,31 +34,38 @@ export const SettingsBillingTabBar = () => {
   const limitsPath = getSettingsPath(SettingsPath.BillingLimits);
 
   const isTabActive = (path: string) =>
-    matchPath({ path, end: true }, location.pathname) !== null;
+    isDefined(matchPath({ path, end: true }, location.pathname));
+
+  const tabs = [
+    {
+      id: 'billing',
+      title: t`Billing`,
+      Icon: IconCreditCard,
+      path: billingPath,
+    },
+    { id: 'plans', title: t`Plans`, Icon: IconColorSwatch, path: plansPath },
+    { id: 'limits', title: t`Limits`, Icon: IconGauge, path: limitsPath },
+  ];
 
   return (
     <StyledTabBar>
-      <TabListButton
-        id="billing"
-        title={t`Billing`}
-        LeftIcon={IconCreditCard}
-        active={isTabActive(billingPath)}
-        to={billingPath}
-      />
-      <TabListButton
-        id="plans"
-        title={t`Plans`}
-        LeftIcon={IconColorSwatch}
-        active={isTabActive(plansPath)}
-        to={plansPath}
-      />
-      <TabListButton
-        id="limits"
-        title={t`Limits`}
-        LeftIcon={IconGauge}
-        active={isTabActive(limitsPath)}
-        to={limitsPath}
-      />
+      {tabs.map(({ id, title, Icon, path }) => (
+        <NavigationLink key={id} to={path}>
+          {({ href, render }) => (
+            <TabButton
+              id={`tab-${id}`}
+              data-testid={`tab-${id}`}
+              startIcon={<Icon />}
+              active={isTabActive(path)}
+              aria-current={isTabActive(path) ? 'page' : undefined}
+              href={href}
+              render={render}
+            >
+              {title}
+            </TabButton>
+          )}
+        </NavigationLink>
+      ))}
     </StyledTabBar>
   );
 };

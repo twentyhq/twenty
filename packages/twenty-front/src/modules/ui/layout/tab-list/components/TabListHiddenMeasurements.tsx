@@ -5,7 +5,8 @@ import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { styled } from '@linaria/react';
 import { IconPlus } from 'twenty-ui/icon';
-import { TabListButton } from '@/ui/layout/tab-list/components/TabListButton';
+import { TabButton } from 'twenty-ui/components';
+import { getTabListItemContent } from '@/ui/layout/tab-list/utils/getTabListItemContent';
 
 import { type TabListDimensions } from '@/ui/layout/tab-list/types/TabListDimension';
 import { TabMoreButton } from './TabMoreButton';
@@ -40,23 +41,24 @@ export const TabListHiddenMeasurements = ({
 }: TabListHiddenMeasurementsProps) => {
   return (
     <StyledHiddenMeasurement aria-hidden inert>
-      {visibleTabs.map((tab) => (
-        <NodeDimension
-          key={tab.id}
-          onDimensionChange={onTabWidthChange(tab.id)}
-        >
-          <TabListButton
-            id={tab.id}
-            title={tab.title}
-            LeftIcon={tab.Icon}
-            logo={tab.logo}
-            active={tab.id === activeTabId}
-            disabled={tab.disabled ?? loading}
-            pill={tab.pill}
-            disableTestId={true}
-          />
-        </NodeDimension>
-      ))}
+      {visibleTabs.map((tab) => {
+        const { startIcon, badge } = getTabListItemContent(tab);
+
+        return (
+          <NodeDimension
+            key={tab.id}
+            onDimensionChange={onTabWidthChange(tab.id)}
+          >
+            <TabButton
+              children={tab.title}
+              startIcon={startIcon}
+              active={tab.id === activeTabId}
+              disabled={tab.disabled ?? loading}
+              badge={badge}
+            />
+          </NodeDimension>
+        );
+      })}
 
       <NodeDimension onDimensionChange={onMoreButtonWidthChange}>
         {/* Measured with the highest count it can ever display, so the widest
@@ -71,12 +73,7 @@ export const TabListHiddenMeasurements = ({
       {onAddButtonWidthChange && (
         <NodeDimension onDimensionChange={onAddButtonWidthChange}>
           {addButtonMeasurement ?? (
-            <TabListButton
-              id="tab-add-button"
-              title="+"
-              LeftIcon={IconPlus}
-              disableTestId={true}
-            />
+            <TabButton children="+" startIcon={<IconPlus />} />
           )}
         </NodeDimension>
       )}

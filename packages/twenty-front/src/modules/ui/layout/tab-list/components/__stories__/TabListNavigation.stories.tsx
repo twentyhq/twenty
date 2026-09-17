@@ -1,14 +1,20 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { useLocation, useNavigationType } from 'react-router-dom';
+import { MemoryRouter, useLocation, useNavigationType } from 'react-router-dom';
 import { expect, userEvent, within } from 'storybook/test';
-import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { Text } from 'twenty-ui/primitives/typography';
 
-import { TabListButton } from '../TabListButton';
+import { TabListItem } from '../TabListItem';
+import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { TabListRow } from '../TabListRow';
 
-const TabListNavigationExample = ({ links = false }: { links?: boolean }) => {
+const TabListNavigationExample = ({
+  links = false,
+}: {
+  links?: boolean;
+  sidePanel?: boolean;
+}) => {
   const [activeTabId, setActiveTabId] = useState('overview');
   const [selections, setSelections] = useState(0);
   const location = useLocation();
@@ -28,17 +34,12 @@ const TabListNavigationExample = ({ links = false }: { links?: boolean }) => {
         onSelectTab={selectTab}
       >
         {['overview', 'disabled', 'activity'].map((id) => (
-          <TabListButton
+          <TabListItem
             key={id}
-            id={id}
-            title={id}
+            tab={{ id, title: id, disabled: id === 'disabled' }}
             active={id === activeTabId}
-            asTab={!links}
-            disabled={id === 'disabled'}
-            to={links ? { search: '?filter=open', hash: `#${id}` } : undefined}
-            state={{ source: 'tab-list' }}
-            replace
-            onClick={() => selectTab(id)}
+            mode={links ? 'link' : 'tab'}
+            onSelect={selectTab}
           />
         ))}
       </TabListRow>
@@ -58,7 +59,30 @@ const TabListNavigationExample = ({ links = false }: { links?: boolean }) => {
 const meta: Meta<typeof TabListNavigationExample> = {
   title: 'UI/Layout/TabList/Navigation',
   component: TabListNavigationExample,
-  decorators: [ComponentWithRouterDecorator],
+  decorators: [
+    ComponentDecorator,
+    (Story, { args }) => (
+      <MemoryRouter
+        initialEntries={[
+          {
+            pathname: '/',
+            search: '?filter=open',
+            state: { source: 'tab-list' },
+          },
+        ]}
+      >
+        <WorkspaceSurfaceContext.Provider
+          value={{
+            type: args.sidePanel ? 'side-panel' : 'main',
+            instanceId: 'tab-navigation',
+            ownsRouteLocation: true,
+          }}
+        >
+          <Story />
+        </WorkspaceSurfaceContext.Provider>
+      </MemoryRouter>
+    ),
+  ],
 };
 
 export default meta;
@@ -86,7 +110,7 @@ export const KeyboardSelection: Story = {
 
 export const RouteLinks: Story = {
   args: { links: true },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const activity = canvas.getByRole('link', { name: 'activity' });
     const disabled = canvas.getByRole('link', { name: 'disabled' });
@@ -96,11 +120,16 @@ export const RouteLinks: Story = {
     await userEvent.click(activity);
     expect(canvas.getByRole('status')).toHaveTextContent('activity: 1');
     expect(canvas.getByText('?filter=open#activity')).toBeVisible();
-    expect(canvas.getByText('REPLACE')).toBeVisible();
+    expect(canvas.getByText(args.sidePanel ? 'REPLACE' : 'PUSH')).toBeVisible();
     expect(canvas.getByText('tab-list')).toBeVisible();
     expect(activity).toHaveAttribute('aria-current', 'page');
     await userEvent.click(disabled);
     expect(canvas.getByRole('status')).toHaveTextContent('activity: 1');
     expect(canvas.getByText('?filter=open#activity')).toBeVisible();
   },
+};
+
+export const SidePanelRouteLinks: Story = {
+  ...RouteLinks,
+  args: { links: true, sidePanel: true },
 };
