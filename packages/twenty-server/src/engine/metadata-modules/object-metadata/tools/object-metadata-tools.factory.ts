@@ -387,7 +387,7 @@ export class ObjectMetadataToolsFactory {
       },
       update_many_object_metadata: {
         description:
-          'Update multiple objects at once. Batch version of update_object_metadata.',
+          'Update multiple objects at once. Batch version of update_object_metadata. Applies the whole batch in one migration, so a rename (nameSingular or namePlural) cannot share a batch with another object: send each rename as its own call.',
         inputSchema: UpdateManyObjectMetadataInputSchema,
         execute: async (parameters: {
           objects: Array<{
@@ -406,44 +406,24 @@ export class ObjectMetadataToolsFactory {
           }>;
         }) => {
           try {
-            const updateObjectInputs = parameters.objects.map(
-              ({ id, icon, ...update }) => {
-                const normalizedIcon = normalizeIconName(icon);
-
-                return {
-                  id,
-                  update: {
-                    ...update,
-                    ...(isDefined(normalizedIcon)
-                      ? { icon: normalizedIcon }
-                      : {}),
-                  },
-                };
-              },
-            );
-
-            // updateManyObjects refuses a batch mixing a rename with anything
-            // else, because renames cannot share one migration.
-            const isRename = ({
-              update,
-            }: (typeof updateObjectInputs)[number]) =>
-              isDefined(update.nameSingular) || isDefined(update.namePlural);
-
             await this.objectMetadataService.updateManyObjects({
-              updateObjectInputs: updateObjectInputs.filter(
-                (updateObjectInput) => !isRename(updateObjectInput),
+              updateObjectInputs: parameters.objects.map(
+                ({ id, icon, ...update }) => {
+                  const normalizedIcon = normalizeIconName(icon);
+
+                  return {
+                    id,
+                    update: {
+                      ...update,
+                      ...(isDefined(normalizedIcon)
+                        ? { icon: normalizedIcon }
+                        : {}),
+                    },
+                  };
+                },
               ),
               workspaceId,
             });
-
-            for (const updateObjectInput of updateObjectInputs.filter(
-              isRename,
-            )) {
-              await this.objectMetadataService.updateOneObject({
-                updateObjectInput,
-                workspaceId,
-              });
-            }
 
             return true;
           } catch (error) {
