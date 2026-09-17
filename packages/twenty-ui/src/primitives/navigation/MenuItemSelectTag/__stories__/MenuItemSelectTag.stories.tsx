@@ -1,3 +1,4 @@
+import { expect, within } from 'storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
@@ -35,7 +36,14 @@ export const Default: Story = {
       control: false,
     },
   },
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story) => (
+      <div role="listbox" aria-label="Options">
+        <Story />
+      </div>
+    ),
+    ComponentDecorator,
+  ],
 };
 
 export const Catalog: CatalogStory<Story, typeof MenuItemSelectTag> = {
@@ -92,5 +100,37 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelectTag> = {
       } as CatalogOptions,
     },
   },
-  decorators: [CatalogDecorator],
+  decorators: [
+    (Story) => (
+      <div role="listbox" aria-label="Options">
+        <Story />
+      </div>
+    ),
+    CatalogDecorator,
+  ],
+};
+
+export const Selected: Story = {
+  args: {
+    color: 'green',
+    selected: true,
+    text: 'Selected option',
+  },
+  decorators: [
+    (Story) => (
+      <div role="listbox" aria-label="Options">
+        <Story />
+      </div>
+    ),
+    ComponentDecorator,
+  ],
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  play: async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByRole('option', {
+        name: 'Selected option',
+        selected: true,
+      }),
+    ).toBeVisible();
+  },
 };

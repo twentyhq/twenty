@@ -8,7 +8,7 @@ import {
   ComponentDecorator,
 } from '@ui/testing';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import { IconButton } from '@ui/components/IconButton/IconButton';
 import {
   Banner,
   type BannerColor,
@@ -17,8 +17,8 @@ import {
 
 import styles from './Banner.stories.module.scss';
 
-const getButtonAccent = (color?: BannerColor) =>
-  color === 'danger' ? 'danger' : 'blue';
+const getButtonColor = (color?: BannerColor) =>
+  color === 'danger' ? 'danger' : 'accent';
 
 const BannerCloseButton = ({
   color,
@@ -30,19 +30,21 @@ const BannerCloseButton = ({
   variant === 'primary' ? (
     <IconButton
       className={styles.invertedIconButton}
-      Icon={IconX}
-      size="small"
-      variant="tertiary"
-      ariaLabel="Close"
-    />
+      size="sm"
+      variant="ghost"
+      aria-label="Close"
+    >
+      <IconX />
+    </IconButton>
   ) : (
     <IconButton
-      Icon={IconX}
-      size="small"
-      variant="tertiary"
-      accent={getButtonAccent(color)}
-      ariaLabel="Close"
-    />
+      size="sm"
+      variant="ghost"
+      color={getButtonColor(color)}
+      aria-label="Close"
+    >
+      <IconX />
+    </IconButton>
   );
 
 const meta: Meta<typeof Banner> = {

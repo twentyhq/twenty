@@ -7,7 +7,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconArrowUp, IconShoppingBag } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import {
   type Application,
   PermissionFlagType,
@@ -109,7 +109,7 @@ export const SettingsApplicationDetailGeneralTab = ({
 
   return (
     <>
-      <Section>
+      <Section.Root>
         <SettingsApplicationOverviewCard
           applicationId={application.id}
           logoUrl={application.logoUrl}
@@ -118,7 +118,7 @@ export const SettingsApplicationDetailGeneralTab = ({
           coverImageUrl={coverImageUrl}
           actions={isNonEmptyArray(actions) ? actions : undefined}
         />
-      </Section>
+      </Section.Root>
       {isUpgradable && (
         <SettingsApplicationAutoUpdateSection
           applicationId={application.id}

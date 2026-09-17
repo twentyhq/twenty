@@ -4,12 +4,15 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Dispatch, type SetStateAction, useState } from 'react';
+import { Section } from 'twenty-ui/components';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H3Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledSectionHeader = styled(Section.Header)`
+  margin-block-end: 0;
+`;
 
 const RESET_VARIABLE_MODAL_ID =
   'reset-application-registration-config-variable-modal';
@@ -113,11 +116,17 @@ export const ConfigVariableEdit = ({
 
   return (
     <SettingsPageContainer>
-      <Section>
-        <H3Title title={title} description={description} />
-      </Section>
+      <Section.Root>
+        <StyledSectionHeader
+          title={title}
+          description={description}
+          level={3}
+          size="lg"
+          descriptionLineClamp={2}
+        />
+      </Section.Root>
 
-      <Section>
+      <Section.Root>
         <StyledRow>
           {input}
           {!isEditing ? (
@@ -159,7 +168,7 @@ export const ConfigVariableEdit = ({
           />
         </StyledRow>
         {helpContent}
-      </Section>
+      </Section.Root>
     </SettingsPageContainer>
   );
 };

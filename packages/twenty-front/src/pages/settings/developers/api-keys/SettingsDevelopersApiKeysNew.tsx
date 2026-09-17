@@ -16,8 +16,6 @@ import { useStore } from 'jotai';
 import { Key } from 'ts-key-enum';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import {
   CreateApiKeyDocument,
   GenerateApiKeyTokenDocument,
@@ -26,6 +24,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
@@ -166,8 +165,11 @@ export const SettingsDevelopersApiKeysNew = () => {
       }
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title title={t`Name`} description={t`Name of your API key`} />
+        <Section.Root>
+          <Section.Header
+            title={t`Name`}
+            description={t`Name of your API key`}
+          />
           <SettingsTextInput
             instanceId="api-key-new-name"
             placeholder={t`E.g. backoffice integration`}
@@ -188,9 +190,9 @@ export const SettingsDevelopersApiKeysNew = () => {
             }}
             fullWidth
           />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Role`}
             description={t`What this API can do: Select a user role to define its permissions.`}
           />
@@ -204,9 +206,9 @@ export const SettingsDevelopersApiKeysNew = () => {
             }}
             roles={roles}
           />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Expiration Date`}
             description={t`When the API key will expire.`}
           />
@@ -221,7 +223,7 @@ export const SettingsDevelopersApiKeysNew = () => {
               }));
             }}
           />
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

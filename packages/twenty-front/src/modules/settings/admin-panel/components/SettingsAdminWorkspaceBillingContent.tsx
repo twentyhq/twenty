@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import {
   IconBox,
@@ -17,8 +18,6 @@ import {
   IconTag,
   IconUsers,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -156,12 +155,12 @@ export const SettingsAdminWorkspaceBillingContent = ({
   if (!billing) {
     return (
       <StyledContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Billing`}
             description={t`No billing data is available for this workspace.`}
           />
-        </Section>
+        </Section.Root>
       </StyledContainer>
     );
   }
@@ -357,8 +356,8 @@ export const SettingsAdminWorkspaceBillingContent = ({
 
   return (
     <StyledContainer>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Customer`}
           description={t`Stripe customer linked to this workspace`}
         />
@@ -367,10 +366,10 @@ export const SettingsAdminWorkspaceBillingContent = ({
           items={customerItems}
           gridAutoColumns="3fr 8fr"
         />
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Usage`}
           description={
             isDefined(usage)
@@ -385,10 +384,10 @@ export const SettingsAdminWorkspaceBillingContent = ({
             gridAutoColumns="3fr 8fr"
           />
         )}
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Subscription`}
           description={
             subscription
@@ -403,7 +402,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
             gridAutoColumns="3fr 8fr"
           />
         )}
-      </Section>
+      </Section.Root>
 
       <SettingsAdminWorkspaceCreditGrantsTable
         workspaceId={workspaceId}

@@ -149,6 +149,7 @@
   --t-box-shadow-color: rgba(0, 0, 0, 0.6);
   --t-box-shadow-light:
     0px 2px 4px 0px rgba(0, 0, 0, 0.04), 0px 0px 4px 0px rgba(0, 0, 0, 0.08);
+  --t-box-shadow-sidebar: -4px 4px 4px 0px rgba(0, 0, 0, 0.03);
   --t-box-shadow-strong:
     2px 4px 16px 0px rgba(0, 0, 0, 0.16), 0px 2px 4px 0px rgba(0, 0, 0, 0.08);
   --t-box-shadow-underline: 0px 1px 0px 0px rgba(0, 0, 0, 0.32);

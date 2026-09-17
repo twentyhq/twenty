@@ -6,9 +6,10 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useUpdateEmail } from '@/settings/profile/hooks/useUpdateEmail';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -39,9 +40,6 @@ const StyledActionButtonContainer = styled.div`
   height: 100%;
   justify-content: center;
 `;
-
-const EMAIL_EDIT_DISABLED_TOOLTIP_ANCHOR_ID =
-  'profile-email-edit-disabled-tooltip-anchor';
 
 export const EmailField = () => {
   const { t } = useLingui();
@@ -126,31 +124,24 @@ export const EmailField = () => {
           </ButtonGroup>
         ) : (
           <StyledActionWrapper key="view">
-            <StyledActionButtonContainer
-              id={
-                shouldShowWorkspaceLimitTooltip
-                  ? EMAIL_EDIT_DISABLED_TOOLTIP_ANCHOR_ID
-                  : undefined
-              }
+            <Tooltip
+              content={t`You can't change your email because you belong to 2 or more workspaces.`}
+              delay={TooltipDelay.noDelay}
+              side="top"
+              disabled={!shouldShowWorkspaceLimitTooltip}
             >
-              <Button
-                startIcon={<IconPencil />}
-                aria-label={t`Edit`}
-                size="md"
-                onClick={handleStartEditing}
-                disabled={!canEdit}
-                type="button"
-                variant="outline"
-              />
-            </StyledActionButtonContainer>
-            {shouldShowWorkspaceLimitTooltip && (
-              <AppTooltip
-                anchorSelect={`#${EMAIL_EDIT_DISABLED_TOOLTIP_ANCHOR_ID}`}
-                title={t`You can't change your email because you belong to 2 or more workspaces.`}
-                delay={TooltipDelay.noDelay}
-                place="top"
-              />
-            )}
+              <StyledActionButtonContainer>
+                <Button
+                  startIcon={<IconPencil />}
+                  aria-label={t`Edit`}
+                  variant="outline"
+                  size="md"
+                  onClick={handleStartEditing}
+                  disabled={!canEdit}
+                  type="button"
+                />
+              </StyledActionButtonContainer>
+            </Tooltip>
           </StyledActionWrapper>
         )}
       </StyledFieldRow>

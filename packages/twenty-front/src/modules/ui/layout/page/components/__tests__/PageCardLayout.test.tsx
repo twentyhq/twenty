@@ -7,7 +7,7 @@ jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
 }));
 
 describe('PageCardLayout', () => {
-  it('renders the information banner before the page bars and body', () => {
+  it('renders the information banner below the header and above the secondary bar', () => {
     render(
       <PageCardLayout
         header={<div>Page header</div>}
@@ -23,7 +23,7 @@ describe('PageCardLayout', () => {
       informationBanner.compareDocumentPosition(
         screen.getByText('Page header'),
       ),
-    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    ).toBe(Node.DOCUMENT_POSITION_PRECEDING);
     expect(
       informationBanner.compareDocumentPosition(
         screen.getByText('Secondary bar'),

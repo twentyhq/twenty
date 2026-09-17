@@ -551,6 +551,7 @@
                         "group": "Surfaces",
                         "pages": [
                           "ui/primitives/surfaces/alert-dialog",
+                          "ui/primitives/surfaces/dialog",
                           "ui/primitives/surfaces/menu",
                           "ui/primitives/surfaces/popover"
                         ]
@@ -564,6 +565,7 @@
                       {
                         "group": "Typography",
                         "pages": [
+                          "ui/primitives/typography/heading",
                           "ui/primitives/typography/text"
                         ]
                       }
@@ -574,7 +576,9 @@
                     "pages": [
                       "ui/components/overview",
                       "ui/components/input/main-button",
-                      "ui/components/input/light-button"
+                      "ui/components/input/light-button",
+                      "ui/components/input/icon-button",
+                      "ui/components/section"
                     ]
                   }
                 ]

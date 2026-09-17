@@ -13,9 +13,8 @@ import { SettingsSecuritySettings } from '@/settings/security/components/Setting
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { IconHistory, IconKey, IconSettings } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
+import { IconHistory, IconKey, IconSettings2 } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const SETTINGS_GENERAL_TABS_INSTANCE_ID = 'settings-general-tabs';
@@ -36,7 +35,11 @@ export const SettingsGeneral = () => {
   );
 
   const tabs = [
-    { id: GENERAL_TAB_GENERAL, title: t`General`, Icon: IconSettings },
+    {
+      id: GENERAL_TAB_GENERAL,
+      title: t`General`,
+      Icon: IconSettings2,
+    },
     ...(hasSecurityPermission
       ? [
           { id: GENERAL_TAB_SECURITY, title: t`Security`, Icon: IconKey },
@@ -57,26 +60,29 @@ export const SettingsGeneral = () => {
 
     return (
       <>
-        <Section>
-          <H2Title title={t`Picture`} />
+        <Section.Root>
+          <Section.Header title={t`Picture`} />
           <WorkspaceLogoUploader />
-        </Section>
-        <Section>
-          <H2Title title={t`Name`} description={t`Name of your workspace`} />
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
+            title={t`Name`}
+            description={t`Name of your workspace`}
+          />
           <NameField />
-        </Section>
+        </Section.Root>
         {isMultiWorkspaceEnabled && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Workspace domain`}
               description={t`Edit your subdomain name or set a custom domain.`}
             />
             <SettingsWorkspaceDomainCard />
-          </Section>
+          </Section.Root>
         )}
-        <Section>
+        <Section.Root>
           <DeleteWorkspace />
-        </Section>
+        </Section.Root>
       </>
     );
   };

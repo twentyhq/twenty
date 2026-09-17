@@ -1,5 +1,5 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Modal } from 'twenty-ui/primitives/surfaces';
+import { Dialog, Modal } from 'twenty-ui/primitives/surfaces';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import {
@@ -15,7 +15,8 @@ const MODAL_OPEN_ENTRIES: GalleryEntry[] = [
   {
     name: 'Modal',
     node: (
-      <Modal isOpen={true} ariaLabel="Open gallery modal">
+      <Modal isOpen={true}>
+        <Dialog.Title>Open gallery modal</Dialog.Title>
         Modal body
       </Modal>
     ),

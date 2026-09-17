@@ -2,11 +2,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconAddressBook, IconPencil, IconReload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -98,8 +97,8 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
 
   return (
     <StyledContentContainer>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Record page`}
           description={t`Customize the workspace record page`}
         />
@@ -127,16 +126,16 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
             />
           }
         />
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Navigation`}
           description={t`Where records of this object open`}
         />
         <ObjectOpenRecordInPicker objectMetadataItem={objectMetadataItem} />
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Reset`}
           description={t`Reset all overrides on this layout to return it to the app default`}
         />
@@ -147,7 +146,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
           disabled={!hasLayoutsPermission || !isDefined(pageLayout)}
           variant="outline"
         >{t`Reset to default`}</Button>
-      </Section>
+      </Section.Root>
       <ConfirmationModal
         modalInstanceId={RESET_PAGE_LAYOUT_MODAL_ID}
         title={t`Reset to default`}

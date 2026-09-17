@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ApplicationVariable } from '~/generated-metadata/graphql';
 import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
@@ -29,8 +28,8 @@ export const SettingsApplicationDetailVariablesTab = ({
       : t`No variables to set for this application`;
 
   return (
-    <Section>
-      <H2Title title={t`Variables`} description={sectionDescription} />
+    <Section.Root>
+      <Section.Header title={t`Variables`} description={sectionDescription} />
       <StyledContainer>
         {applicationVariables.map((applicationVariable) => (
           <div key={applicationVariable.key}>
@@ -58,6 +57,6 @@ export const SettingsApplicationDetailVariablesTab = ({
           </div>
         ))}
       </StyledContainer>
-    </Section>
+    </Section.Root>
   );
 };

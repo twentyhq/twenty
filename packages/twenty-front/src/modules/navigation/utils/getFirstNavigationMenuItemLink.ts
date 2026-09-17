@@ -1,5 +1,6 @@
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
+import { OBJECT_BACKED_NAVIGATION_MENU_ITEM_TYPES } from '@/navigation-menu-item/common/constants/ObjectBackedNavigationMenuItemTypes';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { type View } from '@/views/types/View';
@@ -11,23 +12,19 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 type GetFirstNavigationMenuItemLinkArgs = {
   navigationMenuItemsInDisplayOrder: NavigationMenuItem[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[];
+  views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type' | 'position'>[];
   objectPermissionsByObjectMetadataId: Parameters<
     typeof getObjectPermissionsForObject
   >[0];
+  isInitialObjectViewEnabled?: boolean;
 };
-
-const OBJECT_BACKED_NAVIGATION_MENU_ITEM_TYPES = [
-  NavigationMenuItemType.OBJECT,
-  NavigationMenuItemType.VIEW,
-  NavigationMenuItemType.RECORD,
-];
 
 export const getFirstNavigationMenuItemLink = ({
   navigationMenuItemsInDisplayOrder,
   objectMetadataItems,
   views,
   objectPermissionsByObjectMetadataId,
+  isInitialObjectViewEnabled = false,
 }: GetFirstNavigationMenuItemLinkArgs): string | null => {
   for (const item of navigationMenuItemsInDisplayOrder) {
     if (
@@ -60,6 +57,7 @@ export const getFirstNavigationMenuItemLink = ({
       item,
       objectMetadataItems,
       views,
+      isInitialObjectViewEnabled,
     });
 
     if (isNonEmptyString(link)) {

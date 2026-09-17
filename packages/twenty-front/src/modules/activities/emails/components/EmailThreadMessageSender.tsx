@@ -2,8 +2,9 @@ import { styled } from '@linaria/react';
 
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { AppTooltip, TooltipPosition } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
@@ -40,16 +41,15 @@ export const EmailThreadMessageSender = ({
     const tooltipId = `date-tooltip-${sentAt.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
     sentAtContent = (
-      <>
+      <Tooltip
+        delay={TooltipDelay.mediumDelay}
+        content={formatToHumanReadableDate(sentAt)}
+        side="top"
+      >
         <StyledThreadMessageSentAt id={tooltipId}>
           {beautifyPastDateRelativeToNow(sentAt, localeCatalog)}
         </StyledThreadMessageSentAt>
-        <AppTooltip
-          anchorSelect={`#${tooltipId}`}
-          title={formatToHumanReadableDate(sentAt)}
-          place={TooltipPosition.Top}
-        />
-      </>
+      </Tooltip>
     );
   }
 
