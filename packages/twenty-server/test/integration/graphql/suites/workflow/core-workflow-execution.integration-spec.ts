@@ -1312,10 +1312,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }
   });
 
-  it('dry-runs and idempotently backfills non-completed legacy runs only', async () => {
+  it('dry-runs and idempotently backfills every legacy run status', async () => {
     const fixture = await createFixture();
     const runIds: string[] = [];
-    let completedRunId: string | undefined;
     try {
       for (const status of [
         'NOT_STARTED',
@@ -1324,6 +1323,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         'FAILED',
         'STOPPING',
         'STOPPED',
+        'COMPLETED',
       ]) {
         const id = randomUUID();
         runIds.push(id);
@@ -1332,28 +1332,18 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           [id, fixture.workflowId, fixture.workflowVersionId, status],
         );
       }
-      completedRunId = randomUUID();
-      runIds.push(completedRunId);
-      await global.testDataSource.query(
-        `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", status, position, state) VALUES ($1, 'B-Async completed migration', $2, $3, 'COMPLETED', 0, '{}')`,
-        [completedRunId, fixture.workflowId, fixture.workflowVersionId],
-      );
       await backfill(true);
       for (const id of runIds) {
         expect((await getRun(id)).coreWorkflowVersionId).toBeNull();
       }
       await backfill();
       await backfill();
-      for (const id of runIds.filter((id) => id !== completedRunId)) {
+      for (const id of runIds) {
         expect(await getRun(id)).toMatchObject({
           coreWorkflowId: fixture.coreWorkflowId,
           coreWorkflowVersionId: fixture.coreWorkflowVersionId,
         });
       }
-      expect(await getRun(completedRunId)).toMatchObject({
-        coreWorkflowId: null,
-        coreWorkflowVersionId: null,
-      });
     } finally {
       await global.testDataSource.query(
         `DELETE FROM "${schema}"."workflowRun" WHERE id = ANY($1::uuid[])`,

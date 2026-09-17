@@ -81,10 +81,9 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
            ON cv."workspaceId" = $1 AND cv."workspaceWorkflowVersionId" = r."workflowVersionId"
          LEFT JOIN core."workflow" cw
            ON cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = r."workflowId"
-         WHERE r.status <> 'COMPLETED' AND (
-            (r."coreWorkflowVersionId" IS NOT NULL AND cv.id IS NOT NULL AND r."coreWorkflowVersionId" <> cv.id)
+         WHERE (r."coreWorkflowVersionId" IS NOT NULL AND cv.id IS NOT NULL AND r."coreWorkflowVersionId" <> cv.id)
             OR (r."coreWorkflowId" IS NOT NULL AND cw.id IS NOT NULL AND r."coreWorkflowId" <> cw.id)
-            OR (cv.id IS NOT NULL AND cw.id IS NOT NULL AND cv."coreWorkflowId" <> cw.id))
+            OR (cv.id IS NOT NULL AND cw.id IS NOT NULL AND cv."coreWorkflowId" <> cw.id)
          LIMIT 1`,
         [workspaceId],
       );
@@ -98,7 +97,6 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
          SET "coreWorkflowVersionId" = cv.id
          FROM core."workflowVersion" cv
          WHERE cv."workspaceId" = $1 AND cv."workspaceWorkflowVersionId" = r."workflowVersionId"
-           AND r.status <> 'COMPLETED'
            AND r."coreWorkflowVersionId" IS NULL`,
         [workspaceId],
       );
@@ -107,7 +105,6 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
          SET "coreWorkflowId" = cv."coreWorkflowId"
          FROM core."workflowVersion" cv
          WHERE cv."workspaceId" = $1 AND cv.id = r."coreWorkflowVersionId"
-           AND r.status <> 'COMPLETED'
            AND r."coreWorkflowId" IS NULL`,
         [workspaceId],
       );
@@ -116,7 +113,6 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
          SET "coreWorkflowId" = cw.id
          FROM core."workflow" cw
          WHERE cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = r."workflowId"
-           AND r.status <> 'COMPLETED'
            AND r."coreWorkflowId" IS NULL`,
         [workspaceId],
       );
