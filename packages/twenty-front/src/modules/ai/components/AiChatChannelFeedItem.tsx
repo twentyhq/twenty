@@ -137,7 +137,7 @@ export const AiChatChannelFeedItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isArchived = Boolean(thread.deletedAt);
+  const isArchived = isDefined(thread.deletedAt);
   const ThreadIcon = isArchived ? IconArchive : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
   const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(

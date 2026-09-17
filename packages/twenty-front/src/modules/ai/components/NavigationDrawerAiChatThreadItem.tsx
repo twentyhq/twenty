@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { IconMessage } from 'twenty-ui/icon';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useLingui } from '@lingui/react/macro';
@@ -34,7 +35,7 @@ export const NavigationDrawerAiChatThreadItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isArchived = Boolean(thread.deletedAt);
+  const isArchived = isDefined(thread.deletedAt);
   const displayLabel = thread.title || t`New chat`;
   const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(
     thread.id,
