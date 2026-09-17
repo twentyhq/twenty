@@ -8,8 +8,8 @@ import {
 import { ON_OPPORTUNITY_LISTED_FN_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { notifyListedBrief } from 'src/modules/opportunity/matching/services/notify-listed-brief.service';
 
-// The public form is NOT this function's job: form briefs are born listed and never
-// flip, so the in-route ping covers them. This covers hand-listing and imports.
+// Form briefs are born unlisted and reach the marketplace only when an admin lists them,
+// so this fires for them as well as for imports and hand-created briefs.
 export const handler = async (
   payload: DatabaseEventPayload<
     ObjectRecordUpdateEvent<CoreSchema.Opportunity>

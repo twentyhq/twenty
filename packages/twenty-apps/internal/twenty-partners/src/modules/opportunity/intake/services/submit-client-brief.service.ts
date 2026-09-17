@@ -58,7 +58,7 @@ export async function submitClientBrief(
     const opportunityData: CoreSchema.OpportunityCreateInput = {
       name,
       need: input.need,
-      isListed: true,
+      isListed: false,
       stage: 'NEW',
       companyId,
       pointOfContactId,
