@@ -17,15 +17,20 @@ describe('formatRecordExportRow', () => {
 
   it('escapes multiline text, quotes, arrays and JSON, while preserving empty cells', () => {
     expect(
-      formatRecordExportRow(
-        [column('name'), column('tags'), column('json'), column('empty')],
-        {
+      formatRecordExportRow({
+        columns: [
+          column('name'),
+          column('tags'),
+          column('json'),
+          column('empty'),
+        ],
+        record: {
           name: 'Ada, "Lovelace"\nLondon',
           tags: ['A', 'B'],
           json: { key: 'value' },
           empty: null,
         },
-      ),
+      }),
     ).toBe(
       '"Ada, ""Lovelace""\nLondon","[""A"",""B""]","{""key"":""value""}",\n',
     );
@@ -33,18 +38,18 @@ describe('formatRecordExportRow', () => {
 
   it('protects formula strings including composite values without converting negative numbers to text', () => {
     expect(
-      formatRecordExportRow(
-        [
+      formatRecordExportRow({
+        columns: [
           column('text'),
           column('name', FieldMetadataType.FULL_NAME, 'firstName'),
           column('number', FieldMetadataType.NUMBER),
         ],
-        {
+        record: {
           text: '=SUM(1)',
           name: { firstName: '+cmd' },
           number: -12,
         },
-      ),
+      }),
     ).toBe('\u200D=SUM(1),\u200D+cmd,-12\n');
   });
 
@@ -53,27 +58,32 @@ describe('formatRecordExportRow', () => {
       column('amount', FieldMetadataType.CURRENCY, 'amountMicros'),
       column('amount', FieldMetadataType.CURRENCY, 'currencyCode'),
     ];
-    expect(formatRecordExportRow(columns, { amount: null })).toBe(',\n');
+    expect(formatRecordExportRow({ columns, record: { amount: null } })).toBe(
+      ',\n',
+    );
     expect(
-      formatRecordExportRow(columns, {
-        amount: { amountMicros: '-1234567', currencyCode: 'EUR' },
+      formatRecordExportRow({
+        columns,
+        record: {
+          amount: { amountMicros: '-1234567', currencyCode: 'EUR' },
+        },
       }),
     ).toBe('-1.234567,EUR\n');
   });
   it('serializes native database dates without introducing JSON quotes into CSV cells', () => {
     expect(
-      formatRecordExportRow(
-        [
+      formatRecordExportRow({
+        columns: [
           column('createdAt', FieldMetadataType.DATE_TIME),
           column('birthday', FieldMetadataType.DATE),
           column('dateString', FieldMetadataType.DATE),
         ],
-        {
+        record: {
           createdAt: new Date('2026-01-02T03:04:05.000Z'),
           birthday: new Date('2000-01-02T00:00:00.000Z'),
           dateString: '2000-01-02',
         },
-      ),
+      }),
     ).toBe('2026-01-02T03:04:05.000Z,2000-01-02,2000-01-02\n');
   });
 });

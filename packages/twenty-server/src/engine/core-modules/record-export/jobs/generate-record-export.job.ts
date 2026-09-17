@@ -252,7 +252,7 @@ export class GenerateRecordExportJob {
         signal,
       );
       for (const record of results.records) {
-        const row = formatRecordExportRow(context.columns, record);
+        const row = formatRecordExportRow({ columns: context.columns, record });
         progress.size += Buffer.byteLength(row);
         if (progress.size > RECORD_EXPORT_MAX_FILE_BYTES) {
           throw new RecordExportException(
