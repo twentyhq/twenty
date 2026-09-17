@@ -172,10 +172,10 @@ const StyledModalActions = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   margin-top: ${themeCssVariables.spacing[6]};
+`;
 
-  > div {
-    flex: 1;
-  }
+const StyledActionSlot = styled.div`
+  flex: 1;
 `;
 
 const PackageSummaryLabelText = ({ label }: { label: string }) => (
@@ -403,18 +403,22 @@ export const ResourceCreditPackagePickerModal = ({
         </StyledPackageDetails>
       </StyledPackageCard>
       <StyledModalActions>
-        <Button
-          onClick={onCancel}
-          fullWidth
-          variant="outline"
-        >{t`Cancel`}</Button>
-        <Button
-          onClick={onConfirm}
-          fullWidth
-          disabled={isConfirmDisabled}
-          variant="solid"
-          color="accent"
-        >{t`Confirm`}</Button>
+        <StyledActionSlot>
+          <Button
+            onClick={onCancel}
+            fullWidth
+            variant="outline"
+          >{t`Cancel`}</Button>
+        </StyledActionSlot>
+        <StyledActionSlot>
+          <Button
+            onClick={onConfirm}
+            fullWidth
+            disabled={isConfirmDisabled}
+            variant="solid"
+            color="accent"
+          >{t`Confirm`}</Button>
+        </StyledActionSlot>
       </StyledModalActions>
     </ModalStatefulWrapper>
   );

@@ -35,6 +35,8 @@ export enum CallRecordingStatus {
 }
 
 export type ComputeStepOutputSchemaInput = {
+  /** Core workflow version ID */
+  coreWorkflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
   /** Step JSON format */
   step: Scalars['JSON']['input'];
   /** Workflow version ID */
@@ -143,7 +145,7 @@ export type CoreWorkflowVersionDto = {
   steps?: Maybe<Scalars['JSON']['output']>;
   trigger?: Maybe<Scalars['JSON']['output']>;
   updatedAt: Scalars['String']['output'];
-  workspaceWorkflowId: Scalars['UUID']['output'];
+  workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
   workspaceWorkflowVersionId?: Maybe<Scalars['UUID']['output']>;
 };
 
@@ -156,6 +158,43 @@ export enum CoreWorkflowVersionStatus {
 
 export type CreateCoreWorkflowInput = {
   name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CreateCoreWorkflowVersionEdgeInput = {
+  /** Core workflow version ID */
+  coreWorkflowVersionId: Scalars['UUID']['input'];
+  /** Workflow version source step ID */
+  source: Scalars['String']['input'];
+  /** Workflow version source step connection options */
+  sourceConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
+  /** Workflow version target step ID */
+  target: Scalars['String']['input'];
+};
+
+export type CreateCoreWorkflowVersionStepInput = {
+  /** Core workflow version ID */
+  coreWorkflowVersionId: Scalars['UUID']['input'];
+  /** Default settings for the step */
+  defaultSettings?: InputMaybe<Scalars['JSON']['input']>;
+  /** Step ID */
+  id?: InputMaybe<Scalars['String']['input']>;
+  /** Next step ID */
+  nextStepId?: InputMaybe<Scalars['UUID']['input']>;
+  /** Parent step connection options */
+  parentStepConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
+  /** Parent step ID */
+  parentStepId?: InputMaybe<Scalars['String']['input']>;
+  /** Step position */
+  position?: InputMaybe<WorkflowStepPositionInput>;
+  /** New step type */
+  stepType: Scalars['String']['input'];
+};
+
+export type CreateDraftFromCoreWorkflowVersionInput = {
+  /** Core workflow ID */
+  coreWorkflowId: Scalars['UUID']['input'];
+  /** Core workflow version ID to copy */
+  coreWorkflowVersionIdToCopy: Scalars['UUID']['input'];
 };
 
 export type CreateDraftFromWorkflowVersionInput = {
@@ -206,6 +245,24 @@ export type DateTimeFilter = {
   neq?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
+export type DeleteCoreWorkflowVersionEdgeInput = {
+  /** Core workflow version ID */
+  coreWorkflowVersionId: Scalars['UUID']['input'];
+  /** Workflow version source step ID */
+  source: Scalars['String']['input'];
+  /** Workflow version source step connection options */
+  sourceConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
+  /** Workflow version target step ID */
+  target: Scalars['String']['input'];
+};
+
+export type DeleteCoreWorkflowVersionStepInput = {
+  /** Core workflow version ID */
+  coreWorkflowVersionId: Scalars['UUID']['input'];
+  /** Step to delete ID */
+  stepId: Scalars['String']['input'];
+};
+
 export type DeleteCoreWorkflowsInput = {
   coreWorkflowIds: Array<Scalars['UUID']['input']>;
 };
@@ -224,7 +281,8 @@ export type DeletedCoreWorkflowDto = {
 };
 
 export type DiscardCoreWorkflowDraftInput = {
-  workspaceWorkflowVersionId: Scalars['UUID']['input'];
+  coreWorkflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
+  workspaceWorkflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type DpaAgreement = {
@@ -281,6 +339,19 @@ export enum DpaRegion {
   US = 'US'
 }
 
+export type DuplicateCoreWorkflowInput = {
+  /** Core workflow ID to duplicate */
+  coreWorkflowIdToDuplicate: Scalars['UUID']['input'];
+  /** Core workflow version ID to copy */
+  coreWorkflowVersionIdToCopy: Scalars['UUID']['input'];
+};
+
+export type DuplicateCoreWorkflowVersionStepInput = {
+  /** Core workflow version ID */
+  coreWorkflowVersionId: Scalars['UUID']['input'];
+  stepId: Scalars['String']['input'];
+};
+
 export type DuplicateWorkflowInput = {
   /** Workflow ID to duplicate */
   workflowIdToDuplicate: Scalars['UUID']['input'];
@@ -331,32 +402,52 @@ export enum MessageChannelVisibility {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  activateCoreWorkflowVersion: Scalars['Boolean']['output'];
   activateWorkflowVersion: Scalars['Boolean']['output'];
   computeStepOutputSchema: Scalars['JSON']['output'];
   createCoreWorkflow: CoreWorkflowDto;
+  createCoreWorkflowVersionEdge: WorkflowVersionStepChanges;
+  createCoreWorkflowVersionStep: WorkflowVersionStepChanges;
+  createDraftFromCoreWorkflowVersion: CoreWorkflowVersionDto;
   createDraftFromWorkflowVersion: WorkflowVersionDto;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
+  deactivateCoreWorkflowVersion: Scalars['Boolean']['output'];
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
+  deleteCoreWorkflowVersionEdge: WorkflowVersionStepChanges;
+  deleteCoreWorkflowVersionStep: WorkflowVersionStepChanges;
   deleteCoreWorkflows: Array<DeletedCoreWorkflowDto>;
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   discardCoreWorkflowDraft?: Maybe<CoreWorkflowDto>;
   dismissMaintenanceModeBanner: Scalars['Boolean']['output'];
   dismissReconnectAccountBanner: Scalars['Boolean']['output'];
+  duplicateCoreWorkflow: CoreWorkflowDto;
+  duplicateCoreWorkflowVersionStep: WorkflowVersionStepChanges;
   duplicateWorkflow: WorkflowVersionDto;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
   generateSignedDpa: GenerateSignedDpaResult;
   retryWorkflowRun: WorkflowRun;
+  runCoreWorkflowVersion: RunWorkflowVersion;
   runWorkflowVersion: RunWorkflowVersion;
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
+  updateCoreWorkflow?: Maybe<CoreWorkflowDto>;
+  updateCoreWorkflowVersionPositions: Scalars['Boolean']['output'];
+  updateCoreWorkflowVersionStep: WorkflowAction;
+  updateCoreWorkflowVersionTrigger: WorkflowVersionTrigger;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkflowVersionTrigger: WorkflowVersionTrigger;
+  validateCoreWorkflowVersion: Scalars['Boolean']['output'];
   validateWorkflowVersion: Scalars['Boolean']['output'];
+};
+
+
+export type MutationActivateCoreWorkflowVersionArgs = {
+  coreWorkflowVersionId: Scalars['UUID']['input'];
 };
 
 
@@ -375,6 +466,21 @@ export type MutationCreateCoreWorkflowArgs = {
 };
 
 
+export type MutationCreateCoreWorkflowVersionEdgeArgs = {
+  input: CreateCoreWorkflowVersionEdgeInput;
+};
+
+
+export type MutationCreateCoreWorkflowVersionStepArgs = {
+  input: CreateCoreWorkflowVersionStepInput;
+};
+
+
+export type MutationCreateDraftFromCoreWorkflowVersionArgs = {
+  input: CreateDraftFromCoreWorkflowVersionInput;
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -390,8 +496,23 @@ export type MutationCreateWorkflowVersionStepArgs = {
 };
 
 
+export type MutationDeactivateCoreWorkflowVersionArgs = {
+  coreWorkflowVersionId: Scalars['UUID']['input'];
+};
+
+
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID']['input'];
+};
+
+
+export type MutationDeleteCoreWorkflowVersionEdgeArgs = {
+  input: DeleteCoreWorkflowVersionEdgeInput;
+};
+
+
+export type MutationDeleteCoreWorkflowVersionStepArgs = {
+  input: DeleteCoreWorkflowVersionStepInput;
 };
 
 
@@ -420,6 +541,16 @@ export type MutationDismissReconnectAccountBannerArgs = {
 };
 
 
+export type MutationDuplicateCoreWorkflowArgs = {
+  input: DuplicateCoreWorkflowInput;
+};
+
+
+export type MutationDuplicateCoreWorkflowVersionStepArgs = {
+  input: DuplicateCoreWorkflowVersionStepInput;
+};
+
+
 export type MutationDuplicateWorkflowArgs = {
   input: DuplicateWorkflowInput;
 };
@@ -437,6 +568,11 @@ export type MutationGenerateSignedDpaArgs = {
 
 export type MutationRetryWorkflowRunArgs = {
   workflowRunId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRunCoreWorkflowVersionArgs = {
+  input: RunCoreWorkflowVersionInput;
 };
 
 
@@ -460,6 +596,26 @@ export type MutationTestHttpRequestArgs = {
 };
 
 
+export type MutationUpdateCoreWorkflowArgs = {
+  input: UpdateCoreWorkflowInput;
+};
+
+
+export type MutationUpdateCoreWorkflowVersionPositionsArgs = {
+  input: UpdateCoreWorkflowVersionPositionsInput;
+};
+
+
+export type MutationUpdateCoreWorkflowVersionStepArgs = {
+  input: UpdateCoreWorkflowVersionStepInput;
+};
+
+
+export type MutationUpdateCoreWorkflowVersionTriggerArgs = {
+  input: UpdateCoreWorkflowVersionTriggerInput;
+};
+
+
 export type MutationUpdateWorkflowRunStepArgs = {
   input: UpdateWorkflowRunStepInput;
 };
@@ -480,6 +636,11 @@ export type MutationUpdateWorkflowVersionTriggerArgs = {
 };
 
 
+export type MutationValidateCoreWorkflowVersionArgs = {
+  coreWorkflowVersionId: Scalars['UUID']['input'];
+};
+
+
 export type MutationValidateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID']['input'];
 };
@@ -497,8 +658,11 @@ export type ObjectRecordFilterInput = {
 export type Query = {
   __typename?: 'Query';
   coreWorkflow?: Maybe<CoreWorkflowDto>;
+  coreWorkflowById?: Maybe<CoreWorkflowDto>;
   coreWorkflowVersion?: Maybe<CoreWorkflowVersionDto>;
+  coreWorkflowVersionById?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersions: Array<CoreWorkflowVersionDto>;
+  coreWorkflowVersionsByCoreWorkflowId: Array<CoreWorkflowVersionDto>;
   coreWorkflows: CoreWorkflowConnection;
   dpaAgreements: Array<DpaAgreement>;
   dpaPreview: DpaDocument;
@@ -528,13 +692,28 @@ export type QueryCoreWorkflowArgs = {
 };
 
 
+export type QueryCoreWorkflowByIdArgs = {
+  coreWorkflowId: Scalars['UUID']['input'];
+};
+
+
 export type QueryCoreWorkflowVersionArgs = {
   workspaceWorkflowVersionId: Scalars['UUID']['input'];
 };
 
 
+export type QueryCoreWorkflowVersionByIdArgs = {
+  coreWorkflowVersionId: Scalars['UUID']['input'];
+};
+
+
 export type QueryCoreWorkflowVersionsArgs = {
   workspaceWorkflowId: Scalars['UUID']['input'];
+};
+
+
+export type QueryCoreWorkflowVersionsByCoreWorkflowIdArgs = {
+  coreWorkflowId: Scalars['UUID']['input'];
 };
 
 
@@ -622,6 +801,15 @@ export type QueryWorkflowStepConnectedAccountHandleArgs = {
 
 export type QueryWorkflowVersionContentArgs = {
   workflowVersionId: Scalars['UUID']['input'];
+};
+
+export type RunCoreWorkflowVersionInput = {
+  /** Core workflow version ID */
+  coreWorkflowVersionId: Scalars['UUID']['input'];
+  /** Execution result in JSON format */
+  payload?: InputMaybe<Scalars['JSON']['input']>;
+  /** Workflow run ID */
+  workflowRunId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type RunWorkflowVersion = {
@@ -789,6 +977,32 @@ export type UuidFilter = {
   lt?: InputMaybe<Scalars['UUID']['input']>;
   lte?: InputMaybe<Scalars['UUID']['input']>;
   neq?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type UpdateCoreWorkflowInput = {
+  coreWorkflowId: Scalars['UUID']['input'];
+  name: Scalars['String']['input'];
+};
+
+export type UpdateCoreWorkflowVersionPositionsInput = {
+  /** Core workflow version ID */
+  coreWorkflowVersionId: Scalars['UUID']['input'];
+  /** Workflow version updated positions */
+  positions: Array<WorkflowStepPositionUpdateInput>;
+};
+
+export type UpdateCoreWorkflowVersionStepInput = {
+  /** Core workflow version ID */
+  coreWorkflowVersionId: Scalars['UUID']['input'];
+  /** Step to update in JSON format */
+  step: Scalars['JSON']['input'];
+};
+
+export type UpdateCoreWorkflowVersionTriggerInput = {
+  /** Core workflow version ID */
+  coreWorkflowVersionId: Scalars['UUID']['input'];
+  /** Trigger to update in JSON format */
+  trigger: Scalars['JSON']['input'];
 };
 
 export type UpdateWorkflowRunStepInput = {
@@ -1007,14 +1221,14 @@ export type GetCoreWorkflowVersionQueryVariables = Exact<{
 }>;
 
 
-export type GetCoreWorkflowVersionQuery = { __typename?: 'Query', coreWorkflowVersion?: { __typename?: 'CoreWorkflowVersionDTO', id: any, label: string, status: CoreWorkflowVersionStatus, workspaceWorkflowVersionId?: any | null, workspaceWorkflowId: any, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } | null };
+export type GetCoreWorkflowVersionQuery = { __typename?: 'Query', coreWorkflowVersion?: { __typename?: 'CoreWorkflowVersionDTO', id: any, label: string, status: CoreWorkflowVersionStatus, workspaceWorkflowVersionId?: any | null, workspaceWorkflowId?: any | null, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } | null };
 
 export type GetCoreWorkflowVersionsQueryVariables = Exact<{
   workspaceWorkflowId: Scalars['UUID']['input'];
 }>;
 
 
-export type GetCoreWorkflowVersionsQuery = { __typename?: 'Query', coreWorkflowVersions: Array<{ __typename?: 'CoreWorkflowVersionDTO', id: any, label: string, status: CoreWorkflowVersionStatus, workspaceWorkflowVersionId?: any | null, workspaceWorkflowId: any, createdAt: string, updatedAt: string }> };
+export type GetCoreWorkflowVersionsQuery = { __typename?: 'Query', coreWorkflowVersions: Array<{ __typename?: 'CoreWorkflowVersionDTO', id: any, label: string, status: CoreWorkflowVersionStatus, workspaceWorkflowVersionId?: any | null, workspaceWorkflowId?: any | null, createdAt: string, updatedAt: string }> };
 
 export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null };
 

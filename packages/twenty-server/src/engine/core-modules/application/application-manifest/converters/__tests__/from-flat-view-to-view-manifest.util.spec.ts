@@ -182,6 +182,7 @@ describe('fromFlatViewToViewManifest', () => {
       viewFilterGroupUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
       viewFieldGroupUniversalIdentifiers: [],
+      navigationMenuItemUniversalIdentifiers: [],
       viewSortUniversalIdentifiers: [],
       createdAt: NOW,
       updatedAt: NOW,

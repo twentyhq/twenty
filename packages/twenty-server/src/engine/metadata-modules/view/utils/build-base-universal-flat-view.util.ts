@@ -61,6 +61,7 @@ export const buildBaseUniversalFlatView = ({
     viewFilterUniversalIdentifiers: [],
     viewGroupUniversalIdentifiers: [],
     viewFilterGroupUniversalIdentifiers: [],
+    navigationMenuItemUniversalIdentifiers: [],
     viewSortUniversalIdentifiers: [],
     applicationUniversalIdentifier,
   };

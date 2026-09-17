@@ -153,6 +153,7 @@ const allPetsView: FlatView = {
   viewFilterIds: [],
   viewGroupIds: [],
   viewFilterGroupIds: [],
+  navigationMenuItemIds: [],
   viewSortIds: [],
 };
 
@@ -191,6 +192,7 @@ const buildFlatPageLayout = ({
     ? `${pageLayoutManifest.objectUniversalIdentifier}-id`
     : null,
   defaultTabToFocusOnMobileAndSidePanelId: null,
+  navigationMenuItemIds: [],
   tabIds: [],
   ...flatPageLayoutProperties,
 });

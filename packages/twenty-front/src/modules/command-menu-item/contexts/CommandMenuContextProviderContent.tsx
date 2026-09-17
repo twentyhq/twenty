@@ -40,13 +40,11 @@ export const CommandMenuContextProviderContent = ({
 }: CommandMenuContextProviderContentProps) => {
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const {
-    isRecordCreationFormEnabled,
     hasGlobalRecordCreationCommandTemplate,
     globalRecordCreationCommandMenuItems,
   } = useGlobalRecordCreationCommandMenuItems(commandMenuItems);
   const shouldDisplayGlobalRecordCreationCommands =
     containerType === CommandMenuItemContainerType.CommandMenuList &&
-    isRecordCreationFormEnabled &&
     hasGlobalRecordCreationCommandTemplate;
   const isLayoutCustomizationAllowedOnCurrentPage =
     useIsLayoutCustomizationAllowedOnCurrentPage();
