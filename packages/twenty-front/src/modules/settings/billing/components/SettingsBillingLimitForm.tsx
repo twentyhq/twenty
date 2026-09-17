@@ -2,10 +2,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/primitives/layout';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Section } from 'twenty-ui/components';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
 
 import { SettingsBillingLimitUsageSelect } from '@/settings/billing/components/SettingsBillingLimitUsageSelect';
 import { SettingsBillingLimitAmount } from '@/settings/billing/components/internal/SettingsBillingLimitAmount';
@@ -27,6 +26,7 @@ import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRi
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ProgressRing } from '@/ui/feedback/progress-ring/components/ProgressRing';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import {
   type UsageQuotaDefinitionsQuery,
   UsageOperationType,
@@ -151,8 +151,8 @@ export const SettingsBillingLimitForm = ({
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Scope`}
           description={t`The usage this limit applies to.`}
         />
@@ -174,9 +174,9 @@ export const SettingsBillingLimitForm = ({
             onChange={(spender) => onChange({ ...values, ...spender })}
           />
         </StyledRow>
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Limit`}
           description={t`How much can be spent, and how often it resets.`}
         />
@@ -195,36 +195,39 @@ export const SettingsBillingLimitForm = ({
               fullWidth
               disabled={!hasResource}
               RightIcon={() => (
-                <StyledRingAnchor id={RING_ANCHOR_ID}>
-                  <ProgressRing
-                    value={consumedPercentage}
-                    barColor={getUsageLimitRingColor({
-                      consumedPercentage,
-                      isExhausted,
-                    })}
-                  />
-                </StyledRingAnchor>
+                <Tooltip
+                  side="top"
+                  delay={TooltipDelay.shortDelay}
+                  positionMethod="fixed"
+                  content={
+                    <>
+                      {hasConsumption ? (
+                        <StyledTooltipRow>
+                          {t`Used`}
+                          <SettingsBillingLimitAmount
+                            text={consumedText}
+                            isCreditsMeter={isCreditsMeter}
+                          />
+                          {`· ${periodSpanLabel}`}
+                        </StyledTooltipRow>
+                      ) : (
+                        t`Nothing counted against this scope yet`
+                      )}
+                    </>
+                  }
+                >
+                  <StyledRingAnchor id={RING_ANCHOR_ID}>
+                    <ProgressRing
+                      value={consumedPercentage}
+                      barColor={getUsageLimitRingColor({
+                        consumedPercentage,
+                        isExhausted,
+                      })}
+                    />
+                  </StyledRingAnchor>
+                </Tooltip>
               )}
             />
-            <AppTooltip
-              anchorSelect={`#${RING_ANCHOR_ID}`}
-              place="top"
-              delay={TooltipDelay.shortDelay}
-              positionStrategy="fixed"
-            >
-              {hasConsumption ? (
-                <StyledTooltipRow>
-                  {t`Used`}
-                  <SettingsBillingLimitAmount
-                    text={consumedText}
-                    isCreditsMeter={isCreditsMeter}
-                  />
-                  {`· ${periodSpanLabel}`}
-                </StyledTooltipRow>
-              ) : (
-                t`Nothing counted against this scope yet`
-              )}
-            </AppTooltip>
           </StyledAmountField>
           <StyledMeterRow>
             <Select
@@ -263,7 +266,7 @@ export const SettingsBillingLimitForm = ({
             />
           </StyledMeterRow>
         </StyledRow>
-      </Section>
+      </Section.Root>
     </>
   );
 };

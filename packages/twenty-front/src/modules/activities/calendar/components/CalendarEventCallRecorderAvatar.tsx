@@ -1,14 +1,10 @@
 import { AppChip } from '@/applications/components/AppChip';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useId } from 'react';
-import { createPortal } from 'react-dom';
 import { assertUnreachable } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const IN_PROGRESS_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [
@@ -62,7 +58,12 @@ export const CalendarEventCallRecorderAvatar = ({
   const tooltipAnchorId = `call-recorder-${instanceId.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
 
   return (
-    <>
+    <Tooltip
+      content={getCallRecordingStatusLabel(status)}
+      delay={TooltipDelay.shortDelay}
+      side="top"
+      positionMethod="fixed"
+    >
       <StyledContainer id={tooltipAnchorId} isDisabled={hasNoRecording}>
         <AppChip
           applicationId={applicationId}
@@ -73,16 +74,6 @@ export const CalendarEventCallRecorderAvatar = ({
           chipOnly
         />
       </StyledContainer>
-      {createPortal(
-        <AppTooltip
-          anchorSelect={`#${tooltipAnchorId}`}
-          title={getCallRecordingStatusLabel(status)}
-          delay={TooltipDelay.shortDelay}
-          place={TooltipPosition.Top}
-          positionStrategy="fixed"
-        />,
-        document.body,
-      )}
-    </>
+    </Tooltip>
   );
 };
