@@ -67,7 +67,7 @@ export default defineApplication({
     operations: {
       [CALL_RECORDING_BILLABLE_OPERATION_NAME]: {
         operationType: 'CALL_RECORDING',
-        label: 'Meeting recording',
+        label: 'Call recording',
       },
     },
   },
