@@ -35,6 +35,7 @@ export const useLazyFetchAllRecords = <T>({
     orderBy,
     limit,
     recordGqlFields,
+    shouldToastOnError: false,
   });
 
   const { objectMetadataItem } = useObjectMetadataItem({

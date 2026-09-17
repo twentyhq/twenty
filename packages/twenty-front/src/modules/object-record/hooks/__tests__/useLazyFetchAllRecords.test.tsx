@@ -227,18 +227,14 @@ describe('useLazyFetchAllRecords', () => {
       },
     );
 
-    let res: Promise<unknown> | undefined;
-
-    act(() => {
-      res = result.current.fetchAllRecords();
+    await act(async () => {
+      await expect(result.current.fetchAllRecords()).rejects.toThrow(
+        'Internal server error',
+      );
     });
 
-    await expect(res).rejects.toThrow('Internal server error');
-
-    await waitFor(() => {
-      expect(result.current.isDownloading).toBe(false);
-      expect(result.current.progress).toEqual({ displayType: 'number' });
-    });
+    expect(result.current.isDownloading).toBe(false);
+    expect(result.current.progress).toEqual({ displayType: 'number' });
   });
 
   it('fails when the first page fails', async () => {
@@ -253,16 +249,12 @@ describe('useLazyFetchAllRecords', () => {
       },
     );
 
-    let res: Promise<unknown> | undefined;
-
-    act(() => {
-      res = result.current.fetchAllRecords();
+    await act(async () => {
+      await expect(result.current.fetchAllRecords()).rejects.toThrow(
+        'Internal server error',
+      );
     });
 
-    await expect(res).rejects.toThrow('Internal server error');
-
-    await waitFor(() => {
-      expect(result.current.isDownloading).toBe(false);
-    });
+    expect(result.current.isDownloading).toBe(false);
   });
 });
