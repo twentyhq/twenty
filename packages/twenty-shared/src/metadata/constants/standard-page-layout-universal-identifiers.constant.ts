@@ -502,12 +502,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           fields: 'Fields',
         },
       },
-      timeline: {
-        title: 'Timeline',
-        widgets: {
-          timeline: 'Timeline',
-        },
-      },
     },
   }),
   messageThreadRecordPage: buildStandardObjectRecordPageLayout({

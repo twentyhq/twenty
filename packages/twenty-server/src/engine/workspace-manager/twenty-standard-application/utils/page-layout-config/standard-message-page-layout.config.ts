@@ -30,20 +30,6 @@ const MESSAGE_PAGE_TABS = {
       },
     },
   },
-  timeline: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageRecordPage.tabs.timeline
-        .universalIdentifier,
-    ...TAB_PROPS.timeline,
-    widgets: {
-      timeline: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageRecordPage.tabs
-            .timeline.widgets.timeline.universalIdentifier,
-        ...WIDGET_PROPS.timeline,
-      },
-    },
-  },
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
 export const STANDARD_MESSAGE_PAGE_LAYOUT_CONFIG = {

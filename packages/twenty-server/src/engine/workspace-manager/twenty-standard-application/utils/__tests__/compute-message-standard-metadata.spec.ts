@@ -38,8 +38,10 @@ describe('Message standard record page build', () => {
     expect(pageLayout?.objectMetadataId).toBe(messageObjectMetadata?.id);
   });
 
-  it('lays the message record page out as a home tab and a timeline tab', () => {
-    expect(Object.keys(MESSAGE_RECORD_PAGE.tabs)).toEqual(['home', 'timeline']);
+  // message is not audit logged and exposes no timelineActivities relation, so
+  // a timeline tab would be filtered out of every render it appears in.
+  it('lays the message record page out as a single home tab', () => {
+    expect(Object.keys(MESSAGE_RECORD_PAGE.tabs)).toEqual(['home']);
 
     expect(
       allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
@@ -49,16 +51,6 @@ describe('Message standard record page build', () => {
       title: 'Home',
       icon: 'IconHome',
       position: 10,
-      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-    });
-    expect(
-      allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
-        MESSAGE_RECORD_PAGE.tabs.timeline.universalIdentifier
-      ],
-    ).toMatchObject({
-      title: 'Timeline',
-      icon: 'IconTimelineEvent',
-      position: 20,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     });
   });

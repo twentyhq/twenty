@@ -42,7 +42,6 @@ const PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
 
 const PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIERS = [
   MESSAGE_RECORD_PAGE.tabs.home.universalIdentifier,
-  MESSAGE_RECORD_PAGE.tabs.timeline.universalIdentifier,
 ];
 
 const FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
@@ -50,7 +49,6 @@ const FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
 
 const PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
   FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
-  MESSAGE_RECORD_PAGE.tabs.timeline.widgets.timeline.universalIdentifier,
 ];
 
 @RegisteredWorkspaceCommand('2.42.0', 1789652500000)
