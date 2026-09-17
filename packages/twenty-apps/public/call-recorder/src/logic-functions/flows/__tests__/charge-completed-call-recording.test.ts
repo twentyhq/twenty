@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import applicationConfig from 'src/application-config';
 import { chargeCompletedCallRecording } from 'src/logic-functions/flows/charge-completed-call-recording.util';
 
 const chargeCreditsMock = vi.hoisted(() => vi.fn());
@@ -23,10 +24,24 @@ describe('chargeCompletedCallRecording', () => {
     });
 
     expect(chargeCreditsMock).toHaveBeenCalledWith({
+      operation: 'recordMeeting',
       creditsUsedMicro: 500_000,
       quantity: 30,
+    });
+  });
+
+  it('charges an operation the application declares as call recording', async () => {
+    await chargeCompletedCallRecording({
+      callRecordingId: 'call-recording-1',
+      startedAt: '2026-06-10T09:00:00.000Z',
+      endedAt: '2026-06-10T09:30:00.000Z',
+    });
+
+    const [{ operation }] = chargeCreditsMock.mock.calls[0];
+
+    expect(applicationConfig.config.billing?.operations?.[operation]).toEqual({
       operationType: 'CALL_RECORDING',
-      resourceContext: 'recall',
+      label: 'Meeting recording',
     });
   });
 
