@@ -57,6 +57,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest,
     ownerFlatApplication,
     fromAllFlatEntityMaps,
+    existingAllFlatEntityMaps,
     isLogicFunctionPrebuiltModeEnabled,
     now,
     workspaceId,
@@ -64,6 +65,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
     fromAllFlatEntityMaps: AllFlatEntityMaps;
+    existingAllFlatEntityMaps: AllFlatEntityMaps;
     isLogicFunctionPrebuiltModeEnabled: boolean;
     now: string;
     workspaceId: string;
@@ -483,7 +485,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             .byUniversalIdentifier[
             mainGroupByFieldMetadataUniversalIdentifier
           ] ??
-          fromAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+          existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
             mainGroupByFieldMetadataUniversalIdentifier
           ])
         : undefined;

@@ -114,6 +114,7 @@ export class ApplicationManifestMigrationService {
         manifest: preInstallOnlyManifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
+        existingAllFlatEntityMaps,
         isLogicFunctionPrebuiltModeEnabled:
           featureFlagsMap[
             FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
@@ -211,6 +212,7 @@ export class ApplicationManifestMigrationService {
         manifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
+        existingAllFlatEntityMaps,
         isLogicFunctionPrebuiltModeEnabled:
           featureFlagsMap[
             FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
