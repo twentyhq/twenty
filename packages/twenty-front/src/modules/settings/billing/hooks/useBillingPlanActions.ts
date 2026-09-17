@@ -13,7 +13,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  getSettingsPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import {
   IconArrowDown,
   IconArrowUp,
@@ -95,6 +99,8 @@ export const useBillingPlanActions = ({
         return t`Cancel plan switching`;
       case 'CANCEL_INTERVAL_SWITCH':
         return t`Cancel interval switching`;
+      default:
+        return assertUnreachable(change);
     }
   };
 

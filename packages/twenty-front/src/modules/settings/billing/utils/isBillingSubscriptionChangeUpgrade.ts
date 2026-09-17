@@ -1,4 +1,5 @@
 import { type BillingSubscriptionChange } from '@/settings/billing/types/billingSubscriptionChange.type';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
 import {
   BillingPlanKey,
@@ -23,5 +24,7 @@ export const isBillingSubscriptionChangeUpgrade = ({
       return upcomingPlanKey === BillingPlanKey.PRO;
     case 'CANCEL_INTERVAL_SWITCH':
       return upcomingInterval === SubscriptionInterval.Month;
+    default:
+      return assertUnreachable(change);
   }
 };

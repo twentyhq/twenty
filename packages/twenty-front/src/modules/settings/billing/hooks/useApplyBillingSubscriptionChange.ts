@@ -1,4 +1,5 @@
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { type BillingSubscriptionChange } from '@/settings/billing/types/billingSubscriptionChange.type';
@@ -66,6 +67,8 @@ export const useApplyBillingSubscriptionChange = () => {
 
         return data?.cancelSwitchBillingInterval;
       }
+      default:
+        return assertUnreachable(change);
     }
   };
 
@@ -96,6 +99,8 @@ export const useApplyBillingSubscriptionChange = () => {
         return t`Plan switching has been cancelled.`;
       case 'CANCEL_INTERVAL_SWITCH':
         return t`Interval switching has been cancelled.`;
+      default:
+        return assertUnreachable(change);
     }
   };
 
@@ -108,6 +113,8 @@ export const useApplyBillingSubscriptionChange = () => {
       case 'SWITCH_PLAN':
       case 'SWITCH_INTERVAL':
         return t`Error while switching subscription.`;
+      default:
+        return assertUnreachable(change);
     }
   };
 

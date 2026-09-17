@@ -12,7 +12,11 @@ import { isBillingSubscriptionChangeImmediate } from '@/settings/billing/utils/i
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  assertUnreachable,
+  isDefined,
+} from 'twenty-shared/utils';
 import {
   BillingPlanKey,
   SubscriptionInterval,
@@ -83,6 +87,8 @@ export const useBillingSubscriptionChangeWording = () => {
         return t`When your trial ends, you will be charged ${priceLabel}.`;
       case 'SCHEDULED':
         return t`From ${getBeautifiedRenewDate()}, you will be charged ${priceLabel}.`;
+      default:
+        return assertUnreachable(timing);
     }
   };
 
@@ -254,6 +260,8 @@ export const useBillingSubscriptionChangeWording = () => {
         return getCancelPlanSwitchWording();
       case 'CANCEL_INTERVAL_SWITCH':
         return getCancelIntervalSwitchWording();
+      default:
+        return assertUnreachable(change);
     }
   };
 

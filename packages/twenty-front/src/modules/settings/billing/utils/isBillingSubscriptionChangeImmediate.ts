@@ -1,4 +1,5 @@
 import { type BillingSubscriptionChange } from '@/settings/billing/types/billingSubscriptionChange.type';
+import { assertUnreachable } from 'twenty-shared/utils';
 import {
   BillingPlanKey,
   SubscriptionInterval,
@@ -24,5 +25,7 @@ export const isBillingSubscriptionChangeImmediate = ({
     case 'CANCEL_PLAN_SWITCH':
     case 'CANCEL_INTERVAL_SWITCH':
       return true;
+    default:
+      return assertUnreachable(change);
   }
 };
