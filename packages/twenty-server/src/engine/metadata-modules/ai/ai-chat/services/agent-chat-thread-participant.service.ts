@@ -102,6 +102,14 @@ export class AgentChatThreadParticipantService {
       return existingParticipant;
     }
 
+    // Captured before the insert: a reader who already sees the thread
+    // through its channel must not get it announced a second time.
+    const recipientsBefore =
+      await this.agentChatService.getThreadRecipientUserWorkspaceIds({
+        threadId,
+        workspaceId,
+      });
+
     const participant = await this.participantRepository.insertAndReturnOne(
       workspaceId,
       {
@@ -111,10 +119,16 @@ export class AgentChatThreadParticipantService {
       },
     );
 
-    await this.agentChatService.broadcastThreadCreatedToRecipients({
-      thread,
-      recipientUserWorkspaceIds: [userWorkspaceId],
-    });
+    const hadAccess =
+      !isDefined(recipientsBefore) ||
+      recipientsBefore.includes(userWorkspaceId);
+
+    if (!hadAccess) {
+      await this.agentChatService.broadcastThreadCreatedToRecipients({
+        thread,
+        recipientUserWorkspaceIds: [userWorkspaceId],
+      });
+    }
 
     await this.eventPublisherService.publish({
       threadId,
@@ -178,10 +192,23 @@ export class AgentChatThreadParticipantService {
       return false;
     }
 
-    await this.agentChatService.broadcastThreadDeletedToRecipients({
-      thread,
-      recipientUserWorkspaceIds: [userWorkspaceId],
-    });
+    // The thread's channel may still grant the removed participant access,
+    // in which case it must stay in their list.
+    const recipientsAfter =
+      await this.agentChatService.getThreadRecipientUserWorkspaceIds({
+        threadId,
+        workspaceId,
+      });
+
+    const keepsAccess =
+      !isDefined(recipientsAfter) || recipientsAfter.includes(userWorkspaceId);
+
+    if (!keepsAccess) {
+      await this.agentChatService.broadcastThreadDeletedToRecipients({
+        thread,
+        recipientUserWorkspaceIds: [userWorkspaceId],
+      });
+    }
 
     await this.eventPublisherService.publish({
       threadId,
