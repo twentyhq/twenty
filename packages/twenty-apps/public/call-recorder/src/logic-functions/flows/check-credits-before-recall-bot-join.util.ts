@@ -6,8 +6,8 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCreditsUnavailableFailureReason } from 'src/logic-functions/data/get-credits-unavailable-failure-reason.util';
+import { markCallRecordingNotRecorded } from 'src/logic-functions/data/mark-call-recording-not-recorded.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
-import { updateNonTerminalCallRecordingState } from 'src/logic-functions/data/update-non-terminal-call-recording-state.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 
@@ -19,12 +19,10 @@ export type CheckCreditsBeforeRecallBotJoinResult =
 export const checkCreditsBeforeRecallBotJoin = async ({
   client,
   callRecordingId,
-  joinAt,
   now,
 }: {
   client: CoreApiClient;
   callRecordingId: string;
-  joinAt: string;
   now: Date;
 }): Promise<CheckCreditsBeforeRecallBotJoinResult> => {
   const callRecording = (
@@ -49,18 +47,14 @@ export const checkCreditsBeforeRecallBotJoin = async ({
     await fetchCalendarEventsByIds(client, [callRecording.calendarEventId])
   )[0]?.startsAt;
 
-  if (
-    isUndefined(meetingStartsAt) ||
-    computeRecallBotJoinAt(meetingStartsAt) !== joinAt
-  ) {
-    return {
-      status: 'skipped',
-      reason: 'meeting moved after this check was enqueued',
-    };
+  if (isUndefined(meetingStartsAt)) {
+    return { status: 'skipped', reason: 'meeting has no start time' };
   }
 
   // A late job must never cut a call that is already being recorded.
-  if (now.getTime() >= new Date(joinAt).getTime()) {
+  if (
+    now.getTime() >= new Date(computeRecallBotJoinAt(meetingStartsAt)).getTime()
+  ) {
     return { status: 'skipped', reason: 'bot join time has passed' };
   }
 
@@ -76,12 +70,10 @@ export const checkCreditsBeforeRecallBotJoin = async ({
     );
   }
 
-  await updateNonTerminalCallRecordingState(client, {
+  await markCallRecordingNotRecorded({
+    client,
     callRecordingId,
-    data: {
-      status: CallRecordingStatus.NOT_RECORDED,
-      callRecorderFailureReason: failureReason,
-    },
+    failureReason,
   });
   await updateCallRecording(client, {
     id: callRecordingId,
@@ -91,10 +83,6 @@ export const checkCreditsBeforeRecallBotJoin = async ({
       botScheduleIdempotencyKey: null,
     },
   });
-
-  console.warn(
-    `[call-recorder] callRecording ${callRecordingId} will not be recorded: ${failureReason}`,
-  );
 
   return { status: 'blocked', failureReason };
 };

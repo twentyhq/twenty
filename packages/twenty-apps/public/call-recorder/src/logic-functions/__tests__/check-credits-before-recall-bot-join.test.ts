@@ -21,7 +21,6 @@ vi.mock('twenty-sdk/billing', () => ({
 const fetchMock = vi.fn();
 
 const NOW = new Date('2026-01-01T12:49:00.000Z');
-const JOIN_AT = '2026-01-01T12:59:00.000Z';
 
 const buildConnection = <TNode>(nodes: TNode[]) => ({
   pageInfo: { hasNextPage: false, endCursor: undefined },
@@ -69,16 +68,16 @@ describe('check-credits-before-recall-bot-join', () => {
   });
 
   it('runs as an enqueued job with no trigger of its own', () => {
-    expect(checkCreditsBeforeRecallBotJoinLogicFunction.config).toMatchObject({
-      name: 'check-credits-before-recall-bot-join',
-      handler: handlePreJoinCreditCheckJob,
-    });
+    const { config } = checkCreditsBeforeRecallBotJoinLogicFunction;
+
+    expect(config.handler).toBe(handlePreJoinCreditCheckJob);
+    expect(
+      Object.keys(config).filter((key) => key.endsWith('TriggerSettings')),
+    ).toEqual([]);
   });
 
-  it('skips a job whose payload names no recording or join time', async () => {
-    const result = await handlePreJoinCreditCheckJob({
-      callRecordingId: 'call-recording-1',
-    });
+  it('skips a job whose payload names no recording', async () => {
+    const result = await handlePreJoinCreditCheckJob({});
 
     expect(result).toEqual({
       status: 'skipped',
@@ -97,10 +96,7 @@ describe('check-credits-before-recall-bot-join', () => {
     );
 
     await expect(
-      handlePreJoinCreditCheckJob({
-        callRecordingId: 'call-recording-1',
-        joinAt: JOIN_AT,
-      }),
+      handlePreJoinCreditCheckJob({ callRecordingId: 'call-recording-1' }),
     ).rejects.toMatchObject({ name: 'RetryableLogicFunctionError' });
 
     expect(mutationMock).not.toHaveBeenCalled();

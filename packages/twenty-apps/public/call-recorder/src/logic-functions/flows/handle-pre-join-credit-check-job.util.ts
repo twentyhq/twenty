@@ -14,9 +14,8 @@ export const handlePreJoinCreditCheckJob = async (
 ): Promise<CheckCreditsBeforeRecallBotJoinResult> => {
   const body = asRecord(payload);
   const callRecordingId = getString(body?.callRecordingId);
-  const joinAt = getString(body?.joinAt);
 
-  if (isUndefined(callRecordingId) || isUndefined(joinAt)) {
+  if (isUndefined(callRecordingId)) {
     return { status: 'skipped', reason: 'invalid pre-join credit check job' };
   }
 
@@ -24,7 +23,6 @@ export const handlePreJoinCreditCheckJob = async (
     return await checkCreditsBeforeRecallBotJoin({
       client: new CoreApiClient(),
       callRecordingId,
-      joinAt,
       now: new Date(),
     });
   } catch (error) {

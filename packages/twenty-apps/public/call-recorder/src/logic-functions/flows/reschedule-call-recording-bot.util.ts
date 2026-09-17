@@ -5,7 +5,6 @@ import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recal
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
-import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
@@ -51,11 +50,6 @@ export const rescheduleCallRecordingBot = async (
   });
 
   if (rescheduleResult.ok) {
-    await enqueuePreJoinCreditCheck({
-      callRecordingId: callRecording.id,
-      joinAt,
-    });
-
     return;
   }
 

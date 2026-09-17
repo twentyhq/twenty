@@ -34,14 +34,14 @@ const buildConnection = <TNode>(nodes: TNode[]) => ({
 
 class FakeCoreApiClient {
   callRecording: CallRecordingNode;
-  meetingStartsAt: string;
+  meetingStartsAt: string | null;
 
   constructor({
     callRecording = {},
     meetingStartsAt = MEETING_STARTS_AT,
   }: {
     callRecording?: Partial<CallRecordingNode>;
-    meetingStartsAt?: string;
+    meetingStartsAt?: string | null;
   } = {}) {
     this.callRecording = {
       id: 'call-recording-1',
@@ -108,11 +108,16 @@ class FakeCoreApiClient {
   }
 }
 
-const checkCredits = (client: FakeCoreApiClient, now: Date, joinAt = JOIN_AT) =>
+const checkCredits = ({
+  client,
+  now,
+}: {
+  client: FakeCoreApiClient;
+  now: Date;
+}) =>
   checkCreditsBeforeRecallBotJoin({
     client: client as unknown as CoreApiClient,
     callRecordingId: 'call-recording-1',
-    joinAt,
     now,
   });
 
@@ -141,7 +146,7 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
     getCreditAvailabilityMock.mockResolvedValue({ hasAvailableCredits: true });
     const client = new FakeCoreApiClient();
 
-    const result = await checkCredits(client, TEN_MINUTES_BEFORE_JOIN);
+    const result = await checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN });
 
     expect(result).toEqual({ status: 'allowed' });
     expect(fetchMock).not.toHaveBeenCalled();
@@ -156,7 +161,7 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
     });
     const client = new FakeCoreApiClient();
 
-    const result = await checkCredits(client, TEN_MINUTES_BEFORE_JOIN);
+    const result = await checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN });
 
     expect(result).toEqual({
       status: 'blocked',
@@ -187,7 +192,10 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
       });
       const client = new FakeCoreApiClient();
 
-      const result = await checkCredits(client, TEN_MINUTES_BEFORE_JOIN);
+      const result = await checkCredits({
+        client,
+        now: TEN_MINUTES_BEFORE_JOIN,
+      });
 
       expect(result).toEqual({ status: 'blocked', failureReason });
       expect(client.callRecording.callRecorderFailureReason).toBe(
@@ -201,7 +209,7 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
       callRecording: { status: 'RECORDING' },
     });
 
-    const result = await checkCredits(client, TEN_MINUTES_BEFORE_JOIN);
+    const result = await checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN });
 
     expect(result.status).toBe('skipped');
     expect(getCreditAvailabilityMock).not.toHaveBeenCalled();
@@ -212,7 +220,7 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
   it('does nothing once the bot join time has passed', async () => {
     const client = new FakeCoreApiClient();
 
-    const result = await checkCredits(client, new Date(JOIN_AT));
+    const result = await checkCredits({ client, now: new Date(JOIN_AT) });
 
     expect(result).toEqual({
       status: 'skipped',
@@ -222,19 +230,34 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('does nothing when the meeting moved after the check was enqueued', async () => {
+  it('reads the join time from the calendar event, not from when the job was enqueued', async () => {
+    getCreditAvailabilityMock.mockResolvedValue({
+      hasAvailableCredits: false,
+      reason: 'no-credits',
+    });
     const client = new FakeCoreApiClient({
-      meetingStartsAt: '2026-01-01T15:00:00.000Z',
+      meetingStartsAt: '2026-01-01T12:45:00.000Z',
     });
 
-    const result = await checkCredits(client, TEN_MINUTES_BEFORE_JOIN);
+    const result = await checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN });
 
     expect(result).toEqual({
       status: 'skipped',
-      reason: 'meeting moved after this check was enqueued',
+      reason: 'bot join time has passed',
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('does nothing when the meeting has no start time', async () => {
+    const client = new FakeCoreApiClient({ meetingStartsAt: null });
+
+    const result = await checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN });
+
+    expect(result).toEqual({
+      status: 'skipped',
+      reason: 'meeting has no start time',
     });
     expect(getCreditAvailabilityMock).not.toHaveBeenCalled();
-    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('throws and keeps the recording scheduled when Recall refuses the cancellation', async () => {
@@ -245,9 +268,9 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
     stubRecallBotRemoval(403);
     const client = new FakeCoreApiClient();
 
-    await expect(checkCredits(client, TEN_MINUTES_BEFORE_JOIN)).rejects.toThrow(
-      'could not be canceled',
-    );
+    await expect(
+      checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN }),
+    ).rejects.toThrow('could not be canceled');
 
     expect(client.callRecording.status).toBe('SCHEDULED');
     expect(client.callRecording.externalBotId).toBe('recall-bot-1');
@@ -261,7 +284,7 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
     stubRecallBotRemoval(404);
     const client = new FakeCoreApiClient();
 
-    const result = await checkCredits(client, TEN_MINUTES_BEFORE_JOIN);
+    const result = await checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN });
 
     expect(result.status).toBe('blocked');
     expect(client.callRecording.status).toBe('NOT_RECORDED');
@@ -279,7 +302,7 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
       return new Response(null, { status: 204 });
     });
 
-    await checkCredits(client, TEN_MINUTES_BEFORE_JOIN);
+    await checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN });
 
     expect(client.callRecording.status).toBe('FAILED');
     expect(client.callRecording.callRecorderFailureReason).toBeUndefined();

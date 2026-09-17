@@ -511,18 +511,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         },
       }),
     );
-    expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        jobs: [
-          expect.objectContaining({
-            payload: {
-              callRecordingId: buildCustomerSyncCallRecordingId(),
-              joinAt: FUTURE_RECALL_BOT_JOIN_AT,
-            },
-          }),
-        ],
-      }),
-    );
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 
   it('replaces a stale visible title with the fallback title when the calendar title becomes unavailable', async () => {
@@ -1076,7 +1065,6 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     ]);
     // The event path no longer re-creates the bot; the stale id is cleared and the cron schedules a bot for the pending row.
     expect(recallBotCreateCalls()).toHaveLength(0);
-    expect(enqueueJobsMock).not.toHaveBeenCalled();
     expect(client.callRecordings).toEqual([
       expect.objectContaining({
         id: buildCustomerSyncCallRecordingId(),
