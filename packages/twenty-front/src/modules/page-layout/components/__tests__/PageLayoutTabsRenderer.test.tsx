@@ -214,6 +214,35 @@ describe('PageLayoutTabsRenderer', () => {
     ).toBeInTheDocument();
   });
 
+  it('reveals a prerendered side-panel tab without remounting its content', () => {
+    mockIsInSidePanel = true;
+    mockActiveTabId = 'home-tab-id';
+    mockPrerenderedTabIds = ['timeline-tab-id'];
+
+    const { rerender } = render(<PageLayoutTabsRenderer />, {
+      wrapper: TestWrapper,
+    });
+    const prerenderedContent = screen.getByText(
+      'Rendered tab: timeline-tab-id',
+    );
+
+    expect(prerenderedContent).not.toBeVisible();
+    expect(screen.getByRole('tabpanel')).toHaveTextContent(
+      'Rendered tab: home-tab-id',
+    );
+
+    mockActiveTabId = 'timeline-tab-id';
+    rerender(<PageLayoutTabsRenderer />);
+
+    expect(screen.getByText('Rendered tab: timeline-tab-id')).toBe(
+      prerenderedContent,
+    );
+    expect(prerenderedContent).toBeVisible();
+    expect(screen.getByRole('tabpanel')).toHaveTextContent(
+      'Rendered tab: timeline-tab-id',
+    );
+  });
+
   it('does not mount prerendered tabs that are not prerenderable', () => {
     mockActiveTabId = 'timeline-tab-id';
     mockPrerenderedTabIds = ['home-tab-id'];

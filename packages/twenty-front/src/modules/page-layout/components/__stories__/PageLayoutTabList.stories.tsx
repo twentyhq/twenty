@@ -1,3 +1,6 @@
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
 import { styled } from '@linaria/react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { type ComponentProps, useEffect, useMemo } from 'react';
@@ -151,29 +154,36 @@ const PageLayoutTabListPlayground = ({
         componentInstanceId="page-layout-tab-list-story"
       />
 
-      <PageLayoutWidgetDndProvider>
-        <StyledTabListContainer isInIdentifierBar={isInIdentifierBar}>
-          <PageLayoutTabList
-            tabs={sortedTabs}
-            componentInstanceId="page-layout-tab-list-story"
-            behaveAsLinks={false}
-            loading={false}
-            addTabStrategy={
-              isReorderEnabled
-                ? { mode: 'direct', onCreate: handleAddTab }
-                : undefined
-            }
-            isReorderEnabled={isReorderEnabled}
-            pageLayoutType={
-              isInIdentifierBar
-                ? PageLayoutType.RECORD_PAGE
-                : PageLayoutType.DASHBOARD
-            }
-            presentation={presentation}
-            centerTabs={centerTabs}
-          />
-        </StyledTabListContainer>
-      </PageLayoutWidgetDndProvider>
+      <TabListRoot componentInstanceId="page-layout-tab-list-story">
+        <PageLayoutWidgetDndProvider>
+          <StyledTabListContainer isInIdentifierBar={isInIdentifierBar}>
+            <PageLayoutTabList
+              tabs={sortedTabs}
+              componentInstanceId="page-layout-tab-list-story"
+              behaveAsLinks={false}
+              loading={false}
+              addTabStrategy={
+                isReorderEnabled
+                  ? { mode: 'direct', onCreate: handleAddTab }
+                  : undefined
+              }
+              isReorderEnabled={isReorderEnabled}
+              pageLayoutType={
+                isInIdentifierBar
+                  ? PageLayoutType.RECORD_PAGE
+                  : PageLayoutType.DASHBOARD
+              }
+              presentation={presentation}
+              centerTabs={centerTabs}
+            />
+          </StyledTabListContainer>
+        </PageLayoutWidgetDndProvider>
+        {sortedTabs.map((tab) => (
+          <Tabs.Panel key={tab.id} value={tab.id}>
+            <Text>{tab.title} content</Text>
+          </Tabs.Panel>
+        ))}
+      </TabListRoot>
     </StyledContainer>
   );
 };

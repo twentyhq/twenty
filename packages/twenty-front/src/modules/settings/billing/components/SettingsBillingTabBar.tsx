@@ -53,7 +53,6 @@ export const SettingsBillingTabBar = () => {
         <NavigationLink key={id} to={path}>
           {({ href, render }) => (
             <TabButton
-              id={`tab-${id}`}
               data-testid={`tab-${id}`}
               startIcon={<Icon />}
               active={isTabActive(path)}

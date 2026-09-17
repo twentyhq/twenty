@@ -62,9 +62,7 @@ export const PageLayoutTabListVisibleTabs = ({
     return (
       <TabListRow
         ref={tabRowRef}
-        activeTabId={activeTabId}
         behaveAsLinks={false}
-        onSelectTab={onSelectTab}
         isScrollable={isScrollable}
       >
         {shownTabs.map((tab, index) => (
@@ -106,9 +104,7 @@ export const PageLayoutTabListVisibleTabs = ({
   return (
     <TabListRow
       ref={tabRowRef}
-      activeTabId={activeTabId}
       behaveAsLinks={behaveAsLinks}
-      onSelectTab={onSelectTab}
       isScrollable={isScrollable}
     >
       {visibleTabs.slice(0, visibleTabCount).map((tab) => (

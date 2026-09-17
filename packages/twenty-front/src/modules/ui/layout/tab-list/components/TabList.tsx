@@ -11,14 +11,14 @@ import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { TabListRow } from '@/ui/layout/tab-list/components/TabListRow';
 import { TabListItem } from '@/ui/layout/tab-list/components/TabListItem';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
-import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
+import { TabListSelectionSyncEffect } from '@/ui/layout/tab-list/components/TabListSelectionSyncEffect';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -86,7 +86,16 @@ export const TabList = ({
   );
 
   const activeTabExists = visibleTabs.some((tab) => tab.id === activeTabId);
-  const initialActiveTabId = activeTabExists ? activeTabId : visibleTabs[0]?.id;
+  const routeTabId = location.hash.replace('#', '');
+  const shouldSelectRouteTab =
+    behaveAsLinks &&
+    workspaceSurface.ownsRouteLocation &&
+    visibleTabs.some((tab) => tab.id === routeTabId);
+  const nextActiveTabId = shouldSelectRouteTab
+    ? routeTabId
+    : activeTabExists
+      ? activeTabId
+      : (visibleTabs[0]?.id ?? null);
 
   const {
     visibleTabCount,
@@ -120,17 +129,16 @@ export const TabList = ({
     return hiddenTabs.some((tab) => tab.id === activeTabId);
   }, [hasHiddenTabs, hiddenTabs, activeTabId]);
 
-  useEffect(() => {
-    setActiveTabId(initialActiveTabId);
-    onChangeTab?.(initialActiveTabId || '');
-  }, [initialActiveTabId, setActiveTabId, onChangeTab]);
-
   const handleTabSelect = useCallback(
     (tabId: string) => {
+      if (tabId === activeTabId) {
+        return;
+      }
+
       setActiveTabId(tabId);
       onChangeTab?.(tabId);
     },
-    [setActiveTabId, onChangeTab],
+    [activeTabId, setActiveTabId, onChangeTab],
   );
 
   const handleTabSelectFromDropdown = useCallback(
@@ -143,10 +151,9 @@ export const TabList = ({
             state: location.state,
           },
         );
-        onChangeTab?.(tabId);
-      } else {
-        handleTabSelect(tabId);
       }
+
+      handleTabSelect(tabId);
     },
     [
       behaveAsLinks,
@@ -154,13 +161,18 @@ export const TabList = ({
       location.search,
       location.state,
       navigate,
-      onChangeTab,
       workspaceSurface.type,
     ],
   );
 
   if (visibleTabs.length === 0) {
-    return null;
+    return (
+      <TabListSelectionSyncEffect
+        componentInstanceId={componentInstanceId}
+        nextActiveTabId={null}
+        onChangeTab={onChangeTab}
+      />
+    );
   }
 
   return (
@@ -168,7 +180,11 @@ export const TabList = ({
       value={{ instanceId: componentInstanceId }}
     >
       <>
-        <TabListFromUrlOptionalEffect tabListIds={tabs.map((tab) => tab.id)} />
+        <TabListSelectionSyncEffect
+          componentInstanceId={componentInstanceId}
+          nextActiveTabId={nextActiveTabId}
+          onChangeTab={onChangeTab}
+        />
 
         {visibleTabs.length > 1 && !shouldScrollTabs && (
           <TabListHiddenMeasurements
@@ -185,9 +201,7 @@ export const TabList = ({
             <StyledInnerContainer $centerTabs={centerTabs && !shouldScrollTabs}>
               <TabListRow
                 ref={tabRowRef}
-                activeTabId={activeTabId}
                 behaveAsLinks={behaveAsLinks}
-                onSelectTab={handleTabSelect}
                 isScrollable={shouldScrollTabs}
               >
                 {renderedTabs.map((tab) => (
@@ -197,7 +211,7 @@ export const TabList = ({
                     mode={behaveAsLinks ? 'link' : 'tab'}
                     active={tab.id === activeTabId}
                     disabled={tab.disabled ?? loading}
-                    onSelect={behaveAsLinks ? onChangeTab : handleTabSelect}
+                    onSelect={handleTabSelect}
                   />
                 ))}
               </TabListRow>

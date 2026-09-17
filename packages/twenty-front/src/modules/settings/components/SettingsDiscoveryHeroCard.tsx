@@ -1,7 +1,5 @@
-import {
-  SettingsCustomizeVideoModal,
-  type SettingsCustomizeVideoModalTab,
-} from '@/settings/components/SettingsCustomizeVideoModal';
+import { type SettingsCustomizeVideoModalTab } from '@/settings/types/SettingsCustomizeVideoModalTab';
+import { SettingsCustomizeVideoModal } from '@/settings/components/SettingsCustomizeVideoModal';
 import { HeroPlayButton } from '@/ui/layout/hero/components/HeroPlayButton';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';

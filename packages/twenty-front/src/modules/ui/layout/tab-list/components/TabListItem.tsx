@@ -10,7 +10,7 @@ import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { type TabListItemProps } from '@/ui/layout/tab-list/types/TabListItemProps';
 import { getTabListItemContent } from '@/ui/layout/tab-list/utils/getTabListItemContent';
 
-const TAB_ELEMENT_ID_PREFIX = 'tab-';
+const TAB_TEST_ID_PREFIX = 'tab-';
 
 const StyledTooltipAnchor = styled.div`
   display: flex;
@@ -31,7 +31,7 @@ export const TabListItem = ({
   const location = useLocation();
   const workspaceSurface = useWorkspaceSurface();
   const { startIcon, badge } = getTabListItemContent(tab);
-  const elementId = `${TAB_ELEMENT_ID_PREFIX}${tab.id}`;
+  const testId = `${TAB_TEST_ID_PREFIX}${tab.id}`;
   const selectTab = () => onSelect?.(tab.id);
 
   return (
@@ -45,8 +45,7 @@ export const TabListItem = ({
       <StyledTooltipAnchor>
         {mode === 'tab' ? (
           <Tabs.Tab
-            id={elementId}
-            data-testid={elementId}
+            data-testid={testId}
             value={tab.id}
             ref={ref}
             data-dnd-sortable-handle={isDragHandle}
@@ -54,7 +53,7 @@ export const TabListItem = ({
             highlighted={highlighted}
             startIcon={startIcon}
             badge={badge}
-            onClick={active ? selectTab : undefined}
+            onClick={selectTab}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
           >
@@ -68,8 +67,7 @@ export const TabListItem = ({
           >
             {({ href, render }) => (
               <TabButton
-                id={elementId}
-                data-testid={elementId}
+                data-testid={testId}
                 ref={ref}
                 href={href}
                 render={render}

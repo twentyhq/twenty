@@ -1,3 +1,5 @@
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
+import { WorkflowStepTabPanel } from '@/workflow/workflow-steps/components/WorkflowStepTabPanel';
 import { SidePanelWorkflowRunStepContentComponentInstanceContext } from '@/side-panel/pages/workflow/step/view-run/states/contexts/SidePanelWorkflowRunStepContentComponentInstanceContext';
 import { getIsInputTabDisabled } from '@/side-panel/pages/workflow/step/view-run/utils/getIsInputTabDisabled';
 import { getIsOutputTabDisabled } from '@/side-panel/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
@@ -141,7 +143,9 @@ export const SidePanelWorkflowRunViewStepContent = () => {
             stepExecutionStatus={stepExecutionStatus}
           />
         ) : (
-          <>
+          <TabListRoot
+            componentInstanceId={sidePanelPageComponentInstance.instanceId}
+          >
             <StyledTabListContainer>
               <TabList
                 tabs={tabs}
@@ -150,38 +154,39 @@ export const SidePanelWorkflowRunViewStepContent = () => {
               />
             </StyledTabListContainer>
 
-            {activeTabId === WorkflowRunTabId.OUTPUT ? (
-              <WorkflowRunStepOutputDetail
-                key={workflowSelectedNode}
-                stepId={workflowSelectedNode}
-              />
-            ) : null}
+            <WorkflowStepTabPanel value={activeTabId ?? ''}>
+              {activeTabId === WorkflowRunTabId.OUTPUT ? (
+                <WorkflowRunStepOutputDetail
+                  key={workflowSelectedNode}
+                  stepId={workflowSelectedNode}
+                />
+              ) : null}
 
-            {activeTabId === WorkflowRunTabId.NODE ? (
-              <WorkflowRunStepNodeDetail
-                stepId={workflowSelectedNode}
-                trigger={flow.trigger}
-                steps={flow.steps}
-                stepExecutionStatus={stepExecutionStatus}
-              />
-            ) : null}
+              {activeTabId === WorkflowRunTabId.NODE ? (
+                <WorkflowRunStepNodeDetail
+                  stepId={workflowSelectedNode}
+                  trigger={flow.trigger}
+                  steps={flow.steps}
+                  stepExecutionStatus={stepExecutionStatus}
+                />
+              ) : null}
 
-            {activeTabId === WorkflowRunTabId.INPUT ? (
-              <WorkflowRunStepInputDetail
-                key={workflowSelectedNode}
-                stepId={workflowSelectedNode}
-              />
-            ) : null}
+              {activeTabId === WorkflowRunTabId.INPUT ? (
+                <WorkflowRunStepInputDetail
+                  key={workflowSelectedNode}
+                  stepId={workflowSelectedNode}
+                />
+              ) : null}
 
-            {activeTabId === WorkflowRunTabId.LOGS ? (
-              <WorkflowRunStepLogsDetail
-                key={workflowSelectedNode}
-                stepId={workflowSelectedNode}
-              />
-            ) : null}
-
+              {activeTabId === WorkflowRunTabId.LOGS ? (
+                <WorkflowRunStepLogsDetail
+                  key={workflowSelectedNode}
+                  stepId={workflowSelectedNode}
+                />
+              ) : null}
+            </WorkflowStepTabPanel>
             <WorkflowIteratorSubStepSwitcher stepId={workflowSelectedNode} />
-          </>
+          </TabListRoot>
         )}
       </StyledContainer>
     </SidePanelWorkflowRunStepContentComponentInstanceContext.Provider>
