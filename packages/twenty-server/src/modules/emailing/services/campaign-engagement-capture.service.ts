@@ -2,7 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { v4 } from 'uuid';
 
+import { RECORD_CAMPAIGN_ENGAGEMENT_JOB } from 'src/engine/core-modules/emailing-domain/constants/record-campaign-engagement-job.constant';
 import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
@@ -10,7 +14,6 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK } from 'src/modules/emailing/constants/campaign-engagement-capture-rate-limit-per-link.constant';
 import { CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_REQUESTER } from 'src/modules/emailing/constants/campaign-engagement-capture-rate-limit-per-requester.constant';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
-import { CampaignEngagementRecordingService } from 'src/modules/emailing/services/campaign-engagement-recording.service';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
 
 @Injectable()
@@ -18,10 +21,11 @@ export class CampaignEngagementCaptureService {
   private readonly logger = new Logger(CampaignEngagementCaptureService.name);
 
   constructor(
+    @InjectMessageQueue(MessageQueue.campaignEngagementQueue)
+    private readonly messageQueueService: MessageQueueService,
     private readonly throttlerService: ThrottlerService,
     private readonly metricsService: MetricsService,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
-    private readonly campaignEngagementRecordingService: CampaignEngagementRecordingService,
   ) {}
 
   async capture({
@@ -46,11 +50,11 @@ export class CampaignEngagementCaptureService {
     };
 
     await this.releaseResponseAfterBudget(
-      this.throttleAndRecord({ payload, observation, requesterIp }),
+      this.throttleAndEnqueue({ payload, observation, requesterIp }),
     );
   }
 
-  private async throttleAndRecord({
+  private async throttleAndEnqueue({
     payload,
     observation,
     requesterIp,
@@ -74,7 +78,18 @@ export class CampaignEngagementCaptureService {
         CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK.windowMs,
       );
 
-      await this.campaignEngagementRecordingService.record(observation);
+      await this.messageQueueService.add<CampaignEngagementObservation>(
+        RECORD_CAMPAIGN_ENGAGEMENT_JOB,
+        observation,
+        {
+          retryLimit: 14,
+          backoff: {
+            strategy: 'exponential',
+            initialDelayMilliseconds: 5_000,
+            jitter: 0.5,
+          },
+        },
+      );
     } catch (error) {
       const isThrottled = error instanceof ThrottlerException;
 
@@ -96,7 +111,7 @@ export class CampaignEngagementCaptureService {
   }
 
   private async releaseResponseAfterBudget(
-    recording: Promise<void>,
+    enqueueing: Promise<void>,
   ): Promise<void> {
     let releaseTimer: NodeJS.Timeout | undefined;
 
@@ -105,7 +120,7 @@ export class CampaignEngagementCaptureService {
     });
 
     try {
-      await Promise.race([recording, release]);
+      await Promise.race([enqueueing, release]);
     } finally {
       clearTimeout(releaseTimer);
     }
