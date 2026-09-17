@@ -30,9 +30,8 @@ import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconClockPlay, IconCoins, IconTag } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import {
   BillingPlanKey,
   CancelSwitchResourceCreditPriceDocument,
@@ -388,8 +387,11 @@ export const SettingsBillingSubscriptionInfo = ({
   };
 
   return (
-    <Section>
-      <H2Title title={t`Subscription`} description={subscriptionDescription} />
+    <Section.Root>
+      <Section.Header
+        title={t`Subscription`}
+        description={subscriptionDescription}
+      />
       <SettingsBillingSubscriptionInfoCard
         canDisplaySwitchToMonthlyAction={canDisplaySwitchToMonthlyAction}
         canDisplaySwitchToYearlyAction={canDisplaySwitchToYearlyAction}
@@ -485,6 +487,6 @@ export const SettingsBillingSubscriptionInfo = ({
           },
         })}
       />
-    </Section>
+    </Section.Root>
   );
 };

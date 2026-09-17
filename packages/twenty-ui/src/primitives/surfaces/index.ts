@@ -22,6 +22,8 @@ export { Card } from './Card/Card';
 export { CardContent } from './CardContent/CardContent';
 export { CardFooter } from './CardFooter/CardFooter';
 export { CardHeader } from './CardHeader/CardHeader';
+export { Dialog } from './Dialog/Dialog';
+export type { DialogTitleProps } from './Dialog/types/DialogTitleProps';
 export { Menu } from './Menu/Menu';
 export type { MenuActionItemProps } from './Menu/types/MenuActionItemProps';
 export type { MenuAlign } from './Menu/types/MenuAlign';

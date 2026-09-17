@@ -2,10 +2,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
 
 import { SettingsBillingLimitUsageSelect } from '@/settings/billing/components/SettingsBillingLimitUsageSelect';
 import { SettingsBillingLimitAmount } from '@/settings/billing/components/internal/SettingsBillingLimitAmount';
@@ -152,8 +151,8 @@ export const SettingsBillingLimitForm = ({
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Scope`}
           description={t`The usage this limit applies to.`}
         />
@@ -175,9 +174,9 @@ export const SettingsBillingLimitForm = ({
             onChange={(spender) => onChange({ ...values, ...spender })}
           />
         </StyledRow>
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Limit`}
           description={t`How much can be spent, and how often it resets.`}
         />
@@ -267,7 +266,7 @@ export const SettingsBillingLimitForm = ({
             />
           </StyledMeterRow>
         </StyledRow>
-      </Section>
+      </Section.Root>
     </>
   );
 };

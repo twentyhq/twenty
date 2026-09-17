@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { CalendarChannelSyncStage, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsAccountsCalendars = () => {
   const { t } = useLingui();
@@ -41,11 +41,11 @@ export const SettingsAccountsCalendars = () => {
     }
 
     return (
-      <Section>
+      <Section.Root>
         <SettingsAccountsCalendarChannelsContainer
           calendarChannels={calendarChannels}
         />
-      </Section>
+      </Section.Root>
     );
   };
 

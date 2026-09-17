@@ -1,8 +1,8 @@
+import { Section } from '@ui/components/Section/Section';
 import { useNow } from '../hooks/useNow';
 import { MeetingRow } from './MeetingRow';
 import { i18n } from '@lingui/core';
 import { SettingsCardContent } from './SettingsCardContent';
-import { H2Title } from '@ui/primitives/typography/H2Title/H2Title';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { CalendarDayLabel } from './CalendarDayLabel';
@@ -34,7 +34,7 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
   }
   return (
     <section aria-label={calendarTitle}>
-      <H2Title title={calendarTitle} />
+      <Section.Header title={calendarTitle} />
       {meetings.length ? (
         <>
           <Card
@@ -141,7 +141,7 @@ export const Home = ({ state, command, isPending }: ActionProps) => {
         className="section recordings-section"
         aria-label={i18n._('Recordings')}
       >
-        <H2Title
+        <Section.Header
           title={i18n._('Recordings')}
           adornment={
             <Button

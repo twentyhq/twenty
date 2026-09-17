@@ -37,6 +37,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconCreditCard,
   IconEyeShare,
@@ -47,12 +48,11 @@ import {
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button, Switch } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import {
   Card,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/primitives/surfaces';
-import { H2Title, Text } from 'twenty-ui/primitives/typography';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetUpgradeStatusDocument,
@@ -348,8 +348,11 @@ export const SettingsAdminWorkspaceDetail = () => {
           )}
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.MEMBERS && workspace && (
-          <Section>
-            <H2Title title={t`Members`} description={t`Workspace members`} />
+          <Section.Root>
+            <Section.Header
+              title={t`Members`}
+              description={t`Workspace members`}
+            />
             <Table>
               <TableBody>
                 <TableRow gridTemplateColumns="1fr 2fr 100px">
@@ -415,7 +418,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                 })}
               </TableBody>
             </Table>
-          </Section>
+          </Section.Root>
         )}
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.FEATURE_FLAGS &&
@@ -430,8 +433,8 @@ export const SettingsAdminWorkspaceDetail = () => {
           )}
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.CHATS && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Chat Sessions`}
               description={t`AI chat threads for this workspace`}
             />
@@ -478,7 +481,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                 ))}
               </Table>
             )}
-          </Section>
+          </Section.Root>
         )}
       </SettingsPageContainer>
     </SettingsPageLayout>
