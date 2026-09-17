@@ -1,12 +1,13 @@
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatChannelDeleteConfirmationModal } from '@/ai/components/AiChatChannelDeleteConfirmationModal';
 import { AiChatChannelsMenu } from '@/ai/components/AiChatChannelsMenu';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
-import { NavigationDrawerAiChatChannelSection } from '@/ai/components/NavigationDrawerAiChatChannelSection';
+import { NavigationDrawerAiChatChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
@@ -17,7 +18,6 @@ import { useChatChannels } from '@/ai/hooks/useChatChannels';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { groupThreadsByChannel } from '@/ai/utils/groupThreadsByChannel';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -78,10 +78,11 @@ export const NavigationDrawerAiChatContent = () => {
     fetchMoreRef,
   } = useChatThreads();
   const { joinedChannels, browsableChannels } = useChatChannels();
-  const { channelGroups, threadsWithoutChannel: threads } =
-    groupThreadsByChannel({ threads: allThreads, joinedChannels });
+  // Channel threads live on their channel page; the drawer only lists the
+  // channels themselves and the threads outside any channel.
+  const threads = allThreads.filter((thread) => !isDefined(thread.channelId));
   const hasChannelsSection =
-    channelGroups.length > 0 || browsableChannels.length > 0;
+    joinedChannels.length > 0 || browsableChannels.length > 0;
 
   if (loading && allThreads.length === 0) {
     return (
@@ -111,15 +112,12 @@ export const NavigationDrawerAiChatContent = () => {
               sectionId={AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID}
               label={t`Channels`}
               rightIcon={<AiChatChannelsMenu />}
-              alwaysShowRightIcon={channelGroups.length === 0}
+              alwaysShowRightIcon={joinedChannels.length === 0}
             >
-              {channelGroups.map(({ channel, threads: channelThreads }) => (
-                <NavigationDrawerAiChatChannelSection
+              {joinedChannels.map((channel) => (
+                <NavigationDrawerAiChatChannelItem
                   key={channel.id}
                   channel={channel}
-                  threads={channelThreads}
-                  currentThreadId={currentAiChatThread}
-                  onThreadClick={handleThreadClick}
                 />
               ))}
             </CollapsibleNavigationDrawerSection>

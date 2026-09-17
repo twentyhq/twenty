@@ -2,6 +2,7 @@ import { useStore } from 'jotai';
 
 import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
+import { agentChatDraftChannelIdState } from '@/ai/states/agentChatDraftChannelIdState';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
@@ -11,10 +12,12 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 
 type UseSwitchToNewAiChatParams = {
   shouldOpenInFullPage?: boolean;
+  channelId?: string | null;
 };
 
 export const useSwitchToNewAiChat = ({
   shouldOpenInFullPage = false,
+  channelId = null,
 }: UseSwitchToNewAiChatParams = {}) => {
   const setThreadIdCreatedFromDraft = useSetAtomState(
     threadIdCreatedFromDraftState,
@@ -27,6 +30,7 @@ export const useSwitchToNewAiChat = ({
   const switchToNewChat = () => {
     setThreadIdCreatedFromDraft(null);
     store.set(hasTriggeredCreateForDraftState.atom, false);
+    store.set(agentChatDraftChannelIdState.atom, channelId);
     selectAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
 
     if (shouldOpenInFullPage) {

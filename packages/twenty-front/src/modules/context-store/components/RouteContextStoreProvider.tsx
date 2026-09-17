@@ -61,7 +61,9 @@ export const RouteContextStoreProvider = () => {
   );
   const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
-  const isAiChatPage = isMatchingLocation(location, AppPath.AiChat);
+  const isAiChatPage =
+    isMatchingLocation(location, AppPath.AiChat) ||
+    isMatchingLocation(location, AppPath.AiChatChannel);
   const isSettingsPage = useIsSettingsPage();
 
   const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;

@@ -18,11 +18,14 @@ import {
   AI_CHAT_CHANNEL_MENU_PAGE,
   type AiChatChannelMenuPage,
 } from '@/ai/constants/AiChatChannelMenuPage';
+import { useAiChatChannelIdFromPath } from '@/ai/hooks/useAiChatChannelIdFromPath';
 import { useChatChannelActions } from '@/ai/hooks/useChatChannelActions';
 import { useChatChannels } from '@/ai/hooks/useChatChannels';
+import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { aiChatChannelPendingDeleteState } from '@/ai/states/aiChatChannelPendingDeleteState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { type FlatAgentChatChannel } from '@/metadata-store/types/FlatAgentChatChannel';
+import { AgentChatChannelVisibility } from '~/generated-metadata/graphql';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -49,6 +52,8 @@ export const AiChatChannelMenu = ({ channel }: AiChatChannelMenuProps) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { isCurrentUserChannelAdmin } = useChatChannels();
   const { updateChatChannel, leaveChatChannel } = useChatChannelActions();
+  const { navigateToAiChatPage } = useNavigateToAiChatPage();
+  const currentChannelId = useAiChatChannelIdFromPath();
   const setAiChatChannelPendingDelete = useSetAtomState(
     aiChatChannelPendingDeleteState,
   );
@@ -69,11 +74,22 @@ export const AiChatChannelMenu = ({ channel }: AiChatChannelMenuProps) => {
     event.stopPropagation();
     closeDropdown(dropdownId);
 
-    if (isDefined(currentWorkspaceMember?.userWorkspaceId)) {
-      await leaveChatChannel(
-        channel.id,
-        currentWorkspaceMember.userWorkspaceId,
-      );
+    if (!isDefined(currentWorkspaceMember?.userWorkspaceId)) {
+      return;
+    }
+
+    const hasLeft = await leaveChatChannel(
+      channel.id,
+      currentWorkspaceMember.userWorkspaceId,
+    );
+
+    // Leaving a private channel revokes access to its page.
+    if (
+      hasLeft === true &&
+      channel.visibility === AgentChatChannelVisibility.PRIVATE &&
+      currentChannelId === channel.id
+    ) {
+      navigateToAiChatPage();
     }
   };
 

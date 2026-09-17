@@ -3,14 +3,18 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useChatChannels } from '@/ai/hooks/useChatChannels';
+import { useNavigateToAiChatChannelPage } from '@/ai/hooks/useNavigateToAiChatChannelPage';
 import { getAiChatChannelIcon } from '@/ai/utils/getAiChatChannelIcon';
 
-const StyledChip = styled.span`
+const StyledChip = styled.button`
   align-items: center;
   background: ${themeCssVariables.background.transparent.light};
+  border: none;
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
   display: inline-flex;
+  font-family: inherit;
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
@@ -27,6 +31,7 @@ export const AiChatThreadChannelChip = ({
   channelId,
 }: AiChatThreadChannelChipProps) => {
   const { findChannelById } = useChatChannels();
+  const { navigateToAiChatChannelPage } = useNavigateToAiChatChannelPage();
   const channel = findChannelById(channelId);
 
   if (!isDefined(channel)) {
@@ -36,7 +41,11 @@ export const AiChatThreadChannelChip = ({
   const Icon = getAiChatChannelIcon(channel.visibility);
 
   return (
-    <StyledChip title={channel.name}>
+    <StyledChip
+      type="button"
+      title={channel.name}
+      onClick={() => navigateToAiChatChannelPage(channel.id)}
+    >
       <Icon size={12} />
       {channel.name}
     </StyledChip>

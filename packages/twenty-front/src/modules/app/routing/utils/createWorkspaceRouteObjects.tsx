@@ -35,6 +35,12 @@ const StandalonePageLayoutPage = lazy(() =>
   })),
 );
 
+const AiChatChannelPage = lazy(() =>
+  import('~/pages/ai-chat/AiChatChannelPage').then((module) => ({
+    default: module.AiChatChannelPage,
+  })),
+);
+
 const AiChatPage = lazy(() =>
   import('~/pages/ai-chat/AiChatPage').then((module) => ({
     default: module.AiChatPage,
@@ -116,6 +122,14 @@ export const createWorkspaceRouteObjects = ({
       element: (
         <LazyRoute>
           <StandalonePageLayoutPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.AiChatChannel,
+      element: (
+        <LazyRoute>
+          <AiChatChannelPage />
         </LazyRoute>
       ),
     },

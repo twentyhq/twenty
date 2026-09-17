@@ -33,6 +33,7 @@ import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
@@ -65,6 +66,7 @@ export class AgentChatResolver {
     private readonly agentChatService: AgentChatService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
+    private readonly agentChatChannelService: AgentChatChannelService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
     private readonly aiBillingService: AiBillingService,
@@ -196,12 +198,23 @@ export class AgentChatResolver {
 
   @Mutation(() => AgentChatThreadDTO)
   async createChatThread(
+    @Args('channelId', { type: () => UUIDScalarType, nullable: true })
+    channelId: string | null,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
+    if (isDefined(channelId)) {
+      await this.agentChatChannelService.getAccessibleChannelById({
+        channelId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
+    }
+
     return this.agentChatService.createThread({
       userWorkspaceId,
       workspaceId: workspace.id,
+      channelId,
     });
   }
 

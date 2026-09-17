@@ -99,11 +99,14 @@ export class AgentChatService {
     workspaceId,
     id,
     title,
+    channelId,
   }: {
     userWorkspaceId: string;
     workspaceId: string;
     id?: string;
     title?: string;
+    // Access to the channel is the caller's responsibility to check.
+    channelId?: string | null;
   }) {
     // The owner row is what grants access, so a thread must never exist
     // without it: both rows land in one transaction.
@@ -114,6 +117,7 @@ export class AgentChatService {
           .insertAndReturnOne(workspaceId, {
             ...(isDefined(id) ? { id } : {}),
             ...(isDefined(title) ? { title } : {}),
+            ...(isDefined(channelId) ? { channelId } : {}),
             userWorkspaceId,
           });
 
@@ -131,7 +135,12 @@ export class AgentChatService {
 
     await this.broadcastThreadCreatedToRecipients({
       thread: savedThread,
-      recipientUserWorkspaceIds: [userWorkspaceId],
+      recipientUserWorkspaceIds: isDefined(channelId)
+        ? await this.getThreadRecipientUserWorkspaceIds({
+            threadId: savedThread.id,
+            workspaceId,
+          })
+        : [userWorkspaceId],
     });
 
     return savedThread;

@@ -1,7 +1,9 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { AI_CHAT_CHANNEL_DELETE_MODAL_ID } from '@/ai/constants/AiChatChannelDeleteModalId';
+import { useAiChatChannelIdFromPath } from '@/ai/hooks/useAiChatChannelIdFromPath';
 import { useChatChannelActions } from '@/ai/hooks/useChatChannelActions';
+import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { aiChatChannelPendingDeleteState } from '@/ai/states/aiChatChannelPendingDeleteState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -9,14 +11,22 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 export const AiChatChannelDeleteConfirmationModal = () => {
   const { t } = useLingui();
   const { deleteChatChannel } = useChatChannelActions();
+  const { navigateToAiChatPage } = useNavigateToAiChatPage();
+  const currentChannelId = useAiChatChannelIdFromPath();
   const [aiChatChannelPendingDelete, setAiChatChannelPendingDelete] =
     useAtomState(aiChatChannelPendingDeleteState);
 
   const handleDelete = async () => {
     if (aiChatChannelPendingDelete === null) return;
 
-    await deleteChatChannel(aiChatChannelPendingDelete.channelId);
+    const { channelId } = aiChatChannelPendingDelete;
+    const isDeleted = await deleteChatChannel(channelId);
+
     setAiChatChannelPendingDelete(null);
+
+    if (isDeleted === true && currentChannelId === channelId) {
+      navigateToAiChatPage();
+    }
   };
 
   return (
