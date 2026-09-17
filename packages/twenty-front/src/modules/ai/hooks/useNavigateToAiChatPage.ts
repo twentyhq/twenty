@@ -1,10 +1,13 @@
+import { useStore } from 'jotai';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { useStore } from 'jotai';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { getAiChatChannelIdFromPathname } from '~/utils/getAiChatChannelIdFromPathname';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export const useNavigateToAiChatPage = () => {
@@ -12,15 +15,61 @@ export const useNavigateToAiChatPage = () => {
   const navigate = useNavigateApp();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
+  const findThreadChannelId = (threadId: string) => {
+    const threads = store.get(metadataStoreState.atomFamily('agentChatThreads'))
+      .current as FlatAgentChatThread[];
+
+    return threads.find((thread) => thread.id === threadId)?.channelId ?? null;
+  };
+
   const navigateToAiChatPage = ({
     threadId,
+    channelId,
   }: {
     threadId?: string | null;
+    channelId?: string | null;
   } = {}) => {
-    if (
-      store.get(isLayoutCustomizationModeEnabledState.atom) ||
-      isCurrentPathAiChatPage()
-    ) {
+    if (store.get(isLayoutCustomizationModeEnabledState.atom)) {
+      return;
+    }
+
+    const threadIdParam =
+      isDefined(threadId) && isValidUuid(threadId) ? threadId : null;
+    const destinationChannelId =
+      channelId ??
+      (isDefined(threadIdParam) ? findThreadChannelId(threadIdParam) : null);
+    const navigateOptions = {
+      state: {
+        // Read from the window rather than useLocation so that opening a new
+        // chat does not require a router context from every caller of
+        // useSwitchToNewAiChat, front components included.
+        returnLocation: `${window.location.pathname}${window.location.search}${window.location.hash}`,
+      },
+    };
+
+    // A thread of a channel opens on the channel page, beside the channel's
+    // other chats; that page mirrors its selection in the URL itself.
+    if (isDefined(destinationChannelId)) {
+      if (
+        getAiChatChannelIdFromPathname(window.location.pathname) ===
+        destinationChannelId
+      ) {
+        return;
+      }
+
+      void closeSidePanelMenu();
+
+      navigate(
+        AppPath.AiChatChannel,
+        { channelId: destinationChannelId, threadId: threadIdParam },
+        undefined,
+        navigateOptions,
+      );
+
+      return;
+    }
+
+    if (isCurrentPathAiChatPage()) {
       return;
     }
 
@@ -28,19 +77,9 @@ export const useNavigateToAiChatPage = () => {
 
     navigate(
       AppPath.AiChat,
-      {
-        threadId:
-          isDefined(threadId) && isValidUuid(threadId) ? threadId : null,
-      },
+      { threadId: threadIdParam },
       undefined,
-      {
-        state: {
-          // Read from the window rather than useLocation so that opening a new
-          // chat does not require a router context from every caller of
-          // useSwitchToNewAiChat, front components included.
-          returnLocation: `${window.location.pathname}${window.location.search}${window.location.hash}`,
-        },
-      },
+      navigateOptions,
     );
   };
 

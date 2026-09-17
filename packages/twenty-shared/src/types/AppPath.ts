@@ -18,7 +18,7 @@ export enum AppPath {
 
   // Onboarded
   AiChat = '/chat/:threadId?',
-  AiChatChannel = '/chat/channels/:channelId',
+  AiChatChannel = '/chat/channels/:channelId/:threadId?',
   Index = '/',
   // Mobile only: the navigation menu is a page there rather than a drawer.
   Home = '/home',

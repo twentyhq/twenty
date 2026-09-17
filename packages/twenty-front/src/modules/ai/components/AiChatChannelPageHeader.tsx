@@ -58,10 +58,12 @@ const StyledActions = styled.div`
 
 type AiChatChannelPageHeaderProps = {
   channel: FlatAgentChatChannel;
+  onNewChat?: () => void;
 };
 
 export const AiChatChannelPageHeader = ({
   channel,
+  onNewChat,
 }: AiChatChannelPageHeaderProps) => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
@@ -95,7 +97,10 @@ export const AiChatChannelPageHeader = ({
           size="sm"
           variant="solid"
           color="accent"
-          onClick={() => switchToNewChat()}
+          onClick={() => {
+            switchToNewChat();
+            onNewChat?.();
+          }}
         >{t`New chat`}</Button>
         <AiChatChannelMenu
           channel={channel}

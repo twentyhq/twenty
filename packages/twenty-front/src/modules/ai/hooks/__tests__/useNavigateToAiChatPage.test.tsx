@@ -7,7 +7,14 @@ import { I18nProvider } from '@lingui/react';
 import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { useExpandAskAiSidePanelPage } from '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
+
+const CHANNEL_ID = '5e8c8a1c-6d17-4d75-8d47-3a6e1a2d0b11';
+const CHANNEL_THREAD_ID = '20202020-0000-4000-8000-000000000002';
 
 const navigateMock = jest.fn();
 const closeSidePanelMenuMock = jest.fn();
@@ -30,7 +37,13 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 describe('useNavigateToAiChatPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetJotaiStore();
     jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, false);
+    jotaiStore.set(metadataStoreState.atomFamily('agentChatThreads'), {
+      current: [{ id: CHANNEL_THREAD_ID, channelId: CHANNEL_ID }],
+      draft: [],
+      status: 'up-to-date',
+    });
     window.history.pushState({}, '', '/objects/people');
   });
 
@@ -127,6 +140,65 @@ describe('useNavigateToAiChatPage', () => {
 
     act(() => {
       result.current.navigateToAiChatPage({ threadId: 'new-thread-draft' });
+    });
+
+    expect(navigateMock).toHaveBeenCalledWith('/chat', expect.anything());
+  });
+
+  it('opens a thread of a channel on that channel page', () => {
+    const { result } = renderHook(() => useNavigateToAiChatPage(), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      result.current.navigateToAiChatPage({ threadId: CHANNEL_THREAD_ID });
+    });
+
+    expect(navigateMock).toHaveBeenCalledWith(
+      `/chat/channels/${CHANNEL_ID}/${CHANNEL_THREAD_ID}`,
+      { state: { returnLocation: '/objects/people' } },
+    );
+  });
+
+  it('opens a new chat of a channel on that channel page', () => {
+    const { result } = renderHook(() => useNavigateToAiChatPage(), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      result.current.navigateToAiChatPage({ channelId: CHANNEL_ID });
+    });
+
+    expect(navigateMock).toHaveBeenCalledWith(
+      `/chat/channels/${CHANNEL_ID}`,
+      expect.anything(),
+    );
+  });
+
+  it('should not navigate while already on the page of that channel', () => {
+    window.history.pushState({}, '', `/chat/channels/${CHANNEL_ID}`);
+
+    const { result } = renderHook(() => useNavigateToAiChatPage(), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      result.current.navigateToAiChatPage({ threadId: CHANNEL_THREAD_ID });
+    });
+
+    expect(navigateMock).not.toHaveBeenCalled();
+    expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
+  });
+
+  it('leaves a channel page for a chat outside any channel', () => {
+    window.history.pushState({}, '', `/chat/channels/${CHANNEL_ID}`);
+
+    const { result } = renderHook(() => useNavigateToAiChatPage(), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      result.current.navigateToAiChatPage();
     });
 
     expect(navigateMock).toHaveBeenCalledWith('/chat', expect.anything());

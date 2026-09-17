@@ -10,7 +10,7 @@ export const useNavigateToAiChatChannelPage = () => {
   const navigateToAiChatChannelPage = (channelId: string) => {
     void closeSidePanelMenu();
 
-    navigate(AppPath.AiChatChannel, { channelId });
+    navigate(AppPath.AiChatChannel, { channelId, threadId: null });
   };
 
   return { navigateToAiChatChannelPage };

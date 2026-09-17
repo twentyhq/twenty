@@ -22,17 +22,22 @@ import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const ASSISTANT_MESSAGE_ROLE = 'assistant';
 
-const StyledFeedItem = styled.div`
+const StyledRow = styled.div<{ $isSelected: boolean }>`
   align-items: flex-start;
-  border-radius: ${themeCssVariables.border.radius.md};
+  background: ${({ $isSelected }) =>
+    $isSelected ? themeCssVariables.accent.quaternary : 'transparent'};
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
   display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
   position: relative;
 
   &:hover {
-    background: ${themeCssVariables.background.transparent.light};
+    background: ${({ $isSelected }) =>
+      $isSelected
+        ? themeCssVariables.accent.quaternary
+        : themeCssVariables.background.transparent.lighter};
   }
 `;
 
@@ -109,19 +114,21 @@ const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
   top: ${themeCssVariables.spacing[2]};
   transition: opacity 150ms;
 
-  ${StyledFeedItem}:hover & {
+  ${StyledRow}:hover & {
     opacity: 1;
     pointer-events: auto;
   }
 `;
 
-type AiChatChannelFeedItemProps = {
+type AiChatChannelThreadRowProps = {
   thread: AgentChatThread;
+  isSelected: boolean;
 };
 
-export const AiChatChannelFeedItem = ({
+export const AiChatChannelThreadRow = ({
   thread,
-}: AiChatChannelFeedItemProps) => {
+  isSelected,
+}: AiChatChannelThreadRowProps) => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const currentWorkspaceMembers = useAtomStateValue(
@@ -163,7 +170,9 @@ export const AiChatChannelFeedItem = ({
   const lastActivityAt = thread.lastMessageAt ?? thread.updatedAt;
 
   return (
-    <StyledFeedItem
+    <StyledRow
+      $isSelected={isSelected}
+      aria-current={isSelected ? 'true' : undefined}
       onClick={() => {
         if (!isRenaming) {
           handleThreadClick(thread);
@@ -232,6 +241,6 @@ export const AiChatChannelFeedItem = ({
           onRenameRequested={startRename}
         />
       </StyledMenuTrigger>
-    </StyledFeedItem>
+    </StyledRow>
   );
 };

@@ -3,8 +3,10 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -26,6 +28,7 @@ i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
 const switchToNewChat = jest.fn();
+const handleThreadClick = jest.fn();
 
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat }),
@@ -46,7 +49,7 @@ jest.mock('@/ai/hooks/useDeleteChatThread', () => ({
   useDeleteChatThread: () => ({ deleteChatThread: jest.fn() }),
 }));
 jest.mock('@/ai/hooks/useAiChatThreadClick', () => ({
-  useAiChatThreadClick: () => ({ handleThreadClick: jest.fn() }),
+  useAiChatThreadClick: () => ({ handleThreadClick }),
 }));
 jest.mock('@/navigation/hooks/useNavigationDrawerExpanded', () => ({
   useNavigationDrawerExpanded: () => true,
@@ -54,9 +57,9 @@ jest.mock('@/navigation/hooks/useNavigationDrawerExpanded', () => ({
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: jest.fn() }),
 }));
-jest.mock('@/ai/components/AiChatChannelComposer', () => ({
-  AiChatChannelComposer: ({ channelId }: { channelId: string }) => (
-    <div>Composer for {channelId}</div>
+jest.mock('@/ai/components/AiChatChannelThreadPane', () => ({
+  AiChatChannelThreadPane: ({ channelId }: { channelId: string }) => (
+    <div>Chat pane for {channelId}</div>
   ),
 }));
 
@@ -126,14 +129,14 @@ const setStore = <TItem,>(
   });
 };
 
-const renderPage = (channelId: string) =>
+const renderPage = (path: string) =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <MemoryRouter initialEntries={[`/chat/channels/${channelId}`]}>
+        <MemoryRouter initialEntries={[path]}>
           <Routes>
             <Route
-              path="/chat/channels/:channelId"
+              path={AppPath.AiChatChannel}
               element={<AiChatChannelPage />}
             />
           </Routes>
@@ -161,7 +164,7 @@ describe('AiChatChannelPage', () => {
     setStore('agentChatChannelMembers', [MEMBER]);
   });
 
-  it('lists only the threads of the channel as a feed, with the composer below', () => {
+  it('lists the threads of the channel beside the chat and marks the open one', () => {
     setStore('agentChatThreads', [
       buildThread('t1', 'Import companies', CHANNEL.id, {
         lastMessagePreview: 'Here is the import plan',
@@ -175,8 +178,9 @@ describe('AiChatChannelPage', () => {
       buildThread('t2', 'Private notes', null),
       buildThread('t3', 'Elsewhere', 'other-channel'),
     ]);
+    jotaiStore.set(currentAiChatThreadState.atom, 't4');
 
-    renderPage(CHANNEL.id);
+    renderPage(`/chat/channels/${CHANNEL.id}/t4`);
 
     expect(screen.getByText('Sales')).toBeVisible();
     expect(
@@ -189,18 +193,35 @@ describe('AiChatChannelPage', () => {
     expect(screen.getByText(/Can you pull the numbers\?/)).toBeVisible();
     expect(screen.queryByText('Private notes')).toBeNull();
     expect(screen.queryByText('Elsewhere')).toBeNull();
-    expect(screen.getByText(`Composer for ${CHANNEL.id}`)).toBeVisible();
+    expect(screen.getByText(`Chat pane for ${CHANNEL.id}`)).toBeVisible();
+
+    const openRow = screen.getByText('Q3 forecast').closest('[aria-current]');
+
+    expect(openRow).not.toBeNull();
+    expect(
+      screen.getByText('Import companies').closest('[aria-current]'),
+    ).toBeNull();
   });
 
-  it('shows an empty state, the composer and a new chat action for an empty channel', () => {
+  it('opens a thread of the list when its row is clicked', () => {
+    const thread = buildThread('t1', 'Import companies', CHANNEL.id);
+
+    setStore('agentChatThreads', [thread]);
+
+    renderPage(`/chat/channels/${CHANNEL.id}`);
+
+    screen.getByText('Import companies').click();
+
+    expect(handleThreadClick).toHaveBeenCalledWith(thread);
+  });
+
+  it('shows an empty list, the chat pane and a new chat action for an empty channel', () => {
     setStore('agentChatThreads', []);
 
-    renderPage(CHANNEL.id);
+    renderPage(`/chat/channels/${CHANNEL.id}`);
 
-    expect(
-      screen.getByText('No chat in this channel yet. Start one below.'),
-    ).toBeVisible();
-    expect(screen.getByText(`Composer for ${CHANNEL.id}`)).toBeVisible();
+    expect(screen.getByText('No chat in this channel yet')).toBeVisible();
+    expect(screen.getByText(`Chat pane for ${CHANNEL.id}`)).toBeVisible();
     screen.getByRole('button', { name: /New chat/ }).click();
     expect(switchToNewChat).toHaveBeenCalledTimes(1);
   });
@@ -208,7 +229,7 @@ describe('AiChatChannelPage', () => {
   it('tells the reader when the channel is not visible to them', () => {
     setStore('agentChatThreads', []);
 
-    renderPage('11111111-1111-4111-8111-111111111111');
+    renderPage('/chat/channels/11111111-1111-4111-8111-111111111111');
 
     expect(screen.getByText('Channel not found')).toBeVisible();
   });

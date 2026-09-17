@@ -34,7 +34,7 @@ export const useSwitchToNewAiChat = ({
     selectAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
 
     if (shouldOpenInFullPage) {
-      navigateToAiChatPage();
+      navigateToAiChatPage({ channelId });
     } else {
       openAskAiPage();
     }

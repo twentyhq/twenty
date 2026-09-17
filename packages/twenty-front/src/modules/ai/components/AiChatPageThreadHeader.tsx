@@ -64,7 +64,9 @@ export const AiChatPageThreadHeader = ({
   thread,
 }: AiChatPageThreadHeaderProps) => {
   const { t } = useLingui();
-  const { switchToNewChat } = useSwitchToNewAiChat();
+  const { switchToNewChat } = useSwitchToNewAiChat({
+    channelId: thread.channelId,
+  });
   const currentAiChatThreadTitle = useAtomComponentFamilyStateValue(
     currentAiChatThreadTitleComponentFamilyState,
     { threadId: thread.id },

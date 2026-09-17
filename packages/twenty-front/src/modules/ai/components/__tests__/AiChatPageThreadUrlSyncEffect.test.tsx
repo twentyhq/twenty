@@ -180,6 +180,31 @@ describe('AiChatPageThreadUrlSyncEffect', () => {
     expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(THREAD_B);
   });
 
+  it('should adopt the thread from a channel page URL', () => {
+    jotaiStore.set(currentAiChatThreadState.atom, null);
+
+    render(
+      <JotaiProvider store={jotaiStore}>
+        <MemoryRouter
+          initialEntries={[
+            `/chat/channels/5e8c8a1c-6d17-4d75-8d47-3a6e1a2d0b11/${THREAD_A}`,
+          ]}
+        >
+          <Routes>
+            <Route
+              path={AppPath.AiChatChannel}
+              element={
+                <AiChatPageThreadUrlSyncEffect channelId="5e8c8a1c-6d17-4d75-8d47-3a6e1a2d0b11" />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      </JotaiProvider>,
+    );
+
+    expect(switchThreadWithDraftMock).toHaveBeenCalledWith(THREAD_A);
+  });
+
   it('should leave a bare chat url alone', () => {
     jotaiStore.set(currentAiChatThreadState.atom, THREAD_A);
 

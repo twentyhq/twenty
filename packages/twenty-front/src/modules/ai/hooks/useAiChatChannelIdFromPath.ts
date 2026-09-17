@@ -1,8 +1,9 @@
-import { matchPath, useLocation } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
+import { useLocation } from 'react-router-dom';
+
+import { getAiChatChannelIdFromPathname } from '~/utils/getAiChatChannelIdFromPathname';
 
 export const useAiChatChannelIdFromPath = () => {
   const { pathname } = useLocation();
 
-  return matchPath(AppPath.AiChatChannel, pathname)?.params.channelId ?? null;
+  return getAiChatChannelIdFromPathname(pathname);
 };

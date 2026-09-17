@@ -1,14 +1,12 @@
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
-import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
-import { isCurrentPathAiChatChannelPage } from '~/utils/isCurrentPathAiChatChannelPage';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
+import { isCurrentPathAiChatArea } from '~/utils/isCurrentPathAiChatArea';
 
 export type UseAiChatThreadClickOptions = {
   resetNavigationStack?: boolean;
@@ -27,7 +25,6 @@ export const useAiChatThreadClick = (
   );
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
-  const { navigateToAiChatPage } = useNavigateToAiChatPage();
 
   const handleThreadClick = (thread: AgentChatThread) => {
     setThreadIdCreatedFromDraft(null);
@@ -41,15 +38,9 @@ export const useAiChatThreadClick = (
       thread.title ?? null,
     );
 
-    if (isCurrentPathAiChatPage()) {
-      return;
-    }
-
-    // A channel page lists threads of the full chat page, so it opens them
-    // there rather than in the side panel.
-    if (isCurrentPathAiChatChannelPage()) {
-      navigateToAiChatPage({ threadId: thread.id });
-
+    // The chat page and the channel pages show the selected thread in place
+    // and mirror it in their URL.
+    if (isCurrentPathAiChatArea()) {
       return;
     }
 
