@@ -10,7 +10,7 @@ import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-
 
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
-import { CodeEditor } from 'twenty-ui/components/code-editor';
+import { CodeEditor } from 'twenty-ui/code-editor';
 import { InputLabel } from 'twenty-ui/primitives/input';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';

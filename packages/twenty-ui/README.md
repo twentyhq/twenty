@@ -18,13 +18,11 @@ For a standalone React application, install the library and its peer dependencie
 npm install twenty-ui react@^19 react-dom@^19
 ```
 
-The code editor is available separately from `twenty-ui/components/code-editor`. Only applications using that entry point need to install its optional peers:
+The code editor is available separately from `twenty-ui/code-editor`. Only applications using that entry point need to install its optional peers:
 
 ```bash
 npm install @monaco-editor/react monaco-editor
 ```
-
-Import `CodeEditor`, `CoreEditorHeader`, and the editor theme helpers from `twenty-ui/components/code-editor`. They are no longer exported from `twenty-ui/primitives/input`, `twenty-ui/primitives`, or `twenty-ui`. Configure Monaco workers for your bundler before mounting the editor.
 
 For Twenty apps, follow [Using Twenty UI components](https://docs.twenty.com/developers/extend/apps/layout/front-components#using-twenty-ui-components). The front component renderer supplies the workspace theme. Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` on the same version.
 
@@ -58,8 +56,8 @@ import { Button } from 'twenty-ui/primitives/input';
 | --- | --- |
 | `twenty-ui` | Components except the code editor, icons, theme tokens, and utilities |
 | `twenty-ui/assets` | Logos and static assets |
+| `twenty-ui/code-editor` | Code editor and editor theme helpers |
 | `twenty-ui/components` | Shared design presets and reusable app building blocks |
-| `twenty-ui/components/code-editor` | Code editor, editor header, and editor theme helpers |
 | `twenty-ui/icon` | Icon components and the icon provider |
 | `twenty-ui/primitives` | Foundational UI controls and compound controls |
 | `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers |

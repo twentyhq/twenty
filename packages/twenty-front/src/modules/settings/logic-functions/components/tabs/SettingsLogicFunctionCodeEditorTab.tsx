@@ -9,9 +9,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components';
-import { CoreEditorHeader } from 'twenty-ui/components/code-editor';
 import { IconPlayerPlay } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { Button, CoreEditorHeader } from 'twenty-ui/primitives/input';
 
 const StyledTabListContainer = styled.div`
   > * {

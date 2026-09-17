@@ -4,7 +4,7 @@ import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/components/code-editor';
+import { CodeEditor } from 'twenty-ui/code-editor';
 
 export type File = {
   language: string;

@@ -20001,7 +20001,6 @@ __metadata:
     electron: "npm:44.1.0"
     esbuild: "npm:^0.28.1"
     jsdom: "npm:^30.0.1"
-    monaco-editor: "npm:^0.52.2"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
     sass: "npm:^1.83.0"
@@ -27980,6 +27979,7 @@ __metadata:
     lodash.startcase: "npm:^4.4.0"
     twenty-sdk: "workspace:*"
     twenty-shared: "workspace:*"
+    twenty-ui: "workspace:*"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
     vite: "npm:^8.0.0"
@@ -39936,7 +39936,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"monaco-editor@npm:0.52.2, monaco-editor@npm:^0.52.2":
+"monaco-editor@npm:0.52.2":
   version: 0.52.2
   resolution: "monaco-editor@npm:0.52.2"
   checksum: 10c0/5a92da64f1e2ab375c0ce99364137f794d057c97bed10ecc65a08d6e6846804b8ecbd377eacf01e498f7dfbe1b21e8be64f728256681448f0484df90e767b435

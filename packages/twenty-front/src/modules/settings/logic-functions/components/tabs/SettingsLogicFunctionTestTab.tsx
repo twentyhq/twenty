@@ -12,7 +12,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
-import { CodeEditor, CoreEditorHeader } from 'twenty-ui/components/code-editor';
+import { CodeEditor } from 'twenty-ui/code-editor';
 import {
   IconClock,
   IconDatabase,
@@ -21,7 +21,7 @@ import {
   IconWebhook,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { Button, CoreEditorHeader } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TriggerButton = {

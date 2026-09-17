@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        task: [lint, typecheck, test, test:package, size, pack-size]
+        task: [lint, typecheck, test, size, pack-size]
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -42,6 +42,9 @@ jobs:
       - name: Check generated theme artifacts are up to date
         if: matrix.task == 'lint'
         run: npx nx generate:check twenty-ui
+      - name: Check optional peer dependencies stay out of the root entry point
+        if: matrix.task == 'pack-size'
+        run: npx nx test:package twenty-ui
   ui-sb-build:
     needs: changed-files-check
     if: >-

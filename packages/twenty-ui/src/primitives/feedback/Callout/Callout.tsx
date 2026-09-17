@@ -4,7 +4,8 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { IconHelp, IconX } from '@ui/icon/components/TablerIcons';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { LightIconButton, Button } from '@ui/primitives/input';
+import { Button } from '@ui/primitives/input/Button/Button';
+import { LightIconButton } from '@ui/primitives/input/LightIconButton/LightIconButton';
 
 import styles from './Callout.module.scss';
 

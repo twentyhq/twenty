@@ -19,13 +19,13 @@ For a standalone React application, install the library and its peer dependencie
 yarn add twenty-ui react@^19 react-dom@^19
 ```
 
-The code editor has a separate entry point, `twenty-ui/components/code-editor`. Other components do not require Monaco. If you use the code editor, install its optional peer dependencies:
+The code editor has a separate entry point, `twenty-ui/code-editor`. Since 2.42.0, other components do not require Monaco. Earlier versions need `monaco-editor` even if you never render a code editor.
+
+To use the code editor, install its optional peer dependencies and configure Monaco workers for your bundler before mounting it:
 
 ```bash
 yarn add @monaco-editor/react monaco-editor
 ```
-
-Import `CodeEditor`, `CoreEditorHeader`, and the editor theme helpers from `twenty-ui/components/code-editor`. These exports have moved out of `twenty-ui/primitives/input`, `twenty-ui/primitives`, and the package root. Configure Monaco workers for your bundler before mounting the editor.
 
 If you are building a Twenty app, follow [Using Twenty UI components](/developers/extend/apps/layout/front-components#using-twenty-ui-components). The front component renderer supplies the workspace theme and has a different setup from a standalone browser application.
 
@@ -74,7 +74,7 @@ Each primitive family has a matching public entry point, such as
 | Import                                 | Contents                                                     |
 | -------------------------------------- | ------------------------------------------------------------ |
 | `twenty-ui/components`                 | Shared design presets and reusable app building blocks       |
-| `twenty-ui/components/code-editor`    | Code editor, editor header, and editor theme helpers          |
+| `twenty-ui/code-editor`                | Code editor and editor theme helpers                         |
 | `twenty-ui/primitives/accessibility`   | Hidden elements and keyboard interaction helpers             |
 | `twenty-ui/primitives/data-display`    | Avatars, chips, tags, status indicators, and display helpers |
 | `twenty-ui/primitives/feedback`        | Toasts, banners, progress bars, and loaders                  |
