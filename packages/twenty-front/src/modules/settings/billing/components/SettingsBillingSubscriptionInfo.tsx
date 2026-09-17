@@ -22,7 +22,7 @@ import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPha
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -63,7 +63,7 @@ export const SettingsBillingSubscriptionInfo = ({
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const { enqueueToast } = useToast();
 
@@ -414,12 +414,14 @@ export const SettingsBillingSubscriptionInfo = ({
             isManageBillingDisabled={isManageBillingDisabled}
             isUpdatePaymentDisabled={isUpdatePaymentDisabled}
             onCancelIntervalSwitch={() =>
-              openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval)
+              openDialog(BILLING_MODAL_IDS.cancelSwitchBillingInterval)
             }
             onCancelPlanSwitch={() =>
-              openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan)
+              openDialog(BILLING_MODAL_IDS.cancelSwitchBillingPlan)
             }
-            onEndTrialPeriod={() => openModal(BILLING_MODAL_IDS.endTrialPeriod)}
+            onEndTrialPeriod={() =>
+              openDialog(BILLING_MODAL_IDS.endTrialPeriod)
+            }
             onManageBilling={onManageBilling}
             onUpdatePayment={onUpdatePayment}
             shouldUpdatePayment={shouldUpdatePayment}
@@ -427,10 +429,10 @@ export const SettingsBillingSubscriptionInfo = ({
         }
         isSubscriptionActionDisabled={isSubscriptionActionDisabled}
         onSwitchToMonthly={() =>
-          openModal(BILLING_MODAL_IDS.switchBillingIntervalToMonthly)
+          openDialog(BILLING_MODAL_IDS.switchBillingIntervalToMonthly)
         }
         onSwitchToYearly={() =>
-          openModal(BILLING_MODAL_IDS.switchBillingIntervalToYearly)
+          openDialog(BILLING_MODAL_IDS.switchBillingIntervalToYearly)
         }
         planLabel={planLabel}
         scheduledChangeItems={scheduledChangeItems}

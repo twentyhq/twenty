@@ -1,7 +1,7 @@
 import { getRecordGroupReorderConfirmationModalId } from '@/object-record/record-group/utils/getRecordGroupReorderConfirmationModalId';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
@@ -22,10 +22,8 @@ export const RecordGroupReorderConfirmationModal = ({
   return (
     <>
       {createPortal(
-        <ConfirmationModal
-          modalInstanceId={getRecordGroupReorderConfirmationModalId(
-            recordIndexId,
-          )}
+        <ConfirmationDialog
+          dialogId={getRecordGroupReorderConfirmationModalId(recordIndexId)}
           title={t`Group sorting`}
           subtitle={t`Would you like to remove ${recordIndexRecordGroupSort} group sorting?`}
           onConfirmClick={onConfirmClick}

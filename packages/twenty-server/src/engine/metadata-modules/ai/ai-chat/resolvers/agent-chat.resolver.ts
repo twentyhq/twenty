@@ -19,6 +19,7 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
@@ -55,6 +56,7 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 type ThreadWithOptionalLastMessageSummary = AgentChatThreadEntity &
   Partial<AgentChatThreadLastMessageSummary>;
@@ -64,6 +66,7 @@ type ThreadWithOptionalLastMessageSummary = AgentChatThreadEntity &
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
   BillingGraphqlApiExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 @MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {
@@ -83,6 +86,7 @@ export class AgentChatResolver {
   ) {}
 
   @Query(() => [AgentChatThreadDTO])
+  @AllowSuspendedWorkspace()
   async chatThreads(
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

@@ -7,8 +7,8 @@ import { useDeleteUnsubscribeTopic } from '@/settings/unsubscribe-topics/hooks/u
 import { useUpdateUnsubscribeTopic } from '@/settings/unsubscribe-topics/hooks/useUpdateUnsubscribeTopic';
 import { SETTINGS_UNSUBSCRIBE_TAB_IDS } from '@/settings/unsubscribers/constants/SettingsUnsubscribeTabIds';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
@@ -32,7 +32,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
   const navigateSettings = useNavigateSettings();
   const { unsubscribeTopicId } = useParams<{ unsubscribeTopicId: string }>();
   const { unsubscribeTopics, loading } = useUnsubscribeTopics();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { enqueueToast } = useToast();
   const { updateUnsubscribeTopic } = useUpdateUnsubscribeTopic();
   const { deleteUnsubscribeTopic, loading: deleting } =
@@ -150,7 +150,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
           startIcon={<IconTrash />}
           size="sm"
           disabled={deleting}
-          onClick={() => openModal(DELETE_UNSUBSCRIBE_TOPIC_MODAL_ID)}
+          onClick={() => openDialog(DELETE_UNSUBSCRIBE_TOPIC_MODAL_ID)}
           variant="outline"
           color="danger"
         >{t`Delete`}</Button>
@@ -201,8 +201,8 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
           </Card>
         </Section.Root>
       </SettingsPageContainer>
-      <ConfirmationModal
-        modalInstanceId={DELETE_UNSUBSCRIBE_TOPIC_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={DELETE_UNSUBSCRIBE_TOPIC_MODAL_ID}
         title={t`Delete unsubscribe topic`}
         subtitle={t`Are you sure you want to delete ${topicName}? Recipients will no longer be able to opt out of this category.`}
         onConfirmClick={handleDelete}

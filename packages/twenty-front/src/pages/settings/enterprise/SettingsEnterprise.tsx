@@ -20,8 +20,8 @@ import { SET_ENTERPRISE_KEY } from '@/settings/enterprise/graphql/mutations/setO
 import { ENTERPRISE_PORTAL_SESSION } from '@/settings/enterprise/graphql/queries/enterprisePortalSession';
 import { ENTERPRISE_SUBSCRIPTION_STATUS } from '@/settings/enterprise/graphql/queries/enterpriseSubscriptionStatus';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useLazyQuery, useMutation } from '@apollo/client/react';
@@ -141,7 +141,7 @@ export const SettingsEnterprise = ({
   const [isRefreshingToken, setIsRefreshingToken] = useState(false);
   const [isReleasing, setIsReleasing] = useState(false);
   const [isBoundToAnotherServer, setIsBoundToAnotherServer] = useState(false);
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { enqueueToast } = useToast();
   const { loadCurrentUser } = useLoadCurrentUser();
 
@@ -357,8 +357,8 @@ export const SettingsEnterprise = ({
   }, [fetchPortalSession, enqueueToast, t, returnUrlPath]);
 
   const openCheckoutModal = useCallback(() => {
-    openModal(ENTERPRISE_PLAN_MODAL_ID);
-  }, [openModal]);
+    openDialog(ENTERPRISE_PLAN_MODAL_ID);
+  }, [openDialog]);
 
   const handleRefreshValidityToken = useCallback(async () => {
     setIsRefreshingToken(true);
@@ -565,7 +565,7 @@ export const SettingsEnterprise = ({
       <Button
         startIcon={<IconKey />}
         onClick={() =>
-          openModal(RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID)
+          openDialog(RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID)
         }
         disabled={isReleasing}
         variant="outline"
@@ -995,8 +995,8 @@ export const SettingsEnterprise = ({
   const innerContent = (
     <>
       <EnterprisePlanModal />
-      <ConfirmationModal
-        modalInstanceId={RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID}
         title={t`Release & transfer Organization key`}
         subtitle={t`This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?`}
         confirmButtonText={t`Release & transfer`}

@@ -6,7 +6,7 @@ import { useAiChatChannelIdFromPath } from '@/ai/hooks/useAiChatChannelIdFromPat
 import { useChatChannelActions } from '@/ai/hooks/useChatChannelActions';
 import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { aiChatChannelPendingDeleteState } from '@/ai/states/aiChatChannelPendingDeleteState';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export const AiChatChannelDeleteConfirmationModal = () => {
@@ -33,8 +33,8 @@ export const AiChatChannelDeleteConfirmationModal = () => {
   };
 
   return (
-    <ConfirmationModal
-      modalInstanceId={AI_CHAT_CHANNEL_DELETE_MODAL_ID}
+    <ConfirmationDialog
+      dialogId={AI_CHAT_CHANNEL_DELETE_MODAL_ID}
       title={t`Delete channel`}
       subtitle={
         <Trans>

@@ -34,7 +34,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -60,7 +60,7 @@ export const AiChatChannelMenu = ({
   const { t } = useLingui();
   const dropdownId = getAiChatChannelMenuDropdownId({ channelId: channel.id, surface: surface });
   const { closeDropdown } = useCloseDropdown();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const [page, setPage] = useState<AiChatChannelMenuPage>(
     AI_CHAT_CHANNEL_MENU_PAGE.ROOT,
   );
@@ -121,7 +121,7 @@ export const AiChatChannelMenu = ({
       channelId: channel.id,
       channelName: channel.name,
     });
-    openModal(AI_CHAT_CHANNEL_DELETE_MODAL_ID);
+    openDialog(AI_CHAT_CHANNEL_DELETE_MODAL_ID);
   };
 
   const renderPage = () => {
