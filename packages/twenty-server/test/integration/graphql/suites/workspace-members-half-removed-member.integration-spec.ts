@@ -3,9 +3,10 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
-const JONY_USER_WORKSPACE_ID = '20202020-3957-4908-9c36-2929a23f8353';
+const JONY_USER_WORKSPACE_ID = USER_WORKSPACE_DATA_SEED_IDS.JONY;
 
 const CURRENT_USER_WORKSPACE_MEMBERS_QUERY = gql`
   query CurrentUserWorkspaceMembers {
