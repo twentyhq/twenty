@@ -4,6 +4,8 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { CAMPAIGN_TRACKING_TOKEN_LAYOUT } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-layout.constant';
+import { CAMPAIGN_TRACKING_TOKEN_VERSION } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-version.constant';
 import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
 import { deriveInstanceHmacKey } from 'src/engine/core-modules/secret-encryption/utils/derive-instance-hmac-key.util';
@@ -11,18 +13,6 @@ import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-enc
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type SigningKey = { keyId: Buffer; key: Buffer };
-
-const CAMPAIGN_TRACKING_TOKEN_VERSION = 1;
-
-const CAMPAIGN_TRACKING_TOKEN_LAYOUT = {
-  version: 0,
-  keyId: 1,
-  purpose: 5,
-  deliveryId: 6,
-  shortLinkId: 22,
-  signature: 38,
-  length: 54,
-} as const;
 
 @Injectable()
 export class CampaignTrackingTokenService {

@@ -14,20 +14,15 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
 @WasIntroducedInUpgrade({
   upgradeCommandName: ADD_SHORT_LINK_AND_MESSAGE_TRACKING_UPGRADE_COMMAND_NAME,
 })
-@Index(
-  'IDX_SHORT_LINK_URL_UNIQUE',
-  ['workspaceId', 'messageCampaignId', 'urlHash'],
-  { unique: true },
-)
+@Index('IDX_SHORT_LINK_URL_UNIQUE', ['workspaceId', 'urlHash'], {
+  unique: true,
+})
 export class ShortLinkEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
-
-  @Column({ type: 'uuid', nullable: false })
-  messageCampaignId: string;
 
   @Column({ type: 'varchar', nullable: false })
   authoredUrl: string;
