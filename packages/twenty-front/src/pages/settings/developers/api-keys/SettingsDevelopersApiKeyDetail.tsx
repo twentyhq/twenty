@@ -8,8 +8,8 @@ import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyToken
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -57,7 +57,7 @@ const REGENERATE_API_KEY_MODAL_ID = 'regenerate-api-key-modal';
 export const SettingsDevelopersApiKeyDetail = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigateSettings();
@@ -289,7 +289,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                   <StyledInputContainer>
                     <Button
                       startIcon={<IconRepeat />}
-                      onClick={() => openModal(REGENERATE_API_KEY_MODAL_ID)}
+                      onClick={() => openDialog(REGENERATE_API_KEY_MODAL_ID)}
                     >{t`Regenerate Key`}</Button>
                     <StyledInfo>
                       {formatExpiration(apiKey?.expiresAt || '', true, false)}
@@ -341,7 +341,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               />
               <Button
                 startIcon={<IconTrash />}
-                onClick={() => openModal(DELETE_API_KEY_MODAL_ID)}
+                onClick={() => openDialog(DELETE_API_KEY_MODAL_ID)}
                 variant="outline"
                 color="danger"
               >{t`Delete`}</Button>
@@ -349,10 +349,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
           </SettingsPageContainer>
         </SettingsPageLayout>
       )}
-      <ConfirmationModal
+      <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalInstanceId={DELETE_API_KEY_MODAL_ID}
+        dialogId={DELETE_API_KEY_MODAL_ID}
         title={t`Delete API key`}
         subtitle={
           <Trans>
@@ -365,10 +365,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
         confirmButtonText={t`Delete`}
         loading={isLoading}
       />
-      <ConfirmationModal
+      <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalInstanceId={REGENERATE_API_KEY_MODAL_ID}
+        dialogId={REGENERATE_API_KEY_MODAL_ID}
         title={t`Regenerate an API key`}
         subtitle={
           <Trans>

@@ -1,7 +1,7 @@
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -35,7 +35,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
 }) => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const applicationRegistrationId = registration.id;
 
@@ -142,7 +142,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
         <StyledRotateContainer>
           <Button
             startIcon={<IconRefresh />}
-            onClick={() => openModal(ROTATE_SECRET_MODAL_ID)}
+            onClick={() => openDialog(ROTATE_SECRET_MODAL_ID)}
             variant="outline"
           >{t`Rotate client secret`}</Button>
         </StyledRotateContainer>
@@ -173,10 +173,10 @@ export const SettingsApplicationRegistrationOAuthTab = ({
         />
       </Section.Root>
 
-      <ConfirmationModal
+      <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalInstanceId={ROTATE_SECRET_MODAL_ID}
+        dialogId={ROTATE_SECRET_MODAL_ID}
         title={t`Rotate client secret`}
         subtitle={
           <Trans>

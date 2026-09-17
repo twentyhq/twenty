@@ -4,8 +4,8 @@ import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { TabSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/TabSettingsPlacementSection';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { getTabSettingsPlacementItems } from '@/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
@@ -48,13 +48,13 @@ export const RegularTabSettingsContent = ({
   onDelete,
 }: RegularTabSettingsContentProps) => {
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const handleResetToDefault = () => {
     if (isResetToDefaultDisabled) {
       return;
     }
-    openModal(RESET_TAB_TO_DEFAULT_MODAL_ID);
+    openDialog(RESET_TAB_TO_DEFAULT_MODAL_ID);
   };
 
   const placementItems = getTabSettingsPlacementItems({
@@ -128,8 +128,8 @@ export const RegularTabSettingsContent = ({
           )}
         </SidePanelGroup>
       </SidePanelList>
-      <ConfirmationModal
-        modalInstanceId={RESET_TAB_TO_DEFAULT_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={RESET_TAB_TO_DEFAULT_MODAL_ID}
         title={t`Reset to default`}
         subtitle={t`This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone.`}
         onConfirmClick={onResetToDefault}

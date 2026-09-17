@@ -1,9 +1,10 @@
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
 import { ENTERPRISE_CHECKOUT_SESSION } from '@/settings/enterprise/graphql/queries/enterpriseCheckoutSession';
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -11,7 +12,6 @@ import { useState } from 'react';
 import { Loader, useToast } from 'twenty-ui/primitives/feedback';
 import { MainButton } from 'twenty-ui/components';
 import { CardPicker, RadioGroup } from 'twenty-ui/primitives/input';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckoutButton = styled(MainButton)`
@@ -93,7 +93,7 @@ const StyledIntervalSubtitle = styled.div`
 
 export const EnterprisePlanModal = () => {
   const { t } = useLingui();
-  const { closeModal } = useModal();
+  const { closeDialog } = useDialog();
   const { enqueueToast } = useToast();
   const [selectedInterval, setSelectedInterval] =
     useState<BillingInterval>('monthly');
@@ -129,7 +129,7 @@ export const EnterprisePlanModal = () => {
 
       if (checkoutUrl !== null && checkoutUrl !== undefined) {
         window.open(checkoutUrl, '_blank', 'noopener');
-        closeModal(ENTERPRISE_PLAN_MODAL_ID);
+        closeDialog(ENTERPRISE_PLAN_MODAL_ID);
       } else {
         enqueueToast({
           variant: 'error',
@@ -144,54 +144,68 @@ export const EnterprisePlanModal = () => {
   };
 
   return (
-    <ModalStatefulWrapper
-      modalInstanceId={ENTERPRISE_PLAN_MODAL_ID}
-      size="medium"
-      padding="none"
-      isClosable
-    >
-      <ModalContent isVerticallyCentered>
-        <Title noMarginTop>{t`Get Organization`}</Title>
-        <SubTitle>{t`Enjoy a 30-day free trial`}</SubTitle>
-
-        <StyledSubscriptionContainer>
-          <StyledPriceContainer>
-            <StyledPrice>{`$${price}`}</StyledPrice>
-            <StyledPriceUnit>{priceUnit}</StyledPriceUnit>
-          </StyledPriceContainer>
-          <StyledBenefitsContainer>
-            {benefits.map((benefit) => (
-              <SubscriptionBenefit key={benefit}>{benefit}</SubscriptionBenefit>
-            ))}
-          </StyledBenefitsContainer>
-        </StyledSubscriptionContainer>
-
-        <RadioGroup
-          render={<StyledIntervalContainer />}
-          aria-label={t`Billing interval`}
-          value={selectedInterval}
-          onValueChange={setSelectedInterval}
+    <DialogInstance dialogId={ENTERPRISE_PLAN_MODAL_ID} dismissible>
+      {({ container, backdrop, viewportProps, onKeyDown }) => (
+        <Dialog.Popup
+          aria-label={t`Get Organization`}
+          {...{ container, backdrop, viewportProps, onKeyDown }}
+          size="md"
+          style={{ padding: 0 }}
         >
-          <CardPicker value="monthly">
-            <StyledIntervalCardContent>
-              <StyledIntervalTitle>{t`Monthly`}</StyledIntervalTitle>
-              <StyledIntervalSubtitle>{`$${MONTHLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
-            </StyledIntervalCardContent>
-          </CardPicker>
-          <CardPicker value="yearly">
-            <StyledIntervalCardContent>
-              <StyledIntervalTitle>{t`Yearly`}</StyledIntervalTitle>
-              <StyledIntervalSubtitle>{`$${YEARLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
-            </StyledIntervalCardContent>
-          </CardPicker>
-        </RadioGroup>
+          <Dialog.Body
+            style={{
+              display: 'flex',
+              flex: '1 1 0%',
+              flexDirection: 'column',
+              padding: 'var(--t-spacing-10)',
+              alignItems: 'center',
+            }}
+          >
+            <Title noMarginTop>{t`Get Organization`}</Title>
+            <SubTitle>{t`Enjoy a 30-day free trial`}</SubTitle>
 
-        <StyledCheckoutButton
-          onClick={handleContinue}
-          startIcon={isLoading && <Loader />}
-          disabled={isLoading}
-        >{t`Continue`}</StyledCheckoutButton>
-      </ModalContent>
-    </ModalStatefulWrapper>
+            <StyledSubscriptionContainer>
+              <StyledPriceContainer>
+                <StyledPrice>{`$${price}`}</StyledPrice>
+                <StyledPriceUnit>{priceUnit}</StyledPriceUnit>
+              </StyledPriceContainer>
+              <StyledBenefitsContainer>
+                {benefits.map((benefit) => (
+                  <SubscriptionBenefit key={benefit}>
+                    {benefit}
+                  </SubscriptionBenefit>
+                ))}
+              </StyledBenefitsContainer>
+            </StyledSubscriptionContainer>
+
+            <RadioGroup
+              render={<StyledIntervalContainer />}
+              aria-label={t`Billing interval`}
+              value={selectedInterval}
+              onValueChange={setSelectedInterval}
+            >
+              <CardPicker value="monthly">
+                <StyledIntervalCardContent>
+                  <StyledIntervalTitle>{t`Monthly`}</StyledIntervalTitle>
+                  <StyledIntervalSubtitle>{`$${MONTHLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
+                </StyledIntervalCardContent>
+              </CardPicker>
+              <CardPicker value="yearly">
+                <StyledIntervalCardContent>
+                  <StyledIntervalTitle>{t`Yearly`}</StyledIntervalTitle>
+                  <StyledIntervalSubtitle>{`$${YEARLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
+                </StyledIntervalCardContent>
+              </CardPicker>
+            </RadioGroup>
+
+            <StyledCheckoutButton
+              onClick={handleContinue}
+              startIcon={isLoading && <Loader />}
+              disabled={isLoading}
+            >{t`Continue`}</StyledCheckoutButton>
+          </Dialog.Body>
+        </Dialog.Popup>
+      )}
+    </DialogInstance>
   );
 };

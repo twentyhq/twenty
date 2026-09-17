@@ -15,7 +15,7 @@ import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResour
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
@@ -134,7 +134,7 @@ export const SettingsBillingCreditsSection = ({
 }) => {
   const theme = useTheme();
   const subscriptionStatus = useSubscriptionStatus();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { formatNumber } = useNumberFormat();
 
   const { isMonthlyPlan } = useCurrentBillingFlags();
@@ -251,7 +251,7 @@ export const SettingsBillingCreditsSection = ({
             isUpdatePaymentDisabled={isUpdatePaymentDisabled}
             canCancelCreditPackSwitch={canCancelCreditPackSwitch}
             onCancelCreditPackSwitch={() =>
-              openModal(BILLING_MODAL_IDS.cancelSwitchMeteredPrice)
+              openDialog(BILLING_MODAL_IDS.cancelSwitchMeteredPrice)
             }
           />
         </StyledSettingsBillingCardHeader>
