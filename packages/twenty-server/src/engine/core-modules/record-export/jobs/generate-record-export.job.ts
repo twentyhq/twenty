@@ -153,7 +153,10 @@ export class GenerateRecordExportJob {
 
           await assertConnected();
           for (const record of results.records) {
-            const row = formatRecordExportRow(context.columns, record);
+            const row = formatRecordExportRow({
+              columns: context.columns,
+              record,
+            });
             bytes += Buffer.byteLength(row);
             if (bytes > RECORD_EXPORT_MAX_FILE_BYTES) {
               throw new RecordExportException(

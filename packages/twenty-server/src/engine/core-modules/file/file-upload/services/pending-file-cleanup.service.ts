@@ -31,7 +31,7 @@ export class PendingFileCleanupService {
     private readonly fileStorageService: FileStorageService,
   ) {}
 
-  async cleanupStalePendingFiles(): Promise<number> {
+  async cleanupStaleFiles(): Promise<number> {
     const staleThreshold = new Date(Date.now() - PENDING_FILE_MAX_AGE_MS);
     const exportThreshold = new Date(
       Date.now() - RECORD_EXPORT_FILE_MAX_AGE_MS,
@@ -89,7 +89,7 @@ export class PendingFileCleanupService {
         deletedCount++;
       } catch (error) {
         this.logger.warn(
-          `Failed to clean up stale pending file ${file.id} in workspace ${file.workspaceId}: ${error.message}`,
+          `Failed to clean up stale file ${file.id} in workspace ${file.workspaceId}: ${error.message}`,
         );
       }
     }
