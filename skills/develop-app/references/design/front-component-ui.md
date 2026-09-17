@@ -25,7 +25,8 @@ Use Figma measurements as evidence for the current Twenty rhythm, not as impleme
 
 Prefer Twenty UI primitives for CRM-native front component UI:
 
-- Use `H2Title` or `H3Title` for compact section headings.
+- Use `Dialog.Title` from `twenty-ui/primitives/surfaces` inside `Modal` for its visible title and accessible name.
+- Use `Heading` from `twenty-ui/primitives/typography` for compact headings, or `Section.Header` from `twenty-ui/components` for a heading with a description or action.
 - Use `Callout` with a matching icon for loading, empty, error, and blocked states.
 - Use `Button` for primary and secondary actions.
 - Use `Tag`, `Status`, `Chip`, `Label`, and `Avatar` for metadata, state, people, and small summaries.
