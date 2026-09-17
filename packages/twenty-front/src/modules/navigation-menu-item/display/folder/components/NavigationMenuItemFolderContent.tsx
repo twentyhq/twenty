@@ -1,7 +1,10 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { IconHeartOff } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/primitives/input';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  type NavigationMenuItem,
+} from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemBackButton } from '@/navigation-menu-item/edit/components/NavigationMenuItemBackButton';
@@ -17,6 +20,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type NavigationMenuItemFolderContentProps = {
   folderId: string;
@@ -33,6 +37,9 @@ export const NavigationMenuItemFolderContent = ({
   const views = useAtomStateValue(viewsSelector);
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
+  );
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
   );
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
@@ -52,6 +59,7 @@ export const NavigationMenuItemFolderContent = ({
           objectMetadataItems,
           views,
           lastVisitedViewPerObjectMetadataItem,
+          isInitialObjectViewEnabled,
         });
         const objectNameSingular = getNavigationMenuItemObjectNameSingular(
           navigationMenuItem,
