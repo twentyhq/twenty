@@ -100,6 +100,37 @@ describe('defineSettingsFrontComponent', () => {
     );
   });
 
+  it('should return error when tab label is the reserved General label', () => {
+    const result = defineSettingsFrontComponent({
+      ...validConfig,
+      tab: { label: 'General' },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Settings front component tab label "General" is reserved',
+    );
+  });
+
+  it('should reject the reserved label whatever its casing', () => {
+    const result = defineSettingsFrontComponent({
+      ...validConfig,
+      tab: { label: '  general  ' },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('should accept a label that merely contains the reserved word', () => {
+    const result = defineSettingsFrontComponent({
+      ...validConfig,
+      tab: { label: 'General settings' },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
   it('should accept a negative tab position', () => {
     const result = defineSettingsFrontComponent({
       ...validConfig,

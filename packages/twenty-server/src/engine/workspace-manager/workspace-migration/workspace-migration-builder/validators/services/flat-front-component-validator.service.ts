@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isReservedFrontComponentSettingsTabLabel } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -202,12 +203,20 @@ export class FlatFrontComponentValidatorService {
       });
     }
 
-    if (isDefined(settingsTab.label) && !isNonEmptyString(settingsTab.label)) {
-      errors.push({
-        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-        message: t`Settings tab label must not be empty`,
-        userFriendlyMessage: msg`Settings tab label must not be empty`,
-      });
+    if (isDefined(settingsTab.label)) {
+      if (!isNonEmptyString(settingsTab.label)) {
+        errors.push({
+          code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+          message: t`Settings tab label must not be empty`,
+          userFriendlyMessage: msg`Settings tab label must not be empty`,
+        });
+      } else if (isReservedFrontComponentSettingsTabLabel(settingsTab.label)) {
+        errors.push({
+          code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+          message: t`Settings tab label is reserved`,
+          userFriendlyMessage: msg`Settings tab label is reserved`,
+        });
+      }
     }
 
     return errors;

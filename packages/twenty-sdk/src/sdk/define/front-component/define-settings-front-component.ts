@@ -1,6 +1,7 @@
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { type SettingsFrontComponentConfig } from '@/sdk/define/front-component/settings-front-component-config';
+import { isReservedFrontComponentSettingsTabLabel } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 export const defineSettingsFrontComponent: DefineEntity<
@@ -25,8 +26,14 @@ export const defineSettingsFrontComponent: DefineEntity<
     errors.push('Settings front component tab position must be an integer');
   }
 
-  if (isDefined(config.tab?.label) && config.tab.label.trim() === '') {
-    errors.push('Settings front component tab label must not be empty');
+  if (isDefined(config.tab?.label)) {
+    if (config.tab.label.trim() === '') {
+      errors.push('Settings front component tab label must not be empty');
+    } else if (isReservedFrontComponentSettingsTabLabel(config.tab.label)) {
+      errors.push(
+        `Settings front component tab label "${config.tab.label}" is reserved`,
+      );
+    }
   }
 
   return createValidationResult({

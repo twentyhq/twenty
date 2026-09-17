@@ -210,6 +210,10 @@ export {
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
 export {
+  RESERVED_FRONT_COMPONENT_SETTINGS_TAB_LABELS,
+  isReservedFrontComponentSettingsTabLabel,
+} from './utils/isReservedFrontComponentSettingsTabLabel';
+export {
   DEFAULT_FRONT_COMPONENT_SETTINGS_TAB_POSITION,
   sortFrontComponentSettingsTabs,
 } from './utils/sortFrontComponentSettingsTabs';

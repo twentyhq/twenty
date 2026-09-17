@@ -118,7 +118,7 @@ export default defineSettingsFrontComponent({
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `tab.label` | No | Tab title. Defaults to the component's `name` |
+| `tab.label` | No | Tab title. Defaults to the component's `name`. `General` is reserved for the built-in tab and fails the build |
 | `tab.icon` | No | Icon name, for example `IconRefresh`. An unknown name falls back to a default icon |
 | `tab.position` | No | Sort key among your app's tabs. Defaults to `0`; may be negative |
 
