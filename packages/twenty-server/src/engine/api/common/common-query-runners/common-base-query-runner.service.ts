@@ -1,11 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { type PermissionFlagType } from 'twenty-shared/constants';
-import {
-  FeatureFlagKey,
-  FieldMetadataType,
-  type ObjectRecord,
-} from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -49,11 +45,8 @@ import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
@@ -113,8 +106,6 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly commonResultGettersService: CommonResultGettersService;
   @Inject()
-  protected readonly throttlerService: ThrottlerService;
-  @Inject()
   protected readonly usageLimitSpeedService: UsageLimitSpeedService;
   @Inject()
   protected readonly usageRecorderService: UsageRecorderService;
@@ -122,8 +113,6 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly twentyConfigService: TwentyConfigService;
   @Inject()
   protected readonly metricsService: MetricsService;
-  @Inject()
-  protected readonly featureFlagService: FeatureFlagService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -141,7 +130,7 @@ export abstract class CommonBaseQueryRunnerService<
     } = queryRunnerContext;
 
     if ((queryRunnerContext.nestedOperationDepth ?? 0) === 0) {
-      await this.throttleQueryExecution(authContext);
+      await this.consumeApiSpeedLimit(authContext);
     }
 
     this.recordApiUsage(authContext);
@@ -576,23 +565,6 @@ export abstract class CommonBaseQueryRunnerService<
     });
   }
 
-  private async throttleQueryExecution(authContext: WorkspaceAuthContext) {
-    const isApiRateLimitV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_API_RATE_LIMIT_V2_ENABLED,
-        authContext.workspace.id,
-      );
-
-    if (isApiRateLimitV2Enabled) {
-      await this.consumeApiSpeedLimit(authContext);
-
-      return;
-    }
-
-    await this.throttleApiKeyQueryExecution(authContext);
-    await this.throttleApplicationQueryExecution(authContext);
-  }
-
   private async consumeApiSpeedLimit(authContext: WorkspaceAuthContext) {
     try {
       await this.usageLimitSpeedService.consumeOrThrow({
@@ -643,84 +615,6 @@ export abstract class CommonBaseQueryRunnerService<
           source_type: authContext.application.sourceType,
         },
       });
-    }
-  }
-
-  private async throttleApplicationQueryExecution(
-    authContext: WorkspaceAuthContext,
-  ) {
-    if (!isApplicationAuthContext(authContext)) return;
-
-    try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `api:throttler:application:${authContext.application.universalIdentifier}`,
-        1,
-        this.twentyConfigService.get('APPLICATION_API_RATE_LIMITING_LIMIT'),
-        this.twentyConfigService.get('APPLICATION_API_RATE_LIMITING_TTL_IN_MS'),
-      );
-    } catch (error) {
-      if (error instanceof ThrottlerException) {
-        await this.metricsService.incrementCounterForEvent({
-          key: MetricsKeys.CommonApiApplicationQueryRateLimited,
-          shouldStoreInCache: false,
-          attributes: {
-            universal_identifier: authContext.application.universalIdentifier,
-            app_name: authContext.application.name,
-            source_type: authContext.application.sourceType,
-          },
-        });
-      }
-
-      throw error;
-    }
-  }
-
-  private async throttleApiKeyQueryExecution(
-    authContext: WorkspaceAuthContext,
-  ) {
-    try {
-      if (!isApiKeyAuthContext(authContext)) return;
-
-      const workspaceId = authContext.workspace.id;
-
-      const shortConfig = {
-        key: `api:throttler:${workspaceId}-short-limit`,
-        maxTokens: this.twentyConfigService.get(
-          'API_RATE_LIMITING_SHORT_LIMIT',
-        ),
-        timeWindow: this.twentyConfigService.get(
-          'API_RATE_LIMITING_SHORT_TTL_IN_MS',
-        ),
-      };
-
-      const longConfig = {
-        key: `api:throttler:${workspaceId}-long-limit`,
-        maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_LONG_LIMIT'),
-        timeWindow: this.twentyConfigService.get(
-          'API_RATE_LIMITING_LONG_TTL_IN_MS',
-        ),
-      };
-
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        shortConfig.key,
-        1,
-        shortConfig.maxTokens,
-        shortConfig.timeWindow,
-      );
-
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        longConfig.key,
-        1,
-        longConfig.maxTokens,
-        longConfig.timeWindow,
-      );
-    } catch (error) {
-      await this.metricsService.incrementCounterForEvent({
-        key: MetricsKeys.CommonApiQueryRateLimited,
-        shouldStoreInCache: false,
-      });
-
-      throw error;
     }
   }
 
