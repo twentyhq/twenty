@@ -58,6 +58,7 @@ import {
   toLegacyObjectMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/object-metadata/utils/to-legacy-object-metadata-response.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
 @Controller(`${ApiPath.Rest}/metadata/objects`)
 @UseGuards(
@@ -70,6 +71,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
   ObjectMetadataRestApiExceptionFilter,
   ApplicationRestApiExceptionFilter,
   FlatEntityMapsRestApiExceptionFilter,
+  AuthRestApiExceptionFilter,
 )
 @UsePipes(new ValidationPipe())
 export class ObjectMetadataController {

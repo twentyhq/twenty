@@ -2,6 +2,10 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { chunk } from 'src/utils/chunk';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
+import {
+  type RecordUpsert,
+  upsertRecordsInBatches,
+} from 'src/utils/upsert-records-in-batches';
 
 const PAGE_SIZE = 200;
 
@@ -132,22 +136,14 @@ export const recomputeOpportunitiesLastContact = async (
     personIds,
   );
 
-  for (const [
-    opportunityId,
-    pointOfContactId,
-  ] of pointOfContactIdByOpportunityId) {
-    const data =
-      (pointOfContactId
-        ? lastContactByPersonId.get(pointOfContactId)
-        : undefined) ?? EMPTY_LAST_CONTACT;
+  const upserts: RecordUpsert[] = [
+    ...pointOfContactIdByOpportunityId,
+  ].map(([opportunityId, pointOfContactId]) => ({
+    id: opportunityId,
+    ...((pointOfContactId
+      ? lastContactByPersonId.get(pointOfContactId)
+      : undefined) ?? EMPTY_LAST_CONTACT),
+  }));
 
-    await executeWithRetry(() =>
-      client.mutation({
-        updateOpportunity: {
-          __args: { id: opportunityId, data },
-          id: true,
-        },
-      }),
-    );
-  }
+  await upsertRecordsInBatches(client, 'createOpportunities', upserts);
 };

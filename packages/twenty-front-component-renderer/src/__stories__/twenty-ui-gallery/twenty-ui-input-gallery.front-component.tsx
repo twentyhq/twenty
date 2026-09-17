@@ -6,6 +6,7 @@ import {
   MainButton,
 } from 'twenty-ui/components';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
+import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
   AnimatedButton,
   AnimatedLightIconButton,
@@ -14,7 +15,6 @@ import {
   ColorPickerButton,
   ColorSchemeCard,
   ColorSchemePicker,
-  CoreEditorHeader,
   FloatingButton,
   FloatingButtonGroup,
   FloatingIconButton,
@@ -84,8 +84,8 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'CoreEditorHeader',
-    node: <CoreEditorHeader title="Editor" />,
+    name: 'CodeEditorHeader',
+    node: <CodeEditorHeader title="Editor" />,
   },
   {
     name: 'ColorPickerButton',
