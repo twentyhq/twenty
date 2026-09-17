@@ -17,7 +17,6 @@ export class AddShortLinkAndMessageTrackingFastInstanceCommand
          "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
          "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
          "workspaceId" uuid NOT NULL,
-         "messageCampaignId" uuid NOT NULL,
          "authoredUrl" character varying NOT NULL,
          "url" character varying NOT NULL,
          "urlHash" character(64) NOT NULL,
@@ -27,7 +26,7 @@ export class AddShortLinkAndMessageTrackingFastInstanceCommand
     );
 
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "IDX_SHORT_LINK_URL_UNIQUE" ON "core"."shortLink" ("workspaceId", "messageCampaignId", "urlHash")`,
+      `CREATE UNIQUE INDEX "IDX_SHORT_LINK_URL_UNIQUE" ON "core"."shortLink" ("workspaceId", "urlHash")`,
     );
   }
 
