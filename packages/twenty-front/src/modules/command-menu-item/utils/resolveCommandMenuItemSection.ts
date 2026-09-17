@@ -10,16 +10,20 @@ const sectionByEngineComponentKey: Partial<
   Record<EngineComponentKey, CommandMenuItemSection>
 > = COMMAND_MENU_ITEM_SECTION_BY_ENGINE_COMPONENT_KEY;
 
+const isPerObjectCreationCommandMenuItem = (
+  commandMenuItem: Pick<
+    CommandMenuItemDefinition,
+    'creationTargetObjectMetadataId'
+  >,
+): boolean => isDefined(commandMenuItem.creationTargetObjectMetadataId);
+
 export const resolveCommandMenuItemSection = (
   commandMenuItem: Pick<
     CommandMenuItemDefinition,
     'engineComponentKey' | 'availabilityType' | 'creationTargetObjectMetadataId'
   >,
 ): CommandMenuItemSection => {
-  // Per-object creation commands are synthesized from the CREATE_NEW_RECORD
-  // template, so the engine key alone cannot tell them from the view's own
-  // create command.
-  if (isDefined(commandMenuItem.creationTargetObjectMetadataId)) {
+  if (isPerObjectCreationCommandMenuItem(commandMenuItem)) {
     return 'CREATE_RECORD';
   }
 

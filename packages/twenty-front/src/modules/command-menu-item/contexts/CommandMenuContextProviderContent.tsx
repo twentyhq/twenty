@@ -11,7 +11,7 @@ import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
-import { getCommandMenuContextApiForContainer } from '@/command-menu-item/utils/getCommandMenuContextApiForContainer';
+import { getCommandMenuContextApiForContainerType } from '@/command-menu-item/utils/getCommandMenuContextApiForContainerType';
 import { mergeGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/mergeGlobalRecordCreationCommandMenuItems';
 import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import {
@@ -59,7 +59,7 @@ export const CommandMenuContextProviderContent = ({
 
   const commandMenuContextApiForAvailability = useMemo(
     () =>
-      getCommandMenuContextApiForContainer({
+      getCommandMenuContextApiForContainerType({
         commandMenuContextApi,
         containerType,
       }),

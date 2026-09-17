@@ -1,17 +1,17 @@
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
-import { getCommandMenuContextApiForContainer } from '@/command-menu-item/utils/getCommandMenuContextApiForContainer';
+import { getCommandMenuContextApiForContainerType } from '@/command-menu-item/utils/getCommandMenuContextApiForContainerType';
 
 const COMMAND_MENU_CONTEXT_API = {
   isInSidePanel: true,
   numberOfSelectedRecords: 2,
 } as unknown as CommandMenuContextApi;
 
-describe('getCommandMenuContextApiForContainer', () => {
+describe('getCommandMenuContextApiForContainerType', () => {
   it('reports the command menu list as not being a panel-hosted page', () => {
     expect(
-      getCommandMenuContextApiForContainer({
+      getCommandMenuContextApiForContainerType({
         commandMenuContextApi: COMMAND_MENU_CONTEXT_API,
         containerType: CommandMenuItemContainerType.CommandMenuList,
       }),
@@ -24,10 +24,10 @@ describe('getCommandMenuContextApiForContainer', () => {
     CommandMenuItemContainerType.SidePanelFooter,
   ])('leaves %s alone', (containerType) => {
     expect(
-      getCommandMenuContextApiForContainer({
+      getCommandMenuContextApiForContainerType({
         commandMenuContextApi: COMMAND_MENU_CONTEXT_API,
         containerType,
       }),
-    ).toBe(COMMAND_MENU_CONTEXT_API);
+    ).toEqual(COMMAND_MENU_CONTEXT_API);
   });
 });
