@@ -1,3 +1,4 @@
+import { LightIconButton } from 'twenty-ui/components';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -133,15 +134,16 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                       itemComponent={
                         <MenuItemDraggable
                           LeftIcon={getIcon(fieldMetadataItem.icon)}
-                          iconButtons={[
-                            {
-                              Icon: IconEyeOff,
-                              onClick: () =>
-                                handleHideField(
-                                  recordField.fieldMetadataItemId,
-                                ),
-                            },
-                          ]}
+                          iconButtons={
+                            <LightIconButton
+                              aria-label={t`Hide field`}
+                              onClick={() =>
+                                handleHideField(recordField.fieldMetadataItemId)
+                              }
+                            >
+                              <IconEyeOff />
+                            </LightIconButton>
+                          }
                           text={fieldMetadataItem.label}
                           gripMode="always"
                         />

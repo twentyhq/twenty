@@ -32,7 +32,6 @@ export {
 } from './MenuItem/MenuItem';
 export type { MenuItemAccent } from './MenuItem/types/MenuItemAccent';
 export type { MenuItemDraggableGripMode } from './MenuItem/types/MenuItemDraggableGripMode';
-export type { MenuItemIconButton } from './MenuItem/types/MenuItemIconButton';
 export type { MenuItemAvatarProps } from './MenuItemAvatar/MenuItemAvatar';
 export { MenuItemAvatar } from './MenuItemAvatar/MenuItemAvatar';
 export type { MenuItemDraggableProps } from './MenuItemDraggable/MenuItemDraggable';

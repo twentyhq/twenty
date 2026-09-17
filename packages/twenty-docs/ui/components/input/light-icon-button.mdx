@@ -41,6 +41,35 @@ Import `LightIconButton` from `twenty-ui/components`. Replace `Icon={IconPlus}` 
 
 Replace `LightIconButtonGroup` with [ButtonGroup](/ui/primitives/input/button-group) using `attached={false}` and explicit children. Set `disabled` on unavailable actions, including actions without a click handler. Wrappers and tooltip triggers can remain around each child.
 
+## Menu item icon buttons
+
+`MenuItem`, `MenuItemDraggable`, and `MenuItemAvatar` accept JSX through `iconButtons`. Pass one `LightIconButton` directly, or use `ButtonGroup` for multiple buttons. The menu controls their placement and hover visibility; each button owns its accessible name, click handler, and disabled state. Wrap dropdown triggers directly around the button.
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components';
+import { IconEyeOff, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
+
+export const RecordMenuItem = () => (
+  <MenuItem
+    text="Record"
+    iconButtons={
+      <ButtonGroup attached={false}>
+        <LightIconButton aria-label="Hide record">
+          <IconEyeOff />
+        </LightIconButton>
+        <LightIconButton aria-label="Delete record" disabled>
+          <IconTrash />
+        </LightIconButton>
+      </ButtonGroup>
+    }
+  />
+);
+```
+
+Replace descriptor arrays with these elements and remove `MenuItemIconButton` types. A button without an `onClick` handler can remain enabled when a surrounding dropdown owns its interaction. Set `disabled` explicitly for unavailable buttons.
+
 ## Props
 
 <LightIconButtonReference />

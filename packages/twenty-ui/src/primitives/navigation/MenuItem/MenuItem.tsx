@@ -1,6 +1,4 @@
 import { IconChevronRight, type IconComponent } from '@ui/icon';
-import { MenuItemActions } from '@ui/primitives/navigation/MenuItem/internal/MenuItemActions';
-import { type MenuItemIconButton } from '@ui/primitives/navigation/MenuItem/types/MenuItemIconButton';
 import { type MouseEvent, type ReactNode } from 'react';
 
 import { MenuItemHotKeys } from '@ui/primitives/navigation/MenuItemHotKeys/MenuItemHotKeys';
@@ -33,7 +31,7 @@ export type MenuItemProps = {
   className?: string;
   withIconContainer?: boolean;
   withIconContainerBackground?: boolean;
-  iconButtons?: MenuItemIconButton[];
+  iconButtons?: ReactNode;
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
@@ -83,8 +81,6 @@ export const MenuItem = ({
   isSubMenuOpened = false,
 }: MenuItemProps) => {
   const theme = useTheme();
-  const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
-
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
     if (!onClick) return;
     event.preventDefault();
@@ -118,11 +114,7 @@ export const MenuItem = ({
       />
 
       <StyledMenuItemRightContent>
-        {iconButtons && (
-          <div className="hoverable-buttons">
-            {showIconButtons && <MenuItemActions iconButtons={iconButtons} />}
-          </div>
-        )}
+        {iconButtons && <div className="hoverable-buttons">{iconButtons}</div>}
         {hotKeys && <MenuItemHotKeys hotKeys={hotKeys} />}
         {RightIcon && (
           <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />

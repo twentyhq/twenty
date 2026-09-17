@@ -7,6 +7,7 @@ import {
   MainButton,
 } from 'twenty-ui/components';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+import { MenuItem, MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 import 'twenty-ui/style.css';
@@ -65,6 +66,38 @@ const ButtonControls = () => {
       >
         <IconPlus />
       </IconButton>
+      <MenuItem
+        text="Record"
+        isIconDisplayedOnHoverOnly={false}
+        iconButtons={
+          <ButtonGroup attached={false}>
+            <LightIconButton aria-label="Add to record" onClick={handleClick}>
+              <IconPlus />
+            </LightIconButton>
+            <span>
+              <LightIconButton
+                aria-label="Unavailable record button"
+                disabled
+                onClick={handleClick}
+              >
+                <IconPlus />
+              </LightIconButton>
+            </span>
+          </ButtonGroup>
+        }
+      />
+      <MenuItemDraggable
+        text="Draggable record"
+        isIconDisplayedOnHoverOnly={false}
+        iconButtons={
+          <LightIconButton
+            aria-label="Add to draggable record"
+            onClick={handleClick}
+          >
+            <IconPlus />
+          </LightIconButton>
+        }
+      />
       <output aria-label="Activations">{activations}</output>
     </ThemeProvider>
   );

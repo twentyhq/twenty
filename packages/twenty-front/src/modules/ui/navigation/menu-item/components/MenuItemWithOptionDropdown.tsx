@@ -1,13 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { type Placement } from '@floating-ui/react';
-import {
-  type FunctionComponent,
-  type MouseEvent,
-  type ReactElement,
-  type ReactNode,
-  useContext,
-} from 'react';
+import { type MouseEvent, type ReactNode, useContext } from 'react';
 import {
   IconChevronRight,
   type IconComponent,
@@ -22,13 +16,6 @@ import {
   StyledMenuItemLeftContent,
 } from 'twenty-ui/primitives/navigation';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-
-export type MenuItemIconButton = {
-  Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;
-  Icon: IconComponent;
-  accent?: 'secondary' | 'tertiary';
-  onClick?: (event: MouseEvent<any>) => void;
-};
 
 export type MenuItemWithOptionDropdownProps = {
   accent?: MenuItemAccent;

@@ -60,4 +60,17 @@ export const buttonControlsTest: TwentyUiGalleryPlayFunction = async (
   const send = canvas.getByRole('button', { name: 'Send' });
   await expect(send.getBoundingClientRect().width).toBe(20);
   await expect(getComputedStyle(send).borderTopLeftRadius).toBe('50%');
+
+  await userEvent.click(canvas.getByRole('button', { name: 'Add to record' }));
+  await userEvent.click(
+    canvas.getByRole('button', { name: 'Add to draggable record' }),
+  );
+  const unavailableRecordButton = canvas.getByRole('button', {
+    name: 'Unavailable record button',
+  });
+  await expect(unavailableRecordButton).toBeDisabled();
+  await userEvent.click(unavailableRecordButton);
+  await waitFor(() =>
+    expect(canvas.getByLabelText('Activations')).toHaveTextContent('7'),
+  );
 };
