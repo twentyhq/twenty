@@ -1023,6 +1023,29 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.CANCEL_MESSAGE_CAMPAIGN,
     hotKeys: null,
   },
+  setPersonEmailTrackingConsent: {
+    universalIdentifier: 'e3f4a5b6-7c8d-4e9f-a0b1-2c3d4e5f6071',
+    label: i18nLabel(
+      msg({
+        message: `Email Tracking`,
+        context: 'commandMenuItem.label',
+      }),
+    ),
+    icon: 'IconEyeOff',
+    isPinned: false,
+    position: 73,
+    shortLabel: i18nLabel(
+      msg({ message: `Tracking`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and objectPermissions.canUpdateObjectRecords and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.person.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SET_PERSON_EMAIL_TRACKING_CONSENT,
+    hotKeys: null,
+  },
   duplicateMessageCampaign: {
     universalIdentifier: 'b85e34bd-abfa-40b5-91c0-e5d64b586341',
     label: i18nLabel(

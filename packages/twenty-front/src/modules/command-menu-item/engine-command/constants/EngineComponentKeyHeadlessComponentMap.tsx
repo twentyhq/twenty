@@ -9,6 +9,7 @@ import { CancelMessageCampaignSingleRecordCommand } from '@/command-menu-item/en
 import { DuplicateMessageCampaignSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/DuplicateMessageCampaignSingleRecordCommand';
 import { SendMessageCampaignTestSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/SendMessageCampaignTestSingleRecordCommand';
 import { OpenEmailBlockSettingsSingleRecordCommand } from '@/command-menu-item/engine-command/record/components/OpenEmailBlockSettingsSingleRecordCommand';
+import { SetPersonEmailTrackingConsentSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/person/components/SetPersonEmailTrackingConsentSingleRecordCommand';
 import { ComposeEmailCommand } from '@/command-menu-item/engine-command/global/components/ComposeEmailCommand';
 import { EditLayoutCommand } from '@/command-menu-item/engine-command/global/components/EditLayoutCommand';
 import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
@@ -270,6 +271,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.EMAIL_BLOCK_SETTINGS]: (
     <OpenEmailBlockSettingsSingleRecordCommand />
+  ),
+  [EngineComponentKey.SET_PERSON_EMAIL_TRACKING_CONSENT]: (
+    <SetPersonEmailTrackingConsentSingleRecordCommand />
   ),
 
   // Deprecated keys kept for backward compatibility until migration runs

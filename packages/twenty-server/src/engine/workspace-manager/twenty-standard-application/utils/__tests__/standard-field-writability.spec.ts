@@ -34,12 +34,25 @@ describe('Standard field writability', () => {
     ).toBe(true);
   });
 
+  it('marks person.emailTrackingConsent as SYSTEM, since only the consent service mirrors it', () => {
+    const emailTrackingConsentFlatFieldMetadata =
+      standardFlatFieldMetadatas.find(
+        (flatFieldMetadata) =>
+          flatFieldMetadata.name === 'emailTrackingConsent',
+      );
+
+    expect(emailTrackingConsentFlatFieldMetadata?.writability).toBe(
+      MetadataWritability.SYSTEM,
+    );
+  });
+
   it('leaves every other standard field OPEN', () => {
     const nonSearchVectorWritabilities = new Set(
       standardFlatFieldMetadatas
         .filter(
           (flatFieldMetadata) =>
-            flatFieldMetadata.type !== FieldMetadataType.TS_VECTOR,
+            flatFieldMetadata.type !== FieldMetadataType.TS_VECTOR &&
+            flatFieldMetadata.name !== 'emailTrackingConsent',
         )
         .map((flatFieldMetadata) => flatFieldMetadata.writability),
     );

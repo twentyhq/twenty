@@ -10,6 +10,7 @@ import {
 import {
   FieldMetadataSettingsMapping,
   FieldMetadataType,
+  MetadataWritability,
   ObjectRecord,
   RelationType,
 } from 'twenty-shared/types';
@@ -269,7 +270,14 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
-    return fieldMetadata?.isSystem ?? false;
+    if (!isDefined(fieldMetadata)) {
+      return false;
+    }
+
+    return (
+      fieldMetadata.isSystem ||
+      fieldMetadata.writability === MetadataWritability.SYSTEM
+    );
   }
 
   private createDryRunResponse(

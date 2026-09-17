@@ -194,6 +194,7 @@ import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 's
 import { AddAppMessageChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789395506192-add-app-message-channel-type';
 import { AddAppMessageChannelUniqueHandleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789418882171-add-app-message-channel-unique-handle';
 import { AddShortLinkAndMessageTrackingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789639200001-add-short-link-and-message-tracking';
+import { AddMessageTrackingConsentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789639200002-add-message-tracking-consent';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -390,4 +391,5 @@ export const INSTANCE_COMMANDS = [
   AddAppMessageChannelTypeFastInstanceCommand,
   AddAppMessageChannelUniqueHandleFastInstanceCommand,
   AddShortLinkAndMessageTrackingFastInstanceCommand,
+  AddMessageTrackingConsentFastInstanceCommand,
 ];

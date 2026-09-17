@@ -350,6 +350,20 @@ export const computeStandardPersonViewFields = (
         viewFieldGroupName: 'system',
       },
     }),
+    personRecordPageFieldsEmailTrackingConsent:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'person',
+        context: {
+          viewName: 'personRecordPageFields',
+          viewFieldName: 'emailTrackingConsent',
+          fieldName: 'emailTrackingConsent',
+          position: 4,
+          isVisible: true,
+          size: 150,
+          viewFieldGroupName: 'system',
+        },
+      }),
 
     // messageListRecordPageMembers view fields
     messageListRecordPageMembersName: createStandardViewFieldFlatMetadata({

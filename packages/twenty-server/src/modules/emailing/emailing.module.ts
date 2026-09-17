@@ -10,6 +10,7 @@ import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/
 import { ShortLinkModule } from 'src/engine/core-modules/short-link/short-link.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
+import { MessageTrackingConsentEntity } from 'src/engine/core-modules/emailing-domain/message-tracking-consent.entity';
 import { UnsubscribeTopicEntity } from 'src/engine/core-modules/emailing-domain/unsubscribe-topic.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
@@ -29,6 +30,9 @@ import { RecordCampaignEngagementJob } from 'src/modules/emailing/jobs/record-ca
 import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { CampaignEngagementRecordingService } from 'src/modules/emailing/services/campaign-engagement-recording.service';
+import { MessageTrackingConsentPersonListener } from 'src/modules/emailing/listeners/message-tracking-consent-person.listener';
+import { MessageTrackingConsentResolver } from 'src/modules/emailing/resolvers/message-tracking-consent.resolver';
+import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
 import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
 import { EmailingOngoingStaleCronJob } from 'src/modules/emailing/crons/jobs/emailing-ongoing-stale.cron.job';
@@ -81,6 +85,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
       MessageChannelEntity,
       EmailingDomainEntity,
       MessageSuppressionEntity,
+      MessageTrackingConsentEntity,
       UnsubscribeTopicEntity,
       CampaignDeliveryEntity,
       WorkspaceEntity,
@@ -113,6 +118,10 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     UnsubscribeTopicResolver,
     provideWorkspaceScopedRepository(EmailingDomainEntity),
     provideWorkspaceScopedRepository(MessageSuppressionEntity),
+    provideWorkspaceScopedRepository(MessageTrackingConsentEntity),
+    MessageTrackingConsentService,
+    MessageTrackingConsentPersonListener,
+    MessageTrackingConsentResolver,
     CampaignTrackingContentService,
     CampaignEngagementCaptureService,
     CampaignEngagementRecordingService,

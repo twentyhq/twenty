@@ -1008,6 +1008,9 @@ export const STANDARD_OBJECT_FIELDS = {
     listMemberships: {
       universalIdentifier: '8b8d1be0-4c94-4413-a2c9-c7ede205a81d',
     },
+    emailTrackingConsent: {
+      universalIdentifier: '4f6d0a3e-9b1c-4c7a-8e21-6d3f5b2a9c10',
+    },
   },
   recordShare: {
     ...buildStandardObjectSystemFields(

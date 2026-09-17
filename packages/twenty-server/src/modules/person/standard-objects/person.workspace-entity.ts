@@ -1,3 +1,4 @@
+import { type MessageTrackingConsentDecision } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-decision.type';
 import {
   type ActorMetadata,
   type EmailsMetadata,
@@ -49,5 +50,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   >;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
   listMemberships: EntityRelation<MessageListMemberWorkspaceEntity[]>;
+  emailTrackingConsent: MessageTrackingConsentDecision | null;
   searchVector: string;
 }

@@ -202,6 +202,7 @@ enum EngineComponentKey {
   EXPORT_FROM_RECORD_INDEX
   EXPORT_FROM_RECORD_SHOW
   EXPORT_MULTIPLE_RECORDS
+  SET_PERSON_EMAIL_TRACKING_CONSENT
 }
 
 enum CommandMenuItemAvailabilityType {
@@ -3025,6 +3026,7 @@ type CampaignAudiencePreviewDTO {
   hardSuppressed: Int!
   globallyUnsubscribed: Int!
   topicUnsubscribed: Int!
+  trackingRefused: Int!
   sendable: Int!
 }
 
@@ -4057,6 +4059,7 @@ type Mutation {
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   deleteUnsubscribeTopic(id: String!): Boolean!
+  setPersonEmailTrackingConsent(input: SetPersonEmailTrackingConsentInput!): Boolean!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
@@ -5181,6 +5184,16 @@ input UpdateUnsubscribeTopicInput {
   name: String
   description: String
   visibility: UnsubscribeTopicVisibility
+}
+
+input SetPersonEmailTrackingConsentInput {
+  personId: UUID!
+  decision: MessageTrackingConsentDecision!
+}
+
+enum MessageTrackingConsentDecision {
+  GRANTED
+  DENIED
 }
 
 input UpdateMessageChannelInput {

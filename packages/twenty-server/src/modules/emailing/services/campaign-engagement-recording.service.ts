@@ -5,8 +5,10 @@ import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { MessageTrackingConsentDecision } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-decision.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
+import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
 import { classifyEngagementUserAgent } from 'src/modules/emailing/utils/classify-engagement-user-agent.util';
 
@@ -19,6 +21,7 @@ export class CampaignEngagementRecordingService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
+    private readonly messageTrackingConsentService: MessageTrackingConsentService,
   ) {}
 
   async record(observation: CampaignEngagementObservation): Promise<void> {
@@ -35,6 +38,15 @@ export class CampaignEngagementRecordingService {
     });
 
     if (!workspace?.isCampaignClickTrackingEnabled) {
+      return;
+    }
+
+    const decision = await this.messageTrackingConsentService.findDecision({
+      workspaceId: delivery.workspaceId,
+      emailAddress: delivery.recipientEmail,
+    });
+
+    if (decision === MessageTrackingConsentDecision.DENIED) {
       return;
     }
 

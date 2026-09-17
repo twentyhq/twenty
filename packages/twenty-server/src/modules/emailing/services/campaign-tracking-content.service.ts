@@ -26,6 +26,7 @@ import { CampaignEngagementEventService } from 'src/modules/emailing/services/ca
 import { TRACKABLE_URL_PATTERN } from 'src/modules/emailing/constants/trackable-url-pattern.constant';
 import { CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN } from 'src/modules/emailing/constants/campaign-batch-variable-tag-pattern.constant';
 import { CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART } from 'src/modules/emailing/constants/campaign-tracking-tag-prefix-by-message-part.constant';
+import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
 
@@ -39,6 +40,7 @@ type TrackedCampaignBatch = {
 
 type TrackingRecipient = {
   deliveryId: string;
+  email: string;
   replacements: Record<string, string>;
 };
 
@@ -60,6 +62,7 @@ export class CampaignTrackingContentService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly shortLinkService: ShortLinkService,
     private readonly campaignTrackingTokenService: CampaignTrackingTokenService,
+    private readonly messageTrackingConsentService: MessageTrackingConsentService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
   ) {}
@@ -106,11 +109,19 @@ export class CampaignTrackingContentService {
       return untracked;
     }
 
+    const deniedEmailAddresses =
+      await this.messageTrackingConsentService.findDeniedEmailAddresses({
+        workspaceId,
+        emailAddresses: recipients.map((recipient) => recipient.email),
+      });
+    const isTracked = (recipient: TrackingRecipient) =>
+      !deniedEmailAddresses.has(recipient.email.trim().toLowerCase());
+
     const shortLinkIdByIdentity = await this.registerShortLinks({
       workspaceId,
       urlTemplates,
       variableNames,
-      recipients,
+      recipients: recipients.filter(isTracked),
     });
 
     return {
@@ -124,13 +135,18 @@ export class CampaignTrackingContentService {
           recipient.deliveryId,
           {
             ...recipient.replacements,
-            ...this.buildTrackingReplacements({
-              baseUrl,
-              recipient,
-              urlTemplates,
-              variableNames,
-              shortLinkIdByIdentity,
-            }),
+            ...(isTracked(recipient)
+              ? this.buildTrackingReplacements({
+                  baseUrl,
+                  recipient,
+                  urlTemplates,
+                  variableNames,
+                  shortLinkIdByIdentity,
+                })
+              : this.buildUntrackedReplacements({
+                  recipient,
+                  urlTemplates,
+                })),
           },
         ]),
       ),
@@ -239,6 +255,29 @@ export class CampaignTrackingContentService {
       replacements[this.buildLinkTag({ messagePart: 'HTML', index })] =
         escapeHtml(linkUrl);
       replacements[this.buildLinkTag({ messagePart: 'TEXT', index })] = linkUrl;
+    });
+
+    return replacements;
+  }
+
+  private buildUntrackedReplacements({
+    recipient,
+    urlTemplates,
+  }: {
+    recipient: TrackingRecipient;
+    urlTemplates: string[];
+  }): Record<string, string> {
+    const replacements: Record<string, string> = {};
+
+    urlTemplates.forEach((urlTemplate, index) => {
+      const { url } = this.resolveLinkUrl({
+        urlTemplate,
+        replacements: recipient.replacements,
+      });
+
+      replacements[this.buildLinkTag({ messagePart: 'HTML', index })] =
+        escapeHtml(url);
+      replacements[this.buildLinkTag({ messagePart: 'TEXT', index })] = url;
     });
 
     return replacements;
