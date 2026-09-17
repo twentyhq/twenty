@@ -119,7 +119,9 @@ type AiChatChannelFeedItemProps = {
   thread: AgentChatThread;
 };
 
-export const AiChatChannelFeedItem = ({ thread }: AiChatChannelFeedItemProps) => {
+export const AiChatChannelFeedItem = ({
+  thread,
+}: AiChatChannelFeedItemProps) => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const currentWorkspaceMembers = useAtomStateValue(
@@ -200,7 +202,9 @@ export const AiChatChannelFeedItem = ({ thread }: AiChatChannelFeedItemProps) =>
           ) : (
             <StyledTitle>{displayTitle}</StyledTitle>
           )}
-          <StyledTime>{beautifyPastDateRelativeToNow(lastActivityAt)}</StyledTime>
+          <StyledTime>
+            {beautifyPastDateRelativeToNow(lastActivityAt)}
+          </StyledTime>
         </StyledTitleRow>
         <StyledPreview>
           {isDefined(thread.lastMessagePreview) ? (
