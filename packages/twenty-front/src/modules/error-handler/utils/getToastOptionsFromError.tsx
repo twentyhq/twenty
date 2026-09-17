@@ -26,13 +26,20 @@ export const getToastOptionsFromError = ({
     ? getConflictingRecordFromApolloError(errorLike)
     : null;
 
+  const children =
+    options.children ??
+    (isDefined(errorLike)
+      ? getErrorMessageFromApolloError(errorLike)
+      : t`An error occurred.`);
+
+  // Nested handlers often report the same failure; while its toast is visible, a repeat collapses into it.
+  const dedupeKey =
+    options.dedupeKey ?? (typeof children === 'string' ? children : undefined);
+
   return {
     ...options,
-    children:
-      options.children ??
-      (isDefined(errorLike)
-        ? getErrorMessageFromApolloError(errorLike)
-        : t`An error occurred.`),
+    children,
+    dedupeKey,
     action:
       options.action ??
       (isDefined(conflictingRecord) ? (

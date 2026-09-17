@@ -27,6 +27,15 @@ describe('getToastOptionsFromError', () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
+  it('collapses repeats of the same message into one toast', () => {
+    expect(
+      getToastOptionsFromError({ error: new Error('Connection lost') }),
+    ).toMatchObject({
+      children: 'Connection lost',
+      dedupeKey: 'Connection lost',
+    });
+  });
+
   it('suppresses aborted requests even when custom content is provided', () => {
     expect(
       getToastOptionsFromError({

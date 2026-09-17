@@ -121,15 +121,58 @@ const mock: MockedResponse = {
   })),
 };
 
-const Wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
-  apolloMocks: [mock],
-  componentInstanceId: 'recordIndexId',
-  contextStoreTargetedRecordsRule: {
-    mode: 'selection',
-    selectedRecordIds: [],
+const firstPageMock: MockedResponse = {
+  request: mock.request,
+  result: jest.fn(() => ({
+    data: {
+      people: {
+        pageInfo: {
+          hasNextPage: true,
+          hasPreviousPage: false,
+          startCursor: '1',
+          endCursor: '2',
+        },
+        totalCount: 4,
+        edges: [
+          {
+            node: mockPerson,
+            cursor: '1',
+          },
+          {
+            node: mockPerson,
+            cursor: '2',
+          },
+        ],
+      },
+    },
+  })),
+};
+
+const failingSecondPageMock: MockedResponse = {
+  request: {
+    query: mock.request.query,
+    variables: { limit: 30, lastCursor: '2' },
   },
-  contextStoreCurrentObjectMetadataNameSingular: 'person',
-});
+  error: new Error('Internal server error'),
+};
+
+const failingFirstPageMock: MockedResponse = {
+  request: mock.request,
+  error: new Error('Internal server error'),
+};
+
+const getWrapper = (apolloMocks: MockedResponse[]) =>
+  getJestMetadataAndApolloMocksAndCommandMenuWrapper({
+    apolloMocks,
+    componentInstanceId: 'recordIndexId',
+    contextStoreTargetedRecordsRule: {
+      mode: 'selection',
+      selectedRecordIds: [],
+    },
+    contextStoreCurrentObjectMetadataNameSingular: 'person',
+  });
+
+const Wrapper = getWrapper([mock]);
 
 describe('useLazyFetchAllRecords', () => {
   const objectNameSingular = 'person';
@@ -170,5 +213,56 @@ describe('useLazyFetchAllRecords', () => {
     const finalResult = await res;
 
     expect(finalResult).toEqual([mockPerson, mockPerson]);
+  });
+
+  it('fails instead of returning a truncated list when a later page fails', async () => {
+    const { result } = renderHook(
+      () =>
+        useLazyFetchAllRecords({
+          objectNameSingular,
+          limit: 30,
+        }),
+      {
+        wrapper: getWrapper([firstPageMock, failingSecondPageMock]),
+      },
+    );
+
+    let res: Promise<unknown> | undefined;
+
+    act(() => {
+      res = result.current.fetchAllRecords();
+    });
+
+    await expect(res).rejects.toThrow('Internal server error');
+
+    await waitFor(() => {
+      expect(result.current.isDownloading).toBe(false);
+      expect(result.current.progress).toEqual({ displayType: 'number' });
+    });
+  });
+
+  it('fails when the first page fails', async () => {
+    const { result } = renderHook(
+      () =>
+        useLazyFetchAllRecords({
+          objectNameSingular,
+          limit: 30,
+        }),
+      {
+        wrapper: getWrapper([failingFirstPageMock]),
+      },
+    );
+
+    let res: Promise<unknown> | undefined;
+
+    act(() => {
+      res = result.current.fetchAllRecords();
+    });
+
+    await expect(res).rejects.toThrow('Internal server error');
+
+    await waitFor(() => {
+      expect(result.current.isDownloading).toBe(false);
+    });
   });
 });
