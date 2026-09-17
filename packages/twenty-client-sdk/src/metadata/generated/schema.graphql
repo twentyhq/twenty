@@ -3322,21 +3322,40 @@ type Skill {
   updatedAt: DateTime!
 }
 
-type AgentMessage {
-  id: UUID!
-  threadId: UUID!
-  turnId: UUID
-  agentId: UUID
-  role: String!
-  status: String!
-  parts: [AgentMessagePart!]!
-  processedAt: DateTime
+type AgentChatChannelMember {
+  id: ID!
+  channelId: UUID!
+  userWorkspaceId: UUID!
+  role: AgentChatChannelMemberRole!
   createdAt: DateTime!
+}
+
+enum AgentChatChannelMemberRole {
+  ADMIN
+  MEMBER
+}
+
+type AgentChatChannel {
+  id: ID!
+  name: String!
+  visibility: AgentChatChannelVisibility!
+  targetObjectMetadataId: UUID
+  targetRecordId: UUID
+  createdByUserWorkspaceId: UUID
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum AgentChatChannelVisibility {
+  PUBLIC
+  PRIVATE
 }
 
 type AgentChatThread {
   id: ID!
   title: String
+  channelId: UUID
+  ownerUserWorkspaceId: UUID!
   totalCacheReadTokens: Int!
   totalInputTokens: Int!
   totalOutputTokens: Int!
@@ -3348,6 +3367,32 @@ type AgentChatThread {
   updatedAt: DateTime!
   deletedAt: DateTime
   lastMessageAt: DateTime
+}
+
+type AgentMessage {
+  id: UUID!
+  threadId: UUID!
+  turnId: UUID
+  agentId: UUID
+  authorUserWorkspaceId: UUID
+  role: String!
+  status: String!
+  parts: [AgentMessagePart!]!
+  processedAt: DateTime
+  createdAt: DateTime!
+}
+
+type AgentChatThreadParticipant {
+  id: ID!
+  threadId: UUID!
+  userWorkspaceId: UUID!
+  role: AgentChatThreadParticipantRole!
+  createdAt: DateTime!
+}
+
+enum AgentChatThreadParticipantRole {
+  OWNER
+  MEMBER
 }
 
 type AiSystemPromptSection {
@@ -3750,8 +3795,11 @@ type Query {
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
+  chatThreadParticipants(threadId: UUID!): [AgentChatThreadParticipant!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAiSystemPromptPreview: AiSystemPromptPreview!
+  chatChannels: [AgentChatChannel!]!
+  chatChannelMembers: [AgentChatChannelMember!]!
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!
@@ -4077,7 +4125,9 @@ type Mutation {
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
-  createChatThread: AgentChatThread!
+  addChatThreadParticipant(threadId: UUID!, userWorkspaceId: UUID!): AgentChatThreadParticipant!
+  removeChatThreadParticipant(threadId: UUID!, userWorkspaceId: UUID!): Boolean!
+  createChatThread(channelId: UUID): AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
   answerAgentChatQuestion(threadId: UUID!, messageId: UUID!, answers: [AgentChatQuestionAnswerInput!]!, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
@@ -4087,6 +4137,14 @@ type Mutation {
   unarchiveChatThread(id: UUID!): AgentChatThread!
   deleteChatThread(id: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
+  createChatChannel(input: CreateAgentChatChannelInput!): AgentChatChannel!
+  updateChatChannel(id: UUID!, input: UpdateAgentChatChannelInput!): AgentChatChannel!
+  deleteChatChannel(id: UUID!): Boolean!
+  joinChatChannel(id: UUID!): AgentChatChannelMember!
+  leaveChatChannel(id: UUID!): Boolean!
+  addChatChannelMember(channelId: UUID!, userWorkspaceId: UUID!): AgentChatChannelMember!
+  removeChatChannelMember(channelId: UUID!, userWorkspaceId: UUID!): Boolean!
+  setChatThreadChannel(threadId: UUID!, channelId: UUID): AgentChatThread!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
@@ -5365,6 +5423,18 @@ input AgentChatQuestionAnswerInput {
   questionIndex: Int!
   selectedOptionIndices: [Int!]!
   freeText: String
+}
+
+input CreateAgentChatChannelInput {
+  name: String!
+  visibility: AgentChatChannelVisibility = PUBLIC
+  targetObjectMetadataId: UUID
+  targetRecordId: UUID
+}
+
+input UpdateAgentChatChannelInput {
+  name: String
+  visibility: AgentChatChannelVisibility
 }
 
 input CreateSkillInput {
