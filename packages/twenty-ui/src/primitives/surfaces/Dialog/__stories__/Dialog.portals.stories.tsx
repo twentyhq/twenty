@@ -23,7 +23,10 @@ export const ScopedThemeAndDirection: Story = {
   render: () => (
     <DirectionProvider direction="rtl">
       <ThemeProvider colorScheme="dark" applyToRoot={false}>
-        <div data-testid="theme-scope">
+        <div
+          data-testid="theme-scope"
+          style={{ backgroundColor: 'var(--t-background-primary)' }}
+        >
           <div
             data-testid="theme-color"
             style={{ backgroundColor: 'var(--t-background-primary)' }}
@@ -59,7 +62,9 @@ const ExplicitContainerDialog = () => {
     <>
       <div ref={setContainer} data-testid="portal-container" />
       <ThemeProvider colorScheme="dark" applyToRoot={false}>
-        <DialogExample defaultOpen popupProps={{ container }} />
+        <div style={{ backgroundColor: 'var(--t-background-primary)' }}>
+          <DialogExample defaultOpen popupProps={{ container }} />
+        </div>
       </ThemeProvider>
     </>
   );
