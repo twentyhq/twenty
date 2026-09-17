@@ -1,5 +1,5 @@
+import { Section } from '@ui/components/Section/Section';
 import { i18n } from '@lingui/core';
-import { H2Title } from '@ui/primitives/typography/H2Title/H2Title';
 import { SettingsCardContent } from './SettingsCardContent';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
@@ -62,7 +62,7 @@ const SettingsToggle = ({
 
 export const Settings = ({ state, isPending, command }: ActionProps) => (
   <section className="settings-page">
-    <H2Title title={i18n._('General')} />
+    <Section.Header title={i18n._('General')} />
     <Card
       className="settings-group"
       backgroundColor="var(--t-background-secondary)"
@@ -127,7 +127,7 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
         )}
       />
     </Card>
-    <H2Title title={i18n._('Meetings')} className="section" />
+    <Section.Header title={i18n._('Meetings')} className="section" />
     <Card
       className="settings-group"
       backgroundColor="var(--t-background-secondary)"
@@ -238,7 +238,7 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
         </SettingsCardContent>
       </button>
     </Card>
-    <H2Title title={i18n._('Workspace')} className="section" />
+    <Section.Header title={i18n._('Workspace')} className="section" />
     <Card
       className="settings-group"
       backgroundColor="var(--t-background-secondary)"
