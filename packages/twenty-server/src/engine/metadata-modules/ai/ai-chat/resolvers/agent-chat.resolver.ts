@@ -34,6 +34,7 @@ import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/en
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
+import { AgentRunThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-run-thread.service';
 import { type AgentChatThreadLastMessageSummary } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-message-summary.type';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -71,6 +72,7 @@ export class AgentChatResolver {
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
     private readonly agentChatChannelService: AgentChatChannelService,
+    private readonly agentRunThreadService: AgentRunThreadService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
     private readonly aiBillingService: AiBillingService,
@@ -439,6 +441,18 @@ export class AgentChatResolver {
         'Thread not found',
         AiExceptionCode.THREAD_NOT_FOUND,
       );
+    }
+
+    // A workflow run's question resumes the run, not a chat stream.
+    if (isDefined(thread.workflowRunId)) {
+      const answer = await this.agentRunThreadService.answerRunQuestion({
+        thread,
+        messageId,
+        answers,
+        userWorkspaceId,
+      });
+
+      return { messageId: answer.messageId, queued: false };
     }
 
     const { streamId, turnId } =

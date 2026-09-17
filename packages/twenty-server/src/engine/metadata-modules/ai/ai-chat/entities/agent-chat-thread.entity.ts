@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { ADD_AGENT_CHAT_CHANNELS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-channels-upgrade-command-name.constant';
+import { ADD_AGENT_CHAT_THREAD_WORKFLOW_RUN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-thread-workflow-run-upgrade-command-name.constant';
 import { ADD_LAST_STREAM_ERROR_TO_AGENT_CHAT_THREAD_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-last-stream-error-to-agent-chat-thread-upgrade-command-name.constant';
 import { ADD_PENDING_QUESTION_MESSAGE_ID_TO_AGENT_CHAT_THREAD_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-pending-question-message-id-to-agent-chat-thread-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -64,6 +65,22 @@ export class AgentChatThreadEntity {
   })
   @JoinColumn({ name: 'channelId' })
   channel: EntityRelation<AgentChatChannelEntity> | null;
+
+  // A thread opened by a workflow AI agent step is the run's conversation:
+  // the run and step it belongs to live in the workspace schema, so they are
+  // referenced without a foreign key.
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AGENT_CHAT_THREAD_WORKFLOW_RUN_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'uuid', nullable: true })
+  @Index('IDX_AGENT_CHAT_THREAD_WORKFLOW_RUN_ID')
+  workflowRunId: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AGENT_CHAT_THREAD_WORKFLOW_RUN_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'varchar', nullable: true })
+  workflowStepId: string | null;
 
   @Column({ type: 'int', default: 0 })
   totalInputTokens: number;

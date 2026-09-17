@@ -28,6 +28,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
+import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
@@ -46,6 +47,7 @@ import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-s
 import { AgentChatEventPublisherService } from './services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from './services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
+import { AgentRunThreadService } from './services/agent-run-thread.service';
 import { AgentChatChannelService } from './services/agent-chat-channel.service';
 import { AgentChatThreadParticipantService } from './services/agent-chat-thread-participant.service';
 import { AgentChatService } from './services/agent-chat.service';
@@ -85,6 +87,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     ToolProviderModule,
     DashboardToolsModule,
     WorkflowToolsModule,
+    WorkflowRunModule,
   ],
   providers: [
     AiChatUsageService,
@@ -100,6 +103,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatStreamingService,
     AgentChatThreadParticipantService,
     AgentChatChannelService,
+    AgentRunThreadService,
     WorkspaceSetupChatService,
     AgentTitleGenerationService,
     ChatExecutionService,
@@ -124,6 +128,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatStreamingService,
     AgentChatThreadParticipantService,
     AgentChatChannelService,
+    AgentRunThreadService,
     TypeOrmModule.forFeature([AgentChatThreadEntity]),
   ],
 })

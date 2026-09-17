@@ -4,7 +4,9 @@ import {
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent';
+import { WorkflowRunStepConversation } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepConversation';
 import { WorkflowActionCode } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionCode';
 import { WorkflowEditActionCreateCalendarEvent } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
@@ -41,6 +43,7 @@ export const WorkflowRunStepNodeDetail = ({
   steps,
   stepExecutionStatus,
 }: WorkflowRunStepNodeDetailProps) => {
+  const workflowRunId = useWorkflowRunIdOrThrow();
   const stepDefinition = getStepDefinitionOrThrow({
     stepId,
     trigger,
@@ -251,13 +254,20 @@ export const WorkflowRunStepNodeDetail = ({
         }
         case 'AI_AGENT': {
           return (
-            <WorkflowEditActionAiAgent
-              key={stepId}
-              action={stepDefinition.definition}
-              actionOptions={{
-                readonly: true,
-              }}
-            />
+            <>
+              <WorkflowRunStepConversation
+                workflowRunId={workflowRunId}
+                stepId={stepId}
+                stepExecutionStatus={stepExecutionStatus}
+              />
+              <WorkflowEditActionAiAgent
+                key={stepId}
+                action={stepDefinition.definition}
+                actionOptions={{
+                  readonly: true,
+                }}
+              />
+            </>
           );
         }
         case 'FILTER': {

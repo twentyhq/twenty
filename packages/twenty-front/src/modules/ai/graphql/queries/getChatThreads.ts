@@ -6,6 +6,8 @@ export const GET_CHAT_THREADS = gql`
       id
       title
       channelId
+      workflowRunId
+      workflowStepId
       ownerUserWorkspaceId
       totalCacheReadTokens
       totalInputTokens

@@ -4,6 +4,10 @@ import { type QueryRunner } from 'typeorm';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import {
   AGENT_CHAT_THREAD_DATA_SEED_IDS,
+  AGENT_WORKFLOW_DATA_SEED_IDS,
+  AGENT_WORKFLOW_SEED_NAME,
+  AGENT_WORKFLOW_SEED_PROMPT,
+  AGENT_WORKFLOW_SEED_STEP_NAME,
   APPLE_AGENT_CHAT_CHANNEL_SEEDS,
   APPLE_AGENT_CHAT_CONVERSATION_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/agent-chat-seeds.constant';
@@ -156,6 +160,8 @@ const seedChatThreads = async ({
         })),
       )
       .execute();
+
+    await seedRunThreads({ queryRunner, schemaName, workspaceId, now });
   }
 
   await seedChatThreadParticipants({
@@ -169,12 +175,279 @@ const seedChatThreads = async ({
             threadId,
             AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_IMPORT_THREAD,
             AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_FOLLOW_UP_THREAD,
+            AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN_THREAD,
+            AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN_THREAD,
           ]
         : [threadId],
     now,
   });
 
   return { threadId, ownerUserWorkspaceId: userWorkspaceId };
+};
+
+type SeedRunThreadsArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+  now: Date;
+};
+
+const RUN_THREAD_TURN_IDS = {
+  COMPLETED_RUN: '20202020-0000-4000-8000-000000000331',
+  WAITING_RUN: '20202020-0000-4000-8000-000000000332',
+};
+
+const RUN_THREAD_MESSAGE_IDS = {
+  COMPLETED_RUN_PROMPT: '20202020-0000-4000-8000-000000000341',
+  COMPLETED_RUN_ANSWER: '20202020-0000-4000-8000-000000000342',
+  WAITING_RUN_PROMPT: '20202020-0000-4000-8000-000000000343',
+  WAITING_RUN_QUESTION:
+    AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN_QUESTION_MESSAGE,
+};
+
+const WAITING_RUN_QUESTIONS = [
+  {
+    header: 'Send outreach',
+    question:
+      'The lead fits the profile and the email below is ready. Send it now?',
+    options: [
+      {
+        label: 'Send it',
+        description: 'Send the drafted email from your mailbox.',
+        isRecommended: true,
+      },
+      {
+        label: 'Hold for review',
+        description: 'Keep the draft in the conversation for you to edit.',
+      },
+      { label: 'Do not contact', description: 'Close the lead as not a fit.' },
+    ],
+  },
+];
+
+// The conversations of the seeded workflow runs: the completed run reads
+// like a finished chat, the waiting run ends on the question the agent
+// asked, exactly as the agent step would have left it.
+const seedRunThreads = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+  now,
+}: SeedRunThreadsArgs) => {
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+  const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const ownerUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM;
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentChatThreadTableName}`, [
+      'id',
+      'workspaceId',
+      'userWorkspaceId',
+      'title',
+      'workflowRunId',
+      'workflowStepId',
+      'pendingQuestionMessageId',
+      'createdAt',
+      'updatedAt',
+    ])
+    .orIgnore()
+    .values([
+      {
+        id: AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN_THREAD,
+        workspaceId,
+        userWorkspaceId: ownerUserWorkspaceId,
+        title: `#1 - ${AGENT_WORKFLOW_SEED_NAME} · ${AGENT_WORKFLOW_SEED_STEP_NAME}`,
+        workflowRunId: AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN,
+        workflowStepId: AGENT_WORKFLOW_DATA_SEED_IDS.QUALIFY_LEAD_STEP,
+        pendingQuestionMessageId: null,
+        createdAt: yesterday,
+        updatedAt: yesterday,
+      },
+      {
+        id: AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN_THREAD,
+        workspaceId,
+        userWorkspaceId: ownerUserWorkspaceId,
+        title: `#2 - ${AGENT_WORKFLOW_SEED_NAME} · ${AGENT_WORKFLOW_SEED_STEP_NAME}`,
+        workflowRunId: AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN,
+        workflowStepId: AGENT_WORKFLOW_DATA_SEED_IDS.QUALIFY_LEAD_STEP,
+        pendingQuestionMessageId: RUN_THREAD_MESSAGE_IDS.WAITING_RUN_QUESTION,
+        createdAt: oneHourAgo,
+        updatedAt: oneHourAgo,
+      },
+    ])
+    .execute();
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentTurnTableName}`, [
+      'id',
+      'workspaceId',
+      'threadId',
+      'createdAt',
+    ])
+    .orIgnore()
+    .values([
+      {
+        id: RUN_THREAD_TURN_IDS.COMPLETED_RUN,
+        workspaceId,
+        threadId: AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN_THREAD,
+        createdAt: yesterday,
+      },
+      {
+        id: RUN_THREAD_TURN_IDS.WAITING_RUN,
+        workspaceId,
+        threadId: AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN_THREAD,
+        createdAt: oneHourAgo,
+      },
+    ])
+    .execute();
+
+  const messages = [
+    {
+      id: RUN_THREAD_MESSAGE_IDS.COMPLETED_RUN_PROMPT,
+      threadId: AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN_THREAD,
+      turnId: RUN_THREAD_TURN_IDS.COMPLETED_RUN,
+      role: AgentMessageRole.USER,
+      createdAt: yesterday,
+    },
+    {
+      id: RUN_THREAD_MESSAGE_IDS.COMPLETED_RUN_ANSWER,
+      threadId: AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN_THREAD,
+      turnId: RUN_THREAD_TURN_IDS.COMPLETED_RUN,
+      role: AgentMessageRole.ASSISTANT,
+      createdAt: new Date(yesterday.getTime() + 1000),
+    },
+    {
+      id: RUN_THREAD_MESSAGE_IDS.WAITING_RUN_PROMPT,
+      threadId: AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN_THREAD,
+      turnId: RUN_THREAD_TURN_IDS.WAITING_RUN,
+      role: AgentMessageRole.USER,
+      createdAt: oneHourAgo,
+    },
+    {
+      id: RUN_THREAD_MESSAGE_IDS.WAITING_RUN_QUESTION,
+      threadId: AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN_THREAD,
+      turnId: RUN_THREAD_TURN_IDS.WAITING_RUN,
+      role: AgentMessageRole.ASSISTANT,
+      createdAt: new Date(oneHourAgo.getTime() + 1000),
+    },
+  ];
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentMessageTableName}`, [
+      'id',
+      'workspaceId',
+      'threadId',
+      'turnId',
+      'role',
+      'authorUserWorkspaceId',
+      'processedAt',
+      'createdAt',
+    ])
+    .orIgnore()
+    .values(
+      messages.map((message) => ({
+        ...message,
+        workspaceId,
+        authorUserWorkspaceId: null,
+        processedAt: message.createdAt,
+      })),
+    )
+    .execute();
+
+  const textPart = (
+    id: string,
+    messageId: string,
+    textContent: string,
+    createdAt: Date,
+  ) => ({
+    id,
+    workspaceId,
+    messageId,
+    orderIndex: 0,
+    type: 'text',
+    textContent,
+    toolName: null,
+    toolCallId: null,
+    toolInput: null,
+    toolOutput: null,
+    state: null,
+    createdAt,
+  });
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentMessagePartTableName}`, [
+      'id',
+      'workspaceId',
+      'messageId',
+      'orderIndex',
+      'type',
+      'textContent',
+      'toolName',
+      'toolCallId',
+      'toolInput',
+      'toolOutput',
+      'state',
+      'createdAt',
+    ])
+    .orIgnore()
+    .values([
+      textPart(
+        '20202020-0000-4000-8000-000000000351',
+        RUN_THREAD_MESSAGE_IDS.COMPLETED_RUN_PROMPT,
+        AGENT_WORKFLOW_SEED_PROMPT,
+        yesterday,
+      ),
+      textPart(
+        '20202020-0000-4000-8000-000000000352',
+        RUN_THREAD_MESSAGE_IDS.COMPLETED_RUN_ANSWER,
+        'Warm lead. Sarah Chen is VP Sales at Northwind (about 200 people, B2B SaaS), ' +
+          'which sits in our target segment, and she asked for pricing on the form. ' +
+          'You approved the outreach email and it went out from your mailbox.',
+        new Date(yesterday.getTime() + 1000),
+      ),
+      textPart(
+        '20202020-0000-4000-8000-000000000353',
+        RUN_THREAD_MESSAGE_IDS.WAITING_RUN_PROMPT,
+        AGENT_WORKFLOW_SEED_PROMPT,
+        oneHourAgo,
+      ),
+      textPart(
+        '20202020-0000-4000-8000-000000000354',
+        RUN_THREAD_MESSAGE_IDS.WAITING_RUN_QUESTION,
+        'Marcus Lee, Head of Operations at Contoso Logistics (about 80 people), fits the ' +
+          'profile: mid-market, hiring in sales ops, and he asked for a demo. Draft ready:\n\n' +
+          'Hi Marcus, thanks for reaching out. Twenty gives ops teams one place for pipeline, ' +
+          'people and automations. Would a 20-minute walkthrough on Thursday work?',
+        new Date(oneHourAgo.getTime() + 1000),
+      ),
+      {
+        id: '20202020-0000-4000-8000-000000000355',
+        workspaceId,
+        messageId: RUN_THREAD_MESSAGE_IDS.WAITING_RUN_QUESTION,
+        orderIndex: 1,
+        type: 'tool-ask_questions',
+        textContent: null,
+        toolName: 'ask_questions',
+        toolCallId: 'seed-ask-questions-1',
+        toolInput: { questions: WAITING_RUN_QUESTIONS },
+        toolOutput: {
+          success: true,
+          message: 'Questions presented to the user; awaiting their answer.',
+          result: { questions: WAITING_RUN_QUESTIONS, status: 'pending' },
+        },
+        state: 'output-available',
+        createdAt: new Date(oneHourAgo.getTime() + 1000),
+      },
+    ])
+    .execute();
 };
 
 type SeedChatChannelsArgs = {

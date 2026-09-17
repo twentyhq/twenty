@@ -26,6 +26,13 @@ const archiveChatThread = jest.fn();
 const unarchiveChatThread = jest.fn();
 const deleteChatThread = jest.fn();
 
+const mockNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat }),
 }));
@@ -117,6 +124,27 @@ describe('AiChatPageHeader', () => {
     expect(
       screen.queryByRole('button', { name: 'Collapse to side panel' }),
     ).toBeNull();
+  });
+
+  it('links a workflow run conversation back to its run', async () => {
+    const user = userEvent.setup();
+    const runThread = {
+      ...THREAD,
+      workflowRunId: '4d2a7b9c-5e6f-4a1b-8c2d-3e4f5a6b7c8d',
+      workflowStepId: 'step-id',
+    };
+
+    setThreads([runThread]);
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+    const chip = screen.getByRole('button', { name: 'Workflow run' });
+
+    expect(chip).toBeVisible();
+    await user.click(chip);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      `/object/workflowRun/${runThread.workflowRunId}`,
+      expect.anything(),
+    );
   });
 
   it('does not label an existing chat as new while its metadata loads', () => {

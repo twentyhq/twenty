@@ -21,8 +21,8 @@ type SeedRow = {
 
 describe('seedAgents', () => {
   it.each([
-    [SEED_APPLE_WORKSPACE_ID, 3, 24, 12, 5, 2, 5, 1],
-    [SEED_YCOMBINATOR_WORKSPACE_ID, 1, 4, 2, 1, 0, 0, 0],
+    [SEED_APPLE_WORKSPACE_ID, 5, 28, 14, 7, 2, 5, 1, 2],
+    [SEED_YCOMBINATOR_WORKSPACE_ID, 1, 4, 2, 1, 0, 0, 0, 0],
   ])(
     'keeps messages, turns, and parts in their owning conversation for %s',
     async (
@@ -34,6 +34,7 @@ describe('seedAgents', () => {
       channelCount,
       channelMemberCount,
       channelRoleCount,
+      runThreadCount,
     ) => {
       const tables = new Map<string, SeedRow[]>();
       let tableName: string;
@@ -83,9 +84,13 @@ describe('seedAgents', () => {
       const channelMembers = tables.get('core.agentChatChannelMember') ?? [];
       const channelRoles = tables.get('core.agentChatChannelRole') ?? [];
 
+      const runThreads = threads.filter((thread) => thread.workflowRunId);
+
       expect(threads).toHaveLength(threadCount);
+      expect(runThreads).toHaveLength(runThreadCount);
       expect(messages).toHaveLength(messageCount);
-      expect(parts).toHaveLength(messageCount);
+      // The waiting run's last message carries its text and the question.
+      expect(parts).toHaveLength(messageCount + runThreadCount / 2);
       expect(turns).toHaveLength(turnCount);
       expect(participants).toHaveLength(participantCount);
       expect(channels).toHaveLength(channelCount);
@@ -122,7 +127,11 @@ describe('seedAgents', () => {
         );
       }
       for (const message of messages) {
-        if (message.role === 'user') {
+        const isRunPrompt = runThreads.some(
+          (thread) => thread.id === message.threadId,
+        );
+
+        if (message.role === 'user' && !isRunPrompt) {
           expect(participants).toContainEqual(
             expect.objectContaining({
               threadId: message.threadId,
@@ -132,6 +141,22 @@ describe('seedAgents', () => {
         } else {
           expect(message.authorUserWorkspaceId).toBeNull();
         }
+      }
+      for (const thread of runThreads) {
+        expect(thread.workflowStepId).toBeDefined();
+        expect(participants).toContainEqual(
+          expect.objectContaining({ threadId: thread.id, role: 'owner' }),
+        );
+      }
+      const pendingParts = parts.filter(
+        (part) => part.toolName === 'ask_questions',
+      );
+
+      expect(pendingParts).toHaveLength(runThreadCount / 2);
+      for (const part of pendingParts) {
+        expect(
+          threads.find((thread) => thread.pendingQuestionMessageId === part.messageId),
+        ).toBeDefined();
       }
       expect(queryBuilder.where).toHaveBeenCalledWith(
         'id = :threadId AND "workspaceId" = :workspaceId',

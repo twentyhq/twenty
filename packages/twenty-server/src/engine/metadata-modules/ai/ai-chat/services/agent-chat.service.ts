@@ -77,6 +77,8 @@ const serializeThreadForBroadcast = (
   title: thread.title,
   channelId: thread.channelId,
   ownerUserWorkspaceId: thread.userWorkspaceId,
+  workflowRunId: thread.workflowRunId,
+  workflowStepId: thread.workflowStepId,
   totalInputTokens: thread.totalInputTokens,
   totalOutputTokens: thread.totalOutputTokens,
   totalCacheReadTokens: thread.totalCacheReadTokens,
@@ -129,6 +131,7 @@ export class AgentChatService {
     id,
     title,
     channelId,
+    workflowRun,
   }: {
     userWorkspaceId: string;
     workspaceId: string;
@@ -136,6 +139,7 @@ export class AgentChatService {
     title?: string;
     // Access to the channel is the caller's responsibility to check.
     channelId?: string | null;
+    workflowRun?: { workflowRunId: string; workflowStepId: string };
   }) {
     // The owner row is what grants access, so a thread must never exist
     // without it: both rows land in one transaction.
@@ -147,6 +151,12 @@ export class AgentChatService {
             ...(isDefined(id) ? { id } : {}),
             ...(isDefined(title) ? { title } : {}),
             ...(isDefined(channelId) ? { channelId } : {}),
+            ...(isDefined(workflowRun)
+              ? {
+                  workflowRunId: workflowRun.workflowRunId,
+                  workflowStepId: workflowRun.workflowStepId,
+                }
+              : {}),
             userWorkspaceId,
           });
 
@@ -1521,6 +1531,28 @@ export class AgentChatService {
       'conversationSize',
       'contextWindowTokens',
     ]);
+  }
+
+  // For writers outside the chat flow (a workflow job, for one) that changed
+  // a thread and want its readers told.
+  async broadcastThreadChanged({
+    threadId,
+    workspaceId,
+    updatedFields,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    updatedFields: (keyof AgentChatThreadDTO)[];
+  }): Promise<void> {
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
+
+    if (!isDefined(thread)) {
+      return;
+    }
+
+    await this.broadcastThreadUpdated(thread, updatedFields);
   }
 
   private async broadcastThreadUpdated(

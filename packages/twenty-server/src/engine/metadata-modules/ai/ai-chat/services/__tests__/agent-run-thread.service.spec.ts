@@ -1,0 +1,269 @@
+import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
+import { StepStatus } from 'twenty-shared/workflow';
+
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentRunThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-run-thread.service';
+import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
+
+const WORKSPACE_ID = 'workspace-id';
+const THREAD_ID = 'thread-id';
+const RUN_ID = 'run-id';
+const STEP_ID = 'step-id';
+const OWNER_ID = 'owner-user-workspace-id';
+
+const QUESTIONS = [
+  {
+    header: 'Send outreach',
+    question: 'Send the email now?',
+    options: [{ label: 'Send it' }, { label: 'Hold' }],
+  },
+];
+
+const buildThread = () => ({
+  id: THREAD_ID,
+  workspaceId: WORKSPACE_ID,
+  userWorkspaceId: OWNER_ID,
+  workflowRunId: RUN_ID,
+  workflowStepId: STEP_ID,
+  totalInputTokens: 10,
+  totalOutputTokens: 5,
+});
+
+const buildService = () => {
+  const threadRepository = {
+    findOne: jest.fn().mockResolvedValue(buildThread()),
+    update: jest.fn().mockResolvedValue({ affected: 1 }),
+  };
+  const messageRepository = {
+    find: jest.fn().mockResolvedValue([]),
+    findOne: jest.fn().mockResolvedValue({
+      id: 'question-message-id',
+      parts: [
+        {
+          toolName: ASK_QUESTIONS_TOOL_NAME,
+          toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
+        },
+      ],
+    }),
+  };
+  const agentChatService = {
+    createThread: jest.fn().mockResolvedValue(buildThread()),
+    addMessage: jest
+      .fn()
+      .mockImplementation(({ uiMessage }) =>
+        Promise.resolve({
+          id: `${uiMessage.role}-message-id`,
+          turnId: 'turn-id',
+        }),
+      ),
+    broadcastThreadChanged: jest.fn().mockResolvedValue(undefined),
+    resolvePendingQuestion: jest
+      .fn()
+      .mockResolvedValue({ turnId: 'turn-id', rollback: {} }),
+  };
+  const eventPublisherService = { publish: jest.fn().mockResolvedValue(undefined) };
+  const workflowRunWorkspaceService = {
+    updateWorkflowRunStepInfo: jest.fn().mockResolvedValue(undefined),
+  };
+  const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
+
+  const service = new AgentRunThreadService(
+    threadRepository as never,
+    messageRepository as never,
+    { findOne: jest.fn().mockResolvedValue({ id: 'admin-role' }) } as never,
+    {
+      findOne: jest.fn().mockResolvedValue({ userWorkspaceId: 'admin-uw' }),
+    } as never,
+    { findOne: jest.fn().mockResolvedValue(null) } as never,
+    agentChatService as never,
+    eventPublisherService as never,
+    { executeInWorkspaceContext: jest.fn() } as never,
+    workflowRunWorkspaceService as never,
+    messageQueueService as never,
+  );
+
+  return {
+    service,
+    threadRepository,
+    messageRepository,
+    agentChatService,
+    eventPublisherService,
+    workflowRunWorkspaceService,
+    messageQueueService,
+  };
+};
+
+describe('AgentRunThreadService', () => {
+  it('records what the agent did and leaves the thread waiting on the question it asked', async () => {
+    const { service, agentChatService, threadRepository } = buildService();
+
+    const { pendingQuestions } = await service.recordAssistantTurn({
+      thread: buildThread() as never,
+      agentId: null,
+      executionResult: {
+        result: { response: '' },
+        usage: { inputTokens: 100, outputTokens: 20 },
+        cacheCreationTokens: 0,
+        nativeWebSearchCallCount: 0,
+        hasNoMoreAvailableCredits: false,
+        pausedOnToolName: ASK_QUESTIONS_TOOL_NAME,
+        steps: [
+          {
+            text: 'The lead fits. Draft ready.',
+            toolCalls: [
+              {
+                toolCallId: 'call-1',
+                toolName: ASK_QUESTIONS_TOOL_NAME,
+                input: { questions: QUESTIONS },
+              },
+            ],
+            toolResults: [
+              {
+                toolCallId: 'call-1',
+                toolName: ASK_QUESTIONS_TOOL_NAME,
+                output: { result: { questions: QUESTIONS, status: 'pending' } },
+              },
+            ],
+          },
+        ],
+      } as never,
+    });
+
+    expect(pendingQuestions).toEqual(QUESTIONS);
+    expect(agentChatService.addMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        uiMessage: {
+          role: 'assistant',
+          parts: [
+            { type: 'text', text: 'The lead fits. Draft ready.' },
+            expect.objectContaining({
+              type: `tool-${ASK_QUESTIONS_TOOL_NAME}`,
+              toolCallId: 'call-1',
+              state: 'output-available',
+            }),
+          ],
+        },
+      }),
+    );
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      { id: THREAD_ID },
+      expect.objectContaining({
+        pendingQuestionMessageId: 'assistant-message-id',
+        totalInputTokens: 110,
+        totalOutputTokens: 25,
+      }),
+    );
+  });
+
+  it('clears the waiting state when the agent finished without asking', async () => {
+    const { service, threadRepository } = buildService();
+
+    const { pendingQuestions } = await service.recordAssistantTurn({
+      thread: buildThread() as never,
+      agentId: null,
+      executionResult: {
+        result: { response: 'Done.' },
+        usage: { inputTokens: 1, outputTokens: 1 },
+        cacheCreationTokens: 0,
+        nativeWebSearchCallCount: 0,
+        hasNoMoreAvailableCredits: false,
+        steps: [{ text: 'Done.', toolCalls: [], toolResults: [] }],
+      } as never,
+    });
+
+    expect(pendingQuestions).toBeNull();
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      { id: THREAD_ID },
+      expect.objectContaining({ pendingQuestionMessageId: null }),
+    );
+  });
+
+  it('answers the question, records the answer and re-queues the step', async () => {
+    const {
+      service,
+      agentChatService,
+      threadRepository,
+      workflowRunWorkspaceService,
+      messageQueueService,
+      eventPublisherService,
+    } = buildService();
+
+    await service.answerRunQuestion({
+      thread: buildThread() as never,
+      messageId: 'question-message-id',
+      answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+      userWorkspaceId: OWNER_ID,
+    });
+
+    expect(agentChatService.resolvePendingQuestion).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadId: THREAD_ID,
+        messageId: 'question-message-id',
+      }),
+    );
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      expect.objectContaining({ id: THREAD_ID }),
+      { activeStreamId: null },
+    );
+    expect(agentChatService.addMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        uiMessage: {
+          role: 'user',
+          parts: [{ type: 'text', text: 'Send outreach: Send it' }],
+        },
+        authorUserWorkspaceId: OWNER_ID,
+      }),
+    );
+    expect(eventPublisherService.publish).toHaveBeenCalledWith(
+      expect.objectContaining({ event: { type: 'question-answered' } }),
+    );
+    expect(
+      workflowRunWorkspaceService.updateWorkflowRunStepInfo,
+    ).toHaveBeenCalledWith({
+      stepId: STEP_ID,
+      stepInfo: { status: StepStatus.NOT_STARTED },
+      workflowRunId: RUN_ID,
+      workspaceId: WORKSPACE_ID,
+    });
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      RUN_WORKFLOW_JOB_NAME,
+      { workspaceId: WORKSPACE_ID, workflowRunId: RUN_ID, stepIdsToRetry: [STEP_ID] },
+      expect.objectContaining({ id: RUN_ID }),
+    );
+  });
+
+  it('rebuilds the conversation as text for the resumed agent', async () => {
+    const { service, messageRepository } = buildService();
+
+    messageRepository.find.mockResolvedValueOnce([
+      {
+        role: AgentMessageRole.USER,
+        parts: [{ orderIndex: 0, type: 'text', textContent: 'Qualify this lead.' }],
+      },
+      {
+        role: AgentMessageRole.ASSISTANT,
+        parts: [
+          { orderIndex: 1, type: 'tool-ask_questions', toolName: ASK_QUESTIONS_TOOL_NAME, toolOutput: { result: { questions: QUESTIONS, status: 'answered', answers: [{ questionIndex: 0, selectedOptionIndices: [1] }] } } },
+          { orderIndex: 0, type: 'text', textContent: 'Draft ready.' },
+        ],
+      },
+    ]);
+
+    const transcript = await service.loadTranscript({
+      threadId: THREAD_ID,
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(transcript).toEqual([
+      { role: 'user', content: 'Qualify this lead.' },
+      {
+        role: 'assistant',
+        content:
+          'Draft ready.\nAsked: Send the email now? (options: Send it, Hold)\nAnswered: Send outreach: Hold',
+      },
+    ]);
+  });
+});

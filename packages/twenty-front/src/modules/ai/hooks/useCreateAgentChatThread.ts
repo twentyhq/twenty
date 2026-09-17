@@ -41,6 +41,8 @@ export const useCreateAgentChatThread = () => {
         id: data.createChatThread.id,
         title: data.createChatThread.title ?? null,
         channelId: data.createChatThread.channelId ?? null,
+        workflowRunId: null,
+        workflowStepId: null,
         ownerUserWorkspaceId: data.createChatThread.ownerUserWorkspaceId,
         createdAt: data.createChatThread.createdAt,
         updatedAt: data.createChatThread.updatedAt,

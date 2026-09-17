@@ -17,6 +17,12 @@ export class AgentChatThreadDTO {
   @Field(() => UUIDScalarType)
   ownerUserWorkspaceId: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  workflowRunId: string | null;
+
+  @Field(() => String, { nullable: true })
+  workflowStepId: string | null;
+
   @Field(() => Int)
   totalCacheReadTokens: number;
 
