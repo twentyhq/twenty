@@ -216,7 +216,7 @@ export class ObjectMetadataService {
     if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while updating objects',
+        `Multiple validation errors occurred while updating object${updateObjectInputs.length > 1 ? 's' : ''}`,
       );
     }
 
