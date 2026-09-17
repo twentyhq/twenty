@@ -153,16 +153,20 @@ export class MessageQueueExplorer implements OnModuleInit {
           return acc;
         }
 
-        if (!acc[queueName]) {
-          acc[queueName] = [];
-        }
+        const queueNames = Array.isArray(queueName) ? queueName : [queueName];
 
-        acc[queueName].push({
-          instance,
-          host: wrapper.host,
-          processMethodNames,
-          isRequestScoped: !wrapper.isDependencyTreeStatic(),
-        });
+        for (const processorQueueName of queueNames) {
+          if (!acc[processorQueueName]) {
+            acc[processorQueueName] = [];
+          }
+
+          acc[processorQueueName].push({
+            instance,
+            host: wrapper.host,
+            processMethodNames,
+            isRequestScoped: !wrapper.isDependencyTreeStatic(),
+          });
+        }
 
         return acc;
       },

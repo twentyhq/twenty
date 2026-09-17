@@ -68,3 +68,70 @@ describe('MessageQueueExplorer progress context', () => {
     }
   });
 });
+
+const multiQueueJobValues: string[] = [];
+
+@Processor([
+  MessageQueue.workspaceQueue,
+  MessageQueue.applicationLifecycleHookQueue,
+])
+class MultiQueueProcessor {
+  @Process('multi-queue-job')
+  async handle(data: { value: string }) {
+    multiQueueJobValues.push(data.value);
+  }
+}
+
+describe('MessageQueueExplorer multi queue processor', () => {
+  it('creates a worker on every queue a processor subscribes to', async () => {
+    const driver = new SyncDriver();
+    const workspaceQueue = new MessageQueueService(
+      driver,
+      MessageQueue.workspaceQueue,
+    );
+    const applicationLifecycleHookQueue = new MessageQueueService(
+      driver,
+      MessageQueue.applicationLifecycleHookQueue,
+    );
+    const module = await Test.createTestingModule({
+      imports: [DiscoveryModule],
+      providers: [
+        MultiQueueProcessor,
+        MessageQueueExplorer,
+        MessageQueueMetadataAccessor,
+        {
+          provide: getQueueToken(MessageQueue.workspaceQueue),
+          useValue: workspaceQueue,
+        },
+        {
+          provide: getQueueToken(MessageQueue.applicationLifecycleHookQueue),
+          useValue: applicationLifecycleHookQueue,
+        },
+        { provide: TwentyConfigService, useValue: { get: () => [] } },
+        {
+          provide: ExceptionHandlerService,
+          useValue: { captureExceptions: jest.fn() },
+        },
+        {
+          provide: EventLoopStallMonitorService,
+          useValue: { registerJobStart: jest.fn(), registerJobEnd: jest.fn() },
+        },
+      ],
+    }).compile();
+
+    try {
+      await module.init();
+      await workspaceQueue.add('multi-queue-job', { value: 'workspace' });
+      await applicationLifecycleHookQueue.add('multi-queue-job', {
+        value: 'application-lifecycle-hook',
+      });
+
+      expect(multiQueueJobValues).toEqual([
+        'workspace',
+        'application-lifecycle-hook',
+      ]);
+    } finally {
+      await module.close();
+    }
+  });
+});

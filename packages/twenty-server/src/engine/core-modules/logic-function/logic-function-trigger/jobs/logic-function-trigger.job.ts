@@ -23,8 +23,13 @@ export type LogicFunctionTriggerJobData = {
   applicationRetryCount?: number;
 };
 
+// Application install/uninstall hooks run the same job on their own queue,
+// which is throttled to a single concurrent execution
 @Processor({
-  queueName: MessageQueue.logicFunctionQueue,
+  queueName: [
+    MessageQueue.logicFunctionQueue,
+    MessageQueue.applicationLifecycleHookQueue,
+  ],
   scope: Scope.REQUEST,
 })
 export class LogicFunctionTriggerJob {

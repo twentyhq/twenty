@@ -174,8 +174,8 @@ export class WorkspaceService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly deleteCascadeMessageQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
-    private readonly logicFunctionMessageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.applicationLifecycleHookQueue)
+    private readonly applicationLifecycleHookQueueService: MessageQueueService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
@@ -737,7 +737,7 @@ export class WorkspaceService {
   async enqueueWorkspaceDeletionApplicationUninstall(
     workspaceId: string,
   ): Promise<void> {
-    await this.logicFunctionMessageQueueService.add<WorkspaceDeletionApplicationUninstallJobData>(
+    await this.applicationLifecycleHookQueueService.add<WorkspaceDeletionApplicationUninstallJobData>(
       WorkspaceDeletionApplicationUninstallJob.name,
       { workspaceId },
       {
