@@ -1,13 +1,15 @@
 import { RecordExportStreamWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-stream.workspace-service';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
-import { DeleteRecordExportJob } from 'src/engine/core-modules/record-export/jobs/delete-record-export.job';
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { RecordExportSecurityService } from 'src/engine/core-modules/record-export/services/record-export-security.service';
 
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { GenerateRecordExportJob } from 'src/engine/core-modules/record-export/jobs/generate-record-export.job';
@@ -22,6 +24,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([FileEntity]),
     TokenModule,
     UserSessionModule,
     WorkspaceCacheStorageModule,
@@ -39,7 +42,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordExportResolver,
     RecordExportStreamWorkspaceService,
     RecordExportCacheService,
-    DeleteRecordExportJob,
+    provideWorkspaceScopedRepository(FileEntity),
     RecordExportWorkspaceService,
     RecordExportQueryWorkspaceService,
     GenerateRecordExportJob,

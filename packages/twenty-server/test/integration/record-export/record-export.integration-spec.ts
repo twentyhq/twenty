@@ -1,3 +1,4 @@
+import { type PendingFileCleanupCronJob } from 'src/engine/core-modules/file/file-upload/crons/jobs/pending-file-cleanup.cron.job';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -29,7 +30,11 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { FeatureFlagKey, OrderByDirection } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  FileFolder,
+  OrderByDirection,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -40,7 +45,6 @@ import { type FileStorageService } from 'src/engine/core-modules/file-storage/se
 import { type CreateRecordExportInput } from 'src/engine/core-modules/record-export/dtos/create-record-export.input';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
-import { type DeleteRecordExportJob } from 'src/engine/core-modules/record-export/jobs/delete-record-export.job';
 import { type RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 import { type RecordExportQueryWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-query.workspace-service';
 import { type RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
@@ -70,7 +74,6 @@ describe('record export lifecycle (integration)', () => {
   let cache: RecordExportCacheService;
   let storage: FileStorageService;
   let query: RecordExportQueryWorkspaceService;
-  let cleanup: DeleteRecordExportJob;
   let originalRoleId: string;
   let roleId: string;
   let wasAsyncCsvExportEnabled: boolean;
@@ -185,7 +188,6 @@ describe('record export lifecycle (integration)', () => {
     cache = getAppProviderByClassName('RecordExportCacheService');
     storage = getAppProviderByClassName('FileStorageService');
     query = getAppProviderByClassName('RecordExportQueryWorkspaceService');
-    cleanup = getAppProviderByClassName('DeleteRecordExportJob');
     const { objects } = await findManyObjectMetadata({
       input: { filter: {}, paging: { first: 1000 } },
       gqlFields: 'id nameSingular fieldsList { id name }',
@@ -326,7 +328,23 @@ describe('record export lifecycle (integration)', () => {
     expect(recordExport.totalRecordCount).toBe(1004);
     const stored = await getExport(recordExport.id);
     expect(await fileExists(stored)).toBe(true);
+    const [file] = await globalThis.testDataSource.query(
+      'SELECT id, status, size, "mimeType" FROM core.file WHERE "workspaceId" = $1 AND path = $2',
+      [
+        SEED_APPLE_WORKSPACE_ID,
+        `${FileFolder.RecordExport}/${stored.filePath}`,
+      ],
+    );
+    expect(file).toMatchObject({ status: 'UPLOADED', mimeType: 'text/csv' });
     const response = await download(recordExport).expect(200);
+    expect(Number(file.size)).toBe(Buffer.byteLength(response.text));
+    await waitUntil(async () => {
+      const rows = await globalThis.testDataSource.query(
+        'SELECT id FROM core.file WHERE id = $1',
+        [file.id],
+      );
+      return rows.length === 0;
+    });
     expect(response.headers['content-disposition']).toBe(
       'attachment; filename="company.csv"',
     );
@@ -405,44 +423,39 @@ describe('record export lifecycle (integration)', () => {
     }
   });
 
-  it.each([MessageQueue.recordExportQueue, MessageQueue.cronQueue])(
-    'releases the workspace slot when %s cannot accept a job',
-    async (queueName) => {
-      const completed = await exportToCompletion();
-      const stored = await getExport(completed.id);
-      const requester = await query.resolveRequester(stored);
-      const queue = global.app.get<MessageQueueService>(
-        getQueueToken(queueName),
-      );
-      const create = cache.create.bind(cache);
-      let failed: RecordExport | undefined;
-      jest.spyOn(cache, 'create').mockImplementation(async (parameters) => {
-        const recordExport = await create(parameters);
-        exportIds.add(recordExport.id);
-        failed = recordExport;
-        return recordExport;
-      });
-      jest
-        .spyOn(queue, 'add')
-        .mockRejectedValueOnce(new Error('Queue unavailable'));
-      await expect(
-        exports.enqueue(
-          await exports.create({
-            parameters: input,
-            authContext: requester,
-            requestTokenHash: hashUserSessionToken(
-              APPLE_JANE_ADMIN_ACCESS_TOKEN,
-            ),
-          }),
-        ),
-      ).rejects.toThrow('Queue unavailable');
-      expect((await getExport(failed!.id)).status).toBe(
-        RecordExportStatus.FAILED,
-      );
-      const next = await exportToCompletion();
-      await download(next).expect(200);
-    },
-  );
+  it('releases the workspace slot when the export queue cannot accept a job', async () => {
+    const completed = await exportToCompletion();
+    const stored = await getExport(completed.id);
+    const requester = await query.resolveRequester(stored);
+    const queue = global.app.get<MessageQueueService>(
+      getQueueToken(MessageQueue.recordExportQueue),
+    );
+    const create = cache.create.bind(cache);
+    let failed: RecordExport | undefined;
+    jest.spyOn(cache, 'create').mockImplementation(async (parameters) => {
+      const recordExport = await create(parameters);
+      exportIds.add(recordExport.id);
+      failed = recordExport;
+      return recordExport;
+    });
+    jest
+      .spyOn(queue, 'add')
+      .mockRejectedValueOnce(new Error('Queue unavailable'));
+    await expect(
+      exports.enqueue(
+        await exports.create({
+          parameters: input,
+          authContext: requester,
+          requestTokenHash: hashUserSessionToken(APPLE_JANE_ADMIN_ACCESS_TOKEN),
+        }),
+      ),
+    ).rejects.toThrow('Queue unavailable');
+    expect((await getExport(failed!.id)).status).toBe(
+      RecordExportStatus.FAILED,
+    );
+    const next = await exportToCompletion();
+    await download(next).expect(200);
+  });
 
   it('renews the lease during queue handoff and paused event consumption', async () => {
     const ready = await exportToCompletion();
@@ -688,11 +701,19 @@ describe('record export lifecycle (integration)', () => {
 
   it('removes a partial file when generation fails', async () => {
     let partialFilePath: string | undefined;
+    let pendingFile: { id: string; status: string } | undefined;
     const writeFileStream = storage.writeFileStream.bind(storage);
     jest
       .spyOn(storage, 'writeFileStream')
       .mockImplementation(async (resource) => {
         partialFilePath = resource.resourcePath;
+        [pendingFile] = await globalThis.testDataSource.query(
+          'SELECT id, status FROM core.file WHERE "workspaceId" = $1 AND path = $2',
+          [
+            SEED_APPLE_WORKSPACE_ID,
+            `${FileFolder.RecordExport}/${partialFilePath}`,
+          ],
+        );
         return writeFileStream(resource);
       });
     const readPage = query.readPage.bind(query);
@@ -709,6 +730,13 @@ describe('record export lifecycle (integration)', () => {
     }
     expect(recordExport.downloadUrl).toBeNull();
     expect(partialFilePath).toBeDefined();
+    expect(pendingFile).toMatchObject({ status: 'PENDING' });
+    expect(
+      await globalThis.testDataSource.query(
+        'SELECT id FROM core.file WHERE id = $1',
+        [pendingFile!.id],
+      ),
+    ).toEqual([]);
     expect(
       await storage.checkFileExists(
         exports.getFileResource({
@@ -717,22 +745,6 @@ describe('record export lifecycle (integration)', () => {
         }),
       ),
     ).toBe(false);
-  });
-
-  it('keeps a ready file until its cache expires and then runs storage cleanup', async () => {
-    const recordExport = await exportToCompletion();
-    const stored = await getExport(recordExport.id);
-    await cleanup.handle({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      recordExportId: stored.id,
-    });
-    expect(await fileExists(stored)).toBe(true);
-    await cache.delete({ workspaceId: SEED_APPLE_WORKSPACE_ID, id: stored.id });
-    await cleanup.handle({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      recordExportId: stored.id,
-    });
-    expect(await fileExists(stored)).toBe(false);
   });
 
   it('cleans up a download when the storage stream fails', async () => {
@@ -879,7 +891,7 @@ describe('record export lifecycle (integration)', () => {
       }
       if (cleanupFails) {
         jest
-          .spyOn(storage, 'deleteFolderObjects')
+          .spyOn(storage, 'deleteFolder')
           .mockRejectedValueOnce(new Error('Storage deletion unavailable'));
       }
       const response = await download(recordExport).expect(403);
@@ -887,10 +899,18 @@ describe('record export lifecycle (integration)', () => {
       expect(await cache.findOne(stored)).toBeUndefined();
       if (cleanupFails) {
         expect(await fileExists(stored)).toBe(true);
-        await cleanup.handle({
-          workspaceId: stored.workspaceId,
-          recordExportId: stored.id,
-        });
+        await globalThis.testDataSource.query(
+          'UPDATE core.file SET "createdAt" = $3 WHERE "workspaceId" = $1 AND path = $2',
+          [
+            stored.workspaceId,
+            `${FileFolder.RecordExport}/${stored.filePath}`,
+            new Date(Date.now() - 61 * 60_000),
+          ],
+        );
+        const cleanup = getAppProviderByClassName<PendingFileCleanupCronJob>(
+          'PendingFileCleanupCronJob',
+        );
+        await cleanup.handle();
       }
       expect(await fileExists(stored)).toBe(false);
     },

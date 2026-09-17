@@ -14,6 +14,10 @@ import {
 import { v4 } from 'uuid';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -44,6 +48,8 @@ export class GenerateRecordExportJob {
     private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
     private readonly recordExportQueryWorkspaceService: RecordExportQueryWorkspaceService,
     private readonly fileStorageService: FileStorageService,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -230,6 +236,18 @@ export class GenerateRecordExportJob {
         } while (true);
       }
 
+      const resource = this.recordExportWorkspaceService.getFileResource({
+        workspaceId,
+        resourcePath: filePath,
+      });
+      const file = await this.fileStorageService.createPendingFile({
+        ...resource,
+        fileId: attemptId,
+        size: 0,
+        mimeType: 'application/octet-stream',
+        settings: { isTemporaryFile: true, toDelete: false },
+      });
+
       stream = Readable.from(generateCsv(), {
         signal: AbortSignal.timeout(
           Math.max(
@@ -240,13 +258,16 @@ export class GenerateRecordExportJob {
         ),
       });
       await this.fileStorageService.writeFileStream({
-        ...this.recordExportWorkspaceService.getFileResource({
-          workspaceId,
-          resourcePath: filePath,
-        }),
+        ...resource,
         stream,
         mimeType: 'text/csv',
       });
+
+      await this.fileRepository.update(
+        workspaceId,
+        { id: file.id },
+        { status: FILE_STATUS.UPLOADED, size: bytes, mimeType: 'text/csv' },
+      );
 
       await this.recordExportSecurityService.assertPermissionsUnchanged(
         recordExport,
@@ -274,7 +295,7 @@ export class GenerateRecordExportJob {
     } catch (error) {
       stream?.destroy();
       await this.fileStorageService
-        .deleteFileObject(
+        .deleteFile(
           this.recordExportWorkspaceService.getFileResource({
             workspaceId,
             resourcePath: filePath,

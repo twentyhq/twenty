@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { t } from '@lingui/core/macro';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
@@ -21,7 +22,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   RECORD_EXPORT_MAX_DURATION_MS,
-  RECORD_EXPORT_CLEANUP_JOB_OPTIONS,
   RECORD_EXPORT_MISSING_JOB_TIMEOUT_MS,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
@@ -38,8 +38,6 @@ export class RecordExportWorkspaceService {
     private readonly recordExportSecurityService: RecordExportSecurityService,
     @InjectMessageQueue(MessageQueue.recordExportQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.cronQueue)
-    private readonly cleanupQueueService: MessageQueueService,
     private readonly recordExportQueryWorkspaceService: RecordExportQueryWorkspaceService,
     private readonly fileStorageService: FileStorageService,
     private readonly jwtWrapperService: JwtWrapperService,
@@ -83,21 +81,6 @@ export class RecordExportWorkspaceService {
   async enqueue(recordExport: RecordExport): Promise<void> {
     const workspaceId = recordExport.workspaceId;
     try {
-      const cleanupJobId = await this.cleanupQueueService.add(
-        'DeleteRecordExportJob',
-        { workspaceId, recordExportId: recordExport.id },
-        {
-          ...RECORD_EXPORT_CLEANUP_JOB_OPTIONS,
-          id: recordExport.id,
-        },
-      );
-      if (!isDefined(cleanupJobId)) {
-        throw new RecordExportException(
-          'Export cleanup could not be queued',
-          'QUEUE_UNAVAILABLE',
-        );
-      }
-
       const jobId = await this.messageQueueService.add(
         'GenerateRecordExportJob',
         { workspaceId, recordExportId: recordExport.id },
@@ -139,9 +122,11 @@ export class RecordExportWorkspaceService {
     id: string;
   }): Promise<void> {
     await this.recordExportCacheService.delete({ workspaceId, id });
-    await this.fileStorageService.deleteFolderObjects({
+    await this.fileStorageService.deleteFolder({
       ...this.getFileResource({ workspaceId, resourcePath: id }),
       folderPath: id,
+      // Pending rows must survive cancellation until their writer has stopped.
+      fileStatus: FILE_STATUS.UPLOADED,
     });
   }
 
