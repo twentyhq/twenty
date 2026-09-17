@@ -5,13 +5,13 @@ import 'twenty-ui/theme-dark.css';
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 import { enqueueSnackbar, useColorScheme } from 'twenty-sdk/front-component';
+import { ProgressBar } from 'twenty-ui/feedback';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
-import { ProgressRing } from 'src/front-components/components/ProgressRing';
 import { useBackfillStatus } from 'src/front-components/hooks/use-backfill-status';
 import { useRequestBackfill } from 'src/front-components/hooks/use-request-backfill';
 import { getBackfillFeedback } from 'src/front-components/utils/get-backfill-feedback.util';
@@ -32,7 +32,6 @@ const StyledActionRow = styled.div`
   gap: ${() => themeCssVariables.spacing[3]};
 `;
 
-// Mirrors the ring-and-caption row twenty-front uses for usage meters.
 const StyledProgressRow = styled.div`
   align-items: center;
   color: ${() => themeCssVariables.font.color.tertiary};
@@ -42,6 +41,13 @@ const StyledProgressRow = styled.div`
   font-weight: ${() => themeCssVariables.font.weight.medium};
   gap: ${() => themeCssVariables.spacing[2]};
   white-space: nowrap;
+`;
+
+// ProgressBar fills the width it is given, so it needs a box of its own to sit
+// next to the button rather than across the whole panel.
+const StyledProgressBarContainer = styled.div`
+  display: flex;
+  width: ${() => themeCssVariables.spacing[30]};
 `;
 
 export const LastContactSettings = () => {
@@ -64,7 +70,7 @@ export const LastContactSettings = () => {
   };
 
   // ThemeProvider applies the color-scheme class the theme CSS variables hang
-  // off, without which every token above resolves to nothing.
+  // off, without which every token here resolves to nothing.
   return (
     <ThemeProvider colorScheme={colorScheme}>
       <StyledContainer>
@@ -86,7 +92,15 @@ export const LastContactSettings = () => {
             {!isUndefined(progressMessage) && (
               <StyledProgressRow>
                 {!isUndefined(progressPercentage) && (
-                  <ProgressRing value={progressPercentage} />
+                  <StyledProgressBarContainer>
+                    <ProgressBar
+                      value={progressPercentage}
+                      barColor={themeCssVariables.color.blue}
+                      backgroundColor={themeCssVariables.background.quaternary}
+                      withBorderRadius
+                      ariaLabel="Backfill progress"
+                    />
+                  </StyledProgressBarContainer>
                 )}
                 <span>{progressMessage}</span>
               </StyledProgressRow>
