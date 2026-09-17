@@ -257,6 +257,12 @@ export class WorkflowCommonWorkspaceService {
           { shouldBypassPermissionChecks: true },
         );
 
+      const workflowRepository =
+        this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+          'workflow',
+          { shouldBypassPermissionChecks: true },
+        );
+
       const workflowAutomatedTriggerRepository =
         this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
           'workflowAutomatedTrigger',
@@ -289,14 +295,6 @@ export class WorkflowCommonWorkspaceService {
               workflowId,
             ]);
 
-            await workflowAutomatedTriggerRepository.restore({
-              workflowId,
-            });
-
-            await workflowRunRepository.restore({
-              workflowId,
-            });
-
             await workflowVersionRepository.restore({
               workflowId,
             });
@@ -305,6 +303,58 @@ export class WorkflowCommonWorkspaceService {
               workspaceId,
               workflowId,
             );
+
+            const workflow = await workflowRepository.findOne({
+              where: { id: workflowId },
+              select: { coreWorkflowId: true },
+            });
+            const workflowVersions = await workflowVersionRepository.find({
+              where: { workflowId },
+              select: { id: true, coreWorkflowVersionId: true },
+            });
+
+            if (
+              !isDefined(workflow?.coreWorkflowId) ||
+              workflowVersions.some(
+                (workflowVersion) =>
+                  !isDefined(workflowVersion.coreWorkflowVersionId),
+              )
+            ) {
+              throw new Error(
+                `Missing core mapping while restoring workflow ${workflowId}`,
+              );
+            }
+
+            await this.workspaceOrmManager.runInWorkspaceTransaction(
+              async ({ getRepository }) => {
+                const transactionalWorkflowRunRepository =
+                  getRepository<WorkflowRunWorkspaceEntity>('workflowRun', {
+                    shouldBypassPermissionChecks: true,
+                  });
+
+                await transactionalWorkflowRunRepository.restore({
+                  workflowId,
+                });
+                await transactionalWorkflowRunRepository.update(
+                  { workflowId },
+                  { coreWorkflowId: workflow.coreWorkflowId },
+                );
+
+                for (const workflowVersion of workflowVersions) {
+                  await transactionalWorkflowRunRepository.update(
+                    { workflowId, workflowVersionId: workflowVersion.id },
+                    {
+                      coreWorkflowVersionId:
+                        workflowVersion.coreWorkflowVersionId,
+                    },
+                  );
+                }
+              },
+            );
+
+            await workflowAutomatedTriggerRepository.restore({
+              workflowId,
+            });
 
             break;
         }

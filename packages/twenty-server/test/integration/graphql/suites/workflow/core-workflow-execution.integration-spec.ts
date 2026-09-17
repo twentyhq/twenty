@@ -807,6 +807,70 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(retried.state.stepInfos[failedStep.id].status).toBe('FAILED');
   });
 
+  it('relinks restored runs before retrying their captured snapshots', async () => {
+    const failedStep: WorkflowAction = {
+      ...emptyStep(),
+      type: WorkflowActionType.DELAY,
+      settings: {
+        ...settings,
+        input: {
+          delayType: 'SCHEDULED_DATE',
+          scheduledDateTime: '2000-01-01T00:00:00.000Z',
+        },
+      },
+    };
+    const fixture = await createFixture({ steps: [failedStep] });
+    const originalCoreWorkflowId = fixture.coreWorkflowId;
+    const runId = await runFixture(fixture);
+
+    await waitForRun(runId, 'FAILED');
+
+    const deleteResponse = await workflowGraphqlRequest(
+      'mutation Delete($id: UUID!) { deleteWorkflow(id: $id) { id } }',
+      { id: fixture.workflowId },
+    );
+
+    expect(deleteResponse.body.errors).toBeUndefined();
+
+    await global.testDataSource.query(
+      'DELETE FROM core.workflow WHERE id = $1',
+      [originalCoreWorkflowId],
+    );
+
+    const restoreResponse = await workflowGraphqlRequest(
+      'mutation Restore($id: UUID!) { restoreWorkflow(id: $id) { id } }',
+      { id: fixture.workflowId },
+    );
+
+    expect(restoreResponse.body.errors).toBeUndefined();
+
+    const [restoredMapping] = await global.testDataSource.query(
+      `SELECT w."coreWorkflowId", wv."coreWorkflowVersionId"
+       FROM "${schema}".workflow w
+       JOIN "${schema}"."workflowVersion" wv ON wv.id = $2
+       WHERE w.id = $1`,
+      [fixture.workflowId, fixture.workflowVersionId],
+    );
+    const restoredRun = await getRun(runId);
+
+    expect(restoredMapping.coreWorkflowId).not.toBe(originalCoreWorkflowId);
+    expect(restoredRun.coreWorkflowId).toBe(restoredMapping.coreWorkflowId);
+    expect(restoredRun.coreWorkflowVersionId).toBe(
+      restoredMapping.coreWorkflowVersionId,
+    );
+
+    fixture.coreWorkflowId = restoredMapping.coreWorkflowId;
+    fixture.coreWorkflowVersionId = restoredMapping.coreWorkflowVersionId;
+
+    const retryResponse = await workflowGraphqlRequest(
+      'mutation Retry($id: UUID!) { retryWorkflowRun(workflowRunId: $id) { id status } }',
+      { id: runId },
+    );
+
+    expect(retryResponse.body.errors).toBeUndefined();
+    await waitForRun(runId, 'FAILED');
+  });
+
   it('records hard-throttled runs with their requested id and snapshot', async () => {
     const fixture = await createFixture({ mirrorless: true });
     jest
