@@ -17,6 +17,8 @@ Metered in Twenty credits based on the bot's actual recording time, prorated by
 duration — **$1.00 per recording-hour** (1 credit). No recording — opted out,
 canceled, or no-show — means no charge.
 
+A single recording stops after 4 hours.
+
 AI summaries use workspace AI credits, billed on the model's token usage — the
 cost scales with how much was said in the meeting, typically **$0.02–$0.06 per
 meeting** on default models. Set the `CALL_RECORDER_SUMMARY_ENABLED` app

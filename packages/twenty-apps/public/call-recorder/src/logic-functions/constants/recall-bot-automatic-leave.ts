@@ -4,6 +4,7 @@ import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/lo
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds-env-var-name';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds-env-var-name';
 import { RECALL_BOT_EVERYONE_LEFT_MIN_ACTIVATE_AFTER_SECONDS } from 'src/logic-functions/constants/recall-bot-everyone-left-min-activate-after-seconds';
+import { RECALL_BOT_IN_CALL_RECORDING_TIMEOUT_SECONDS } from 'src/logic-functions/constants/recall-bot-in-call-recording-timeout-seconds';
 import {
   RECALL_BOT_DETECTION_USING_PARTICIPANT_EVENTS_TIMEOUT_SECONDS,
   RECALL_BOT_DETECTION_USING_PARTICIPANT_NAMES_MIN_TIMEOUT_SECONDS,
@@ -38,6 +39,7 @@ type RecallBotAutomaticLeave = {
     activate_after: number;
     timeout: number;
   };
+  in_call_recording_timeout: number;
 };
 
 export const getRecallBotAutomaticLeave = ({
@@ -66,6 +68,7 @@ export const getRecallBotAutomaticLeave = ({
       activate_after: RECALL_BOT_SILENCE_DETECTION_ACTIVATE_AFTER_SECONDS,
       timeout: RECALL_BOT_SILENCE_DETECTION_TIMEOUT_SECONDS,
     },
+    in_call_recording_timeout: RECALL_BOT_IN_CALL_RECORDING_TIMEOUT_SECONDS,
   };
 
   if (!isUndefined(waitingRoomTimeoutSeconds)) {

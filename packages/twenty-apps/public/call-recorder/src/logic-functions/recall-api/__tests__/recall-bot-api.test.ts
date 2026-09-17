@@ -122,6 +122,7 @@ describe('recall bot api', () => {
           activate_after: 1200,
           timeout: 300,
         },
+        in_call_recording_timeout: 14_400,
       },
       recording_config: {
         video_mixed_mp4: {},
@@ -271,6 +272,10 @@ describe('recall bot api', () => {
       audio_mixed_mp3: {},
       retention: { type: 'timed', hours: 166 },
     });
+    expect(
+      JSON.parse(fetchMock.mock.calls[0][1].body).automatic_leave
+        .in_call_recording_timeout,
+    ).toBe(14_400);
   });
 
   it('does not duplicate an existing Token authorization prefix', async () => {
