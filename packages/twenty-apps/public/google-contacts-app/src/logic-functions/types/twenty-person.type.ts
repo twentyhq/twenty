@@ -34,10 +34,10 @@ export type TwentyPersonRecord = {
   phones?: {
     primaryPhoneNumber?: string | null;
     primaryPhoneCallingCode?: string | null;
-    additionalPhones?: Partial<TwentyAdditionalPhoneInput>[] | null;
+    additionalPhones?:
+      { number?: string | null; callingCode?: string | null }[] | null;
   } | null;
   linkedinLink?: { primaryLinkUrl?: string | null } | null;
-  xLink?: { primaryLinkUrl?: string | null } | null;
   company?: { name?: string | null } | null;
 };
 
@@ -59,7 +59,6 @@ export type TwentyPersonInput = {
   phones: TwentyPhonesInput;
   jobTitle: string;
   linkedinLink: TwentyLinkInput;
-  xLink: TwentyLinkInput;
   avatarUrl: string;
 };
 

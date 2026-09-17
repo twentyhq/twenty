@@ -119,54 +119,39 @@ describe('mapGooglePerson', () => {
     });
   });
 
-  it('should map matching social links to their url', () => {
+  it('should map a linkedin url to the linkedin link', () => {
     const person = buildPerson({
       urls: [
-        { value: 'https://www.linkedin.com/in/johndoe' },
         { value: 'https://x.com/johndoe' },
+        { value: 'https://www.linkedin.com/in/johndoe' },
       ],
     });
-    const mappedPerson = mapGooglePerson(person);
 
-    expect(mappedPerson?.linkedinLink).toEqual({
+    expect(mapGooglePerson(person)?.linkedinLink).toEqual({
       primaryLinkUrl: 'https://www.linkedin.com/in/johndoe',
       primaryLinkLabel: '',
       secondaryLinks: null,
     });
-    expect(mappedPerson?.xLink?.primaryLinkUrl).toBe('https://x.com/johndoe');
   });
 
-  it('should empty the links when no url matches', () => {
+  it('should empty the linkedin link when no url matches', () => {
     const person = buildPerson({
       urls: [{ value: 'https://github.com/johndoe' }],
     });
-    const mappedPerson = mapGooglePerson(person);
-    const emptyLink = {
+
+    expect(mapGooglePerson(person)?.linkedinLink).toEqual({
       primaryLinkUrl: '',
       primaryLinkLabel: '',
       secondaryLinks: null,
-    };
-
-    expect(mappedPerson?.xLink).toEqual(emptyLink);
-    expect(mappedPerson?.linkedinLink).toEqual(emptyLink);
+    });
   });
 
   it('should not treat a lookalike domain as a match', () => {
     const person = buildPerson({
-      urls: [{ value: 'https://box.com/johndoe' }],
+      urls: [{ value: 'https://notlinkedin.com/in/johndoe' }],
     });
 
-    expect(mapGooglePerson(person)?.xLink?.primaryLinkUrl).toBe('');
-  });
-
-  it('should map a legacy twitter.com url to xLink', () => {
-    const person = buildPerson({
-      urls: [{ value: 'https://twitter.com/johndoe' }],
-    });
-
-    expect(mapGooglePerson(person)?.xLink?.primaryLinkUrl).toBe(
-      'https://twitter.com/johndoe',
-    );
+    expect(mapGooglePerson(person)?.linkedinLink?.primaryLinkUrl).toBe('');
   });
 
   it('should map the job title of the first organization', () => {
@@ -221,11 +206,6 @@ describe('mapGooglePerson', () => {
       },
       jobTitle: '',
       linkedinLink: {
-        primaryLinkUrl: '',
-        primaryLinkLabel: '',
-        secondaryLinks: null,
-      },
-      xLink: {
         primaryLinkUrl: '',
         primaryLinkLabel: '',
         secondaryLinks: null,

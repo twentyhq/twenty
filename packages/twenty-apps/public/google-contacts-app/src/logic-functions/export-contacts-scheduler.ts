@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { EXPORT_CONTACTS_ROUTE_PATH } from 'src/constants/route-paths';
 import { buildExportJobId } from 'src/logic-functions/data/build-export-job-id.util';
-import { fetchReadablePersonIds } from 'src/logic-functions/data/fetch-readable-person-ids.util';
+import { fetchReadablePeople } from 'src/logic-functions/data/fetch-readable-people.util';
 import { readRecordIds } from 'src/logic-functions/data/read-record-ids.util';
 import {
   EXPORT_CONTACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -44,12 +44,12 @@ const handler = async (payload: RoutePayload<{ recordIds?: unknown }>) => {
     return jsonResponse({ status: 'no-contacts-found' }, 200);
   }
 
-  const readableRecordIds = await fetchReadablePersonIds({
+  const readablePeople = await fetchReadablePeople({
     client: new CoreApiClient(),
     personIds: recordIds,
   });
 
-  if (readableRecordIds.length === 0) {
+  if (readablePeople.length === 0) {
     return jsonResponse({ status: 'no-contacts-found' }, 200);
   }
 
@@ -60,11 +60,11 @@ const handler = async (payload: RoutePayload<{ recordIds?: unknown }>) => {
       {
         payload: {
           connectionId: connection.id,
-          recordIds: readableRecordIds,
+          recordIds: readablePeople.map(({ id }) => id),
         },
         jobId: buildExportJobId({
           connectionId: connection.id,
-          recordIds: readableRecordIds,
+          people: readablePeople,
         }),
       },
     ],

@@ -3,13 +3,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   isUrlOnOneOfDomains,
   LINKEDIN_DOMAINS,
-  X_DOMAINS,
 } from 'src/logic-functions/data/link-domain.util';
 import { type GoogleContactWriteInput } from 'src/logic-functions/types/google-request.type';
-import {
-  type Organization,
-  type Person,
-} from 'src/logic-functions/types/google-response.type';
+import { type Person } from 'src/logic-functions/types/google-response.type';
 import { type TwentyPersonRecord } from 'src/logic-functions/types/twenty-person.type';
 
 const mapNames = (
@@ -70,12 +66,11 @@ const mapOrganizations = (
   const [existingOrganization, ...otherOrganizations] =
     existingContact?.organizations ?? [];
 
-  // Twenty owns the name and the title, so both are rebuilt from the record
-  // while everything else Google stored on that organization is carried over.
-  const preservedFields: Organization = { ...existingOrganization };
-
-  delete preservedFields.name;
-  delete preservedFields.title;
+  const {
+    name: _name,
+    title: _title,
+    ...preservedFields
+  } = existingOrganization ?? {};
 
   const organization = {
     ...preservedFields,
@@ -92,22 +87,19 @@ const mapUrls = (
   person: TwentyPersonRecord,
   existingContact: Person | undefined,
 ): GoogleContactWriteInput['urls'] => {
-  const twentyUrls = [
-    person.linkedinLink?.primaryLinkUrl,
-    person.xLink?.primaryLinkUrl,
-  ].filter(isNonEmptyString);
+  const twentyUrls = [person.linkedinLink?.primaryLinkUrl].filter(
+    isNonEmptyString,
+  );
 
   const preservedUrls = (existingContact?.urls ?? []).filter(
     (url) =>
       isNonEmptyString(url.value) &&
-      !isUrlOnOneOfDomains(url.value, [...LINKEDIN_DOMAINS, ...X_DOMAINS]),
+      !isUrlOnOneOfDomains(url.value, LINKEDIN_DOMAINS),
   );
 
   return [...preservedUrls, ...twentyUrls.map((url) => ({ value: url }))];
 };
 
-// Every field Twenty owns is always present, empty included: the update mask
-// covers them all, so a value cleared in Twenty has to clear in Google too.
 export const mapTwentyPerson = (
   person: TwentyPersonRecord,
   existingContact?: Person,

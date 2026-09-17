@@ -1,15 +1,22 @@
 import { createHash } from 'node:crypto';
 
-// Keyed on the selection itself: a resubmitted selection is deduplicated
-// before the worker picks it up, while a different one still gets its own job.
+import { type ReadablePerson } from 'src/logic-functions/data/fetch-readable-people.util';
+
 export const buildExportJobId = ({
   connectionId,
-  recordIds,
+  people,
 }: {
   connectionId: string;
-  recordIds: string[];
+  people: ReadablePerson[];
 }): string =>
   `export-contacts-${createHash('sha256')
-    .update(JSON.stringify([connectionId, [...recordIds].sort()]))
+    .update(
+      JSON.stringify([
+        connectionId,
+        [...people]
+          .sort((first, second) => first.id.localeCompare(second.id))
+          .map(({ id, updatedAt }) => [id, updatedAt ?? null]),
+      ]),
+    )
     .digest('hex')
     .slice(0, 32)}`;

@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest';
 import {
   isUrlOnOneOfDomains,
   LINKEDIN_DOMAINS,
-  X_DOMAINS,
 } from 'src/logic-functions/data/link-domain.util';
 
 describe('isUrlOnOneOfDomains', () => {
@@ -20,7 +19,9 @@ describe('isUrlOnOneOfDomains', () => {
   });
 
   it('should match a url written without a scheme', () => {
-    expect(isUrlOnOneOfDomains('x.com/john', X_DOMAINS)).toBe(true);
+    expect(isUrlOnOneOfDomains('linkedin.com/in/john', LINKEDIN_DOMAINS)).toBe(
+      true,
+    );
   });
 
   it('should not match a domain that merely ends with the same text', () => {
@@ -30,10 +31,12 @@ describe('isUrlOnOneOfDomains', () => {
   });
 
   it('should not match an unrelated domain', () => {
-    expect(isUrlOnOneOfDomains('https://example.com', X_DOMAINS)).toBe(false);
+    expect(isUrlOnOneOfDomains('https://example.com', LINKEDIN_DOMAINS)).toBe(
+      false,
+    );
   });
 
   it('should not match an unparseable url', () => {
-    expect(isUrlOnOneOfDomains('http://', X_DOMAINS)).toBe(false);
+    expect(isUrlOnOneOfDomains('http://', LINKEDIN_DOMAINS)).toBe(false);
   });
 });

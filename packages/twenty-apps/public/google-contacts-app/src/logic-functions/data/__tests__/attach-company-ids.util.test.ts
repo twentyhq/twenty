@@ -21,7 +21,6 @@ const buildPersonInput = (): TwentyPersonInput => ({
     primaryLinkLabel: '',
     secondaryLinks: null,
   },
-  xLink: { primaryLinkUrl: '', primaryLinkLabel: '', secondaryLinks: null },
   avatarUrl: '',
 });
 

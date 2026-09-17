@@ -3,7 +3,6 @@ import { type CountryCode, parsePhoneNumberWithError } from 'libphonenumber-js';
 import {
   isUrlOnOneOfDomains,
   LINKEDIN_DOMAINS,
-  X_DOMAINS,
 } from 'src/logic-functions/data/link-domain.util';
 import {
   type Person,
@@ -155,7 +154,6 @@ export const mapGooglePerson = (
   const phones = mapPhones(person);
   const jobTitle = person.organizations?.[0]?.title;
   const linkedinLink = findLink(person.urls, LINKEDIN_DOMAINS);
-  const xLink = findLink(person.urls, X_DOMAINS);
   const avatarUrl = mapAvatarUrl(person);
 
   return {
@@ -165,7 +163,6 @@ export const mapGooglePerson = (
     phones: phones ?? emptyPhones(),
     jobTitle: isNonEmptyString(jobTitle) ? jobTitle.trim() : '',
     linkedinLink: linkedinLink ?? emptyLink(),
-    xLink: xLink ?? emptyLink(),
     avatarUrl: avatarUrl ?? '',
   };
 };

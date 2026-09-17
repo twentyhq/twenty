@@ -1,30 +1,38 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, expect, it, vi } from 'vitest';
 
-import { fetchReadablePersonIds } from 'src/logic-functions/data/fetch-readable-person-ids.util';
+import { fetchReadablePeople } from 'src/logic-functions/data/fetch-readable-people.util';
 
 const buildClient = (query: ReturnType<typeof vi.fn>): CoreApiClient =>
   ({ query }) as unknown as CoreApiClient;
 
-describe('fetchReadablePersonIds', () => {
-  it('should keep only the ids the query answered with', async () => {
+describe('fetchReadablePeople', () => {
+  it('should keep only the people the query answered with', async () => {
     const query = vi.fn().mockResolvedValue({
-      people: { edges: [{ node: { id: 'a' } }, { node: { id: 'b' } }] },
+      people: {
+        edges: [
+          { node: { id: 'a', updatedAt: '2024-01-01T00:00:00Z' } },
+          { node: { id: 'b', updatedAt: '2024-01-02T00:00:00Z' } },
+        ],
+      },
     });
 
     await expect(
-      fetchReadablePersonIds({
+      fetchReadablePeople({
         client: buildClient(query),
         personIds: ['a', 'b', 'c'],
       }),
-    ).resolves.toEqual(['a', 'b']);
+    ).resolves.toEqual([
+      { id: 'a', updatedAt: '2024-01-01T00:00:00Z' },
+      { id: 'b', updatedAt: '2024-01-02T00:00:00Z' },
+    ]);
   });
 
   it('should return nothing when the caller can read none of the people', async () => {
     const query = vi.fn().mockResolvedValue({ people: { edges: [] } });
 
     await expect(
-      fetchReadablePersonIds({
+      fetchReadablePeople({
         client: buildClient(query),
         personIds: ['a', 'b'],
       }),
@@ -35,7 +43,7 @@ describe('fetchReadablePersonIds', () => {
     const query = vi.fn().mockResolvedValue({ people: { edges: [] } });
     const personIds = Array.from({ length: 201 }, (_, index) => `p${index}`);
 
-    await fetchReadablePersonIds({ client: buildClient(query), personIds });
+    await fetchReadablePeople({ client: buildClient(query), personIds });
 
     expect(query).toHaveBeenCalledTimes(2);
     expect(query.mock.calls[0][0].people.__args.filter.id.in).toHaveLength(200);
@@ -46,7 +54,7 @@ describe('fetchReadablePersonIds', () => {
     const query = vi.fn();
 
     await expect(
-      fetchReadablePersonIds({ client: buildClient(query), personIds: [] }),
+      fetchReadablePeople({ client: buildClient(query), personIds: [] }),
     ).resolves.toEqual([]);
     expect(query).not.toHaveBeenCalled();
   });

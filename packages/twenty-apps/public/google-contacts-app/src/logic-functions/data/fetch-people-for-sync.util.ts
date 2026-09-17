@@ -13,7 +13,6 @@ export type ExistingTwentyPeople = {
   byPrimaryEmail: Map<string, ExistingTwentyPerson>;
 };
 
-// Twenty filters emails case-sensitively, so both spellings have to be asked for.
 const buildEmailVariants = (primaryEmails: string[]): string[] => [
   ...new Set(primaryEmails.flatMap((email) => [email, email.toLowerCase()])),
 ];

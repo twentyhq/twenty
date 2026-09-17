@@ -107,7 +107,7 @@ describe('mapTwentyPerson', () => {
     ).toEqual([]);
   });
 
-  it('should clear the social links Twenty no longer has', () => {
+  it('should clear the linkedin link Twenty no longer has', () => {
     const existingContact = buildExistingContact({
       urls: [
         { value: 'https://johndoe.com' },
@@ -120,31 +120,31 @@ describe('mapTwentyPerson', () => {
     ]);
   });
 
-  it('should map the linkedin and x links', () => {
+  it('should map the linkedin link', () => {
     const person = buildTwentyPerson({
       linkedinLink: { primaryLinkUrl: 'https://linkedin.com/in/john' },
-      xLink: { primaryLinkUrl: 'https://x.com/john' },
     });
 
     expect(mapTwentyPerson(person).urls).toEqual([
       { value: 'https://linkedin.com/in/john' },
-      { value: 'https://x.com/john' },
     ]);
   });
 
-  it('should replace the social links but keep the other urls', () => {
+  it('should replace the linkedin link but keep the other urls', () => {
     const person = buildTwentyPerson({
       linkedinLink: { primaryLinkUrl: 'https://linkedin.com/in/john' },
     });
     const existingContact = buildExistingContact({
       urls: [
         { value: 'https://johndoe.com' },
+        { value: 'https://x.com/john' },
         { value: 'https://www.linkedin.com/in/outdated' },
       ],
     });
 
     expect(mapTwentyPerson(person, existingContact).urls).toEqual([
       { value: 'https://johndoe.com' },
+      { value: 'https://x.com/john' },
       { value: 'https://linkedin.com/in/john' },
     ]);
   });

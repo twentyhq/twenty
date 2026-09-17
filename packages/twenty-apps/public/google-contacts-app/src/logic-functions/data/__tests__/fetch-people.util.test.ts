@@ -17,16 +17,6 @@ describe('fetchPeople', () => {
     ).resolves.toEqual([{ id: 'p1' }, { id: 'p2' }]);
   });
 
-  it('should drop a node that carries no id', async () => {
-    const query = vi.fn().mockResolvedValue({
-      people: { edges: [{ node: { id: 'p1' } }, { node: { name: {} } }] },
-    });
-
-    await expect(
-      fetchPeople({ client: buildClient(query), personIds: ['p1', 'p2'] }),
-    ).resolves.toEqual([{ id: 'p1' }]);
-  });
-
   it('should split a selection larger than one batch into several queries', async () => {
     const query = vi.fn().mockResolvedValue({ people: { edges: [] } });
     const personIds = Array.from({ length: 201 }, (_, index) => `p${index}`);

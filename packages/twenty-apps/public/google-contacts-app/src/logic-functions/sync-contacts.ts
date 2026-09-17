@@ -49,8 +49,6 @@ const fetchAndUpsertPeople = async ({
   let pageToken: string | undefined;
   let nextSyncToken: string | undefined;
 
-  // Held across pages: Google can spread two contacts sharing a primary email
-  // over several of them, and only one of the two can own it in Twenty.
   const claimedPrimaryEmails = new Set<string>();
 
   do {

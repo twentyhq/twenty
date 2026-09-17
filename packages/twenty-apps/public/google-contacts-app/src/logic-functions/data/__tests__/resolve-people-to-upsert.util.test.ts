@@ -27,7 +27,6 @@ const buildPersonInput = (
     primaryLinkLabel: '',
     secondaryLinks: null,
   },
-  xLink: { primaryLinkUrl: '', primaryLinkLabel: '', secondaryLinks: null },
   avatarUrl: '',
 });
 

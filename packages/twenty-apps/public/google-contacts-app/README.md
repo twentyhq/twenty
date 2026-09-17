@@ -6,7 +6,7 @@
 
 - **Contacts imported automatically**: every 30 minutes, with your whole address book imported the moment you connect
 - **People sent back to Google**: select anyone in the People list and pick **Send to Google Contacts** from the command menu
-- **Names, emails, phone numbers, job titles, employers, LinkedIn and X links** kept in step both ways, plus contact photos on the way in
+- **Names, emails, phone numbers, job titles, employers, LinkedIn links** kept in step both ways, plus contact photos on the way in
 - **Your own account, not the workspace's**: each member connects their own Google account and syncs only their own contacts
 - **Edits in Twenty stick**: the more recent change wins, so a sync never reverts something you just typed
 
