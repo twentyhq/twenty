@@ -1,4 +1,4 @@
-import { sanitizeAutocompleteResults } from 'src/engine/core-modules/geo-map/utils/sanitize-autocomplete-results.util';
+import { sanitizeAddressAutocompleteGooglePlacesSuggestions } from 'src/engine/core-modules/geo-map/drivers/google-places/utils/sanitize-address-autocomplete-google-places-suggestions.util';
 
 // Real Google Places Autocomplete API prediction format
 const GOOGLE_PREDICTIONS = [
@@ -16,13 +16,14 @@ const GOOGLE_PREDICTIONS = [
   },
 ];
 
-describe('sanitizeAutocompleteResults', () => {
+describe('sanitizeAddressAutocompleteGooglePlacesSuggestions', () => {
   it('should return empty array for empty input', () => {
-    expect(sanitizeAutocompleteResults([])).toEqual([]);
+    expect(sanitizeAddressAutocompleteGooglePlacesSuggestions([])).toEqual([]);
   });
 
   it('should map predictions to text and placeId', () => {
-    const result = sanitizeAutocompleteResults(GOOGLE_PREDICTIONS);
+    const result =
+      sanitizeAddressAutocompleteGooglePlacesSuggestions(GOOGLE_PREDICTIONS);
 
     expect(result).toEqual([
       {
@@ -41,7 +42,9 @@ describe('sanitizeAutocompleteResults', () => {
   });
 
   it('should map a single prediction', () => {
-    const result = sanitizeAutocompleteResults([GOOGLE_PREDICTIONS[0]]);
+    const result = sanitizeAddressAutocompleteGooglePlacesSuggestions([
+      GOOGLE_PREDICTIONS[0],
+    ]);
 
     expect(result).toHaveLength(1);
     expect(result[0].text).toBe('48 Pirrama Road, Pyrmont NSW 2009, Australia');
