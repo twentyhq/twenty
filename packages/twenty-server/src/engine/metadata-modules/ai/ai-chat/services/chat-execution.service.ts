@@ -359,7 +359,7 @@ export class ChatExecutionService {
         })
       : undefined;
 
-    if (threadSharingContext?.isShared === true) {
+    if (threadSharingContext?.isShared) {
       processedMessages = injectMessageAuthors(processedMessages, {
         isShared: true,
         displayNameByUserWorkspaceId:

@@ -207,6 +207,10 @@ export class AgentChatChannelService {
       ...(isDefined(input.visibility) ? { visibility: input.visibility } : {}),
     };
 
+    if (Object.keys(updates).length === 0) {
+      return channel;
+    }
+
     const isVisibilityChanging =
       isDefined(updates.visibility) &&
       updates.visibility !== channel.visibility;
@@ -221,13 +225,11 @@ export class AgentChatChannelService {
         )
       : undefined;
 
-    if (Object.keys(updates).length > 0) {
-      await this.updateChannelOrThrow(
-        workspaceId,
-        channelId,
-        updates as QueryDeepPartialEntity<AgentChatChannelEntity>,
-      );
-    }
+    await this.updateChannelOrThrow(
+      workspaceId,
+      channelId,
+      updates as QueryDeepPartialEntity<AgentChatChannelEntity>,
+    );
 
     const updatedChannel = { ...channel, ...updates, updatedAt: new Date() };
     const recipientsAfter = this.getChannelRecipients(

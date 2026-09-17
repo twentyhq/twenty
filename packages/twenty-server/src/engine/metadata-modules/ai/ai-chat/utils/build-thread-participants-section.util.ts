@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatThreadSharingContext } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 
@@ -37,4 +38,4 @@ ${lines.join('\n')}`;
 const isDefinedSharedContext = (
   sharingContext: AgentChatThreadSharingContext | undefined,
 ): sharingContext is AgentChatThreadSharingContext =>
-  sharingContext?.isShared === true;
+  isDefined(sharingContext) && sharingContext.isShared;
