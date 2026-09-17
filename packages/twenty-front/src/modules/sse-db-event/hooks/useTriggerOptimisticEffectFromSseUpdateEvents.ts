@@ -136,7 +136,13 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         }
 
         // The tab that made the change already holds the mutation response, so its own echo carries nothing new.
-        if (isRecordUpdateAlreadyInCache({ cachedRecord, updatedRecord })) {
+        if (
+          isRecordUpdateAlreadyInCache({
+            cachedRecord,
+            updatedRecord,
+            objectMetadataItem,
+          })
+        ) {
           continue;
         }
 

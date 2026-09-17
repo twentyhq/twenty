@@ -1,4 +1,19 @@
 import { isRecordUpdateAlreadyInCache } from '@/sse-db-event/utils/isRecordUpdateAlreadyInCache';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+
+const objectMetadataItem = {
+  fields: [
+    ...personObjectMetadataItem.fields,
+    {
+      ...personObjectMetadataItem.fields[0],
+      name: 'settings',
+      type: FieldMetadataType.RAW_JSON,
+    },
+  ],
+};
 
 const cachedRecord = {
   __typename: 'Person',
@@ -16,6 +31,7 @@ const cachedRecord = {
     name: 'Tim Apple',
     context: { __typename: 'ActorContext', provider: null },
   },
+  settings: { enabled: null, __typename: 'custom' },
   companyId: 'company-1',
 };
 
@@ -24,6 +40,7 @@ describe('isRecordUpdateAlreadyInCache', () => {
     expect(
       isRecordUpdateAlreadyInCache({
         cachedRecord,
+        objectMetadataItem,
         updatedRecord: {
           id: 'person-1',
           jobTitle: 'Surveyor',
@@ -39,6 +56,7 @@ describe('isRecordUpdateAlreadyInCache', () => {
     expect(
       isRecordUpdateAlreadyInCache({
         cachedRecord,
+        objectMetadataItem,
         updatedRecord: {
           id: 'person-1',
           searchVector: "'mark':1",
@@ -53,6 +71,7 @@ describe('isRecordUpdateAlreadyInCache', () => {
     expect(
       isRecordUpdateAlreadyInCache({
         cachedRecord,
+        objectMetadataItem,
         updatedRecord: { id: 'person-1', jobTitle: 'Geologist' },
       }),
     ).toBe(false);
@@ -62,6 +81,7 @@ describe('isRecordUpdateAlreadyInCache', () => {
     expect(
       isRecordUpdateAlreadyInCache({
         cachedRecord,
+        objectMetadataItem,
         updatedRecord: {
           id: 'person-1',
           emails: { primaryEmail: 'other@example.com', additionalEmails: [] },
@@ -74,10 +94,32 @@ describe('isRecordUpdateAlreadyInCache', () => {
     expect(
       isRecordUpdateAlreadyInCache({
         cachedRecord,
+        objectMetadataItem,
         updatedRecord: {
           id: 'person-1',
           updatedAt: '2026-09-17T06:00:01.000Z',
         },
+      }),
+    ).toBe(false);
+  });
+
+  it('compares raw JSON values as is, keeping null properties and typename keys', () => {
+    expect(
+      isRecordUpdateAlreadyInCache({
+        cachedRecord,
+        objectMetadataItem,
+        updatedRecord: {
+          id: 'person-1',
+          settings: { enabled: null, __typename: 'custom' },
+        },
+      }),
+    ).toBe(true);
+
+    expect(
+      isRecordUpdateAlreadyInCache({
+        cachedRecord,
+        objectMetadataItem,
+        updatedRecord: { id: 'person-1', settings: {} },
       }),
     ).toBe(false);
   });
