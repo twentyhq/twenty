@@ -37,10 +37,7 @@ export const NavigationDrawerAiChatThreadItem = ({
 
   const isArchived = isDefined(thread.deletedAt);
   const displayLabel = thread.title || t`New chat`;
-  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(
-    thread.id,
-    AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER,
-  );
+  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({ threadId: thread.id, surface: AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER });
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     itemMenuDropdownId,

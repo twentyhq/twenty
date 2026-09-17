@@ -40,10 +40,13 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 
 // The same channel's menu is mounted in the sidebar and on its page at the
 // same time, so the dropdown id carries the surface to open only one of them.
-export const getAiChatChannelMenuDropdownId = (
-  channelId: string,
-  surface: AiChatThreadActionsSurface,
-) => `ai-chat-channel-menu-${surface}-${channelId}`;
+export const getAiChatChannelMenuDropdownId = ({
+  channelId,
+  surface,
+}: {
+  channelId: string;
+  surface: AiChatThreadActionsSurface;
+}) => `ai-chat-channel-menu-${surface}-${channelId}`;
 
 type AiChatChannelMenuProps = {
   channel: FlatAgentChatChannel;
@@ -55,7 +58,7 @@ export const AiChatChannelMenu = ({
   surface,
 }: AiChatChannelMenuProps) => {
   const { t } = useLingui();
-  const dropdownId = getAiChatChannelMenuDropdownId(channel.id, surface);
+  const dropdownId = getAiChatChannelMenuDropdownId({ channelId: channel.id, surface: surface });
   const { closeDropdown } = useCloseDropdown();
   const { openModal } = useModal();
   const [page, setPage] = useState<AiChatChannelMenuPage>(

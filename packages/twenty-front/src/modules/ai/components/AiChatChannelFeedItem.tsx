@@ -140,10 +140,7 @@ export const AiChatChannelFeedItem = ({
   const isArchived = isDefined(thread.deletedAt);
   const ThreadIcon = isArchived ? IconArchive : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
-  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(
-    thread.id,
-    AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
-  );
+  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({ threadId: thread.id, surface: AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL });
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     itemMenuDropdownId,
