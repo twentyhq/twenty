@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -142,7 +143,7 @@ describe('EventRelationFieldDiffValues', () => {
         />,
       );
 
-      fireEvent.mouseEnter(screen.getByText('Empty'));
+      await userEvent.hover(screen.getByText('Empty'));
 
       expect(await screen.findByText('Tim A → Empty')).toBeInTheDocument();
     });
@@ -155,7 +156,7 @@ describe('EventRelationFieldDiffValues', () => {
         />,
       );
 
-      fireEvent.mouseEnter(screen.getByText('Tim Apple'));
+      await userEvent.hover(screen.getByText('Tim Apple'));
 
       expect(await screen.findByText('Empty → Tim Apple')).toBeInTheDocument();
     });
@@ -168,7 +169,7 @@ describe('EventRelationFieldDiffValues', () => {
         />,
       );
 
-      fireEvent.mouseEnter(screen.getByText('Tim Apple'));
+      await userEvent.hover(screen.getByText('Tim Apple'));
 
       expect(await screen.findByText('Tim A → Tim Apple')).toBeInTheDocument();
     });

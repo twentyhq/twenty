@@ -59,6 +59,16 @@ export const NavigationMenuItemTypeTooltip = ({
       }
       sideOffset={theme.spacingMultiplicator}
       disabled={hidden}
+      onOpenChange={(...openChangeArguments) => {
+        const [open, eventDetails] = openChangeArguments;
+        const isDescendantFocus =
+          eventDetails.reason === 'trigger-focus' &&
+          eventDetails.event.target !== eventDetails.trigger;
+
+        if (open && isDescendantFocus) {
+          eventDetails.cancel();
+        }
+      }}
       side="top"
       positionMethod="fixed"
     >
