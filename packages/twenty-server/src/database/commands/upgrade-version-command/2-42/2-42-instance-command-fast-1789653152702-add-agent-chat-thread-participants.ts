@@ -5,7 +5,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 
 // Schema only; the owner rows and message authors are backfilled by the slow
 // command that follows so the bulk writes do not hold the DDL lock.
-@RegisteredInstanceCommand('2.42.0', 1789645520116)
+@RegisteredInstanceCommand('2.42.0', 1789653152702)
 export class AddAgentChatThreadParticipantsFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

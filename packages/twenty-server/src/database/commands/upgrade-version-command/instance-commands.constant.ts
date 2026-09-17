@@ -193,9 +193,9 @@ import { AddCoreVersionPointersFastInstanceCommand } from 'src/database/commands
 import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789373200000-add-readability-parent-fields-to-object-metadata';
 import { AddAppMessageChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789395506192-add-app-message-channel-type';
 import { AddAppMessageChannelUniqueHandleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789418882171-add-app-message-channel-unique-handle';
-import { AddAgentChatThreadParticipantsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789645520116-add-agent-chat-thread-participants';
-import { BackfillAgentChatThreadParticipantsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1789645520117-backfill-agent-chat-thread-participants';
-import { AddAgentChatChannelsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789647999774-add-agent-chat-channels';
+import { AddAgentChatThreadParticipantsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789653152702-add-agent-chat-thread-participants';
+import { BackfillAgentChatThreadParticipantsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1789653152703-backfill-agent-chat-thread-participants';
+import { AddAgentChatChannelsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789653152704-add-agent-chat-channels';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

@@ -5,7 +5,7 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 
 // Every pre-existing thread was private to its creator, so the creator
 // becomes its owner participant and the author of all its user messages.
-@RegisteredInstanceCommand('2.42.0', 1789645520117, { type: 'slow' })
+@RegisteredInstanceCommand('2.42.0', 1789653152703, { type: 'slow' })
 export class BackfillAgentChatThreadParticipantsSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(
