@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
@@ -11,7 +13,7 @@ import {
   IconDownload,
   IconInfoCircle,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -61,12 +63,13 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
       {installable && (
         <>
           <Button
-            Icon={IconDownload}
-            title={isInstalling ? t`Installing...` : t`Install`}
-            variant={'secondary'}
+            startIcon={<IconDownload />}
             onClick={requestInstall}
             disabled={isInstalling}
-          />
+            variant="outline"
+          >
+            {isInstalling ? t`Installing...` : t`Install`}
+          </Button>
           <SettingsApplicationInstallPermissionValidationModal
             modalInstanceId={modalInstanceId}
             appDisplayName={displayName}
@@ -79,9 +82,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
       )}
       {withCopyButton && (
         <Button
-          Icon={IconCopy}
-          title={t`Copy sharing link`}
-          variant="secondary"
+          startIcon={<IconCopy />}
           disabled={!shareLink}
           onClick={async () => {
             if (shareLink) {
@@ -91,15 +92,17 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
               );
             }
           }}
-        />
+          variant="outline"
+        >{t`Copy sharing link`}</Button>
       )}
-      <Button
-        Icon={isNpmSource ? IconArrowUpRight : IconInfoCircle}
-        title={isNpmSource ? t`See on marketplace` : t`See app page`}
-        variant="secondary"
+      <NavigationButton
+        startIcon={isNpmSource ? <IconArrowUpRight /> : <IconInfoCircle />}
         disabled={!shareLink}
-        to={shareLink}
-      />
+        to={isNonEmptyString(shareLink) ? shareLink : undefined}
+        variant="outline"
+      >
+        {isNpmSource ? t`See on marketplace` : t`See app page`}
+      </NavigationButton>
     </StyledButtonGroup>
   );
 };

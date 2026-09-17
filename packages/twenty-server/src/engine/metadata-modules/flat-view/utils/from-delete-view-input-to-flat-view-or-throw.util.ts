@@ -6,13 +6,14 @@ import {
 
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { type DeleteViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/delete-view.input';
 import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
 
 export const fromDeleteViewInputToFlatViewOrThrow = ({
   deleteViewInput: rawDeleteViewInput,
@@ -54,8 +55,13 @@ export const fromDeleteViewInputToFlatViewOrThrow = ({
 
   if (shouldDeactivate) {
     return {
-      ...existingFlatViewToDelete,
-      isActive: false,
+      ...dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
+        flatEntity: existingFlatViewToDelete,
+        isActive: false,
+        authorUniversalIdentifier: callerApplicationUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier,
+      }),
       updatedAt: now,
     };
   }

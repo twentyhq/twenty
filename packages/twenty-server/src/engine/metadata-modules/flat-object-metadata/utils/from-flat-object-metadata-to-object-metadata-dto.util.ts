@@ -1,5 +1,6 @@
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 export const fromFlatObjectMetadataToObjectMetadataDto = (
   flatObjectMetadata: FlatObjectMetadata,
@@ -15,12 +16,12 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     duplicateCriteria,
     id,
     universalIdentifier,
-    isActive,
     isLabelSyncedWithName,
     isRemote,
     isSearchable,
     openRecordIn,
     readability,
+    readabilityParentFieldUniversalIdentifiers,
     writability,
     isSystem,
     isUIEditable,
@@ -38,12 +39,17 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
   return {
     id,
     universalIdentifier,
-    isActive,
+    isActive: resolveEffectiveFlatEntityProperty({
+      metadataName: 'objectMetadata',
+      flatEntity: flatObjectMetadata,
+      property: 'isActive',
+    }),
     isLabelSyncedWithName,
     isRemote,
     isSearchable,
     openRecordIn,
     readability,
+    readabilityParentFieldUniversalIdentifiers,
     writability,
     isSystem,
     isUIEditable,

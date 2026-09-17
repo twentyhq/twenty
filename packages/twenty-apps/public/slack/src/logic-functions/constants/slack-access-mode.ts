@@ -1,0 +1,4 @@
+export const SLACK_ACCESS_MODE = {
+  ANYONE: 'ANYONE',
+  ONLY_LINKED_MEMBERS: 'ONLY_LINKED_MEMBERS',
+} as const;

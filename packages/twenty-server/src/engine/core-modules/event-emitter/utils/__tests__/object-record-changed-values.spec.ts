@@ -49,6 +49,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   isUICreatable: true,
   writability: MetadataWritability.OPEN,
   readability: MetadataReadability.OPEN,
+  readabilityParentFieldUniversalIdentifiers: null,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   labelIdentifierFieldMetadataId: null,
   imageIdentifierFieldMetadataId: null,

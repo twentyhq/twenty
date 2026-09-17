@@ -1,4 +1,8 @@
-import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
+import {
+  type ObjectRecordDeleteEvent,
+  type ObjectRecordDestroyEvent,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-shared/database-events';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -10,6 +14,7 @@ import {
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
+import { type InheritedReadabilityChildRecordsCarrier } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
 
 describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
   const workspaceId = 'workspace-id';
@@ -241,5 +246,92 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
         });
       },
     );
+  });
+
+  describe('DELETED and DESTROYED actions', () => {
+    const deletedAtField = createMockField({
+      id: 'deleted-at-id',
+      type: FieldMetadataType.DATE_TIME,
+      name: 'deletedAt',
+      label: 'Deleted at',
+    });
+    const flatFieldMetadataMapsWithDeletedAt: FlatEntityMaps<FlatFieldMetadata> =
+      {
+        byUniversalIdentifier: {
+          'name-id': nameField,
+          'deleted-at-id': deletedAtField,
+        },
+        universalIdentifierById: {
+          'name-id': 'name-id',
+          'deleted-at-id': 'deleted-at-id',
+        },
+        universalIdentifiersByApplicationId: {},
+      };
+    const flatObjectMetadataWithDeletedAt = {
+      ...flatObjectMetadata,
+      fieldIds: ['name-id', 'deleted-at-id'],
+    } as FlatObjectMetadata;
+    const inheritedReadabilityChildRecordsByRecordId = new Map([
+      [
+        'record-1',
+        { noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }] },
+      ],
+    ]);
+
+    it('should carry the child records captured for a record on its deleted event only', () => {
+      const result = formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.DELETED,
+        objectMetadataItem: flatObjectMetadataWithDeletedAt,
+        flatFieldMetadataMaps: flatFieldMetadataMapsWithDeletedAt,
+        workspaceId: mockWorkspaceId,
+        authContext: mockAuthContext,
+        recordsBefore: [
+          { id: 'record-1', name: 'John', deletedAt: null },
+          { id: 'record-2', name: 'Jane', deletedAt: null },
+        ],
+        recordsAfter: [
+          { id: 'record-1', name: 'John', deletedAt: '2026-09-15T00:00:00Z' },
+          { id: 'record-2', name: 'Jane', deletedAt: '2026-09-15T00:00:00Z' },
+        ],
+        inheritedReadabilityChildRecordsByRecordId,
+      });
+      const [deleteEvent1, deleteEvent2] =
+        result?.events as ObjectRecordDeleteEvent[];
+
+      expect(
+        (deleteEvent1.properties as InheritedReadabilityChildRecordsCarrier)
+          .inheritedReadabilityChildRecords,
+      ).toEqual({
+        noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }],
+      });
+      expect(deleteEvent2.properties).not.toHaveProperty(
+        'inheritedReadabilityChildRecords',
+      );
+    });
+
+    it('should carry the child records captured for a record on its destroyed event only', () => {
+      const result = formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.DESTROYED,
+        objectMetadataItem: flatObjectMetadata,
+        flatFieldMetadataMaps,
+        workspaceId: mockWorkspaceId,
+        authContext: mockAuthContext,
+        recordsBefore: [
+          { id: 'record-1', name: 'John' },
+          { id: 'record-2', name: 'Jane' },
+        ],
+        inheritedReadabilityChildRecordsByRecordId,
+      });
+      const [destroyEvent1, destroyEvent2] =
+        result?.events as ObjectRecordDestroyEvent[];
+
+      expect(
+        (destroyEvent1.properties as InheritedReadabilityChildRecordsCarrier)
+          .inheritedReadabilityChildRecords,
+      ).toEqual({ noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }] });
+      expect(destroyEvent2.properties).not.toHaveProperty(
+        'inheritedReadabilityChildRecords',
+      );
+    });
   });
 });

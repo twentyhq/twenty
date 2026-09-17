@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Loader } from 'twenty-ui/feedback';
+import { Loader } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`

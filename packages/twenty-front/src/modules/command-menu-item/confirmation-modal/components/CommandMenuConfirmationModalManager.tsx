@@ -1,3 +1,7 @@
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID } from '@/command-menu-item/confirmation-modal/constants/CommandMenuItemConfirmationModalId';
 import { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from 'twenty-shared/constants';
 import { commandMenuItemConfirmationModalConfigState } from '@/command-menu-item/confirmation-modal/states/commandMenuItemConfirmationModalState';
@@ -5,15 +9,17 @@ import {
   type CommandMenuConfirmationModalResult,
   type CommandMenuConfirmationModalResultBrowserEventDetail,
 } from 'twenty-shared/types';
-import {
-  ConfirmationModal,
-  StyledCenteredButton,
-} from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
+
+const StyledCenteredNavigationButton = styled(NavigationButton)`
+  box-sizing: border-box;
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
 
 export const CommandMenuConfirmationModalManager = () => {
   const commandMenuItemConfirmationModalConfig = useAtomStateValue(
@@ -67,19 +73,19 @@ export const CommandMenuConfirmationModalManager = () => {
       confirmButtonText={
         commandMenuItemConfirmationModalConfig.confirmButtonText
       }
-      confirmButtonAccent={
-        commandMenuItemConfirmationModalConfig.confirmButtonAccent
+      confirmButtonColor={
+        commandMenuItemConfirmationModalConfig.confirmButtonColor
       }
       AdditionalButtons={
         isDefined(linkButton) ? (
-          <StyledCenteredButton
+          <StyledCenteredNavigationButton
             to={linkButton.to}
             onClick={() => emitConfirmationResult('cancel')}
-            variant="secondary"
-            title={linkButton.title}
             fullWidth
-            justify="center"
-          />
+            variant="outline"
+          >
+            {linkButton.title}
+          </StyledCenteredNavigationButton>
         ) : undefined
       }
     />

@@ -5,11 +5,13 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatViewFieldGroupMaps } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group-maps.type';
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { type ViewFieldOverrides } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
+import { mapAuthoredOverrideEntries } from 'src/engine/metadata-modules/overrides/utils/map-authored-override-entries.util';
 
 type UniversalViewFieldOverrides =
   FormatRecordSerializedRelationProperties<ViewFieldOverrides>;
 
-export const fromUniversalOverridesToViewFieldOverrides = ({
+const fromUniversalOverridesToViewFieldOverridesEntry = ({
   universalOverrides,
   flatViewFieldGroupMaps,
 }: {
@@ -39,3 +41,20 @@ export const fromUniversalOverridesToViewFieldOverrides = ({
     viewFieldGroupId: flatViewFieldGroup?.id ?? null,
   };
 };
+
+export const fromUniversalOverridesToViewFieldOverrides = ({
+  universalOverrides,
+  flatViewFieldGroupMaps,
+}: {
+  universalOverrides: AuthoredOverrides<UniversalViewFieldOverrides>;
+  flatViewFieldGroupMaps: FlatViewFieldGroupMaps;
+}): AuthoredOverrides<ViewFieldOverrides> =>
+  mapAuthoredOverrideEntries({
+    metadataName: 'viewField',
+    overrides: universalOverrides,
+    mapEntry: (entry) =>
+      fromUniversalOverridesToViewFieldOverridesEntry({
+        universalOverrides: entry,
+        flatViewFieldGroupMaps,
+      }),
+  });

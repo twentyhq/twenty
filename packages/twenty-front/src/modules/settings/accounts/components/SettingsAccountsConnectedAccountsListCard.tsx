@@ -9,8 +9,8 @@ import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
 
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -56,12 +56,11 @@ export const SettingsAccountsConnectedAccountsListCard = ({
       <StyledAddAccountSectionContainer>
         <Section>
           <Button
-            Icon={IconPlus}
-            title={t`Add account`}
-            variant="secondary"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={() => navigateSettings(SettingsPath.NewAccount)}
-          />
+            variant="outline"
+          >{t`Add account`}</Button>
         </Section>
       </StyledAddAccountSectionContainer>
     </Section>

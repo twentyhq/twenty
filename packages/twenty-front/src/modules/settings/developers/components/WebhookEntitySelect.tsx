@@ -24,8 +24,8 @@ import {
   IconTable,
   IconWebhook,
 } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
 const WEBHOOK_ENTITY_DROPDOWN_ID = 'webhook-entity-select';
 

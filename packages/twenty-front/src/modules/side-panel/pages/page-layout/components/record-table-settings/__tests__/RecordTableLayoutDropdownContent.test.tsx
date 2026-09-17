@@ -67,7 +67,7 @@ jest.mock(
     useAtomComponentStateValue: jest.fn(() => null),
   }),
 );
-jest.mock('twenty-ui/navigation', () => ({
+jest.mock('twenty-ui/primitives/navigation', () => ({
   MenuItemSelect: ({
     contextualText,
     disabled,

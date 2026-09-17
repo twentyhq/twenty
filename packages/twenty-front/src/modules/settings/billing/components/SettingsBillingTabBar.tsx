@@ -6,7 +6,7 @@ import { styled } from '@linaria/react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { TabButton } from 'twenty-ui/input';
+import { TabButton } from 'twenty-ui/primitives/input';
 import { IconColorSwatch, IconCreditCard, IconGauge } from 'twenty-ui/icon';
 
 const StyledTabBar = styled.div`

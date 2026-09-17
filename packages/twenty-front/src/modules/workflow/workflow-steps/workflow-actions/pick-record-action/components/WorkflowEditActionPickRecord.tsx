@@ -4,8 +4,8 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption, InputHint } from 'twenty-ui/input';
-import { HorizontalSeparator } from 'twenty-ui/layout';
+import { type SelectOption, InputHint } from 'twenty-ui/primitives/input';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 import 'twenty-ui/style.css';
 

@@ -1,0 +1,58 @@
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
+import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
+
+type FlatEntityWithOverrides<TEntry> = {
+  [key: string]: unknown;
+  applicationUniversalIdentifier: string;
+  overrides: AuthoredOverrides<TEntry> | null;
+};
+
+export const sanitizeOverridableEntityInput = <
+  T extends AllMetadataName,
+  TProperties extends Record<string, unknown>,
+  TEntry = Record<string, unknown>,
+>({
+  metadataName,
+  existingFlatEntity,
+  updatedEditableProperties,
+  shouldOverride,
+  callerApplicationUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
+}: {
+  metadataName: T;
+  existingFlatEntity: FlatEntityWithOverrides<TEntry>;
+  updatedEditableProperties: TProperties;
+  shouldOverride: boolean;
+  callerApplicationUniversalIdentifier: string;
+  workspaceCustomApplicationUniversalIdentifier: string;
+}): {
+  overrides: AuthoredOverrides<TEntry> | null;
+  updatedEditableProperties: TProperties;
+} => {
+  if (!shouldOverride) {
+    return {
+      overrides: existingFlatEntity.overrides,
+      updatedEditableProperties,
+    };
+  }
+
+  const { overrides, columnProperties } = dispatchUpdateToAuthoredOverride<
+    TProperties,
+    TEntry
+  >({
+    metadataName,
+    updatedProperties: updatedEditableProperties,
+    existingEntity: existingFlatEntity,
+    existingOverrides: existingFlatEntity.overrides,
+    authorUniversalIdentifier: callerApplicationUniversalIdentifier,
+    authorContext: {
+      workspaceCustomApplicationUniversalIdentifier,
+      ownerApplicationUniversalIdentifier:
+        existingFlatEntity.applicationUniversalIdentifier,
+    },
+  });
+
+  return { overrides, updatedEditableProperties: columnProperties };
+};

@@ -2,10 +2,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
-import { Button, Checkbox } from 'twenty-ui/input';
-import { HorizontalSeparator, Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
+import { Button, Checkbox } from 'twenty-ui/primitives/input';
+import { HorizontalSeparator, Section } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 
@@ -100,28 +100,22 @@ export const SettingsUnsubscribePreview = () => {
                   ))}
                 </StyledTopics>
                 <Button
-                  title={t`Update`}
-                  variant="primary"
-                  accent="blue"
                   fullWidth
-                  justify="center"
-                />
+                  variant="solid"
+                  color="accent"
+                >{t`Update`}</Button>
                 <HorizontalSeparator text={t`Or`} noMargin />
                 <Button
-                  title={t`Unsubscribe all`}
-                  variant="secondary"
                   fullWidth
-                  justify="center"
-                />
+                  variant="outline"
+                >{t`Unsubscribe all`}</Button>
               </>
             ) : (
               <Button
-                title={t`Unsubscribe`}
-                variant="primary"
-                accent="blue"
                 fullWidth
-                justify="center"
-              />
+                variant="solid"
+                color="accent"
+              >{t`Unsubscribe`}</Button>
             )}
           </StyledCard>
         )}

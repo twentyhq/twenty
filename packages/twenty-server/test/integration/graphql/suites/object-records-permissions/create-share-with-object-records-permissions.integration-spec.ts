@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { randomUUID } from 'node:crypto';
 
 import gql from 'graphql-tag';
@@ -28,10 +30,10 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 
-import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
+import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { type RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -157,10 +159,10 @@ describe('createShareWithObjectRecordsPermissions', () => {
   const createdPersonIds: string[] = [];
 
   const findRecordShares = (recordId: string) =>
-    recordShareService.findByRecord({
+    recordShareService.findByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
-      recordId,
+      recordIds: [recordId],
     });
 
   const trackRecordId = (): string => {

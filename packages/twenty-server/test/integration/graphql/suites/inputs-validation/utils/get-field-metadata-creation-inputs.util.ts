@@ -3,14 +3,13 @@ import {
   type FieldMetadataTypesToTestForFilterInputValidation,
 } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
 import {
+  type FieldMetadataComplexOption,
   type FieldMetadataSettingsMapping,
   FieldMetadataType,
   RelationType,
   type FieldMetadataMultiItemSettings,
   type RelationCreationPayload,
 } from 'twenty-shared/types';
-
-import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 type FieldMetadataCreationInput = {
   name: string;

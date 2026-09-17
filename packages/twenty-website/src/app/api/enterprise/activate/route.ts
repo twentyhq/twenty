@@ -17,7 +17,7 @@ export async function GET(request: Request) {
       '[enterprise-activate] 503 — STRIPE_SECRET_KEY and/or ENTERPRISE_JWT_PRIVATE_KEY are not configured',
     );
     return NextResponse.json(
-      { error: 'Enterprise activation is not configured.' },
+      { error: 'Organization activation is not configured.' },
       { status: 503 },
     );
   }

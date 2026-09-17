@@ -18,7 +18,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 

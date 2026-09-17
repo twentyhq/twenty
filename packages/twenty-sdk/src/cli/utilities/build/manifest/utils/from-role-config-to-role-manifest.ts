@@ -1,31 +1,42 @@
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
-import { type RoleManifest } from 'twenty-shared/application';
-import { v5 as uuidv5 } from 'uuid';
+import {
+  getFieldPermissionUniversalIdentifier,
+  getObjectPermissionUniversalIdentifier,
+  type RoleManifest,
+} from 'twenty-shared/application';
 
-const ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE =
-  'b403ec59-4d80-4f22-85e6-717a192dc9cb';
-
-export const fromRoleConfigToRoleManifest = (
-  roleConfig: RoleConfig,
-): RoleManifest => {
+export const fromRoleConfigToRoleManifest = ({
+  roleConfig,
+  applicationUniversalIdentifier,
+}: {
+  roleConfig: RoleConfig;
+  applicationUniversalIdentifier: string;
+}): RoleManifest => {
   return {
     ...roleConfig,
     objectPermissions: (roleConfig.objectPermissions ?? []).map(
       (objectPermission) => ({
         ...objectPermission,
-        universalIdentifier: uuidv5(
-          `${roleConfig.universalIdentifier}:${objectPermission.objectUniversalIdentifier}`,
-          ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
-        ),
+        universalIdentifier:
+          objectPermission.universalIdentifier ??
+          getObjectPermissionUniversalIdentifier({
+            applicationUniversalIdentifier,
+            roleUniversalIdentifier: roleConfig.universalIdentifier,
+            objectUniversalIdentifier:
+              objectPermission.objectUniversalIdentifier,
+          }),
       }),
     ),
     fieldPermissions: (roleConfig.fieldPermissions ?? []).map(
       (fieldPermission) => ({
         ...fieldPermission,
-        universalIdentifier: uuidv5(
-          `${roleConfig.universalIdentifier}:${fieldPermission.objectUniversalIdentifier}:${fieldPermission.fieldUniversalIdentifier}`,
-          ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
-        ),
+        universalIdentifier:
+          fieldPermission.universalIdentifier ??
+          getFieldPermissionUniversalIdentifier({
+            applicationUniversalIdentifier,
+            roleUniversalIdentifier: roleConfig.universalIdentifier,
+            fieldUniversalIdentifier: fieldPermission.fieldUniversalIdentifier,
+          }),
       }),
     ),
     rowLevelPermissionPredicateGroups:

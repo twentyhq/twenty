@@ -159,7 +159,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
             );
 
             const getPermissionValue = (
-              overrideValue: boolean | undefined,
+              overrideValue: boolean | null | undefined,
               defaultValue: boolean,
             ) => overrideValue ?? (isSystem ? true : defaultValue);
 

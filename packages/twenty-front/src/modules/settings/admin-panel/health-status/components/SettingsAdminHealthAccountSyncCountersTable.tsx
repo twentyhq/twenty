@@ -1,8 +1,8 @@
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSettingsTableCardContainer = styled.div`

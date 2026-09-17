@@ -5,7 +5,10 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
+import {
+  ClickToActionLink,
+  UndecoratedLink,
+} from 'twenty-ui/primitives/navigation';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -26,9 +29,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/layout';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type AvailableWorkspace,
@@ -178,8 +181,8 @@ export const SignInUpGlobalScopeForm = () => {
                   <StyledWorkspaceItem>
                     <StyledWorkspaceContent>
                       <Avatar
-                        placeholder={availableWorkspace.displayName || ''}
-                        avatarUrl={getAbsoluteImageUrl(
+                        name={availableWorkspace.displayName || ''}
+                        src={getAbsoluteImageUrl(
                           availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
                         )}
                         size="lg"

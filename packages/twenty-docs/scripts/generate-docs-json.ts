@@ -2,28 +2,13 @@ import fs from 'fs';
 import path from 'path';
 
 import {
+  type BaseGroup,
+  type BaseStructure,
+} from '../navigation/base-structure-types';
+import {
   DEFAULT_LANGUAGE,
   SUPPORTED_LANGUAGES,
 } from '../navigation/supported-languages';
-
-type BasePage = string | BaseGroup;
-
-type BaseGroup = {
-  key: string;
-  label: string;
-  icon?: string;
-  pages: BasePage[];
-};
-
-type BaseTab = {
-  key: string;
-  label: string;
-  groups: BaseGroup[];
-};
-
-type BaseStructure = {
-  tabs: BaseTab[];
-};
 
 type TranslationGroupEntry = {
   label: string;

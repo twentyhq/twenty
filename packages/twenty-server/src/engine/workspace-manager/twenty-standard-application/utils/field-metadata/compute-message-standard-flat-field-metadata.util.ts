@@ -32,9 +32,9 @@ export const buildMessageStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg({ message: `Id`, context: 'fieldMetadata.label' })),
+      label: i18nLabel(msg({ message: `ID`, context: 'fieldMetadata.label' })),
       description: i18nLabel(
-        msg({ message: `Id`, context: 'fieldMetadata.description' }),
+        msg({ message: `ID`, context: 'fieldMetadata.description' }),
       ),
       icon: 'Icon123',
       isSystem: true,
@@ -240,7 +240,7 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       fieldName: 'headerMessageId',
       type: FieldMetadataType.TEXT,
       label: i18nLabel(
-        msg({ message: `Header message Id`, context: 'fieldMetadata.label' }),
+        msg({ message: `Header message ID`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
@@ -331,11 +331,11 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       morphId: null,
       fieldName: 'messageThread',
       label: i18nLabel(
-        msg({ message: `Message Thread Id`, context: 'fieldMetadata.label' }),
+        msg({ message: `Message Thread ID`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
-          message: `Message Thread Id`,
+          message: `Message Thread ID`,
           context: 'fieldMetadata.description',
         }),
       ),

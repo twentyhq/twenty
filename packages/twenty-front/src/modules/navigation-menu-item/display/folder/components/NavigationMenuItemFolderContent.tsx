@@ -1,5 +1,6 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { IconHeartOff } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
@@ -67,6 +68,7 @@ export const NavigationMenuItemFolderContent = ({
           >
             <NavigationDrawerItem
               secondaryLabel={getObjectNavigationMenuItemSecondaryLabel({
+                isView: navigationMenuItem.type === NavigationMenuItemType.VIEW,
                 objectMetadataItems,
                 navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
               })}

@@ -11,6 +11,7 @@ import { type ResendDomain } from 'src/engine/core-modules/emailing-domain/drive
 import { type ResendErrorBody } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-error-body.type';
 import { type ResendReceivedEmail } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-received-email.type';
 import { type ResendSendEmailPayload } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-send-email-payload.type';
+import { type ResendSentEmail } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-sent-email.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const RESEND_API_BASE_URL = 'https://api.resend.com';
@@ -54,6 +55,10 @@ export class ResendApiClientService {
 
   async deleteDomain(domainId: string): Promise<void> {
     await this.performRequest('DELETE', `/domains/${domainId}`);
+  }
+
+  async getSentEmail(emailId: string): Promise<ResendSentEmail> {
+    return this.requestJson<ResendSentEmail>('GET', `/emails/${emailId}`);
   }
 
   async getReceivedEmail(emailId: string): Promise<ResendReceivedEmail> {

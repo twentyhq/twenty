@@ -33,7 +33,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { Trans, useLingui } from '@lingui/react/macro';
 import { findByProperty } from 'twenty-shared/utils';
 import { IconX, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
@@ -112,7 +112,6 @@ export const ObjectSortDropdownButton = () => {
 
   const handleDropdownOpen = () => {
     resetSortDropdown();
-    setSelectedItemId(selectableItemIdArray[0]);
   };
 
   const { closeSortDropdown } = useCloseSortDropdown();
@@ -154,11 +153,6 @@ export const ObjectSortDropdownButton = () => {
   ];
 
   const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
-  const setSelectedItemId = useSetAtomComponentState(
     selectedItemIdComponentState,
     dropdownId,
   );

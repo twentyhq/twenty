@@ -35,9 +35,9 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg({ message: `Id`, context: 'fieldMetadata.label' })),
+      label: i18nLabel(msg({ message: `ID`, context: 'fieldMetadata.label' })),
       description: i18nLabel(
-        msg({ message: `Id`, context: 'fieldMetadata.description' }),
+        msg({ message: `ID`, context: 'fieldMetadata.description' }),
       ),
       icon: 'Icon123',
       isSystem: true,
@@ -222,7 +222,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       ),
       description: i18nLabel(
         msg({
-          message: `Json object to provide trigger`,
+          message: `JSON object to provide trigger`,
           context: 'fieldMetadata.description',
         }),
       ),
@@ -246,7 +246,7 @@ export const buildWorkflowVersionStandardFlatFieldMetadatas = ({
       ),
       description: i18nLabel(
         msg({
-          message: `Json object to provide steps`,
+          message: `JSON object to provide steps`,
           context: 'fieldMetadata.description',
         }),
       ),

@@ -18,8 +18,8 @@ const UNSUBSCRIBE_TABS_INSTANCE_ID = 'settings-unsubscribe-tabs';
 export const SettingsWorkspaceUnsubscribe = () => {
   const { t } = useLingui();
 
-  const isEmailGroupEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+  const isMessageCampaignEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   );
 
   const tabs = [
@@ -45,7 +45,7 @@ export const SettingsWorkspaceUnsubscribe = () => {
     tabs.map((tab) => tab.id),
   );
 
-  if (!isEmailGroupEnabled) {
+  if (!isMessageCampaignEnabled) {
     return null;
   }
 

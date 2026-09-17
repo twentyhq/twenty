@@ -296,7 +296,11 @@ describe('reconstructDataModelManifest', () => {
           nameField,
           buildPetField({
             ...ageField,
-            overrides: { label: 'Age in years' },
+            overrides: {
+              '20202020-aaaa-4aaa-8aaa-000000000001': {
+                label: 'Age in years',
+              },
+            },
           }),
         ],
       }),

@@ -5,6 +5,84 @@ import { type ReleaseNote } from './release-note';
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    release: '2.40.0',
+    date: '2026-09-15',
+    highlights: [
+      {
+        title: msg`Pick an AI model by tier`,
+        description: (
+          <Trans>
+            Choose how your AI should behave on a single slider, from Extra Fast
+            to Extra Smart, instead of picking a model by name. Each tier shows
+            what it trades in speed, cost, and intelligence.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`See what a model costs and where it runs`,
+        description: (
+          <Trans>
+            AI settings now show each model’s provider, price per million
+            tokens, context window, maximum output, and data residency.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Arabic and Hebrew read right to left`,
+        description: (
+          <Trans>
+            The interface now mirrors for right-to-left languages, so Arabic and
+            Hebrew workspaces read in their own direction.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Reference records and skills in AI chat`,
+        description: (
+          <Trans>
+            Type <code>@</code> to point the chat at a record, or <code>/</code>{' '}
+            to pick one of your workspace’s skills. Both suggest matches as you
+            type.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.39.0',
+    date: '2026-09-09',
+    highlights: [
+      {
+        title: msg`Field descriptions on hover`,
+        description: (
+          <Trans>
+            Hover a column header or a field label to read that field’s
+            description, instead of opening settings to find it.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Pause the recording bot`,
+        description: (
+          <Trans>
+            Stop the call recorder from joining calendar meetings with one
+            workspace setting, rather than uninstalling the app. The Recording
+            Bot preference now reads On only when a bot is really scheduled.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Play audio-only recordings`,
+        description: (
+          <Trans>
+            Call recordings that have no video now come with an audio player, so
+            click-to-seek and transcript highlighting work there too.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
     release: '2.38.1',
     date: '2026-09-06',
     highlights: [
@@ -107,6 +185,40 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     ],
   },
   {
+    release: '2.34.0',
+    date: '2026-08-24',
+    highlights: [
+      {
+        title: msg`A proper home on mobile`,
+        description: (
+          <Trans>
+            The navigation menu is now a page of its own, with a real address
+            and a way back. Create actions appear as icons in page headers, and
+            the bottom bar no longer sits on top of your content.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Edit deactivated objects`,
+        description: (
+          <Trans>
+            Open a deactivated object from Settings and change it, instead of
+            deleting it and building it again.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Delete a workflow step from the diagram`,
+        description: (
+          <Trans>
+            Remove a step from its node in the diagram, without opening the side
+            panel first.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
     release: '2.28.0',
     date: '2026-08-11',
     highlights: [
@@ -116,6 +228,30 @@ export const RELEASE_NOTES: ReleaseNote[] = [
           <Trans>
             Display records two relationships away directly on a record page—for
             example, opportunities associated with a company’s contacts.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.27.0',
+    date: '2026-08-04',
+    highlights: [
+      {
+        title: msg`See the devices on your account`,
+        description: (
+          <Trans>
+            Settings &gt; Profile now lists every device with an active session,
+            marks the one you are on, and lets you sign out any of the others.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Choose where records open`,
+        description: (
+          <Trans>
+            Decide whether records open in the side panel or as a full page, set
+            per object and as your own preference in Settings &gt; Experience.
           </Trans>
         ),
       },
@@ -974,7 +1110,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     date: '2025-08-29',
     highlights: [
       {
-        title: msg`Field Level Permission`,
+        title: msg`Field-Level Permissions`,
         description: (
           <Trans>
             You can now control which fields a role can view or edit. This adds
@@ -995,7 +1131,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
         image: '/images/releases/1.4/1.4-workflow-filters.webp',
       },
       {
-        title: msg`Two Factor Authentication`,
+        title: msg`Two-Factor Authentication`,
         description: (
           <Trans>
             Enabled two-factor authentication with authenticator apps like

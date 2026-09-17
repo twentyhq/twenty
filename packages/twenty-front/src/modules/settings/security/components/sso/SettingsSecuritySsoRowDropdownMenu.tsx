@@ -1,16 +1,16 @@
 import { useDeleteSsoIdentityProvider } from '@/settings/security/hooks/useDeleteSsoIdentityProvider';
 import { useUpdateSsoIdentityProvider } from '@/settings/security/hooks/useUpdateSsoIdentityProvider';
 import { type SsoIdentityProvider } from '@/settings/security/types/SsoIdentityProvider';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { LightIconButton } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
 
 type SettingsSecuritySsoRowDropdownMenuProps = {
@@ -22,7 +22,7 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
 }: SettingsSecuritySsoRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${ssoIdp.id}`;
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -38,11 +38,10 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
       identityProviderId,
     });
     if (isDefined(result.error)) {
-      enqueueErrorSnackBar({
-        message: t`Error deleting SSO Identity Provider`,
-        options: {
-          duration: 2000,
-        },
+      enqueueToast({
+        variant: 'error',
+        children: t`Error deleting SSO Identity Provider`,
+        duration: 2000,
       });
     }
   };
@@ -58,11 +57,10 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
           : SsoIdentityProviderStatus.Active,
     });
     if (isDefined(result.error)) {
-      enqueueErrorSnackBar({
-        message: t`Error editing SSO Identity Provider`,
-        options: {
-          duration: 2000,
-        },
+      enqueueToast({
+        variant: 'error',
+        children: t`Error editing SSO Identity Provider`,
+        duration: 2000,
       });
     }
   };

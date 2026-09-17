@@ -3,9 +3,13 @@ import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStateful
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/input';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import {
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+} from 'twenty-ui/primitives/layout';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AddCreditCardModalProps = {
@@ -73,11 +77,9 @@ export const AddCreditCardModal = ({
       <StyledCancelButtonContainer>
         <Button
           onClick={() => closeModal(modalInstanceId)}
-          variant="secondary"
-          title={t`Cancel`}
           fullWidth
-          justify="center"
-        />
+          variant="outline"
+        >{t`Cancel`}</Button>
       </StyledCancelButtonContainer>
     </ModalStatefulWrapper>
   );

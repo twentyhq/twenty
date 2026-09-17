@@ -39,6 +39,7 @@ export type MicrosoftMock = {
   ) => void;
   moveMessageToFolder: (messageId: string, targetFolderId: string) => void;
   deleteMessage: (messageId: string) => void;
+  failMessageFetch: (messageId: string) => void;
   failSubscriptionRenewal: () => void;
   failMessageDelta: (failure: MicrosoftGraphFailure) => void;
   failCalendarDelta: (failure: MicrosoftGraphFailure) => void;
@@ -220,6 +221,15 @@ export const setupMicrosoftMock = ({
 
       messages.splice(messages.indexOf(message), 1);
     },
+    failMessageFetch: (messageId) =>
+      httpMock.use(
+        ...microsoftMailboxHandlers(
+          folderStore,
+          messages,
+          removedMessageIdsByFolderId,
+          { unfetchableMessageIds: [messageId] },
+        ),
+      ),
     failSubscriptionRenewal: () =>
       httpMock.use(
         ...microsoftWebhookSubscriptionHandlers(subscriptionStore, {

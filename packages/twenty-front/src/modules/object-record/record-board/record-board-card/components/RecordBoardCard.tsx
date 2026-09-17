@@ -35,7 +35,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseInOut } from 'twenty-ui/layout';
+import { AnimatedEaseInOut } from 'twenty-ui/primitives/layout';
 import { useDebouncedCallback } from 'use-debounce';
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 

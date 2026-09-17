@@ -11,6 +11,7 @@ import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils
 import { isCoreWorkflowsObjectNavigationMenuItem } from '@/navigation-menu-item/display/utils/isCoreWorkflowsObjectNavigationMenuItem';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
@@ -29,7 +30,7 @@ import {
   NavigationMenuItemType,
 } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconLock, useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -149,14 +150,14 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const Icon = isRecord
     ? () => (
         <Avatar
-          type={
+          shape={
             objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
-              ? 'squared'
-              : 'rounded'
+              ? 'square'
+              : 'circle'
           }
-          avatarUrl={getAbsoluteImageUrl(recordIdentifier?.avatarUrl)}
-          placeholderColorSeed={navigationMenuItem!.targetRecordId ?? undefined}
-          placeholder={itemLabel}
+          src={getAbsoluteImageUrl(recordIdentifier?.avatarUrl)}
+          colorSeed={navigationMenuItem!.targetRecordId ?? undefined}
+          name={itemLabel}
         />
       )
     : isViewWithResolvedView && isDefined(view?.icon)
@@ -167,9 +168,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
             objectColor={objectNavItemColor}
           />
         )
-      : getIcon(objectMetadataItem.icon);
-
-  const iconThemeColor = !isRecord ? objectNavItemColor : undefined;
+      : () => <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />;
 
   const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
@@ -181,8 +180,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     isWorkflowCoreIndexPageEnabled,
   });
 
-  const objectSecondaryLabel =
-    isRecord || isViewWithResolvedView
+  const objectSecondaryLabel = isViewWithResolvedView
+    ? objectMetadataItem.labelPlural
+    : isRecord
       ? objectMetadataItem.labelSingular
       : undefined;
 
@@ -206,7 +206,6 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       }
       onClick={handleClick}
       Icon={Icon}
-      iconColor={iconThemeColor}
       active={isActive}
       isSelectedInEditMode={isSelectedInEditMode}
       isDragging={isDragging}

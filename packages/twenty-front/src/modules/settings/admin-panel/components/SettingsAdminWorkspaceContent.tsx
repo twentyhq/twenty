@@ -17,7 +17,11 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { type GetUpgradeStatusQuery } from '~/generated-admin/graphql';
-import { AvatarOrIcon, LinkChip, Status } from 'twenty-ui/data-display';
+import {
+  AvatarOrIcon,
+  LinkChip,
+  Status,
+} from 'twenty-ui/primitives/data-display';
 import {
   IconCalendar,
   IconHome,
@@ -26,9 +30,9 @@ import {
   IconStatusChange,
   IconUser,
 } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -77,21 +81,22 @@ export const SettingsAdminWorkspaceContent = ({
       label: t`Name`,
       value: activeWorkspace?.id ? (
         <LinkChip
-          label={activeWorkspace?.name ?? ''}
           emptyLabel={t`Untitled`}
           to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
             workspaceId: activeWorkspace.id,
           })}
-          leftComponent={
+          startElement={
             <AvatarOrIcon
-              avatarUrl={getAbsoluteImageUrl(
+              src={getAbsoluteImageUrl(
                 isNonEmptyString(activeWorkspace?.logo)
                   ? activeWorkspace?.logo
                   : DEFAULT_WORKSPACE_LOGO,
               )}
             />
           }
-        />
+        >
+          {activeWorkspace?.name ?? ''}
+        </LinkChip>
       ) : (
         (activeWorkspace?.name ?? '')
       ),

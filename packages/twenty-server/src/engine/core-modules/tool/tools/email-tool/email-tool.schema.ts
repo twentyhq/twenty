@@ -33,7 +33,7 @@ export const EmailToolInputZodSchema = z.object({
     .string()
     .refine((val) => isValidUuid(val))
     .describe(
-      'The UUID of the connected account to send the email from. Provide this only if you have it; otherwise, leave blank.',
+      'The UUID of the connected account to send the email from. When the user has not said which address to send from, call find_connected_accounts first: if it returns exactly one account use that id, and if it returns several ask the user which one before sending. Leave blank only when no account id could be determined.',
     )
     .optional(),
   fromHandle: z

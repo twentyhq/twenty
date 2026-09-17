@@ -39,7 +39,7 @@ import {
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {

@@ -17,7 +17,7 @@ import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconRefresh } from 'twenty-ui/icon';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
+import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
@@ -149,7 +149,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
             <IconPicker
               selectedIconKey={value ?? 'IconUsers'}
               onChange={({ iconKey }) => onChange(iconKey)}
-              variant="primary"
+              variant="outline"
               disabled={readonly}
             />
           )}

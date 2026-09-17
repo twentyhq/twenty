@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { useFullNameFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useFullNameFieldDisplay';
-import { TextDisplay } from 'twenty-ui/data-display';
+import { TextDisplay } from 'twenty-ui/primitives/data-display';
 
 export const FullNameFieldDisplay = () => {
   const { fieldValue } = useFullNameFieldDisplay();

@@ -103,6 +103,7 @@ export const buildManifest = async (
 
   let applicationConfig: ApplicationConfig | undefined;
   const objectConfigs: ObjectConfig[] = [];
+  const roleConfigs: RoleConfig[] = [];
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const indexes: IndexManifest[] = [];
@@ -221,8 +222,7 @@ export const buildManifest = async (
           appPath,
           filePath,
         });
-        const roleConfig = fromRoleConfigToRoleManifest(extract.config);
-        roles.push(roleConfig);
+        roleConfigs.push(extract.config);
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         rolesFilePaths.push(relativePath);
@@ -581,6 +581,15 @@ export const buildManifest = async (
       };
 
       objects.push(objectManifest);
+    }
+
+    for (const roleConfig of roleConfigs) {
+      roles.push(
+        fromRoleConfigToRoleManifest({
+          roleConfig,
+          applicationUniversalIdentifier: applicationConfig.universalIdentifier,
+        }),
+      );
     }
   }
 

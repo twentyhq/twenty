@@ -9,7 +9,7 @@ import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/component
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { StyledTabContainer, TabContent } from 'twenty-ui/input';
+import { StyledTabContainer, TabContent } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 

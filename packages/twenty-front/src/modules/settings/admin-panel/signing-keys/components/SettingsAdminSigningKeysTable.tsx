@@ -12,10 +12,10 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag, type TagColor } from 'twenty-ui/data-display';
+import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { IconCopy } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { Button } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetSigningKeysDocument,
@@ -112,20 +112,24 @@ export const SettingsAdminSigningKeysTable = () => {
                 key={signingKey.id}
                 gridTemplateColumns={SIGNING_KEYS_GRID_TEMPLATE_COLUMNS}
               >
-                <TableCell overflow="hidden" gap={themeCssVariables.spacing[1]}>
+                <TableCell
+                  color={themeCssVariables.font.color.primary}
+                  overflow="hidden"
+                  gap={themeCssVariables.spacing[1]}
+                >
                   <OverflowingTextWithTooltip
                     text={signingKey.id}
                     tooltipContent={t`Created on ${beautifyExactDateTime(signingKey.createdAt)}`}
                     alwaysShowTooltip
                   />
                   <Button
-                    Icon={IconCopy}
-                    size="small"
-                    variant="tertiary"
-                    ariaLabel={t`Copy key ID`}
+                    startIcon={<IconCopy />}
+                    size="sm"
+                    aria-label={t`Copy key ID`}
                     onClick={() =>
                       copyToClipboard(signingKey.id, t`Key ID copied`)
                     }
+                    variant="ghost"
                   />
                 </TableCell>
                 <TableCell>
@@ -149,10 +153,7 @@ export const SettingsAdminSigningKeysTable = () => {
                 </TableCell>
                 <TableCell align="right">
                   <Button
-                    title={t`Revoke`}
-                    size="small"
-                    variant="secondary"
-                    accent="danger"
+                    size="sm"
                     disabled={isRevoked || isRevoking}
                     onClick={() =>
                       handleRevokeClick({
@@ -160,7 +161,9 @@ export const SettingsAdminSigningKeysTable = () => {
                         isCurrent: signingKey.isCurrent,
                       })
                     }
-                  />
+                    variant="outline"
+                    color="danger"
+                  >{t`Revoke`}</Button>
                 </TableCell>
               </TableRow>
             );

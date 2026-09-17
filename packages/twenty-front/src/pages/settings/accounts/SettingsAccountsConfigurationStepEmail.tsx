@@ -7,7 +7,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsAccountsConfigurationStepEmailProps = {
   messageChannel: MessageChannel;
@@ -45,24 +45,22 @@ export const SettingsAccountsConfigurationStepEmail = ({
       actionButton={
         hasNextStep ? (
           <Button
-            Icon={IconChevronRight}
-            title={t`Next`}
-            accent="blue"
-            size="small"
-            variant="secondary"
+            startIcon={<IconChevronRight />}
+            size="sm"
             onClick={onNext}
             disabled={isSubmitting}
-          />
+            variant="outline"
+            color="accent"
+          >{t`Next`}</Button>
         ) : (
           <Button
-            Icon={IconPlus}
-            title={t`Add account`}
-            accent="blue"
-            size="small"
-            variant="primary"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={onAddAccount}
             disabled={isSubmitting}
-          />
+            variant="solid"
+            color="accent"
+          >{t`Add account`}</Button>
         )
       }
     >

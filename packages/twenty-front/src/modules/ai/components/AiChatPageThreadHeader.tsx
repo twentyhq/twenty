@@ -3,8 +3,9 @@ import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/input';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
@@ -102,13 +103,12 @@ export const AiChatPageThreadHeader = ({
       <StyledActions>
         {hasConversation && (
           <Button
-            Icon={IconPlus}
-            title={t`New chat`}
-            size="small"
-            variant="primary"
-            accent="blue"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={() => switchToNewChat()}
-          />
+            variant="solid"
+            color="accent"
+          >{t`New chat`}</Button>
         )}
         <AiChatThreadItemMenu
           threadId={thread.id}
@@ -118,11 +118,12 @@ export const AiChatPageThreadHeader = ({
           onRenameRequested={startRename}
           clickableComponent={
             <IconButton
-              Icon={IconDotsVertical}
-              size="small"
-              variant="secondary"
-              ariaLabel={t`Chat actions`}
-            />
+              size="sm"
+              variant="outline"
+              aria-label={t`Chat actions`}
+            >
+              <IconDotsVertical />
+            </IconButton>
           }
         />
       </StyledActions>

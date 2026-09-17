@@ -8,7 +8,7 @@ import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-m
 import { styled } from '@linaria/react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSectionContainer = styled.div`

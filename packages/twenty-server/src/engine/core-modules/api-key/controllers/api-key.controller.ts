@@ -105,7 +105,7 @@ export class ApiKeyController {
     if (updateApiKeyDto.revokedAt !== undefined) {
       updateData.revokedAt = updateApiKeyDto.revokedAt
         ? new Date(updateApiKeyDto.revokedAt)
-        : undefined;
+        : null;
     }
 
     return this.apiKeyService.update(id, workspace.id, updateData);

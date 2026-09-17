@@ -1,13 +1,28 @@
-import { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
-import { useMutation, useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
+import { REMOVE_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeAiProvider';
+import { REMOVE_MODEL_FROM_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeModelFromProvider';
+import { SET_ADMIN_AI_MODELS_ENABLED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsEnabled';
+import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
+import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
+import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
+import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   IconFlag,
@@ -19,32 +34,16 @@ import {
   IconTrash,
   IconWorld,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button, SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { RoundedLink, UndecoratedLink } from 'twenty-ui/navigation';
-
-import { useClientConfig } from '@/client-config/hooks/useClientConfig';
-import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
-import { REMOVE_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeAiProvider';
-import { SET_ADMIN_AI_MODELS_ENABLED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsEnabled';
-import { REMOVE_MODEL_FROM_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeModelFromProvider';
-import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
-import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
-import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
-import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
-import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { Button, SearchInput } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { RoundedLink } from 'twenty-ui/primitives/navigation';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import {
   type AdminAiModelConfig,
   SetAdminAiModelEnabledDocument,
 } from '~/generated-admin/graphql';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const REMOVE_PROVIDER_MODAL_ID = 'settings-ai-provider-remove';
 const REMOVE_MODEL_MODAL_ID = 'settings-ai-model-remove';
@@ -53,7 +52,7 @@ export const SettingsAdminAiProviderDetail = () => {
   const { providerName } = useParams<{ providerName: string }>();
   const apolloAdminClient = useApolloAdminClient();
   const navigate = useNavigate();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { refetch: refetchClientConfig } = useClientConfig();
   const { openModal } = useModal();
   const [searchQuery, setSearchQuery] = useState('');
@@ -104,13 +103,15 @@ export const SettingsAdminAiProviderDetail = () => {
           { query: GET_ADMIN_AI_MODELS },
         ],
       });
-      enqueueSuccessSnackBar({
-        message: t`Provider "${provider?.label ?? providerName}" removed`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Provider "${provider?.label ?? providerName}" removed`,
       });
       navigate(AI_ADMIN_PATH);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to remove provider`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to remove provider`,
       });
     }
   };
@@ -132,14 +133,13 @@ export const SettingsAdminAiProviderDetail = () => {
         ],
       });
       await refetchClientConfig();
-      enqueueSuccessSnackBar({
-        message: t`Model "${modelToRemove.label}" removed`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Model "${modelToRemove.label}" removed`,
       });
       setModelToRemove(null);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to remove model`,
-      });
+      enqueueToast({ variant: 'error', children: t`Failed to remove model` });
     }
   };
 
@@ -187,8 +187,9 @@ export const SettingsAdminAiProviderDetail = () => {
       });
       await refetchClientConfig();
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update model availability`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to update model availability`,
       });
     }
   };
@@ -381,8 +382,9 @@ export const SettingsAdminAiProviderDetail = () => {
                     },
                   });
                 } catch {
-                  enqueueErrorSnackBar({
-                    message: t`Failed to update model availability`,
+                  enqueueToast({
+                    variant: 'error',
+                    children: t`Failed to update model availability`,
                   });
                 } finally {
                   await refetchModels();
@@ -395,13 +397,11 @@ export const SettingsAdminAiProviderDetail = () => {
           )}
 
           {isCustomProvider && newModelPath && (
-            <UndecoratedLink to={newModelPath}>
-              <Button
-                Icon={IconPlus}
-                title={t`Add Model`}
-                variant="secondary"
-              />
-            </UndecoratedLink>
+            <NavigationButton
+              to={newModelPath}
+              startIcon={<IconPlus />}
+              variant="outline"
+            >{t`Add Model`}</NavigationButton>
           )}
         </Section>
 
@@ -412,12 +412,11 @@ export const SettingsAdminAiProviderDetail = () => {
               description={t`Remove this provider and disconnect all its models`}
             />
             <Button
-              Icon={IconTrash}
-              title={t`Remove provider`}
-              variant="secondary"
-              accent="danger"
+              startIcon={<IconTrash />}
               onClick={() => openModal(REMOVE_PROVIDER_MODAL_ID)}
-            />
+              variant="outline"
+              color="danger"
+            >{t`Remove provider`}</Button>
           </Section>
         )}
       </SettingsPageContainer>
@@ -428,7 +427,7 @@ export const SettingsAdminAiProviderDetail = () => {
         subtitle={t`This will disconnect all models from this provider. Models will no longer be available until a new provider is configured.`}
         onConfirmClick={handleRemoveProvider}
         confirmButtonText={t`Remove`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
       />
 
       <ConfirmationModal
@@ -437,7 +436,7 @@ export const SettingsAdminAiProviderDetail = () => {
         subtitle={t`This model will be removed from the provider. You can re-add it later.`}
         onConfirmClick={handleRemoveModel}
         confirmButtonText={t`Remove`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
       />
     </SettingsPageLayout>
   );

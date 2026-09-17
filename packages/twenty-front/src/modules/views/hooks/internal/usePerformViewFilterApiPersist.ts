@@ -8,12 +8,10 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { convertViewFilterValueToString, isDefined } from 'twenty-shared/utils';
 import {
   type CreateViewFilterMutationVariables,
-  type DeleteViewFilterMutationVariables,
   type DestroyViewFilterMutationVariables,
   type UpdateViewFilterMutationVariables,
   type ViewFilterFragmentFragment,
   CreateViewFilterDocument,
-  DeleteViewFilterDocument,
   DestroyViewFilterDocument,
   UpdateViewFilterDocument,
 } from '~/generated-metadata/graphql';
@@ -32,7 +30,6 @@ const toFlatViewFilter = ({
 export const usePerformViewFilterApiPersist = () => {
   const [createViewFilterMutation] = useMutation(CreateViewFilterDocument);
   const [updateViewFilterMutation] = useMutation(UpdateViewFilterDocument);
-  const [deleteViewFilterMutation] = useMutation(DeleteViewFilterDocument);
   const [destroyViewFilterMutation] = useMutation(DestroyViewFilterDocument);
 
   const { performViewEntityApiPersistBatchOperation } =
@@ -86,27 +83,6 @@ export const usePerformViewFilterApiPersist = () => {
     [updateViewFilterMutation, performViewEntityApiPersistBatchOperation],
   );
 
-  const performViewFilterApiDelete = useCallback(
-    async (
-      deleteViewFilterInputs: DeleteViewFilterMutationVariables[],
-    ): Promise<
-      MetadataRequestResult<
-        Awaited<ReturnType<typeof deleteViewFilterMutation>>[]
-      >
-    > =>
-      performViewEntityApiPersistBatchOperation({
-        inputs: deleteViewFilterInputs,
-        mutate: (variables) => deleteViewFilterMutation({ variables }),
-        applyResultToDraft: (fulfilledMutations, { removeFromDraft }) =>
-          removeFromDraft({
-            key: 'viewFilters',
-            itemIds: fulfilledMutations.map(({ input }) => input.input.id),
-          }),
-        operationType: CrudOperationType.DELETE,
-      }),
-    [deleteViewFilterMutation, performViewEntityApiPersistBatchOperation],
-  );
-
   const performViewFilterApiDestroy = useCallback(
     async (
       destroyViewFilterInputs: DestroyViewFilterMutationVariables[],
@@ -131,7 +107,6 @@ export const usePerformViewFilterApiPersist = () => {
   return {
     performViewFilterApiCreate,
     performViewFilterApiUpdate,
-    performViewFilterApiDelete,
     performViewFilterApiDestroy,
   };
 };

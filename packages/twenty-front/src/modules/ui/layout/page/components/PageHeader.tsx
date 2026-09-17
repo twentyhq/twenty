@@ -11,8 +11,8 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AnimatePresence } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { LightIconButton } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,

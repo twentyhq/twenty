@@ -1,7 +1,7 @@
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
 
 export const SettingsNewAccountSection = () => {
   return (

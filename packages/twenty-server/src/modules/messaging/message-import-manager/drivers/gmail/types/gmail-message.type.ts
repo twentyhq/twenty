@@ -1,5 +1,7 @@
 import { type MessageParticipantRole } from 'twenty-shared/types';
 
+import { type ExplicitParticipantIdentity } from 'src/modules/messaging/message-import-manager/types/message';
+
 export type GmailMessage = {
   historyId: string;
   externalId: string;
@@ -18,7 +20,7 @@ export type Participant = {
   role: MessageParticipantRole;
   handle: string;
   displayName: string;
-};
+} & ExplicitParticipantIdentity;
 
 export type ParticipantWithMessageId = Participant & { messageId: string };
 
