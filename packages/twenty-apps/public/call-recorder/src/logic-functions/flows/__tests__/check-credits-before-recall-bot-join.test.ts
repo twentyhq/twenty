@@ -276,6 +276,43 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
     expect(client.callRecording.externalBotId).toBe('recall-bot-1');
   });
 
+  it('leaves a bot that has already joined alone instead of ejecting it', async () => {
+    getCreditAvailabilityMock.mockResolvedValue({
+      hasAvailableCredits: false,
+      reason: 'no-credits',
+    });
+    stubRecallBotRemoval(405);
+    const client = new FakeCoreApiClient();
+
+    const result = await checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN });
+
+    expect(result).toEqual({
+      status: 'skipped',
+      reason: 'bot has already joined',
+    });
+    expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
+      RECALL_BOT_URL,
+      expect.objectContaining({ method: 'DELETE' }),
+    );
+    expect(client.callRecording.status).toBe('SCHEDULED');
+    expect(client.callRecording.externalBotId).toBe('recall-bot-1');
+  });
+
+  it('does nothing for the canceled recording of a meeting that moved', async () => {
+    const client = new FakeCoreApiClient({
+      callRecording: {
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: null,
+      },
+    });
+
+    const result = await checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN });
+
+    expect(result.status).toBe('skipped');
+    expect(getCreditAvailabilityMock).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('treats a bot that is already gone as canceled so a retried job completes', async () => {
     getCreditAvailabilityMock.mockResolvedValue({
       hasAvailableCredits: false,

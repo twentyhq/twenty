@@ -3,13 +3,14 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { RECALL_BOT_ALREADY_JOINED_STATUS } from 'src/logic-functions/constants/recall-bot-already-joined-status';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCreditsUnavailableFailureReason } from 'src/logic-functions/data/get-credits-unavailable-failure-reason.util';
 import { markCallRecordingNotRecorded } from 'src/logic-functions/data/mark-call-recording-not-recorded.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
-import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
+import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 
 export type CheckCreditsBeforeRecallBotJoinResult =
   | { status: 'skipped'; reason: string }
@@ -64,9 +65,21 @@ export const checkCreditsBeforeRecallBotJoin = async ({
     return { status: 'allowed' };
   }
 
-  if (!(await cancelOrEjectRecallBot(callRecording.externalBotId))) {
+  // Delete only, never eject: Recall refuses the delete once the bot has joined, so a late job cannot cut a call.
+  const cancelResult = await cancelRecallBot({
+    externalBotId: callRecording.externalBotId,
+  });
+
+  if (
+    !cancelResult.ok &&
+    cancelResult.status === RECALL_BOT_ALREADY_JOINED_STATUS
+  ) {
+    return { status: 'skipped', reason: 'bot has already joined' };
+  }
+
+  if (!cancelResult.ok) {
     throw new Error(
-      `Recall bot ${callRecording.externalBotId} could not be canceled`,
+      `Recall bot ${callRecording.externalBotId} could not be canceled: ${cancelResult.errorMessage}`,
     );
   }
 
