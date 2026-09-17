@@ -118,6 +118,10 @@ export class SyncDriver implements MessageQueueDriver {
         processedOn: Date.now(),
       };
       this.jobs.set(`${queueName}:${job.id}`, details);
+      job.updateData = async (data) => {
+        job.data = data;
+        details.data = data ?? {};
+      };
       job.updateProgress = async (progress) => {
         details.progress = progress;
       };
