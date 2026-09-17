@@ -23,6 +23,11 @@ const NAVIGATION_MENU_ITEM_GQL_FIELDS = `
   position
 `;
 
+type NavigationMenuItemRow = {
+  id: string;
+  type: string;
+};
+
 const buildCreateObjectInput = (
   suffix: string,
 ): CreateOneObjectFactoryInput => ({
@@ -50,13 +55,13 @@ const findItemsReferencingObject = ({
       (isDefined(item.viewId) && viewIds.includes(item.viewId)),
   );
 
-const findNavigationMenuItemRowsReferencingObject = async ({
+const findRowsReferencingObject = async ({
   objectMetadataId,
   viewIds,
 }: {
   objectMetadataId: string;
   viewIds: string[];
-}): Promise<{ id: string; type: string }[]> =>
+}): Promise<NavigationMenuItemRow[]> =>
   global.testDataSource.query(
     `SELECT id, type
      FROM core."navigationMenuItem"
@@ -64,32 +69,63 @@ const findNavigationMenuItemRowsReferencingObject = async ({
     [objectMetadataId, viewIds],
   );
 
+const findExistingRowIds = async (ids: string[]): Promise<string[]> => {
+  const rows: Pick<NavigationMenuItemRow, 'id'>[] =
+    await global.testDataSource.query(
+      `SELECT id FROM core."navigationMenuItem" WHERE id = ANY($1::uuid[])`,
+      [ids],
+    );
+
+  return rows.map((row) => row.id);
+};
+
 const listNavigationMenuItems = async () => {
   const {
     data: { navigationMenuItems },
-    errors,
   } = await findNavigationMenuItems({
     expectToFail: false,
     input: undefined,
     gqlFields: NAVIGATION_MENU_ITEM_GQL_FIELDS,
   });
 
-  expect(errors).toBeUndefined();
-
   return navigationMenuItems;
+};
+
+// The API and the table are asserted together so a failure shows both
+// layers at once: rows left behind, or an API still serving rows that
+// are gone.
+const expectNoTraceOfObject = async ({
+  objectMetadataId,
+  viewIds,
+}: {
+  objectMetadataId: string;
+  viewIds: string[];
+}) => {
+  const apiItems = findItemsReferencingObject({
+    navigationMenuItems: await listNavigationMenuItems(),
+    objectMetadataId,
+    viewIds,
+  }).map(({ id, type }) => ({ id, type }));
+
+  const databaseRows = await findRowsReferencingObject({
+    objectMetadataId,
+    viewIds,
+  });
+
+  expect({ apiItems, databaseRows }).toEqual({
+    apiItems: [],
+    databaseRows: [],
+  });
 };
 
 const createObjectWithNavigationMenuItems = async (suffix: string) => {
   const {
     data: { createOneObject },
-    errors: createErrors,
   } = await createOneObjectMetadata({
     expectToFail: false,
     input: buildCreateObjectInput(suffix),
     gqlFields: 'id',
   });
-
-  expect(createErrors).toBeUndefined();
 
   const objectMetadataId = createOneObject.id;
 
@@ -153,11 +189,9 @@ describe('Navigation menu item side effect on object metadata deletion', () => {
   let navigationMenuItemIdsToCleanUp: string[] = [];
 
   afterEach(async () => {
-    const remainingNavigationMenuItemIds = (await listNavigationMenuItems())
-      .map((item) => item.id)
-      .filter((id) => navigationMenuItemIdsToCleanUp.includes(id));
-
-    for (const navigationMenuItemId of remainingNavigationMenuItemIds) {
+    for (const navigationMenuItemId of await findExistingRowIds(
+      navigationMenuItemIdsToCleanUp,
+    )) {
       await deleteNavigationMenuItem({
         input: { id: navigationMenuItemId },
         expectToFail: false,
@@ -193,33 +227,16 @@ describe('Navigation menu item side effect on object metadata deletion', () => {
       ...live.navigationMenuItemIds,
     ];
 
-    const { errors: deleteErrors } = await deleteOneObjectMetadata({
+    await deleteOneObjectMetadata({
       input: { idToDelete: deleted.objectMetadataId },
       expectToFail: false,
     });
 
-    expect(deleteErrors).toBeUndefined();
-
-    const itemsAfterDelete = await listNavigationMenuItems();
+    await expectNoTraceOfObject(deleted);
 
     expect(
       findItemsReferencingObject({
-        navigationMenuItems: itemsAfterDelete,
-        objectMetadataId: deleted.objectMetadataId,
-        viewIds: deleted.viewIds,
-      }),
-    ).toEqual([]);
-
-    expect(
-      await findNavigationMenuItemRowsReferencingObject({
-        objectMetadataId: deleted.objectMetadataId,
-        viewIds: deleted.viewIds,
-      }),
-    ).toEqual([]);
-
-    expect(
-      findItemsReferencingObject({
-        navigationMenuItems: itemsAfterDelete,
+        navigationMenuItems: await listNavigationMenuItems(),
         objectMetadataId: live.objectMetadataId,
         viewIds: live.viewIds,
       }),
@@ -235,7 +252,6 @@ describe('Navigation menu item side effect on object metadata deletion', () => {
 
     const {
       data: { updateOneObject },
-      errors: updateErrors,
     } = await updateOneObjectMetadata({
       input: {
         idToUpdate: deleted.objectMetadataId,
@@ -245,30 +261,14 @@ describe('Navigation menu item side effect on object metadata deletion', () => {
       expectToFail: false,
     });
 
-    expect(updateErrors).toBeUndefined();
     jestExpectToBeDefined(updateOneObject);
     expect(updateOneObject.isActive).toBe(false);
 
-    const { errors: deleteErrors } = await deleteOneObjectMetadata({
+    await deleteOneObjectMetadata({
       input: { idToDelete: deleted.objectMetadataId },
       expectToFail: false,
     });
 
-    expect(deleteErrors).toBeUndefined();
-
-    expect(
-      findItemsReferencingObject({
-        navigationMenuItems: await listNavigationMenuItems(),
-        objectMetadataId: deleted.objectMetadataId,
-        viewIds: deleted.viewIds,
-      }),
-    ).toEqual([]);
-
-    expect(
-      await findNavigationMenuItemRowsReferencingObject({
-        objectMetadataId: deleted.objectMetadataId,
-        viewIds: deleted.viewIds,
-      }),
-    ).toEqual([]);
+    await expectNoTraceOfObject(deleted);
   });
 });
