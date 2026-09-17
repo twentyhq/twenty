@@ -1,5 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { compare } from 'semver'
 
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import {
@@ -7,16 +8,17 @@ import {
   getBackfillSleepMs,
 } from 'src/utils/backfill-settings';
 import { enqueueBackfillJobs } from 'src/utils/enqueue-backfill-jobs';
+import { isDefined } from 'twenty-sdk/utils';
 
 const shouldRunPostInstall = ({
   previousVersion,
   newVersion
 }: InstallPayload): boolean  => {
-  if(!previousVersion) { // Fresh install
+  if(!isDefined(previousVersion)) { // Fresh install
     return true;
   }
 
-  if (previousVersion < "1.4.0" && newVersion >= "1.4.0") { // Rate limitation fix
+  if (compare(previousVersion, "1.4.0") < 0 && compare(newVersion, "1.4.0") >= 1) { // Rate limitation fix
     return true;
   }
 
