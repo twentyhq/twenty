@@ -3,6 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { chargeCredits } from 'twenty-sdk/billing';
 
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
+import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
 import { runBatchEnrichment } from 'src/logic-functions/utils/run-batch-enrichment';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
@@ -129,6 +130,15 @@ const isPresent = <TValue>(value: TValue | undefined): value is TValue =>
   value !== undefined;
 
 const records = (...ids: string[]) => ids.map((id) => ({ id }));
+
+const buildRecordIds = (count: number) =>
+  Array.from({ length: count }, (_unused, index) => `r${index}`);
+
+const INVALID_API_KEY_OUTCOME: PdlEnrichResult<FakeData> = {
+  outcome: 'error',
+  httpStatus: 401,
+  message: 'Invalid API key',
+};
 
 describe('runBatchEnrichment', () => {
   beforeEach(() => {
@@ -405,7 +415,7 @@ describe('runBatchEnrichment', () => {
   });
 
   it('chunks large id sets into separate read and PDL calls', async () => {
-    const ids = Array.from({ length: 150 }, (_unused, index) => `r${index}`);
+    const ids = buildRecordIds(150);
     const harness = buildHarness(ids.map((id) => ({ id })));
 
     const result = await runBatchEnrichment({
@@ -417,6 +427,71 @@ describe('runBatchEnrichment', () => {
     expect(harness.readRecords).toHaveBeenCalledTimes(2);
     expect(harness.enrichBatch).toHaveBeenCalledTimes(2);
     expect(result.matched).toBe(150);
+  });
+
+  it('stops enriching the remaining chunks when PDL rejects the API key', async () => {
+    const ids = buildRecordIds(150);
+    const harness = buildHarness(
+      ids.map((id) => ({ id, outcome: INVALID_API_KEY_OUTCOME })),
+    );
+
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: ids.map((id) => ({ id })) },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.readRecords).toHaveBeenCalledTimes(1);
+    expect(harness.enrichBatch).toHaveBeenCalledTimes(1);
+    expect(harness.updateManyStatus).toHaveBeenCalledExactlyOnceWith({
+      client: CLIENT,
+      recordIds: ids.slice(0, 100),
+      data: {
+        pdlEnrichmentStatus: 'ERROR',
+        pdlLastEnrichedAt: expect.any(String),
+      },
+    });
+    expect(result).toMatchObject({ total: 150, errored: 150, success: false });
+    expect(result.results[149]).toMatchObject({
+      recordId: 'r149',
+      status: 'ERROR',
+      error: 'Invalid API key',
+    });
+  });
+
+  it('stops enriching the remaining chunks when the API key is not configured', async () => {
+    const ids = buildRecordIds(150);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+    harness.enrichBatch.mockRejectedValue(
+      new PdlConfigError('No People Data Labs API key is configured.'),
+    );
+
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: ids.map((id) => ({ id })) },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.enrichBatch).toHaveBeenCalledTimes(1);
+    expect(result).toMatchObject({ total: 150, errored: 150 });
+    expect(result.results[149].error).toBe(
+      'No People Data Labs API key is configured.',
+    );
+  });
+
+  it('keeps enriching the remaining chunks after a chunk fails for another reason', async () => {
+    const ids = buildRecordIds(150);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+    harness.enrichBatch.mockRejectedValueOnce(new Error('pdl down'));
+
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: ids.map((id) => ({ id })) },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.enrichBatch).toHaveBeenCalledTimes(2);
+    expect(result).toMatchObject({ matched: 50, errored: 100 });
   });
 
   it('bills only matched outcomes after the PDL call', async () => {
@@ -475,7 +550,7 @@ describe('runBatchEnrichment', () => {
   });
 
   it('bills each chunk separately', async () => {
-    const ids = Array.from({ length: 150 }, (_unused, index) => `r${index}`);
+    const ids = buildRecordIds(150);
     const harness = buildHarness(ids.map((id) => ({ id })));
 
     await runBatchEnrichment({
