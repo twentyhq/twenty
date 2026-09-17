@@ -1,9 +1,10 @@
 name: Upgrade Mutation Guard
 description: >
   Validates that added/modified upgrade commands stay in the current version
-  directory and keep timestamps real and append-only, diffed against a given
-  base. Shared by the PR-level guard (base = PR base) and the merge-queue guard
-  (base = merge candidate's base, i.e. the current tip of main).
+  directory (frozen as well once its tag exists) and keep timestamps real and
+  append-only, diffed against a given base. Shared by the PR-level guard
+  (base = PR base) and the merge-queue guard (base = merge candidate's base,
+  i.e. the current tip of main).
 
 inputs:
   base_sha:
@@ -50,6 +51,16 @@ runs:
 
         echo "Current version: $CURRENT_VERSION (directory: $CURRENT_DIR)"
 
+        # Between the tag push and the version bump PR, TWENTY_CURRENT_VERSION
+        # still names the released version. Once its tag exists, its directory
+        # is a previous version like any other: the tag already shipped it.
+        IS_CURRENT_VERSION_RELEASED=false
+
+        if git ls-remote --exit-code --tags origin "refs/tags/twenty/v${CURRENT_VERSION}" >/dev/null; then
+          IS_CURRENT_VERSION_RELEASED=true
+          echo "twenty/v${CURRENT_VERSION} is already tagged: ${CURRENT_DIR} is frozen until the version bump lands."
+        fi
+
         DIFF=$(git diff --name-status --find-renames "$BASE_SHA" HEAD -- "$COMMANDS_ROOT")
 
         ADDED_FILES=$(echo "$DIFF" | awk '$1 == "A" { print $2 } $1 ~ /^[RC]/ { print $3 }')
@@ -64,7 +75,7 @@ runs:
           for file in "$@"; do
             VERSION_DIR=$(echo "$file" | sed -n 's|.*upgrade-version-command/\([0-9]*-[0-9]*\)/.*|\1|p')
 
-            if [ -n "$VERSION_DIR" ] && [ "$VERSION_DIR" != "$CURRENT_DIR" ]; then
+            if [ -n "$VERSION_DIR" ] && { [ "$VERSION_DIR" != "$CURRENT_DIR" ] || [ "$IS_CURRENT_VERSION_RELEASED" = "true" ]; }; then
               if [ "$category" = "added" ]; then
                 ADDED_OFFENDERS="$ADDED_OFFENDERS\n  - $file (version directory: $VERSION_DIR)"
               else
@@ -78,7 +89,11 @@ runs:
         check_files "modified" $MODIFIED_FILES
 
         if [ -n "$ADDED_OFFENDERS" ] || [ -n "$MODIFIED_OFFENDERS" ]; then
-          echo "This change touches upgrade command files outside the current version directory ($CURRENT_DIR / $CURRENT_VERSION)."
+          if [ "$IS_CURRENT_VERSION_RELEASED" = "true" ]; then
+            echo "This change touches upgrade command files of a released version: twenty/v${CURRENT_VERSION} is already tagged, so ${CURRENT_DIR} is frozen."
+          else
+            echo "This change touches upgrade command files outside the current version directory ($CURRENT_DIR / $CURRENT_VERSION)."
+          fi
 
           if [ -n "$ADDED_OFFENDERS" ]; then
             echo ""
@@ -94,7 +109,11 @@ runs:
 
           echo ""
           echo "If this is intentional, add the label 'ci:allow-previous-version-upgrade-mutation' to the PR and re-run CI."
-          echo "Otherwise, move your changes to the current version directory ($CURRENT_DIR)."
+          if [ "$IS_CURRENT_VERSION_RELEASED" = "true" ]; then
+            echo "Otherwise, wait for the version bump PR to land, then regenerate your command under the next version."
+          else
+            echo "Otherwise, move your changes to the current version directory ($CURRENT_DIR)."
+          fi
 
           echo "::error::Upgrade commands were added or modified in non-current version directories."
           exit 1
