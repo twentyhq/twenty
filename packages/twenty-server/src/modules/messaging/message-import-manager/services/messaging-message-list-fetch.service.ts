@@ -8,25 +8,30 @@ import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import {
   MessageChannelPendingGroupEmailsAction,
-  MessageChannelSyncStage,
   MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
+import {
+  MessagingMessagesImportJob,
+  type MessagingMessagesImportJobData,
+} from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
-import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import {
   MessagingProcessFolderActionsService,
   type ProcessFolderActionsResult,
@@ -41,6 +46,8 @@ const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 export class MessagingMessageListFetchService {
   private readonly logger = new Logger(MessagingMessageListFetchService.name);
   constructor(
+    @InjectMessageQueue(MessageQueue.messagingQueue)
+    private readonly messageQueueService: MessageQueueService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
@@ -51,7 +58,6 @@ export class MessagingMessageListFetchService {
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
     private readonly messagingCursorService: MessagingCursorService,
-    private readonly messagingMessagesImportService: MessagingMessagesImportService,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
     private readonly messagingProcessFolderActionsService: MessagingProcessFolderActionsService,
@@ -261,7 +267,7 @@ export class MessagingMessageListFetchService {
           }
 
           this.logger.debug(
-            `messageChannelId: ${freshMessageChannel.id} Scheduling direct messages import`,
+            `messageChannelId: ${freshMessageChannel.id} Enqueuing messages import`,
           );
 
           await this.messageChannelSyncStatusService.markAsMessagesImportScheduled(
@@ -269,13 +275,12 @@ export class MessagingMessageListFetchService {
             workspaceId,
           );
 
-          await this.messagingMessagesImportService.processMessageBatchImport(
+          await this.messageQueueService.add<MessagingMessagesImportJobData>(
+            MessagingMessagesImportJob.name,
             {
-              ...freshMessageChannel,
-              syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+              workspaceId,
+              messageChannelId: freshMessageChannel.id,
             },
-            freshMessageChannel.connectedAccount,
-            workspaceId,
           );
         } catch (error) {
           await this.messageImportErrorHandlerService.handleDriverException(

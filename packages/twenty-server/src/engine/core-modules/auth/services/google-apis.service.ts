@@ -62,7 +62,7 @@ export class GoogleAPIsService {
 
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
+    @InjectMessageQueue(MessageQueue.messagingListFetchQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,

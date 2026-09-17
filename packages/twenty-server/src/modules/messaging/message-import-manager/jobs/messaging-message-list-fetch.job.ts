@@ -23,7 +23,7 @@ export type MessagingMessageListFetchJobData = {
 };
 
 @Processor({
-  queueName: MessageQueue.messagingQueue,
+  queueName: MessageQueue.messagingListFetchQueue,
   scope: Scope.REQUEST,
 })
 export class MessagingMessageListFetchJob {

@@ -35,7 +35,7 @@ export class MessagingTriggerMessageListFetchCommand extends CommandRunner {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
+    @InjectMessageQueue(MessageQueue.messagingListFetchQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
     super();

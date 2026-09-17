@@ -26,7 +26,7 @@ import {
 @Injectable()
 export class WebhookSyncTriggerService {
   constructor(
-    @InjectMessageQueue(MessageQueue.messagingQueue)
+    @InjectMessageQueue(MessageQueue.messagingListFetchQueue)
     private readonly messagingQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.connectedAccountSyncWebhookQueue)
     private readonly connectedAccountSyncWebhookQueueService: MessageQueueService,

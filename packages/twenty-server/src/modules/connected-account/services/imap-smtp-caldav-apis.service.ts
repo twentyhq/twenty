@@ -48,7 +48,7 @@ export class ImapSmtpCalDavApiService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
+    @InjectMessageQueue(MessageQueue.messagingListFetchQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,

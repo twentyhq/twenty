@@ -35,7 +35,7 @@ export class MessagingMessageListFetchCronJob {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
+    @InjectMessageQueue(MessageQueue.messagingListFetchQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,

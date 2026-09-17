@@ -40,6 +40,15 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
+  [MessageQueue.messagingListFetchQueue]: {
+    priority: 2,
+    workerOptions: {
+      concurrency: 5,
+      lockDuration: 30_000,
+      maxStalledCount: 1,
+      boundedShutdownDrain: false,
+    },
+  },
   [MessageQueue.webhookQueue]: {
     priority: 2,
     workerOptions: {

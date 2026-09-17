@@ -17,7 +17,7 @@ export const runMessageChannelSync = async (
   );
 
   await enqueueJobAndDrain(
-    MessageQueue.messagingQueue,
+    MessageQueue.messagingListFetchQueue,
     MessagingMessageListFetchJob.name,
     { workspaceId, messageChannelId },
   );
