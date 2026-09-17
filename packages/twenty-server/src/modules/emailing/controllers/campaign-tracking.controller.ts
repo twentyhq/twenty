@@ -3,13 +3,16 @@ import {
   Controller,
   Get,
   Header,
+  Headers,
   NotFoundException,
   Param,
   Redirect,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,6 +21,7 @@ import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/email
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
+import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 
 const FOUND_STATUS_CODE = 302;
 
@@ -29,6 +33,7 @@ export class CampaignTrackingController {
   constructor(
     private readonly campaignTrackingTokenService: CampaignTrackingTokenService,
     private readonly shortLinkService: ShortLinkService,
+    private readonly campaignEngagementCaptureService: CampaignEngagementCaptureService,
   ) {}
 
   @Get('c/:token')
@@ -37,6 +42,8 @@ export class CampaignTrackingController {
   @Header('Referrer-Policy', 'no-referrer')
   async handleTrackedLinkClick(
     @Param('token') token: string,
+    @Headers('user-agent') userAgent: string | undefined,
+    @Req() request: Request,
   ): Promise<{ url: string; statusCode: number }> {
     const payload = this.verifyTokenOrThrow(token);
 
@@ -47,6 +54,12 @@ export class CampaignTrackingController {
     if (!isDefined(shortLink)) {
       throw new NotFoundException('Unknown tracked link');
     }
+
+    await this.campaignEngagementCaptureService.capture({
+      payload,
+      userAgent: userAgent ?? null,
+      requesterIp: request.ip ?? null,
+    });
 
     return { url: shortLink.url, statusCode: FOUND_STATUS_CODE };
   }
