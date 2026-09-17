@@ -2,6 +2,7 @@ import { defineApplication, FieldType } from 'twenty-sdk/define';
 
 import { APP_DESCRIPTION } from 'src/constants/app-description';
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
+import { CALL_RECORDING_BILLABLE_OPERATION_NAME } from 'src/constants/call-recording-billable-operation-name';
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS } from 'src/constants/call-recorder-transcript-provider-options';
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -60,6 +61,16 @@ export default defineApplication({
   category: 'Productivity',
   author: 'Twenty',
   galleryImages: ['public/gallery/call-recorder-cover.png'],
+  billing: {
+    description:
+      '$1.00 per recorded hour, prorated by duration. Billed to your Twenty credits.',
+    operations: {
+      [CALL_RECORDING_BILLABLE_OPERATION_NAME]: {
+        operationType: 'CALL_RECORDING',
+        label: 'Meeting recording',
+      },
+    },
+  },
   applicationVariables: {
     [CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME]: {
       universalIdentifier:
