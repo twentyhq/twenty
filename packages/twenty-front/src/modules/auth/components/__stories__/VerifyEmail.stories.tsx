@@ -1,8 +1,8 @@
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { type VerifyEmail } from '@/auth/components/VerifyEmail';
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { ModalContent } from '@/ui/layout/modal/components/ModalContent';
 
 // Mock component that just renders the error state of VerifyEmail directly
 // (since normal VerifyEmail has async logic that's hard to test in Storybook)
@@ -10,9 +10,9 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const VerifyEmailErrorState = ({ email = 'user@example.com' }) => {
   return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
+    <StyledAuthContent>
       <EmailVerificationSent email={email} isError={true} />
-    </ModalContent>
+    </StyledAuthContent>
   );
 };
 
@@ -29,7 +29,7 @@ const meta: Meta<typeof VerifyEmailErrorState> = {
   ],
   parameters: {
     codeSection: {
-      docs: 'IMPORTANT: When rendering EmailVerificationSent from VerifyEmail, always wrap it with ModalContent to maintain consistent styling.',
+      docs: 'IMPORTANT: When rendering EmailVerificationSent from VerifyEmail, always wrap it with StyledAuthContent to maintain consistent styling.',
     },
   },
 };

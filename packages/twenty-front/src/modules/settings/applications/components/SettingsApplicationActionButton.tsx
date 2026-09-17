@@ -1,5 +1,5 @@
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { useId } from 'react';
@@ -34,7 +34,7 @@ export const SettingsApplicationActionButton = ({
   onUninstall,
   isUninstalling,
 }: SettingsApplicationActionButtonProps) => {
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const uninstallModalId = useId();
 
   const confirmationValue = t`yes`;
@@ -83,15 +83,15 @@ export const SettingsApplicationActionButton = ({
           variant="outline"
           color="danger"
           size="sm"
-          onClick={() => openModal(uninstallModalId)}
+          onClick={() => openDialog(uninstallModalId)}
           disabled={isUninstalling}
         >
           {isUninstalling ? t`Uninstalling...` : t`Uninstall`}
         </Button>
-        <ConfirmationModal
+        <ConfirmationDialog
           confirmationPlaceholder={confirmationValue}
           confirmationValue={confirmationValue}
-          modalInstanceId={uninstallModalId}
+          dialogId={uninstallModalId}
           title={t`Uninstall Application?`}
           subtitle={
             <Trans>

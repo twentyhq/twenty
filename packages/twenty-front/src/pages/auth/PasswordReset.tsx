@@ -1,3 +1,4 @@
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { Logo } from '@/auth/components/Logo';
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
@@ -31,7 +32,6 @@ import { AppPath } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { MainButton } from 'twenty-ui/components';
 import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
-import { ModalContent } from '@/ui/layout/modal/components/ModalContent';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 import {
@@ -211,7 +211,7 @@ export const PasswordReset = () => {
 
   return (
     isTokenValid && (
-      <ModalContent isVerticallyCentered isHorizontallyCentered>
+      <StyledAuthContent>
         <StyledMainContainer>
           <AnimatedEaseIn>
             <Logo
@@ -305,7 +305,7 @@ export const PasswordReset = () => {
             )}
           </StyledOnboardingContentContainer>
         </StyledMainContainer>
-      </ModalContent>
+      </StyledAuthContent>
     )
   );
 };

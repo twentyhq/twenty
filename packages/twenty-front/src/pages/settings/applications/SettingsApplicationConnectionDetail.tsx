@@ -15,8 +15,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -83,7 +83,7 @@ export const SettingsApplicationConnectionDetail = () => {
   }>();
 
   const navigate = useNavigateSettings();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const { connectionProviders, loading: providersLoading } =
     useFindApplicationConnectionProviders(applicationId);
@@ -339,13 +339,13 @@ export const SettingsApplicationConnectionDetail = () => {
                 {connection.visibility !== 'workspace' && (
                   <Button
                     startIcon={<IconUsers />}
-                    onClick={() => openModal(shareWithWorkspaceModalId)}
+                    onClick={() => openDialog(shareWithWorkspaceModalId)}
                     variant="outline"
                   >{t`Share with workspace`}</Button>
                 )}
                 <Button
                   startIcon={<IconTrash />}
-                  onClick={() => openModal(deleteModalId)}
+                  onClick={() => openDialog(deleteModalId)}
                   variant="outline"
                   color="danger"
                 >{t`Disconnect`}</Button>
@@ -378,8 +378,8 @@ export const SettingsApplicationConnectionDetail = () => {
                 </TableSection>
               </Table>
             </Section.Root>
-            <ConfirmationModal
-              modalInstanceId={deleteModalId}
+            <ConfirmationDialog
+              dialogId={deleteModalId}
               title={t`Disconnect connection?`}
               subtitle={
                 <Trans>
@@ -390,8 +390,8 @@ export const SettingsApplicationConnectionDetail = () => {
               confirmButtonText={t`Disconnect`}
               loading={isDeleting}
             />
-            <ConfirmationModal
-              modalInstanceId={shareWithWorkspaceModalId}
+            <ConfirmationDialog
+              dialogId={shareWithWorkspaceModalId}
               title={t`Share with workspace?`}
               subtitle={
                 <Trans>

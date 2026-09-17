@@ -1,10 +1,10 @@
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
 import { MainButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { t } from '@lingui/core/macro';
 import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
-import { ModalFooter } from '@/ui/layout/modal/components/ModalFooter';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledFooterContainer = styled.div`
@@ -34,7 +34,7 @@ export const StepNavigationButton = ({
 }: StepNavigationButtonProps) => {
   return (
     <StyledFooterContainer>
-      <ModalFooter autoHeight>
+      <Dialog.Footer style={{ padding: 'var(--t-spacing-5)' }}>
         {!isUndefinedOrNull(onBack) && (
           <MainButton
             startIcon={isLoading ? <CircularProgressBar /> : undefined}
@@ -53,7 +53,7 @@ export const StepNavigationButton = ({
             {continueTitle}
           </MainButton>
         )}
-      </ModalFooter>
+      </Dialog.Footer>
     </StyledFooterContainer>
   );
 };

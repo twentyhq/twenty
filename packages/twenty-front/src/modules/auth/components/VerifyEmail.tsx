@@ -1,3 +1,4 @@
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
@@ -5,7 +6,6 @@ import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerify
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { ModalContent } from '@/ui/layout/modal/components/ModalContent';
 
 export const VerifyEmail = () => {
   const { t } = useLingui();
@@ -16,9 +16,9 @@ export const VerifyEmail = () => {
 
   if (isError) {
     return (
-      <ModalContent isVerticallyCentered isHorizontallyCentered>
+      <StyledAuthContent>
         <EmailVerificationSent email={email} isError={true} />
-      </ModalContent>
+      </StyledAuthContent>
     );
   }
 

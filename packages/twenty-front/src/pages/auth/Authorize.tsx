@@ -1,3 +1,4 @@
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { styled } from '@linaria/react';
 import { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -17,7 +18,6 @@ import {
   IconUserCircle,
 } from 'twenty-ui/icon';
 import { Heading } from 'twenty-ui/primitives/typography';
-import { ModalContent } from '@/ui/layout/modal/components/ModalContent';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AuthorizeAppDocument,
@@ -244,18 +244,20 @@ export const Authorize = () => {
 
   if (isDefined(queryError)) {
     return (
-      <ModalContent isVerticallyCentered isHorizontallyCentered>
+      <StyledAuthContent>
         <StyledCardWrapper>
-          <ModalContent contentPadding={10}>
+          <StyledAuthContent
+            style={{ alignItems: 'stretch', justifyContent: 'flex-start' }}
+          >
             <StyledOAuthTitle level={2} size="lg">
               <Trans>Something went wrong</Trans>
             </StyledOAuthTitle>
             <StyledErrorText>
               {t`Unable to load application details. Please try again later.`}
             </StyledErrorText>
-          </ModalContent>
+          </StyledAuthContent>
         </StyledCardWrapper>
-      </ModalContent>
+      </StyledAuthContent>
     );
   }
 
@@ -268,12 +270,14 @@ export const Authorize = () => {
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
 
   return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
+    <StyledAuthContent>
       <StyledCardWrapper>
         <StyledHeader>
           <AppConnectionHeader appLogoUrl={appLogoUrl} appName={appName} />
         </StyledHeader>
-        <ModalContent contentPadding={10}>
+        <StyledAuthContent
+          style={{ alignItems: 'stretch', justifyContent: 'flex-start' }}
+        >
           <StyledOAuthTitle level={2} size="lg">
             <Trans>Connect {appName} to your account</Trans>
           </StyledOAuthTitle>
@@ -309,8 +313,8 @@ export const Authorize = () => {
             onAuthorize={handleAuthorize}
             isLoading={isAuthorizing}
           />
-        </ModalContent>
+        </StyledAuthContent>
       </StyledCardWrapper>
-    </ModalContent>
+    </StyledAuthContent>
   );
 };
