@@ -26,8 +26,14 @@ describe('groupUpdates', () => {
     ]);
 
     expect(operations).toHaveLength(2);
-    expect(operations).toContainEqual({ fields: { status: 'DONE' }, ids: ['a'] });
-    expect(operations).toContainEqual({ fields: { title: 'Renamed' }, ids: ['b'] });
+    expect(operations).toContainEqual({
+      fields: { status: 'DONE' },
+      ids: ['a'],
+    });
+    expect(operations).toContainEqual({
+      fields: { title: 'Renamed' },
+      ids: ['b'],
+    });
   });
 
   it('groups on the whole payload, not just one field', () => {
@@ -40,10 +46,13 @@ describe('groupUpdates', () => {
   });
 
   it('splits a group larger than the mutation batch limit', () => {
-    const taskUpdates = Array.from({ length: TASKS_BATCH_SIZE + 5 }, (_, index) => ({
-      id: `task-${index}`,
-      fields: { status: 'DONE' as const },
-    }));
+    const taskUpdates = Array.from(
+      { length: TASKS_BATCH_SIZE + 5 },
+      (_, index) => ({
+        id: `task-${index}`,
+        fields: { status: 'DONE' as const },
+      }),
+    );
 
     const operations = groupUpdates(taskUpdates);
 

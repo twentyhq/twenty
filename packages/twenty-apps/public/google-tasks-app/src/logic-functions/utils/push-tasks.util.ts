@@ -16,6 +16,7 @@ import { chunk } from 'src/logic-functions/utils/chunk.util';
 import { executeWithRetry } from 'src/logic-functions/utils/execute-with-retry.util';
 import {
   isGoogleAuthorizationFailure,
+  isGoogleRateLimitError,
   isTransientGoogleError,
 } from 'src/logic-functions/utils/google-error.util';
 
@@ -34,10 +35,22 @@ const createGoogleTask = async (
         `/tasks/v1/lists/${listId}/tasks`,
         payload,
       ),
-    isTransientGoogleError,
+    isGoogleRateLimitError,
   );
 
   return response.data.id;
+};
+
+const deleteGoogleTask = async (
+  axiosInstance: AxiosInstance,
+  listId: string,
+  googleTasksId: string,
+) => {
+  await executeWithRetry(
+    () =>
+      axiosInstance.delete(`/tasks/v1/lists/${listId}/tasks/${googleTasksId}`),
+    isTransientGoogleError,
+  );
 };
 
 const patchGoogleTask = async (
@@ -134,7 +147,12 @@ export const pushTasks = async (
             payload,
           );
 
-          await linkTaskToGoogle(client, task.id, googleTasksId, listId);
+          try {
+            await linkTaskToGoogle(client, task.id, googleTasksId, listId);
+          } catch (error) {
+            await deleteGoogleTask(axiosInstance, listId, googleTasksId);
+            throw error;
+          }
 
           return true;
         } catch (error) {

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { type AxiosInstance } from 'axios';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { pushTasks } from 'src/logic-functions/utils/push-tasks.util';
@@ -7,19 +7,18 @@ import { type TaskNode } from 'src/logic-functions/types/types';
 const DEFAULT_LIST_ID = 'default-list';
 
 const buildAxiosInstance = (
-  overrides: Partial<Record<'post' | 'patch', unknown>> = {},
+  overrides: Partial<Record<'post' | 'patch' | 'delete', unknown>> = {},
 ) =>
   ({
     get: vi.fn().mockResolvedValue({ data: { id: DEFAULT_LIST_ID } }),
     post: vi.fn().mockResolvedValue({ data: { id: 'google-new' } }),
     patch: vi.fn().mockResolvedValue({ data: {} }),
+    delete: vi.fn().mockResolvedValue({ data: {} }),
     ...overrides,
   }) as unknown as AxiosInstance;
 
-const buildClient = () =>
-  ({
-    mutation: vi.fn().mockResolvedValue({}),
-  }) as unknown as CoreApiClient;
+const buildClient = (mutation = vi.fn().mockResolvedValue({})) =>
+  ({ mutation }) as unknown as CoreApiClient;
 
 const task = (overrides: Partial<TaskNode> = {}): TaskNode => ({
   id: 'twenty-1',
@@ -36,6 +35,10 @@ const axiosErrorWithStatus = (status: number) =>
   });
 
 describe('pushTasks', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('does not call Google when nothing is selected', async () => {
     const axiosInstance = buildAxiosInstance();
 
@@ -79,6 +82,49 @@ describe('pushTasks', () => {
         id: true,
       },
     });
+  });
+
+  it('resends a task creation that Google rate limited', async () => {
+    vi.useFakeTimers();
+
+    const axiosInstance = buildAxiosInstance({
+      post: vi
+        .fn()
+        .mockRejectedValueOnce(axiosErrorWithStatus(429))
+        .mockResolvedValue({ data: { id: 'google-new' } }),
+    });
+
+    const result = pushTasks(axiosInstance, buildClient(), [task()]);
+
+    await vi.runAllTimersAsync();
+
+    expect(await result).toEqual({ hasFailures: false });
+    expect(axiosInstance.post).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not resend a task creation that Google may already have applied', async () => {
+    const axiosInstance = buildAxiosInstance({
+      post: vi.fn().mockRejectedValue(axiosErrorWithStatus(503)),
+    });
+
+    const result = await pushTasks(axiosInstance, buildClient(), [task()]);
+
+    expect(axiosInstance.post).toHaveBeenCalledTimes(1);
+    expect(result).toEqual({ hasFailures: true });
+  });
+
+  it('removes the Google task when it cannot be linked back to Twenty', async () => {
+    const axiosInstance = buildAxiosInstance();
+    const client = buildClient(
+      vi.fn().mockRejectedValue(new Error('Validation failed')),
+    );
+
+    const result = await pushTasks(axiosInstance, client, [task()]);
+
+    expect(axiosInstance.delete).toHaveBeenCalledWith(
+      `/tasks/v1/lists/${DEFAULT_LIST_ID}/tasks/google-new`,
+    );
+    expect(result).toEqual({ hasFailures: true });
   });
 
   it('patches a task in the list it already belongs to', async () => {

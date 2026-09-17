@@ -1,5 +1,6 @@
 export type TaskListsResponse = {
   items?: TaskList[];
+  nextPageToken?: string;
 };
 
 type TaskList = {

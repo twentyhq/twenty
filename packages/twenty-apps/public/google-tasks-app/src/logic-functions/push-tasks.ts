@@ -1,5 +1,5 @@
 import { defineLogicFunction, RoutePayload } from 'twenty-sdk/define';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import {
   findConnectionForRequest,
   listConnections,
@@ -13,7 +13,7 @@ import { toGoogleFailureResponseOrThrow } from 'src/logic-functions/utils/to-goo
 import { PUSH_TASKS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import {
   AUTHORIZATION_FAILED_ERROR,
-  MISSING_TASK_IDS_ERROR,
+  INVALID_TASK_IDS_ERROR,
   NO_CONNECTION_ERROR,
 } from 'src/constants/push-tasks-errors';
 import {
@@ -24,10 +24,10 @@ import {
 const handler = async (params: RoutePayload<{ taskIds: string[] }>) => {
   const taskIds = params.body?.taskIds;
 
-  if (!isNonEmptyArray(taskIds)) {
+  if (!isNonEmptyArray(taskIds) || !taskIds.every(isNonEmptyString)) {
     return {
       success: false,
-      error: MISSING_TASK_IDS_ERROR,
+      error: INVALID_TASK_IDS_ERROR,
     };
   }
 
@@ -37,7 +37,11 @@ const handler = async (params: RoutePayload<{ taskIds: string[] }>) => {
 
   const connection = findConnectionForRequest(connections, params);
 
-  if (connection === null || connection.authFailedAt !== null || connection.visibility === 'workspace') {
+  if (
+    connection === null ||
+    connection.authFailedAt !== null ||
+    connection.visibility === 'workspace'
+  ) {
     return {
       success: false,
       error: NO_CONNECTION_ERROR,

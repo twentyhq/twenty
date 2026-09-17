@@ -1,11 +1,15 @@
-import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
+import {
+  reportConnectionAuthFailure,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+import { executeWithRetry } from 'src/logic-functions/utils/execute-with-retry.util';
 import { getErrorMessage } from 'src/logic-functions/utils/get-error-message.util';
 import {
   isGoogleAuthorizationFailure,
   isTransientGoogleError,
 } from 'src/logic-functions/utils/google-error.util';
 
-export const toGoogleFailureResponseOrThrow = ({
+export const toGoogleFailureResponseOrThrow = async ({
   error,
   connectionId,
   authorizationError,
@@ -21,6 +25,13 @@ export const toGoogleFailureResponseOrThrow = ({
   }
 
   if (isGoogleAuthorizationFailure(error)) {
+    await executeWithRetry(() =>
+      reportConnectionAuthFailure({
+        connectionId,
+        reason: getErrorMessage(error),
+      }),
+    );
+
     return {
       success: false,
       error: authorizationError,

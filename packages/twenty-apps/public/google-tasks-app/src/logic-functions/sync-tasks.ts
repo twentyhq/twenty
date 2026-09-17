@@ -20,6 +20,27 @@ import {
 const lastSyncedAtKey = (connectionId: string) =>
   `sync:lastSyncedAt:${connectionId}`;
 
+const fetchTaskListIds = async (axiosInstance: AxiosInstance) => {
+  const listIds: string[] = [];
+  let pageToken: string | undefined;
+
+  do {
+    const response = await executeWithRetry(
+      () =>
+        axiosInstance.get<TaskListsResponse>('/tasks/v1/users/@me/lists', {
+          params: pageToken === undefined ? {} : { pageToken },
+        }),
+      isTransientGoogleError,
+    );
+
+    listIds.push(...(response.data.items ?? []).map((list) => list.id));
+
+    pageToken = response.data.nextPageToken;
+  } while (pageToken !== undefined);
+
+  return listIds;
+};
+
 const syncTaskList = async (
   axiosInstance: AxiosInstance,
   client: CoreApiClient,
@@ -90,17 +111,14 @@ const handler = async ({ connectionId }: { connectionId?: string }) => {
   const totals = { created: 0, updated: 0 };
 
   try {
-    const listsResponse = await executeWithRetry(
-      () => axiosInstance.get<TaskListsResponse>('/tasks/v1/users/@me/lists'),
-      isTransientGoogleError,
-    );
+    const listIds = await fetchTaskListIds(axiosInstance);
 
-    for (const list of listsResponse.data.items ?? []) {
+    for (const listId of listIds) {
       const counts = await syncTaskList(
         axiosInstance,
         client,
         assigneeId,
-        list.id,
+        listId,
         updatedMin,
       );
 

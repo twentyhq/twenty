@@ -1,9 +1,12 @@
-import { type CoreApiClient } from "twenty-client-sdk/core";
-import { isUndefined } from "@sniptt/guards";
-import { chunk } from "src/logic-functions/utils/chunk.util";
-import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
-import { TASKS_BATCH_SIZE, UPDATE_CONCURRENCY } from "src/constants/sync";
-import { type TaskFields, type TaskUpdate } from "src/logic-functions/types/types";
+import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isUndefined } from '@sniptt/guards';
+import { chunk } from 'src/logic-functions/utils/chunk.util';
+import { executeWithRetry } from 'src/logic-functions/utils/execute-with-retry.util';
+import { TASKS_BATCH_SIZE, UPDATE_CONCURRENCY } from 'src/constants/sync';
+import {
+  type TaskFields,
+  type TaskUpdate,
+} from 'src/logic-functions/types/types';
 
 type UpdateOperation = {
   fields: TaskFields;
@@ -31,7 +34,10 @@ export const groupUpdates = (taskUpdates: TaskUpdate[]): UpdateOperation[] => {
   );
 };
 
-export const updateTasks = async (client: CoreApiClient, taskUpdates: TaskUpdate[]) => {
+export const updateTasks = async (
+  client: CoreApiClient,
+  taskUpdates: TaskUpdate[],
+) => {
   for (const batch of chunk(groupUpdates(taskUpdates), UPDATE_CONCURRENCY)) {
     await Promise.all(
       batch.map(({ fields, ids }) =>
@@ -43,7 +49,7 @@ export const updateTasks = async (client: CoreApiClient, taskUpdates: TaskUpdate
                 filter: {
                   id: {
                     in: ids,
-                  }
+                  },
                 },
               },
               id: true,
@@ -53,4 +59,4 @@ export const updateTasks = async (client: CoreApiClient, taskUpdates: TaskUpdate
       ),
     );
   }
-}
+};
