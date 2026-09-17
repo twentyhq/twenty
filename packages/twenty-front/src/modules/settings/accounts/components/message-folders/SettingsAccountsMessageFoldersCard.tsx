@@ -15,8 +15,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
+import { Section } from 'twenty-ui/components';
 import { Checkbox } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Label } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -120,11 +120,11 @@ export const SettingsAccountsMessageFoldersCard = () => {
 
   if (loading) {
     return (
-      <Section>
+      <Section.Root>
         <Table>
           <SettingsMessageFoldersSkeletonLoader />
         </Table>
-      </Section>
+      </Section.Root>
     );
   }
 
@@ -133,7 +133,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
   }
 
   return (
-    <Section>
+    <Section.Root>
       <Table>
         <StyledSearchInputContainer>
           <SettingsTextInput
@@ -173,6 +173,6 @@ export const SettingsAccountsMessageFoldersCard = () => {
           </StyledTreeList>
         </StyledFoldersContainer>
       </Table>
-    </Section>
+    </Section.Root>
   );
 };

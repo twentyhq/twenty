@@ -6,10 +6,9 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { SearchInput } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
@@ -76,8 +75,8 @@ export const SettingsAgentToolsTab = () => {
     .sort((a, b) => (a.label ?? a.name).localeCompare(b.label ?? b.name));
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Tools`}
         description={t`Use filter to see existing tools or create your own`}
       />
@@ -132,6 +131,6 @@ export const SettingsAgentToolsTab = () => {
         }
         currentWorkspace={currentWorkspace}
       />
-    </Section>
+    </Section.Root>
   );
 };

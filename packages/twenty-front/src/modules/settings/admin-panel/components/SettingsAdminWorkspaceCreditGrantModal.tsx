@@ -12,13 +12,9 @@ import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { Section } from 'twenty-ui/components';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { Button } from 'twenty-ui/primitives/input';
-import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui/primitives/layout';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 import { BillingCreditGrantType } from '~/generated-admin/graphql';
@@ -30,10 +26,6 @@ type SettingsAdminWorkspaceCreditGrantModalProps = {
   modalInstanceId: string;
   workspaceId: string;
 };
-
-const StyledCenteredTitle = styled.div`
-  text-align: center;
-`;
 
 const StyledSectionContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[6]};
@@ -158,19 +150,11 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
       smallBorderRadius
       autoHeight
     >
-      <StyledCenteredTitle>
-        <H1Title
-          title={t`Grant credits`}
-          fontColor={H1TitleFontColor.Primary}
-        />
-      </StyledCenteredTitle>
+      <Dialog.Title>{t`Grant credits`}</Dialog.Title>
       <StyledSectionContainer>
-        <Section
-          alignment={SectionAlignment.Center}
-          fontColor={SectionFontColor.Primary}
-        >
+        <Section.Root align="center" color="primary">
           {t`Credits are added on top of the plan allowance and are spent only once it runs out. They carry over in full from one billing period to the next, and stay available until they are used up or, where an expiry is set, until the end of the billing period that expiry falls in.`}
-        </Section>
+        </Section.Root>
       </StyledSectionContainer>
 
       <StyledFields>

@@ -11,6 +11,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -34,7 +35,7 @@ import {
   IconShare,
   IconTrash,
 } from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
@@ -239,76 +240,74 @@ export const ObjectOptionsDropdownCustomView = ({
             />
           </SelectableListItem>
           {customViewData?.type !== ViewType.CALENDAR && (
-            <div id="group-by-menu-item">
-              <SelectableListItem
-                itemId="Group"
-                onEnter={() =>
-                  isDefined(recordIndexGroupFieldMetadataItem)
-                    ? onContentChange('recordGroups')
-                    : onContentChange('recordGroupFields')
-                }
-              >
-                <MenuItem
-                  focused={selectedItemId === 'Group'}
-                  onClick={() =>
+            <Tooltip
+              content={t`Not available on Default View`}
+              side="bottom"
+              maxWidth={'100%'}
+              delay={TooltipDelay.mediumDelay}
+              disabled={!isDefaultView}
+            >
+              <div id="group-by-menu-item">
+                <SelectableListItem
+                  itemId="Group"
+                  onEnter={() =>
                     isDefined(recordIndexGroupFieldMetadataItem)
                       ? onContentChange('recordGroups')
                       : onContentChange('recordGroupFields')
                   }
-                  LeftIcon={IconLayoutList}
-                  text={t`Group`}
-                  contextualText={
-                    isDefaultView
-                      ? t`Not available on Default View`
-                      : recordIndexGroupFieldMetadataItem?.label
-                  }
-                  contextualTextPosition="right"
-                  hasSubMenu
-                  disabled={isDefaultView}
-                />
-              </SelectableListItem>
-            </div>
-          )}
-          {isDefaultView && (
-            <AppTooltip
-              anchorSelect={`#group-by-menu-item`}
-              title={t`Not available on Default View`}
-              noArrow
-              place="bottom"
-              maxWidth="100%"
-            />
+                >
+                  <MenuItem
+                    focused={selectedItemId === 'Group'}
+                    onClick={() =>
+                      isDefined(recordIndexGroupFieldMetadataItem)
+                        ? onContentChange('recordGroups')
+                        : onContentChange('recordGroupFields')
+                    }
+                    LeftIcon={IconLayoutList}
+                    text={t`Group`}
+                    contextualText={
+                      isDefaultView
+                        ? t`Not available on Default View`
+                        : recordIndexGroupFieldMetadataItem?.label
+                    }
+                    contextualTextPosition="right"
+                    hasSubMenu
+                    disabled={isDefaultView}
+                  />
+                </SelectableListItem>
+              </div>
+            </Tooltip>
           )}
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer scrollable={false}>
-          <div id="delete-view-menu-item">
-            <SelectableListItem
-              itemId="Delete view"
-              onEnter={() => handleDelete()}
-            >
-              <MenuItem
-                focused={selectedItemId === 'Delete view'}
-                onClick={() => handleDelete()}
-                LeftIcon={IconTrash}
-                text={t`Delete view`}
-                disabled={isDefaultView || isLastView}
-                accent="danger"
-              />
-            </SelectableListItem>
-          </div>
-          {(isDefaultView || isLastView) && (
-            <AppTooltip
-              anchorSelect={`#delete-view-menu-item`}
-              title={
-                isDefaultView
-                  ? t`Not available on Default View`
-                  : t`Cannot delete the only view`
-              }
-              noArrow
-              place="bottom"
-              maxWidth="100%"
-            />
-          )}
+          <Tooltip
+            delay={TooltipDelay.mediumDelay}
+            content={
+              isDefaultView
+                ? t`Not available on Default View`
+                : t`Cannot delete the only view`
+            }
+            side="bottom"
+            maxWidth={'100%'}
+            disabled={!(isDefaultView || isLastView)}
+          >
+            <div id="delete-view-menu-item">
+              <SelectableListItem
+                itemId="Delete view"
+                onEnter={() => handleDelete()}
+              >
+                <MenuItem
+                  focused={selectedItemId === 'Delete view'}
+                  onClick={() => handleDelete()}
+                  LeftIcon={IconTrash}
+                  text={t`Delete view`}
+                  disabled={isDefaultView || isLastView}
+                  accent="danger"
+                />
+              </SelectableListItem>
+            </div>
+          </Tooltip>
         </DropdownMenuItemsContainer>
       </SelectableList>
     </DropdownContent>

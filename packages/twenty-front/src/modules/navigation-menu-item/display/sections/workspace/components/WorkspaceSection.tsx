@@ -27,8 +27,12 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const StyledRightIconsContainer = styled.div`
   align-items: center;
@@ -45,6 +49,9 @@ export const WorkspaceSection = () => {
     lastVisitedViewPerObjectMetadataItemState,
   );
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+  );
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -78,6 +85,7 @@ export const WorkspaceSection = () => {
       objectMetadataItems,
       views,
       lastVisitedViewPerObjectMetadataItem,
+      isInitialObjectViewEnabled,
     });
     if (isNonEmptyString(link)) {
       navigate(link);

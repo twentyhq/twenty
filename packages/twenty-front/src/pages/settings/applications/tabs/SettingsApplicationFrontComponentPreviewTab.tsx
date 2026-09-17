@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Suspense, lazy } from 'react';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
@@ -57,7 +57,7 @@ export const SettingsApplicationFrontComponentPreviewTab = ({
   isHeadless,
 }: SettingsApplicationFrontComponentPreviewTabProps) => {
   return (
-    <Section>
+    <Section.Root>
       <StyledPreviewFrame>
         {isHeadless ? (
           <StyledHeadlessNotice>
@@ -75,6 +75,6 @@ export const SettingsApplicationFrontComponentPreviewTab = ({
           </StyledRendererContainer>
         )}
       </StyledPreviewFrame>
-    </Section>
+    </Section.Root>
   );
 };

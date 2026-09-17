@@ -1,3 +1,4 @@
+import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
 import { type ReactNode } from 'react';
@@ -8,7 +9,7 @@ import { NavigationMenuItemAddDropdownContent } from '@/navigation-menu-item/edi
 type NavigationMenuItemAddDropdownProps = {
   children: ReactNode;
   instanceId?: string;
-  section?: 'workspace' | 'favorite';
+  section?: NavigationMenuItemSection;
   onOpen?: () => void;
 } & (
   | { folderId: string; position: number }

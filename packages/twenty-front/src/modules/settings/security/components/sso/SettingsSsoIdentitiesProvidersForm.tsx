@@ -10,9 +10,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactElement, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
+import { Section } from 'twenty-ui/components';
 import { type IconComponent, IconKey } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { IdentityProviderType } from '~/generated-metadata/graphql';
 
@@ -82,8 +81,11 @@ export const SettingsSsoIdentitiesProvidersForm = () => {
 
   return (
     <SettingsPageContainer>
-      <Section>
-        <H2Title title={t`Name`} description={t`The name of your connection`} />
+      <Section.Root>
+        <Section.Header
+          title={t`Name`}
+          description={t`The name of your connection`}
+        />
         <StyledInputsContainer>
           <Controller
             name="name"
@@ -101,9 +103,9 @@ export const SettingsSsoIdentitiesProvidersForm = () => {
             )}
           />
         </StyledInputsContainer>
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Type`}
           description={t`Choose between OIDC and SAML protocols`}
         />
@@ -122,7 +124,7 @@ export const SettingsSsoIdentitiesProvidersForm = () => {
             )}
           />
         </StyledInputsContainer>
-      </Section>
+      </Section.Root>
       {formByType}
     </SettingsPageContainer>
   );
