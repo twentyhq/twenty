@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import {
   type MessageQueueDriver,
   type QueueJobToAdd,
@@ -32,7 +33,10 @@ export class SyncDriver implements MessageQueueDriver {
     jobIds: string[],
   ): Promise<Partial<Record<string, QueueJobDetails<TData>>>> {
     return Object.fromEntries(
-      jobIds.map((id) => [id, this.jobs.get(`${queueName}:${id}`)]),
+      jobIds
+        .map((id) => this.jobs.get(`${queueName}:${id}`))
+        .filter(isDefined)
+        .map((job) => [job.id, job]),
     ) as Partial<Record<string, QueueJobDetails<TData>>>;
   }
 
@@ -114,6 +118,7 @@ export class SyncDriver implements MessageQueueDriver {
         data: job.data ?? {},
         state: 'active',
         attemptsMade: 0,
+        progress: 0,
         timestamp: Date.now(),
         processedOn: Date.now(),
       };
@@ -139,8 +144,9 @@ export class SyncDriver implements MessageQueueDriver {
         for (const [key, entry] of this.jobs) {
           if (
             entry.state !== 'active' &&
-            (this.jobs.size > 1000 ||
-              Date.now() - entry.timestamp > 4 * 60 * 60 * 1000)
+            (this.jobs.size > QUEUE_RETENTION.completedMaxCount ||
+              Date.now() - (entry.finishedOn ?? entry.timestamp) >
+                QUEUE_RETENTION.completedMaxAge * 1000)
           ) {
             this.jobs.delete(key);
           }

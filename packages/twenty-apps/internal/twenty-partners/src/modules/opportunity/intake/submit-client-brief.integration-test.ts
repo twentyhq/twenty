@@ -108,7 +108,8 @@ describe('submit-client-brief handler', () => {
     });
 
     const opp = fetched.opportunity;
-    expect(opp?.name).toBe(`${input.companyName} — marketplace brief`);
+    expect(opp?.name).toBe(`${input.need} — marketplace brief`);
+    expect(opp?.name).not.toContain(input.companyName);
     expect(opp?.need).toBe(input.need);
     expect(opp?.requirements).toContain('French UI');
     expect(opp?.requirements).toContain('Additional context:');
