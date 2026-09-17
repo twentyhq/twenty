@@ -146,11 +146,11 @@ export const DefaultWithoutSearch: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Go to People')).toBeVisible();
-    expect(await canvas.findByText('Go to Opportunities')).toBeVisible();
-    expect(await canvas.findByText('Go to Settings')).toBeVisible();
-    expect(await canvas.findByText('Go to Tasks')).toBeVisible();
-    expect(await canvas.findByText('Go to Notes')).toBeVisible();
+    expect(await canvas.findByText('Workspace')).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.queryByText('Go to People')).not.toBeInTheDocument();
+      expect(canvas.queryByText('Go to Settings')).not.toBeInTheDocument();
+    });
   },
 };
 
@@ -160,13 +160,17 @@ export const LimitedPermissions: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const searchInput = await canvas.findByTestId(SIDE_PANEL_FOCUS_ID);
+    await sleep(openTimeout);
+    await userEvent.type(searchInput, 'go to');
+
     expect(await canvas.findByText('Go to People')).toBeVisible();
+    expect(await canvas.findByText('Go to Settings')).toBeVisible();
+    expect(await canvas.findByText('Go to Notes')).toBeVisible();
     await waitFor(() => {
       expect(canvas.queryByText('Go to Opportunities')).not.toBeInTheDocument();
       expect(canvas.queryByText('Go to Tasks')).not.toBeInTheDocument();
     });
-    expect(await canvas.findByText('Go to Settings')).toBeVisible();
-    expect(await canvas.findByText('Go to Notes')).toBeVisible();
   },
 };
 
