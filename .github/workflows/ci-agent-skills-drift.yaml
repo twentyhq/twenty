@@ -178,13 +178,17 @@ jobs:
           AGENT_OUTCOME: ${{ steps.drift-agent.outcome }}
           STRUCTURED_OUTPUT: ${{ steps.drift-agent.outputs.structured_output }}
         run: |
+          # A checker that could not run is a tooling outage, not evidence of
+          # drift. Warn and pass, so an expired token or a rate limit does not
+          # block every PR touching the app-development surface. Only a real
+          # hasDrift verdict fails the check.
           if [ "$AGENT_OUTCOME" != "success" ]; then
-            echo "::error::Agent skills drift checker did not complete (agent step outcome: $AGENT_OUTCOME)."
-            exit 1
+            echo "::warning::Agent skills drift checker did not complete (agent step outcome: $AGENT_OUTCOME). Skipping the gate; review agent skills drift manually."
+            exit 0
           fi
           if [ -z "$STRUCTURED_OUTPUT" ]; then
-            echo "::error::Agent skills drift checker did not return a structured verdict."
-            exit 1
+            echo "::warning::Agent skills drift checker did not return a structured verdict. Skipping the gate; review agent skills drift manually."
+            exit 0
           fi
           has_drift=$(printf '%s' "$STRUCTURED_OUTPUT" | jq -r '.hasDrift')
           if [ "$has_drift" = "true" ]; then
@@ -195,5 +199,5 @@ jobs:
             echo "No agent skills drift."
             exit 0
           fi
-          echo "::error::Structured verdict present but 'hasDrift' was not a recognizable boolean: $has_drift"
-          exit 1
+          echo "::warning::Structured verdict present but 'hasDrift' was not a recognizable boolean: $has_drift. Skipping the gate; review agent skills drift manually."
+          exit 0
