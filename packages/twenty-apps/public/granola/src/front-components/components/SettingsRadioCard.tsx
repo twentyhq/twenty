@@ -1,30 +1,36 @@
 import styled from '@emotion/styled';
 import { Fragment, useId } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Radio } from 'src/front-components/components/Radio';
 import { Separator } from 'src/front-components/components/Separator';
-import {
-  StyledSettingsCardDescription,
-  StyledSettingsCardTextContainer,
-  StyledSettingsCardTitle,
-} from 'src/front-components/components/SettingsCardContentBase';
+import { StyledSettingsCardTextContainer } from 'src/front-components/components/SettingsCardContentBase';
 import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 
-const StyledOptionRow = styled.div<{ $disabled: boolean }>`
+const StyledOptionRow = styled.div`
   align-items: center;
   background-color: ${() => themeCssVariables.background.secondary};
-  cursor: ${({ $disabled }) => ($disabled ? 'default' : 'pointer')};
+  cursor: pointer;
   display: flex;
   gap: ${() => themeCssVariables.spacing[4]};
   padding: ${() => themeCssVariables.spacing[4]};
-  pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
 
   &:hover {
     background: ${() => themeCssVariables.background.transparent.lighter};
   }
+`;
+
+// Mirrors twenty-front's SettingsRadioSettingsCard: descriptions wrap, unlike the option card rows.
+const StyledOptionTitle = styled.div`
+  color: ${() => themeCssVariables.font.color.primary};
+  font-weight: ${() => themeCssVariables.font.weight.medium};
+  margin-bottom: ${() => themeCssVariables.spacing[2]};
+`;
+
+const StyledOptionDescription = styled.div`
+  color: ${() => themeCssVariables.font.color.tertiary};
+  font-size: ${() => themeCssVariables.font.size.sm};
 `;
 
 const StyledRadioContainer = styled.span`
@@ -51,14 +57,12 @@ export type SettingsRadioCardOption<TValue extends string> = {
 type SettingsRadioCardProps<TValue extends string> = {
   options: SettingsRadioCardOption<TValue>[];
   value: TValue;
-  disabled?: boolean;
   onChange: (value: TValue) => void;
 };
 
 export const SettingsRadioCard = <TValue extends string>({
   options,
   value,
-  disabled = false,
   onChange,
 }: SettingsRadioCardProps<TValue>) => {
   const groupId = useId();
@@ -72,23 +76,19 @@ export const SettingsRadioCard = <TValue extends string>({
 
         return (
           <Fragment key={option.value}>
-            <StyledOptionRow
-              $disabled={disabled}
-              onClick={() => onChange(option.value)}
-            >
+            <StyledOptionRow onClick={() => onChange(option.value)}>
               {option.cardMedia}
               <StyledSettingsCardTextContainer>
-                <StyledSettingsCardTitle id={titleId}>
+                <StyledOptionTitle id={titleId}>
                   {option.title}
-                </StyledSettingsCardTitle>
-                <StyledSettingsCardDescription id={descriptionId}>
-                  <OverflowingTextWithTooltip text={option.description} />
-                </StyledSettingsCardDescription>
+                </StyledOptionTitle>
+                <StyledOptionDescription id={descriptionId}>
+                  {option.description}
+                </StyledOptionDescription>
               </StyledSettingsCardTextContainer>
               <StyledRadioContainer>
                 <Radio
                   checked={isSelected}
-                  disabled={disabled}
                   aria-labelledby={titleId}
                   aria-describedby={descriptionId}
                   onSelect={() => onChange(option.value)}

@@ -3,11 +3,13 @@ import 'twenty-ui/style.css';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import {
+  enqueueSnackbar,
   t,
   useColorScheme,
   useFrontComponentId,
 } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
+import { Info } from 'twenty-ui/feedback';
 import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
 import {
   ThemeContext,
@@ -15,17 +17,24 @@ import {
   type ThemeType,
 } from 'twenty-ui/theme-constants';
 
-import { GranolaFolderSection } from 'src/front-components/components/GranolaFolderSection';
-import { GranolaImportHistorySection } from 'src/front-components/components/GranolaImportHistorySection';
 import { GRANOLA_WEBHOOK_REGISTRATION_ROUTE_PATH } from 'src/constants/granola-webhook-registration-route-path';
 import { GRANOLA_WEBHOOK_REMOVAL_ROUTE_PATH } from 'src/constants/granola-webhook-removal-route-path';
+import { GranolaApiKeyForm } from 'src/front-components/components/GranolaApiKeyForm';
+import { GranolaApiKeyFormSkeleton } from 'src/front-components/components/GranolaApiKeyFormSkeleton';
+import { GranolaConnectionCard } from 'src/front-components/components/GranolaConnectionCard';
+import { GranolaConnectionCardSkeleton } from 'src/front-components/components/GranolaConnectionCardSkeleton';
 import { GranolaConnectionSection } from 'src/front-components/components/GranolaConnectionSection';
+import { GranolaDangerZoneSection } from 'src/front-components/components/GranolaDangerZoneSection';
+import { GranolaFolderSection } from 'src/front-components/components/GranolaFolderSection';
+import { GranolaImportHistorySection } from 'src/front-components/components/GranolaImportHistorySection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { type GranolaConnectionStatus } from 'src/front-components/types/granola-connection-status.type';
+import { computeGranolaConnectionState } from 'src/front-components/utils/compute-granola-connection-state.util';
 import { fetchGranolaConnectionStatusOrThrow } from 'src/front-components/utils/fetch-granola-connection-status-or-throw.util';
-import { isGranolaConnectionReady } from 'src/front-components/utils/is-granola-connection-ready.util';
 import { postGranolaSettingsRouteOrThrow } from 'src/front-components/utils/post-granola-settings-route-or-throw.util';
+import { readStoredGranolaApiKeyHint } from 'src/front-components/utils/read-stored-granola-api-key-hint.util';
 import { setGranolaApiKeyOrThrow } from 'src/front-components/utils/set-granola-api-key-or-throw.util';
+import { storeGranolaApiKeyHint } from 'src/front-components/utils/store-granola-api-key-hint.util';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -39,13 +48,6 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledNotice = styled.div`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.md};
-  line-height: ${() => themeCssVariables.text.lineHeight.md};
-`;
-
 type GranolaSettingsState =
   | { step: 'loading' }
   | { step: 'unavailable' }
@@ -57,88 +59,112 @@ const shouldSetUpLiveSync = (status: GranolaConnectionStatus) =>
   status.needsRegistration &&
   !isDefined(status.registration);
 
+const fetchGranolaConnectionStatusOrUndefined = async () => {
+  try {
+    return await fetchGranolaConnectionStatusOrThrow();
+  } catch {
+    return undefined;
+  }
+};
+
+const registerGranolaLiveSync = async (): Promise<boolean> => {
+  try {
+    await postGranolaSettingsRouteOrThrow({
+      routePath: GRANOLA_WEBHOOK_REGISTRATION_ROUTE_PATH,
+      body: {},
+    });
+
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const GranolaSettings = () => {
   const colorScheme = useColorScheme();
   const frontComponentId = useFrontComponentId();
   const [state, setState] = useState<GranolaSettingsState>({ step: 'loading' });
-  const [isConnecting, setIsConnecting] = useState(false);
+  const [isSettingUpConnection, setIsSettingUpConnection] = useState(true);
+  const [hasSetupFailed, setHasSetupFailed] = useState(false);
   const [connectError, setConnectError] = useState<string | undefined>();
   const [isRemoving, setIsRemoving] = useState(false);
-  const [removeError, setRemoveError] = useState<string | undefined>();
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [registrationError, setRegistrationError] = useState<
-    string | undefined
-  >();
+  const [isApiKeyExpected] = useState(readStoredGranolaApiKeyHint);
 
-  const refreshConnectionStatus = async () => {
-    try {
-      const status = await fetchGranolaConnectionStatusOrThrow();
+  const showConnectionStatus = (status: GranolaConnectionStatus) => {
+    storeGranolaApiKeyHint(status.isApiKeySet);
+    setState({ step: 'ready', status });
+  };
 
-      setState({ step: 'ready', status });
-
-      return status;
-    } catch {
-      setRegistrationError(t('Could not connect to Granola. Try again.'));
+  // Status and flags are set in one tick so the key form and the card never swap for a frame.
+  const finishConnectionSetup = ({
+    status,
+    hasRegistrationFailed,
+  }: {
+    status: GranolaConnectionStatus | undefined;
+    hasRegistrationFailed: boolean;
+  }) => {
+    if (isDefined(status)) {
+      showConnectionStatus(status);
+    } else {
       setState((current) =>
         current.step === 'ready' ? current : { step: 'unavailable' },
       );
-
-      return undefined;
     }
+    setHasSetupFailed(hasRegistrationFailed || !isDefined(status));
+    setIsSettingUpConnection(false);
   };
 
   const registerLiveSync = async () => {
-    setIsRegistering(true);
-    setRegistrationError(undefined);
+    setIsSettingUpConnection(true);
 
-    try {
-      await postGranolaSettingsRouteOrThrow({
-        routePath: GRANOLA_WEBHOOK_REGISTRATION_ROUTE_PATH,
-        body: {},
-      });
-    } catch {
-      setRegistrationError(t('Could not connect to Granola. Try again.'));
-    }
+    const isRegistered = await registerGranolaLiveSync();
+    const status = await fetchGranolaConnectionStatusOrUndefined();
 
-    await refreshConnectionStatus();
-    setIsRegistering(false);
+    finishConnectionSetup({ status, hasRegistrationFailed: !isRegistered });
   };
 
   const loadConnectionStatus = async () => {
-    setIsRegistering(true);
-    setRegistrationError(undefined);
-    const status = await refreshConnectionStatus();
+    setIsSettingUpConnection(true);
+    setState((current) =>
+      current.step === 'ready' ? current : { step: 'loading' },
+    );
+
+    const status = await fetchGranolaConnectionStatusOrUndefined();
 
     if (isDefined(status) && shouldSetUpLiveSync(status)) {
+      showConnectionStatus(status);
       await registerLiveSync();
+
+      return;
     }
-    setIsRegistering(false);
+
+    finishConnectionSetup({ status, hasRegistrationFailed: false });
   };
 
-  const handleConnect = async (apiKey: string): Promise<boolean> => {
-    setIsConnecting(true);
+  const handleConnect = async (apiKey: string) => {
+    setIsSettingUpConnection(true);
     setConnectError(undefined);
 
     try {
       await setGranolaApiKeyOrThrow({ frontComponentId, apiKey });
     } catch {
       setConnectError(t('Could not save the API key. Try again.'));
-      setIsConnecting(false);
+      setIsSettingUpConnection(false);
 
-      return false;
+      return;
     }
 
     await loadConnectionStatus();
-    setIsConnecting(false);
-
-    return true;
   };
 
   // Deleting the endpoint needs the key that created it, so the webhook goes
   // before the variable is cleared.
-  const handleRemove = async () => {
+  const handleRemoveApiKey = async () => {
+    if (isRemoving) {
+      return;
+    }
+
     setIsRemoving(true);
-    setRemoveError(undefined);
 
     try {
       await postGranolaSettingsRouteOrThrow({
@@ -147,14 +173,32 @@ export const GranolaSettings = () => {
       });
       await setGranolaApiKeyOrThrow({ frontComponentId, apiKey: '' });
       setConnectError(undefined);
-      setRegistrationError(undefined);
+      setHasSetupFailed(false);
     } catch {
-      setRemoveError(t('Could not remove the API key. Try again.'));
+      enqueueSnackbar({
+        message: t('Could not remove the API key. Try again.'),
+        variant: 'error',
+      });
     }
 
-    await refreshConnectionStatus();
+    const status = await fetchGranolaConnectionStatusOrUndefined();
+
+    if (isDefined(status)) {
+      showConnectionStatus(status);
+    }
     setIsRemoving(false);
   };
+
+  const status = state.step === 'ready' ? state.status : undefined;
+  const connectionState = isDefined(status)
+    ? computeGranolaConnectionState({
+        status,
+        isConnecting: isSettingUpConnection,
+        hasSetupFailed,
+      })
+    : undefined;
+  const hasApiKeyOrIsSettingUp =
+    isDefined(status) && (status.isApiKeySet || isSettingUpConnection);
 
   // twenty-ui components read icon sizes off ThemeContext, and the context
   // default resolves them to var() strings an SVG size attribute cannot use.
@@ -169,43 +213,57 @@ export const GranolaSettings = () => {
     >
       <StyledContainer>
         <OnMountEffect onMount={loadConnectionStatus} />
-        {state.step === 'loading' && (
-          <StyledNotice>{t('Checking your Granola connection…')}</StyledNotice>
-        )}
-        {state.step === 'unavailable' && (
-          <StyledNotice>
-            {t(
-              'Could not load Granola settings. Reload the page to try again.',
-            )}
-          </StyledNotice>
-        )}
-        {state.step === 'ready' && (
-          <>
-            <GranolaConnectionSection
-              status={state.status}
-              isConnecting={isConnecting || isRegistering}
-              isRemoving={isRemoving}
-              connectError={connectError ?? registrationError}
-              removeError={removeError}
-              onConnect={handleConnect}
-              onRemove={handleRemove}
-              onRetry={
-                state.status.isConnected && state.status.canManage
-                  ? registerLiveSync
-                  : loadConnectionStatus
-              }
+        <GranolaConnectionSection>
+          {state.step === 'loading' && isApiKeyExpected && (
+            <GranolaConnectionCardSkeleton />
+          )}
+          {state.step === 'loading' && !isApiKeyExpected && (
+            <GranolaApiKeyFormSkeleton />
+          )}
+          {state.step === 'unavailable' && (
+            <Info
+              accent="danger"
+              text={t('Could not load Granola settings.')}
+              buttonTitle={t('Retry')}
+              onClick={loadConnectionStatus}
             />
-            {state.status.canManage &&
-              isGranolaConnectionReady(state.status) &&
-              !isConnecting &&
-              !isRegistering &&
-              !isDefined(registrationError) && (
-                <>
-                  <GranolaFolderSection />
-                  <GranolaImportHistorySection />
-                </>
-              )}
-          </>
+          )}
+          {isDefined(status) && !hasApiKeyOrIsSettingUp && (
+            <GranolaApiKeyForm
+              errorMessage={connectError}
+              onConnect={handleConnect}
+            />
+          )}
+          {isDefined(status) &&
+            isDefined(connectionState) &&
+            hasApiKeyOrIsSettingUp && (
+              <GranolaConnectionCard
+                connectionState={connectionState}
+                isWorkspaceKey={
+                  status.registration?.scopes.includes('workspace') ?? false
+                }
+                onRetry={
+                  status.isConnected && status.canManage
+                    ? registerLiveSync
+                    : loadConnectionStatus
+                }
+                onReplaceKey={handleRemoveApiKey}
+              />
+            )}
+        </GranolaConnectionSection>
+        {isDefined(status) &&
+          status.canManage &&
+          connectionState === 'CONNECTED' && (
+            <>
+              <GranolaFolderSection />
+              <GranolaImportHistorySection />
+            </>
+          )}
+        {isDefined(status) && status.isApiKeySet && !isSettingUpConnection && (
+          <GranolaDangerZoneSection
+            isDisconnecting={isRemoving}
+            onDisconnect={handleRemoveApiKey}
+          />
         )}
       </StyledContainer>
     </ThemeContext.Provider>
