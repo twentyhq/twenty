@@ -1,6 +1,5 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isNonEmptyString } from 'twenty-shared/utils';
 
 export const getCommandMenuItemObjectSectionHeading = ({
   commandMenuContextApi,
