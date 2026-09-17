@@ -285,6 +285,10 @@ export class WorkflowCommonWorkspaceService {
 
             break;
           case 'restore':
+            await this.workflowCoreSyncService.upsertToCore(workspaceId, [
+              workflowId,
+            ]);
+
             await workflowAutomatedTriggerRepository.restore({
               workflowId,
             });

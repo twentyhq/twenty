@@ -253,42 +253,6 @@ export class CoreWorkflowVersionWriteService {
     });
   }
 
-  private async mergeWithPersistedContent({
-    workspaceId,
-    coreWorkflowVersionId,
-    trigger,
-    steps,
-  }: {
-    workspaceId: string;
-    coreWorkflowVersionId: string;
-    trigger?: WorkflowTrigger | null;
-    steps?: WorkflowAction[] | null;
-  }): Promise<{
-    trigger: WorkflowTrigger | null;
-    steps: WorkflowAction[] | null;
-  }> {
-    if (trigger !== undefined && steps !== undefined) {
-      return { trigger, steps };
-    }
-
-    const persistedCoreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { id: coreWorkflowVersionId },
-        select: { id: true, triggers: true, steps: true },
-      });
-
-    return {
-      trigger:
-        trigger === undefined
-          ? (persistedCoreWorkflowVersion?.triggers?.[0] ?? null)
-          : trigger,
-      steps:
-        steps === undefined
-          ? (persistedCoreWorkflowVersion?.steps ?? null)
-          : steps,
-    };
-  }
-
   private async assertContentIsNotMalformed({
     workspaceId,
     coreWorkflowVersionId,

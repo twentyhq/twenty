@@ -318,6 +318,16 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         'UPDATE core."workflowVersion" SET "workspaceWorkflowVersionId" = NULL WHERE id = $1',
         [fixture.coreWorkflowVersionId],
       );
+      await expect(backfill()).rejects.toThrow(
+        'Missing or conflicting workflow version mapping',
+      );
+      await global.workflowTestServices.versionAliasBackfill.runOnWorkspace({
+        workspaceId,
+        dataSource: global.testDataSource,
+        options: {},
+        index: 0,
+        total: 1,
+      });
       await global.workflowTestServices.backfill.runOnWorkspace({
         workspaceId,
         dataSource: global.testDataSource,
@@ -1343,10 +1353,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const id = randomUUID();
     try {
       await global.testDataSource.query(
-        'UPDATE core."workflowVersion" SET "workspaceWorkflowVersionId" = NULL WHERE id = $1',
-        [fixture.coreWorkflowVersionId],
-      );
-      await global.testDataSource.query(
         `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", "coreWorkflowId", status, position, state) VALUES ($1, 'B-Async conflict', $2, $3, $4, 'ENQUEUED', 0, '{}')`,
         [
           id,
@@ -1362,7 +1368,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         'SELECT "workspaceWorkflowVersionId" FROM core."workflowVersion" WHERE id = $1',
         [fixture.coreWorkflowVersionId],
       );
-      expect(version.workspaceWorkflowVersionId).toBeNull();
+      expect(version.workspaceWorkflowVersionId).toBe(
+        fixture.workflowVersionId,
+      );
       expect((await getRun(id)).coreWorkflowVersionId).toBeNull();
     } finally {
       await global.testDataSource.query(

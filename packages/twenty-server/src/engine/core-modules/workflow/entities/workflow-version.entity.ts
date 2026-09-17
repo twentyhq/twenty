@@ -44,10 +44,6 @@ export enum WorkflowVersionStatus {
   },
 )
 @Index('IDX_WORKFLOW_VERSION_APPLICATION_ID', ['applicationId'])
-@Index('IDX_WORKFLOW_VERSION_WORKSPACE_WORKFLOW_VERSION_ID', [
-  'workspaceId',
-  'workspaceWorkflowVersionId',
-])
 export class WorkflowVersionEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

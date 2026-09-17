@@ -9,11 +9,11 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredWorkspaceCommand('2.42.0', 1789593132221)
+@RegisteredWorkspaceCommand('2.42.0', 1789652804003)
 @Command({
   name: 'upgrade:2-42:backfill-workflow-execution-core-ids',
   description:
-    'Backfill durable workflow version mappings and workflow run core ids',
+    'Validate durable workflow mappings and backfill workflow run core ids',
 })
 export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -60,7 +60,7 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
            cv."workflowId" IS DISTINCT FROM wv."workflowId" OR
            cw.id IS NULL OR cw."workspaceId" <> $1 OR
            cw."workspaceWorkflowId" IS DISTINCT FROM wv."workflowId" OR
-           (cv."workspaceWorkflowVersionId" IS NOT NULL AND cv."workspaceWorkflowVersionId" <> wv.id)
+           cv."workspaceWorkflowVersionId" IS DISTINCT FROM wv.id
          ) LIMIT 1`,
         [workspaceId],
       );
@@ -74,15 +74,6 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
       if (invalidMappings.length > 0 || duplicates.length > 0) {
         throw new Error(`Missing or conflicting workflow version mapping in workspace ${workspaceId}`);
       }
-
-      await queryRunner.query(
-        `UPDATE core."workflowVersion" cv
-         SET "workspaceWorkflowVersionId" = wv.id
-         FROM "${schema}"."workflowVersion" wv
-         WHERE cv."workspaceId" = $1 AND wv."coreWorkflowVersionId" = cv.id
-           AND cv."workspaceWorkflowVersionId" IS NULL`,
-        [workspaceId],
-      );
 
       const conflictingRuns = await queryRunner.query(
         `SELECT r.id FROM "${schema}"."workflowRun" r

@@ -33,11 +33,24 @@ export class WorkflowCoreSyncService {
 
   async upsertToCore(
     workspaceId: string,
-    workflows: WorkflowWorkspaceEntity[],
+    workspaceWorkflowIds: string[],
   ): Promise<void> {
-    const liveWorkflows = workflows.filter(
-      (workflow) => !isDefined(workflow.deletedAt),
-    );
+    if (workspaceWorkflowIds.length === 0) {
+      return;
+    }
+
+    const liveWorkflows =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowRepository =
+          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            'workflow',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return workflowRepository.find({
+          where: { id: In(workspaceWorkflowIds) },
+        });
+      }, buildSystemAuthContext(workspaceId));
 
     if (liveWorkflows.length === 0) {
       return;
@@ -191,18 +204,6 @@ export class WorkflowCoreSyncService {
         },
       );
     }, buildSystemAuthContext(workspaceId));
-  }
-
-  private async resolveReverseMappedCoreWorkflowIds(
-    workspaceId: string,
-    workflows: WorkflowWorkspaceEntity[],
-  ): Promise<Map<string, string>> {
-    return resolveCoreWorkflowIdsByWorkspaceWorkflowId({
-      executeQuery: (query, parameters) =>
-        this.workspaceRepository.manager.query(query, parameters),
-      workspaceId,
-      workspaceWorkflowIds: workflows.map((workflow) => workflow.id),
-    });
   }
 
   private async resolveCoreVersionIdByWorkspaceVersionId(

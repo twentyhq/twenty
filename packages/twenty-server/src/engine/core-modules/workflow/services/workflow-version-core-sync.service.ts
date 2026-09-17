@@ -100,7 +100,6 @@ export class WorkflowVersionCoreSyncService {
           : null,
         steps: workflowVersion.steps ?? null,
         status: workflowVersion.status as unknown as WorkflowVersionStatus,
-        workspaceWorkflowVersionId: workflowVersion.id,
         universalIdentifier: uuidv4(),
         applicationId,
       };

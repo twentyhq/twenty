@@ -8,7 +8,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-@RegisteredWorkspaceCommand('2.42.0', 1789593132222)
+@RegisteredWorkspaceCommand('2.42.0', 1789652804004)
 @Command({
   name: 'upgrade:2-42:make-workflow-run-projection-relations-nullable',
   description:

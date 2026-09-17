@@ -136,22 +136,15 @@ export class WorkflowTriggerResolver {
         });
       }, authContext);
 
+    const { payload: triggerPayload, createdBy } =
+      buildWorkflowRunTriggerContext({ workspaceMember, payload });
+
     return this.coreWorkflowRunnerService.run({
       workspaceId: workspace.id,
       coreWorkflowVersionId,
       workflowRunId: workflowRunId ?? undefined,
-      payload: {
-        ...(payload ?? {}),
-        [WORKFLOW_TRIGGER_PAYLOAD_KEY]: { ...(payload ?? {}) },
-        [WORKFLOW_TRIGGER_METADATA_KEY]: {
-          [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]:
-            workspaceMember.id,
-        },
-      },
-      source: buildCreatedByFromFullNameMetadata({
-        fullNameMetadata: workspaceMember.name,
-        workspaceMemberId: workspaceMember.id,
-      }),
+      payload: triggerPayload,
+      source: createdBy,
     });
   }
 

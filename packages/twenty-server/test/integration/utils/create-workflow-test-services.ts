@@ -1,4 +1,5 @@
 import { getDataSourceToken } from '@nestjs/typeorm';
+import { BackfillWorkspaceWorkflowVersionIdCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789652804001-backfill-workspace-workflow-version-id.command';
 import { type DataSource } from 'typeorm';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -8,7 +9,7 @@ import { type INestApplication } from '@nestjs/common';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { BackfillWorkflowExecutionCoreIdsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789593132221-backfill-workflow-execution-core-ids.command';
+import { BackfillWorkflowExecutionCoreIdsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789652804003-backfill-workflow-execution-core-ids.command';
 import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
@@ -25,6 +26,7 @@ export const createWorkflowTestServices = (app: INestApplication) => ({
   workspaceCache: app.get(WorkspaceCacheService),
   upgradeState: UpgradeAwareRepositoryState.getInstance(),
   backfill: app.get(BackfillWorkflowExecutionCoreIdsCommand),
+  versionAliasBackfill: app.get(BackfillWorkspaceWorkflowVersionIdCommand),
   triggerJob: () => app.resolve(WorkflowTriggerJob),
   runJob: () => app.resolve(RunWorkflowJob),
   cron: app.get(WorkflowCronTriggerCronJob),

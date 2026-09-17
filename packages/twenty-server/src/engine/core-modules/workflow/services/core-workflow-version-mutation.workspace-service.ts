@@ -273,6 +273,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       coreWorkflowVersionId,
       expectedVersion: coreWorkflowVersion,
       trigger,
+      steps,
     });
 
     return { trigger };
@@ -399,6 +400,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         coreWorkflowVersionId,
         expectedVersion: coreWorkflowVersion,
         trigger: updatedTrigger,
+        steps,
       });
 
       return computeWorkflowVersionStepChanges({
@@ -500,6 +502,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         coreWorkflowVersionId,
         expectedVersion: coreWorkflowVersion,
         trigger: updatedTrigger,
+        steps,
       });
 
       return computeWorkflowVersionStepChanges({
@@ -596,8 +599,8 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       workspaceId,
       coreWorkflowVersionId,
       expectedVersion: coreWorkflowVersion,
-      trigger: updatedTrigger,
-      steps: updatedSteps,
+      trigger: updatedTrigger ?? trigger,
+      steps: updatedSteps ?? steps,
     });
   }
 
