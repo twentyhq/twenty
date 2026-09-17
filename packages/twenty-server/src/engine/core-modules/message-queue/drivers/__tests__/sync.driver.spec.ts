@@ -5,12 +5,14 @@ describe('SyncDriver job snapshots', () => {
   it('retains progress and the handler result when work completes', async () => {
     const driver = new SyncDriver();
     driver.work(MessageQueue.recordExportQueue, async (job) => {
+      await job.updateData({ cursor: 'next-page' });
       await job.updateProgress({ processedRecordCount: 100 });
       const active = await driver.getJobs(MessageQueue.recordExportQueue, [
         job.id,
       ]);
       expect(active[job.id]).toMatchObject({
         state: 'active',
+        data: { cursor: 'next-page' },
         progress: { processedRecordCount: 100 },
       });
       return { fileId: 'file-id' };
