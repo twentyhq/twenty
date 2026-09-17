@@ -33,8 +33,15 @@ export const getToastOptionsFromError = ({
       : t`An error occurred.`);
 
   // Nested handlers often report the same failure; while its toast is visible, a repeat collapses into it.
-  const dedupeKey =
-    options.dedupeKey ?? (typeof children === 'string' ? children : undefined);
+  // A conflict carries a record-specific action, so conflicts on different records stay separate.
+  const defaultDedupeKey =
+    typeof children === 'string'
+      ? isDefined(conflictingRecord)
+        ? `${children}:${conflictingRecord.conflictingRecordId}`
+        : children
+      : undefined;
+
+  const dedupeKey = options.dedupeKey ?? defaultDedupeKey;
 
   return {
     ...options,

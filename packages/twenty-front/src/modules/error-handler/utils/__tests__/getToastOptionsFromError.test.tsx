@@ -1,4 +1,5 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 
 describe('getToastOptionsFromError', () => {
   it('preserves custom content, actions, and delivery options', () => {
@@ -34,6 +35,33 @@ describe('getToastOptionsFromError', () => {
       children: 'Connection lost',
       dedupeKey: 'Connection lost',
     });
+  });
+
+  it('keeps conflicts on different records as separate toasts', () => {
+    const buildConflictError = (conflictingRecordId: string) =>
+      new CombinedGraphQLErrors({
+        data: null,
+        errors: [
+          {
+            message: 'Record already exists',
+            extensions: {
+              userFriendlyMessage: 'Record already exists',
+              conflictingRecordId,
+              conflictingObjectNameSingular: 'person',
+            },
+          },
+        ],
+      });
+
+    const firstOptions = getToastOptionsFromError({
+      error: buildConflictError('record-1'),
+    });
+    const secondOptions = getToastOptionsFromError({
+      error: buildConflictError('record-2'),
+    });
+
+    expect(firstOptions?.dedupeKey).toBe('Record already exists:record-1');
+    expect(secondOptions?.dedupeKey).toBe('Record already exists:record-2');
   });
 
   it('suppresses aborted requests even when custom content is provided', () => {
