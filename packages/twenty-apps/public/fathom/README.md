@@ -5,8 +5,9 @@
 ## ✨ What you get
 
 - **Fathom transcripts, summaries, and action items saved when available**
-- **Impromptu titles keep Fathom's name with a short topic from the summary,
-  or the recording's date and time in UTC when a topic is unavailable**
+- **Impromptu recordings save immediately with Fathom's name and the recording
+  date and time in UTC. A background agent can replace the timestamp with a short
+  topic from the summary, provided the saved title still matches the original**
 - **Recording video, or audio for audio-only calls, on the same record**
 - **Saved to a Call Recording, with calendar links for clear matches**
 - **New meetings synced as they happen**
@@ -17,6 +18,9 @@
 
 **Free to run**: no per-seat, per-recording or per-import charge. AI actions,
 including impromptu title generation, use AI credits on the model's token usage.
+Title generation is queued for new impromptu recordings with a summary, without
+automatic retries.
+If it fails or produces no usable topic, the timestamped title stays in place.
 
 ## 📌 Heads up
 

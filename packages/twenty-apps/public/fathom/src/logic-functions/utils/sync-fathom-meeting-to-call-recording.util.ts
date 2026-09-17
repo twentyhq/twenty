@@ -2,19 +2,20 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type Meeting } from 'fathom-typescript/sdk/models/shared';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { MAX_FATHOM_TITLE_SUMMARY_CHARACTERS } from 'src/constants/fathom.constant';
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
+import { buildFathomCallRecordingTitle } from 'src/logic-functions/utils/build-fathom-call-recording-title.util';
 import { buildFathomCallRecordingUpsertFields } from 'src/logic-functions/utils/build-fathom-call-recording-upsert-fields.util';
 import { completeFathomCallRecordingImport } from 'src/logic-functions/utils/complete-fathom-call-recording-import.util';
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
+import { enqueueFathomCallRecordingTitleGeneration } from 'src/logic-functions/utils/enqueue-fathom-call-recording-title-generation.util';
 import { enqueueFathomMediaDownloadRequest } from 'src/logic-functions/utils/enqueue-fathom-media-download-request.util';
 import { findCallRecordingMediaState } from 'src/logic-functions/utils/find-call-recording-media-state.util';
 import { findMatchingCalendarEvent } from 'src/logic-functions/utils/find-matching-calendar-event.util';
 import { formatFathomSummary } from 'src/logic-functions/utils/format-fathom-summary.util';
-import { generateFathomCallRecordingTitle } from 'src/logic-functions/utils/generate-fathom-call-recording-title.util';
 import { mapFathomTranscriptToEntries } from 'src/logic-functions/utils/map-fathom-transcript-to-entries.util';
 import { upsertCallRecording } from 'src/logic-functions/utils/upsert-call-recording.util';
 import { upsertFathomRecordingImport } from 'src/logic-functions/utils/upsert-fathom-recording-import.util';
-import { isDefined } from 'src/utils/is-defined';
 
 export const syncFathomMeetingToCallRecording = async ({
   coreApiClient,
@@ -47,9 +48,7 @@ export const syncFathomMeetingToCallRecording = async ({
     coreApiClient,
     callRecordingId,
   });
-  const title = !isDefined(existingCallRecording)
-    ? await generateFathomCallRecordingTitle(meeting)
-    : undefined;
+  const { title, impromptuTitle } = buildFathomCallRecordingTitle(meeting);
   const sharedFields: CallRecordingSyncFields = {
     recordingRequestStatus: 'REQUESTED',
     startedAt: meeting.recordingStartTime.toISOString(),
@@ -98,6 +97,22 @@ export const syncFathomMeetingToCallRecording = async ({
     coreApiClient,
     callRecordingId,
   });
+
+  const meetingSummary = meeting.defaultSummary?.markdownFormatted?.trim();
+
+  if (
+    upsertResult.created &&
+    isNonEmptyString(impromptuTitle) &&
+    isNonEmptyString(meetingSummary)
+  ) {
+    await enqueueFathomCallRecordingTitleGeneration({
+      callRecordingId,
+      expectedTitle: title,
+      originalTitle: impromptuTitle,
+      summary: meetingSummary.slice(0, MAX_FATHOM_TITLE_SUMMARY_CHARACTERS),
+    });
+  }
+
   if (upsertResult.created || isMediaDownloadRequestNeeded) {
     await enqueueFathomMediaDownloadRequest({
       callRecordingId,
