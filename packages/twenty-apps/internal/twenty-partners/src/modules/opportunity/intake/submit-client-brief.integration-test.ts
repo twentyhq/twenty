@@ -81,7 +81,7 @@ describe('submit-client-brief handler', () => {
     expect(result).toEqual({ ok: false, reason: 'unauthorized' });
   });
 
-  it('creates an unlisted opportunity with marketplace brief name suffix', async () => {
+  it('creates a listed opportunity with marketplace brief name suffix', async () => {
     const input = baseInput({
       requirements: 'French UI',
       hostingType: 'CLOUD',
@@ -108,11 +108,12 @@ describe('submit-client-brief handler', () => {
     });
 
     const opp = fetched.opportunity;
-    expect(opp?.name).toBe(`${input.companyName} — marketplace brief`);
+    expect(opp?.name).toBe(`${input.need} — marketplace brief`);
+    expect(opp?.name).not.toContain(input.companyName);
     expect(opp?.need).toBe(input.need);
     expect(opp?.requirements).toContain('French UI');
     expect(opp?.requirements).toContain('Additional context:');
-    expect(opp?.isListed).toBe(false);
+    expect(opp?.isListed).toBe(true);
     expect(opp?.stage).toBe('NEW');
     expect(opp?.company?.name).toBe(input.companyName);
     expect(opp?.pointOfContact?.emails?.primaryEmail).toBe(input.email);

@@ -5,6 +5,7 @@ import {
   findOrCreatePersonByEmail,
 } from 'src/modules/shared/services/find-or-create-company-and-person.service';
 import { createOpportunity } from 'src/modules/opportunity/intake/graphql/mutations/create-opportunity';
+import { buildBriefName } from 'src/modules/opportunity/intake/mappers/build-brief-name.mapper';
 import { findPartnerIdBySlug } from 'src/modules/opportunity/intake/graphql/queries/find-partner-id-by-slug';
 import {
   buildRequirementsText,
@@ -37,7 +38,7 @@ export async function submitClientBrief(
 ): Promise<SubmitClientBriefResult> {
   try {
     const client = new CoreApiClient();
-    const name = `${input.companyName.trim()} — marketplace brief`;
+    const name = buildBriefName(input.need);
     const requirements = buildRequirementsText(input);
 
     const companyId = await findOrCreateCompanyByName(
@@ -58,7 +59,7 @@ export async function submitClientBrief(
     const opportunityData: CoreSchema.OpportunityCreateInput = {
       name,
       need: input.need,
-      isListed: false,
+      isListed: true,
       stage: 'NEW',
       companyId,
       pointOfContactId,
