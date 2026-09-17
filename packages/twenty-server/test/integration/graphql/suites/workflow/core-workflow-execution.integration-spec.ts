@@ -871,6 +871,38 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     await waitForRun(runId, 'FAILED');
   });
 
+  it('restores historical versions that no longer validate against current metadata', async () => {
+    const historicalStep: WorkflowAction = {
+      ...emptyStep(),
+      type: WorkflowActionType.CREATE_RECORD,
+      settings: {
+        ...settings,
+        input: { objectName: 'unavailableObject', objectRecord: {} },
+      },
+    };
+    const fixture = await createFixture({ steps: [historicalStep] });
+    const deleteResponse = await workflowGraphqlRequest(
+      'mutation Delete($id: UUID!) { deleteWorkflow(id: $id) { id } }',
+      { id: fixture.workflowId },
+    );
+
+    expect(deleteResponse.body.errors).toBeUndefined();
+
+    const restoreResponse = await workflowGraphqlRequest(
+      'mutation Restore($id: UUID!) { restoreWorkflow(id: $id) { id } }',
+      { id: fixture.workflowId },
+    );
+
+    expect(restoreResponse.body.errors).toBeUndefined();
+
+    const [restoredVersion] = await global.testDataSource.query(
+      'SELECT steps FROM core."workflowVersion" WHERE id = $1',
+      [fixture.coreWorkflowVersionId],
+    );
+
+    expect(restoredVersion.steps).toEqual([historicalStep]);
+  });
+
   it('records hard-throttled runs with their requested id and snapshot', async () => {
     const fixture = await createFixture({ mirrorless: true });
     jest

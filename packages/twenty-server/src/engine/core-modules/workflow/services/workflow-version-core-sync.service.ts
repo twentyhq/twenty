@@ -591,23 +591,29 @@ export class WorkflowVersionCoreSyncService {
     workflowId: string,
   ): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
+      await this.workspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          const workflowVersionRepository =
+            transactionScope.getRepository<WorkflowVersionWorkspaceEntity>(
+              'workflowVersion',
+              { shouldBypassPermissionChecks: true },
+            );
+          const versions = await workflowVersionRepository.find({
+            where: { workflowId },
+          });
 
-      const versions = await workflowVersionRepository.find({
-        where: { workflowId },
-      });
-
-      for (const version of versions) {
-        await this.writeWorkflowVersionAndMirror(
-          workspaceId,
-          async () => version.id,
-        );
-      }
+          for (const version of versions) {
+            await this.mirrorWorkflowVersionWrite({
+              workspaceId,
+              transactionScope,
+              workflowVersion: version,
+            });
+          }
+        },
+      );
     }, buildSystemAuthContext(workspaceId));
+
+    await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
 
   private async writeBackCoreVersionIds(
