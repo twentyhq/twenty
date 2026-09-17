@@ -1,7 +1,7 @@
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useMultiSelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMultiSelectFieldDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { isDefined } from 'twenty-shared/utils';
 
 export const MultiSelectFieldDisplay = () => {

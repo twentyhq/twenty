@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -88,7 +88,7 @@ export const SettingsApplicationRegistrationRedirectURIsInput = ({
             )}
           />
         </StyledLinkContainer>
-        <Button title={t`Add URI`} type="submit" />
+        <Button type="submit">{t`Add URI`}</Button>
       </StyledContainer>
     </form>
   );

@@ -5,7 +5,7 @@ import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconArrowsSort, IconTrash, useIcons } from 'twenty-ui/icon';
-import { Button, type SelectOption } from 'twenty-ui/input';
+import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { v4 as uuidv4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -139,7 +139,8 @@ export const WorkflowFindRecordsSorts = ({
             {!readonly && (
               <Button
                 onClick={() => handleRemoveSort(sort.id)}
-                Icon={IconTrash}
+                startIcon={<IconTrash />}
+                aria-label={t`Delete`}
                 disabled={readonly}
               />
             )}
@@ -149,15 +150,13 @@ export const WorkflowFindRecordsSorts = ({
 
       <StyledAddButtonContainer>
         <Button
-          Icon={IconArrowsSort}
-          size="small"
-          variant="secondary"
-          accent="default"
+          startIcon={<IconArrowsSort />}
+          size="sm"
           onClick={handleAddSort}
-          ariaLabel={t`Add sort`}
-          title={t`Add sort`}
+          aria-label={t`Add sort`}
           disabled={readonly}
-        />
+          variant="outline"
+        >{t`Add sort`}</Button>
       </StyledAddButtonContainer>
     </StyledContainer>
   );

@@ -22,8 +22,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
 type WorkflowDropdownStepOutputItemsProps = {
   stepFilter: StepFilter;

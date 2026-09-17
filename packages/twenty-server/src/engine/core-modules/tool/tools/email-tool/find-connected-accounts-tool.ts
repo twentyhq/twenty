@@ -1,3 +1,4 @@
+import { EmailOperation } from 'twenty-shared/types';
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -13,7 +14,7 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 @Injectable()
 export class FindConnectedAccountsTool implements Tool {
   description =
-    'List connected email accounts the caller can use with draft_email and send_email. Returns id, handle, provider, visibility and aliases. Use a returned id as connectedAccountId.';
+    'List the mailboxes the caller can use with draft_email and send_email. Returns id, handle, provider, visibility and aliases. Pass a returned id as connectedAccountId. If more than one is returned, ask the user which one to send from rather than guessing. Whether a given mailbox supports drafting also depends on its configuration, which draft_email reports if it does not.';
   inputSchema = FindConnectedAccountsToolInputZodSchema;
 
   constructor(
@@ -24,18 +25,19 @@ export class FindConnectedAccountsTool implements Tool {
     { handle }: FindConnectedAccountsToolInput,
     { workspaceId, userWorkspaceId }: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const usableAccounts =
-      await this.connectedAccountMetadataService.findUsableByCaller({
+    const mailboxAccounts =
+      await this.connectedAccountMetadataService.findMailboxesUsableByCaller({
         workspaceId,
         userWorkspaceId,
+        operation: EmailOperation.SEND,
       });
 
     const matchingAccounts = isNonEmptyString(handle)
       ? filterConnectedAccountsByHandle({
-          connectedAccounts: usableAccounts,
+          connectedAccounts: mailboxAccounts,
           handle,
         })
-      : usableAccounts;
+      : mailboxAccounts;
 
     const records = matchingAccounts.map((connectedAccount) => ({
       id: connectedAccount.id,

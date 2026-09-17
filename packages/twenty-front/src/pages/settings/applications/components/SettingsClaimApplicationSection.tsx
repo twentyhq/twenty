@@ -1,7 +1,7 @@
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLazyQuery, useMutation } from '@apollo/client/react';
@@ -17,19 +17,18 @@ import {
 } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/feedback';
 import { IconBrandGithub, IconRefresh, IconSearch } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Callout, useToast } from 'twenty-ui/primitives/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
 import {
   FindClaimableApplicationRegistrationDocument,
   GithubClaimAuthorizationUrlDocument,
   PermissionFlagType,
   SyncMarketplaceCatalogDocument,
 } from '~/generated-metadata/graphql';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { getClaimErrorContent } from '~/pages/settings/applications/utils/getClaimErrorContent';
 
 export const CLAIM_ERROR_CODE_SEARCH_PARAM = 'claimErrorCode';
@@ -83,7 +82,7 @@ const StyledCalloutContainer = styled.div`
 
 export const SettingsClaimApplicationSection = () => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const [searchParams] = useSearchParams();
@@ -150,8 +149,9 @@ export const SettingsClaimApplicationSection = () => {
         setNotFound(true);
       }
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      enqueueToast({
+        variant: 'error',
+        children:
           error instanceof Error ? error.message : t`Could not run the lookup`,
       });
     }
@@ -175,8 +175,9 @@ export const SettingsClaimApplicationSection = () => {
 
       window.location.href = authorizationUrl;
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      enqueueToast({
+        variant: 'error',
+        children:
           error instanceof Error
             ? error.message
             : t`Could not start the GitHub claim`,
@@ -187,12 +188,14 @@ export const SettingsClaimApplicationSection = () => {
   const handleSync = async () => {
     try {
       await syncCatalog();
-      enqueueSuccessSnackBar({
-        message: t`Catalog sync started. Try your lookup again in a moment.`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Catalog sync started. Try your lookup again in a moment.`,
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      enqueueToast({
+        variant: 'error',
+        children:
           error instanceof Error
             ? error.message
             : t`Could not sync the catalog`,
@@ -256,19 +259,17 @@ export const SettingsClaimApplicationSection = () => {
           />
         </StyledInputContainer>
         <Button
-          title={t`Look up`}
-          Icon={IconSearch}
+          startIcon={<IconSearch />}
           onClick={handleLookup}
           disabled={isLookingUp || lookupValue.trim().length === 0}
-        />
+        >{t`Look up`}</Button>
         {canSyncCatalog && (
           <Button
-            title={t`Sync catalog`}
-            variant="secondary"
-            Icon={IconRefresh}
+            startIcon={<IconRefresh />}
             onClick={handleSync}
             disabled={isSyncing}
-          />
+            variant="outline"
+          >{t`Sync catalog`}</Button>
         )}
       </StyledRow>
 
@@ -298,12 +299,12 @@ export const SettingsClaimApplicationSection = () => {
           </StyledHint>
           <StyledRow>
             <Button
-              title={t`Claim with GitHub`}
-              Icon={IconBrandGithub}
-              accent="blue"
+              startIcon={<IconBrandGithub />}
               onClick={handleClaimWithGithub}
               disabled={isRedirectingToGithub}
-            />
+              variant="solid"
+              color="accent"
+            >{t`Claim with GitHub`}</Button>
           </StyledRow>
         </StyledResultCard>
       )}

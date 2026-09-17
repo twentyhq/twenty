@@ -4,10 +4,10 @@ import { useContext, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconRefresh, useIcons } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
+import { Section } from 'twenty-ui/primitives/layout';
+import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';

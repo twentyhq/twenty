@@ -1,19 +1,11 @@
-import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
-import {
-  MetadataReadability,
-  RecordShareAccessLevel,
-  RecordSharePrincipalType,
-  RecordShareRowCause,
-} from 'twenty-shared/types';
+import { MetadataReadability } from 'twenty-shared/types';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import type { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
-import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 
 const mockObjectMetadata: FlatObjectMetadata = {
   id: 'id',
@@ -256,7 +248,7 @@ describe('transformEventBatchToWebhookEvents', () => {
     expect(resultWithoutEventDate).toEqual(expectedResultWithoutEventDate);
   });
 
-  it('should only keep events of a private object for records shared with everyone', () => {
+  it('should only keep the events of the admitted records', () => {
     const workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent> = {
       workspaceId: 'workspaceId',
       objectMetadata: {
@@ -288,36 +280,10 @@ describe('transformEventBatchToWebhookEvents', () => {
       },
     ] as WebhookEntity[];
 
-    const recordShares = [
-      {
-        id: 'record-share-1',
-        recordId: 'recordId-1',
-        objectMetadataId: mockObjectMetadata.id,
-        principalId: EVERYONE_PRINCIPAL_ID,
-        principalType: RecordSharePrincipalType.EVERYONE,
-        accessLevel: RecordShareAccessLevel.READ,
-        rowCause: RecordShareRowCause.MANUAL,
-        sourceId: 'source-1',
-      },
-      {
-        id: 'record-share-2',
-        recordId: 'recordId-2',
-        objectMetadataId: mockObjectMetadata.id,
-        principalId: 'workspace-member-id',
-        principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-        accessLevel: RecordShareAccessLevel.FULL,
-        rowCause: RecordShareRowCause.MANUAL,
-        sourceId: 'source-1',
-      },
-    ] as RecordShare[];
-
     const result = transformEventBatchToWebhookEvents({
       workspaceEventBatch,
       webhooks,
-      recordShareGate: {
-        recordSharesByRecordId: indexRecordSharesByRecordId(recordShares),
-        principalIds: [EVERYONE_PRINCIPAL_ID],
-      },
+      admittedRecordIds: new Set(['recordId-1']),
     });
 
     expect(result).toHaveLength(1);

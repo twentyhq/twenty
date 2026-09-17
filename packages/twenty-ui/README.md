@@ -6,39 +6,44 @@
 
 Twenty's open-source React UI component library: components, icons, and design tokens built on a zero-runtime, CSS-variable styling layer.
 
+Read the [twenty-ui documentation](https://docs.twenty.com/ui/getting-started) for setup, theming, and component guides.
+
 > **Alpha:** `twenty-ui` is still in alpha. Its version number follows the Twenty SDK release cycle. APIs and component behavior may change between releases.
 
 # Installation
 
+For a standalone React application, install the library and its peer dependencies. React 19 is required.
+
 ```bash
-npm install twenty-ui
+npm install twenty-ui monaco-editor react@^19 react-dom@^19
 ```
 
-`react`, `react-dom`, and `monaco-editor` are peer dependencies (install them in your app). `monaco-editor` is only required if you use the code editor components.
+Install `monaco-editor` even if you never render a code editor: the `twenty-ui/primitives/input`, `twenty-ui/primitives/feedback`, and `twenty-ui/primitives/navigation` entry points reference it, and bundlers fail to resolve it otherwise.
+
+For Twenty apps, follow [Using Twenty UI components](https://docs.twenty.com/developers/extend/apps/layout/front-components#using-twenty-ui-components). The front component renderer supplies the workspace theme. Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` on the same version.
 
 # Usage
 
-Import the base styles once, pick a theme stylesheet, and wrap your app in `ThemeProvider`:
+For a standalone React application, import the base styles once, pick a theme stylesheet, and wrap your app in `ThemeProvider`:
 
 ```tsx
 import { ThemeProvider } from 'twenty-ui/theme-constants';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 
 export const App = () => (
   <ThemeProvider colorScheme="light">
-    <Button title="Click me" />
+    <Button>Click me</Button>
   </ThemeProvider>
 );
 ```
 
-Components are available from the root entry point or from a specific subpath for better tree-shaking:
+Prefer the matching subpath for better tree-shaking. Imports from the `twenty-ui` root entry point are also supported.
 
 ```tsx
-import { Button } from 'twenty-ui';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 ```
 
 # Entry points
@@ -46,20 +51,22 @@ import { Button } from 'twenty-ui/input';
 | Subpath | Contents |
 | --- | --- |
 | `twenty-ui` | All components, icons, theme tokens, and utilities |
-| `twenty-ui/accessibility` | Accessibility helpers |
 | `twenty-ui/assets` | Logos and static assets |
-| `twenty-ui/data-display` | Avatars, chips, tags, and other display components |
-| `twenty-ui/feedback` | Progress bars, loaders, and status feedback |
+| `twenty-ui/components` | Shared design presets and reusable app building blocks |
 | `twenty-ui/icon` | Icon components and the icon provider |
-| `twenty-ui/input` | Buttons, switches, and form inputs |
-| `twenty-ui/json-visualizer` | JSON tree viewer |
-| `twenty-ui/layout` | Layout primitives |
-| `twenty-ui/navigation` | Menus, links, and navigation components |
-| `twenty-ui/surfaces` | Cards, tooltips, and surface components |
+| `twenty-ui/primitives` | Foundational UI controls and compound controls |
+| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers |
+| `twenty-ui/primitives/data-display` | Avatars, chips, tags, status indicators, and display helpers |
+| `twenty-ui/primitives/feedback` | Toasts, banners, progress bars, and loaders |
+| `twenty-ui/primitives/input` | Buttons, form controls, pickers, and code editors |
+| `twenty-ui/primitives/json-visualizer` | JSON tree viewer |
+| `twenty-ui/primitives/layout` | Layout, animation, resizing, and section components |
+| `twenty-ui/primitives/navigation` | Links, list items, menus, and tabs |
+| `twenty-ui/primitives/surfaces` | Cards, dialogs, menus, popovers, and tooltips |
+| `twenty-ui/primitives/typography` | Text, headings, labels, and typography helpers |
 | `twenty-ui/testing` | Storybook and test decorators |
 | `twenty-ui/theme` | Theme types and helpers |
 | `twenty-ui/theme-constants` | Design tokens, `ThemeProvider`, and `useTheme` |
-| `twenty-ui/typography` | Text and typography components |
 | `twenty-ui/utilities` | Hooks and shared utilities |
 
 # Theming
@@ -69,6 +76,20 @@ import { Button } from 'twenty-ui/input';
 - `ThemeProvider` exposes the active theme through `useTheme()` and applies the `light` / `dark` class. Pass `applyToRoot={false}` with `overrides` to scope a theme to a subtree instead of the document root.
 
 # Development
+
+Primitive guides belong in `packages/twenty-docs/ui/primitives`. Shared component guides belong in `packages/twenty-docs/ui/components`. For each stateful API that supports both modes, include separate **Uncontrolled state** and **Controlled state** examples with the same scenario, labels, and initial state. Keep each example complete, with public imports and one exported example component.
+
+Explain state ownership before advanced behavior such as indeterminate selection or manual tab activation. Document independent states, such as selection and popup visibility, separately. For components that delegate state to a parent or group, explain that ownership and link to the relevant examples.
+
+For compound components, include an anatomy tree and identify required parts, optional parts, and elements supplied internally. Show supported composition with complete examples, use Twenty UI components for supporting controls, and explain how custom wrappers preserve props and refs. Use `text` fences for structural diagrams and `tsx` fences for runnable examples so the documentation checker validates the examples.
+
+## Internal state
+
+twenty-ui uses Base UI's store for notification state. Each `ToastProvider` creates its own store, and the toaster subscribes to the toast list. Queue rules and rendering remain owned by twenty-ui. Consumers use `useToast()` without configuring a state library.
+
+The store factory and subscription hook are internal to the toast module. `@base-ui/utils` is a direct dependency pinned to the version used by `@base-ui/react`, and the library build keeps it external. Review its store API changes when upgrading the dependency.
+
+## Testing
 
 Component interaction and behavior tests belong in Storybook stories (`*.stories.tsx`) using `play` functions. Component unit tests are reserved for conformance (native props, refs, class names, rendering, and prop types). Keep non-interactive utility, hook, and token tests in the Vitest unit project; avoid duplicating story coverage there.
 

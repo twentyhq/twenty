@@ -15,7 +15,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconPaperclip, IconSend, IconTrash } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/input';
+import { Button, IconButton } from 'twenty-ui/primitives/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 import { useAttachEmailFiles } from '@/activities/emails/hooks/useAttachEmailFiles';
@@ -111,15 +111,14 @@ export const SidePanelComposeEmailPage = () => {
           />,
           <Button
             key="send"
-            size="small"
-            variant="primary"
-            accent="blue"
-            title={t`Send`}
-            Icon={IconSend}
+            size="sm"
+            startIcon={<IconSend />}
             hotkeys={[getOsControlSymbol(), '⏎']}
             onClick={composerState.handleSend}
             disabled={!canSend}
-          />,
+            variant="solid"
+            color="accent"
+          >{t`Send`}</Button>,
         ]}
       />
     </StyledContainer>

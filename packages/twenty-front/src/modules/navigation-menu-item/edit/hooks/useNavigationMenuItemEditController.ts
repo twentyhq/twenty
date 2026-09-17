@@ -12,9 +12,9 @@ import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/sta
 import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/common/utils/buildCreateNavigationMenuItemInput';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 export type NewNavigationMenuItemInput = {
   type: NavigationMenuItemType;
@@ -40,7 +40,7 @@ type CreateItemOptions = {
 // surfaced here and the rejection is swallowed — callers fire-and-forget.
 export const useNavigationMenuItemEditController = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const navigationMenuItemEditSection = useAtomStateValue(
     navigationMenuItemEditSectionState,
   );
@@ -118,10 +118,16 @@ export const useNavigationMenuItemEditController = () => {
           userWorkspaceId: targetUserWorkspaceId,
         },
       ]).catch(() =>
-        enqueueErrorSnackBar({ message: t`Couldn't add to favorites` }),
+        enqueueToast({
+          variant: 'error',
+          children: t`Couldn't add to favorites`,
+        }),
       );
     } else {
-      enqueueErrorSnackBar({ message: t`Couldn't add to favorites` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Couldn't add to favorites`,
+      });
     }
 
     return id;
@@ -145,7 +151,7 @@ export const useNavigationMenuItemEditController = () => {
     try {
       await updateManyNavigationMenuItems([{ id, update }]);
     } catch {
-      enqueueErrorSnackBar({ message: t`Couldn't update favorite` });
+      enqueueToast({ variant: 'error', children: t`Couldn't update favorite` });
     }
   };
 
@@ -162,7 +168,7 @@ export const useNavigationMenuItemEditController = () => {
     try {
       await deleteManyNavigationMenuItems(ids);
     } catch {
-      enqueueErrorSnackBar({ message: t`Couldn't remove favorite` });
+      enqueueToast({ variant: 'error', children: t`Couldn't remove favorite` });
     }
   };
 

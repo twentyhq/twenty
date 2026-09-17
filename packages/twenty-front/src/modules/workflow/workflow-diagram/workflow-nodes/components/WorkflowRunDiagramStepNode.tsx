@@ -30,7 +30,7 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { IconCheck, IconX, useIcons } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/feedback';
+import { Loader } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNodeLabelWithCounterPart = styled.div`

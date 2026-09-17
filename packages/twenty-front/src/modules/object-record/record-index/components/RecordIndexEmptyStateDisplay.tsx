@@ -7,9 +7,9 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   type AnimatedPlaceholderType,
-} from 'twenty-ui/feedback';
+} from 'twenty-ui/primitives/feedback';
 import { type IconComponent } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 const StyledEmptyStateContainer = styled.div`
   height: 100%;
@@ -46,11 +46,12 @@ export const RecordIndexEmptyStateDisplay = ({
       </AnimatedPlaceholderEmptyTextContainer>
       {isDefined(onButtonClick) && (
         <Button
-          Icon={ButtonIcon}
-          title={buttonTitle}
-          variant="secondary"
+          startIcon={isDefined(ButtonIcon) ? <ButtonIcon /> : undefined}
           onClick={onButtonClick}
-        />
+          variant="outline"
+        >
+          {buttonTitle}
+        </Button>
       )}
     </AnimatedPlaceholderEmptyContainer>
   </StyledEmptyStateContainer>

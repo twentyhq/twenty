@@ -1,12 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import {
-  Chip,
-  ChipAccent,
-  ChipSize,
-  ChipVariant,
-} from 'twenty-ui/data-display';
+import { Chip } from 'twenty-ui/primitives/data-display';
 import {
   IconBolt,
   IconBuildingSkyscraper,
@@ -90,19 +85,19 @@ export const SettingsAiModelHoverCard = ({
       value: (
         <StyledChipContainer>
           <Chip
-            size={ChipSize.Small}
-            accent={ChipAccent.TextPrimary}
-            variant={ChipVariant.Static}
-            clickable={false}
-            label={model.label}
-            leftComponent={
+            size="sm"
+            color="primary"
+            variant="soft"
+            startElement={
               <ModelIcon
                 size={theme.icon.size.sm}
                 stroke={theme.icon.stroke.sm}
               />
             }
-            rightComponent={null}
-          />
+            endElement={null}
+          >
+            {model.label}
+          </Chip>
         </StyledChipContainer>
       ),
     },

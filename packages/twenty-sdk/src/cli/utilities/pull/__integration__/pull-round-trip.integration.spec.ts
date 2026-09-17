@@ -8,12 +8,14 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import {
   getFieldUniversalIdentifier,
+  getObjectPermissionUniversalIdentifier,
   getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewUniversalIdentifier,
   type Manifest,
   SYSTEM_VIEW_KEYS,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { generateMessageId } from 'twenty-shared/i18n';
 import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
@@ -62,6 +64,20 @@ const COMPANY_HOME_STANDALONE_WIDGET_UID =
 const CARE_FOLDER_MENU_ITEM_UID = '35353535-3535-4353-8353-353535353535';
 const PET_MENU_ITEM_UID = '36363636-3636-4363-8363-363636363636';
 const HANDBOOK_MENU_ITEM_UID = '37373737-3737-4373-8373-373737373737';
+const PET_CARER_ROLE_UID = '39393939-3939-4393-8393-393939393939';
+const AUDITOR_ROLE_UID = '41414141-4141-4414-8414-414141414141';
+const PET_AGE_FIELD_PERMISSION_UID = '42424242-4242-4424-8424-424242424242';
+const SENIOR_PETS_PREDICATE_GROUP_UID = '43434343-4343-4434-8434-434343434343';
+const REX_PREDICATE_GROUP_UID = '46464646-4646-4464-8464-464646464646';
+const REX_PREDICATE_UID = '47474747-4747-4474-8474-474747474747';
+const EXPORT_PETS_PERMISSION_FLAG_UID = '48484848-4848-4484-8484-484848484848';
+
+const PET_CARER_PET_OBJECT_PERMISSION_UID =
+  getObjectPermissionUniversalIdentifier({
+    applicationUniversalIdentifier: APP_UID,
+    roleUniversalIdentifier: PET_CARER_ROLE_UID,
+    objectUniversalIdentifier: PET_UID,
+  });
 
 const PET_RECORD_PAGE_LAYOUT_UID = getSystemRecordPageLayoutUniversalIdentifier(
   {
@@ -90,7 +106,7 @@ const EXPORTED_MANIFEST = {
     universalIdentifier: APP_UID,
     displayName: 'Pet Care',
     description: 'Pets and the companies that care for them',
-    defaultRoleUniversalIdentifier: '20202020-02c2-43f2-b94d-cab1f2b532eb',
+    defaultRoleUniversalIdentifier: PET_CARER_ROLE_UID,
     packageJsonChecksum: 'a-package-json-checksum',
     yarnLockChecksum: 'a-yarn-lock-checksum',
   },
@@ -255,6 +271,91 @@ const EXPORTED_MANIFEST = {
           fieldUniversalIdentifier: PET_NAME_FIELD_UID,
         },
       ],
+    },
+  ],
+  permissionFlags: [
+    {
+      universalIdentifier: EXPORT_PETS_PERMISSION_FLAG_UID,
+      key: 'EXPORT_PETS',
+      label: 'Export pets',
+      description: 'Download the pet list',
+      icon: 'IconDownload',
+      permissionType: 'settings',
+    },
+  ],
+  roles: [
+    {
+      universalIdentifier: PET_CARER_ROLE_UID,
+      label: 'Pet carer',
+      canUpdateAllSettings: false,
+      canAccessAllTools: false,
+      canReadAllObjectRecords: false,
+      canUpdateAllObjectRecords: false,
+      canSoftDeleteAllObjectRecords: false,
+      canDestroyAllObjectRecords: false,
+      canBeAssignedToUsers: true,
+      canBeAssignedToAgents: false,
+      canBeAssignedToApiKeys: false,
+      objectPermissions: [
+        {
+          universalIdentifier: PET_CARER_PET_OBJECT_PERMISSION_UID,
+          objectUniversalIdentifier: PET_UID,
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+        },
+      ],
+      fieldPermissions: [
+        {
+          universalIdentifier: PET_AGE_FIELD_PERMISSION_UID,
+          objectUniversalIdentifier: PET_UID,
+          fieldUniversalIdentifier: PET_AGE_FIELD_UID,
+          canUpdateFieldValue: false,
+        },
+      ],
+      permissionFlagUniversalIdentifiers: [EXPORT_PETS_PERMISSION_FLAG_UID],
+    },
+    {
+      universalIdentifier: AUDITOR_ROLE_UID,
+      label: 'Auditor',
+      description: 'Reads the pets named Rex',
+      icon: 'IconEye',
+      canUpdateAllSettings: false,
+      canAccessAllTools: false,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: false,
+      canSoftDeleteAllObjectRecords: false,
+      canDestroyAllObjectRecords: false,
+      canBeAssignedToUsers: true,
+      canBeAssignedToAgents: true,
+      canBeAssignedToApiKeys: false,
+      rowLevelPermissionPredicateGroups: [
+        {
+          universalIdentifier: SENIOR_PETS_PREDICATE_GROUP_UID,
+          objectUniversalIdentifier: PET_UID,
+          logicalOperator: 'OR',
+          position: 0,
+        },
+        {
+          universalIdentifier: REX_PREDICATE_GROUP_UID,
+          objectUniversalIdentifier: PET_UID,
+          logicalOperator: 'AND',
+          parentPredicateGroupUniversalIdentifier:
+            SENIOR_PETS_PREDICATE_GROUP_UID,
+          position: 1,
+        },
+      ],
+      rowLevelPermissionPredicates: [
+        {
+          universalIdentifier: REX_PREDICATE_UID,
+          objectUniversalIdentifier: PET_UID,
+          fieldUniversalIdentifier: PET_NAME_FIELD_UID,
+          operand: 'CONTAINS',
+          value: 'Rex',
+          predicateGroupUniversalIdentifier: REX_PREDICATE_GROUP_UID,
+          position: 0,
+        },
+      ],
+      permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE],
     },
   ],
   views: [
@@ -545,6 +646,15 @@ const withSortedFields = (objectManifest: {
   fields: sortByUniversalIdentifier(objectManifest.fields),
 });
 
+const withRoleCollections = (roleManifest: object) => ({
+  objectPermissions: [],
+  fieldPermissions: [],
+  rowLevelPermissionPredicateGroups: [],
+  rowLevelPermissionPredicates: [],
+  permissionFlagUniversalIdentifiers: [],
+  ...roleManifest,
+});
+
 describe('pull round trip', () => {
   let appPath: string;
   let builtManifest: Manifest | null;
@@ -735,7 +845,42 @@ describe('pull round trip', () => {
     );
   });
 
-  it('should rebuild the application header, leaving the build to recompute its checksums', () => {
+  it('should rebuild the exported permission flags unchanged', () => {
+    expect(
+      canonicalize(
+        sortByUniversalIdentifier(builtManifest?.permissionFlags ?? []),
+      ),
+    ).toEqual(
+      canonicalize(
+        sortByUniversalIdentifier(EXPORTED_MANIFEST.permissionFlags),
+      ),
+    );
+  });
+
+  it('should rebuild the exported roles with their permissions, predicate groups, predicates and permission flags unchanged', () => {
+    expect(
+      canonicalize(sortByUniversalIdentifier(builtManifest?.roles ?? [])),
+    ).toEqual(
+      canonicalize(
+        sortByUniversalIdentifier(EXPORTED_MANIFEST.roles).map(
+          withRoleCollections,
+        ),
+      ),
+    );
+  });
+
+  it('should write the default role with defineApplicationRole, leaving out the object permission identifier the build derives', async () => {
+    const defaultRoleFile = await readFile(
+      join(appPath, 'src/roles/pet-carer.role.ts'),
+      'utf8',
+    );
+
+    expect(defaultRoleFile).toContain('export default defineApplicationRole({');
+    expect(defaultRoleFile).not.toContain(PET_CARER_PET_OBJECT_PERMISSION_UID);
+    expect(defaultRoleFile).toContain(PET_AGE_FIELD_PERMISSION_UID);
+  });
+
+  it('should rebuild the application header, resolving the default role from its role file and leaving the build to recompute its checksums', () => {
     const builtApplication = builtManifest?.application as unknown as Record<
       string,
       unknown
@@ -747,7 +892,7 @@ describe('pull round trip', () => {
       'Pets and the companies that care for them',
     );
     expect(builtApplication.defaultRoleUniversalIdentifier).toBe(
-      '20202020-02c2-43f2-b94d-cab1f2b532eb',
+      PET_CARER_ROLE_UID,
     );
     expect(builtApplication.packageJsonChecksum).toBeNull();
     expect(builtApplication.yarnLockChecksum).toBeNull();

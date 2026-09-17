@@ -34,10 +34,10 @@ import {
   IconMail,
   IconUser,
 } from 'twenty-ui/icon';
-import { Avatar } from 'twenty-ui/data-display';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
@@ -144,10 +144,10 @@ export const SettingsAdminUserDetail = () => {
       title={displayName}
       icon={
         <Avatar
-          placeholder={displayName}
-          placeholderColorSeed={user?.id}
+          name={displayName}
+          colorSeed={user?.id}
           size="md"
-          type="rounded"
+          shape="circle"
         />
       }
       links={[
@@ -198,14 +198,7 @@ export const SettingsAdminUserDetail = () => {
                 user.id !== currentUser.id && (
                   <StyledButtonContainer>
                     <Button
-                      Icon={IconEyeShare}
-                      variant="primary"
-                      accent="default"
-                      title={
-                        activeWorkspace.allowImpersonation === false
-                          ? t`Impersonation is disabled for this workspace`
-                          : t`Impersonate`
-                      }
+                      startIcon={<IconEyeShare />}
                       onClick={() =>
                         handleImpersonate(user.id, activeWorkspace.id)
                       }
@@ -213,7 +206,12 @@ export const SettingsAdminUserDetail = () => {
                         impersonatingUserId !== null ||
                         activeWorkspace.allowImpersonation === false
                       }
-                    />
+                      variant="outline"
+                    >
+                      {activeWorkspace.allowImpersonation === false
+                        ? t`Impersonation is disabled for this workspace`
+                        : t`Impersonate`}
+                    </Button>
                   </StyledButtonContainer>
                 )}
             </Section>

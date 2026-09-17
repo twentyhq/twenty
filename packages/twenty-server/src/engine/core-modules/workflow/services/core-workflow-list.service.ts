@@ -22,6 +22,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 type CoreWorkflowRow = {
+  createdAt: Date;
   id: string;
   cursorSortValue: string | null;
   name: string | null;
@@ -60,12 +61,13 @@ const SORT_COLUMN_BY_FIELD: Record<
   },
 };
 
-const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."updatedAt"`;
+const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."createdAt", c."updatedAt"`;
 
 const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
          c.name,
          c."lastPublishedVersionId",
          c."applicationId",
+         c."createdAt",
          c."updatedAt",
          coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion",
          coalesce(bool_or(v.status = 'ACTIVE'), false) AS "hasActiveVersion",
@@ -82,6 +84,7 @@ const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
   lastPublishedVersionId: row.lastPublishedVersionId,
   applicationId: row.applicationId,
   workspaceWorkflowId: row.workspaceWorkflowId,
+  createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
 });
 

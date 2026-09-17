@@ -5,9 +5,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { IconCopy } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -63,8 +63,7 @@ export const SettingsSsoOidcForm = () => {
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
-                Icon={IconCopy}
-                title={t`Copy`}
+                startIcon={<IconCopy />}
                 onClick={() => {
                   copyToClipboard(
                     authorizedUrl,
@@ -72,7 +71,7 @@ export const SettingsSsoOidcForm = () => {
                   );
                 }}
                 type="button"
-              />
+              >{t`Copy`}</Button>
             </StyledButtonCopy>
           </StyledContainer>
           <StyledContainer>
@@ -87,16 +86,15 @@ export const SettingsSsoOidcForm = () => {
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
-                Icon={IconCopy}
-                title={t`Copy`}
+                startIcon={<IconCopy />}
                 onClick={() => {
                   copyToClipboard(
                     redirectionUrl,
-                    t`Redirect Url copied to clipboard`,
+                    t`Redirect URL copied to clipboard`,
                   );
                 }}
                 type="button"
-              />
+              >{t`Copy`}</Button>
             </StyledButtonCopy>
           </StyledContainer>
         </StyledInputsContainer>

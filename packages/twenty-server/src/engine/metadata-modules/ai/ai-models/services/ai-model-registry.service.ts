@@ -14,7 +14,7 @@ import {
   parseAiModelVariantId,
 } from 'twenty-shared/ai';
 
-import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
+import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-organization-key.constant';
 import { CustomAiProviderAccessService } from 'src/engine/core-modules/enterprise/services/custom-ai-provider-access.service';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
@@ -126,7 +126,7 @@ export class AiModelRegistryService {
     });
 
     this.registerModelsFromProviders(providers);
-    this.registerConfiguredVariants();
+    this.registerSupportedVariants();
   }
 
   private registerModelsFromProviders(providers: AiProvidersConfig): void {
@@ -187,12 +187,12 @@ export class AiModelRegistryService {
     }
   }
 
-  private registerConfiguredVariants(): void {
-    for (const tier of AI_MODEL_TIERS) {
-      for (const variantId of this.preferencesService.getDefaultModelIdsForTier(
-        tier,
-      )) {
-        this.registerVariant(variantId);
+  private registerSupportedVariants(): void {
+    // The client catalog must resolve every selectable effort before a pin is
+    // saved, not only variants that have already been used by the server.
+    for (const modelConfig of Array.from(this.modelConfigCache.values())) {
+      for (const effort of getAvailableEfforts(modelConfig)) {
+        this.registerVariant(`${modelConfig.modelId}@${effort}`);
       }
     }
   }
@@ -636,18 +636,21 @@ export class AiModelRegistryService {
   }> {
     this.ensureFresh();
 
-    return Array.from(this.modelConfigCache.values()).map((modelConfig) => {
-      const registered = this.modelRegistry.get(modelConfig.modelId);
-      const cached = this.providerModelDefCache.get(modelConfig.modelId);
+    // Effort variants share the base model's management and deletion target.
+    return Array.from(this.modelConfigCache.values())
+      .filter((modelConfig) => !isDefined(modelConfig.effort))
+      .map((modelConfig) => {
+        const registered = this.modelRegistry.get(modelConfig.modelId);
+        const cached = this.providerModelDefCache.get(modelConfig.modelId);
 
-      return {
-        modelConfig,
-        isAvailable: !!registered,
-        isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
-        providerName: registered?.providerName ?? cached?.providerName,
-        name: cached?.modelDef.name,
-      };
-    });
+        return {
+          modelConfig,
+          isAvailable: !!registered,
+          isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
+          providerName: registered?.providerName ?? cached?.providerName,
+          name: cached?.modelDef.name,
+        };
+      });
   }
 
   async setModelAdminEnabled(modelId: string, enabled: boolean): Promise<void> {

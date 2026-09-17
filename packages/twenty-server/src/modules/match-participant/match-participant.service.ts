@@ -40,7 +40,7 @@ type MatchParticipantsForPeopleArgs = {
   workspaceId: string;
 };
 
-type MatchParticipantsArgs<
+export type MatchParticipantsArgs<
   ParticipantWorkspaceEntity extends
     | Pick<
         CalendarEventParticipantWorkspaceEntity,
@@ -54,7 +54,11 @@ type MatchParticipantsArgs<
   participants: ParticipantWorkspaceEntity[];
   sourceRecordIds: string[];
   objectMetadataName: ObjectMetadataName;
-  matchWith: 'workspaceMemberOnly' | 'personOnly' | 'workspaceMemberAndPerson';
+  matchWith:
+    | 'workspaceMemberOnly'
+    | 'personOnly'
+    | 'workspaceMemberAndPerson'
+    | 'targetsOnly';
   transactionScope?: WorkspaceTransactionScope;
 };
 
@@ -92,6 +96,22 @@ export class MatchParticipantService<
     // Desired targets derive from personId only, so a workspaceMemberOnly
     // rematch can never change them; skip the recompute in that case.
     const shouldReconcileTargets = matchWith !== 'workspaceMemberOnly';
+
+    // A source whose handles are not email addresses has no matching to do:
+    // looking every handle up as an email would find nothing and write
+    // personId back to null, erasing the identities the caller supplied. The
+    // targets still have to be built, so reconcile and stop there.
+    if (matchWith === 'targetsOnly') {
+      await this.participantTargetReconciliationService.reconcileParticipantTargets(
+        {
+          sourceRecordIds,
+          objectMetadataName,
+          transactionScope,
+        },
+      );
+
+      return;
+    }
 
     if (participants.length === 0) {
       if (shouldReconcileTargets) {

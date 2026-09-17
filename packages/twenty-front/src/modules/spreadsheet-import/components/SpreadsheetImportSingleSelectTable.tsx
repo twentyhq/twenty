@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { type Key, useMemo } from 'react';
 import { type DataGridProps } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
-import { RadioGroup, type RadioGroupProps } from 'twenty-ui/input';
+import { RadioGroup, type RadioGroupProps } from 'twenty-ui/primitives/input';
 
 const StyledRadioGroupContainer = styled.div`
   flex: 1;

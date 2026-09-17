@@ -5,13 +5,15 @@ import {
 } from 'twenty-shared/types';
 
 import { validateTabViewportConstraints } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util';
-import { resolveEffectiveEntity } from 'src/engine/metadata-modules/utils/resolve-effective-entity.util';
+import { resolveEffectiveUniversalFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity.util';
 
 type ViewportWidget = Parameters<
   typeof validateTabViewportConstraints
 >[0]['widget'];
 
 const TAB_UNIVERSAL_IDENTIFIER = '00000000-0000-4000-8000-000000000001';
+const OWNER_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '00000000-0000-4000-8000-0000000000aa';
 
 const buildWidget = ({
   universalIdentifier,
@@ -25,6 +27,7 @@ const buildWidget = ({
   type?: WidgetType;
 }): ViewportWidget => ({
   universalIdentifier,
+  applicationUniversalIdentifier: OWNER_APPLICATION_UNIVERSAL_IDENTIFIER,
   title: universalIdentifier,
   type,
   isActive: true,
@@ -46,9 +49,9 @@ describe('validateTabViewportConstraints', () => {
     siblingWidgets?: ViewportWidget[];
   }) =>
     validateTabViewportConstraints({
-      widget: resolveEffectiveEntity({
-        ...widget,
-        overrides: widget.universalOverrides,
+      widget: resolveEffectiveUniversalFlatEntity({
+        metadataName: 'pageLayoutWidget',
+        universalFlatEntity: widget,
       }),
       relatedWidgets: siblingWidgets,
       pageLayoutTab: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST },
@@ -130,7 +133,13 @@ describe('validateTabViewportConstraints', () => {
             ...timeline,
             ...(positionSource === 'base'
               ? { position: null }
-              : { universalOverrides: { position: null } }),
+              : {
+                  universalOverrides: {
+                    [OWNER_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+                      position: null,
+                    },
+                  },
+                }),
           },
         ],
       });
@@ -158,7 +167,11 @@ describe('validateTabViewportConstraints', () => {
         }),
         ...(positionSource === 'base'
           ? { position: null }
-          : { universalOverrides: { position: null } }),
+          : {
+              universalOverrides: {
+                [OWNER_APPLICATION_UNIVERSAL_IDENTIFIER]: { position: null },
+              },
+            }),
       };
       const fitContentWidget = buildWidget({
         universalIdentifier: 'fit-content',
@@ -234,9 +247,11 @@ describe('validateTabViewportConstraints', () => {
               ? otherTabUniversalIdentifier
               : TAB_UNIVERSAL_IDENTIFIER,
             universalOverrides: {
-              pageLayoutTabUniversalIdentifier: isMovedIntoTab
-                ? TAB_UNIVERSAL_IDENTIFIER
-                : otherTabUniversalIdentifier,
+              [OWNER_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+                pageLayoutTabUniversalIdentifier: isMovedIntoTab
+                  ? TAB_UNIVERSAL_IDENTIFIER
+                  : otherTabUniversalIdentifier,
+              },
             },
           },
         ],
@@ -261,7 +276,11 @@ describe('validateTabViewportConstraints', () => {
             heightBehavior:
               PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
           }),
-          universalOverrides: { pageLayoutTabUniversalIdentifier: null },
+          universalOverrides: {
+            [OWNER_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+              pageLayoutTabUniversalIdentifier: null,
+            },
+          },
         },
       ],
     });

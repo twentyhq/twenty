@@ -1,0 +1,2 @@
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  '8b2c3d4e-a1f6-4b2c-9d3e-1f2a3b4c5d6e';

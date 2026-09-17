@@ -7,6 +7,8 @@ import {
 } from '@ui/icon/constants/TwentyIconDictionary';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
+import { H2Title } from '@ui/primitives/typography/H2Title/H2Title';
+import { Text } from '@ui/primitives/typography/Text/Text';
 
 import styles from './IconDictionary.stories.module.scss';
 
@@ -19,7 +21,7 @@ const IconDictionary = () => (
   <div className={styles.dictionary}>
     {TWENTY_ICON_DICTIONARY_CATEGORIES.map((category) => (
       <section className={styles.category} key={category.key}>
-        <h2 className={styles.categoryTitle}>{category.label}</h2>
+        <H2Title className={styles.categoryTitle} title={category.label} />
         {TWENTY_ICON_DICTIONARY.filter(
           (entry) => entry.category === category.key,
         ).map((entry) => {
@@ -27,7 +29,7 @@ const IconDictionary = () => (
 
           return (
             <div className={styles.item} key={entry.key}>
-              <span>{entry.label}</span>
+              <Text>{entry.label}</Text>
               <Icon
                 aria-hidden
                 color="var(--t-font-color-light)"

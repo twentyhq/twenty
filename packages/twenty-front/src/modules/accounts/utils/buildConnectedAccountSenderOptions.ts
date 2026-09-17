@@ -1,6 +1,6 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { getSendableEmailHandles } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 
 export const buildConnectedAccountSenderOptions = (
   accounts: Pick<ConnectedAccount, 'handle' | 'handleAliases'>[],

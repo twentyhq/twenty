@@ -3,10 +3,13 @@ import {
   NAVIGATION_MENU_ITEM_ENUM_BINDINGS,
   PAGE_LAYOUT_ENUM_BINDINGS,
   PAGE_LAYOUT_TAB_ENUM_BINDINGS,
+  ROLE_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
 } from '@/cli/utilities/pull/write-define-file';
 import {
+  getFieldPermissionUniversalIdentifier,
+  getObjectPermissionUniversalIdentifier,
   getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewUniversalIdentifier,
   type Manifest,
@@ -48,6 +51,17 @@ const WIDGET_UID = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const STANDALONE_TAB_UID = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
 const NAVIGATION_MENU_ITEM_UID = '10101010-1010-4010-8010-101010101010';
 const NAVIGATION_FOLDER_UID = '20202020-2020-4020-8020-202020202020';
+const SUPPORT_ROLE_UID = '30303030-3030-4303-8303-303030303030';
+const AUDITOR_ROLE_UID = '40404040-4040-4404-8404-404040404040';
+const EXPORT_PETS_FLAG_UID = '50505050-5050-4505-8505-505050505050';
+const LEGACY_OBJECT_PERMISSION_UID = '60606060-6060-4606-8606-606060606060';
+
+const APPLICATION_WITH_SUPPORT_DEFAULT_ROLE = {
+  universalIdentifier: APP_UID,
+  displayName: 'Pets',
+  description: 'Pet tracking',
+  defaultRoleUniversalIdentifier: SUPPORT_ROLE_UID,
+};
 
 const buildManifest = (overrides: Partial<Manifest> = {}): Manifest =>
   ({
@@ -976,5 +990,158 @@ describe('buildPullEntities', () => {
     expect(view?.parentName).toBeNull();
     expect(pageLayout?.parentName).toBeNull();
     expect(pageLayoutTab?.parentName).toBeNull();
+  });
+
+  it('should write a permission flag verbatim into src/permission-flags, named after its key', () => {
+    const permissionFlagManifest = {
+      universalIdentifier: EXPORT_PETS_FLAG_UID,
+      key: 'EXPORT_PETS',
+      label: 'Export pets',
+      permissionType: 'settings' as const,
+    };
+    const { entities, skipped } = buildPullEntities(
+      buildManifest({ permissionFlags: [permissionFlagManifest] }),
+    );
+    const permissionFlag = entities.find(
+      (entity) => entity.kind === 'permissionFlag',
+    );
+
+    expect(skipped).toEqual([]);
+    expect(permissionFlag?.definer).toBe('definePermissionFlag');
+    expect(permissionFlag?.config).toEqual(permissionFlagManifest);
+    expect(
+      `${permissionFlag?.defaultFolder}/${permissionFlag?.fileBaseName}${permissionFlag?.fileSuffix}`,
+    ).toBe('src/permission-flags/export-pets.permission-flag.ts');
+  });
+
+  it('should write the default role with defineApplicationRole and the other roles with defineRole into src/roles under the role enum bindings', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        application: APPLICATION_WITH_SUPPORT_DEFAULT_ROLE,
+        roles: [
+          { universalIdentifier: SUPPORT_ROLE_UID, label: 'Support' },
+          { universalIdentifier: AUDITOR_ROLE_UID, label: 'Auditor' },
+        ],
+      } as unknown as Partial<Manifest>),
+    );
+
+    expect(
+      entities
+        .filter((entity) => entity.kind === 'role')
+        .map((entity) => ({
+          definer: entity.definer,
+          path: `${entity.defaultFolder}/${entity.fileBaseName}${entity.fileSuffix}`,
+          enumBindings: entity.enumBindings,
+        })),
+    ).toEqual([
+      {
+        definer: 'defineApplicationRole',
+        path: 'src/roles/support.role.ts',
+        enumBindings: ROLE_ENUM_BINDINGS,
+      },
+      {
+        definer: 'defineRole',
+        path: 'src/roles/auditor.role.ts',
+        enumBindings: ROLE_ENUM_BINDINGS,
+      },
+    ]);
+  });
+
+  it('should drop the default role from the application config when that role is written', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        application: APPLICATION_WITH_SUPPORT_DEFAULT_ROLE,
+        roles: [{ universalIdentifier: SUPPORT_ROLE_UID, label: 'Support' }],
+      } as unknown as Partial<Manifest>),
+    );
+
+    expect(
+      entities.find((entity) => entity.kind === 'application')?.config,
+    ).toEqual({
+      universalIdentifier: APP_UID,
+      displayName: 'Pets',
+      description: 'Pet tracking',
+    });
+  });
+
+  it('should keep a default role that is not one of the written roles on the application config', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        application: APPLICATION_WITH_SUPPORT_DEFAULT_ROLE,
+        roles: [{ universalIdentifier: AUDITOR_ROLE_UID, label: 'Auditor' }],
+      } as unknown as Partial<Manifest>),
+    );
+
+    expect(
+      entities.find((entity) => entity.kind === 'application')?.config,
+    ).toEqual(APPLICATION_WITH_SUPPORT_DEFAULT_ROLE);
+    expect(entities.find((entity) => entity.kind === 'role')?.definer).toBe(
+      'defineRole',
+    );
+  });
+
+  it('should leave out the object and field permission identifiers the build derives and keep the others', () => {
+    const { entities } = buildPullEntities(
+      buildManifest({
+        roles: [
+          {
+            universalIdentifier: SUPPORT_ROLE_UID,
+            label: 'Support',
+            objectPermissions: [
+              {
+                universalIdentifier: getObjectPermissionUniversalIdentifier({
+                  applicationUniversalIdentifier: APP_UID,
+                  roleUniversalIdentifier: SUPPORT_ROLE_UID,
+                  objectUniversalIdentifier: PET_UID,
+                }),
+                objectUniversalIdentifier: PET_UID,
+                canReadObjectRecords: true,
+              },
+              {
+                universalIdentifier: LEGACY_OBJECT_PERMISSION_UID,
+                objectUniversalIdentifier:
+                  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+                canReadObjectRecords: false,
+              },
+            ],
+            fieldPermissions: [
+              {
+                universalIdentifier: getFieldPermissionUniversalIdentifier({
+                  applicationUniversalIdentifier: APP_UID,
+                  roleUniversalIdentifier: SUPPORT_ROLE_UID,
+                  fieldUniversalIdentifier: PET_NAME_FIELD_UID,
+                }),
+                objectUniversalIdentifier: PET_UID,
+                fieldUniversalIdentifier: PET_NAME_FIELD_UID,
+                canUpdateFieldValue: false,
+              },
+            ],
+            permissionFlagUniversalIdentifiers: [EXPORT_PETS_FLAG_UID],
+          },
+        ],
+      }),
+    );
+
+    expect(entities.find((entity) => entity.kind === 'role')?.config).toEqual({
+      universalIdentifier: SUPPORT_ROLE_UID,
+      label: 'Support',
+      objectPermissions: [
+        { objectUniversalIdentifier: PET_UID, canReadObjectRecords: true },
+        {
+          universalIdentifier: LEGACY_OBJECT_PERMISSION_UID,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+          canReadObjectRecords: false,
+        },
+      ],
+      fieldPermissions: [
+        {
+          objectUniversalIdentifier: PET_UID,
+          fieldUniversalIdentifier: PET_NAME_FIELD_UID,
+          canUpdateFieldValue: false,
+        },
+      ],
+      permissionFlagUniversalIdentifiers: [EXPORT_PETS_FLAG_UID],
+    });
   });
 });

@@ -1,3 +1,4 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -16,8 +17,8 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -33,7 +34,8 @@ const previewTooltipClass = css`
 
 export const SidePanelSearchRecordsPage = () => {
   const { t } = useLingui();
-  const { searchResultItems, loading, noResults } = useSidePanelSearchRecords();
+  const { searchResultItems, loading, noResults, error } =
+    useSidePanelSearchRecords();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { closeCommandMenu } = useCloseCommandMenu();
   const navigate = useNavigate();
@@ -50,6 +52,8 @@ export const SidePanelSearchRecordsPage = () => {
 
   return (
     <>
+      <ToastOnQueryErrorEffect error={error} />
+
       <SidePanelList
         selectableItemIds={selectableItemIds}
         loading={loading}
@@ -95,10 +99,10 @@ export const SidePanelSearchRecordsPage = () => {
                       onClick={handleClick}
                       LeftComponent={
                         <Avatar
-                          type={item.avatarType}
-                          avatarUrl={getAbsoluteImageUrl(item.imageUrl)}
-                          placeholderColorSeed={item.recordId}
-                          placeholder={item.label}
+                          shape={item.avatarShape}
+                          src={getAbsoluteImageUrl(item.imageUrl)}
+                          colorSeed={item.recordId}
+                          name={item.label}
                         />
                       }
                     />

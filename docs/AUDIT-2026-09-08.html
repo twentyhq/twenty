@@ -151,6 +151,7 @@
   <a href="#update-2">Cập nhật 11/09 (vòng 3)</a>
   <a href="#update-3">Cập nhật 12/09 (vòng 4)</a>
   <a href="#update-4">Cập nhật 13/09 (vòng 5)</a>
+  <a href="#update-5">Cập nhật 16/09 (vòng 6)</a>
   <a href="#clean">Điểm đạt</a>
   <a href="#corrections">Điều chỉnh giả định</a>
   <a href="#plan">Kế hoạch hành động</a>
@@ -2300,6 +2301,48 @@ if (!isMultiWorkspaceSubdomainEnabled) { return null; }</code></pre>
   Actions one-off trên runner sạch (khuyến nghị), regenerate local rồi đối chiếu checksum với
   registry, hoặc bật <code>checksumBehavior: update</code> (làm yếu integrity — không khuyến nghị).
 </p>
+
+<!-- ==================== UPDATE 5 ==================== -->
+
+<h2 id="update-5">Cập nhật 16/09/2026 <span class="badge b-ok">vòng 6</span></h2>
+
+<h3>Đóng hết 3 nợ CI còn lại của sync v2.40.0 — PR #5 merged, CI Server xanh toàn bộ</h3>
+<p>
+  <strong>server-validation:</strong> regenerate 3 cấu hình <code>graphql:generate</code>
+  (data/metadata/admin) + <code>twenty-client-sdk:generate-metadata-client</code> against server sống
+  (cần <code>TWENTY_API_URL=http://localhost:3020</code> vì codegen mặc định trỏ cổng 3000).
+  Commit <code>d4f15fe182</code>.
+</p>
+<p>
+  <strong>server-apps-install-smoke (commerce + zalo-oa):</strong> ba lớp lỗi lồng nhau, xử lý lần
+  lượt — (1) lockfile lệch sau rename <code>@crove</code>: regenerate bằng
+  <code>yarn install</code> với <code>YARN_CACHE_FOLDER</code> mới (checksum lấy thẳng từ registry,
+  tương đương runner sạch), commit <code>f87624912a</code>; (2) 24/40 universal identifier của
+  commerce có variant nibble ngoài 8-b (c-d-e-f) — v2.40 validate UUID chặt, remap giữ nhịp pattern
+  c→8/d→9/e→a/f→b, commit <code>5e571584d7</code>; (3) field FILES <code>images</code> thiếu
+  <code>universalSettings.maxNumberOfValues</code> (bắt buộc 1-60 từ v2.40) — đặt 30, commit
+  <code>fb564d03e1</code>. Hai lỗi viewField "Field metadata not found" là cascade của lỗi
+  fieldMetadata (sync transactional), tự hết.
+</p>
+<p>
+  <strong>server-test:</strong> 2 suite fork-red sửa trong <code>7c017d9546</code> —
+  <code>build-mcp-server-card</code> expect <code>io.crove/crm</code> thay vì upstream
+  <code>com.twenty/twenty</code>; spec <code>add-timeline-activity-type-snapshot</code> cộng thêm 1
+  call guard probe <code>information_schema</code> (fork guard) vào mock/expectations.
+</p>
+<p>
+  <strong>CI:</strong> shard integration 16 fail 1 lần do Docker pull
+  <em>unauthorized: authentication required</em> (rate-limit hub, flaky hạ tầng) — re-run xanh.
+  Run cuối <code>35012042399</code>: server-validation ✓, server-test 4/4 ✓, integration 20/20 ✓,
+  install-smoke toàn bộ app ✓. PR
+  <a href="https://github.com/DOS/Crove-CRM/pull/5">#5</a> merged vào main
+  (<code>d81ef9a7c1</code>). Mutation-guard cần lại label
+  <code>ci:allow-previous-version-upgrade-mutation</code> (PR đụng spec trong thư mục 2-34 cũ).
+</p>
+<p><em>
+  Lưu ý cho vòng sau: publish v2.40 kiểm tra UUID variant nên mọi app fork đặt tay UUID cần đủ
+  8/9/a/b ở nhóm 4; codegen SDK cần biến môi trường TWENTY_API_URL trỏ đúng cổng server local.
+</em></p>
 
 <!-- ==================== CLEAN ==================== -->
 

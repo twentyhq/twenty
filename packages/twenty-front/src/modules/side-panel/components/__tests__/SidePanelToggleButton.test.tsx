@@ -25,8 +25,8 @@ jest.mock('twenty-ui/utilities', () => ({
   getOsControlSymbol: () => '⌘',
 }));
 
-jest.mock('twenty-ui/surfaces', () => ({
-  ...jest.requireActual('twenty-ui/surfaces'),
+jest.mock('twenty-ui/primitives/surfaces', () => ({
+  ...jest.requireActual('twenty-ui/primitives/surfaces'),
   AppTooltip: (props: { title: string }) => {
     mockAppTooltip(props);
 

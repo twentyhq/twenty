@@ -17,7 +17,7 @@ import {
   Loader,
   ProgressBar,
   SidePanelInformationBanner,
-} from 'twenty-ui/feedback';
+} from 'twenty-ui/primitives/feedback';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import {
@@ -132,13 +132,17 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
 
 const FeedbackGallery = () => (
   <ThemeProvider colorScheme="light">
-    <ComponentGallery title="twenty-ui/feedback" entries={FEEDBACK_ENTRIES} />
+    <ComponentGallery
+      title="twenty-ui/primitives/feedback"
+      entries={FEEDBACK_ENTRIES}
+    />
   </ThemeProvider>
 );
 
 export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000102',
   name: 'twenty-ui-feedback-gallery',
-  description: 'Renders every twenty-ui/feedback component in the sandbox',
+  description:
+    'Renders every twenty-ui/primitives/feedback component in the sandbox',
   component: FeedbackGallery,
 });

@@ -70,6 +70,7 @@ const COMMAND_MENU_ITEM: FlatCommandMenuItem = {
   id: 'command-menu-item-id',
   universalIdentifier: 'command-menu-item-universal-identifier',
   workflowVersionId: null,
+  coreWorkflowVersionId: null,
   frontComponentId: null,
   frontComponentUniversalIdentifier: null,
   engineComponentKey: EngineComponentKey.NAVIGATION,

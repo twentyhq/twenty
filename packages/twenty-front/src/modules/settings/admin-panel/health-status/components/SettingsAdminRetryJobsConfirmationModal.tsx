@@ -32,7 +32,7 @@ export const SettingsAdminRetryJobsConfirmationModal = ({
       onConfirmClick={onConfirm}
       onClose={onClose}
       confirmButtonText={t`Retry`}
-      confirmButtonAccent="blue"
+      confirmButtonColor="accent"
     />
   );
 };

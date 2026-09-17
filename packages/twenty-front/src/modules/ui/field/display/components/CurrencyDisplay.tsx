@@ -1,7 +1,11 @@
 import { useContext, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '@linaria/react';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/primitives/surfaces';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { isDefined, formatToShortNumber } from 'twenty-shared/utils';
 
@@ -12,7 +16,7 @@ import {
   type FieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
-import { EllipsisDisplay } from 'twenty-ui/data-display';
+import { EllipsisDisplay } from 'twenty-ui/primitives/data-display';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 

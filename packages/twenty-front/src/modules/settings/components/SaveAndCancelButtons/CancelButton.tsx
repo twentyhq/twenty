@@ -1,5 +1,7 @@
+import { BUTTON_INVERTED_CLASS_NAME } from '@/ui/input/styles/ButtonInvertedClassName';
 import { useLingui } from '@lingui/react/macro';
-import { Button, LightButton } from 'twenty-ui/input';
+import { LightButton } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
 
 type CancelButtonProps = {
   onCancel?: () => void;
@@ -17,23 +19,20 @@ export const CancelButton = ({
   if (inverted) {
     return (
       <Button
-        title={t`Cancel`}
-        variant="tertiary"
-        accent="default"
-        inverted
-        size="small"
+        className={BUTTON_INVERTED_CLASS_NAME}
+        size="sm"
         onClick={onCancel}
         disabled={disabled}
-      />
+        variant="ghost"
+      >{t`Cancel`}</Button>
     );
   }
 
   return (
     <LightButton
-      title={t`Cancel`}
-      accent="tertiary"
+      emphasis="subtle"
       onClick={onCancel}
       disabled={disabled}
-    />
+    >{t`Cancel`}</LightButton>
   );
 };

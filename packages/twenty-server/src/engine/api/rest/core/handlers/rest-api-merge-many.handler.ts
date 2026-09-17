@@ -25,6 +25,7 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        flatIndexMaps,
         objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
@@ -44,6 +45,7 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
             flatObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
+            flatIndexMaps,
             objectIdByNameSingular,
           },
         );

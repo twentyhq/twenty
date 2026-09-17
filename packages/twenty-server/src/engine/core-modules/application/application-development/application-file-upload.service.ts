@@ -8,6 +8,7 @@ import { ALLOWED_APPLICATION_FILE_FOLDERS } from 'src/engine/core-modules/applic
 import { CompleteApplicationFileUploadsResultDTO } from 'src/engine/core-modules/application/application-development/dtos/complete-application-file-uploads-result.dto';
 import { CreateApplicationFileUploadsResultDTO } from 'src/engine/core-modules/application/application-development/dtos/create-application-file-uploads-result.dto';
 import { type ApplicationFileUploadRequestInput } from 'src/engine/core-modules/application/application-development/dtos/create-application-file-uploads.input';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -33,6 +34,7 @@ const APPLICATION_FILE_SETTINGS = {
 export class ApplicationFileUploadService {
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly fileUploadTargetService: FileUploadTargetService,
     private readonly fileUploadCompletionService: FileUploadCompletionService,
     @InjectWorkspaceScopedRepository(FileEntity)
@@ -48,7 +50,7 @@ export class ApplicationFileUploadService {
     applicationUniversalIdentifier: string;
     files: ApplicationFileUploadRequestInput[];
   }): Promise<CreateApplicationFileUploadsResultDTO> {
-    const application = await this.findApplicationOrThrow({
+    const application = await this.findOwnedApplicationOrThrow({
       workspaceId,
       applicationUniversalIdentifier,
     });
@@ -120,7 +122,7 @@ export class ApplicationFileUploadService {
     applicationUniversalIdentifier: string;
     fileIds: string[];
   }): Promise<CompleteApplicationFileUploadsResultDTO> {
-    const application = await this.findApplicationOrThrow({
+    const application = await this.findOwnedApplicationOrThrow({
       workspaceId,
       applicationUniversalIdentifier,
     });
@@ -191,7 +193,7 @@ export class ApplicationFileUploadService {
     return undefined;
   }
 
-  private async findApplicationOrThrow({
+  private async findOwnedApplicationOrThrow({
     workspaceId,
     applicationUniversalIdentifier,
   }: {
@@ -211,6 +213,11 @@ export class ApplicationFileUploadService {
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
+
+    await this.applicationRegistrationService.findOneOwnedByWorkspaceOrThrow({
+      universalIdentifier: applicationUniversalIdentifier,
+      workspaceId,
+    });
 
     return application;
   }

@@ -8,14 +8,12 @@ import {
 } from 'src/constants/granola-history.constant';
 import { type GranolaWebhookRegistration } from 'src/logic-functions/types/granola-webhook-registration.type';
 import { enqueueGranolaBackfillOrThrow } from 'src/logic-functions/utils/enqueue-granola-backfill-or-throw.util';
+import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
 
-export const enqueueGranolaInitialBackfillOrThrow = async (
-  registration: Pick<
-    GranolaWebhookRegistration,
-    'registrationId' | 'folderIds' | 'isInitialBackfillEnqueued'
-  >,
-): Promise<void> => {
-  if (registration.isInitialBackfillEnqueued) {
+export const enqueueGranolaInitialBackfillOrThrow = async (): Promise<void> => {
+  const registration = await findGranolaRegistrationForCurrentKey();
+
+  if (!isDefined(registration) || registration.isInitialBackfillEnqueued) {
     return;
   }
 
@@ -23,7 +21,6 @@ export const enqueueGranolaInitialBackfillOrThrow = async (
     createdAfter: new Date(
       Date.now() - GRANOLA_INITIAL_IMPORT_DAYS * GRANOLA_MILLISECONDS_PER_DAY,
     ).toISOString(),
-    folderIds: registration.folderIds,
   });
 
   const currentRegistration = await kv.get<GranolaWebhookRegistration>(

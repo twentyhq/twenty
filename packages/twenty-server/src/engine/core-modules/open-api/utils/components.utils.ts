@@ -1,5 +1,9 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
 import {
+  DEFAULT_SELECT_OPTION_COLOR,
+  TAG_COLORS,
+} from 'twenty-shared/constants';
+import {
   type FieldMetadataDefaultValue,
   FieldMetadataType,
   PageLayoutWidgetVerticalListHeightBehavior,
@@ -416,7 +420,11 @@ export const computeMetadataSchemaComponents = (
                 items: {
                   type: 'object',
                   properties: {
-                    color: { type: 'string' },
+                    color: {
+                      type: 'string',
+                      enum: [...TAG_COLORS],
+                      default: DEFAULT_SELECT_OPTION_COLOR,
+                    },
                     label: { type: 'string' },
                     value: {
                       type: 'string',

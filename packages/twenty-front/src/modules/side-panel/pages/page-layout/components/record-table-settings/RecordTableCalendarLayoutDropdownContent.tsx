@@ -13,7 +13,7 @@ import {
   IconCalendarMonth,
   IconCalendarWeek,
 } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 type RecordTableCalendarLayoutDropdownContentProps = {

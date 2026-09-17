@@ -15,9 +15,14 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+<<<<<<< HEAD
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { useEffect } from 'react';
+=======
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
+>>>>>>> twenty/v2.41.0
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledDomainFormWrapper = styled.div`

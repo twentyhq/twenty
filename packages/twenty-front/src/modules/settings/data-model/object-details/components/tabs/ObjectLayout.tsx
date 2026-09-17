@@ -3,10 +3,10 @@ import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconAddressBook, IconPencil, IconReload } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -116,14 +116,13 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
               description={t`Customize how your record page looks.`}
               action={
                 <Button
-                  title={t`Customize`}
-                  variant="primary"
-                  accent="blue"
-                  size="small"
-                  Icon={IconPencil}
+                  size="sm"
+                  startIcon={<IconPencil />}
                   onClick={handleCustomizeRecordPage}
                   disabled={!hasLayoutsPermission || !isDefined(firstRecord)}
-                />
+                  variant="solid"
+                  color="accent"
+                >{t`Customize`}</Button>
               }
             />
           }
@@ -142,13 +141,12 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
           description={t`Reset all overrides on this layout to return it to the app default`}
         />
         <Button
-          title={t`Reset to default`}
-          variant="secondary"
-          size="small"
-          Icon={IconReload}
+          size="sm"
+          startIcon={<IconReload />}
           onClick={handleResetPageLayout}
           disabled={!hasLayoutsPermission || !isDefined(pageLayout)}
-        />
+          variant="outline"
+        >{t`Reset to default`}</Button>
       </Section>
       <ConfirmationModal
         modalInstanceId={RESET_PAGE_LAYOUT_MODAL_ID}
@@ -156,7 +154,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
         subtitle={t`This action cannot be undone.`}
         onConfirmClick={handleConfirmReset}
         confirmButtonText={t`Reset`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
       />
     </StyledContentContainer>
   );

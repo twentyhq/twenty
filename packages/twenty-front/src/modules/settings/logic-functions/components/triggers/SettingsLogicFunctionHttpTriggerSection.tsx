@@ -18,7 +18,7 @@ import {
   IconHttpPut,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { Switch } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';

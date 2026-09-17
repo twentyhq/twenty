@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { type AppTooltipProps } from 'twenty-ui/surfaces';
+import { type AppTooltipProps } from 'twenty-ui/primitives/surfaces';
 
 type FieldDescriptionTooltipContextValue = {
   tooltipId: string;

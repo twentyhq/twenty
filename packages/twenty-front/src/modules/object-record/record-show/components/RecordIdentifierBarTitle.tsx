@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { useRef, type ChangeEvent, type MouseEvent } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -85,13 +85,13 @@ export const RecordIdentifierBarTitle = ({
       <HeaderIdentifier
         fontSize={isInSidePanel ? 'md' : 'lg'}
         avatar={{
-          avatarUrl: getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? ''),
+          src: getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? ''),
           onClick: isAvatarEditable
             ? () => inputFileRef.current?.click?.()
             : undefined,
-          placeholderColorSeed: objectRecordId,
-          placeholder: recordIdentifier?.name ?? '',
-          type: recordIdentifier?.avatarType ?? 'rounded',
+          colorSeed: objectRecordId,
+          name: recordIdentifier?.name ?? '',
+          shape: recordIdentifier?.avatarShape ?? 'circle',
         }}
         title={
           // A writable title has to stay click-to-edit, so only a read-only one

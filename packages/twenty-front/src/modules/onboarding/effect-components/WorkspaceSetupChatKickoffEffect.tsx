@@ -93,6 +93,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           updatedAt: thread.updatedAt,
           conversationSize: thread.conversationSize,
           contextWindowTokens: thread.contextWindowTokens ?? null,
+          totalCacheReadTokens: thread.totalCacheReadTokens,
           totalInputTokens: thread.totalInputTokens,
           totalOutputTokens: thread.totalOutputTokens,
           totalInputCredits: thread.totalInputCredits,

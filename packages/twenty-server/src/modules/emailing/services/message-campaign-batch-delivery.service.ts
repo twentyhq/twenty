@@ -37,6 +37,7 @@ import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emaili
 import { type CampaignDeliverySettlement } from 'src/modules/emailing/types/campaign-delivery-settlement.type';
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
 import { buildCampaignBatchReplacements } from 'src/modules/emailing/utils/build-campaign-batch-replacements.util';
+import { buildCampaignThreadExternalId } from 'src/modules/emailing/utils/build-campaign-thread-external-id.util';
 import { buildCampaignDeliverySettleQuery } from 'src/modules/emailing/utils/build-campaign-delivery-settle-query.util';
 import { compileCampaignBatchTemplate } from 'src/modules/emailing/utils/compile-campaign-batch-template.util';
 import { chunkRecipientsToAdmissibleSize } from 'src/modules/emailing/utils/chunk-recipients-to-admissible-size.util';
@@ -45,6 +46,7 @@ import { resolveCampaignBatchSettlements } from 'src/modules/emailing/utils/reso
 import { resolveCampaignSendFailure } from 'src/modules/emailing/utils/resolve-campaign-send-failure.util';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { buildOutboundThreadingHeaders } from 'src/modules/messaging/message-outbound-manager/utils/build-outbound-threading-headers.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 type BatchRecipient = SendCampaignEmailBatchJobData['recipients'][number];
@@ -348,16 +350,24 @@ export class MessageCampaignBatchDeliveryService {
       );
     }
 
+    const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
+
     const providerOutcome = await this.emailingDomainSenderService
       .sendEmailBatch({
         workspaceId,
         emailingDomainId,
         sendKind: 'MARKETING',
-        from: campaign.fromAddress?.primaryEmail ?? '',
+        from: fromAddress,
         template,
         recipients: claimedRecipients.map((recipient) => ({
           email: recipient.email,
           replacements: replacementsByDeliveryId.get(recipient.messageId) ?? {},
+          headers: buildOutboundThreadingHeaders({
+            threadExternalId: buildCampaignThreadExternalId({
+              messageId: recipient.messageId,
+              fromAddress,
+            }),
+          }),
         })),
         unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
       })
@@ -386,6 +396,19 @@ export class MessageCampaignBatchDeliveryService {
       outcome: providerOutcome,
     });
 
+    const headerMessageIdByDeliveryId = new Map<string, string>();
+
+    for (const entry of providerOutcome.entries) {
+      const recipient = claimedRecipients[entry.recipientIndex];
+
+      if (isDefined(recipient) && isDefined(entry.headerMessageId)) {
+        headerMessageIdByDeliveryId.set(
+          recipient.messageId,
+          entry.headerMessageId,
+        );
+      }
+    }
+
     try {
       await this.settleDeliveredBatch({
         data,
@@ -393,6 +416,7 @@ export class MessageCampaignBatchDeliveryService {
         settlements,
         template,
         replacementsByDeliveryId,
+        headerMessageIdByDeliveryId,
       });
     } catch (error) {
       await this.settleClaimsAlreadyHandedToProvider({
@@ -411,12 +435,14 @@ export class MessageCampaignBatchDeliveryService {
     settlements,
     template,
     replacementsByDeliveryId,
+    headerMessageIdByDeliveryId,
   }: {
     data: SendCampaignEmailBatchJobData;
     claimToken: string;
     settlements: CampaignDeliverySettlement[];
     template: EmailingDomainEmailTemplate;
     replacementsByDeliveryId: Map<string, Record<string, string>>;
+    headerMessageIdByDeliveryId: Map<string, string>;
   }): Promise<void> {
     const { workspaceId, campaignId, userWorkspaceId } = data;
 
@@ -434,9 +460,14 @@ export class MessageCampaignBatchDeliveryService {
     );
 
     for (const settlement of sentSettlements) {
+      const providerMessageId = settlement.providerMessageId ?? '';
+
       await this.recordSentMessage({
         deliveryId: settlement.deliveryId,
-        providerMessageId: settlement.providerMessageId ?? '',
+        providerMessageId,
+        headerMessageId:
+          headerMessageIdByDeliveryId.get(settlement.deliveryId) ??
+          providerMessageId,
         template,
         replacements: replacementsByDeliveryId.get(settlement.deliveryId) ?? {},
       });
@@ -464,11 +495,13 @@ export class MessageCampaignBatchDeliveryService {
   private async recordSentMessage({
     deliveryId,
     providerMessageId,
+    headerMessageId,
     template,
     replacements,
   }: {
     deliveryId: string;
     providerMessageId: string;
+    headerMessageId: string;
     template: EmailingDomainEmailTemplate;
     replacements: Record<string, string>;
   }): Promise<void> {
@@ -479,7 +512,7 @@ export class MessageCampaignBatchDeliveryService {
     );
 
     await messageRepository.update(deliveryId, {
-      headerMessageId: providerMessageId,
+      headerMessageId,
       subject: applyReplacementTags(template.subject, replacements),
       text: applyReplacementTags(template.text, replacements),
     });
@@ -492,10 +525,7 @@ export class MessageCampaignBatchDeliveryService {
 
     await associationRepository.update(
       { messageId: deliveryId },
-      {
-        messageExternalId: providerMessageId,
-        messageThreadExternalId: providerMessageId,
-      },
+      { messageExternalId: providerMessageId },
     );
   }
 

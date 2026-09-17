@@ -12,18 +12,20 @@ import { isDefined } from 'twenty-shared/utils';
 import { type PackageJson } from 'type-fest';
 import { IsNull, Not, Repository } from 'typeorm';
 import { v4 } from 'uuid';
+import { z } from 'zod';
 
+import { assertValidNpmPackageName } from 'src/engine/core-modules/application/application-package/utils/assert-valid-npm-package-name.util';
+import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
+import { assertValidNpmVersionSpec } from 'src/engine/core-modules/application/application-package/utils/is-valid-npm-version-spec.util';
+import { readJsonFileOrThrow } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
+import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { assertValidNpmPackageName } from 'src/engine/core-modules/application/application-package/utils/assert-valid-npm-package-name.util';
-import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
-import { readJsonFileOrThrow } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
-import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
@@ -40,6 +42,11 @@ export type ResolvedPackage = {
   manifest: Manifest;
   packageJson: PackageJson;
 };
+
+const registryVersionMetadataSchema = z.object({
+  name: z.string(),
+  dist: z.object({ tarball: z.string().optional() }).optional(),
+});
 
 @Injectable()
 export class ApplicationPackageFetcherService implements OnModuleInit {
@@ -66,6 +73,34 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
   }
 
   async resolvePackage(
+    appRegistration: ApplicationRegistrationEntity,
+    options?: { targetVersion?: string },
+  ): Promise<ResolvedPackage | null> {
+    const resolvedPackage = await this.resolveFromSource(
+      appRegistration,
+      options,
+    );
+
+    if (!isDefined(resolvedPackage)) {
+      return null;
+    }
+
+    const manifestUniversalIdentifier =
+      resolvedPackage.manifest.application.universalIdentifier;
+
+    if (manifestUniversalIdentifier !== appRegistration.universalIdentifier) {
+      await this.cleanupExtractedDir(resolvedPackage.cleanupDir);
+
+      throw new ApplicationException(
+        `Resolved package declares application ${manifestUniversalIdentifier} but registration is for ${appRegistration.universalIdentifier}`,
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
+    }
+
+    return resolvedPackage;
+  }
+
+  private async resolveFromSource(
     appRegistration: ApplicationRegistrationEntity,
     options?: { targetVersion?: string },
   ): Promise<ResolvedPackage | null> {
@@ -99,7 +134,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
   }
 
   private async resolveFromNpm(
-    packageName: string,
+    sourcePackage: string,
     targetVersion?: string,
   ): Promise<ResolvedPackage> {
     const workDir = join(APP_FETCHER_TMPDIR, v4());
@@ -110,13 +145,15 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
       const authToken = this.twentyConfigService.get('APP_REGISTRY_TOKEN');
 
-      assertValidNpmPackageName(packageName);
+      assertValidNpmPackageName(sourcePackage);
 
       const versionSpec = targetVersion ?? 'latest';
 
+      assertValidNpmVersionSpec(versionSpec);
+
       const tarballUrl = await this.fetchTarballUrl(
         registryUrl,
-        packageName,
+        sourcePackage,
         versionSpec,
         authToken,
       );
@@ -126,6 +163,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         registryUrl,
         authToken,
       );
+
       const tarballPath = join(workDir, 'package.tgz');
 
       await fs.writeFile(tarballPath, tarballBuffer);
@@ -142,6 +180,13 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         'package.json',
       );
 
+      if (packageJson.name !== sourcePackage) {
+        throw new ApplicationException(
+          `Downloaded package is ${packageJson.name} but ${sourcePackage} was requested`,
+          ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+        );
+      }
+
       return {
         extractedDir: contentDir,
         cleanupDir: workDir,
@@ -156,7 +201,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       }
 
       throw new ApplicationException(
-        `Failed to resolve npm package ${packageName}: ${error}`,
+        `Failed to resolve npm package ${sourcePackage}: ${error}`,
         ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
       );
     }
@@ -241,13 +286,14 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
   private async fetchTarballUrl(
     registryUrl: string,
-    packageName: string,
+    sourcePackage: string,
     versionSpec: string,
     authToken?: string,
   ): Promise<string> {
-    const encodedName = encodeURIComponent(packageName);
+    const encodedName = encodeURIComponent(sourcePackage);
+    const encodedVersionSpec = encodeURIComponent(versionSpec);
     const baseUrl = registryUrl.replace(/\/$/, '');
-    const metadataUrl = `${baseUrl}/${encodedName}/${versionSpec}`;
+    const metadataUrl = `${baseUrl}/${encodedName}/${encodedVersionSpec}`;
 
     const headers: Record<string, string> = {
       Accept: 'application/json',
@@ -267,21 +313,39 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     let response;
 
     try {
-      response = await httpClient.get<{
-        dist?: { tarball?: string };
-      }>(metadataUrl, { headers });
+      response = await httpClient.get(metadataUrl, { headers });
     } catch (error) {
       throw new ApplicationException(
-        `Registry returned ${isAxiosError(error) ? error.response?.status : 'unknown error'} for ${packageName}@${versionSpec}`,
+        `Registry returned ${isAxiosError(error) ? error.response?.status : 'unknown error'} for ${sourcePackage}@${versionSpec}`,
         ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
       );
     }
 
-    const tarballUrl = response.data?.dist?.tarball;
+    const parsedMetadata = registryVersionMetadataSchema.safeParse(
+      response.data,
+    );
+
+    if (!parsedMetadata.success) {
+      throw new ApplicationException(
+        `Unexpected registry metadata shape for ${sourcePackage}@${versionSpec}`,
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
+    }
+
+    const metadata = parsedMetadata.data;
+
+    if (metadata.name !== sourcePackage) {
+      throw new ApplicationException(
+        `Registry metadata for ${sourcePackage}@${versionSpec} describes ${metadata.name}`,
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
+    }
+
+    const tarballUrl = metadata.dist?.tarball;
 
     if (!tarballUrl) {
       throw new ApplicationException(
-        `No tarball URL in registry metadata for ${packageName}@${versionSpec}`,
+        `No tarball URL in registry metadata for ${sourcePackage}@${versionSpec}`,
         ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
       );
     }

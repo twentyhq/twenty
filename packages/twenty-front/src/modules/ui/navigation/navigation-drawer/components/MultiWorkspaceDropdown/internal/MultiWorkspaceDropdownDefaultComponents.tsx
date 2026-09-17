@@ -30,7 +30,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import {
   IconDotsVertical,
   IconLogout,
@@ -40,12 +40,12 @@ import {
   IconSwitchHorizontal,
   IconUserPlus,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import {
   MenuItem,
   MenuItemSelectAvatar,
   UndecoratedLink,
-} from 'twenty-ui/navigation';
+} from 'twenty-ui/primitives/navigation';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -117,8 +117,8 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           <DropdownMenuHeaderLeftComponent
             Avatar={
               <Avatar
-                placeholder={currentWorkspace?.displayName || ''}
-                avatarUrl={getAbsoluteImageUrl(
+                name={currentWorkspace?.displayName || ''}
+                src={getAbsoluteImageUrl(
                   currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
                 )}
               />
@@ -167,6 +167,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             ]
               .filter(({ id }) => id !== currentWorkspace?.id)
               .slice(0, 3)
+<<<<<<< HEAD
               .map((availableWorkspace) => {
                 const { pathname, searchParams } =
                   getAvailableWorkspacePathAndSearchParams(availableWorkspace);
@@ -199,6 +200,33 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                   </UndecoratedLink>
                 );
               })}
+=======
+              .map((availableWorkspace) => (
+                <UndecoratedLink
+                  key={availableWorkspace.id}
+                  to={buildWorkspaceUrl(
+                    getWorkspaceUrl(availableWorkspace.workspaceUrls),
+                  )}
+                  onClick={(event) => {
+                    event?.preventDefault();
+                    handleChange(availableWorkspace);
+                  }}
+                >
+                  <MenuItemSelectAvatar
+                    text={availableWorkspace.displayName ?? t`(No name)`}
+                    avatar={
+                      <Avatar
+                        name={availableWorkspace.displayName || ''}
+                        src={getAbsoluteImageUrl(
+                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                        )}
+                      />
+                    }
+                    selected={false}
+                  />
+                </UndecoratedLink>
+              ))}
+>>>>>>> twenty/v2.41.0
             {availableWorkspacesCount > 4 && (
               <MenuItem
                 LeftIcon={IconSwitchHorizontal}
