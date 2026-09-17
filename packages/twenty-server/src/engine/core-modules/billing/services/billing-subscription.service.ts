@@ -31,7 +31,7 @@ import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modu
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaCounterService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -73,7 +73,7 @@ export class BillingSubscriptionService {
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly billingUsageCacheService: BillingUsageCacheService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly usageQuotaCounterService: UsageQuotaCounterService,
   ) {}
 
   async getBillingSubscriptions(workspaceId: string) {
@@ -342,7 +342,7 @@ export class BillingSubscriptionService {
       'currentBillingSubscription',
     ]);
 
-    await this.usageLimitQuotaService.dropAllowanceCounter(workspace.id);
+    await this.usageQuotaCounterService.dropAllowanceCounter(workspace.id);
 
     return {
       status: getSubscriptionStatus(updatedSubscription.status),

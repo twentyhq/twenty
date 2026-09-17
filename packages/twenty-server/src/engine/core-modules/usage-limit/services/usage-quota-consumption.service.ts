@@ -7,7 +7,7 @@ import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type UsageQuotaScopeInput } from 'src/engine/core-modules/usage-limit/dtos/usage-quota-scope.input';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaCounterService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter.service';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
@@ -41,7 +41,7 @@ export class UsageQuotaConsumptionService {
     @InjectWorkspaceScopedRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     private readonly usageLimitService: UsageLimitService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly usageQuotaCounterService: UsageQuotaCounterService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
     private readonly usagePeriodService: UsagePeriodService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
@@ -126,7 +126,7 @@ export class UsageQuotaConsumptionService {
     const enforceableIds = new Set(enforceableLimits.map((limit) => limit.id));
 
     const [consumptionById, spenderLabelById] = await Promise.all([
-      this.usageLimitQuotaService.readLimitConsumptions({
+      this.usageQuotaCounterService.readLimitConsumptions({
         workspaceId,
         limits: enforceableLimits,
       }),

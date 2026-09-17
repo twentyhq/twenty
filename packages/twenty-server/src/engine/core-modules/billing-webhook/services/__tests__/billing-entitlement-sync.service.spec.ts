@@ -6,7 +6,7 @@ import { BillingEntitlementSyncService } from 'src/engine/core-modules/billing-w
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaCounterService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter.service';
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
@@ -26,7 +26,7 @@ describe('BillingEntitlementSyncService', () => {
     deleteAllRowLevelPermissionPredicateGroups: jest.fn(),
   };
 
-  const usageLimitQuotaService = {
+  const usageQuotaCounterService = {
     dropIntraWorkspaceLimitCounters: jest.fn(),
   };
 
@@ -67,7 +67,7 @@ describe('BillingEntitlementSyncService', () => {
     heldLockKeys.clear();
     lockQueueByKey.clear();
     billingEntitlementRepository.upsert.mockResolvedValue(undefined);
-    usageLimitQuotaService.dropIntraWorkspaceLimitCounters.mockResolvedValue(
+    usageQuotaCounterService.dropIntraWorkspaceLimitCounters.mockResolvedValue(
       undefined,
     );
     rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups.mockResolvedValue(
@@ -86,8 +86,8 @@ describe('BillingEntitlementSyncService', () => {
           useValue: rowLevelPermissionPredicateGroupService,
         },
         {
-          provide: UsageLimitQuotaService,
-          useValue: usageLimitQuotaService,
+          provide: UsageQuotaCounterService,
+          useValue: usageQuotaCounterService,
         },
         {
           provide: CacheLockService,
@@ -129,7 +129,7 @@ describe('BillingEntitlementSyncService', () => {
     ]);
 
     expect(
-      usageLimitQuotaService.dropIntraWorkspaceLimitCounters,
+      usageQuotaCounterService.dropIntraWorkspaceLimitCounters,
     ).toHaveBeenCalledTimes(1);
   });
 

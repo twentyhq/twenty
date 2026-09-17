@@ -25,7 +25,7 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaCounterService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
@@ -66,7 +66,7 @@ export class BillingWebhookSubscriptionService {
     private readonly workspaceService: WorkspaceService,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingUsageCacheService: BillingUsageCacheService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly usageQuotaCounterService: UsageQuotaCounterService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -191,7 +191,7 @@ export class BillingWebhookSubscriptionService {
       'currentBillingSubscription',
     ]);
 
-    await this.usageLimitQuotaService.dropAllowanceCounter(workspace.id);
+    await this.usageQuotaCounterService.dropAllowanceCounter(workspace.id);
 
     const shouldSuspendWorkspace = allLiveSubscriptions.every(
       (customerSubscription) =>

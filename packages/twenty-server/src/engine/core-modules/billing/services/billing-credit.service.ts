@@ -19,7 +19,7 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaCounterService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type GrantCreditsParams = {
@@ -50,7 +50,7 @@ export class BillingCreditService {
     private readonly billingUsageService: BillingUsageService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly usageQuotaCounterService: UsageQuotaCounterService,
   ) {}
 
   async grantCredits(
@@ -267,7 +267,7 @@ export class BillingCreditService {
     const isPureReplay = isReplay && availableDeltaMicro === 0;
 
     if (!isPureReplay) {
-      await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
+      await this.usageQuotaCounterService.dropAllowanceCounter(workspaceId);
     }
   }
 

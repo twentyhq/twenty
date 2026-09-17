@@ -12,7 +12,7 @@ import {
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaCounterService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
@@ -42,7 +42,7 @@ export class UsageLimitService {
     @InjectWorkspaceScopedRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly usageQuotaCounterService: UsageQuotaCounterService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
     private readonly usagePeriodService: UsagePeriodService,
   ) {}
@@ -80,7 +80,7 @@ export class UsageLimitService {
       { where: scope },
     );
 
-    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
+    await this.usageQuotaCounterService.dropLimitCounter(usageLimit);
 
     return usageLimit;
   }
@@ -133,8 +133,8 @@ export class UsageLimitService {
     );
 
     // counters are keyed by scope, so a scope change leaves two of them to rewarm
-    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
-    await this.usageLimitQuotaService.dropLimitCounter(updatedUsageLimit);
+    await this.usageQuotaCounterService.dropLimitCounter(usageLimit);
+    await this.usageQuotaCounterService.dropLimitCounter(updatedUsageLimit);
 
     return updatedUsageLimit;
   }
@@ -231,7 +231,7 @@ export class UsageLimitService {
       'usageLimits',
     ]);
 
-    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
+    await this.usageQuotaCounterService.dropLimitCounter(usageLimit);
 
     return true;
   }

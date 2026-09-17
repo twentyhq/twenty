@@ -6,6 +6,7 @@ import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaCounterService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -43,6 +44,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   providers: [
     UsageLimitQuotaService,
+    UsageQuotaCounterService,
     UsageLimitSpeedService,
     UsageLimitEntitlementService,
     UsageLimitsCacheService,
@@ -60,6 +62,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   exports: [
     UsageLimitQuotaService,
+    UsageQuotaCounterService,
     UsageLimitSpeedService,
     UsageLimitsCacheService,
   ],

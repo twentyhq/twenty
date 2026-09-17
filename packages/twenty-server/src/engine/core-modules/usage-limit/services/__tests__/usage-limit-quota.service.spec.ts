@@ -17,6 +17,7 @@ import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/int
 import { UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/interfaces/usage-limit-entitlement-provider.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaCounterService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
@@ -87,6 +88,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
 
 describe('UsageLimitQuotaService', () => {
   let service: UsageLimitQuotaService;
+  let counterService: UsageQuotaCounterService;
   let creditAllowanceProvider: TestCreditAllowanceProvider;
   let entitlementProvider: TestUsageLimitEntitlementProvider;
 
@@ -186,6 +188,7 @@ describe('UsageLimitQuotaService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsageLimitQuotaService,
+        UsageQuotaCounterService,
         UsageLimitEntitlementService,
         {
           provide: CacheStorageNamespace.EngineUsageLimit,
@@ -209,7 +212,10 @@ describe('UsageLimitQuotaService', () => {
     }).compile();
 
     service = module.get<UsageLimitQuotaService>(UsageLimitQuotaService);
-    service.onModuleInit();
+    counterService = module.get<UsageQuotaCounterService>(
+      UsageQuotaCounterService,
+    );
+    counterService.onModuleInit();
     module.get(UsageLimitEntitlementService).onModuleInit();
   });
 
@@ -543,7 +549,7 @@ describe('UsageLimitQuotaService', () => {
     it('drops the counter keyed by the current period', async () => {
       setAllowance(2_000_000);
 
-      await service.dropAllowanceCounter('workspace-1');
+      await counterService.dropAllowanceCounter('workspace-1');
 
       expect(cacheStorage.mdel).toHaveBeenCalledWith([
         buildAllowanceCounterKey({
@@ -554,7 +560,7 @@ describe('UsageLimitQuotaService', () => {
     });
 
     it('does nothing when no allowance exists', async () => {
-      await service.dropAllowanceCounter('workspace-1');
+      await counterService.dropAllowanceCounter('workspace-1');
 
       expect(cacheStorage.mdel).not.toHaveBeenCalled();
     });
@@ -583,7 +589,7 @@ describe('UsageLimitQuotaService', () => {
         }),
       ]);
 
-      await service.dropIntraWorkspaceLimitCounters('workspace-1');
+      await counterService.dropIntraWorkspaceLimitCounters('workspace-1');
 
       expect(cacheLockService.withLock).toHaveBeenCalledWith(
         expect.any(Function),
@@ -617,7 +623,7 @@ describe('UsageLimitQuotaService', () => {
     it('does nothing when the workspace only has workspace-scoped limits', async () => {
       setLimits([buildLimit({})]);
 
-      await service.dropIntraWorkspaceLimitCounters('workspace-1');
+      await counterService.dropIntraWorkspaceLimitCounters('workspace-1');
 
       expect(cacheStorage.mdel).not.toHaveBeenCalled();
     });
@@ -625,7 +631,7 @@ describe('UsageLimitQuotaService', () => {
 
   describe('dropLimitCounter', () => {
     it('drops the counter keyed by the current period under the warm lock', async () => {
-      await service.dropLimitCounter(buildLimitCounterScope());
+      await counterService.dropLimitCounter(buildLimitCounterScope());
 
       expect(cacheLockService.withLock).toHaveBeenCalledWith(
         expect.any(Function),
@@ -647,7 +653,7 @@ describe('UsageLimitQuotaService', () => {
     });
 
     it('skips the drop when the period cannot be resolved', async () => {
-      await service.dropLimitCounter(
+      await counterService.dropLimitCounter(
         buildLimitCounterScope({ periodUnit: 'allowancePeriod' }),
       );
 
@@ -655,7 +661,7 @@ describe('UsageLimitQuotaService', () => {
     });
 
     it('ignores a speed limit', async () => {
-      await service.dropLimitCounter(
+      await counterService.dropLimitCounter(
         buildLimitCounterScope({ limitKind: 'speed', periodUnit: 'second' }),
       );
 
@@ -670,7 +676,7 @@ describe('UsageLimitQuotaService', () => {
         ),
       );
 
-      await service.dropLimitCounter(buildLimitCounterScope());
+      await counterService.dropLimitCounter(buildLimitCounterScope());
 
       expect(cacheStorage.mdel).toHaveBeenCalledTimes(1);
     });
@@ -682,13 +688,13 @@ describe('UsageLimitQuotaService', () => {
       cacheStorage.mget.mockResolvedValue([1_500]);
 
       await expect(
-        service.getAllowanceRemainingMicro('workspace-1'),
+        counterService.getAllowanceRemainingMicro('workspace-1'),
       ).resolves.toBe(1_500);
     });
 
     it('answers null when no allowance exists', async () => {
       await expect(
-        service.getAllowanceRemainingMicro('workspace-1'),
+        counterService.getAllowanceRemainingMicro('workspace-1'),
       ).resolves.toBeNull();
       expect(cacheStorage.mget).not.toHaveBeenCalled();
     });
@@ -698,7 +704,7 @@ describe('UsageLimitQuotaService', () => {
       cacheStorage.mget.mockRejectedValue(new Error('Socket closed'));
 
       await expect(
-        service.getAllowanceRemainingMicro('workspace-1'),
+        counterService.getAllowanceRemainingMicro('workspace-1'),
       ).resolves.toBeNull();
       expect(metricsService.incrementCounterBy).not.toHaveBeenCalled();
     });
@@ -706,7 +712,10 @@ describe('UsageLimitQuotaService', () => {
 
   describe('readLimitConsumptions', () => {
     const readLimitConsumptions = (limits: FlatUsageLimit[]) =>
-      service.readLimitConsumptions({ workspaceId: 'workspace-1', limits });
+      counterService.readLimitConsumptions({
+        workspaceId: 'workspace-1',
+        limits,
+      });
 
     const buildConsumptionRow = (
       overrides: Partial<UsageConsumptionRow> = {},

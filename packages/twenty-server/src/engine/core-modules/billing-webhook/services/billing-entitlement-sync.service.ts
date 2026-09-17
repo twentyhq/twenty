@@ -8,7 +8,7 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { BILLING_ENTITLEMENT_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-entitlement-state-lock-options.constant';
 import { buildBillingEntitlementStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-entitlement-state-lock-key.util';
 import { buildBillingEntitlementsFromLookupKeys } from 'src/engine/core-modules/billing/utils/build-billing-entitlements-from-lookup-keys.util';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaCounterService } from 'src/engine/core-modules/usage-limit/services/usage-quota-counter.service';
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -31,7 +31,7 @@ export class BillingEntitlementSyncService {
     @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
     private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
     private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly usageQuotaCounterService: UsageQuotaCounterService,
     private readonly cacheLockService: CacheLockService,
   ) {}
 
@@ -87,7 +87,7 @@ export class BillingEntitlementSyncService {
       !wasGranted(BillingEntitlementKey.USAGE_LIMIT) &&
       isGranted(BillingEntitlementKey.USAGE_LIMIT)
     ) {
-      await this.usageLimitQuotaService.dropIntraWorkspaceLimitCounters(
+      await this.usageQuotaCounterService.dropIntraWorkspaceLimitCounters(
         workspaceId,
       );
     }
