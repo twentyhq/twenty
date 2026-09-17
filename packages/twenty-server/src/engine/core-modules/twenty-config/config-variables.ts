@@ -702,7 +702,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
     description:
-      'Maximum number of records a single workspace may hold across all its objects, soft-deleted records included. A write that would cross it is refused',
+      'Maximum number of records a single workspace may hold across its objects, system objects other than messages and calendar events left out, soft-deleted records included. A write that would cross it is refused',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()

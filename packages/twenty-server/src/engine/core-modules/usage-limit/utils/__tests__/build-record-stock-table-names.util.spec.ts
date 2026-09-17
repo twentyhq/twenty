@@ -10,6 +10,7 @@ const buildFlatObjectMetadata = (
 ): FlatObjectMetadata =>
   ({
     universalIdentifier: overrides.nameSingular,
+    isSystem: false,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
     ...overrides,
@@ -28,7 +29,7 @@ const buildMaps = (
   }) as FlatEntityMaps<FlatObjectMetadata>;
 
 describe('buildRecordStockTableNames', () => {
-  it('names the table of every object but timeline activities', () => {
+  it('names the table of every tracked object', () => {
     const tableNames = buildRecordStockTableNames(
       buildMaps([
         buildFlatObjectMetadata({ nameSingular: 'person' }),
@@ -37,14 +38,18 @@ describe('buildRecordStockTableNames', () => {
           applicationUniversalIdentifier: 'custom-app',
         }),
         buildFlatObjectMetadata({
+          nameSingular: 'message',
+          isSystem: true,
+          universalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
+        }),
+        buildFlatObjectMetadata({
           nameSingular: 'timelineActivity',
-          universalIdentifier:
-            STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+          isSystem: true,
         }),
       ]),
     );
 
-    expect(tableNames).toEqual(['person', '_rocket']);
+    expect(tableNames).toEqual(['person', '_rocket', 'message']);
   });
 
   it('skips holes in the map', () => {
