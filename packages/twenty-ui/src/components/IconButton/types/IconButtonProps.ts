@@ -1,10 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { type ButtonProps } from '@ui/primitives/input/Button/types/ButtonProps';
-import {
-  type TooltipDelay,
-  type TooltipPosition,
-} from '@ui/primitives/surfaces/AppTooltip/AppTooltip';
+import { type TooltipSide } from '@ui/primitives/surfaces/Tooltip/types/TooltipSide';
 
 export type IconButtonProps = Omit<
   ButtonProps,
@@ -20,7 +17,7 @@ export type IconButtonProps = Omit<
   children: ReactNode;
   'aria-label': string;
   tooltip?: string;
-  tooltipPlace?: TooltipPosition;
-  tooltipDelay?: TooltipDelay;
+  tooltipPlace?: TooltipSide;
+  tooltipDelay?: number;
   tooltipOffset?: number;
 };

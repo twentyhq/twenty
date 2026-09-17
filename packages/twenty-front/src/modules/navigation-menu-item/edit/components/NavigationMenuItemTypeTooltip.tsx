@@ -1,3 +1,5 @@
+import { type ReactElement } from 'react';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
@@ -9,22 +11,18 @@ import {
   IconTable,
   type IconComponent,
 } from 'twenty-ui/icon';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme } from 'twenty-ui/theme-constants';
 
 type NavigationMenuItemTypeTooltipProps = {
   type: NavigationMenuItemType;
-  anchorId: string;
+  children: ReactElement;
   hidden: boolean;
 };
 
 export const NavigationMenuItemTypeTooltip = ({
   type,
-  anchorId,
+  children,
   hidden,
 }: NavigationMenuItemTypeTooltipProps) => {
   const { t } = useLingui();
@@ -42,19 +40,39 @@ export const NavigationMenuItemTypeTooltip = ({
     PAGE_LAYOUT: { label: t`Page`, Icon: IconPerspective },
   };
 
+  const { label, Icon } = labelsByType[type];
+
   return (
-    <AppTooltip
+    <Tooltip
       delay={TooltipDelay.mediumDelay}
-      anchorSelect={`#${anchorId}`}
-      title={labelsByType[type].label}
-      description={
-        type === NavigationMenuItemType.FOLDER ? t`Click to edit` : undefined
+      content={
+        <Tooltip.Content
+          description={
+            type === NavigationMenuItemType.FOLDER
+              ? t`Click to edit`
+              : undefined
+          }
+          startIcon={<Icon size={theme.icon.size.sm} />}
+        >
+          {label}
+        </Tooltip.Content>
       }
-      Icon={labelsByType[type].Icon}
-      offset={theme.spacingMultiplicator}
-      hidden={hidden}
-      place={TooltipPosition.Top}
-      positionStrategy="fixed"
-    />
+      sideOffset={theme.spacingMultiplicator}
+      disabled={hidden}
+      onOpenChange={(...openChangeArguments) => {
+        const [open, eventDetails] = openChangeArguments;
+        const isDescendantFocus =
+          eventDetails.reason === 'trigger-focus' &&
+          eventDetails.event.target !== eventDetails.trigger;
+
+        if (open && isDescendantFocus) {
+          eventDetails.cancel();
+        }
+      }}
+      side="top"
+      positionMethod="fixed"
+    >
+      {children}
+    </Tooltip>
   );
 };

@@ -15,8 +15,8 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledUserHeader = styled.div`
@@ -130,14 +130,14 @@ export const SettingsUsageUserDetail = () => {
         </StyledUserHeader>
 
         {!hasAnyData && (
-          <Section>
+          <Section.Root>
             <SubscriptionInfoContainer>
               <SettingsBillingLabelValueItem
                 label={t`No usage data`}
                 value={t`No credit consumption recorded for this user.`}
               />
             </SubscriptionInfoContainer>
-          </Section>
+          </Section.Root>
         )}
 
         <UsageDailyChartSection

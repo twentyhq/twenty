@@ -26,6 +26,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { Section } from 'twenty-ui/components';
 import {
   IconCalendar,
   IconEyeShare,
@@ -35,9 +36,7 @@ import {
   IconUser,
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
@@ -176,16 +175,19 @@ export const SettingsAdminUserDetail = () => {
       <SettingsPageContainer>
         {userLookupResult && (
           <>
-            <Section>
-              <H2Title title={t`User Info`} description={t`About this user`} />
+            <Section.Root>
+              <Section.Header
+                title={t`User Info`}
+                description={t`About this user`}
+              />
               <SettingsTableCard
                 items={userInfoItems}
                 rounded
                 gridAutoColumns="1fr 4fr"
               />
-            </Section>
-            <Section>
-              <H2Title
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Workspaces`}
                 description={t`All workspaces this user is a member of`}
               />
@@ -214,7 +216,7 @@ export const SettingsAdminUserDetail = () => {
                     </Button>
                   </StyledButtonContainer>
                 )}
-            </Section>
+            </Section.Root>
           </>
         )}
       </SettingsPageContainer>
