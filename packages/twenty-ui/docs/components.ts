@@ -3,7 +3,11 @@ import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
+import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
+import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
+import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
+import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
 import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
@@ -184,5 +188,29 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/data-display',
     slug: 'data-display/status',
     propDescriptions: STATUS_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Heading',
+    source: 'primitives/typography/Heading/Heading.tsx',
+    entryPoint: 'twenty-ui/primitives/typography',
+    slug: 'typography/heading',
+    propDescriptions: HEADING_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Section',
+    source: 'components/Section/Section.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/section',
+    partPropDescriptions: {
+      Root: SECTION_ROOT_PROP_DESCRIPTIONS,
+      Header: SECTION_HEADER_PROP_DESCRIPTIONS,
+    },
+  },
+  {
+    name: 'Dialog',
+    source: 'primitives/surfaces/Dialog/Dialog.tsx',
+    entryPoint: 'twenty-ui/primitives/surfaces',
+    slug: 'surfaces/dialog',
+    partPropDescriptions: { Title: DIALOG_TITLE_PROP_DESCRIPTIONS },
   },
 ] as const;

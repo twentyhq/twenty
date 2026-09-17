@@ -9,20 +9,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconShare, IconTrash, IconUserPlus } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui/primitives/layout';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import {
-  H1Title,
-  H1TitleFontColor,
-  H2Title,
-} from 'twenty-ui/primitives/typography';
+import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type ApplicationRegistration,
@@ -37,7 +28,6 @@ import {
   StyledAppModal,
   StyledAppModalButton,
   StyledAppModalSection,
-  StyledAppModalTitle,
 } from '~/pages/settings/applications/components/SettingsAppModalLayout';
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
@@ -202,8 +192,8 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Danger zone`}
           description={t`Delete or transfer this app registration`}
         />
@@ -245,7 +235,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
                 >{t`Transfer ownership`}</Button>
               )}
         </StyledDangerButtonGroup>
-      </Section>
+      </Section.Root>
 
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
@@ -286,19 +276,11 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         padding="large"
         dataGloballyPreventClickOutside
       >
-        <StyledAppModalTitle>
-          <H1Title
-            title={t`Transfer ownership`}
-            fontColor={H1TitleFontColor.Primary}
-          />
-        </StyledAppModalTitle>
-        <StyledAppModalSection
-          alignment={SectionAlignment.Center}
-          fontColor={SectionFontColor.Primary}
-        >
+        <Dialog.Title>{t`Transfer ownership`}</Dialog.Title>
+        <StyledAppModalSection align="center" color="primary">
           {t`Enter the workspace subdomain to transfer this app to. You will lose access to manage it.`}
         </StyledAppModalSection>
-        <Section>
+        <Section.Root>
           <SettingsTextInput
             instanceId="transfer-ownership-subdomain"
             value={transferSubdomain}
@@ -309,7 +291,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
             label={t`Target workspace subdomain`}
             autoFocusOnMount
           />
-        </Section>
+        </Section.Root>
         <StyledAppModalButton
           onClick={() => {
             closeModal(TRANSFER_OWNERSHIP_MODAL_ID);

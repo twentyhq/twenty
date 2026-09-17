@@ -16,6 +16,7 @@ import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRo
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconInbox,
   IconMail,
@@ -23,8 +24,6 @@ import {
   IconPhone,
   IconPlus,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import coverDark from '~/pages/settings/communications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/communications/assets/cover-light.png';
 import { SettingsCard } from '@/settings/components/SettingsCard';
@@ -117,18 +116,18 @@ export const SettingsWorkspaceCommunications = () => {
       <SettingsPageContainer>
         {activeTabId === COMMUNICATIONS_TAB_ID.emails && (
           <>
-            <Section>
+            <Section.Root>
               <SettingsDiscoveryHeroCard
                 lightSrc={coverLight}
                 darkSrc={coverDark}
                 instanceIdPrefix="settings-communications-hero"
                 tabs={[]}
               />
-            </Section>
+            </Section.Root>
             <SettingsWorkspaceEmailGroupSection />
             {isMessageCampaignFeatureEnabled && (
-              <Section>
-                <H2Title
+              <Section.Root>
+                <Section.Header
                   title={t`Unsubscribe`}
                   description={t`Manage unsubscribers, opt-out topics, and the page recipients see`}
                 />
@@ -144,15 +143,15 @@ export const SettingsWorkspaceCommunications = () => {
                     onClick={() => navigateSettings(SettingsPath.Unsubscribe)}
                   />
                 </StyledCardsColumn>
-              </Section>
+              </Section.Root>
             )}
           </>
         )}
         {activeTabId === COMMUNICATIONS_TAB_ID.inbox && (
           <>
-            <Section>
+            <Section.Root>
               <SettingsRolesQueryEffect />
-              <H2Title
+              <Section.Header
                 title={t`Shared inboxes`}
                 description={t`An inbox a team watches together. Work sent here is nobody's until someone takes it.`}
               />
@@ -168,7 +167,7 @@ export const SettingsWorkspaceCommunications = () => {
                   {t`New shared inbox`}
                 </NavigationButton>
               </StyledButtonRow>
-            </Section>
+            </Section.Root>
           </>
         )}
         <SettingsWorkspaceEmailSyncSection />

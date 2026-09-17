@@ -35,10 +35,9 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -361,8 +360,8 @@ export const SettingsObjectFieldEdit = () => {
           }
         >
           <SettingsPageContainer>
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Icon and Name`}
                 description={t`The name and icon of this field`}
               />
@@ -372,16 +371,16 @@ export const SettingsObjectFieldEdit = () => {
                 isCreationMode={false}
                 readonly={readonly}
               />
-            </Section>
+            </Section.Root>
             {!isReverseJunctionRelation && (
-              <Section>
+              <Section.Root>
                 {fieldMetadataItem.isUnique ? (
-                  <H2Title
+                  <Section.Header
                     title={t`Values`}
                     description={t`The values of this field must be unique`}
                   />
                 ) : (
-                  <H2Title
+                  <Section.Header
                     title={t`Values`}
                     description={t`The values of this field`}
                   />
@@ -392,10 +391,10 @@ export const SettingsObjectFieldEdit = () => {
                   objectNameSingular={objectMetadataItem.nameSingular}
                   disabled={readonly}
                 />
-              </Section>
+              </Section.Root>
             )}
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Description`}
                 description={t`The description of this field`}
               />
@@ -403,10 +402,10 @@ export const SettingsObjectFieldEdit = () => {
                 fieldMetadataItem={fieldMetadataItem}
                 disabled={readonly}
               />
-            </Section>
+            </Section.Root>
 
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Translations`}
                 description={t`What each language displays for this field's labels`}
               />
@@ -418,11 +417,11 @@ export const SettingsObjectFieldEdit = () => {
                   label: fieldMetadataItem.label,
                 }}
               />
-            </Section>
+            </Section.Root>
 
             {!isLabelIdentifier && !readonly && fieldCanBeDeactivated && (
-              <Section>
-                <H2Title
+              <Section.Root>
+                <Section.Header
                   title={t`Danger zone`}
                   description={t`Deactivate this field`}
                 />
@@ -455,7 +454,7 @@ export const SettingsObjectFieldEdit = () => {
                     >{t`Delete`}</Button>
                   )}
                 </StyledDangerButtons>
-              </Section>
+              </Section.Root>
             )}
           </SettingsPageContainer>
         </SettingsPageLayout>

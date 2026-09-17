@@ -23,11 +23,10 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconCopy, IconTrash, useIcons } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -197,8 +196,8 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       }
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Shared email`}
             description={t`The shared email you want to use.`}
           />
@@ -208,9 +207,9 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
             disabled
             fullWidth
           />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Forwarding address`}
             description={t`Set up forwarding from the source address to this destination.`}
           />
@@ -233,10 +232,10 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
               }
             >{t`Copy`}</Button>
           </StyledInputRow>
-        </Section>
+        </Section.Root>
         {isInboxEnabled && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Shared inbox`}
               description={t`Where mail forwarded to this address lands. Leave it on default routing to follow the rule for the kind of work instead.`}
             />
@@ -248,11 +247,11 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
               fullWidth
               onChange={handleInboxQueueChange}
             />
-          </Section>
+          </Section.Root>
         )}
         {isNonEmptyString(channel.displayName) && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Sender name`}
               description={t`The name recipients see next to your address. It is set when the channel is created.`}
             />
@@ -262,11 +261,11 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
               disabled
               fullWidth
             />
-          </Section>
+          </Section.Root>
         )}
         {isDefined(emailingDomain) && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Sending domain`}
               description={t`Add these records at your DNS provider. Twenty checks them automatically.`}
             />
@@ -288,7 +287,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
                 emailingDomain={emailingDomain}
               />
             </StyledSendingDomainColumn>
-          </Section>
+          </Section.Root>
         )}
         <SettingsAccountsMessageChannelDetails messageChannel={channel} />
       </SettingsPageContainer>

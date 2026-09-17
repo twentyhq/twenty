@@ -5,8 +5,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -74,9 +73,9 @@ export const SettingsInboxQueueEdit = () => {
         ]}
       >
         <SettingsPageContainer>
-          <Section>
-            <H2Title title={t`This shared inbox no longer exists`} />
-          </Section>
+          <Section.Root>
+            <Section.Header title={t`This shared inbox no longer exists`} />
+          </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
     );
@@ -154,8 +153,8 @@ export const SettingsInboxQueueEdit = () => {
           }
         />
         {!inboxQueue.isDefault && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Danger zone`}
               description={t`Work still in this inbox moves to Triage rather than being deleted`}
             />
@@ -168,7 +167,7 @@ export const SettingsInboxQueueEdit = () => {
             >
               {t`Delete shared inbox`}
             </Button>
-          </Section>
+          </Section.Root>
         )}
       </SettingsPageContainer>
       <ConfirmationModal

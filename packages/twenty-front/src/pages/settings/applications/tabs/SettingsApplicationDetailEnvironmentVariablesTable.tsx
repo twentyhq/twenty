@@ -2,8 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { type ApplicationVariable } from '~/generated-metadata/graphql';
@@ -36,8 +35,11 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
       ? t`Set your application configuration variables`
       : t`No variables to set for this application`;
   return (
-    <Section>
-      <H2Title title={t`Configuration`} description={sectionDescription} />
+    <Section.Root>
+      <Section.Header
+        title={t`Configuration`}
+        description={sectionDescription}
+      />
       <StyledContainer>
         {editedEnvVariables.map((editedEnvVariable) => {
           return (
@@ -75,6 +77,6 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
           );
         })}
       </StyledContainer>
-    </Section>
+    </Section.Root>
   );
 };

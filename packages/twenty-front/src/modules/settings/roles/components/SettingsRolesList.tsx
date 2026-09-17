@@ -12,6 +12,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
+import { Section } from 'twenty-ui/components';
 import {
   IconFilter,
   IconKey,
@@ -19,9 +20,7 @@ import {
   IconPlus,
   IconSearch,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -79,8 +78,8 @@ export const SettingsRolesList = () => {
   });
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`All roles`}
         description={t`Assign roles to specify access permissions`}
       />
@@ -145,15 +144,15 @@ export const SettingsRolesList = () => {
         </StyledTableRows>
       </Table>
       <StyledCreateRoleSectionContainer>
-        <Section>
+        <Section.Root>
           <Button
             startIcon={<IconPlus />}
             size="sm"
             onClick={() => navigateSettings(SettingsPath.RoleCreate)}
             variant="outline"
           >{t`Create Role`}</Button>
-        </Section>
+        </Section.Root>
       </StyledCreateRoleSectionContainer>
-    </Section>
+    </Section.Root>
   );
 };

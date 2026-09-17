@@ -4,10 +4,10 @@ import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
+import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import {
@@ -57,7 +57,7 @@ export const RoleAssignmentSection = ({
   );
 
   return (
-    <Section>
+    <Section.Root>
       <SettingsRoleAssignmentTable
         roleId={roleId}
         roleTargetType={roleTargetType}
@@ -110,6 +110,6 @@ export const RoleAssignmentSection = ({
           }
         />
       </StyledAssignToMemberContainer>
-    </Section>
+    </Section.Root>
   );
 };

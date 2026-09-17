@@ -2,8 +2,7 @@ import { styled } from '@linaria/react';
 import { INBOX_QUEUE_LABEL_MAX_LENGTH } from 'twenty-shared/constants';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 
 import { SettingsInboxQueueRolePicker } from '@/settings/inbox/components/SettingsInboxQueueRolePicker';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -38,8 +37,8 @@ export const SettingsInboxQueueForm = ({
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Name`}
           description={t`What this shared inbox is called in the navigation`}
         />
@@ -58,9 +57,9 @@ export const SettingsInboxQueueForm = ({
             />
           </StyledNameInput>
         </StyledNameRow>
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Access`}
           description={t`Roles that can open this inbox. Work sent here belongs to all of them until someone takes it`}
         />
@@ -68,7 +67,7 @@ export const SettingsInboxQueueForm = ({
           selectedRoleIds={draft.roleIds}
           onChange={(roleIds) => onChange({ ...draft, roleIds })}
         />
-      </Section>
+      </Section.Root>
     </>
   );
 };

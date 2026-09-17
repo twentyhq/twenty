@@ -15,11 +15,10 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconEye, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
@@ -158,8 +157,8 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
       }
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Name`}
             description={t`The name recipients see for this topic.`}
           />
@@ -171,9 +170,9 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
             onBlur={handleNameBlur}
             fullWidth
           />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Description`}
             description={t`Optional context shown to recipients on the preferences page.`}
           />
@@ -185,9 +184,9 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
             onBlur={handleDescriptionBlur}
             fullWidth
           />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Visibility`}
             description={t`Control whether recipients can find and manage this topic.`}
           />
@@ -200,7 +199,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
               onChange={handleVisibilityChange}
             />
           </Card>
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
       <ConfirmationModal
         modalInstanceId={DELETE_UNSUBSCRIBE_TOPIC_MODAL_ID}

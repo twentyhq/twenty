@@ -180,7 +180,7 @@ export const SettingsBillingPlanComparisonTable = ({
                 <StyledComparisonTitle>{t`Compare plans`}</StyledComparisonTitle>
                 <StyledPlanSubtitle>
                   {billingInterval === SubscriptionInterval.Year
-                    ? t`Save 25% when billed yearly`
+                    ? t`Save 25% when billed annually`
                     : t`Billed monthly`}
                 </StyledPlanSubtitle>
               </StyledHeaderText>

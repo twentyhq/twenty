@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -74,8 +73,8 @@ export const SettingsAiModelTiersPreview = () => {
   const tiers = useAiModelTiers();
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Preview`}
         description={t`The modes people and agents choose between`}
       />
@@ -137,6 +136,6 @@ export const SettingsAiModelTiersPreview = () => {
           );
         })}
       </StyledTable>
-    </Section>
+    </Section.Root>
   );
 };
