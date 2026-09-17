@@ -7,10 +7,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
 import { type RestoreRichTextTypeOnNoteAndTaskBodyCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789652800000-restore-rich-text-type-on-note-and-task-body.command';
+import { invalidateFieldMetadataCache } from 'src/database/commands/upgrade-version-command/utils/invalidate-field-metadata-cache.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
-import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -58,18 +56,10 @@ describe('2-42 workspace command 1789652800000 - RestoreRichTextTypeOnNoteAndTas
       ({ type }) => type,
     );
 
-  const invalidateFieldMetadataCache = () =>
-    workspaceMigrationRunnerService.invalidateCache({
-      allFlatEntityMapsKeys: [
-        ...new Set(
-          [
-            'fieldMetadata',
-            ...getMetadataRelatedMetadataNames('fieldMetadata'),
-            ...getMetadataSerializedRelationNames('fieldMetadata'),
-          ].map(getMetadataFlatEntityMapsKey),
-        ),
-      ],
+  const invalidateSeedWorkspaceFieldMetadataCache = () =>
+    invalidateFieldMetadataCache({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMigrationRunnerService,
     });
 
   // The state a 1.20 upgrade left behind: metadata says TEXT while the columns are still the composite pair.
@@ -77,7 +67,7 @@ describe('2-42 workspace command 1789652800000 - RestoreRichTextTypeOnNoteAndTas
     await fieldMetadataRepository().update(bodyFieldScope, {
       type: FieldMetadataType.TEXT,
     });
-    await invalidateFieldMetadataCache();
+    await invalidateSeedWorkspaceFieldMetadataCache();
   };
 
   const runCommand = (options: { dryRun?: boolean } = {}) =>

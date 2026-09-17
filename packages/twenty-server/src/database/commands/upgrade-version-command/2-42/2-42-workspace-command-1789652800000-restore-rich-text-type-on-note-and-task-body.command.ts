@@ -7,11 +7,9 @@ import { In, Repository } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { invalidateFieldMetadataCache } from 'src/database/commands/upgrade-version-command/utils/invalidate-field-metadata-cache.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
-import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 // Workspaces upgraded through 1.20 while the RICH_TEXT enum value was briefly 'RICH_TEXT' had their
@@ -73,17 +71,9 @@ export class RestoreRichTextTypeOnNoteAndTaskBodyCommand extends ProvisionedWork
       { type: FieldMetadataType.RICH_TEXT },
     );
 
-    const fieldMetadataRelatedNames = [
-      'fieldMetadata',
-      ...getMetadataRelatedMetadataNames('fieldMetadata'),
-      ...getMetadataSerializedRelationNames('fieldMetadata'),
-    ] as const;
-
-    await this.workspaceMigrationRunnerService.invalidateCache({
-      allFlatEntityMapsKeys: [
-        ...new Set(fieldMetadataRelatedNames.map(getMetadataFlatEntityMapsKey)),
-      ],
+    await invalidateFieldMetadataCache({
       workspaceId,
+      workspaceMigrationRunnerService: this.workspaceMigrationRunnerService,
     });
 
     this.logger.log(
