@@ -198,6 +198,16 @@ export class InboxItemToolCallService {
       );
     }
 
+    // A skipped step is put back in the plan first; running it straight
+    // away would read as someone else's change once the claim finds no
+    // proposed row.
+    if (toolCall.status === InboxItemToolCallStatus.REJECTED) {
+      throw new InboxException(
+        `Inbox item tool call ${toolCall.id} was skipped`,
+        InboxExceptionCode.INVALID_INBOX_ACTION,
+      );
+    }
+
     this.assertInputsMatchSchema([toolCall]);
 
     const claimedAt = new Date();

@@ -657,6 +657,24 @@ describe('InboxItemToolCallService', () => {
       ).rejects.toMatchObject({ code: InboxExceptionCode.INBOX_ITEM_CHANGED });
     });
 
+    it('should refuse to run a skipped call rather than report it as changed', async () => {
+      const skippedReply = buildToolCall({
+        id: 'reply',
+        status: InboxItemToolCallStatus.REJECTED,
+      });
+
+      givenSingleToolCall(skippedReply, []);
+
+      await expect(
+        service.runOne({ ...actorArgs, inboxItemToolCallId: 'reply' }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INVALID_INBOX_ACTION,
+      });
+
+      expect(inboxItemToolCallRepository.update).not.toHaveBeenCalled();
+      expect(inboxToolCallExecutionService.execute).not.toHaveBeenCalled();
+    });
+
     it('should run a failed call again and drop its old error on the way in', async () => {
       const failedReply = buildToolCall({
         id: 'reply',
