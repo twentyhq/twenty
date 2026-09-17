@@ -8,7 +8,7 @@ import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/field
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { SettingsDataModelObjectIdentifiersForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { Trans } from '@lingui/react/macro';
-import { Card, CardContent } from 'twenty-ui/surfaces';
+import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsDataModelObjectSettingsFormCardProps = {

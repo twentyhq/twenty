@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
+msgstr "{actorName} {targetName} ({targetEmail}) uchun server administratori ruxsatini yangiladi."
+
+#. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
 msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
 msgstr "{senderName} (<0>{senderEmail}</0>) sizni <1>{workspaceName}</1> nomli ish maydoniga qoʻshilishga taklif qildi."
@@ -89,6 +94,11 @@ msgid "Enabled"
 msgstr "Yoqilgan"
 
 #. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Full admin panel access: {fullAdminStatus}"
+msgstr "To‘liq administrator paneliga kirish: {fullAdminStatus}"
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Github"
 msgstr "Github"
@@ -123,6 +133,11 @@ msgid "If Twenty is working for you, you're all set — there's nothing to do. I
 msgstr "Agar Twenty siz uchun mos boʻlsa, hammasi tayyor — siz hech narsa qilishingiz shart emas. Agar u sizga toʻgʻri kelmasa, shu muddatgacha bir marta bosish bilan bekor qilishingiz mumkin va sizdan toʻlov olinmaydi."
 
 #. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "If you did not expect this change, review your server administrators immediately."
+msgstr "Agar bu o‘zgarishni kutmagan bo‘lsangiz, server administratorlaringizni darhol tekshiring."
+
+#. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
 msgstr "Agar siz bu oʻzgarishni boshlamagan boʻlsangiz, darhol ish maydoni egasi bilan bogʻlaning."
@@ -136,6 +151,11 @@ msgstr "Hech narsa qilmasangiz, biz ish maydoningizni pauza holatiga oʻtkazamiz
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
 msgstr "Agar qachondir Twentyʼga yana bir bor imkon berishni istasangiz, bir necha daqiqada yangi ish maydonini boshlashingiz mumkin — sizni yana koʻrishdan mamnun boʻlamiz."
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Impersonation: {impersonateStatus}"
+msgstr "Boshqa foydalanuvchi nomidan kirish: {impersonateStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
@@ -207,26 +227,6 @@ msgstr "San-Fransisko / Parij"
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
 msgstr "Server administratoriga kirish huquqi o‘zgartirildi"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.fullAdmin"
-msgstr "serverAdminAccessChanged.fullAdmin"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.impersonation"
-msgstr "serverAdminAccessChanged.impersonation"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.summary"
-msgstr "serverAdminAccessChanged.summary"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.warning"
-msgstr "serverAdminAccessChanged.warning"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

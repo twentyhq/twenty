@@ -20,7 +20,7 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -155,11 +155,11 @@ export const ObjectRecordShowPageBreadcrumb = ({
         isDefined(recordIdentifier) && (
           <StyledAvatarContainer>
             <Avatar
-              avatarUrl={getAbsoluteImageUrl(recordIdentifier.avatarUrl)}
-              placeholder={recordIdentifier.name}
-              placeholderColorSeed={objectRecordId}
+              src={getAbsoluteImageUrl(recordIdentifier.avatarUrl)}
+              name={recordIdentifier.name}
+              colorSeed={objectRecordId}
               size="md"
-              type={recordIdentifier.avatarType}
+              shape={recordIdentifier.avatarShape ?? undefined}
             />
           </StyledAvatarContainer>
         )

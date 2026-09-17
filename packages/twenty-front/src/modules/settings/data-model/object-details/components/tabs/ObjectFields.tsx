@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
@@ -9,10 +11,8 @@ import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
 
@@ -63,20 +63,16 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
           />
           <StyledButtonContainer>
             {!readonly && (
-              <UndecoratedLink
+              <NavigationButton
                 to={getSettingsPath(
                   SettingsPath.ObjectNewFieldConfigure,
                   { objectNamePlural: objectMetadataItem.namePlural },
                   { fieldType: FieldMetadataType.MORPH_RELATION },
                 )}
-              >
-                <Button
-                  Icon={IconPlus}
-                  title={t`Add relation`}
-                  size="small"
-                  variant="secondary"
-                />
-              </UndecoratedLink>
+                startIcon={<IconPlus />}
+                size="sm"
+                variant="outline"
+              >{t`Add relation`}</NavigationButton>
             )}
           </StyledButtonContainer>
         </Section>
@@ -93,18 +89,14 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
         />
         <StyledButtonContainer>
           {!readonly && (
-            <UndecoratedLink
+            <NavigationButton
               to={getSettingsPath(SettingsPath.ObjectNewFieldSelect, {
                 objectNamePlural: objectMetadataItem.namePlural,
               })}
-            >
-              <Button
-                Icon={IconPlus}
-                title={t`Add Field`}
-                size="small"
-                variant="secondary"
-              />
-            </UndecoratedLink>
+              startIcon={<IconPlus />}
+              size="sm"
+              variant="outline"
+            >{t`Add Field`}</NavigationButton>
           )}
         </StyledButtonContainer>
       </Section>

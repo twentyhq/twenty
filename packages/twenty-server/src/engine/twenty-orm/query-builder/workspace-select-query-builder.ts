@@ -46,7 +46,10 @@ import {
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
-import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import {
+  type WorkspaceRelationShape,
+  type WorkspaceTableShape,
+} from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 let objectWhereParameterSequence = 0;
@@ -676,6 +679,23 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     );
   }
 
+  getJoinParentRelationShape(
+    alias: string,
+  ): WorkspaceRelationShape | undefined {
+    const clause =
+      this.joinClauses.find((joinClause) => joinClause.alias === alias) ??
+      this.existsFilterClauses.find(
+        (existsFilterClause) => existsFilterClause.alias === alias,
+      );
+
+    if (!isDefined(clause)) {
+      return undefined;
+    }
+
+    return this.getTableShapeForAlias(clause.parentAlias)
+      ?.relationShapeByFieldName[clause.relationFieldName];
+  }
+
   markRowLevelPermissionApplied(alias: string): boolean {
     if (this.aliasesWithRowLevelPermissionApplied.has(alias)) {
       return false;
@@ -768,6 +788,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         formatResult: this.context.formatResult,
       },
       whereClauses: this.whereClauses,
+      includeDeleted: this.includeDeleted,
       parameters: this.parameters,
     });
   }

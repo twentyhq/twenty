@@ -12,11 +12,11 @@ import { useContext, useState } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { CommandBlock } from 'twenty-ui/data-display';
+import { CommandBlock } from 'twenty-ui/primitives/data-display';
 import { IconArrowUpRight, IconChevronRight, IconCopy } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button, SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button, SearchInput } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import {
   type ApplicationRegistrationListItemFragment,
   FeatureFlagKey,
@@ -86,8 +86,8 @@ export const SettingsApplicationsDeveloperTab = () => {
           t`Commands copied to clipboard`,
         );
       }}
-      ariaLabel={t`Copy commands`}
-      Icon={IconCopy}
+      aria-label={t`Copy commands`}
+      startIcon={<IconCopy />}
     />
   );
 
@@ -108,10 +108,8 @@ export const SettingsApplicationsDeveloperTab = () => {
         <CommandBlock commands={createCommands} button={createCopyButton} />
         <StyledButtonContainer>
           <Button
-            Icon={IconArrowUpRight}
-            variant={'secondary'}
-            size={'small'}
-            title={t`Read documentation`}
+            startIcon={<IconArrowUpRight />}
+            size="sm"
             onClick={() =>
               window.open(
                 getDocumentationUrl({
@@ -121,7 +119,8 @@ export const SettingsApplicationsDeveloperTab = () => {
                 '_blank',
               )
             }
-          />
+            variant="outline"
+          >{t`Read documentation`}</Button>
         </StyledButtonContainer>
       </Section>
 

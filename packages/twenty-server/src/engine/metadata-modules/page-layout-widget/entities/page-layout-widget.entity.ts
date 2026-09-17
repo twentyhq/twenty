@@ -31,6 +31,7 @@ import { OverridableEntity } from 'src/engine/workspace-manager/types/overridabl
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 export type PageLayoutWidgetOverrides = {
+  isActive?: boolean;
   title?: string;
   position?: PageLayoutWidgetPosition | null;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;

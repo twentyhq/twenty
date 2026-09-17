@@ -11,7 +11,7 @@ import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNa
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { useContext } from 'react';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type MultiWorkspaceDropdownClickableComponentProps = {
@@ -34,8 +34,8 @@ export const MultiWorkspaceDropdownClickableComponent = ({
       disabled={disabled}
     >
       <Avatar
-        placeholder={currentWorkspace?.displayName || ''}
-        avatarUrl={getAbsoluteImageUrl(
+        name={currentWorkspace?.displayName || ''}
+        src={getAbsoluteImageUrl(
           currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
         )}
       />

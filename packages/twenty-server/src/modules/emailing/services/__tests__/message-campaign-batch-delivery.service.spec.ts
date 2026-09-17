@@ -372,7 +372,12 @@ describe('MessageCampaignBatchDeliveryService', () => {
     harness.claimedIds.push('message-0');
     harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
       entries: [
-        { recipientIndex: 0, messageId: 'provider-0', errorMessage: null },
+        {
+          recipientIndex: 0,
+          messageId: 'provider-0',
+          headerMessageId: '<provider-0@eu-central-1.amazonses.com>',
+          errorMessage: null,
+        },
       ],
       suppressedRecipientIndexes: [],
     });
@@ -381,7 +386,9 @@ describe('MessageCampaignBatchDeliveryService', () => {
 
     expect(harness.messageRepository.update).toHaveBeenCalledWith(
       'message-0',
-      expect.objectContaining({ headerMessageId: 'provider-0' }),
+      expect.objectContaining({
+        headerMessageId: '<provider-0@eu-central-1.amazonses.com>',
+      }),
     );
     expect(harness.associationRepository.update).toHaveBeenCalledWith(
       { messageId: 'message-0' },
@@ -389,6 +396,41 @@ describe('MessageCampaignBatchDeliveryService', () => {
     );
     expect(harness.emailBillingService.billSentEmails).toHaveBeenCalledWith(
       expect.objectContaining({ sentEmailCount: 1 }),
+    );
+  });
+
+  it('sends each recipient its own References token and falls back to the provider id when the header id is unknown', async () => {
+    const harness = buildHarness();
+
+    harness.claimedIds.push('message-0');
+    harness.emailingDomainSenderService.sendEmailBatch.mockResolvedValue({
+      entries: [
+        {
+          recipientIndex: 0,
+          messageId: 'provider-0',
+          headerMessageId: null,
+          errorMessage: null,
+        },
+      ],
+      suppressedRecipientIndexes: [],
+    });
+
+    await (await harness.buildService()).processSendBatchJob(buildJobData(1));
+
+    expect(
+      harness.emailingDomainSenderService.sendEmailBatch,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        recipients: [
+          expect.objectContaining({
+            headers: [{ name: 'References', value: '<message-0@example.com>' }],
+          }),
+        ],
+      }),
+    );
+    expect(harness.messageRepository.update).toHaveBeenCalledWith(
+      'message-0',
+      expect.objectContaining({ headerMessageId: 'provider-0' }),
     );
   });
 

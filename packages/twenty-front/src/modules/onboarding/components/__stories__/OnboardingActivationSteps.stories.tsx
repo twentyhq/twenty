@@ -4,7 +4,7 @@ import { OnboardingActivationSteps } from '@/onboarding/components/OnboardingAct
 import { OnboardingActivationStepsEffect } from '@/onboarding/components/OnboardingActivationStepsEffect';
 import { ONBOARDING_ACTIVATION_MESSAGES } from '@/onboarding/constants/OnboardingActivationMessages';
 import { useState } from 'react';
-import { ModalContent } from 'twenty-ui/surfaces';
+import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const RenderWithModalContent = () => {

@@ -17,7 +17,7 @@ import { t } from '@lingui/core/macro';
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -128,15 +128,14 @@ const SidePanelRecordCreationForm = ({
         actions={[
           <Button
             key="create-record"
-            title={t`Create`}
-            Icon={IconPlus}
-            variant="primary"
-            accent="blue"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={handleCreateClick}
             disabled={isSubmitting}
-            dataTestId="record-creation-form-create-button"
-          />,
+            data-testid="record-creation-form-create-button"
+            variant="solid"
+            color="accent"
+          >{t`Create`}</Button>,
         ]}
       />
     </StyledContainer>

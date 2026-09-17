@@ -12,8 +12,8 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
-import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 const StyledOnboardingStep = styled(StyledOnboardingStepPage)`
@@ -96,19 +96,17 @@ export const ImportContacts = ({
           <StyledButtons>
             {isDefined(onContinueWithMicrosoft) && (
               <MainButton
-                title={t`Continue with Microsoft`}
                 fullWidth
                 onClick={onContinueWithMicrosoft}
-                Icon={() => <IconMicrosoft size={theme.icon.size.md} />}
-              />
+                startIcon={<IconMicrosoft size={theme.icon.size.md} />}
+              >{t`Continue with Microsoft`}</MainButton>
             )}
             {isDefined(onContinueWithGoogle) && (
               <MainButton
-                title={t`Continue with Google`}
                 fullWidth
                 onClick={onContinueWithGoogle}
-                Icon={() => <IconGoogle size={theme.icon.size.md} />}
-              />
+                startIcon={<IconGoogle size={theme.icon.size.md} />}
+              >{t`Continue with Google`}</MainButton>
             )}
           </StyledButtons>
           {isDefined(onSkip) && <OnboardingSkipButton onClick={onSkip} />}

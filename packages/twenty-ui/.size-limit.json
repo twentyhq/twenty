@@ -6,14 +6,64 @@
     "import": "{ Button }"
   },
   {
-    "name": "accessibility",
-    "path": "dist/accessibility.mjs",
-    "limit": "10 kB"
-  },
-  {
     "name": "assets",
     "path": "dist/assets.mjs",
     "limit": "10 kB"
+  },
+  {
+    "name": "components",
+    "path": "dist/components.mjs",
+    "limit": "95 kB"
+  },
+  {
+    "name": "primitives",
+    "path": "dist/primitives.mjs",
+    "limit": "210 kB"
+  },
+  {
+    "name": "primitives/accessibility",
+    "path": "dist/primitives/accessibility.mjs",
+    "limit": "10 kB"
+  },
+  {
+    "name": "primitives/data-display",
+    "path": "dist/primitives/data-display.mjs",
+    "limit": "170 kB"
+  },
+  {
+    "name": "primitives/feedback",
+    "path": "dist/primitives/feedback.mjs",
+    "limit": "210 kB"
+  },
+  {
+    "name": "primitives/input",
+    "path": "dist/primitives/input.mjs",
+    "limit": "230 kB"
+  },
+  {
+    "name": "primitives/json-visualizer",
+    "path": "dist/primitives/json-visualizer.mjs",
+    "limit": "30 kB"
+  },
+  {
+    "name": "primitives/layout",
+    "path": "dist/primitives/layout.mjs",
+    "limit": "25 kB"
+  },
+  {
+    "name": "primitives/navigation",
+    "path": "dist/primitives/navigation.mjs",
+    "limit": "180 kB"
+  },
+  {
+    "name": "primitives/surfaces",
+    "path": "dist/primitives/surfaces.mjs",
+    "limit": "70 kB"
+  },
+  {
+    "name": "primitives/typography",
+    "path": "dist/primitives/typography.mjs",
+    "limit": "50 kB"
   },
   {
     "name": "testing",
@@ -21,49 +71,9 @@
     "limit": "50 kB"
   },
   {
-    "name": "data-display",
-    "path": "dist/data-display.mjs",
-    "limit": "170 kB"
-  },
-  {
-    "name": "typography",
-    "path": "dist/typography.mjs",
-    "limit": "50 kB"
-  },
-  {
     "name": "icon",
     "path": "dist/icon.mjs",
     "limit": "290 kB"
-  },
-  {
-    "name": "surfaces",
-    "path": "dist/surfaces.mjs",
-    "limit": "70 kB"
-  },
-  {
-    "name": "feedback",
-    "path": "dist/feedback.mjs",
-    "limit": "210 kB"
-  },
-  {
-    "name": "input",
-    "path": "dist/input.mjs",
-    "limit": "230 kB"
-  },
-  {
-    "name": "layout",
-    "path": "dist/layout.mjs",
-    "limit": "25 kB"
-  },
-  {
-    "name": "navigation",
-    "path": "dist/navigation.mjs",
-    "limit": "180 kB"
-  },
-  {
-    "name": "json-visualizer",
-    "path": "dist/json-visualizer.mjs",
-    "limit": "30 kB"
   },
   {
     "name": "theme",

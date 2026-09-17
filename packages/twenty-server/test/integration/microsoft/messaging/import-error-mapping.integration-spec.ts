@@ -1,3 +1,6 @@
+import { randomUUID } from 'node:crypto';
+
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   ConnectedAccountProvider,
   MessageChannelSyncStage,
@@ -6,6 +9,7 @@ import {
 
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MICROSOFT_PERMANENT_ACCOUNT_ERROR_CODES } from 'src/modules/connected-account/constants/microsoft-permanent-account-error-codes.constant';
 
 import {
@@ -13,6 +17,7 @@ import {
   setupMicrosoftMock,
 } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
+import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import {
   queryConnectedAccount,
@@ -22,6 +27,31 @@ import { resetMessageChannelSyncState } from 'test/integration/utils/reset-chann
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
 const HANDLE = 'microsoft-import-error-mapping@apple.dev';
+
+const FETCHABLE_SUBJECT = `Microsoft fetchable message ${randomUUID()}`;
+const UNFETCHABLE_SUBJECT = `Microsoft unfetchable message ${randomUUID()}`;
+
+const inboxMessage = (id: string, subject: string) => ({
+  id,
+  subject,
+  body: { contentType: 'text', content: subject },
+  receivedDateTime: '2026-08-13T00:00:00.000Z',
+  internetMessageId: `<${id}@example.com>`,
+  conversationId: `${id}-conversation`,
+  parentFolderId: 'inbox',
+  isDraft: false,
+  from: { emailAddress: { address: 'sender@external.test' } },
+  toRecipients: [{ emailAddress: { address: HANDLE } }],
+});
+
+const FETCHABLE_MESSAGE = inboxMessage(
+  'microsoft-import-error-mapping-fetchable-message',
+  FETCHABLE_SUBJECT,
+);
+const UNFETCHABLE_MESSAGE = inboxMessage(
+  'microsoft-import-error-mapping-unfetchable-message',
+  UNFETCHABLE_SUBJECT,
+);
 
 const TEMPORARY_FAILURES: [string, MicrosoftGraphFailure][] = [
   [
@@ -43,7 +73,10 @@ const TEMPORARY_FAILURES: [string, MicrosoftGraphFailure][] = [
 ];
 
 describe('Microsoft messaging import error mapping (integration)', () => {
-  const microsoft = setupMicrosoftMock({ handle: HANDLE });
+  const microsoft = setupMicrosoftMock({
+    handle: HANDLE,
+    messages: [FETCHABLE_MESSAGE, UNFETCHABLE_MESSAGE],
+  });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 
@@ -169,5 +202,27 @@ describe('Microsoft messaging import error mapping (integration)', () => {
     ).findOneByOrFail({ id: channel.channelId });
 
     expect(storedChannel.syncCursor).toBeFalsy();
+  }, 60000);
+
+  it('imports the rest of the batch and keeps the folder cursors when one listed message is not found on fetch', async () => {
+    microsoft.failMessageFetch(UNFETCHABLE_MESSAGE.id);
+
+    await runMessageChannelSync(channel.channelId);
+
+    expect(
+      await findImportedMessageSubjects([
+        FETCHABLE_SUBJECT,
+        UNFETCHABLE_SUBJECT,
+      ]),
+    ).toEqual([FETCHABLE_SUBJECT]);
+
+    const syncedFolders = await getCoreRepository<MessageFolderEntity>(
+      MessageFolderEntity,
+    ).findBy({ messageChannelId: channel.channelId, isSynced: true });
+
+    expect(syncedFolders.length).toBeGreaterThan(0);
+    expect(
+      syncedFolders.every((folder) => isNonEmptyString(folder.syncCursor)),
+    ).toBe(true);
   }, 60000);
 });

@@ -1,0 +1,31 @@
+import { type ComponentProps, type MouseEvent } from 'react';
+import { type IconComponent } from '@ui/icon';
+import { type ClickOutsideAttributes } from '@ui/utilities/types/ClickOutsideAttributes';
+import { type AnimatedButtonAccent } from './AnimatedButtonAccent';
+import { type AnimatedButtonVariant } from './AnimatedButtonVariant';
+import { type AnimatedButtonPosition } from './AnimatedButtonPosition';
+
+export type AnimatedButtonBaseProps = ClickOutsideAttributes & {
+  id?: string;
+  className?: string;
+  Icon?: IconComponent;
+  title?: string;
+  fullWidth?: boolean;
+  variant?: AnimatedButtonVariant;
+  inverted?: boolean;
+  size?: 'small' | 'medium';
+  position?: AnimatedButtonPosition;
+  accent?: AnimatedButtonAccent;
+  soon?: boolean;
+  justify?: 'center' | 'flex-start' | 'flex-end';
+  disabled?: boolean;
+  focus?: boolean;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  to?: string;
+  target?: string;
+  dataTestId?: string;
+  hotkeys?: string[];
+  ariaLabel?: string;
+  isLoading?: boolean;
+  type?: ComponentProps<'button'>['type'];
+};

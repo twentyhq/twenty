@@ -34,6 +34,7 @@ export type TextInputProps = {
   instanceId: string;
   placeholder?: string;
   autoFocus?: boolean;
+  selectOnFocus?: boolean;
   value: string;
   onEnter?: (newText: string) => void;
   onEscape?: (newText: string) => void;
@@ -59,6 +60,7 @@ export const TextInput = ({
   instanceId,
   placeholder,
   autoFocus,
+  selectOnFocus = false,
   value,
   onEnter,
   onEscape,
@@ -105,6 +107,9 @@ export const TextInput = ({
         placeholder={placeholder}
         onChange={handleChange}
         autoFocus={autoFocus}
+        onFocus={
+          selectOnFocus ? (event) => event.currentTarget.select() : undefined
+        }
         value={internalText}
         disabled={disabled}
         className={className}

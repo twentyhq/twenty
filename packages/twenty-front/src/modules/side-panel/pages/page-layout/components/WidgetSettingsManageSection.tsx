@@ -25,7 +25,7 @@ import {
   IconSwitchHorizontal,
   IconTrash,
 } from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/surfaces';
+import { AppTooltip } from 'twenty-ui/primitives/surfaces';
 
 const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
 const RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID =
@@ -161,7 +161,7 @@ export const WidgetSettingsManageSection = ({
         subtitle={t`This will cancel all modifications done on the widget. This action cannot be undone.`}
         onConfirmClick={handleConfirmReset}
         confirmButtonText={t`Reset`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
       />
     </>
   );

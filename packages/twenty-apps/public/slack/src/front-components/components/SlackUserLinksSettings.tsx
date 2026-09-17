@@ -1,16 +1,19 @@
 import 'twenty-ui/style.css';
+import 'twenty-ui/theme-dark.css';
+import 'twenty-ui/theme-light.css';
 
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, useColorScheme } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { Callout } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
+import { SlackAccessModeSection } from 'src/front-components/components/SlackAccessModeSection';
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
 import { UnlinkedSlackUsersList } from 'src/front-components/components/UnlinkedSlackUsersList';
@@ -63,7 +66,7 @@ const StyledCenteredState = styled.div`
   width: 100%;
 `;
 
-export const SlackUserLinksSettings = () => {
+const SlackUserLinksSettingsContent = () => {
   const { canManage, isPermissionLoading } = useCanManageSlackUserLinks();
   const {
     isSlackConnected,
@@ -211,6 +214,7 @@ export const SlackUserLinksSettings = () => {
           description="The last automatic email match failed before linking everyone. Press Auto-link by email below to run it again."
         />
       )}
+      <SlackAccessModeSection canManage={canManage} />
       {canManage && (
         <Section>
           <H2Title
@@ -285,5 +289,19 @@ export const SlackUserLinksSettings = () => {
           </StyledDisclosure>
         ))}
     </StyledContainer>
+  );
+};
+
+// twenty-ui components and this app's styled rules read every token off
+// ThemeContext as a var() reference. The sandbox document does not inherit the
+// host stylesheet, so the theme variable sheets are imported here for the
+// provider to resolve them against.
+export const SlackUserLinksSettings = () => {
+  const colorScheme = useColorScheme();
+
+  return (
+    <ThemeProvider colorScheme={colorScheme}>
+      <SlackUserLinksSettingsContent />
+    </ThemeProvider>
   );
 };

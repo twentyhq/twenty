@@ -19,10 +19,10 @@ import {
   IconPlus,
   IconSearch,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItemSwitch } from 'twenty-ui/navigation';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -101,11 +101,10 @@ export const SettingsRolesList = () => {
           dropdownOffset={{ x: 0, y: 8 }}
           clickableComponent={
             <Button
-              Icon={IconFilter}
-              size="medium"
-              variant="secondary"
-              accent="default"
-              ariaLabel={t`Filter`}
+              startIcon={<IconFilter />}
+              size="md"
+              aria-label={t`Filter`}
+              variant="outline"
             />
           }
           dropdownComponents={
@@ -148,12 +147,11 @@ export const SettingsRolesList = () => {
       <StyledCreateRoleSectionContainer>
         <Section>
           <Button
-            Icon={IconPlus}
-            title={t`Create Role`}
-            variant="secondary"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={() => navigateSettings(SettingsPath.RoleCreate)}
-          />
+            variant="outline"
+          >{t`Create Role`}</Button>
         </Section>
       </StyledCreateRoleSectionContainer>
     </Section>

@@ -13,6 +13,7 @@ export const START_WORKSPACE_SETUP_CHAT = gql`
       thread {
         id
         title
+        totalCacheReadTokens
         totalInputTokens
         totalOutputTokens
         contextWindowTokens

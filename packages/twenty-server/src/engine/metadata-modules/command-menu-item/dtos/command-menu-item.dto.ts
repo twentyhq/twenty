@@ -17,6 +17,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { type CommandMenuItemOverrides } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
@@ -122,7 +123,7 @@ export class CommandMenuItemDTO {
   // cannot tell a standard label from one a workspace renamed, and would match
   // the workspace's own copy against the standard catalog.
   @HideField()
-  overrides?: CommandMenuItemOverrides | null;
+  overrides?: AuthoredOverrides<CommandMenuItemOverrides> | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
   universalIdentifier?: string;

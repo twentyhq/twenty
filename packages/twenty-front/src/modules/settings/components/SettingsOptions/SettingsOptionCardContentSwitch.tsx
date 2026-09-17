@@ -9,8 +9,8 @@ import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOpti
 import { styled } from '@linaria/react';
 import { useId } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { Switch } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSwitch = styled(Switch)`

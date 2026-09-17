@@ -3,10 +3,10 @@ import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVaria
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/data-display';
+import { Tag, TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { type SelectOption } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
@@ -77,6 +77,12 @@ export const StyledControlContainer = styled.div<{
   text-align: left;
 `;
 
+const StyledLeadingContent = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledIconChevronDownWrapper = styled.div<{
   disabled?: boolean;
 }>`
@@ -87,7 +93,18 @@ const StyledIconChevronDownWrapper = styled.div<{
   display: flex;
 `;
 
+const StyledTagContainer = styled.div`
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const StyledTag = styled(Tag)`
+  box-sizing: border-box;
+  max-width: 100%;
+`;
+
 export type SelectControlProps = {
+  renderAsTag?: boolean;
   selectedOption: SelectOption<string | number | boolean | null>;
   LeftComponent?: ReactNode;
   isDisabled?: boolean;
@@ -99,6 +116,7 @@ export type SelectControlProps = {
 
 export const SelectControl = ({
   selectedOption,
+  renderAsTag = false,
   LeftComponent,
   isDisabled,
   selectSizeVariant,
@@ -107,10 +125,14 @@ export const SelectControl = ({
   variant = 'default',
 }: SelectControlProps) => {
   const { theme } = useContext(ThemeContext);
+  const hasLeadingContent =
+    isDefined(LeftComponent) ||
+    isDefined(selectedOption.Icon) ||
+    isDefined(selectedOption.LeftComponent);
   return (
     <StyledControlContainer
       disabled={isDisabled}
-      hasIcon={isDefined(LeftComponent) || isDefined(selectedOption?.Icon)}
+      hasIcon={hasLeadingContent}
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}
       hasRightElement={hasRightElement}
@@ -119,31 +141,44 @@ export const SelectControl = ({
     >
       {isDefined(LeftComponent) ? (
         LeftComponent
-      ) : isDefined(selectedOption?.Icon) ? (
-        isDefined(selectedOption.iconThemeColor) ? (
-          <TintedIconTile
-            Icon={selectedOption.Icon}
-            color={selectedOption.iconThemeColor}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        ) : (
-          <selectedOption.Icon
-            color={
-              isDisabled ? theme.font.color.light : theme.font.color.primary
-            }
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        )
+      ) : hasLeadingContent ? (
+        <StyledLeadingContent>
+          {isDefined(selectedOption?.Icon) ? (
+            isDefined(selectedOption.iconThemeColor) ? (
+              <TintedIconTile
+                Icon={selectedOption.Icon}
+                color={selectedOption.iconThemeColor}
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            ) : (
+              <selectedOption.Icon
+                color={
+                  isDisabled ? theme.font.color.light : theme.font.color.primary
+                }
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            )
+          ) : null}
+          {selectedOption.LeftComponent}
+        </StyledLeadingContent>
       ) : null}
-      <OverflowingTextWithTooltip
-        text={
-          selectedOption.contextualText
-            ? `${selectedOption.label} · ${selectedOption.contextualText}`
-            : selectedOption.label
-        }
-      />
+      {renderAsTag && isDefined(selectedOption.color) ? (
+        <StyledTagContainer>
+          <StyledTag color={selectedOption.color}>
+            {selectedOption.label}
+          </StyledTag>
+        </StyledTagContainer>
+      ) : (
+        <OverflowingTextWithTooltip
+          text={
+            selectedOption.contextualText
+              ? `${selectedOption.label} · ${selectedOption.contextualText}`
+              : selectedOption.label
+          }
+        />
+      )}
       <StyledIconChevronDownWrapper disabled={isDisabled}>
         <IconChevronDown size={theme.icon.size.md} />
       </StyledIconChevronDownWrapper>

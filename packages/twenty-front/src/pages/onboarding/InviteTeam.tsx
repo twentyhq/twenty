@@ -18,9 +18,9 @@ import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Controller } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
+import { Loader } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledForm = styled.div`
@@ -128,12 +128,11 @@ export const InviteTeam = () => {
       <OnboardingStepAnimatedItem index={4}>
         <StyledFooter>
           <MainButton
-            title={t`Invite`}
-            Icon={() => (isSubmitting || isNavigating ? <Loader /> : null)}
+            startIcon={isSubmitting || isNavigating ? <Loader /> : null}
             disabled={!isValid || isSubmitting || isNavigating}
             onClick={handleSubmit(onSubmit)}
             fullWidth
-          />
+          >{t`Invite`}</MainButton>
           <OnboardingSkipButton
             onClick={handleSkip}
             disabled={isSubmitting || isNavigating}

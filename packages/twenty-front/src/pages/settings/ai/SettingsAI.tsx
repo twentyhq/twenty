@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -16,11 +18,11 @@ import {
   IconSparkle2,
   IconTool,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsAgentSkillsTab';
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
+import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
 import { SettingsAiModelsTab } from '~/pages/settings/ai/components/SettingsAiModelsTab';
 import { SettingsAiOverviewTab } from '~/pages/settings/ai/components/SettingsAiOverviewTab';
 import { SettingsAiUsageTab } from '~/pages/settings/ai/components/SettingsAiUsageTab';
@@ -85,23 +87,22 @@ export const SettingsAI = () => {
       }
       actionButton={
         isSkillsTab ? (
-          <UndecoratedLink to={getSettingsPath(SettingsPath.AiNewSkill)}>
-            <Button
-              Icon={IconPlus}
-              title={t`New Skill`}
-              accent="blue"
-              size="small"
-            />
-          </UndecoratedLink>
+          <NavigationButton
+            to={getSettingsPath(SettingsPath.AiNewSkill)}
+            startIcon={<IconPlus />}
+            size="sm"
+            variant="solid"
+            color="accent"
+          >{t`New Skill`}</NavigationButton>
         ) : isToolsTab ? (
           <Button
-            Icon={IconPlus}
-            title={t`New Tool`}
-            accent="blue"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={handleCreateTool}
             disabled={isCreatingTool}
-          />
+            variant="solid"
+            color="accent"
+          >{t`New Tool`}</Button>
         ) : undefined
       }
       links={[
@@ -113,24 +114,31 @@ export const SettingsAI = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <SettingsDiscoveryHeroCard
-            lightSrc={AI_HERO_LIGHT}
-            darkSrc={AI_HERO_DARK}
-            instanceIdPrefix={SETTINGS_AI_HERO_INSTANCE_ID_PREFIX}
-            tabs={[
-              {
-                id: 'ai_walkthrough',
-                title: t`Walkthrough`,
-                Icon: IconSparkle2,
-                vimeoId: '1217964358',
-                hasSound: true,
-              },
-            ]}
-            playButtonAriaLabel={t`Watch AI demo`}
-          />
-        </Section>
-        {isOverviewTab && <SettingsAiOverviewTab />}
+        {!isModelsTab && (
+          <Section>
+            <SettingsDiscoveryHeroCard
+              lightSrc={AI_HERO_LIGHT}
+              darkSrc={AI_HERO_DARK}
+              instanceIdPrefix={SETTINGS_AI_HERO_INSTANCE_ID_PREFIX}
+              tabs={[
+                {
+                  id: 'ai_walkthrough',
+                  title: t`Walkthrough`,
+                  Icon: IconSparkle2,
+                  vimeoId: '1217964358',
+                  hasSound: true,
+                },
+              ]}
+              playButtonAriaLabel={t`Watch AI demo`}
+            />
+          </Section>
+        )}
+        {isOverviewTab && (
+          <>
+            <SettingsAiOverviewTab />
+            <SettingsAiSystemPromptsSection />
+          </>
+        )}
         {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkillsTab />}
         {isToolsTab && <SettingsAgentToolsTab />}

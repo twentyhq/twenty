@@ -18,11 +18,13 @@ export type HeadlessEngineCommandContextApi = {
   objectMetadataItem: Nullable<EnrichedObjectMetadataItem>;
   currentViewId: Nullable<string>;
   recordIndexId: Nullable<string>;
+  hasAnySoftDeleteFilterOnView?: boolean;
   targetedRecordsRule: ContextStoreTargetedRecordsRule;
   selectedRecords: ObjectRecord[];
   graphqlFilter: Nullable<RecordGqlOperationFilter>;
   payload: Nullable<CommandMenuItemPayload>;
   navigationTargetObjectMetadataId: Nullable<string>;
+  creationTargetObjectMetadataId?: string;
   isInSidePanel?: boolean;
 };
 

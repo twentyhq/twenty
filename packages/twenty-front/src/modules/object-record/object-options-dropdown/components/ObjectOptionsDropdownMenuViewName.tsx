@@ -16,7 +16,7 @@ import { styled } from '@linaria/react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -131,7 +131,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
         <DropdownMenuItemsContainer>
           <StyledDropdownMenuIconAndNameContainer>
             <IconPicker
-              size="small"
+              size="sm"
               onChange={handleIconChange}
               selectedIconKey={viewPickerSelectedIcon}
             />

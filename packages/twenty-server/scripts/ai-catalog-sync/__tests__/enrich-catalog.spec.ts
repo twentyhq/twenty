@@ -6,15 +6,9 @@ import { type GeneratedCatalog } from '../types/generated-catalog.type';
 
 const MEASURED_AT = '2026-09-09';
 
-const catalogOf = (...modelNames: string[]): GeneratedCatalog =>
-  ({
-    openai: {
-      npm: '@ai-sdk/openai',
-      label: 'OpenAI',
-      apiKey: '',
-      models: modelNames.map((name) => ({ name, label: name })),
-    },
-  }) as GeneratedCatalog;
+const catalogOf = (...modelNames: string[]): GeneratedCatalog => ({
+  openai: { models: modelNames.map((name) => ({ name, label: name })) },
+});
 
 const enrich = (catalog: GeneratedCatalog, benchmarkIndex: BenchmarkIndex) =>
   enrichCatalog({

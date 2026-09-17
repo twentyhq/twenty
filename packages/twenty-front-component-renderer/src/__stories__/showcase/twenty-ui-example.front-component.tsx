@@ -1,9 +1,9 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useState } from 'react';
-import { Chip, ChipVariant, Status, Tag } from 'twenty-ui/data-display';
-import { Button } from 'twenty-ui/input';
+import { Chip, Status, Tag } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 
 const CARD_STYLE = {
   padding: 24,
@@ -51,8 +51,10 @@ const TwentyUiComponent = () => {
           <Status color="orange">Away</Status>
         </div>
         <div style={ROW_STYLE}>
-          <Chip label="Highlighted" variant={ChipVariant.Highlighted} />
-          <Chip label="Rounded" variant={ChipVariant.Rounded} />
+          <Chip variant="soft">Highlighted</Chip>
+          <Chip variant="ghost" shape="round">
+            Rounded
+          </Chip>
         </div>
         <p
           data-testid="twenty-ui-count"
@@ -62,15 +64,15 @@ const TwentyUiComponent = () => {
         </p>
         <div style={ROW_STYLE}>
           <Button
-            title="Increment"
-            accent="blue"
             onClick={() => setCount((previous) => previous + 1)}
-          />
-          <Button
-            title="Reset"
-            variant="secondary"
-            onClick={() => setCount(0)}
-          />
+            variant="solid"
+            color="accent"
+          >
+            {'Increment'}
+          </Button>
+          <Button onClick={() => setCount(0)} variant="outline">
+            {'Reset'}
+          </Button>
         </div>
       </div>
     </ThemeProvider>

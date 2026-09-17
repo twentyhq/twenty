@@ -36,7 +36,7 @@ export const SettingsRoleSettingsDeleteRoleConfirmationModal = ({
       }
       onConfirmClick={handleConfirmClick}
       confirmButtonText={t`Confirm`}
-      confirmButtonAccent="danger"
+      confirmButtonColor="danger"
     />
   );
 };

@@ -6,7 +6,7 @@ import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/r
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 
 const StyledContainer = styled.div`
   align-items: center;

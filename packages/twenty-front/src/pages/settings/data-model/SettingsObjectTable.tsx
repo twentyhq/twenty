@@ -31,8 +31,8 @@ import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/input';
-import { MenuItemSwitch } from 'twenty-ui/navigation';
+import { SearchInput } from 'twenty-ui/primitives/input';
+import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,

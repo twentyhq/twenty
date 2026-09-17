@@ -52,6 +52,10 @@ export default defineRole({
 
 ## Row-level security
 
+Row-level permissions require the **Organization plan or above** — see
+[pricing](https://twenty.com/pricing). What happens on a plan without the entitlement is covered in
+the notes at the end of this section.
+
 Object and field permissions decide _which objects and fields_ a role can touch. **Row-level
 permission predicates** go further and decide _which records_ a role can see and act on — for
 example, a self-service role where each external user sees only their own records.
@@ -165,8 +169,14 @@ Notes:
 - Give every predicate and group a stable `universalIdentifier` (any uuid) — it keys the entity
   across upgrades, and predicates reference groups by it.
 - Predicates can reference objects and fields owned by your app or by Twenty's standard objects.
-- Row-level security is enforced for workspaces on plans that include it; the predicates still sync
-  on other plans, they are simply not enforced.
+- Row-level security is enforced for workspaces on the **Organization plan or above**. On other
+  plans the predicates declared in an app manifest still sync, they are simply not enforced.
+- The Metadata API behaves differently from the manifest here: without the entitlement,
+  `upsertRowLevelPermissionPredicates` is rejected with
+  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` rather than syncing. A workspace on a plan that does not
+  include row-level security therefore cannot create predicates outside of an app manifest, even
+  though the `rowLevelPermissionPredicates` field is present on the `Role` type when you introspect
+  the schema.
 
 ## The default function role
 

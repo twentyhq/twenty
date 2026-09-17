@@ -14,7 +14,7 @@ import {
   AppTooltip,
   OverflowingTextWithTooltip,
   TooltipDelay,
-} from 'twenty-ui/surfaces';
+} from 'twenty-ui/primitives/surfaces';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useRecordInlineCellContext } from './RecordInlineCellContext';
 

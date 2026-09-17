@@ -1,3 +1,4 @@
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ResourceCreditPackagePickerModal } from '@/settings/billing/components/internal/ResourceCreditPackagePickerModal';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
@@ -5,7 +6,6 @@ import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -20,7 +20,7 @@ import {
   IconCircleX,
   IconCreditCard,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   SetResourceCreditSubscriptionPriceDocument,
@@ -87,7 +87,7 @@ export const ResourceCreditPriceSelector = ({
 
   const [selectedPriceId, setSelectedPriceId] = useState<string | undefined>();
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [setResourceCreditPrice, { loading: isUpdating }] = useMutation(
     SetResourceCreditSubscriptionPriceDocument,
@@ -309,10 +309,16 @@ export const ResourceCreditPriceSelector = ({
           onBillingUpdateApplied: refetchResourceCreditUsage,
         },
       );
-      enqueueSuccessSnackBar({ message: t`Resource credits updated.` });
+      enqueueToast({
+        variant: 'success',
+        children: t`Resource credits updated.`,
+      });
       setSelectedPriceId(undefined);
     } catch (error) {
-      enqueueErrorSnackBar({ message: t`Failed to update resource credits.` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to update resource credits.`,
+      });
 
       if (!CombinedGraphQLErrors.is(error)) {
         throw error;
@@ -351,13 +357,12 @@ export const ResourceCreditPriceSelector = ({
       <StyledActionContainer>
         {canCancelCreditPackSwitch && (
           <Button
-            Icon={IconCircleX}
-            title={t`Cancel credit pack switching`}
-            variant="secondary"
-            size="small"
+            startIcon={<IconCircleX />}
+            size="sm"
             onClick={onCancelCreditPackSwitch}
             disabled={isUpdating}
-          />
+            variant="outline"
+          >{t`Cancel credit pack switching`}</Button>
         )}
         {!isTrialing &&
           !canCancelCreditPackSwitch &&
@@ -369,31 +374,23 @@ export const ResourceCreditPriceSelector = ({
             return (
               <Button
                 key={price.stripePriceId}
-                Icon={IconArrowUp}
-                title={t`Increase to $${priceDisplay}`}
-                variant="secondary"
-                size="small"
+                startIcon={<IconArrowUp />}
+                size="sm"
                 onClick={() => openConfirmationForPrice(price)}
                 disabled={
                   isUpdating ||
                   (shouldRedirectToManageBilling && isManageBillingDisabled)
                 }
-              />
+                variant="outline"
+              >{t`Increase to $${priceDisplay}`}</Button>
             );
           })}
         {shouldShowPrimaryAction && (
           <Button
-            Icon={PrimaryActionIcon}
-            title={
-              shouldRedirectToUpdatePayment
-                ? t`Update payment`
-                : shouldRedirectToManageBilling
-                  ? t`Manage billing`
-                  : t`Manage`
+            startIcon={
+              isDefined(PrimaryActionIcon) ? <PrimaryActionIcon /> : undefined
             }
-            variant="primary"
-            accent="green"
-            size="small"
+            size="sm"
             onClick={handlePrimaryActionClick}
             disabled={
               isUpdating ||
@@ -404,7 +401,15 @@ export const ResourceCreditPriceSelector = ({
                 !isTrialing &&
                 !hasAlternativeResourceCreditPrice)
             }
-          />
+            variant="solid"
+            color="success"
+          >
+            {shouldRedirectToUpdatePayment
+              ? t`Update payment`
+              : shouldRedirectToManageBilling
+                ? t`Manage billing`
+                : t`Manage`}
+          </Button>
         )}
       </StyledActionContainer>
       <ResourceCreditPackagePickerModal
@@ -438,7 +443,7 @@ export const ResourceCreditPriceSelector = ({
             : t`Confirm changing your current resource credit allocation.`
         }
         confirmButtonText={isUpgrade() ? t`Upgrade` : t`Downgrade`}
-        confirmButtonAccent={isUpgrade() ? 'blue' : 'danger'}
+        confirmButtonColor={isUpgrade() ? 'accent' : 'danger'}
         loading={isUpdating}
         onConfirmClick={handleConfirmClick}
       />

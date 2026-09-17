@@ -12,13 +12,16 @@ import {
   type IconComponent,
   IconDotsVertical,
 } from 'twenty-ui/icon';
-import { LightIconButton, type LightIconButtonProps } from 'twenty-ui/input';
+import {
+  LightIconButton,
+  type LightIconButtonProps,
+} from 'twenty-ui/primitives/input';
 import {
   type MenuItemAccent,
   MenuItemLeftContent,
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
-} from 'twenty-ui/navigation';
+} from 'twenty-ui/primitives/navigation';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export type MenuItemIconButton = {

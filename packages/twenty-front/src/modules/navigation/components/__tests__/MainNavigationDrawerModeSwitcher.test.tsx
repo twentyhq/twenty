@@ -22,8 +22,8 @@ jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
   useIsMobile: () => false,
 }));
 
-jest.mock('twenty-ui/surfaces', () => ({
-  ...jest.requireActual('twenty-ui/surfaces'),
+jest.mock('twenty-ui/primitives/surfaces', () => ({
+  ...jest.requireActual('twenty-ui/primitives/surfaces'),
   AppTooltip: () => null,
 }));
 

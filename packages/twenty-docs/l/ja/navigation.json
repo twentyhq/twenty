@@ -185,9 +185,6 @@
             },
             "appsOperations": {
               "label": "オペレーション"
-            },
-            "appsTranslations": {
-              "label": "翻訳"
             }
           }
         },

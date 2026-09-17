@@ -3,13 +3,14 @@ import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useImperativeHandle, useRef, useState, type Ref } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { CircularProgressBar } from 'twenty-ui/feedback';
+import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
 import {
   IconHeadphones,
   IconPlayerPause,
   IconPlayerPlay,
 } from 'twenty-ui/icon';
-import { Button, IconButton, Slider } from 'twenty-ui/input';
+import { Button, Slider } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledAudioBar = styled.div`
@@ -140,6 +141,8 @@ export const CallRecordingAudioPlayer = ({
     }
   };
 
+  const PlaybackIcon = isPlaying ? IconPlayerPause : IconPlayerPlay;
+
   return (
     <StyledAudioBar>
       <audio
@@ -173,30 +176,26 @@ export const CallRecordingAudioPlayer = ({
         <>
           <StyledTrack role="status">{t`Playback failed`}</StyledTrack>
           <Button
-            title={t`Retry`}
-            variant="secondary"
-            size="small"
+            size="sm"
             disabled={isRetrying}
-            isLoading={isRetrying}
+            loading={isRetrying}
             onClick={handleRetry}
-          />
+            variant="outline"
+          >{t`Retry`}</Button>
         </>
       ) : (
         <>
           <IconButton
-            ariaLabel={isPlaying ? t`Pause` : t`Play`}
-            Icon={
-              isStalled
-                ? undefined
-                : isPlaying
-                  ? IconPlayerPause
-                  : IconPlayerPlay
-            }
-            size="small"
-            variant="tertiary"
+            aria-label={isPlaying ? t`Pause` : t`Play`}
+            size="sm"
+            variant="ghost"
             onClick={handleTogglePlayback}
           >
-            {isStalled && <CircularProgressBar barWidth={2} size={24} />}
+            {isStalled ? (
+              <CircularProgressBar barWidth={2} size={24} />
+            ) : (
+              <PlaybackIcon />
+            )}
           </IconButton>
           <StyledTrack>
             {isDurationKnown ? (

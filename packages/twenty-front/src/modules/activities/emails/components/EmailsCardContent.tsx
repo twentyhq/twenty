@@ -5,7 +5,7 @@ import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPr
 import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInboxPlaceholder';
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { styled } from '@linaria/react';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineThread } from '~/generated/graphql';
 

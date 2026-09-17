@@ -15,12 +15,10 @@ import {
   PageLayoutWidgetVerticalListHeightBehavior,
   WidgetType,
 } from '@/types';
-import {
-  assertUnreachable,
-  getPageLayoutWidgetHeightBehavior,
-  isDefined,
-  isPlainObject,
-} from '@/utils';
+import { assertUnreachable } from '@/utils/assertUnreachable';
+import { getPageLayoutWidgetHeightBehavior } from '@/utils/pageLayout/getPageLayoutWidgetHeightBehavior';
+import { isDefined } from '@/utils/validation/isDefined';
+import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 
 export const normalizePageLayoutTabManifest = ({
   pageLayoutTabManifest,

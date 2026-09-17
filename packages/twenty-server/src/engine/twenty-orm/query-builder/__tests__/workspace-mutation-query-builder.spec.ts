@@ -93,7 +93,7 @@ const buildBuilders = ({
 };
 
 describe('WorkspaceMutationQueryBuilder', () => {
-  it('should build a soft delete that stamps deletedAt and updatedAt', () => {
+  it('should build a soft delete that stamps deletedAt and updatedAt on live rows only', () => {
     const { selectQueryBuilder } = buildBuilders();
 
     const mutationQueryBuilder = selectQueryBuilder
@@ -106,8 +106,25 @@ describe('WorkspaceMutationQueryBuilder', () => {
     expect(mutationQueryBuilder.getQuery()).toBe(
       `UPDATE "${SCHEMA_NAME}"."person" AS "person" ` +
         'SET "deletedAt" = CURRENT_TIMESTAMP, "updatedAt" = CURRENT_TIMESTAMP ' +
-        'WHERE ("person"."id" IN (:...ids)) ' +
+        'WHERE (("person"."id" IN (:...ids))) AND "person"."deletedAt" IS NULL ' +
         'RETURNING "person"."id" AS "person_id", "person"."nameFirstName" AS "person_nameFirstName"',
+    );
+  });
+
+  it('should let a soft delete reach rows already in the trash only after withDeleted', () => {
+    const { selectQueryBuilder } = buildBuilders();
+
+    const mutationQueryBuilder = selectQueryBuilder
+      .where('"person"."id" IN (:...ids)', {
+        ids: ['id-1', 'id-2'],
+      })
+      .withDeleted()
+      .softDelete();
+
+    expect(mutationQueryBuilder.getQuery()).toBe(
+      `UPDATE "${SCHEMA_NAME}"."person" AS "person" ` +
+        'SET "deletedAt" = CURRENT_TIMESTAMP, "updatedAt" = CURRENT_TIMESTAMP ' +
+        'WHERE ("person"."id" IN (:...ids))',
     );
   });
 

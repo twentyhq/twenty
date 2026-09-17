@@ -1,6 +1,6 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useNumberFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useNumberFieldDisplay';
-import { NumberDisplay } from 'twenty-ui/data-display';
+import { NumberDisplay } from 'twenty-ui/primitives/data-display';
 import { formatToShortNumber, isDefined } from 'twenty-shared/utils';
 
 export const NumberFieldDisplay = () => {

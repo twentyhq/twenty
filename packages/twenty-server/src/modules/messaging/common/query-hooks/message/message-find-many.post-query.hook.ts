@@ -45,10 +45,18 @@ export class MessageFindManyPostQueryHook implements WorkspacePostQueryHookInsta
       ? authContext.user.id
       : undefined;
 
+    // An application reading its own channel has no user behind it, so without
+    // this it falls through to the redaction branches and gets back
+    // placeholders instead of the messages it just wrote.
+    const applicationId = isApplicationAuthContext(authContext)
+      ? authContext.application.id
+      : undefined;
+
     await this.applyMessagesVisibilityRestrictionsService.applyMessagesVisibilityRestrictions(
       payload,
       workspace.id,
       userId,
+      applicationId,
     );
   }
 }

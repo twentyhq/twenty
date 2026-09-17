@@ -89,10 +89,10 @@ jest.mock('@/views/hooks/useUpdateCurrentView', () => ({
     updateCurrentView: mockUpdateCurrentView,
   })),
 }));
-jest.mock('twenty-ui/data-display', () => ({
+jest.mock('twenty-ui/primitives/data-display', () => ({
   Pill: ({ label }: { label: string }) => <span>{label}</span>,
 }));
-jest.mock('twenty-ui/navigation', () => ({
+jest.mock('twenty-ui/primitives/navigation', () => ({
   MenuItem: ({ text }: { text: string }) => <span>{text}</span>,
   MenuItemSelect: ({
     contextualText,

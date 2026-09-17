@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useContext, useState } from 'react';
 import { TableBody } from './TableBody';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { Label } from 'twenty-ui/typography';
+import { Label } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TableSectionProps = {

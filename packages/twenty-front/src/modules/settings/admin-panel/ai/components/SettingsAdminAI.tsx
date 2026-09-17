@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { useMemo, useState } from 'react';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -6,11 +8,9 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { IconMessage } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -31,11 +31,11 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
 import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
 import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Select } from '@/ui/input/components/Select';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -60,7 +60,7 @@ type UsageBreakdownItem = {
 
 export const SettingsAdminAI = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { refetch: refetchClientConfig } = useClientConfig();
   const { formatUsageValue } = useUsageValueFormatter();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -148,8 +148,9 @@ export const SettingsAdminAI = () => {
       });
       await refetchClientConfig();
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update default model`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to update default model`,
       });
     }
   };
@@ -197,34 +198,36 @@ export const SettingsAdminAI = () => {
         <Section>
           <H2Title
             title={t`Default Models`}
-            description={t`The model behind each tier for every workspace. Workspaces can pin their own.`}
+            description={t`The model behind each mode for every workspace. Workspaces can pin their own.`}
           />
 
           <Card rounded>
-            {AI_MODEL_TIERS.map((tier, index) => (
-              <SettingsOptionCardContentSelect
-                key={tier}
-                title={getAiModelTierLabel(tier)}
-                divider={index < AI_MODEL_TIERS.length - 1}
-              >
-                <AiModelPinSelect
-                  dropdownId={`admin-default-model-select-${tier}`}
-                  modelId={
-                    defaultModelByTier.find(
-                      (defaultModel) => defaultModel.tier === tier,
-                    )?.modelId ?? null
-                  }
-                  onChange={(modelId) => {
-                    if (isDefined(modelId)) {
-                      void handleDefaultModelChange(tier, modelId);
+            <StyledSettingsSelectGroup controlWidth={260}>
+              {AI_MODEL_TIERS.map((tier, index) => (
+                <SettingsOptionCardContentSelect
+                  key={tier}
+                  title={getAiModelTierLabel(tier)}
+                  divider={index < AI_MODEL_TIERS.length - 1}
+                >
+                  <AiModelPinSelect
+                    dropdownId={`admin-default-model-select-${tier}`}
+                    modelId={
+                      defaultModelByTier.find(
+                        (defaultModel) => defaultModel.tier === tier,
+                      )?.modelId ?? null
                     }
-                  }}
-                  aiModels={enabledModels}
-                  selectSizeVariant="small"
-                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-                />
-              </SettingsOptionCardContentSelect>
-            ))}
+                    onChange={(modelId) => {
+                      if (isDefined(modelId)) {
+                        void handleDefaultModelChange(tier, modelId);
+                      }
+                    }}
+                    aiModels={enabledModels}
+                    selectSizeVariant="small"
+                    dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+                  />
+                </SettingsOptionCardContentSelect>
+              ))}
+            </StyledSettingsSelectGroup>
           </Card>
         </Section>
       )}
@@ -234,14 +237,12 @@ export const SettingsAdminAI = () => {
           title={t`Chats`}
           description={t`Browse AI chat threads across all workspaces, including onboarding chats`}
         />
-        <UndecoratedLink to={getSettingsPath(SettingsPath.AdminPanelChats)}>
-          <Button
-            Icon={IconMessage}
-            title={t`View all chats`}
-            size="small"
-            variant="secondary"
-          />
-        </UndecoratedLink>
+        <NavigationButton
+          to={getSettingsPath(SettingsPath.AdminPanelChats)}
+          startIcon={<IconMessage />}
+          size="sm"
+          variant="outline"
+        >{t`View all chats`}</NavigationButton>
       </Section>
 
       <Section>
@@ -301,8 +302,8 @@ export const SettingsAdminAI = () => {
           )
         ) : (
           <SettingsEnterpriseFeatureGateCard
-            title={t`Enterprise feature`}
-            description={t`AI usage analytics across workspaces is available with an Enterprise key.`}
+            title={t`Organization feature`}
+            description={t`AI usage analytics across workspaces is available with an Organization key.`}
             buttonTitle={t`Activate`}
           />
         )}

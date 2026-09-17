@@ -6,9 +6,9 @@ import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconKey, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -64,10 +64,10 @@ export const SettingsRoleAssignmentTableRow = ({
         );
         return (
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(enrichedWorkspaceMember?.avatarUrl)}
-            placeholderColorSeed={enrichedWorkspaceMember?.id}
-            placeholder={enrichedWorkspaceMember?.name.firstName ?? ''}
-            type="rounded"
+            src={getAbsoluteImageUrl(enrichedWorkspaceMember?.avatarUrl)}
+            colorSeed={enrichedWorkspaceMember?.id}
+            name={enrichedWorkspaceMember?.name.firstName ?? ''}
+            shape="circle"
             size="md"
           />
         );
