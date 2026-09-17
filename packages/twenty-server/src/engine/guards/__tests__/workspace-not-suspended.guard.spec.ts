@@ -143,14 +143,14 @@ describe('WorkspaceNotSuspendedGuard', () => {
   );
 
   it.each(SUSPENDED_STATUSES)(
-    'should refuse a %s workspace subscription',
+    'should let a %s workspace subscribe on the metadata schema',
     (activationStatus) => {
       const { guard, context } = buildGraphqlContext({
         workspace: { id: 'workspace-id', activationStatus },
         operation: 'subscription',
       });
 
-      expectSuspendedThrow(() => guard.canActivate(context));
+      expect(guard.canActivate(context)).toBe(true);
     },
   );
 

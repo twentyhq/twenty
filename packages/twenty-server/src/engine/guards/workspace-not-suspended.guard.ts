@@ -31,7 +31,7 @@ export class WorkspaceNotSuspendedGuard implements CanActivate {
       return true;
     }
 
-    if (this.isQueryOutsideCoreSchema(context)) {
+    if (this.isReadOutsideCoreSchema(context)) {
       return true;
     }
 
@@ -50,7 +50,9 @@ export class WorkspaceNotSuspendedGuard implements CanActivate {
     );
   }
 
-  private isQueryOutsideCoreSchema(context: ExecutionContext): boolean {
+  // Subscriptions are read-only too: refusing them makes the SSE client
+  // re-subscribe in a loop while it holds the user on the billing page.
+  private isReadOutsideCoreSchema(context: ExecutionContext): boolean {
     if (context.getType<GqlContextType>() !== 'graphql') {
       return false;
     }
@@ -67,7 +69,7 @@ export class WorkspaceNotSuspendedGuard implements CanActivate {
     return (
       GqlExecutionContext.create(context).getInfo<
         { operation?: { operation?: string } } | undefined
-      >()?.operation?.operation === 'query'
+      >()?.operation?.operation !== 'mutation'
     );
   }
 }
