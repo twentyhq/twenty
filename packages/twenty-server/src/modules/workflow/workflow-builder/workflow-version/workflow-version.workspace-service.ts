@@ -6,7 +6,6 @@ import {
   computeWorkflowLayout,
   TRIGGER_STEP_ID,
   WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
-  WorkflowActionType,
 } from 'twenty-shared/workflow';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
@@ -31,6 +30,7 @@ import { assertWorkflowVersionHasSteps } from 'src/modules/workflow/common/utils
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { remapDuplicatedStepDestinations } from 'src/modules/workflow/workflow-builder/utils/remap-duplicated-step-destinations.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -263,11 +263,11 @@ export class WorkflowVersionWorkspaceService {
         });
 
       const newTrigger = sourceVersion.trigger;
-      const sourceToClonedPairs: Array<{
+      const sourceToClonedPairs: {
         source: WorkflowAction;
         duplicated: WorkflowAction;
-      }> = [];
-      const oldToNewIdMap = new Map<string, string>();
+      }[] = [];
+      const clonedStepIdBySourceStepId = new Map<string, string>();
 
       for (const step of sourceVersion.steps ?? []) {
         const clonedStep =
@@ -280,46 +280,21 @@ export class WorkflowVersionWorkspaceService {
           source: step,
           duplicated: clonedStep,
         });
-        oldToNewIdMap.set(step.id, clonedStep.id);
+        clonedStepIdBySourceStepId.set(step.id, clonedStep.id);
       }
 
-      const remappedTrigger = isDefined(newTrigger)
-        ? {
-            ...newTrigger,
-            nextStepIds: (newTrigger.nextStepIds ?? []).map(
-              (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
-            ),
-          }
-        : undefined;
-
-      const remappedSteps: WorkflowAction[] = sourceToClonedPairs.map(
-        ({ source, duplicated }) => {
-          const remappedStep = {
-            ...duplicated,
-            nextStepIds: (source.nextStepIds ?? []).map(
-              (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
-            ),
+      const { trigger: remappedTrigger, steps: remappedSteps } = isDefined(
+        newTrigger,
+      )
+        ? remapDuplicatedStepDestinations({
+            trigger: newTrigger,
+            sourceToClonedPairs,
+            clonedStepIdBySourceStepId,
+          })
+        : {
+            trigger: undefined,
+            steps: sourceToClonedPairs.map(({ duplicated }) => duplicated),
           };
-
-          if (
-            source.type === WorkflowActionType.ITERATOR &&
-            isDefined(source.settings?.input?.initialLoopStepIds)
-          ) {
-            remappedStep.settings = {
-              ...remappedStep.settings,
-              input: {
-                ...remappedStep.settings.input,
-                initialLoopStepIds:
-                  source.settings.input.initialLoopStepIds.map(
-                    (oldId: string) => oldToNewIdMap.get(oldId) ?? oldId,
-                  ),
-              },
-            };
-          }
-
-          return remappedStep;
-        },
-      );
 
       let newDraftVersion: WorkflowVersionWorkspaceEntity | undefined;
 

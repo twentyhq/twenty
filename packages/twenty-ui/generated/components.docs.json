@@ -5739,5 +5739,138 @@
         ]
       }
     ]
+  },
+  {
+    "name": "CodeEditor",
+    "entryPoint": "twenty-ui/components/code-editor",
+    "slug": "components/code-editor",
+    "props": [
+      {
+        "name": "autoHeight",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Grows the editor to fit its content instead of using `height`. Ignored when `resizable` is set."
+      },
+      {
+        "name": "contentPadding",
+        "type": "\"default\" | \"comfortable\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "`default` pads the top and bottom of the content. `comfortable` also widens the gap between line numbers and code."
+      },
+      {
+        "name": "height",
+        "type": "string | number",
+        "required": false,
+        "defaultValue": "450",
+        "description": "Editor height in pixels or as a CSS length. With `resizable`, a numeric height sets the initial height."
+      },
+      {
+        "name": "isLoading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Shows a loader at the editor height instead of the editor. A loader also shows while Monaco loads."
+      },
+      {
+        "name": "language",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Monaco language identifier for highlighting and language services, such as `json` or `typescript`."
+      },
+      {
+        "name": "onChange",
+        "type": "((value: string) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the full content whenever it changes."
+      },
+      {
+        "name": "onMount",
+        "type": "OnMount",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called when the editor is ready, with the editor instance and the Monaco namespace. The Twenty theme is already applied."
+      },
+      {
+        "name": "onValidate",
+        "type": "OnValidate",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the markers Monaco reports after validating the content, such as JSON syntax errors."
+      },
+      {
+        "name": "options",
+        "type": "IStandaloneEditorConstructionOptions",
+        "required": false,
+        "defaultValue": null,
+        "description": "Monaco editor options merged over the Twenty defaults. `padding` is ignored; use `contentPadding` instead."
+      },
+      {
+        "name": "resizable",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Adds a handle below the editor to drag its height."
+      },
+      {
+        "name": "setMarkers",
+        "type": "((value: string) => IMarkerData[])",
+        "required": false,
+        "defaultValue": null,
+        "description": "Returns custom validation markers for the content. Runs when the editor mounts and after every change, replacing the previous custom markers."
+      },
+      {
+        "name": "transparentBackground",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Removes the editor background so the surrounding surface shows through."
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content of the editor. Pair it with `onChange` to control the editor."
+      },
+      {
+        "name": "variant",
+        "type": "\"default\" | \"with-header\" | \"borderless\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "Border treatment: `default` draws a rounded border, `with-header` attaches the editor below a `CodeEditorHeader`, and `borderless` removes the border."
+      }
+    ]
+  },
+  {
+    "name": "CodeEditorHeader",
+    "entryPoint": "twenty-ui/components/code-editor",
+    "slug": "components/code-editor-header",
+    "props": [
+      {
+        "name": "leftNodes",
+        "type": "ReactNode[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Elements shown at the start of the header, such as tabs."
+      },
+      {
+        "name": "rightNodes",
+        "type": "ReactNode[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Elements shown at the end of the header, such as actions."
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text shown at the start of the header, after `leftNodes`."
+      }
+    ]
   }
 ]

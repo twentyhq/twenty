@@ -706,7 +706,7 @@ Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/pa
 `twenty-ui` is published alongside the SDK packages with the same version. Add it to your app, pinned to the version of `twenty-sdk` and `twenty-client-sdk` you use:
 
 ```bash
-yarn add -D twenty-ui@2.40.0
+yarn add -D twenty-ui@2.42.0
 ```
 
 `twenty-ui` is bundled into your front component at build time, so it only needs to be a dependency of your app — there is nothing to configure at runtime.
@@ -715,15 +715,16 @@ yarn add -D twenty-ui@2.40.0
 
 Import from the matching subpath rather than the package root, so only the components you use end up in your bundle:
 
-All existing UI components are grouped under `twenty-ui/primitives/<family>`.
-The `components/` folder is reserved for higher-level app building blocks.
+Foundational controls are grouped under `twenty-ui/primitives/<family>`.
+Shared design presets and app building blocks are available from `twenty-ui/components`.
+These entry points do not require `monaco-editor`.
 
 | Subpath | What it exports |
 | --- | --- |
 | `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers |
 | `twenty-ui/primitives/data-display` | Avatars, chips, tags, status indicators, and display helpers |
 | `twenty-ui/primitives/feedback` | Toasts, banners, progress bars, and loaders |
-| `twenty-ui/primitives/input` | Buttons, form controls, pickers, and code editors |
+| `twenty-ui/primitives/input` | Buttons, form controls, and pickers |
 | `twenty-ui/primitives/json-visualizer` | JSON tree viewer |
 | `twenty-ui/primitives/layout` | Layout, animation, resizing, and section components |
 | `twenty-ui/primitives/navigation` | Links, list items, menus, and tabs |

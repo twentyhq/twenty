@@ -17,6 +17,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.workspace-service';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
@@ -30,6 +31,7 @@ import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workfl
   PreventNestToAutoLogGraphqlErrorsFilter,
   WorkflowVersionEdgeGraphqlApiExceptionFilter,
   WorkflowVersionValidationGraphqlApiExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 export class WorkflowVersionEdgeResolver {
   constructor(
