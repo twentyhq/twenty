@@ -4,6 +4,7 @@ import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/
 import { useCommandMenuAppActions } from '@/command-menu-item/display/hooks/useCommandMenuAppActions';
 import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMenuItemSection';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
+import { getCommandMenuItemObjectSectionHeading } from '@/command-menu-item/utils/getCommandMenuItemObjectSectionHeading';
 import { groupCommandMenuItemsBySection } from '@/command-menu-item/utils/groupCommandMenuItemsBySection';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
@@ -77,7 +78,10 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       case 'SELECTION':
         return t`Selection`;
       case 'THIS_VIEW':
-        return t`This view`;
+        return getCommandMenuItemObjectSectionHeading({
+          commandMenuContextApi,
+          fallbackHeading: t`This object`,
+        });
       case 'ASK_AND_FIND':
         return t`Ask & find`;
       case 'CREATE_RECORD':

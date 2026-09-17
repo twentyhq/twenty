@@ -352,12 +352,12 @@ export const NavigationSitsLastAtRest: Story = {
     expect(await canvas.findByText('Go to People')).toBeVisible();
 
     const headings = canvas.getAllByText(
-      /^(Pinned|This view|Workspace|Go to)$/,
+      /^(Pinned|This object|Workspace|Go to)$/,
     );
 
     expect(headings.map((heading) => heading.textContent)).toEqual([
       'Pinned',
-      'This view',
+      'This object',
       'Workspace',
       'Go to',
     ]);
