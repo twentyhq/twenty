@@ -2,6 +2,7 @@ import { createManyOperationFactory } from 'test/integration/graphql/utils/creat
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import { createClient } from 'redis';
@@ -16,11 +17,13 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 const SCHEMA_NAME = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const HEADROOM = 2;
+const STATS_FLUSH_TIMEOUT_MS = 30_000;
 
 describe('Record stock limit', () => {
   let usageLimitRepository: Repository<UsageLimitEntity>;
   let redis: Awaited<ReturnType<typeof createClient>>;
   let usageLimitId: string;
+  let baselineRecordCount: number;
   const createdRocketIds: string[] = [];
 
   const createRockets = async (count: number) => {
@@ -59,22 +62,38 @@ describe('Record stock limit', () => {
     );
 
   const countRecords = async (): Promise<number> => {
-    const tables: { table_name: string }[] = await global.testDataSource.query(
-      `SELECT table_name FROM information_schema.tables
-       WHERE table_schema = $1 AND table_type = 'BASE TABLE'
-       AND table_name <> 'timelineActivity'`,
+    const [row]: { quantity: string }[] = await global.testDataSource.query(
+      `SELECT COALESCE(SUM(n_live_tup), 0)::bigint AS quantity
+       FROM pg_stat_user_tables
+       WHERE schemaname = $1 AND relname <> 'timelineActivity'`,
       [SCHEMA_NAME],
     );
 
-    const counts: { quantity: string }[][] = await Promise.all(
-      tables.map(({ table_name }) =>
-        global.testDataSource.query(
-          `SELECT COUNT(*) AS quantity FROM "${SCHEMA_NAME}"."${table_name}"`,
-        ),
-      ),
+    return Number(row.quantity);
+  };
+
+  const waitForRecordCount = (expected: number) =>
+    expectEventually(
+      async () => {
+        expect(await countRecords()).toBe(expected);
+      },
+      { timeoutMs: STATS_FLUSH_TIMEOUT_MS },
     );
 
-    return counts.reduce((sum, [row]) => sum + Number(row.quantity), 0);
+  const waitForStatsToSettle = async (): Promise<number> => {
+    let previous = await countRecords();
+
+    for (;;) {
+      await new Promise((resolve) => setTimeout(resolve, 1_500));
+
+      const current = await countRecords();
+
+      if (current === previous) {
+        return current;
+      }
+
+      previous = current;
+    }
   };
 
   const dropKeys = async (pattern: string) => {
@@ -103,6 +122,7 @@ describe('Record stock limit', () => {
     usageLimitRepository =
       getCoreRepository<UsageLimitEntity>(UsageLimitEntity);
     redis = await createClient({ url: process.env.REDIS_URL }).connect();
+    baselineRecordCount = await waitForStatsToSettle();
 
     const [usageLimit] = await usageLimitRepository.save([
       {
@@ -115,7 +135,7 @@ describe('Record stock limit', () => {
         periodCount: 1,
         periodUnit: 'lifetime',
         meter: 'quantity',
-        limitValue: (await countRecords()) + HEADROOM,
+        limitValue: baselineRecordCount + HEADROOM,
         burstValue: null,
       },
     ]);
@@ -127,8 +147,9 @@ describe('Record stock limit', () => {
   });
 
   beforeEach(async () => {
+    await waitForRecordCount(baselineRecordCount);
     await dropStockCounter();
-  });
+  }, STATS_FLUSH_TIMEOUT_MS + 5_000);
 
   afterEach(async () => {
     if (createdRocketIds.length > 0) {

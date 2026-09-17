@@ -3,8 +3,8 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
+import { COUNT_LIVE_RECORDS_QUERY } from 'src/engine/core-modules/usage-limit/constants/count-live-records-query.constant';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
-import { buildRecordCountQuery } from 'src/engine/core-modules/usage-limit/utils/build-record-count-query.util';
 import { buildRecordStockTableNames } from 'src/engine/core-modules/usage-limit/utils/build-record-stock-table-names.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -92,10 +92,11 @@ export class WorkspaceRecordStockService {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   }): Promise<{ quantity: number; bytes: number }> {
     const [used] = await this.coreDataSource.query<{ quantity: string }[]>(
-      buildRecordCountQuery({
-        schemaName: getWorkspaceSchemaName(workspaceId),
-        tableNames: buildRecordStockTableNames(flatObjectMetadataMaps),
-      }),
+      COUNT_LIVE_RECORDS_QUERY,
+      [
+        getWorkspaceSchemaName(workspaceId),
+        buildRecordStockTableNames(flatObjectMetadataMaps),
+      ],
     );
 
     return { quantity: Number(used?.quantity ?? 0), bytes: 0 };
