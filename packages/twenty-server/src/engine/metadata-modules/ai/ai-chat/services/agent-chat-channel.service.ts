@@ -6,13 +6,11 @@ import {
   type EntityManager,
   In,
   type ObjectLiteral,
-  QueryFailedError,
   Repository,
   type SelectQueryBuilder,
 } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentChatChannelMemberEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel-member.entity';
 import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel-role.entity';
@@ -23,6 +21,7 @@ import { AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-ch
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { buildChannelAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-channel-access-where.util';
 import { isForeignKeyViolation } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-foreign-key-violation.util';
+import { isUniqueViolation } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation.util';
 import {
   AiException,
   AiExceptionCode,
@@ -620,7 +619,7 @@ export class AgentChatChannelService {
       );
     } catch (error) {
       // A concurrent grant already created the row.
-      if (!this.isUniqueViolation(error)) {
+      if (!isUniqueViolation(error)) {
         throw error;
       }
 
@@ -907,7 +906,7 @@ export class AgentChatChannelService {
       });
     } catch (error) {
       // A concurrent join or invite already created the row.
-      if (!this.isUniqueViolation(error)) {
+      if (!isUniqueViolation(error)) {
         throw error;
       }
 
@@ -1205,15 +1204,8 @@ export class AgentChatChannelService {
     }
   }
 
-  private isUniqueViolation(error: unknown): boolean {
-    return (
-      error instanceof QueryFailedError &&
-      error.driverError?.code === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
-    );
-  }
-
   private mapUniqueViolation(error: unknown): unknown {
-    if (this.isUniqueViolation(error)) {
+    if (isUniqueViolation(error)) {
       return new AiException(
         'A channel with this name already exists',
         AiExceptionCode.CHANNEL_NAME_ALREADY_EXISTS,

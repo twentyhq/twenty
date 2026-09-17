@@ -10,6 +10,7 @@ import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai
 import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { isUniqueViolation } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation.util';
 import { sanitizeModelDisplayName } from 'src/engine/metadata-modules/ai/ai-chat/utils/sanitize-model-display-name.util';
 import {
   AiException,
@@ -110,14 +111,34 @@ export class AgentChatThreadParticipantService {
         workspaceId,
       });
 
-    const participant = await this.participantRepository.insertAndReturnOne(
-      workspaceId,
-      {
-        threadId,
-        userWorkspaceId,
-        role: AgentChatThreadParticipantRole.MEMBER,
-      },
-    );
+    let participant: AgentChatThreadParticipantEntity;
+
+    try {
+      participant = await this.participantRepository.insertAndReturnOne(
+        workspaceId,
+        {
+          threadId,
+          userWorkspaceId,
+          role: AgentChatThreadParticipantRole.MEMBER,
+        },
+      );
+    } catch (error) {
+      // A concurrent request already added the same person.
+      if (!isUniqueViolation(error)) {
+        throw error;
+      }
+
+      const concurrentlyAddedParticipant =
+        await this.participantRepository.findOne(workspaceId, {
+          where: { threadId, userWorkspaceId },
+        });
+
+      if (!isDefined(concurrentlyAddedParticipant)) {
+        throw error;
+      }
+
+      return concurrentlyAddedParticipant;
+    }
 
     const hadAccess =
       !isDefined(recipientsBefore) ||
