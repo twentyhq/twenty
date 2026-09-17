@@ -4,8 +4,9 @@ import { type SettingsCustomizeVideoModalTab } from '@/settings/types/SettingsCu
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { t } from '@lingui/core/macro';
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { styled } from '@linaria/react';
 import { IconX } from 'twenty-ui/icon';
@@ -83,7 +84,7 @@ export const SettingsCustomizeVideoModal = ({
   tabs,
 }: SettingsCustomizeVideoModalProps) => {
   const theme = useTheme();
-  const { closeModal } = useModal();
+  const { closeDialog } = useDialog();
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     tabsInstanceId,
@@ -98,7 +99,7 @@ export const SettingsCustomizeVideoModal = ({
   const ActiveTabIcon = activeTab.Icon;
 
   const handleClose = () => {
-    closeModal(modalInstanceId);
+    closeDialog(modalInstanceId);
   };
 
   const videoContent = (
@@ -117,51 +118,58 @@ export const SettingsCustomizeVideoModal = ({
   );
 
   return (
-    <ModalStatefulWrapper
-      modalInstanceId={modalInstanceId}
-      size="large"
-      padding="none"
-      isClosable
+    <DialogInstance
+      dialogId={modalInstanceId}
+      dismissible
       onClose={handleClose}
       renderInDocumentBody
     >
-      <TabListRoot
-        componentInstanceId={tabsInstanceId}
-        enabled={hasMultipleTabs}
-      >
-        <StyledHeader $hasBottomBorder={!hasMultipleTabs}>
-          {hasMultipleTabs ? (
-            <StyledTabsContainer>
-              <TabList
-                tabs={tabs}
-                behaveAsLinks={false}
-                componentInstanceId={tabsInstanceId}
-              />
-            </StyledTabsContainer>
-          ) : (
-            <StyledTitle>
-              <ActiveTabIcon
-                size={theme.icon.size.md}
-                color={theme.font.color.primary}
-                aria-hidden
-              />
-              <StyledTitleText>{activeTab.title}</StyledTitleText>
-            </StyledTitle>
-          )}
-          <IconButton
-            aria-label={t`Close video`}
-            onClick={handleClose}
-            size="sm"
+      {({ container, backdrop, viewportProps, onKeyDown }) => (
+        <Dialog.Popup
+          aria-label={activeTab.title}
+          {...{ container, backdrop, viewportProps, onKeyDown }}
+          size="lg"
+          style={{ padding: 0 }}
+        >
+          <TabListRoot
+            componentInstanceId={tabsInstanceId}
+            enabled={hasMultipleTabs}
           >
-            <IconX />
-          </IconButton>
-        </StyledHeader>
-        {hasMultipleTabs ? (
-          <Tabs.Panel value={activeTab.id}>{videoContent}</Tabs.Panel>
-        ) : (
-          videoContent
-        )}
-      </TabListRoot>
-    </ModalStatefulWrapper>
+            <StyledHeader $hasBottomBorder={!hasMultipleTabs}>
+              {hasMultipleTabs ? (
+                <StyledTabsContainer>
+                  <TabList
+                    tabs={tabs}
+                    behaveAsLinks={false}
+                    componentInstanceId={tabsInstanceId}
+                  />
+                </StyledTabsContainer>
+              ) : (
+                <StyledTitle>
+                  <ActiveTabIcon
+                    size={theme.icon.size.md}
+                    color={theme.font.color.primary}
+                    aria-hidden
+                  />
+                  <StyledTitleText>{activeTab.title}</StyledTitleText>
+                </StyledTitle>
+              )}
+              <IconButton
+                aria-label={t`Close video`}
+                onClick={handleClose}
+                size="sm"
+              >
+                <IconX />
+              </IconButton>
+            </StyledHeader>
+            {hasMultipleTabs ? (
+              <Tabs.Panel value={activeTab.id}>{videoContent}</Tabs.Panel>
+            ) : (
+              videoContent
+            )}
+          </TabListRoot>
+        </Dialog.Popup>
+      )}
+    </DialogInstance>
   );
 };

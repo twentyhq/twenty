@@ -18,8 +18,8 @@ import recordPageLayoutCoverDark from '@/settings/data-model/object-details/asse
 import recordPageLayoutCoverLight from '@/settings/data-model/object-details/assets/record-page-layout-cover-light.png';
 import { ObjectOpenRecordInPicker } from '@/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -43,7 +43,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
   const navigateApp = useNavigateApp();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { resetPageLayoutToDefault } = useResetPageLayoutToDefault();
 
   const pageLayout = useAtomFamilySelectorValue(
@@ -82,7 +82,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
   };
 
   const handleResetPageLayout = () => {
-    openModal(RESET_PAGE_LAYOUT_MODAL_ID);
+    openDialog(RESET_PAGE_LAYOUT_MODAL_ID);
   };
 
   const handleConfirmReset = async () => {
@@ -147,8 +147,8 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
           variant="outline"
         >{t`Reset to default`}</Button>
       </Section.Root>
-      <ConfirmationModal
-        modalInstanceId={RESET_PAGE_LAYOUT_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={RESET_PAGE_LAYOUT_MODAL_ID}
         title={t`Reset to default`}
         subtitle={t`This action cannot be undone.`}
         onConfirmClick={handleConfirmReset}

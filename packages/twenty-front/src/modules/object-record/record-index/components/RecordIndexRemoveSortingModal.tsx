@@ -2,7 +2,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { getRecordIndexRemoveSortingModalId } from '@/object-record/record-index/utils/getRecordIndexRemoveSortingModalId';
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 
@@ -27,8 +27,8 @@ export const RecordIndexRemoveSortingModal = () => {
   };
 
   return (
-    <ConfirmationModal
-      modalInstanceId={getRecordIndexRemoveSortingModalId(recordIndexId)}
+    <ConfirmationDialog
+      dialogId={getRecordIndexRemoveSortingModalId(recordIndexId)}
       title={t`Remove sorting?`}
       subtitle={t`This is required to enable manual row reordering.`}
       onConfirmClick={handleRemoveClick}

@@ -1,3 +1,4 @@
+import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
@@ -130,6 +131,14 @@ export const DOCUMENTED_COMPONENTS = [
     },
   },
   {
+    name: 'Dialog',
+    source: 'primitives/surfaces/Dialog/Dialog.tsx',
+    entryPoint: 'twenty-ui/primitives/surfaces',
+    slug: 'surfaces/dialog',
+    propDescriptions: DIALOG_PROP_DESCRIPTIONS,
+    partPropDescriptions: { Title: DIALOG_TITLE_PROP_DESCRIPTIONS },
+  },
+  {
     name: 'AlertDialog',
     source: 'primitives/surfaces/AlertDialog/AlertDialog.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
@@ -227,13 +236,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/code-editor',
     slug: 'components/code-editor-header',
     propDescriptions: CODE_EDITOR_HEADER_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'Dialog',
-    source: 'primitives/surfaces/Dialog/Dialog.tsx',
-    entryPoint: 'twenty-ui/primitives/surfaces',
-    slug: 'surfaces/dialog',
-    partPropDescriptions: { Title: DIALOG_TITLE_PROP_DESCRIPTIONS },
   },
   {
     name: 'TabButton',

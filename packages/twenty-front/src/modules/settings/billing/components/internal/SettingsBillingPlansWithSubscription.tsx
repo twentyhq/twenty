@@ -9,8 +9,8 @@ import {
   type SettingsBillingPlanPrices,
 } from '@/settings/billing/types/settingsBillingPlanComparison.type';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,7 +32,7 @@ export const SettingsBillingPlansWithSubscription = ({
   planPrices,
 }: SettingsBillingPlansWithSubscriptionProps) => {
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const [pendingChange, setPendingChange] =
     useState<BillingSubscriptionChange | null>(null);
   const {
@@ -47,7 +47,7 @@ export const SettingsBillingPlansWithSubscription = ({
     isApplyingBillingSubscriptionChange,
     onBillingSubscriptionChangeRequested: (change) => {
       setPendingChange(change);
-      openModal(BILLING_MODAL_IDS.confirmSubscriptionChange);
+      openDialog(BILLING_MODAL_IDS.confirmSubscriptionChange);
     },
   });
 
@@ -67,8 +67,8 @@ export const SettingsBillingPlansWithSubscription = ({
         planPrices={planPrices}
       />
       {isDefined(pendingChange) && isDefined(pendingChangeWording) && (
-        <ConfirmationModal
-          modalInstanceId={BILLING_MODAL_IDS.confirmSubscriptionChange}
+        <ConfirmationDialog
+          dialogId={BILLING_MODAL_IDS.confirmSubscriptionChange}
           title={pendingChangeWording.title}
           subtitle={pendingChangeWording.subtitle}
           onConfirmClick={() => applyBillingSubscriptionChange(pendingChange)}

@@ -1,5 +1,5 @@
 import { SettingsApplicationScreenshotLightbox } from '@/settings/applications/components/SettingsApplicationScreenshotLightbox';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useId, useState } from 'react';
@@ -76,7 +76,7 @@ export const SettingsApplicationScreenshotGallery = ({
   displayName,
 }: SettingsApplicationScreenshotGalleryProps) => {
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
   const lightboxModalId = useId();
 
   if (screenshots.length === 0) {
@@ -90,7 +90,7 @@ export const SettingsApplicationScreenshotGallery = ({
       <StyledHeroButton
         type="button"
         aria-label={t`View screenshot in full screen`}
-        onClick={() => openModal(lightboxModalId)}
+        onClick={() => openDialog(lightboxModalId)}
       >
         <StyledHeroImage
           src={screenshots[safeIndex]}
@@ -120,7 +120,7 @@ export const SettingsApplicationScreenshotGallery = ({
         displayName={displayName}
         selectedIndex={safeIndex}
         onSelectedIndexChange={setSelectedScreenshotIndex}
-        onClose={() => closeModal(lightboxModalId)}
+        onClose={() => closeDialog(lightboxModalId)}
       />
     </StyledGalleryContainer>
   );
