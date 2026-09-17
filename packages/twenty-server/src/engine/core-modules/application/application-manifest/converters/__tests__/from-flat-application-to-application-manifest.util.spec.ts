@@ -57,23 +57,27 @@ describe('fromFlatApplicationToApplicationManifest', () => {
       }).description,
     ).toBe('');
   });
-  it('should emit the settings front component and uninstall logic function pointers', () => {
+  it('should emit the uninstall logic function pointer', () => {
     expect(
       fromFlatApplicationToApplicationManifest({
         flatApplication: buildFlatApplication({}),
         defaultRoleUniversalIdentifier: ROLE_UID,
-        settingsFrontComponentUniversalIdentifier:
-          'settings-front-component-universal-identifier',
         uninstallLogicFunctionUniversalIdentifier:
           'uninstall-logic-function-universal-identifier',
       }),
     ).toMatchObject({
-      settingsFrontComponent: {
-        universalIdentifier: 'settings-front-component-universal-identifier',
-      },
       uninstallLogicFunction: {
         universalIdentifier: 'uninstall-logic-function-universal-identifier',
       },
     });
+  });
+
+  it('should not emit a settings front component pointer anymore', () => {
+    expect(
+      fromFlatApplicationToApplicationManifest({
+        flatApplication: buildFlatApplication({}),
+        defaultRoleUniversalIdentifier: ROLE_UID,
+      }),
+    ).not.toHaveProperty('settingsFrontComponent');
   });
 });

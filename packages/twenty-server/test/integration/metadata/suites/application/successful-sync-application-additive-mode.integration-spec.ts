@@ -16,7 +16,10 @@ const TEST_ROLE_ID = uuidv4();
 const SKILL_NAME = 'additiveModeSkill';
 const CLEANUP_LOGIC_FUNCTION_ID = uuidv4();
 const SETTINGS_FRONT_COMPONENT_ID = uuidv4();
+const SECOND_SETTINGS_FRONT_COMPONENT_ID = uuidv4();
 const BUILT_SETTINGS_COMPONENT_PATH = 'src/front-components/settings.mjs';
+const BUILT_SECOND_SETTINGS_COMPONENT_PATH =
+  'src/front-components/advanced-settings.mjs';
 
 const skill: SkillManifest = {
   universalIdentifier: uuidv4(),
@@ -61,9 +64,6 @@ const buildManifestWithApplicationReferences = (): Manifest => {
     ...baseManifest,
     application: {
       ...baseManifest.application,
-      settingsFrontComponent: {
-        universalIdentifier: SETTINGS_FRONT_COMPONENT_ID,
-      },
       uninstallLogicFunction: {
         universalIdentifier: CLEANUP_LOGIC_FUNCTION_ID,
       },
@@ -86,6 +86,17 @@ const buildManifestWithApplicationReferences = (): Manifest => {
     ],
     frontComponents: [
       {
+        universalIdentifier: SECOND_SETTINGS_FRONT_COMPONENT_ID,
+        name: 'AdvancedSettingsComponent',
+        description: 'The second settings tab of the application',
+        sourceComponentPath: 'src/front-components/advanced-settings.tsx',
+        builtComponentPath: BUILT_SECOND_SETTINGS_COMPONENT_PATH,
+        builtComponentChecksum: 'advanced-settings-checksum',
+        componentName: 'AdvancedSettingsComponent',
+        isHeadless: false,
+        settingsTab: { label: 'Advanced', icon: 'IconTool', position: 2 },
+      },
+      {
         universalIdentifier: SETTINGS_FRONT_COMPONENT_ID,
         name: 'SettingsComponent',
         description: 'The settings tab of the application',
@@ -94,9 +105,23 @@ const buildManifestWithApplicationReferences = (): Manifest => {
         builtComponentChecksum: 'settings-checksum',
         componentName: 'SettingsComponent',
         isHeadless: false,
+        settingsTab: { label: 'Settings', icon: 'IconSettings', position: 1 },
       },
     ],
   };
+};
+
+const findSettingsTabByUniversalIdentifier = async (
+  universalIdentifier: string,
+): Promise<{ id: string; settingsTab: Record<string, unknown> | null }> => {
+  const [frontComponent] = await globalThis.testDataSource.query(
+    `SELECT "id", "settingsTab"
+     FROM core."frontComponent"
+     WHERE "universalIdentifier" = $1 AND "deletedAt" IS NULL`,
+    [universalIdentifier],
+  );
+
+  return frontComponent;
 };
 
 const findApplicationReferences = async (): Promise<{
@@ -216,6 +241,16 @@ describe('Manifest sync - additive mode', () => {
       expectToFail: false,
     });
 
+    await uploadApplicationFile({
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'BuiltFrontComponent',
+      filePath: BUILT_SECOND_SETTINGS_COMPONENT_PATH,
+      fileBuffer: Buffer.from('dummy built component content'),
+      filename: 'advanced-settings.mjs',
+      contentType: 'application/javascript',
+      expectToFail: false,
+    });
+
     jest.useFakeTimers();
 
     await syncApplication({
@@ -225,7 +260,29 @@ describe('Manifest sync - additive mode', () => {
 
     const declaredReferences = await findApplicationReferences();
 
-    expect(declaredReferences.settingsCustomTabFrontComponentId).not.toBeNull();
+    const firstSettingsTab = await findSettingsTabByUniversalIdentifier(
+      SETTINGS_FRONT_COMPONENT_ID,
+    );
+    const secondSettingsTab = await findSettingsTabByUniversalIdentifier(
+      SECOND_SETTINGS_FRONT_COMPONENT_ID,
+    );
+
+    expect(firstSettingsTab.settingsTab).toEqual({
+      label: 'Settings',
+      icon: 'IconSettings',
+      position: 1,
+    });
+    expect(secondSettingsTab.settingsTab).toEqual({
+      label: 'Advanced',
+      icon: 'IconTool',
+      position: 2,
+    });
+
+    // The application FK carries the lowest-positioned tab, whatever order the
+    // manifest declared the components in.
+    expect(declaredReferences.settingsCustomTabFrontComponentId).toBe(
+      firstSettingsTab.id,
+    );
     expect(declaredReferences.uninstallLogicFunctionId).not.toBeNull();
 
     const manifestWithoutReferences = buildManifest({

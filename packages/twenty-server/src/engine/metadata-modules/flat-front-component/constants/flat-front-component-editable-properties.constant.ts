@@ -8,4 +8,5 @@ export const FLAT_FRONT_COMPONENT_EDITABLE_PROPERTIES = [
   'builtComponentPath',
   'componentName',
   'isHeadless',
+  'settingsTab',
 ] as const satisfies MetadataEntityPropertyName<'frontComponent'>[];

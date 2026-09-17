@@ -16,6 +16,7 @@ import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-versio
 import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type SettingsFrontComponentConfig } from '@/sdk/define/front-component/settings-front-component-config';
 import { type IndexConfig } from '@/sdk/define/indexes/index-config';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
 import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
@@ -129,7 +130,6 @@ export const buildManifest = async (
     [];
   const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
     [];
-  const settingsFrontComponentUniversalIdentifiers: string[] = [];
   const applicationRoleUniversalIdentifiers: string[] = [];
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
@@ -362,7 +362,9 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.FrontComponents: {
-        const extract = await extractManifestFromFile<FrontComponentConfig>({
+        const extract = await extractManifestFromFile<
+          FrontComponentConfig & Pick<SettingsFrontComponentConfig, 'tab'>
+        >({
           appPath,
           filePath,
         });
@@ -370,9 +372,12 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
 
-        const { component, ...rest } = extract.config;
+        const { component, tab, ...rest } = extract.config;
 
         const relativeFilePath = relative(appPath, filePath);
+
+        const isSettingsFrontComponent =
+          targetFunctionName === TargetFunction.DefineSettingsFrontComponent;
 
         const config: FrontComponentManifest = {
           ...rest,
@@ -381,18 +386,13 @@ export const buildManifest = async (
           builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtComponentChecksum: '',
           isHeadless: rest.isHeadless ?? false,
+          // A defined settingsTab is what marks the component as a settings
+          // tab, so it stays set even when the app declares no tab options.
+          ...(isSettingsFrontComponent ? { settingsTab: tab ?? {} } : {}),
         };
 
         frontComponents.push(config);
         frontComponentsFilePaths.push(relativePath);
-
-        if (
-          targetFunctionName === TargetFunction.DefineSettingsFrontComponent
-        ) {
-          settingsFrontComponentUniversalIdentifiers.push(
-            extract.config.universalIdentifier,
-          );
-        }
 
         break;
       }
@@ -609,10 +609,6 @@ export const buildManifest = async (
     errors.push('Only one uninstall logic function is allowed per application');
   }
 
-  if (settingsFrontComponentUniversalIdentifiers.length > 1) {
-    errors.push('Only one settings front component is allowed per application');
-  }
-
   if (applicationRoleUniversalIdentifiers.length > 1) {
     errors.push('Only one defineApplicationRole is allowed per application');
   }
@@ -669,14 +665,6 @@ export const buildManifest = async (
               : {}),
             ...(uninstallLogicFunctions.length >= 1
               ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
-              : {}),
-            ...(settingsFrontComponentUniversalIdentifiers.length >= 1
-              ? {
-                  settingsFrontComponent: {
-                    universalIdentifier:
-                      settingsFrontComponentUniversalIdentifiers[0],
-                  },
-                }
               : {}),
             ...(isDefined(sharedDependencies)
               ? { frontComponentSharedDependencies: sharedDependencies }

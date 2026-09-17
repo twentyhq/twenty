@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type Manifest,
+  sortFrontComponentSettingsTabs,
+} from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -318,15 +321,23 @@ export class ApplicationManifestMigrationService {
       }
     }
 
-    const settingsFrontComponentUniversalIdentifier =
-      manifest.application.settingsFrontComponent?.universalIdentifier;
+    // The application FK only holds one component: until the settings page
+    // reads the tabs off the front components themselves, it points at the
+    // first one so a single-tab app keeps rendering.
+    const [firstSettingsFrontComponentManifest] =
+      sortFrontComponentSettingsTabs(
+        manifest.frontComponents.filter(({ settingsTab }) =>
+          isDefined(settingsTab),
+        ),
+      );
 
     const settingsCustomTabFrontComponentId = isDefined(
-      settingsFrontComponentUniversalIdentifier,
+      firstSettingsFrontComponentManifest,
     )
       ? resolveApplicationReferenceIdOrThrow({
           flatEntityMaps: refreshedFlatFrontComponentMaps,
-          universalIdentifier: settingsFrontComponentUniversalIdentifier,
+          universalIdentifier:
+            firstSettingsFrontComponentManifest.universalIdentifier,
           referenceLabel: 'settings front component',
           exceptionCode: ApplicationExceptionCode.ENTITY_NOT_FOUND,
         })

@@ -36,11 +36,16 @@ export type ApplicationManifest = SyncableEntityOptions & {
   postInstallLogicFunction?: PostInstallLogicFunctionApplicationManifest;
   preInstallLogicFunction?: PreInstallLogicFunctionApplicationManifest;
   uninstallLogicFunction?: UninstallLogicFunctionApplicationManifest;
+  /**
+   * @deprecated Declare the tab on the front component itself with
+   * `defineSettingsFrontComponent()`, which sets `settingsTab` on its
+   * `frontComponents` manifest entry. This property is ignored.
+   */
   settingsFrontComponent?: SettingsFrontComponentApplicationManifest;
   frontComponentSharedDependencies?: FrontComponentSharedDependenciesManifest;
   /**
-   * @deprecated Use `defineSettingsFrontComponent()` (exposed on the manifest
-   * as `settingsFrontComponent`) instead. This property is ignored.
+   * @deprecated Use `defineSettingsFrontComponent()`, which sets `settingsTab`
+   * on its `frontComponents` manifest entry. This property is ignored.
    */
   settingsCustomTabFrontComponentUniversalIdentifier?: string;
   packageJsonChecksum: string | null;

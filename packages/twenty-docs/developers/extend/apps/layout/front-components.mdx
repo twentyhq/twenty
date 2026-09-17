@@ -16,13 +16,13 @@ Front components can render in three locations within Twenty:
 
 - **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
 - **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
-- **App settings** — Defined with [`defineSettingsFrontComponent()`](#custom-settings-component), the front component renders as a section inside the app's **Settings** tab, in place of the default variable configuration UI.
+- **App settings** — Defined with [`defineSettingsFrontComponent()`](#custom-settings-tabs), the front component renders as its own tab in the app's settings page.
 
 A front component on its own isn't reachable from the UI — you need to *surface* it. The three ways to do that are:
 
 - **Pair it with a [command menu item](/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
 - **Embed it as a widget in a [page layout](/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
-- **Define it with [`defineSettingsFrontComponent()`](#custom-settings-component)** — renders it as a section inside the app's **Settings** tab, in place of the default variable configuration UI.
+- **Define it with [`defineSettingsFrontComponent()`](#custom-settings-tabs)** — renders it as its own tab in the app's settings page.
 
 ## Basic example
 
@@ -83,11 +83,11 @@ Click it to render the component inline.
 
 Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See [Page Layouts](/developers/extend/apps/layout/page-layouts) for details.
 
-## Custom settings component
+## Custom settings tabs
 
-To replace the auto-generated variable configuration UI in your app's **Settings** tab with your own component, define it with `defineSettingsFrontComponent` instead of `defineFrontComponent`. It takes the same [configuration fields](#configuration-fields) (except `isHeadless`, which is not accepted since a settings component always renders visible UI) and additionally marks the component as the app's settings UI.
+Your app's settings page opens on a **General** tab holding the settings every app shares — auto-upgrade, App URL and connections. Those are system-managed and an app cannot override them.
 
-The component renders as a section **inside** the Settings tab, not as a replacement for the whole tab. Twenty's system-managed sections — auto-upgrade, App URL, and connections — always render above it and cannot be overridden by the app.
+Every other tab comes from your app. To add one, define a front component with `defineSettingsFrontComponent` instead of `defineFrontComponent`. It takes the same [configuration fields](#configuration-fields) (except `isHeadless`, which is not accepted since a settings tab always renders visible UI), plus an optional `tab` object describing how the tab is presented.
 
 ```tsx src/front-components/app-settings.tsx
 import { defineSettingsFrontComponent } from 'twenty-sdk/define';
@@ -104,12 +104,33 @@ const AppSettings = () => {
 export default defineSettingsFrontComponent({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   name: 'app-settings',
-  description: "Custom UI for the app's Settings tab",
+  description: "Custom UI for the app's settings page",
   component: AppSettings,
+  tab: {
+    label: 'Sync',
+    icon: 'IconRefresh',
+    position: 1,
+  },
 });
 ```
 
-Only one settings front component is allowed per app; declaring more than one fails the build. When present, the app's **Settings** tab renders this component in place of the default variable configuration UI.
+### Tab fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `tab.label` | No | Tab title. Defaults to the component's `name` |
+| `tab.icon` | No | Icon name, for example `IconRefresh`. An unknown name falls back to a default icon |
+| `tab.position` | No | Sort key among your app's tabs. Defaults to `0`; may be negative |
+
+### Ordering
+
+Declare as many settings tabs as you need. They render after **General**, sorted by ascending `position`; tabs sharing a position fall back to their `universalIdentifier` in alphabetical order, so the order is stable across syncs.
+
+### Application variables
+
+An app that declares no settings tab of its own gets a generated **Variables** tab holding its [application variables](/developers/extend/apps/config/application). An app with no variables either shows only the **General** tab content, with no tab bar at all.
+
+A settings tab lays out its own configuration UI, so declaring one replaces that generated tab — read and write your variables from your component instead.
 
 ## Headless vs non-headless
 

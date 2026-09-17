@@ -59,4 +59,54 @@ describe('defineSettingsFrontComponent', () => {
       'Settings front component component must be a React component',
     );
   });
+
+  it('should accept a tab declaration', () => {
+    const config = {
+      ...validConfig,
+      tab: { label: 'Billing', icon: 'IconCreditCard', position: 2 },
+    };
+
+    const result = defineSettingsFrontComponent(config);
+
+    expect(result.success).toBe(true);
+    expect(result.config.tab).toEqual({
+      label: 'Billing',
+      icon: 'IconCreditCard',
+      position: 2,
+    });
+  });
+
+  it('should return error when tab position is not an integer', () => {
+    const result = defineSettingsFrontComponent({
+      ...validConfig,
+      tab: { position: 1.5 },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Settings front component tab position must be an integer',
+    );
+  });
+
+  it('should return error when tab label is blank', () => {
+    const result = defineSettingsFrontComponent({
+      ...validConfig,
+      tab: { label: '  ' },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Settings front component tab label must not be empty',
+    );
+  });
+
+  it('should accept a negative tab position', () => {
+    const result = defineSettingsFrontComponent({
+      ...validConfig,
+      tab: { position: -1 },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
 });

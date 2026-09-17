@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FrontComponentExceptionCode } from 'src/engine/metadata-modules/front-component/front-component.exception';
+import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -67,6 +68,10 @@ export class FlatFrontComponentValidatorService {
         });
       }
     }
+
+    validationResult.errors.push(
+      ...this.getSettingsTabValidationErrors(flatFrontComponent.settingsTab),
+    );
 
     return validationResult;
   }
@@ -168,6 +173,43 @@ export class FlatFrontComponentValidatorService {
       }
     }
 
+    if (isDefined(flatEntityUpdate.settingsTab)) {
+      validationResult.errors.push(
+        ...this.getSettingsTabValidationErrors(flatEntityUpdate.settingsTab),
+      );
+    }
+
     return validationResult;
+  }
+
+  private getSettingsTabValidationErrors(
+    settingsTab: FlatFrontComponent['settingsTab'],
+  ) {
+    if (!isDefined(settingsTab)) {
+      return [];
+    }
+
+    const errors = [];
+
+    if (
+      isDefined(settingsTab.position) &&
+      !Number.isInteger(settingsTab.position)
+    ) {
+      errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Settings tab position must be an integer`,
+        userFriendlyMessage: msg`Settings tab position must be an integer`,
+      });
+    }
+
+    if (isDefined(settingsTab.label) && !isNonEmptyString(settingsTab.label)) {
+      errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Settings tab label must not be empty`,
+        userFriendlyMessage: msg`Settings tab label must not be empty`,
+      });
+    }
+
+    return errors;
   }
 }

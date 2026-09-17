@@ -166,7 +166,6 @@ const frontComponent: FlatFrontComponent = {
       componentName: 'PetCard',
     },
     applicationUniversalIdentifier: APP_UID,
-    isSettingsFrontComponent: false,
     now: NOW,
   }),
   id: `${FRONT_COMPONENT_UID}-id`,

@@ -139,6 +139,7 @@ export type {
   CommandMenuItemManifest,
   FrontComponentManifest,
 } from './frontComponentManifestType';
+export type { FrontComponentSettingsTabManifest } from './frontComponentSettingsTabType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
@@ -208,6 +209,10 @@ export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
+export {
+  DEFAULT_FRONT_COMPONENT_SETTINGS_TAB_POSITION,
+  sortFrontComponentSettingsTabs,
+} from './utils/sortFrontComponentSettingsTabs';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

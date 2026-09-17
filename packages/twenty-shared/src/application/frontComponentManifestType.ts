@@ -1,3 +1,4 @@
+import { type FrontComponentSettingsTabManifest } from '@/application/frontComponentSettingsTabType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type CommandMenuItemAvailabilityType } from '@/types';
 
@@ -24,4 +25,5 @@ export type FrontComponentManifest = {
   componentName: string;
   isHeadless?: boolean;
   usesSdkClient?: boolean;
+  settingsTab?: FrontComponentSettingsTabManifest;
 };

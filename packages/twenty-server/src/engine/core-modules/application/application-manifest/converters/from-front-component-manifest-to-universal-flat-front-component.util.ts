@@ -1,18 +1,19 @@
 import { type FrontComponentManifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
 
 export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
   frontComponentManifest,
   applicationUniversalIdentifier,
-  isSettingsFrontComponent,
   now,
 }: {
   frontComponentManifest: FrontComponentManifest;
   applicationUniversalIdentifier: string;
-  isSettingsFrontComponent: boolean;
   now: string;
 }): UniversalFlatFrontComponent => {
+  const settingsTab = frontComponentManifest.settingsTab ?? null;
+
   return {
     universalIdentifier: frontComponentManifest.universalIdentifier,
     applicationUniversalIdentifier,
@@ -23,10 +24,11 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
     componentName: frontComponentManifest.componentName,
     builtComponentChecksum: frontComponentManifest.builtComponentChecksum,
     // A settings front component always renders visible UI.
-    isHeadless: isSettingsFrontComponent
+    isHeadless: isDefined(settingsTab)
       ? false
       : (frontComponentManifest.isHeadless ?? false),
     usesSdkClient: frontComponentManifest.usesSdkClient ?? false,
+    settingsTab,
     createdAt: now,
     updatedAt: now,
   };
