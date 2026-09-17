@@ -340,6 +340,7 @@ export class StreamAgentChatJob {
             ),
           },
           workspaceId: data.workspaceId,
+          authorUserWorkspaceId: data.userWorkspaceId,
         });
 
     userMessagePromise.catch(() => {});

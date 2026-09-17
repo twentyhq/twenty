@@ -12,16 +12,25 @@ type SeedRow = {
   threadId?: string;
   turnId?: string;
   messageId?: string;
+  role?: string;
+  userWorkspaceId?: string;
+  authorUserWorkspaceId?: string | null;
   createdAt: Date;
 };
 
 describe('seedAgents', () => {
   it.each([
-    [SEED_APPLE_WORKSPACE_ID, 3, 22, 11],
-    [SEED_YCOMBINATOR_WORKSPACE_ID, 1, 4, 2],
+    [SEED_APPLE_WORKSPACE_ID, 3, 24, 12, 5],
+    [SEED_YCOMBINATOR_WORKSPACE_ID, 1, 4, 2, 1],
   ])(
     'keeps messages, turns, and parts in their owning conversation for %s',
-    async (workspaceId, threadCount, messageCount, turnCount) => {
+    async (
+      workspaceId,
+      threadCount,
+      messageCount,
+      turnCount,
+      participantCount,
+    ) => {
       const tables = new Map<string, SeedRow[]>();
       let tableName: string;
       const queryBuilder = {
@@ -65,11 +74,35 @@ describe('seedAgents', () => {
       const turns = tables.get('core.agentTurn') ?? [];
       const messages = tables.get('core.agentMessage') ?? [];
       const parts = tables.get('core.agentMessagePart') ?? [];
+      const participants = tables.get('core.agentChatThreadParticipant') ?? [];
 
       expect(threads).toHaveLength(threadCount);
       expect(messages).toHaveLength(messageCount);
       expect(parts).toHaveLength(messageCount);
       expect(turns).toHaveLength(turnCount);
+      expect(participants).toHaveLength(participantCount);
+      for (const thread of threads) {
+        expect(participants).toContainEqual(
+          expect.objectContaining({
+            threadId: thread.id,
+            userWorkspaceId: threads[0].userWorkspaceId,
+            role: 'owner',
+            workspaceId,
+          }),
+        );
+      }
+      for (const message of messages) {
+        if (message.role === 'user') {
+          expect(participants).toContainEqual(
+            expect.objectContaining({
+              threadId: message.threadId,
+              userWorkspaceId: message.authorUserWorkspaceId,
+            }),
+          );
+        } else {
+          expect(message.authorUserWorkspaceId).toBeNull();
+        }
+      }
       expect(queryBuilder.where).toHaveBeenCalledWith(
         'id = :threadId AND "workspaceId" = :workspaceId',
         { threadId: threads[0].id, workspaceId },

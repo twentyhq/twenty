@@ -17,6 +17,7 @@ import { nullableBigintColumnTransformer } from 'src/engine/core-modules/usage-l
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
+import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread-participant.entity';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
@@ -110,6 +111,12 @@ export class AgentChatThreadEntity {
 
   @OneToMany(() => AgentMessageEntity, (message) => message.thread)
   messages: EntityRelation<AgentMessageEntity[]>;
+
+  @OneToMany(
+    () => AgentChatThreadParticipantEntity,
+    (participant) => participant.thread,
+  )
+  participants: EntityRelation<AgentChatThreadParticipantEntity[]>;
 
   @Column({ type: 'timestamptz', nullable: true })
   deletedAt: Date | null;

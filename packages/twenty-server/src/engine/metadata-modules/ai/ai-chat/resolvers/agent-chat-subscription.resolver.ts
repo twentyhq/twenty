@@ -52,7 +52,7 @@ export class AgentChatSubscriptionResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, userWorkspaceId },
+      where: { id: threadId, participants: { userWorkspaceId } },
       select: ['id'],
     });
 

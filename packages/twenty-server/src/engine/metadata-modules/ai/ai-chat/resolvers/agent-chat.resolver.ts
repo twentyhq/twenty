@@ -25,6 +25,7 @@ import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatQuestionAnswerInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-question-answer.input';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
+import { AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { FileAttachmentInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/file-attachment.input';
 import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
 import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-stream-catchup-chunks.dto';
@@ -32,6 +33,7 @@ import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
@@ -61,6 +63,7 @@ export class AgentChatResolver {
   constructor(
     private readonly agentChatService: AgentChatService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
+    private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
     private readonly aiBillingService: AiBillingService,
@@ -102,6 +105,51 @@ export class AgentChatResolver {
   ) {
     return this.agentChatService.getMessagesForThread({
       threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Query(() => [AgentChatThreadParticipantDTO])
+  async chatThreadParticipants(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    return this.agentChatThreadParticipantService.getParticipantsForThread({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadParticipantDTO)
+  async addChatThreadParticipant(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @Args('userWorkspaceId', { type: () => UUIDScalarType })
+    userWorkspaceId: string,
+    @AuthUserWorkspaceId() actorUserWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    return this.agentChatThreadParticipantService.addParticipant({
+      threadId,
+      actorUserWorkspaceId,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => Boolean)
+  async removeChatThreadParticipant(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @Args('userWorkspaceId', { type: () => UUIDScalarType })
+    userWorkspaceId: string,
+    @AuthUserWorkspaceId() actorUserWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<boolean> {
+    return this.agentChatThreadParticipantService.removeParticipant({
+      threadId,
+      actorUserWorkspaceId,
       userWorkspaceId,
       workspaceId,
     });
@@ -194,7 +242,7 @@ export class AgentChatResolver {
     });
 
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, userWorkspaceId },
+      where: { id: threadId, participants: { userWorkspaceId } },
     });
 
     if (!isDefined(thread)) {
@@ -365,7 +413,7 @@ export class AgentChatResolver {
     });
 
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, userWorkspaceId },
+      where: { id: threadId, participants: { userWorkspaceId } },
     });
 
     if (!isDefined(thread)) {
@@ -405,7 +453,7 @@ export class AgentChatResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId, userWorkspaceId },
+      where: { id: threadId, participants: { userWorkspaceId } },
     });
 
     if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
@@ -421,7 +469,7 @@ export class AgentChatResolver {
 
     await this.threadRepository.update(
       workspaceId,
-      { id: threadId, userWorkspaceId, activeStreamId: thread.activeStreamId },
+      { id: threadId, activeStreamId: thread.activeStreamId },
       { activeStreamId: null },
     );
 
@@ -494,7 +542,7 @@ export class AgentChatResolver {
     workspaceId: string,
   ): Promise<void> {
     const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId, userWorkspaceId },
+      where: { id: threadId, participants: { userWorkspaceId } },
     });
 
     if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
@@ -528,7 +576,7 @@ export class AgentChatResolver {
     }
 
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: message.threadId, userWorkspaceId },
+      where: { id: message.threadId, participants: { userWorkspaceId } },
     });
 
     if (!isDefined(thread)) {

@@ -6,6 +6,7 @@ export type AgentChatSubscriptionEvent =
   | { type: 'message-persisted'; messageId: string }
   | { type: 'queue-updated' }
   | { type: 'question-answered' }
+  | { type: 'participants-updated' }
   | { type: 'stream-error'; code: string; message: string }
   | { type: 'credits-exhausted' }
   | { type: 'keepalive' };

@@ -9,6 +9,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
+import { AiChatThreadParticipants } from '@/ai/components/AiChatThreadParticipants';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
@@ -101,6 +102,7 @@ export const AiChatPageThreadHeader = ({
         )}
       </StyledTitle>
       <StyledActions>
+        <AiChatThreadParticipants threadId={thread.id} />
         {hasConversation && (
           <Button
             startIcon={<IconPlus />}

@@ -77,6 +77,7 @@ import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-cha
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
+import { injectMessageAuthors } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-authors.util';
 import {
   getCacheProviderOptions,
   getCallLevelProviderOptions,
@@ -94,6 +95,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 
@@ -135,6 +137,7 @@ export class ChatExecutionService {
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly messagePruningService: MessagePruningService,
     private readonly metricsService: MetricsService,
+    private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
   ) {}
 
   async streamChat({
@@ -348,6 +351,17 @@ export class ChatExecutionService {
       userContext.timezone,
     );
 
+    const threadParticipants = isDefined(threadId)
+      ? await this.agentChatThreadParticipantService.getParticipantDisplayNames(
+          { threadId, workspaceId: workspace.id },
+        )
+      : [];
+
+    processedMessages = injectMessageAuthors(
+      processedMessages,
+      threadParticipants,
+    );
+
     const systemPrompt = buildFullSystemPrompt({
       toolCatalog,
       skillCatalog,
@@ -359,6 +373,7 @@ export class ChatExecutionService {
       },
       workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
       userContext,
+      threadParticipants,
       isWorkspaceSetupThread,
     });
 

@@ -12,8 +12,10 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
 
 const agentChatThreadTableName = 'agentChatThread';
+const agentChatThreadParticipantTableName = 'agentChatThreadParticipant';
 const agentTurnTableName = 'agentTurn';
 const agentMessageTableName = 'agentMessage';
 const agentMessagePartTableName = 'agentMessagePart';
@@ -135,7 +137,82 @@ const seedChatThreads = async ({
       .execute();
   }
 
-  return threadId;
+  await seedChatThreadParticipants({
+    queryRunner,
+    schemaName,
+    workspaceId,
+    ownerUserWorkspaceId: userWorkspaceId,
+    ownedThreadIds:
+      workspaceId === SEED_APPLE_WORKSPACE_ID
+        ? [
+            threadId,
+            AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_IMPORT_THREAD,
+            AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_FOLLOW_UP_THREAD,
+          ]
+        : [threadId],
+    now,
+  });
+
+  return { threadId, ownerUserWorkspaceId: userWorkspaceId };
+};
+
+type SeedChatThreadParticipantsArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+  ownerUserWorkspaceId: string;
+  ownedThreadIds: string[];
+  now: Date;
+};
+
+// Every thread has its creator as owner; the Apple follow-up thread is also
+// shared with two members so the dev workspace shows a collaborative thread.
+const seedChatThreadParticipants = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+  ownerUserWorkspaceId,
+  ownedThreadIds,
+  now,
+}: SeedChatThreadParticipantsArgs) => {
+  const ownerParticipants = ownedThreadIds.map((ownedThreadId) => ({
+    threadId: ownedThreadId,
+    userWorkspaceId: ownerUserWorkspaceId,
+    role: AgentChatThreadParticipantRole.OWNER,
+  }));
+
+  const memberParticipants =
+    workspaceId === SEED_APPLE_WORKSPACE_ID
+      ? APPLE_AGENT_CHAT_CONVERSATION_SEEDS.flatMap((conversation) =>
+          (conversation.memberUserWorkspaceIds ?? []).map(
+            (memberUserWorkspaceId) => ({
+              threadId: conversation.threadId,
+              userWorkspaceId: memberUserWorkspaceId,
+              role: AgentChatThreadParticipantRole.MEMBER,
+            }),
+          ),
+        )
+      : [];
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentChatThreadParticipantTableName}`, [
+      'workspaceId',
+      'threadId',
+      'userWorkspaceId',
+      'role',
+      'createdAt',
+    ])
+    .orIgnore()
+    .values(
+      [...ownerParticipants, ...memberParticipants].map((participant) => ({
+        ...participant,
+        workspaceId,
+        createdAt: now,
+      })),
+    )
+    .execute();
 };
 
 type SeedChatMessagesArgs = {
@@ -143,6 +220,7 @@ type SeedChatMessagesArgs = {
   schemaName: string;
   workspaceId: string;
   threadId: string;
+  ownerUserWorkspaceId: string;
   chatReferenceIds: ChatReferenceIds;
 };
 
@@ -158,6 +236,7 @@ const seedChatMessages = async ({
   schemaName,
   workspaceId,
   threadId,
+  ownerUserWorkspaceId,
   chatReferenceIds,
 }: SeedChatMessagesArgs) => {
   let messageIds: string[];
@@ -168,6 +247,7 @@ const seedChatMessages = async ({
     threadId: string;
     turnId: string;
     role: AgentMessageRole;
+    authorUserWorkspaceId: string | null;
     createdAt: Date;
   }>;
   let messageParts: Array<{
@@ -200,6 +280,7 @@ const seedChatMessages = async ({
         threadId,
         turnId: turnIds[0],
         role: AgentMessageRole.USER,
+        authorUserWorkspaceId: ownerUserWorkspaceId,
         createdAt: new Date(baseTime.getTime()),
       },
       {
@@ -208,6 +289,7 @@ const seedChatMessages = async ({
         threadId,
         turnId: turnIds[0],
         role: AgentMessageRole.ASSISTANT,
+        authorUserWorkspaceId: null,
         createdAt: new Date(baseTime.getTime() + 5 * 60 * 1000),
       },
     ];
@@ -256,6 +338,7 @@ const seedChatMessages = async ({
         threadId,
         turnId: turnIds[0],
         role: AgentMessageRole.USER,
+        authorUserWorkspaceId: ownerUserWorkspaceId,
         createdAt: new Date(baseTime.getTime()),
       },
       {
@@ -264,6 +347,7 @@ const seedChatMessages = async ({
         threadId,
         turnId: turnIds[0],
         role: AgentMessageRole.ASSISTANT,
+        authorUserWorkspaceId: null,
         createdAt: new Date(baseTime.getTime() + 3 * 60 * 1000),
       },
       {
@@ -272,6 +356,7 @@ const seedChatMessages = async ({
         threadId,
         turnId: turnIds[1],
         role: AgentMessageRole.USER,
+        authorUserWorkspaceId: ownerUserWorkspaceId,
         createdAt: new Date(baseTime.getTime() + 8 * 60 * 1000),
       },
       {
@@ -280,6 +365,7 @@ const seedChatMessages = async ({
         threadId,
         turnId: turnIds[1],
         role: AgentMessageRole.ASSISTANT,
+        authorUserWorkspaceId: null,
         createdAt: new Date(baseTime.getTime() + 12 * 60 * 1000),
       },
     ];
@@ -335,8 +421,14 @@ const seedChatMessages = async ({
     let seedId = 100;
 
     for (const conversation of APPLE_AGENT_CHAT_CONVERSATION_SEEDS) {
-      for (const exchange of conversation.exchanges) {
+      for (const [
+        exchangeIndex,
+        exchange,
+      ] of conversation.exchanges.entries()) {
         const turnId = `20202020-0000-4000-8000-${String(seedId++).padStart(12, '0')}`;
+        const exchangeAuthorUserWorkspaceId =
+          conversation.exchangeAuthorUserWorkspaceIds?.[exchangeIndex] ??
+          ownerUserWorkspaceId;
 
         for (const [index, textContent] of exchange.entries()) {
           const messageId = `20202020-0000-4000-8000-${String(seedId++).padStart(12, '0')}`;
@@ -350,6 +442,8 @@ const seedChatMessages = async ({
             turnId,
             role:
               index === 0 ? AgentMessageRole.USER : AgentMessageRole.ASSISTANT,
+            authorUserWorkspaceId:
+              index === 0 ? exchangeAuthorUserWorkspaceId : null,
             createdAt,
           });
           messageParts.push({
@@ -395,6 +489,7 @@ const seedChatMessages = async ({
       'threadId',
       'turnId',
       'role',
+      'authorUserWorkspaceId',
       'createdAt',
     ])
     .orIgnore()
@@ -431,7 +526,7 @@ export const seedAgents = async ({
   workspaceId,
   chatReferenceIds,
 }: SeedAgentsArgs) => {
-  const threadId = await seedChatThreads({
+  const { threadId, ownerUserWorkspaceId } = await seedChatThreads({
     queryRunner,
     schemaName,
     workspaceId,
@@ -442,6 +537,7 @@ export const seedAgents = async ({
     schemaName,
     workspaceId,
     threadId,
+    ownerUserWorkspaceId,
     chatReferenceIds,
   });
 };

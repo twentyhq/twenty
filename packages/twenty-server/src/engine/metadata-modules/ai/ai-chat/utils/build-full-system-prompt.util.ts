@@ -4,6 +4,8 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
 import { type UserContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { type AgentChatThreadParticipantDisplayName } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { buildThreadParticipantsSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-participants-section.util';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
 import { WORKSPACE_SETUP_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-system-prompt.constant';
 import {
@@ -25,6 +27,7 @@ export const buildFullSystemPrompt = ({
   uploadedFilesContext,
   workspaceInstructions,
   userContext,
+  threadParticipants = [],
   isWorkspaceSetupThread,
 }: {
   toolCatalog: ToolIndexEntry[];
@@ -37,6 +40,7 @@ export const buildFullSystemPrompt = ({
   };
   workspaceInstructions?: string;
   userContext?: UserContext;
+  threadParticipants?: AgentChatThreadParticipantDisplayName[];
   isWorkspaceSetupThread?: boolean;
 }): string => {
   const parts: string[] = isWorkspaceSetupThread
@@ -59,6 +63,13 @@ export const buildFullSystemPrompt = ({
 
   if (userContext) {
     parts.push(buildUserContextSection(userContext));
+  }
+
+  const threadParticipantsSection =
+    buildThreadParticipantsSection(threadParticipants);
+
+  if (isNonEmptyString(threadParticipantsSection)) {
+    parts.push(threadParticipantsSection);
   }
 
   parts.push(buildToolCatalogSection(toolCatalog, preloadedTools));

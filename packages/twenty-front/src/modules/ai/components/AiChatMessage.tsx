@@ -5,6 +5,7 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
+import { AiChatMessageAuthor } from '@/ai/components/AiChatMessageAuthor';
 import { agentChatMessageComponentFamilySelector } from '@/ai/states/selectors/agentChatMessageComponentFamilySelector';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
@@ -170,6 +171,13 @@ export const AiChatMessage = ({
 
   return (
     <StyledMessageBubble isUser={isUser}>
+      {isUser && (
+        <AiChatMessageAuthor
+          authorUserWorkspaceId={
+            agentChatMessage.metadata?.authorUserWorkspaceId
+          }
+        />
+      )}
       <StyledMessageContainer isUser={isUser}>
         <StyledMessageText isUser={isUser}>
           <AiChatAssistantMessageRenderer

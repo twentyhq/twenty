@@ -173,6 +173,7 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
       },
       turnId: 'turn-id',
       workspaceId: 'workspace-id',
+      authorUserWorkspaceId: 'user-workspace-id',
     });
     expect(
       agentChatService.addMessage.mock.invocationCallOrder[0],

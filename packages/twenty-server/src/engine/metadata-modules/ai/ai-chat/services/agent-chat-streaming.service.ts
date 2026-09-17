@@ -174,7 +174,7 @@ export class AgentChatStreamingService {
     const thread = await this.threadRepository.findOne(workspace.id, {
       where: {
         id: threadId,
-        userWorkspaceId,
+        participants: { userWorkspaceId },
       },
     });
 
@@ -242,6 +242,7 @@ export class AgentChatStreamingService {
           parts: userMessageParts,
         },
         workspaceId: workspace.id,
+        authorUserWorkspaceId: userWorkspaceId,
       });
 
       await this.agentChatService.notifyThreadActivityUpdated({
@@ -413,7 +414,7 @@ export class AgentChatStreamingService {
     modelId?: string;
   }): Promise<{ streamId: string; messageId: string; turnId: string }> {
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, userWorkspaceId },
+      where: { id: threadId, participants: { userWorkspaceId } },
     });
 
     if (!thread) {
@@ -594,6 +595,7 @@ export class AgentChatStreamingService {
           },
           turnId: resolved.turnId ?? undefined,
           workspaceId: workspace.id,
+          authorUserWorkspaceId: userWorkspaceId,
         });
 
         attachmentMessageId = attachmentMessage.id;
@@ -887,7 +889,12 @@ export class AgentChatStreamingService {
         // insert time is meaningless and later than the first real message it sorts before.
         ...(message.isHidden
           ? {}
-          : { metadata: { createdAt: message.createdAt.toISOString() } }),
+          : {
+              metadata: {
+                createdAt: message.createdAt.toISOString(),
+                authorUserWorkspaceId: message.authorUserWorkspaceId,
+              },
+            }),
       })),
     );
   }

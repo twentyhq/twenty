@@ -14,6 +14,7 @@ export const mapDBMessagesToUIMessages = (
       .map(mapDBPartToUIMessagePart),
     metadata: {
       createdAt: dbMessage.createdAt,
+      authorUserWorkspaceId: dbMessage.authorUserWorkspaceId,
     },
     threadId: dbMessage.threadId,
   }));

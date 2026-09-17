@@ -19,6 +19,9 @@ export class AgentMessageDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   agentId: string | null;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  authorUserWorkspaceId: string | null;
+
   @Field()
   role: 'system' | 'user' | 'assistant';
 

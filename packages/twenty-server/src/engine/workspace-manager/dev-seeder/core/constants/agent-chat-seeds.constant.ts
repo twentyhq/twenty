@@ -1,3 +1,5 @@
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+
 export const AGENT_CHAT_THREAD_DATA_SEED_IDS = {
   APPLE_DEFAULT_THREAD: '20202020-0000-4000-8000-000000000011',
   APPLE_IMPORT_THREAD: '20202020-0000-4000-8000-000000000013',
@@ -8,6 +10,10 @@ export const AGENT_CHAT_THREAD_DATA_SEED_IDS = {
 type AgentChatConversationSeed = {
   threadId: string;
   exchanges: [string, string][];
+  // Members invited by the thread owner; the owner is always a participant.
+  memberUserWorkspaceIds?: string[];
+  // Author of the user message of an exchange, by exchange index. Defaults to the owner.
+  exchangeAuthorUserWorkspaceIds?: Record<number, string>;
 };
 
 export const APPLE_AGENT_CHAT_CONVERSATION_SEEDS: AgentChatConversationSeed[] =
@@ -51,6 +57,14 @@ export const APPLE_AGENT_CHAT_CONVERSATION_SEEDS: AgentChatConversationSeed[] =
     },
     {
       threadId: AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_FOLLOW_UP_THREAD,
+      memberUserWorkspaceIds: [
+        USER_WORKSPACE_DATA_SEED_IDS.JONY,
+        USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+      ],
+      exchangeAuthorUserWorkspaceIds: {
+        1: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+        2: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+      },
       exchanges: [
         [
           'Help me plan customer follow-ups for this week.',
@@ -59,6 +73,10 @@ export const APPLE_AGENT_CHAT_CONVERSATION_SEEDS: AgentChatConversationSeed[] =
         [
           'Draft a short follow-up I can personalize.',
           'Hi [Name],\n\nThanks for our conversation. I’m following up on [topic] and would love to hear your thoughts. Would [day] work for a quick check-in?\n\nBest,\nTim\n\nThis is a draft for review; no message has been sent.',
+        ],
+        [
+          'Can you add a short note on which accounts Tim and Jony each own so we split the follow-ups?',
+          'Sure. Tim owns the renewals due this month, Jony owns the open product questions, and Phil covers the accounts without a recent meeting. Each person can take the follow-ups in their column and tick them off here.',
         ],
       ],
     },
