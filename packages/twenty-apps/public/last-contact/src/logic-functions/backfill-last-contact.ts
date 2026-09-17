@@ -28,7 +28,7 @@ const handler = async ({
 newVersion
 }: InstallPayload): Promise<object> => {
 
-  if(shouldRunPostInstall({
+  if(!shouldRunPostInstall({
     previousVersion,
     newVersion
   })) {
