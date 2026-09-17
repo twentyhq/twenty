@@ -8,10 +8,17 @@ export const normalizeDocumentationPropType = ({
   required: boolean;
 }): string => {
   if (type.name === 'enum' && type.value !== undefined) {
-    return type.value
+    const values = type.value
       .map((option) => option.value)
-      .filter((value) => required || value !== 'undefined')
-      .join(' | ');
+      .filter((value) => required || value !== 'undefined');
+    const hasOnlyNumericValues = values.every((value) =>
+      Number.isFinite(Number(value)),
+    );
+    const orderedValues = hasOnlyNumericValues
+      ? values.sort((left, right) => Number(left) - Number(right))
+      : values;
+
+    return orderedValues.join(' | ');
   }
 
   if (!required && type.name.endsWith(OPTIONAL_UNDEFINED_SUFFIX)) {

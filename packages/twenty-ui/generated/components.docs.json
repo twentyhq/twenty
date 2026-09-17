@@ -2919,7 +2919,7 @@
           },
           {
             "name": "level",
-            "type": "1 | 5 | 2 | 3 | 4 | 6",
+            "type": "1 | 2 | 3 | 4 | 5 | 6",
             "required": false,
             "defaultValue": "2",
             "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
@@ -5764,7 +5764,7 @@
       },
       {
         "name": "level",
-        "type": "1 | 5 | 2 | 3 | 4 | 6",
+        "type": "1 | 2 | 3 | 4 | 5 | 6",
         "required": false,
         "defaultValue": "2",
         "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
@@ -5857,7 +5857,7 @@
           },
           {
             "name": "level",
-            "type": "1 | 5 | 2 | 3 | 4 | 6",
+            "type": "1 | 2 | 3 | 4 | 5 | 6",
             "required": false,
             "defaultValue": "2",
             "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
