@@ -58,7 +58,10 @@ export const AiChatChannelMenu = ({
   surface,
 }: AiChatChannelMenuProps) => {
   const { t } = useLingui();
-  const dropdownId = getAiChatChannelMenuDropdownId({ channelId: channel.id, surface: surface });
+  const dropdownId = getAiChatChannelMenuDropdownId({
+    channelId: channel.id,
+    surface: surface,
+  });
   const { closeDropdown } = useCloseDropdown();
   const { openDialog } = useDialog();
   const [page, setPage] = useState<AiChatChannelMenuPage>(

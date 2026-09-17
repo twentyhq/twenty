@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider, createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { StepStatus } from 'twenty-shared/workflow';
 
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { WorkflowRunStepConversation } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepConversation';
@@ -43,7 +44,7 @@ const RUN_THREAD: AgentChatThread = {
 
 const renderWithThreads = (
   threads: AgentChatThread[],
-  stepExecutionStatus: 'PENDING' | 'SUCCESS',
+  stepExecutionStatus: StepStatus,
 ) => {
   const store = createStore();
 
@@ -74,14 +75,16 @@ describe('WorkflowRunStepConversation', () => {
 
   it('opens the conversation of a finished step', async () => {
     const user = userEvent.setup();
-    renderWithThreads([RUN_THREAD], 'SUCCESS');
+    renderWithThreads([RUN_THREAD], StepStatus.SUCCESS);
 
     await user.click(screen.getByRole('button', { name: 'Open conversation' }));
-    expect(navigateToAiChatPage).toHaveBeenCalledWith({ threadId: 'thread-id' });
+    expect(navigateToAiChatPage).toHaveBeenCalledWith({
+      threadId: 'thread-id',
+    });
   });
 
   it('tells the reader the run waits on an answer', () => {
-    renderWithThreads([RUN_THREAD], 'PENDING');
+    renderWithThreads([RUN_THREAD], StepStatus.PENDING);
 
     expect(
       screen.getByText(
@@ -94,7 +97,10 @@ describe('WorkflowRunStepConversation', () => {
   });
 
   it('shows nothing for a step without a conversation', () => {
-    renderWithThreads([{ ...RUN_THREAD, workflowStepId: 'other-step' }], 'SUCCESS');
+    renderWithThreads(
+      [{ ...RUN_THREAD, workflowStepId: 'other-step' }],
+      StepStatus.SUCCESS,
+    );
 
     expect(screen.queryByRole('button')).toBeNull();
   });

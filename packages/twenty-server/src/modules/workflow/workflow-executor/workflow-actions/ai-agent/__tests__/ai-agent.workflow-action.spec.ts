@@ -51,11 +51,15 @@ const buildAction = ({
   const workflowRunStepLogService = { setStepLog: jest.fn() };
   const agentRepository = { findOne: jest.fn() };
   const workflowRunWorkspaceService = {
-    getWorkflowRun: jest.fn().mockResolvedValue({ name: '#3 - Lead qualification' }),
+    getWorkflowRun: jest
+      .fn()
+      .mockResolvedValue({ name: '#3 - Lead qualification' }),
   };
   const agentRunThreadService = {
     findRunThread: jest.fn().mockResolvedValue(existingThread),
-    resolveOwnerUserWorkspaceId: jest.fn().mockResolvedValue('user-workspace-id'),
+    resolveOwnerUserWorkspaceId: jest
+      .fn()
+      .mockResolvedValue('user-workspace-id'),
     openRunThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
     loadTranscript: jest
       .fn()

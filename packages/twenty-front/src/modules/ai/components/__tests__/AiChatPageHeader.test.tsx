@@ -143,7 +143,7 @@ describe('AiChatPageHeader', () => {
     await user.click(chip);
     expect(mockNavigate).toHaveBeenCalledWith(
       `/object/workflowRun/${runThread.workflowRunId}`,
-      expect.anything(),
+      undefined,
     );
   });
 

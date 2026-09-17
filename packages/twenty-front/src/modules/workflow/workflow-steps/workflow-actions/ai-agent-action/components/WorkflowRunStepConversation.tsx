@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomValue } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
+import { StepStatus } from 'twenty-shared/workflow';
 import { IconMessage } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -57,7 +58,7 @@ export const WorkflowRunStepConversation = ({
     return null;
   }
 
-  const isWaitingForAnswer = stepExecutionStatus === 'PENDING';
+  const isWaitingForAnswer = stepExecutionStatus === StepStatus.PENDING;
 
   return (
     <StyledCard>
@@ -68,9 +69,13 @@ export const WorkflowRunStepConversation = ({
       </StyledText>
       <Button
         startIcon={<IconMessage />}
-        title={isWaitingForAnswer ? t`Answer in the conversation` : t`Open conversation`}
-        variant="secondary"
-        size="small"
+        title={
+          isWaitingForAnswer
+            ? t`Answer in the conversation`
+            : t`Open conversation`
+        }
+        variant="outline"
+        size="sm"
         onClick={() => navigateToAiChatPage({ threadId: runThread.id })}
       />
     </StyledCard>

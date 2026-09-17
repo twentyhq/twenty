@@ -50,7 +50,10 @@ export const AiChatThreadItemMenu = ({
   clickableComponent,
 }: AiChatThreadItemMenuProps) => {
   const { t } = useLingui();
-  const dropdownId = getAiChatThreadItemMenuDropdownId({ threadId: threadId, surface: surface });
+  const dropdownId = getAiChatThreadItemMenuDropdownId({
+    threadId: threadId,
+    surface: surface,
+  });
   const { closeDropdown } = useCloseDropdown();
   const { openDialog } = useDialog();
   const [page, setPage] = useState<AiChatThreadItemMenuPage>(

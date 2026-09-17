@@ -402,10 +402,11 @@ export class AgentAsyncExecutorService {
         tools,
         model: registeredModel.model,
         messages: modelMessages,
-        stopWhen: (step) =>
-          isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
-          pauseOnToolNames.some((toolName) => hasToolCall(toolName)(step)) ||
-          hasNoMoreAvailableCredits,
+        stopWhen: [
+          isStepCount(AGENT_CONFIG.MAX_STEPS),
+          ...pauseOnToolNames.map((toolName) => hasToolCall(toolName)),
+          () => hasNoMoreAvailableCredits,
+        ],
         providerOptions,
         ...buildAiTelemetry({
           functionId: 'agent-execution',

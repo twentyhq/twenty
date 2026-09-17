@@ -1,3 +1,5 @@
+import { StepStatus } from 'twenty-shared/workflow';
+
 import {
   type WorkflowActionType,
   type WorkflowRunStepStatus,
@@ -14,6 +16,6 @@ export const getShouldFocusNodeTab = ({
   // its conversation. Both are what the node tab shows.
   return (
     (actionType === 'FORM' || actionType === 'AI_AGENT') &&
-    stepExecutionStatus === 'PENDING'
+    stepExecutionStatus === StepStatus.PENDING
   );
 };

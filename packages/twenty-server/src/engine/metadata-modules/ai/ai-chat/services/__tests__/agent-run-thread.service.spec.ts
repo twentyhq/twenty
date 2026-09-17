@@ -48,20 +48,20 @@ const buildService = () => {
   };
   const agentChatService = {
     createThread: jest.fn().mockResolvedValue(buildThread()),
-    addMessage: jest
-      .fn()
-      .mockImplementation(({ uiMessage }) =>
-        Promise.resolve({
-          id: `${uiMessage.role}-message-id`,
-          turnId: 'turn-id',
-        }),
-      ),
+    addMessage: jest.fn().mockImplementation(({ uiMessage }) =>
+      Promise.resolve({
+        id: `${uiMessage.role}-message-id`,
+        turnId: 'turn-id',
+      }),
+    ),
     broadcastThreadChanged: jest.fn().mockResolvedValue(undefined),
     resolvePendingQuestion: jest
       .fn()
       .mockResolvedValue({ turnId: 'turn-id', rollback: {} }),
   };
-  const eventPublisherService = { publish: jest.fn().mockResolvedValue(undefined) };
+  const eventPublisherService = {
+    publish: jest.fn().mockResolvedValue(undefined),
+  };
   const workflowRunWorkspaceService = {
     updateWorkflowRunStepInfo: jest.fn().mockResolvedValue(undefined),
   };
@@ -230,7 +230,11 @@ describe('AgentRunThreadService', () => {
     });
     expect(messageQueueService.add).toHaveBeenCalledWith(
       RUN_WORKFLOW_JOB_NAME,
-      { workspaceId: WORKSPACE_ID, workflowRunId: RUN_ID, stepIdsToRetry: [STEP_ID] },
+      {
+        workspaceId: WORKSPACE_ID,
+        workflowRunId: RUN_ID,
+        stepIdsToRetry: [STEP_ID],
+      },
       expect.objectContaining({ id: RUN_ID }),
     );
   });
@@ -241,12 +245,25 @@ describe('AgentRunThreadService', () => {
     messageRepository.find.mockResolvedValueOnce([
       {
         role: AgentMessageRole.USER,
-        parts: [{ orderIndex: 0, type: 'text', textContent: 'Qualify this lead.' }],
+        parts: [
+          { orderIndex: 0, type: 'text', textContent: 'Qualify this lead.' },
+        ],
       },
       {
         role: AgentMessageRole.ASSISTANT,
         parts: [
-          { orderIndex: 1, type: 'tool-ask_questions', toolName: ASK_QUESTIONS_TOOL_NAME, toolOutput: { result: { questions: QUESTIONS, status: 'answered', answers: [{ questionIndex: 0, selectedOptionIndices: [1] }] } } },
+          {
+            orderIndex: 1,
+            type: 'tool-ask_questions',
+            toolName: ASK_QUESTIONS_TOOL_NAME,
+            toolOutput: {
+              result: {
+                questions: QUESTIONS,
+                status: 'answered',
+                answers: [{ questionIndex: 0, selectedOptionIndices: [1] }],
+              },
+            },
+          },
           { orderIndex: 0, type: 'text', textContent: 'Draft ready.' },
         ],
       },

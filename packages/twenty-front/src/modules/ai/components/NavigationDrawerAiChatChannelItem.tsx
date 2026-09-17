@@ -22,7 +22,10 @@ export const NavigationDrawerAiChatChannelItem = ({
   const { navigateToAiChatChannelPage } = useNavigateToAiChatChannelPage();
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    getAiChatChannelMenuDropdownId({ channelId: channel.id, surface: AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER }),
+    getAiChatChannelMenuDropdownId({
+      channelId: channel.id,
+      surface: AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER,
+    }),
   );
 
   const isActive = currentChannelId === channel.id;

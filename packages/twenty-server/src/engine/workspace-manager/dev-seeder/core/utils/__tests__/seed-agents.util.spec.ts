@@ -16,6 +16,10 @@ type SeedRow = {
   userWorkspaceId?: string;
   channelId?: string | null;
   authorUserWorkspaceId?: string | null;
+  workflowRunId?: string | null;
+  workflowStepId?: string | null;
+  pendingQuestionMessageId?: string | null;
+  toolName?: string | null;
   createdAt: Date;
 };
 
@@ -155,7 +159,9 @@ describe('seedAgents', () => {
       expect(pendingParts).toHaveLength(runThreadCount / 2);
       for (const part of pendingParts) {
         expect(
-          threads.find((thread) => thread.pendingQuestionMessageId === part.messageId),
+          threads.find(
+            (thread) => thread.pendingQuestionMessageId === part.messageId,
+          ),
         ).toBeDefined();
       }
       expect(queryBuilder.where).toHaveBeenCalledWith(

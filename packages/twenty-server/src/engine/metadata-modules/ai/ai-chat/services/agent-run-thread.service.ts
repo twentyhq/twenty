@@ -24,8 +24,10 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import {
+  AgentMessageEntity,
+  AgentMessageRole,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -217,7 +219,10 @@ export class AgentRunThreadService {
     thread: AgentChatThreadEntity;
     executionResult: AgentExecutionResult;
     agentId: string | null;
-  }): Promise<{ messageId: string; pendingQuestions: AskQuestionItem[] | null }> {
+  }): Promise<{
+    messageId: string;
+    pendingQuestions: AskQuestionItem[] | null;
+  }> {
     const parts = this.buildAssistantParts(executionResult);
 
     if (parts.length === 0) {
@@ -276,10 +281,7 @@ export class AgentRunThreadService {
     answers: AskQuestionAnswer[];
     userWorkspaceId: string;
   }): Promise<{ messageId: string }> {
-    if (
-      !isDefined(thread.workflowRunId) ||
-      !isDefined(thread.workflowStepId)
-    ) {
+    if (!isDefined(thread.workflowRunId) || !isDefined(thread.workflowStepId)) {
       throw new AiException(
         'This thread is not a workflow run conversation',
         AiExceptionCode.QUESTION_NOT_PENDING,
@@ -460,9 +462,7 @@ export class AgentRunThreadService {
           ...(isNonEmptyString(answer.freeText) ? [answer.freeText] : []),
         ].join(', ');
 
-        return isDefined(question)
-          ? `${question.header}: ${chosen}`
-          : chosen;
+        return isDefined(question) ? `${question.header}: ${chosen}` : chosen;
       })
       .filter(isNonEmptyString)
       .join('\n');
