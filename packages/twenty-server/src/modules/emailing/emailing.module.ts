@@ -6,6 +6,7 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { ShortLinkModule } from 'src/engine/core-modules/short-link/short-link.module';
 import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
 import { UnsubscribeTopicEntity } from 'src/engine/core-modules/emailing-domain/unsubscribe-topic.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -20,7 +21,9 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
+import { CampaignTrackingController } from 'src/modules/emailing/controllers/campaign-tracking.controller';
 import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscribe.controller';
+import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
 import { EmailingOngoingStaleCronJob } from 'src/modules/emailing/crons/jobs/emailing-ongoing-stale.cron.job';
 import { ReconcileCampaignStatsCronCommand } from 'src/modules/emailing/crons/commands/reconcile-campaign-stats.cron.command';
@@ -65,6 +68,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     UsageLimitModule,
+    ShortLinkModule,
     TypeOrmModule.forFeature([
       MessageChannelEntity,
       EmailingDomainEntity,
@@ -74,7 +78,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
       WorkspaceEntity,
     ]),
   ],
-  controllers: [UnsubscribeController],
+  controllers: [UnsubscribeController, CampaignTrackingController],
   providers: [
     CampaignVariableService,
     EmailBillingService,
@@ -101,6 +105,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     UnsubscribeTopicResolver,
     provideWorkspaceScopedRepository(EmailingDomainEntity),
     provideWorkspaceScopedRepository(MessageSuppressionEntity),
+    CampaignTrackingContentService,
     provideWorkspaceScopedRepository(UnsubscribeTopicEntity),
     provideWorkspaceScopedRepository(CampaignDeliveryEntity),
     EmailingOngoingStaleCronCommand,
