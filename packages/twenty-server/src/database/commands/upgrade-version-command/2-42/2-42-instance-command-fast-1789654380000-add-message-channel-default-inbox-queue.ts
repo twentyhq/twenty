@@ -4,7 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 // Runs after the inbox tables exist, since the constraint points at them.
-@RegisteredInstanceCommand('2.42.0', 1789637880000)
+@RegisteredInstanceCommand('2.42.0', 1789654380000)
 export class AddMessageChannelDefaultInboxQueueFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

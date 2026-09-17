@@ -1,15 +1,8 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { applyPersonInteractions } from 'src/utils/apply-person-interactions';
 import { collectCalendarEventInteractions } from 'src/utils/collect-calendar-event-interactions';
-import {
-  type Interaction,
-  pickLatestInteraction,
-  updatePersonForInteractions,
-} from 'src/utils/update-person-last-contact';
-import {
-  type RelatedInteraction,
-  updateRelatedLastContactForPeople,
-} from 'src/utils/update-related-last-contact';
+import { type Interaction } from 'src/utils/update-person-last-contact';
 
 export type CalendarEventParticipantLink = {
   personId: string;
@@ -56,21 +49,5 @@ export const applyMeetingInteractions = async (
     }
   }
 
-  const contactByPersonId = new Map<string, RelatedInteraction>();
-
-  for (const [personId, interactions] of interactionsByPersonId) {
-    await updatePersonForInteractions(client, personId, interactions);
-
-    const latest = pickLatestInteraction(interactions);
-
-    if (latest) {
-      contactByPersonId.set(personId, {
-        occurredAt: latest.occurredAt,
-        itemId: latest.itemId,
-        kind: 'meeting',
-      });
-    }
-  }
-
-  await updateRelatedLastContactForPeople(client, contactByPersonId);
+  await applyPersonInteractions(client, interactionsByPersonId);
 };

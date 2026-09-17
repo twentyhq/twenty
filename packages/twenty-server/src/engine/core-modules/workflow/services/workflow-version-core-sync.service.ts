@@ -12,6 +12,7 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
@@ -96,6 +97,7 @@ export class WorkflowVersionCoreSyncService {
           : null,
         steps: workflowVersion.steps ?? null,
         status: workflowVersion.status as unknown as WorkflowVersionStatus,
+        workspaceWorkflowVersionId: workflowVersion.id,
         universalIdentifier: uuidv4(),
         applicationId,
       };
@@ -200,23 +202,25 @@ export class WorkflowVersionCoreSyncService {
     const isNewLink = !isDefined(linkedCoreVersionId);
     const coreWorkflowVersionId = linkedCoreVersionId ?? uuidv4();
 
-    const coreWorkflowId = await this.resolveCoreWorkflowIdInTransaction(
-      workflowVersion.workflowId,
+    const coreWorkflowId = await this.resolveCoreWorkflowIdInTransaction({
+      workspaceId,
+      workflowId: workflowVersion.workflowId,
       transactionScope,
-    );
+    });
 
     // The conflict target is the primary key alone, so without the workspaceId
     // predicate a core row owned by another workspace would have its triggers
     // and steps overwritten.
     await transactionScope.executeRawQuery(
       `INSERT INTO core."workflowVersion"
-         ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "coreWorkflowId")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "coreWorkflowId", "workspaceWorkflowVersionId")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        ON CONFLICT ("id") DO UPDATE SET
          "triggers" = EXCLUDED."triggers",
          "steps" = EXCLUDED."steps",
          "status" = EXCLUDED."status",
-         "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId")
+         "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId"),
+         "workspaceWorkflowVersionId" = EXCLUDED."workspaceWorkflowVersionId"
        WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId"`,
       [
         coreWorkflowVersionId,
@@ -232,6 +236,7 @@ export class WorkflowVersionCoreSyncService {
         uuidv4(),
         resolvedApplicationId,
         coreWorkflowId,
+        workflowVersion.id,
       ],
     );
 
@@ -280,26 +285,61 @@ export class WorkflowVersionCoreSyncService {
       }
     }
 
+    const unresolvedWorkflowIds = distinctWorkflowIds.filter(
+      (candidateWorkflowId) =>
+        !coreWorkflowIdByWorkflowId.has(candidateWorkflowId),
+    );
+
+    const reverseMappedCoreWorkflowIds =
+      await resolveCoreWorkflowIdsByWorkspaceWorkflowId({
+        executeQuery: (query, parameters) =>
+          this.workspaceRepository.manager.query(query, parameters),
+        workspaceId,
+        workspaceWorkflowIds: unresolvedWorkflowIds,
+      });
+
+    for (const [
+      workspaceWorkflowId,
+      coreWorkflowId,
+    ] of reverseMappedCoreWorkflowIds) {
+      if (!coreWorkflowIdByWorkflowId.has(workspaceWorkflowId)) {
+        coreWorkflowIdByWorkflowId.set(workspaceWorkflowId, coreWorkflowId);
+      }
+    }
+
     return coreWorkflowIdByWorkflowId;
   }
 
-  private async resolveCoreWorkflowIdInTransaction(
-    workflowId: string,
-    transactionScope: WorkspaceTransactionScope,
-  ): Promise<string | null> {
-    const workflowRepository =
-      transactionScope.getRepository<WorkflowWorkspaceEntity>('workflow', {
+  private async resolveCoreWorkflowIdInTransaction({
+    workspaceId,
+    workflowId,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    workflowId: string;
+    transactionScope: WorkspaceTransactionScope;
+  }): Promise<string | null> {
+    const workflow = await transactionScope
+      .getRepository<WorkflowWorkspaceEntity>('workflow', {
         shouldBypassPermissionChecks: true,
+      })
+      .findOne({ where: { id: workflowId }, withDeleted: true });
+
+    const pointedCoreWorkflowId = workflow?.coreWorkflowId ?? null;
+
+    if (isNonEmptyString(pointedCoreWorkflowId)) {
+      return pointedCoreWorkflowId;
+    }
+
+    const coreWorkflowIdByWorkspaceWorkflowId =
+      await resolveCoreWorkflowIdsByWorkspaceWorkflowId({
+        executeQuery: (query, parameters) =>
+          transactionScope.executeRawQuery(query, parameters),
+        workspaceId,
+        workspaceWorkflowIds: [workflowId],
       });
 
-    const workflow = await workflowRepository.findOne({
-      where: { id: workflowId },
-      withDeleted: true,
-    });
-
-    const coreWorkflowId = workflow?.coreWorkflowId ?? null;
-
-    return isNonEmptyString(coreWorkflowId) ? coreWorkflowId : null;
+    return coreWorkflowIdByWorkspaceWorkflowId.get(workflowId) ?? null;
   }
 
   // Must run inside the caller's transaction so the ownership answer cannot go
