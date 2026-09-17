@@ -32,7 +32,7 @@ export const TEST_STANDALONE_RICH_TEXT_CONFIG: StandaloneRichTextConfigurationDT
     configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
     body: {
       blocknote:
-        '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello world"}]}]}',
+        '[{"id":"5f4a1c1e-0000-4000-8000-000000000001","type":"paragraph","props":{},"content":[{"type":"text","text":"Hello world","styles":{}}],"children":[]}]',
       markdown: '# Hello world',
     },
   };
@@ -42,7 +42,7 @@ export const TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL: StandaloneRichTextConfigu
     configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
     body: {
       blocknote:
-        '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Simple text"}]}]}',
+        '[{"id":"5f4a1c1e-0000-4000-8000-000000000002","type":"paragraph","props":{},"content":[{"type":"text","text":"Simple text","styles":{}}],"children":[]}]',
       markdown: null,
     },
   };
