@@ -20,11 +20,10 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { Section } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AdminPanelRecentUsersDocument,
@@ -84,20 +83,20 @@ export const SettingsAdminGeneral = () => {
     <>
       {canAccessFullAdminPanel && (
         <>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`About`}
               description={t`Version of the application`}
             />
             <SettingsAdminVersionContainer />
-          </Section>
+          </Section.Root>
           <SettingsAdminServerAdmins />
         </>
       )}
 
       {(canImpersonate || canAccessFullAdminPanel) && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Recent Users`}
             description={
               canManageFeatureFlags
@@ -194,12 +193,12 @@ export const SettingsAdminGeneral = () => {
               </TableBody>
             </Table>
           )}
-        </Section>
+        </Section.Root>
       )}
 
       {canImpersonate && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Top Workspaces`}
             description={t`Top 10 workspaces by number of users`}
           />
@@ -267,7 +266,7 @@ export const SettingsAdminGeneral = () => {
               </TableBody>
             </Table>
           )}
-        </Section>
+        </Section.Root>
       )}
     </>
   );

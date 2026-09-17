@@ -15,6 +15,10 @@
   Required accessible name describing the action.
 </ParamField>
 
+<ParamField body="children" type="ReactNode" required>
+  Icon content. Decorative and hidden from assistive technology.
+</ParamField>
+
 <ParamField body="className" type="string | ((state: ButtonState) =&gt; string | undefined)">
   CSS class applied to the element, or a function that
   returns a class based on the component's state.
@@ -53,7 +57,7 @@
   Text displayed when hovering or focusing the button.
 </ParamField>
 
-<ParamField body="tooltipDelay" type="&quot;0ms&quot; | &quot;300ms&quot; | &quot;500ms&quot; | &quot;1000ms&quot;" default="TooltipDelay.longDelay">
+<ParamField body="tooltipDelay" type="number" default="1000">
   Delay before showing the tooltip.
 </ParamField>
 
@@ -61,7 +65,7 @@
   Distance in pixels between the button and the tooltip.
 </ParamField>
 
-<ParamField body="tooltipPlace" type="&quot;top&quot; | &quot;left&quot; | &quot;right&quot; | &quot;bottom&quot;" default="TooltipPosition.Bottom">
+<ParamField body="tooltipPlace" type="&quot;top&quot; | &quot;right&quot; | &quot;bottom&quot; | &quot;left&quot;" default="bottom">
   Preferred placement of the tooltip relative to the button.
 </ParamField>
 

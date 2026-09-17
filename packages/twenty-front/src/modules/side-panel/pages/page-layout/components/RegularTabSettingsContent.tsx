@@ -7,9 +7,10 @@ import { getTabSettingsPlacementItems } from '@/side-panel/pages/page-layout/uti
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
 import { IconCopyPlus, IconRefreshDot, IconTrash } from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID = 'reset-regular-tab-to-default-modal';
 const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID =
@@ -90,28 +91,28 @@ export const RegularTabSettingsContent = ({
               onClick={onDuplicate}
             />
           </SelectableListItem>
-          <div id={RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}>
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-              onEnter={handleResetToDefault}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-                Icon={IconRefreshDot}
-                label={t`Reset to default`}
-                onClick={handleResetToDefault}
-                disabled={isResetToDefaultDisabled}
-              />
-            </SelectableListItem>
-          </div>
-          {isResetToDefaultDisabled && (
-            <AppTooltip
-              anchorSelect={`#${RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}`}
-              title={t`No default configuration available for this tab`}
-              noArrow
-              place="bottom"
-            />
-          )}
+          <Tooltip
+            delay={TooltipDelay.mediumDelay}
+            content={t`No default configuration available for this tab`}
+            side="bottom"
+            disabled={!isResetToDefaultDisabled}
+          >
+            <div id={RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}>
+              <SelectableListItem
+                itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+                onEnter={handleResetToDefault}
+              >
+                <CommandMenuItem
+                  id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+                  Icon={IconRefreshDot}
+                  label={t`Reset to default`}
+                  onClick={handleResetToDefault}
+                  disabled={isResetToDefaultDisabled}
+                />
+              </SelectableListItem>
+            </div>
+          </Tooltip>
+
           {canDelete && (
             <SelectableListItem
               itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE}
