@@ -24,7 +24,6 @@ export default defineApplication({
     PDL_API_KEY: {
       description: 'Twenty-managed People Data Labs API key',
       isSecret: true,
-      isRequired: true,
     },
   },
 });
