@@ -3,6 +3,7 @@ import 'twenty-ui/style.css';
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { ProgressBar } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -12,6 +13,7 @@ import { useBackfillStatus } from 'src/front-components/hooks/use-backfill-statu
 import { useRequestBackfill } from 'src/front-components/hooks/use-request-backfill';
 import { getBackfillFeedback } from 'src/front-components/utils/get-backfill-feedback.util';
 import { getBackfillProgressMessage } from 'src/front-components/utils/get-backfill-progress-message.util';
+import { getBackfillProgressPercentage } from 'src/front-components/utils/get-backfill-progress-percentage.util';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -22,10 +24,17 @@ const StyledContainer = styled.div`
 `;
 
 const StyledProgress = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${() => themeCssVariables.spacing[2]};
+  margin-top: ${() => themeCssVariables.spacing[3]};
+  max-width: ${() => themeCssVariables.spacing[32]};
+`;
+
+const StyledProgressLabel = styled.div`
   color: ${() => themeCssVariables.font.color.tertiary};
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
-  margin-top: ${() => themeCssVariables.spacing[2]};
 `;
 
 export const LastContactSettings = () => {
@@ -36,6 +45,7 @@ export const LastContactSettings = () => {
     backfillStatus?.status === 'enqueueing' ||
     backfillStatus?.status === 'running';
   const progressMessage = getBackfillProgressMessage(backfillStatus);
+  const progressPercentage = getBackfillProgressPercentage(backfillStatus);
 
   const handleBackfillClick = async () => {
     const outcome = await requestBackfill();
@@ -58,7 +68,16 @@ export const LastContactSettings = () => {
           onClick={handleBackfillClick}
         />
         {!isUndefined(progressMessage) && (
-          <StyledProgress>{progressMessage}</StyledProgress>
+          <StyledProgress>
+            {!isUndefined(progressPercentage) && (
+              <ProgressBar
+                value={progressPercentage}
+                ariaLabel="Backfill progress"
+                withBorderRadius
+              />
+            )}
+            <StyledProgressLabel>{progressMessage}</StyledProgressLabel>
+          </StyledProgress>
         )}
       </Section>
     </StyledContainer>
