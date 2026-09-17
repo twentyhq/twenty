@@ -1,0 +1,45 @@
+---
+title: IconButtonGroup
+description: Frame compact icon actions with shared spacing, blur, and rounded corners.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import IconButtonGroupReference from '/snippets/ui/generated/input/icon-button-group.mdx';
+
+`IconButtonGroup` composes [ButtonGroup](/ui/primitives/input/button-group) with a floating frame, compact 20px controls, 2px gaps and padding, and concentric corners. Position the group in your application's layout.
+
+<StoryEmbed
+  storyId="ui-input-button-iconbuttongroup--default"
+  title="Framed icon actions"
+  height={240}
+/>
+
+## Usage
+
+```tsx
+import { IconButtonGroup, LightIconButton } from 'twenty-ui/components';
+import { IconPlus, IconTrash } from 'twenty-ui/icon';
+
+export const RecordActions = () => (
+  <IconButtonGroup aria-label="Record actions">
+    <LightIconButton aria-label="Add" emphasis="subtle">
+      <IconPlus />
+    </LightIconButton>
+    <LightIconButton aria-label="Delete" emphasis="subtle" disabled>
+      <IconTrash />
+    </LightIconButton>
+  </IconButtonGroup>
+);
+```
+
+## State and interaction
+
+The group owns presentation and supplies a shared surface or color. Each child owns its action, accessible name, disabled state, and optional tooltip. The group uses ordinary button tab stops and adds no toolbar keyboard behavior. Wrappers retain the same spacing and rounded corners.
+
+## Updating existing groups
+
+Import `IconButtonGroup` from `twenty-ui/components` and replace `iconButtons` arrays with explicit children. Set `disabled` on each unavailable action. `InsideButton` is replaced by the compact child controls inside this frame.
+
+## Props
+
+<IconButtonGroupReference />

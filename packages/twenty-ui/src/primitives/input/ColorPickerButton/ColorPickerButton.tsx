@@ -2,15 +2,13 @@ import {
   ColorSample,
   type ColorSampleProps,
 } from '@ui/primitives/data-display';
-import {
-  LightIconButton,
-  type LightIconButtonProps,
-} from '@ui/primitives/input/LightIconButton/LightIconButton';
+import { Button } from '@ui/primitives/input/Button/Button';
+import { type ButtonProps } from '@ui/primitives/input/Button/types/ButtonProps';
 
 import styles from './ColorPickerButton.module.scss';
 
 type ColorPickerButtonProps = Pick<ColorSampleProps, 'colorName'> &
-  Pick<LightIconButtonProps, 'onClick'> & {
+  Pick<ButtonProps, 'onClick'> & {
     isSelected?: boolean;
   };
 
@@ -21,9 +19,11 @@ export const ColorPickerButton = ({
 }: ColorPickerButtonProps) => {
   return (
     <div className={styles.wrapper} data-selected={isSelected || undefined}>
-      <LightIconButton
-        size="medium"
-        Icon={() => <ColorSample colorName={colorName} />}
+      <Button
+        size="md"
+        variant="ghost"
+        className={styles.button}
+        startIcon={<ColorSample colorName={colorName} />}
         aria-label={`Select ${colorName} color`}
         onClick={onClick}
       />

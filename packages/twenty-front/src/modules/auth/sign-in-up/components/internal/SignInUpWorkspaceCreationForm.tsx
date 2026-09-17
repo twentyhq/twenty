@@ -15,10 +15,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/components';
+import { MainButton, LightIconButton } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContentContainer = styled.div`
@@ -277,13 +278,14 @@ export const SignInUpWorkspaceCreationForm = () => {
                 variant="outline"
               >{t`Upload logo`}</Button>
               <LightIconButton
-                Icon={IconTrash}
-                accent="tertiary"
-                size="medium"
+                emphasis="subtle"
+                size="md"
                 onClick={handleLogoRemove}
                 disabled={!isDefined(logoPreviewUrl)}
                 aria-label={t`Remove logo`}
-              />
+              >
+                <IconTrash />
+              </LightIconButton>
             </StyledLogoButtons>
           </StyledLogoRow>
         </OnboardingStepAnimatedItem>

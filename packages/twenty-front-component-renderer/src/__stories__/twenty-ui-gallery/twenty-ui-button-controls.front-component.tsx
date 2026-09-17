@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { LightButton, MainButton } from 'twenty-ui/components';
+import {
+  IconButton,
+  IconButtonGroup,
+  LightIconButton,
+  LightButton,
+  MainButton,
+} from 'twenty-ui/components';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
@@ -36,6 +42,29 @@ const ButtonControls = () => {
         <Button onClick={handleClick}>First action</Button>
         <Button onClick={handleClick}>Second action</Button>
       </ButtonGroup>
+      <IconButtonGroup aria-label="Icon actions">
+        <LightIconButton aria-label="Add item" onClick={handleClick}>
+          <IconPlus />
+        </LightIconButton>
+        <span>
+          <LightIconButton
+            aria-label="Unavailable item"
+            disabled
+            onClick={handleClick}
+          >
+            <IconPlus />
+          </LightIconButton>
+        </span>
+      </IconButtonGroup>
+      <IconButton
+        aria-label="Send"
+        shape="round"
+        size="xs"
+        variant="solid"
+        color="accent"
+      >
+        <IconPlus />
+      </IconButton>
       <output aria-label="Activations">{activations}</output>
     </ThemeProvider>
   );

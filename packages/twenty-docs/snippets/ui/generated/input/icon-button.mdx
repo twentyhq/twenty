@@ -44,8 +44,12 @@
   Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller.
 </ParamField>
 
-<ParamField body="size" type="&quot;sm&quot; | &quot;md&quot;">
-  Square button size: `sm` (24px) or `md` (32px).
+<ParamField body="shape" type="&quot;square&quot; | &quot;round&quot;" default="square">
+  Square or round icon control.
+</ParamField>
+
+<ParamField body="size" type="&quot;sm&quot; | &quot;md&quot; | &quot;xs&quot;" default="md">
+  Button size: `xs` (20px), `sm` (24px), or `md` (32px).
 </ParamField>
 
 <ParamField body="style" type="CSSProperties | ((state: ButtonState) =&gt; CSSProperties | undefined)">

@@ -32,7 +32,7 @@ import {
   IconPlus,
   IconX,
 } from 'twenty-ui/icon';
-import { IconButtonGroup } from 'twenty-ui/primitives/input';
+import { IconButtonGroup, LightIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const nodeTypes: NodeTypes = {
@@ -213,25 +213,38 @@ export const SettingsDataModelOverview = () => {
         <Background />
         <IconButtonGroup
           className="react-flow__panel react-flow__controls bottom left horizontal"
-          iconButtons={[
-            {
-              Icon: IconPlus,
-              onClick: () => zoomIn(),
-            },
-            {
-              Icon: IconMinus,
-              onClick: () => zoomOut(),
-            },
-            {
-              Icon: IconMaximize,
-              onClick: () => fitView(),
-            },
-            {
-              Icon: isInteractive ? IconLockOpen : IconLock,
-              onClick: () => setInteractive(!isInteractive),
-            },
-          ]}
-        ></IconButtonGroup>
+          aria-label={t`Diagram controls`}
+        >
+          <LightIconButton
+            emphasis="subtle"
+            aria-label={t`Zoom in`}
+            onClick={() => zoomIn()}
+          >
+            <IconPlus />
+          </LightIconButton>
+          <LightIconButton
+            emphasis="subtle"
+            aria-label={t`Zoom out`}
+            onClick={() => zoomOut()}
+          >
+            <IconMinus />
+          </LightIconButton>
+          <LightIconButton
+            emphasis="subtle"
+            aria-label={t`Fit view`}
+            onClick={() => fitView()}
+          >
+            <IconMaximize />
+          </LightIconButton>
+          <LightIconButton
+            emphasis="subtle"
+            aria-label={t`Lock diagram`}
+            aria-pressed={!isInteractive}
+            onClick={() => setInteractive(!isInteractive)}
+          >
+            {isInteractive ? <IconLockOpen /> : <IconLock />}
+          </LightIconButton>
+        </IconButtonGroup>
       </ReactFlow>
     </StyledContainer>
   );

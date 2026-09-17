@@ -1,0 +1,46 @@
+---
+title: LightIconButton
+description: Present lightweight icon actions with standard or subtle emphasis.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LightIconButtonReference from '/snippets/ui/generated/input/light-icon-button.mdx';
+
+`LightIconButton` composes [IconButton](/ui/components/input/icon-button) with a ghost surface and a small size. Supply an accessible name and decorative icon content.
+
+<StoryEmbed
+  storyId="ui-input-button-lighticonbutton--default"
+  title="Light icon button"
+  height={240}
+/>
+
+## Usage
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const AddAction = () => (
+  <LightIconButton aria-label="Add record" emphasis="subtle">
+    <IconPlus />
+  </LightIconButton>
+);
+```
+
+Standard emphasis uses secondary neutral text; subtle emphasis uses tertiary text. Explicit semantic colors and group colors take precedence. Small controls are 24px with a 14px icon; medium controls are 32px with a 16px icon. Compact controls use `size="xs"` and are 20px.
+
+## State and interaction
+
+Button owns keyboard activation, disabled and loading behavior, refs, native attributes, and render composition. The native default is `type="button"`. Use `aria-pressed` for toggles and `aria-expanded` for disclosures. The application owns these states and can set `color="accent"` to highlight a selected action. Keyboard focus uses the shared focus ring.
+
+Tooltip text is optional and does not replace `aria-label`. Set `href` for a link and supply `render` when the application owns routing.
+
+## Updating existing controls
+
+Import `LightIconButton` from `twenty-ui/components`. Replace `Icon={IconPlus}` with `<IconPlus />` children, `small`/`medium` with `sm`/`md`, `accent="tertiary"` with `emphasis="subtle"`, and `testId` with `data-testid`. Replace synthetic `active` and `focus` flags with semantic state and actual keyboard focus.
+
+Replace `LightIconButtonGroup` with [ButtonGroup](/ui/primitives/input/button-group) using `attached={false}` and explicit children. Set `disabled` on unavailable actions, including actions without a click handler. Wrappers and tooltip triggers can remain around each child.
+
+## Props
+
+<LightIconButtonReference />

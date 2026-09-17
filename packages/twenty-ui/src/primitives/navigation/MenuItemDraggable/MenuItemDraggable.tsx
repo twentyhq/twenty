@@ -3,10 +3,10 @@ import { StyledHoverableMenuItemBase } from '@ui/primitives/navigation/MenuItem/
 import { type MenuItemAccent } from '@ui/primitives/navigation/MenuItem/types/MenuItemAccent';
 
 import { type IconComponent } from '@ui/icon';
-import { LightIconButtonGroup } from '@ui/primitives/input';
+import { MenuItemActions } from '@ui/primitives/navigation/MenuItem/internal/MenuItemActions';
 import { type ReactNode } from 'react';
 import { type MenuItemDraggableGripMode } from '@ui/primitives/navigation/MenuItem/types/MenuItemDraggableGripMode';
-import { type MenuItemIconButton } from '@ui/primitives/navigation/MenuItem/MenuItem';
+import { type MenuItemIconButton } from '@ui/primitives/navigation/MenuItem/types/MenuItemIconButton';
 
 export type MenuItemDraggableProps = {
   LeftIcon?: IconComponent | undefined;
@@ -59,7 +59,7 @@ export const MenuItemDraggable = ({
         gripMode={gripMode}
       />
       {showIconButtons && (
-        <LightIconButtonGroup
+        <MenuItemActions
           className="hoverable-buttons"
           iconButtons={iconButtons}
         />

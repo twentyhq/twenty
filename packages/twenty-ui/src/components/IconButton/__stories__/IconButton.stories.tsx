@@ -222,3 +222,55 @@ export const CatalogDark: CatalogStory<Story, typeof IconButton> = {
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };
+
+export const Round: Story = {
+  ...Default,
+  render: () => (
+    <>
+      <IconButton
+        aria-label="Compact round"
+        size="xs"
+        shape="round"
+        variant="solid"
+        color="accent"
+      >
+        <IconPlus />
+      </IconButton>
+      <IconButton
+        aria-label="Small round"
+        size="sm"
+        shape="round"
+        variant="solid"
+        color="accent"
+      >
+        <IconPlus />
+      </IconButton>
+      <IconButton
+        aria-label="Disabled round"
+        size="sm"
+        shape="round"
+        variant="solid"
+        color="accent"
+        disabled
+      >
+        <IconPlus />
+      </IconButton>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    for (const [name, size] of [
+      ['Compact round', 20],
+      ['Small round', 24],
+      ['Disabled round', 24],
+    ] as const) {
+      const button = canvas.getByRole('button', { name });
+      await expect(button.getBoundingClientRect().width).toBe(size);
+      await expect(button.getBoundingClientRect().height).toBe(size);
+      await expect(getComputedStyle(button).borderTopLeftRadius).toBe('50%');
+    }
+    const disabled = canvas.getByRole('button', { name: 'Disabled round' });
+    await expect(disabled).toBeDisabled();
+    await expect(getComputedStyle(disabled).opacity).toBe('1');
+  },
+};

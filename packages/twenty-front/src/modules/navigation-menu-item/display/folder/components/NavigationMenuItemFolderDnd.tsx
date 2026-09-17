@@ -11,7 +11,7 @@ import React, { Fragment, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconHeartOff, IconPlus, useIcons } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -371,15 +371,17 @@ export const NavigationMenuItemFolderDnd = ({
                     rightOptions={
                       isEditInPlace ? (
                         <LightIconButton
-                          Icon={IconHeartOff}
                           onClick={(event) => {
                             event.stopPropagation();
                             deleteManyNavigationMenuItems([
                               navigationMenuItem.id,
                             ]);
                           }}
-                          accent="tertiary"
-                        />
+                          emphasis="subtle"
+                          aria-label={t`Remove from favorites`}
+                        >
+                          <IconHeartOff />
+                        </LightIconButton>
                       ) : undefined
                     }
                     onNavigationMenuItemClick={

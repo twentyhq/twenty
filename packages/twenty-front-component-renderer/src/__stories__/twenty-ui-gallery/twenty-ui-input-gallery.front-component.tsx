@@ -1,5 +1,11 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { IconButton, LightButton, MainButton } from 'twenty-ui/components';
+import {
+  IconButton,
+  IconButtonGroup,
+  LightIconButton,
+  LightButton,
+  MainButton,
+} from 'twenty-ui/components';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import {
   AnimatedButton,
@@ -14,12 +20,7 @@ import {
   FloatingButtonGroup,
   FloatingIconButton,
   FloatingIconButtonGroup,
-  IconButtonGroup,
   IconListViewGrip,
-  InsideButton,
-  LightIconButton,
-  LightIconButtonGroup,
-  RoundedIconButton,
   SearchInput,
   SegmentedControl,
   StyledTabContainer,
@@ -145,9 +146,11 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   {
     name: 'IconButtonGroup',
     node: (
-      <IconButtonGroup
-        iconButtons={[{ Icon: IconTrash, ariaLabel: 'Delete' }]}
-      />
+      <IconButtonGroup aria-label="Record actions">
+        <LightIconButton aria-label="Delete" emphasis="subtle">
+          <IconTrash />
+        </LightIconButton>
+      </IconButtonGroup>
     ),
   },
   {
@@ -155,23 +158,15 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     node: <IconListViewGrip />,
   },
   {
-    name: 'InsideButton',
-    node: <InsideButton Icon={IconPlus} ariaLabel="Add" />,
-  },
-  {
     name: 'LightButton',
     node: <LightButton>{'Light'}</LightButton>,
   },
   {
     name: 'LightIconButton',
-    node: <LightIconButton Icon={IconStar} aria-label="Star" />,
-  },
-  {
-    name: 'LightIconButtonGroup',
     node: (
-      <LightIconButtonGroup
-        iconButtons={[{ Icon: IconStar, ariaLabel: 'Star', onClick: () => {} }]}
-      />
+      <LightIconButton aria-label="Star">
+        <IconStar />
+      </LightIconButton>
     ),
   },
   {
@@ -194,10 +189,6 @@ const INPUT_ENTRIES: GalleryEntry[] = [
         <Radio value="b">B</Radio>
       </RadioGroup>
     ),
-  },
-  {
-    name: 'RoundedIconButton',
-    node: <RoundedIconButton Icon={IconPlus} aria-label="Add" />,
   },
   {
     name: 'SearchInput',

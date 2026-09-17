@@ -15,7 +15,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Section } from 'twenty-ui/components';
+import { Section, LightIconButton } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   IconDotsVertical,
@@ -24,7 +24,8 @@ import {
   IconPlus,
   IconTrash,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidv4 } from 'uuid';
@@ -166,10 +167,12 @@ export const SettingsAgentEvalsTab = ({
                 dropdownPlacement="right-start"
                 clickableComponent={
                   <LightIconButton
-                    Icon={IconDotsVertical}
-                    accent="tertiary"
+                    emphasis="subtle"
                     disabled={disabled}
-                  />
+                    aria-label={t`More options`}
+                  >
+                    <IconDotsVertical />
+                  </LightIconButton>
                 }
                 dropdownComponents={
                   <DropdownContent>

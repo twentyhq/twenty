@@ -42,7 +42,7 @@ import {
   IconUnlink,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/primitives/layout';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -224,9 +224,11 @@ export const RecordDetailRelationRecordsListItem = ({
         <StyledClickableZone onClick={handleClick} data-testid="expand-button">
           <LightIconButton
             className="displayOnHover"
-            Icon={AnimatedIconChevronDown}
-            accent="tertiary"
-          />
+            emphasis="subtle"
+            aria-label={t`Expand relation`}
+          >
+            <AnimatedIconChevronDown />
+          </LightIconButton>
         </StyledClickableZone>
         {!parentIsRecordFieldReadOnly && (
           <Dropdown
@@ -235,9 +237,11 @@ export const RecordDetailRelationRecordsListItem = ({
             clickableComponent={
               <LightIconButton
                 className="displayOnHover"
-                Icon={IconDotsVertical}
-                accent="tertiary"
-              />
+                emphasis="subtle"
+                aria-label={t`More options`}
+              >
+                <IconDotsVertical />
+              </LightIconButton>
             }
             dropdownComponents={
               <DropdownContent>

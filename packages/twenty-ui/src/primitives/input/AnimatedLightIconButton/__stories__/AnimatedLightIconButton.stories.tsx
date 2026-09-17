@@ -1,16 +1,15 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconSearch } from '@ui/icon';
 import {
-  type LightIconButtonAccent,
-  type LightIconButtonSize,
-} from '@ui/primitives/input/LightIconButton/LightIconButton';
-import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { AnimatedLightIconButton } from '@ui/primitives/input/AnimatedLightIconButton/AnimatedLightIconButton';
+import {
+  AnimatedLightIconButton,
+  type AnimatedLightIconButtonProps,
+} from '@ui/primitives/input/AnimatedLightIconButton/AnimatedLightIconButton';
 
 const meta: Meta<typeof AnimatedLightIconButton> = {
   title: 'UI/Input/Button/AnimatedLightIconButton',
@@ -87,13 +86,21 @@ export const Catalog: CatalogStory<Story, typeof AnimatedLightIconButton> = {
         },
         {
           name: 'accents',
-          values: ['secondary', 'tertiary'] satisfies LightIconButtonAccent[],
-          props: (accent: LightIconButtonAccent) => ({ accent }),
+          values: [
+            'secondary',
+            'tertiary',
+          ] satisfies AnimatedLightIconButtonProps['accent'][],
+          props: (accent: AnimatedLightIconButtonProps['accent']) => ({
+            accent,
+          }),
         },
         {
           name: 'sizes',
-          values: ['small', 'medium'] satisfies LightIconButtonSize[],
-          props: (size: LightIconButtonSize) => ({ size }),
+          values: [
+            'small',
+            'medium',
+          ] satisfies AnimatedLightIconButtonProps['size'][],
+          props: (size: AnimatedLightIconButtonProps['size']) => ({ size }),
         },
       ],
     },

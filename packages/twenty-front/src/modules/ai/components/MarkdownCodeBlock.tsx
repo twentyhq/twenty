@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNumber, isString } from '@sniptt/guards';
 import { Children, isValidElement } from 'react';
 import { IconCopy } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -67,12 +67,14 @@ export const MarkdownCodeBlock = ({
     <StyledContainer className="markdown-code-outer-container">
       <StyledCopyButtonContainer>
         <LightIconButton
-          Icon={IconCopy}
           onClick={() => copyToClipboard(codeText, t`Code copied to clipboard`)}
           title={t`Copy code`}
-          size="small"
-          accent="tertiary"
-        />
+          size="sm"
+          emphasis="subtle"
+          aria-label={t`Copy code`}
+        >
+          <IconCopy />
+        </LightIconButton>
       </StyledCopyButtonContainer>
       <pre className="markdown-block-code">{children}</pre>
     </StyledContainer>

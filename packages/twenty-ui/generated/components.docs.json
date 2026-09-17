@@ -1,5 +1,159 @@
 [
   {
+    "name": "LightIconButton",
+    "entryPoint": "twenty-ui/components",
+    "slug": "input/light-icon-button",
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Required accessible name describing the action."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Icon content. Decorative and hidden from assistive technology."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic color of the button."
+      },
+      {
+        "name": "elevated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Adds a shadow to the button."
+      },
+      {
+        "name": "emphasis",
+        "type": "\"standard\" | \"subtle\"",
+        "required": false,
+        "defaultValue": "standard",
+        "description": "Standard secondary text or subtle tertiary text. Semantic colors and solid surfaces keep their own colors."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows a loading indicator and disables activation while preserving the button width."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "shape",
+        "type": "\"square\" | \"round\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Square or round icon control."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\" | \"xs\"",
+        "required": false,
+        "defaultValue": "sm",
+        "description": "Button size: `xs` (20px), `sm` (24px), or `md` (32px)."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "tooltip",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text displayed when hovering or focusing the button."
+      },
+      {
+        "name": "tooltipDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Delay before showing the tooltip."
+      },
+      {
+        "name": "tooltipOffset",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Distance in pixels between the button and the tooltip."
+      },
+      {
+        "name": "tooltipPlace",
+        "type": "\"top\" | \"right\" | \"bottom\" | \"left\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Preferred placement of the tooltip relative to the button."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": "ghost",
+        "description": "Visual treatment of the button surface."
+      }
+    ]
+  },
+  {
+    "name": "IconButtonGroup",
+    "entryPoint": "twenty-ui/components",
+    "slug": "input/icon-button-group",
+    "props": [
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shared semantic color that overrides the color of buttons in the group."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": "ghost",
+        "description": "Shared surface treatment that overrides the variant of buttons in the group."
+      }
+    ]
+  },
+  {
     "name": "IconButton",
     "entryPoint": "twenty-ui/components",
     "slug": "input/icon-button",
@@ -61,11 +215,18 @@
         "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
       },
       {
-        "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "name": "shape",
+        "type": "\"square\" | \"round\"",
         "required": false,
-        "defaultValue": null,
-        "description": "Square button size: `sm` (24px) or `md` (32px)."
+        "defaultValue": "square",
+        "description": "Square or round icon control."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\" | \"xs\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Button size: `xs` (20px), `sm` (24px), or `md` (32px)."
       },
       {
         "name": "style",
@@ -459,6 +620,13 @@
     "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/button-group",
     "props": [
+      {
+        "name": "attached",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Join adjacent controls. Set to false for independently rounded buttons with a 2px gap."
+      },
       {
         "name": "color",
         "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
@@ -4941,7 +5109,7 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\" | \"lg\" | \"xl\" | \"xs\"",
+        "type": "\"sm\" | \"md\" | \"xs\" | \"lg\" | \"xl\"",
         "required": false,
         "defaultValue": "md",
         "description": "Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), or `xl` (40px)."
@@ -5256,7 +5424,7 @@
       },
       {
         "name": "level",
-        "type": "5 | 1 | 2 | 3 | 4 | 6",
+        "type": "1 | 5 | 2 | 3 | 4 | 6",
         "required": false,
         "defaultValue": "2",
         "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
@@ -5270,7 +5438,7 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+        "type": "\"sm\" | \"md\" | \"xs\" | \"lg\"",
         "required": false,
         "defaultValue": "md",
         "description": "Visual font size, independent of the heading level. Defaults to `md`."
@@ -5349,7 +5517,7 @@
           },
           {
             "name": "level",
-            "type": "5 | 1 | 2 | 3 | 4 | 6",
+            "type": "1 | 5 | 2 | 3 | 4 | 6",
             "required": false,
             "defaultValue": "2",
             "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
@@ -5363,7 +5531,7 @@
           },
           {
             "name": "size",
-            "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+            "type": "\"sm\" | \"md\" | \"xs\" | \"lg\"",
             "required": false,
             "defaultValue": "md",
             "description": "Visual font size, independent of the heading level. Defaults to `md`."
@@ -5404,7 +5572,7 @@
           },
           {
             "name": "level",
-            "type": "5 | 1 | 2 | 3 | 4 | 6",
+            "type": "1 | 5 | 2 | 3 | 4 | 6",
             "required": false,
             "defaultValue": "2",
             "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
@@ -5418,7 +5586,7 @@
           },
           {
             "name": "size",
-            "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+            "type": "\"sm\" | \"md\" | \"xs\" | \"lg\"",
             "required": false,
             "defaultValue": "lg",
             "description": "Visual font size, independent of the heading level. Defaults to `lg`."

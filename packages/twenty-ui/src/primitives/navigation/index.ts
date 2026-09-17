@@ -21,7 +21,7 @@ export type { ListItemProps } from './ListItem/types/ListItemProps';
 export type { ListItemState } from './ListItem/types/ListItemState';
 export type { ColorLabels } from './MenuItem/constants/DefaultColorLabels';
 export { DEFAULT_COLOR_LABELS } from './MenuItem/constants/DefaultColorLabels';
-export type { MenuItemIconButton, MenuItemProps } from './MenuItem/MenuItem';
+export type { MenuItemProps } from './MenuItem/MenuItem';
 export {
   MenuItemLeftContent,
   StyledHoverableMenuItemBase,
@@ -32,6 +32,7 @@ export {
 } from './MenuItem/MenuItem';
 export type { MenuItemAccent } from './MenuItem/types/MenuItemAccent';
 export type { MenuItemDraggableGripMode } from './MenuItem/types/MenuItemDraggableGripMode';
+export type { MenuItemIconButton } from './MenuItem/types/MenuItemIconButton';
 export type { MenuItemAvatarProps } from './MenuItemAvatar/MenuItemAvatar';
 export { MenuItemAvatar } from './MenuItemAvatar/MenuItemAvatar';
 export type { MenuItemDraggableProps } from './MenuItemDraggable/MenuItemDraggable';

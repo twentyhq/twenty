@@ -6,6 +6,7 @@ import { ButtonGroupContext } from './internal/ButtonGroupContext';
 import { type ButtonGroupProps } from './types/ButtonGroupProps';
 
 export const ButtonGroup = ({
+  attached = true,
   className,
   children,
   variant,
@@ -20,6 +21,7 @@ export const ButtonGroup = ({
     ref,
     props: {
       role: 'group',
+      'data-attached': attached || undefined,
       ...props,
       className: clsx(styles.container, className),
       children,

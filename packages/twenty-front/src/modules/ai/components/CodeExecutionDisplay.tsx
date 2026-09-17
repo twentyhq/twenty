@@ -11,7 +11,8 @@ import {
   IconDownload,
   IconFile,
 } from 'twenty-ui/icon';
-import { CodeEditor, LightIconButton } from 'twenty-ui/primitives/input';
+import { CodeEditor } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -229,15 +230,17 @@ export const CodeExecutionDisplay = ({
           </StyledSectionHeaderLeft>
           <StyledHeaderRight>
             <LightIconButton
-              Icon={IconCopy}
               onClick={(e) => {
                 e.stopPropagation();
                 copyToClipboard(code);
               }}
               title={t`Copy code`}
-              size="small"
-              accent="tertiary"
-            />
+              size="sm"
+              emphasis="subtle"
+              aria-label={t`Copy code`}
+            >
+              <IconCopy />
+            </LightIconButton>
             {isCodeExpanded ? (
               <IconChevronUp size={theme.icon.size.sm} />
             ) : (
