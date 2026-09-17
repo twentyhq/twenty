@@ -91,9 +91,13 @@ export const ManyRecordsAreTruncated: Story = {
       displayName: `Company ${index + 1}`,
     })),
   },
+  // The overflow label is translated, and Storybook renders a pseudo locale,
+  // so the count of rendered links is what can be asserted here.
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('and 8 more');
+    await canvas.findByText('Company 12');
+
+    await expect(canvas.getAllByRole('link')).toHaveLength(12);
   },
 };
