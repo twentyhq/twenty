@@ -707,7 +707,7 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   @IsOptional()
-  WORKSPACE_RECORD_LIMIT: number = 1_000_000;
+  WORKSPACE_RECORD_LIMIT: number = 10_000_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
