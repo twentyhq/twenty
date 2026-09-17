@@ -57,7 +57,10 @@ export default defineConfig(() => {
         requireReturnsDefault: 'auto',
       },
       lib: {
-        entry: 'src/individual-entry.ts',
+        entry: [
+          'src/individual-entry.ts',
+          'src/components/code-editor/index.ts',
+        ],
         formats: ['es'],
       },
       rollupOptions: {

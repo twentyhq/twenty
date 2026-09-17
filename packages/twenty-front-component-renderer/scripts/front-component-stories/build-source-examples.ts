@@ -85,6 +85,10 @@ const TWENTY_UI_SUBMODULES = [
 ];
 
 const twentyUiAliases = {
+  'twenty-ui/components/code-editor': path.resolve(
+    dirname,
+    '../../../twenty-ui/dist/individual/components/code-editor/index.js',
+  ),
   'twenty-ui/style.css': path.join(
     path.dirname(twentyUiIndividualIndex),
     'twenty-ui.css',
