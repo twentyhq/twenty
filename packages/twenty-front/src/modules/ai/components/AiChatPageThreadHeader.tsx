@@ -25,8 +25,22 @@ const StyledTitle = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
   max-width: 100%;
   min-width: 0;
-  padding: 0 ${themeCssVariables.spacing[1]};
   width: fit-content;
+`;
+
+const StyledTitleDisplay = styled.div`
+  align-items: center;
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  height: 24px;
+  overflow: hidden;
+  padding: 0 5px;
+
+  &:hover {
+    background: ${themeCssVariables.background.transparent.light};
+  }
 `;
 
 const StyledActions = styled.div`
@@ -97,7 +111,13 @@ export const AiChatPageThreadHeader = ({
             autoFocus
           />
         ) : (
-          <OverflowingTextWithTooltip text={displayTitle} />
+          <StyledTitleDisplay
+            role="button"
+            aria-label={t`Rename chat`}
+            onClick={startRename}
+          >
+            <OverflowingTextWithTooltip text={displayTitle} />
+          </StyledTitleDisplay>
         )}
       </StyledTitle>
       <StyledActions>

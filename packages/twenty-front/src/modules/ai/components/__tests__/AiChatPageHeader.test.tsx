@@ -251,6 +251,21 @@ describe('AiChatPageHeader', () => {
     expect(unarchiveChatThread).toHaveBeenCalledWith(THREAD.id);
   });
 
+  it('opens the rename editor when clicking the title', async () => {
+    const user = userEvent.setup();
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+    await user.click(screen.getByRole('button', { name: 'Rename chat' }));
+    const input = screen.getByRole('textbox');
+    expect(input).toHaveValue('Best leads');
+    expect(input).toHaveFocus();
+
+    await user.clear(input);
+    await user.type(input, 'Qualified leads{Enter}');
+    expect(renameChatThread).toHaveBeenCalledWith(THREAD.id, 'Qualified leads');
+    expect(screen.queryByRole('textbox')).toBeNull();
+  });
+
   it('renames the current chat and discards the rename editor when switching threads', async () => {
     const user = userEvent.setup();
     render(<AiChatPageHeader />, { wrapper: Wrapper });
