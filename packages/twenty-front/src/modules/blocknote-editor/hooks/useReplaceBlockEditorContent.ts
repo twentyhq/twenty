@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
-import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { filterBlocksSupportedBySchema } from '@/blocknote-editor/utils/filterBlocksSupportedBySchema';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -20,9 +21,10 @@ export const useReplaceBlockEditorContent = (
         | { blocknote?: string | null }
         | undefined;
 
-      const content = parseInitialBlocknote(fieldValue?.blocknote) ?? [
-        { type: 'paragraph' as const, content: '' },
-      ];
+      const content = filterBlocksSupportedBySchema(
+        parseInitialBlocknote(fieldValue?.blocknote),
+        BLOCK_SCHEMA.blockSchema,
+      ) ?? [{ type: 'paragraph' as const, content: '' }];
 
       if (!isDeeplyEqual(editor.document, content as typeof editor.document)) {
         editor.replaceBlocks(

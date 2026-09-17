@@ -3,7 +3,7 @@ import {
   type RichTextMetadata,
   richTextValueSchema,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { convertTipTapBlocksToMarkdown, isDefined } from 'twenty-shared/utils';
 
 import type { ServerBlockNoteEditor } from '@blocknote/server-util';
 
@@ -42,6 +42,7 @@ export const transformRichTextValue = async (
   // Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)
   // Todo : This may be resolved once the server-utils library is updated with proper conversion support - #947
   let convertedMarkdown: string | null = null;
+  let normalizedBlocknote: string | null = parsedValue.blocknote || null;
 
   try {
     convertedMarkdown = isDefined(parsedValue.blocknote)
@@ -50,7 +51,18 @@ export const transformRichTextValue = async (
         )
       : null;
   } catch {
-    convertedMarkdown = parsedValue.blocknote || null;
+    const markdownFromTipTap = isDefined(parsedValue.blocknote)
+      ? convertTipTapBlocksToMarkdown(parsedValue.blocknote)
+      : undefined;
+
+    convertedMarkdown = markdownFromTipTap ?? null;
+    normalizedBlocknote = isDefined(markdownFromTipTap)
+      ? JSON.stringify(
+          await serverBlockNoteEditor.tryParseMarkdownToBlocks(
+            markdownFromTipTap,
+          ),
+        )
+      : null;
   }
 
   const convertedBlocknote = parsedValue.markdown
@@ -63,6 +75,6 @@ export const transformRichTextValue = async (
 
   return {
     markdown: parsedValue.markdown || convertedMarkdown,
-    blocknote: parsedValue.blocknote || convertedBlocknote,
+    blocknote: normalizedBlocknote || convertedBlocknote,
   };
 };
