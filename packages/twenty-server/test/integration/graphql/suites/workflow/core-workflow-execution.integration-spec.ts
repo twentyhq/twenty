@@ -1023,6 +1023,77 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     },
   );
 
+  it.each(['core', 'legacy'] as const)(
+    'rebuilds cron dispatch after a cache publication failure through the %s API',
+    async (api) => {
+      const fixture = await createFixture({
+        triggerType: 'CRON',
+        triggerSettings: { type: 'CUSTOM', pattern: '* * * * *' },
+      });
+      await global.testDataSource.query(
+        `UPDATE core."workflowVersion" SET status = 'DRAFT' WHERE id = $1`,
+        [fixture.coreWorkflowVersionId],
+      );
+      await global.testDataSource.query(
+        `UPDATE "${schema}"."workflowVersion" SET status = 'DRAFT' WHERE id = $1`,
+        [fixture.workflowVersionId],
+      );
+      const cache = global.app.get<CacheStorageService>(
+        CacheStorageNamespace.ModuleWorkflow,
+      );
+      await cache.hashSet({
+        key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+        field: 'b-async-rebuild-test',
+        value: '{}',
+      });
+      const publication = jest
+        .spyOn(cache, 'hashSetIfExists')
+        .mockRejectedValueOnce(new Error('Cron cache publication failure'));
+      const response = await workflowGraphqlRequest(
+        api === 'core'
+          ? 'mutation Activate($id: UUID!) { activateCoreWorkflowVersion(coreWorkflowVersionId: $id) }'
+          : 'mutation Activate($id: UUID!) { activateWorkflowVersion(workflowVersionId: $id) }',
+        {
+          id:
+            api === 'core'
+              ? fixture.coreWorkflowVersionId
+              : fixture.workflowVersionId,
+        },
+      );
+      expect(response.body.errors).toBeUndefined();
+      expect(publication).toHaveBeenCalledTimes(1);
+      publication.mockRestore();
+      expect(
+        await cache.hashGetValues(WORKFLOW_CRON_TRIGGER_CACHE_KEY),
+      ).toEqual([]);
+      await global.workflowTestServices.cron.handle();
+      const entries = await cache.hashGetValues(
+        WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+      );
+      expect(entries.map((entry) => JSON.parse(entry))).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            coreWorkflowVersionId: fixture.coreWorkflowVersionId,
+          }),
+        ]),
+      );
+      for (let attempt = 0; attempt < 100; attempt++) {
+        const runs = await global.testDataSource.query(
+          `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
+          [fixture.coreWorkflowId],
+        );
+        if (runs.length > 0) {
+          await waitForRun(runs[0].id, 'COMPLETED');
+          return;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      throw new Error(
+        'Rebuilt cron cache did not dispatch the activated workflow',
+      );
+    },
+  );
+
   it('rejects an overlapping builder edit without losing the successful edit and accepts a fresh retry', async () => {
     const fixture = await createFixture();
     await global.testDataSource.query(

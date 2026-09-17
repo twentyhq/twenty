@@ -671,11 +671,26 @@ export class WorkflowTriggerWorkspaceService {
         };
 
         const publishCronCache = async () => {
-          await this.cacheStorageService.hashSetIfExists({
-            key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-            field: workflowVersion.workflowId,
-            value: JSON.stringify(cachedTrigger),
-          });
+          try {
+            await this.cacheStorageService.hashSetIfExists({
+              key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+              field: workflowVersion.workflowId,
+              value: JSON.stringify(cachedTrigger),
+            });
+          } catch (error) {
+            this.logger.error(
+              `Cron trigger cache entry not published for workflow ${workflowVersion.workflowId}, dropping the cron cache so the next tick rebuilds it from the database`,
+              error,
+            );
+
+            try {
+              await this.cacheStorageService.del(
+                WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+              );
+            } catch (invalidationError) {
+              this.logger.error(invalidationError);
+            }
+          }
         };
 
         if (isDefined(transactionContext)) {
