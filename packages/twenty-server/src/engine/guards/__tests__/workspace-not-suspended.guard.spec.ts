@@ -8,7 +8,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { RESOLVER_SCHEMA_SCOPE_KEY } from 'src/engine/api/graphql/graphql-config/constants/resolver-schema-scope-key.constant';
 import { ALLOW_SUSPENDED_WORKSPACE_KEY } from 'src/engine/guards/constants/allow-suspended-workspace-key.constant';
 import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-suspended.guard';
 
@@ -17,16 +16,16 @@ const SUSPENDED_STATUSES = [
   WorkspaceActivationStatus.INACTIVE,
 ];
 
-const buildGraphqlContext = ({
+const buildContext = ({
   workspace,
-  operation,
+  type = 'graphql',
+  operation = 'query',
   isSuspendedWorkspaceAllowed = false,
-  resolverSchemaScope = 'metadata',
 }: {
   workspace: Record<string, unknown> | undefined;
-  operation: string;
+  type?: string;
+  operation?: string;
   isSuspendedWorkspaceAllowed?: boolean;
-  resolverSchemaScope?: string;
 }) => {
   const reflector = new Reflector();
 
@@ -38,21 +37,16 @@ const buildGraphqlContext = ({
         : undefined,
     );
 
-  jest
-    .spyOn(reflector, 'get')
-    .mockImplementation((key) =>
-      key === RESOLVER_SCHEMA_SCOPE_KEY ? resolverSchemaScope : undefined,
-    );
-
   jest.spyOn(GqlExecutionContext, 'create').mockReturnValue({
     getContext: () => ({ req: { workspace } }),
     getInfo: () => ({ operation: { operation } }),
   } as any);
 
   const context = {
-    getType: () => 'graphql',
+    getType: () => type,
     getHandler: () => jest.fn(),
     getClass: () => jest.fn(),
+    switchToHttp: () => ({ getRequest: () => ({ workspace }) }),
   } as unknown as ExecutionContext;
 
   return { guard: new WorkspaceNotSuspendedGuard(reflector), context };
@@ -74,8 +68,9 @@ describe('WorkspaceNotSuspendedGuard', () => {
     WorkspaceActivationStatus.ACTIVE,
     WorkspaceActivationStatus.CREATED,
     WorkspaceActivationStatus.PENDING_CREATION,
-  ])('should let a %s workspace mutate', (activationStatus) => {
-    const { guard, context } = buildGraphqlContext({
+    WorkspaceActivationStatus.ONGOING_CREATION,
+  ])('should let a %s workspace through', (activationStatus) => {
+    const { guard, context } = buildContext({
       workspace: { id: 'workspace-id', activationStatus },
       operation: 'mutation',
     });
@@ -84,33 +79,17 @@ describe('WorkspaceNotSuspendedGuard', () => {
   });
 
   it('should let an unauthenticated request through', () => {
-    const { guard, context } = buildGraphqlContext({
-      workspace: undefined,
-      operation: 'mutation',
-    });
+    const { guard, context } = buildContext({ workspace: undefined });
 
     expect(guard.canActivate(context)).toBe(true);
   });
 
   it.each(SUSPENDED_STATUSES)(
-    'should let a %s workspace read on the metadata schema',
+    'should refuse an undeclared query on a %s workspace',
     (activationStatus) => {
-      const { guard, context } = buildGraphqlContext({
+      const { guard, context } = buildContext({
         workspace: { id: 'workspace-id', activationStatus },
         operation: 'query',
-      });
-
-      expect(guard.canActivate(context)).toBe(true);
-    },
-  );
-
-  it.each(SUSPENDED_STATUSES)(
-    'should refuse a %s workspace read on the core schema',
-    (activationStatus) => {
-      const { guard, context } = buildGraphqlContext({
-        workspace: { id: 'workspace-id', activationStatus },
-        operation: 'query',
-        resolverSchemaScope: 'core',
       });
 
       expectSuspendedThrow(() => guard.canActivate(context));
@@ -118,22 +97,9 @@ describe('WorkspaceNotSuspendedGuard', () => {
   );
 
   it.each(SUSPENDED_STATUSES)(
-    'should let a %s workspace read on the admin schema',
+    'should refuse an undeclared mutation on a %s workspace',
     (activationStatus) => {
-      const { guard, context } = buildGraphqlContext({
-        workspace: { id: 'workspace-id', activationStatus },
-        operation: 'query',
-        resolverSchemaScope: 'admin',
-      });
-
-      expect(guard.canActivate(context)).toBe(true);
-    },
-  );
-
-  it.each(SUSPENDED_STATUSES)(
-    'should refuse a %s workspace mutation',
-    (activationStatus) => {
-      const { guard, context } = buildGraphqlContext({
+      const { guard, context } = buildContext({
         workspace: { id: 'workspace-id', activationStatus },
         operation: 'mutation',
       });
@@ -143,21 +109,33 @@ describe('WorkspaceNotSuspendedGuard', () => {
   );
 
   it.each(SUSPENDED_STATUSES)(
-    'should let a %s workspace subscribe on the metadata schema',
+    'should refuse an undeclared subscription on a %s workspace',
     (activationStatus) => {
-      const { guard, context } = buildGraphqlContext({
+      const { guard, context } = buildContext({
         workspace: { id: 'workspace-id', activationStatus },
         operation: 'subscription',
       });
 
-      expect(guard.canActivate(context)).toBe(true);
+      expectSuspendedThrow(() => guard.canActivate(context));
     },
   );
 
   it.each(SUSPENDED_STATUSES)(
-    'should let an exempted mutation through on a %s workspace',
+    'should refuse an undeclared http request on a %s workspace',
     (activationStatus) => {
-      const { guard, context } = buildGraphqlContext({
+      const { guard, context } = buildContext({
+        workspace: { id: 'workspace-id', activationStatus },
+        type: 'http',
+      });
+
+      expectSuspendedThrow(() => guard.canActivate(context));
+    },
+  );
+
+  it.each(SUSPENDED_STATUSES)(
+    'should let a declared handler through on a %s workspace',
+    (activationStatus) => {
+      const { guard, context } = buildContext({
         workspace: { id: 'workspace-id', activationStatus },
         operation: 'mutation',
         isSuspendedWorkspaceAllowed: true,
@@ -170,7 +148,7 @@ describe('WorkspaceNotSuspendedGuard', () => {
   it.each(SUSPENDED_STATUSES)(
     'should let a soft deleted %s workspace through',
     (activationStatus) => {
-      const { guard, context } = buildGraphqlContext({
+      const { guard, context } = buildContext({
         workspace: {
           id: 'workspace-id',
           activationStatus,
@@ -180,26 +158,6 @@ describe('WorkspaceNotSuspendedGuard', () => {
       });
 
       expect(guard.canActivate(context)).toBe(true);
-    },
-  );
-
-  it.each(SUSPENDED_STATUSES)(
-    'should refuse a %s workspace on an http request',
-    (activationStatus) => {
-      const guard = new WorkspaceNotSuspendedGuard(new Reflector());
-
-      const context = {
-        getType: () => 'http',
-        getHandler: () => jest.fn(),
-        getClass: () => jest.fn(),
-        switchToHttp: () => ({
-          getRequest: () => ({
-            workspace: { id: 'workspace-id', activationStatus },
-          }),
-        }),
-      } as unknown as ExecutionContext;
-
-      expectSuspendedThrow(() => guard.canActivate(context));
     },
   );
 });

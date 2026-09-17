@@ -4,10 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { type GqlContextType, GqlExecutionContext } from '@nestjs/graphql';
 
-import { RESOLVER_SCHEMA_SCOPE_KEY } from 'src/engine/api/graphql/graphql-config/constants/resolver-schema-scope-key.constant';
-import { type ResolverSchemaScope } from 'src/engine/api/graphql/graphql-config/types/resolver-schema-scope.type';
 import {
   AuthException,
   AuthExceptionCode,
@@ -31,10 +28,6 @@ export class WorkspaceNotSuspendedGuard implements CanActivate {
       return true;
     }
 
-    if (this.isReadOutsideCoreSchema(context)) {
-      return true;
-    }
-
     throw new AuthException(
       'Workspace is suspended',
       AuthExceptionCode.WORKSPACE_SUSPENDED,
@@ -47,29 +40,6 @@ export class WorkspaceNotSuspendedGuard implements CanActivate {
         context.getHandler(),
         context.getClass(),
       ]) === true
-    );
-  }
-
-  // Subscriptions are read-only too: refusing them makes the SSE client
-  // re-subscribe in a loop while it holds the user on the billing page.
-  private isReadOutsideCoreSchema(context: ExecutionContext): boolean {
-    if (context.getType<GqlContextType>() !== 'graphql') {
-      return false;
-    }
-
-    const resolverSchemaScope = this.reflector.get<ResolverSchemaScope>(
-      RESOLVER_SCHEMA_SCOPE_KEY,
-      context.getClass(),
-    );
-
-    if (resolverSchemaScope === 'core') {
-      return false;
-    }
-
-    return (
-      GqlExecutionContext.create(context).getInfo<
-        { operation?: { operation?: string } } | undefined
-      >()?.operation?.operation !== 'mutation'
     );
   }
 }

@@ -5,6 +5,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileDeletionJob } from 'src/engine/core-modules/file/jobs/file-deletion.job';
 import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -23,6 +24,7 @@ import { FileService } from './services/file.service';
 @Module({
   imports: [
     JwtModule,
+    CoreEntityCacheModule,
     TypeOrmModule.forFeature([FileEntity, WorkspaceEntity, ApplicationEntity]),
     PermissionsModule,
     FileStorageModule,
