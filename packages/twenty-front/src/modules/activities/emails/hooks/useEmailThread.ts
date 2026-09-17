@@ -14,20 +14,20 @@ import {
   CoreObjectNameSingular,
   MessageParticipantRole,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useEmailThread = (threadId: string | null) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const [lastMessageId, setLastMessageId] = useState<string | null>(null);
   const [isMessagesFetchComplete, setIsMessagesFetchComplete] = useState(false);
 
-  const { record: thread } = useFindOneRecord<EmailThread>({
-    objectNameSingular: CoreObjectNameSingular.MessageThread,
-    objectRecordId: threadId ?? '',
-    recordGqlFields: {
-      id: true,
-    },
-  });
+  const { record: thread, loading: threadRecordLoading } =
+    useFindOneRecord<EmailThread>({
+      objectNameSingular: CoreObjectNameSingular.MessageThread,
+      objectRecordId: threadId ?? '',
+      recordGqlFields: {
+        id: true,
+      },
+    });
 
   useEffect(() => {
     if (thread) {
@@ -79,7 +79,7 @@ export const useEmailThread = (threadId: string | null) => {
     }
   }, [messages, isMessagesFetchComplete]);
 
-  const { records: messageSenders } =
+  const { records: messageSenders, loading: messageSendersLoading } =
     useFindManyRecords<EmailThreadMessageParticipant>({
       filter: {
         messageId: {
@@ -136,22 +136,14 @@ export const useEmailThread = (threadId: string | null) => {
     loading: replyConnectedAccountLoading,
   } = useReplyConnectedAccount(lastMessageChannelId);
 
-  const messagesWithSender: EmailThreadMessageWithSender[] = messages
-    .map((message) => {
-      const sender = messageSenders.find(
+  const messagesWithSender: EmailThreadMessageWithSender[] = messages.map(
+    (message) => ({
+      ...message,
+      sender: messageSenders.find(
         (messageSender) => messageSender.messageId === message.id,
-      );
-
-      if (!sender) {
-        return null;
-      }
-
-      return {
-        ...message,
-        sender,
-      };
-    })
-    .filter(isDefined);
+      ),
+    }),
+  );
 
   const messageChannelLoading =
     replyConnectedAccountLoading || messageChannelMessageAssociationLoading;
@@ -163,7 +155,8 @@ export const useEmailThread = (threadId: string | null) => {
     connectedAccountId,
     connectedAccountHandle,
     connectedAccountProvider,
-    threadLoading: messagesLoading,
+    threadLoading:
+      threadRecordLoading || messagesLoading || messageSendersLoading,
     messageChannelLoading,
     lastMessageExternalId,
     fetchMoreMessages,
