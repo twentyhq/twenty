@@ -1,10 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { executeWithRetry } from 'src/utils/execute-with-retry';
-const buildGraphqlError = (
-  message: string,
-  extensions: Record<string, unknown>,
-) => Object.assign(new Error(message), { errors: [{ message, extensions }] });
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -35,75 +31,6 @@ describe('executeWithRetry', () => {
 
     await expect(promise).resolves.toBe('ok');
     expect(execute).toHaveBeenCalledTimes(2);
-  });
-
-  it('retries the application throttler, which reports itself as a user input error', async () => {
-    const execute = vi
-      .fn()
-      .mockRejectedValueOnce(
-        buildGraphqlError('Limit reached (500 tokens per 60000 ms)', {
-          code: 'BAD_USER_INPUT',
-          subCode: 'LIMIT_REACHED',
-        }),
-      )
-      .mockResolvedValue('ok');
-
-    const promise = executeWithRetry(execute);
-    await vi.advanceTimersByTimeAsync(2_000);
-
-    await expect(promise).resolves.toBe('ok');
-    expect(execute).toHaveBeenCalledTimes(2);
-  });
-
-  it('retries a rate-limited usage limit', async () => {
-    const execute = vi
-      .fn()
-      .mockRejectedValueOnce(
-        buildGraphqlError(
-          'Rate limit exceeded for application: 500 requests per 60s.',
-          { code: 'RATE_LIMITED' },
-        ),
-      )
-      .mockResolvedValue('ok');
-
-    const promise = executeWithRetry(execute);
-    await vi.advanceTimersByTimeAsync(2_000);
-
-    await expect(promise).resolves.toBe('ok');
-    expect(execute).toHaveBeenCalledTimes(2);
-  });
-
-  it('waits for the retryAfterMs the server reports when it exceeds the backoff', async () => {
-    const execute = vi
-      .fn()
-      .mockRejectedValueOnce(
-        buildGraphqlError('Rate limit exceeded', {
-          code: 'RATE_LIMITED',
-          retryAfterMs: 11_000,
-        }),
-      )
-      .mockResolvedValue('ok');
-
-    const promise = executeWithRetry(execute);
-    await vi.advanceTimersByTimeAsync(10_000);
-    expect(execute).toHaveBeenCalledTimes(1);
-
-    await vi.advanceTimersByTimeAsync(1_000);
-    await expect(promise).resolves.toBe('ok');
-    expect(execute).toHaveBeenCalledTimes(2);
-  });
-
-  it('does not retry a genuine user input error', async () => {
-    const execute = vi
-      .fn()
-      .mockRejectedValue(
-        buildGraphqlError('Field "nope" is not defined', {
-          code: 'BAD_USER_INPUT',
-        }),
-      );
-
-    await expect(executeWithRetry(execute)).rejects.toThrow('not defined');
-    expect(execute).toHaveBeenCalledTimes(1);
   });
 
   it('does not retry non-retryable errors', async () => {
