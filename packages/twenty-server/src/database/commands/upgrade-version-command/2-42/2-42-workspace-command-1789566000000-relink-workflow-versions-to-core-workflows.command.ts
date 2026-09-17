@@ -76,6 +76,15 @@ export class RelinkWorkflowVersionsToCoreWorkflowsCommand extends ProvisionedWor
         return;
       }
 
+      const [workflowTable] = await queryRunner.query(
+        `SELECT to_regclass($1) AS "table"`,
+        [`"${schema}"."workflow"`],
+      );
+
+      if (!isDefined(workflowTable?.table)) {
+        return;
+      }
+
       const [counts] = await queryRunner.query(
         `SELECT count(*)::int AS total
          FROM core."workflowVersion" v
