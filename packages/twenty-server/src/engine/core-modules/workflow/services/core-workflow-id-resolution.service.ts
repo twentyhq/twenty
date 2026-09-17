@@ -5,15 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 @Injectable()
 export class CoreWorkflowIdResolutionService {
@@ -22,7 +19,6 @@ export class CoreWorkflowIdResolutionService {
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async resolveWorkspaceVersionIdOrThrow({
@@ -72,22 +68,12 @@ export class CoreWorkflowIdResolutionService {
       return null;
     }
 
-    const workspaceTwins =
-      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const workflowVersionRepository =
-          this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
+    const workspaceWorkflowVersionId =
+      coreWorkflowVersion.workspaceWorkflowVersionId;
 
-        return workflowVersionRepository.find({
-          where: { coreWorkflowVersionId },
-        });
-      }, buildSystemAuthContext(workspaceId));
-
-    if (workspaceTwins.length !== 1) {
+    if (!isDefined(workspaceWorkflowVersionId)) {
       throw new WorkflowQueryValidationException(
-        `Core workflow version '${coreWorkflowVersionId}' resolves to ${workspaceTwins.length} workspace rows instead of exactly one`,
+        `Core workflow version '${coreWorkflowVersionId}' has no workspace mirror alias`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
           userFriendlyMessage: msg`Workflow version is not correctly linked to its mirror`,
@@ -97,7 +83,7 @@ export class CoreWorkflowIdResolutionService {
 
     return {
       coreWorkflowVersion,
-      workspaceWorkflowVersionId: workspaceTwins[0].id,
+      workspaceWorkflowVersionId,
     };
   }
 

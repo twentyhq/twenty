@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { In } from 'typeorm';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkflowActionType } from 'twenty-shared/workflow';
 import { v4 as uuidv4 } from 'uuid';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
@@ -17,6 +16,8 @@ import {
   WorkflowVersionStatus as CoreWorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
+import { getWorkflowCommandMenuItemLabel } from 'src/modules/workflow/workflow-trigger/utils/get-workflow-command-menu-item-label.util';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
@@ -37,6 +38,7 @@ import {
   type WorkflowWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { remapDuplicatedStepDestinations } from 'src/modules/workflow/workflow-builder/utils/remap-duplicated-step-destinations.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -54,6 +56,7 @@ export class CoreWorkflowMutationWorkspaceService {
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly coreWorkflowIdResolutionService: CoreWorkflowIdResolutionService,
+    private readonly commandMenuItemService: CommandMenuItemService,
     private readonly coreWorkflowListService: CoreWorkflowListService,
     private readonly coreWorkflowVersionWriteService: CoreWorkflowVersionWriteService,
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
@@ -198,11 +201,11 @@ export class CoreWorkflowMutationWorkspaceService {
     trigger: NonNullable<WorkflowVersionEntity['triggers']>[number];
     steps: WorkflowAction[];
   }) {
-    const sourceToClonedPairs: Array<{
+    const sourceToClonedPairs: {
       source: WorkflowAction;
       duplicated: WorkflowAction;
-    }> = [];
-    const oldToNewIdMap = new Map<string, string>();
+    }[] = [];
+    const clonedStepIdBySourceStepId = new Map<string, string>();
 
     for (const step of steps) {
       const clonedStep =
@@ -212,45 +215,14 @@ export class CoreWorkflowMutationWorkspaceService {
         });
 
       sourceToClonedPairs.push({ source: step, duplicated: clonedStep });
-      oldToNewIdMap.set(step.id, clonedStep.id);
+      clonedStepIdBySourceStepId.set(step.id, clonedStep.id);
     }
 
-    const remappedTrigger = {
-      ...trigger,
-      nextStepIds: (trigger.nextStepIds ?? []).map(
-        (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
-      ),
-    };
-
-    const remappedSteps: WorkflowAction[] = sourceToClonedPairs.map(
-      ({ source, duplicated }) => {
-        const remappedStep = {
-          ...duplicated,
-          nextStepIds: (source.nextStepIds ?? []).map(
-            (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
-          ),
-        };
-
-        if (
-          source.type === WorkflowActionType.ITERATOR &&
-          isDefined(source.settings?.input?.initialLoopStepIds)
-        ) {
-          remappedStep.settings = {
-            ...remappedStep.settings,
-            input: {
-              ...remappedStep.settings.input,
-              initialLoopStepIds: source.settings.input.initialLoopStepIds.map(
-                (oldId: string) => oldToNewIdMap.get(oldId) ?? oldId,
-              ),
-            },
-          };
-        }
-
-        return remappedStep;
-      },
-    );
-
-    return { trigger: remappedTrigger, steps: remappedSteps };
+    return remapDuplicatedStepDestinations({
+      trigger,
+      sourceToClonedPairs,
+      clonedStepIdBySourceStepId,
+    });
   }
 
   async updateWorkflow(
@@ -279,9 +251,59 @@ export class CoreWorkflowMutationWorkspaceService {
       );
     }, buildSystemAuthContext(workspaceId));
 
-    await this.workflowCommonWorkspaceService.syncCommandMenuItemLabelForWorkflows(
-      [workspaceWorkflowId],
-      buildSystemAuthContext(workspaceId),
+    await this.syncCommandMenuItemLabelFromCore({
+      workspaceId,
+      coreWorkflowId,
+      name,
+    });
+  }
+
+  private async syncCommandMenuItemLabelFromCore({
+    workspaceId,
+    coreWorkflowId,
+    name,
+  }: {
+    workspaceId: string;
+    coreWorkflowId: string;
+    name: string;
+  }): Promise<void> {
+    const coreWorkflow = await this.coreWorkflowRepository.findOne(
+      workspaceId,
+      {
+        where: { id: coreWorkflowId },
+        select: { id: true, lastPublishedCoreWorkflowVersionId: true },
+      },
+    );
+
+    const publishedCoreVersionId =
+      coreWorkflow?.lastPublishedCoreWorkflowVersionId;
+
+    if (!isDefined(publishedCoreVersionId)) {
+      return;
+    }
+
+    const existingCommandMenuItem =
+      await this.commandMenuItemService.findByCoreWorkflowVersionId(
+        publishedCoreVersionId,
+        workspaceId,
+      );
+
+    if (!isDefined(existingCommandMenuItem)) {
+      return;
+    }
+
+    const label = getWorkflowCommandMenuItemLabel({ name });
+
+    if (
+      existingCommandMenuItem.label === label &&
+      existingCommandMenuItem.shortLabel === label
+    ) {
+      return;
+    }
+
+    await this.commandMenuItemService.update(
+      { id: existingCommandMenuItem.id, label, shortLabel: label },
+      workspaceId,
     );
   }
 
@@ -389,43 +411,39 @@ export class CoreWorkflowMutationWorkspaceService {
     workspaceId: string,
     { coreWorkflowIds }: { coreWorkflowIds: string[] },
   ): Promise<DeletedCoreWorkflowDTO[]> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    const workflowsToDelete =
-      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const workflowRepository =
-          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-            'workflow',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        return workflowRepository.find({
-          where: { coreWorkflowId: In(coreWorkflowIds) },
-          withDeleted: true,
-        });
-      }, authContext);
-
-    const liveWorkflowsToDelete = workflowsToDelete.filter(
-      (workflow) => !isDefined(workflow.deletedAt),
+    const coreWorkflowsToDelete = await this.coreWorkflowRepository.find(
+      workspaceId,
+      {
+        where: { id: In(coreWorkflowIds) },
+        select: { id: true, workspaceWorkflowId: true },
+      },
     );
 
-    if (workflowsToDelete.length > 0) {
-      if (liveWorkflowsToDelete.length > 0) {
-        await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-          const workflowRepository =
-            this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-              'workflow',
-              { shouldBypassPermissionChecks: true },
-            );
+    const deletedCoreWorkflows = coreWorkflowsToDelete
+      .map(({ id, workspaceWorkflowId }) =>
+        isDefined(workspaceWorkflowId)
+          ? { id, workspaceWorkflowId }
+          : undefined,
+      )
+      .filter(isDefined);
 
-          await workflowRepository.softDelete({
-            id: In(liveWorkflowsToDelete.map((workflow) => workflow.id)),
-          });
-        }, authContext);
-      }
+    const mirrorWorkflowIds = deletedCoreWorkflows.map(
+      ({ workspaceWorkflowId }) => workspaceWorkflowId,
+    );
+
+    if (mirrorWorkflowIds.length > 0) {
+      const authContext = buildSystemAuthContext(workspaceId);
+
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        await this.workspaceOrmManager
+          .getRepository<WorkflowWorkspaceEntity>('workflow', {
+            shouldBypassPermissionChecks: true,
+          })
+          .softDelete({ id: In(mirrorWorkflowIds) });
+      }, authContext);
 
       await this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
-        workflowIds: workflowsToDelete.map((workflow) => workflow.id),
+        workflowIds: mirrorWorkflowIds,
         workspaceId,
         operation: 'delete',
       });
@@ -436,13 +454,7 @@ export class CoreWorkflowMutationWorkspaceService {
       coreWorkflowIds,
     );
 
-    return liveWorkflowsToDelete
-      .map((workflow) =>
-        isDefined(workflow.coreWorkflowId)
-          ? { id: workflow.coreWorkflowId, workspaceWorkflowId: workflow.id }
-          : undefined,
-      )
-      .filter(isDefined);
+    return deletedCoreWorkflows;
   }
 
   async discardDraftVersion(

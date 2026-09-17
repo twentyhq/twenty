@@ -159,6 +159,7 @@ export class CoreWorkflowVersionWriteService {
     });
 
     const coreWorkflowVersionId = uuidv4();
+    const workspaceWorkflowVersionId = uuidv4();
 
     const coreSiblingsCount = await this.countCoreVersions({
       workspaceId,
@@ -179,8 +180,8 @@ export class CoreWorkflowVersionWriteService {
         async (transactionScope) => {
           await transactionScope.executeRawQuery(
             `INSERT INTO core."workflowVersion"
-               ("id", "workspaceId", "workflowId", "coreWorkflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId")
-             VALUES ($1, $2, $3, $4, $5, $6, 'DRAFT', $7, $8)`,
+               ("id", "workspaceId", "workflowId", "coreWorkflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "workspaceWorkflowVersionId")
+             VALUES ($1, $2, $3, $4, $5, $6, 'DRAFT', $7, $8, $9)`,
             [
               coreWorkflowVersionId,
               workspaceId,
@@ -190,6 +191,7 @@ export class CoreWorkflowVersionWriteService {
               isDefined(steps) ? JSON.stringify(steps) : null,
               uuidv4(),
               applicationId,
+              workspaceWorkflowVersionId,
             ],
           );
 
@@ -198,6 +200,7 @@ export class CoreWorkflowVersionWriteService {
               shouldBypassPermissionChecks: true,
             })
             .insert({
+              id: workspaceWorkflowVersionId,
               workflowId: workspaceWorkflowId,
               name: `v${coreSiblingsCount + 1}`,
               status: WorkflowVersionStatus.DRAFT,
