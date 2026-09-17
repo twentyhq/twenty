@@ -7,12 +7,12 @@
  *                              |___/
  */
 
-export type { AnimatedPlaceholderType } from './AnimatedPlaceholder/types/AnimatedPlaceholderType';
 export { AnimatedPlaceholder } from './AnimatedPlaceholder/AnimatedPlaceholder';
 export { BACKGROUND } from './AnimatedPlaceholder/constants/Background';
 export { DARK_BACKGROUND } from './AnimatedPlaceholder/constants/DarkBackground';
 export { DARK_MOVING_IMAGE } from './AnimatedPlaceholder/constants/DarkMovingImage';
 export { MOVING_IMAGE } from './AnimatedPlaceholder/constants/MovingImage';
+export type { AnimatedPlaceholderType } from './AnimatedPlaceholder/types/AnimatedPlaceholderType';
 export type { BannerColor, BannerVariant } from './Banner/Banner';
 export { Banner } from './Banner/Banner';
 export type { CalloutVariant, CalloutProps } from './Callout/Callout';

@@ -199,9 +199,7 @@ type RecordMenuProps = { onDuplicate: () => void; onDelete: () => void };
 
 export const RecordMenu = ({ onDuplicate, onDelete }: RecordMenuProps) => (
   <Menu.Root>
-    <Menu.Trigger
-      render={<Button title="Record actions" variant="secondary" />}
-    />
+    <Menu.Trigger render={<Button variant="outline">Record actions</Button>} />
     <Menu.Popup>
       <Menu.Item startIcon={<IconCopy />} onClick={onDuplicate}>
         Duplicate

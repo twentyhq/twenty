@@ -259,19 +259,17 @@ export const SettingsClaimApplicationSection = () => {
           />
         </StyledInputContainer>
         <Button
-          title={t`Look up`}
-          Icon={IconSearch}
+          startIcon={<IconSearch />}
           onClick={handleLookup}
           disabled={isLookingUp || lookupValue.trim().length === 0}
-        />
+        >{t`Look up`}</Button>
         {canSyncCatalog && (
           <Button
-            title={t`Sync catalog`}
-            variant="secondary"
-            Icon={IconRefresh}
+            startIcon={<IconRefresh />}
             onClick={handleSync}
             disabled={isSyncing}
-          />
+            variant="outline"
+          >{t`Sync catalog`}</Button>
         )}
       </StyledRow>
 
@@ -301,12 +299,12 @@ export const SettingsClaimApplicationSection = () => {
           </StyledHint>
           <StyledRow>
             <Button
-              title={t`Claim with GitHub`}
-              Icon={IconBrandGithub}
-              accent="blue"
+              startIcon={<IconBrandGithub />}
               onClick={handleClaimWithGithub}
               disabled={isRedirectingToGithub}
-            />
+              variant="solid"
+              color="accent"
+            >{t`Claim with GitHub`}</Button>
           </StyledRow>
         </StyledResultCard>
       )}

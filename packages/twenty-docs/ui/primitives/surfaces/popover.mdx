@@ -100,15 +100,13 @@ import { Popover } from 'twenty-ui/primitives/surfaces';
 
 export const ImportHelp = () => (
   <Popover.Root>
-    <Popover.Trigger
-      render={<Button title="Import help" variant="secondary" />}
-    />
+    <Popover.Trigger render={<Button variant="outline">Import help</Button>} />
     <Popover.Popup arrow>
       <Popover.Title>Import a CSV file</Popover.Title>
       <Popover.Description>
         Use a header row to identify your columns.
       </Popover.Description>
-      <Popover.Close render={<Button title="Got it" />} />
+      <Popover.Close render={<Button>Got it</Button>} />
     </Popover.Popup>
   </Popover.Root>
 );

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { isUndefined } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 
@@ -95,6 +96,9 @@ export const SingleRecordPickerMenuItems = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={selectableItemIds}
       focusId={focusId}
+      // The empty option leads the list, so preselecting it would make Enter
+      // detach the relation instead of picking a record.
+      shouldPreselectFirstItem={!isDefined(emptyLabel)}
     >
       {emptyLabel && (
         <SelectableListItem

@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
-import { MainButton } from '@ui/primitives/input/MainButton/MainButton';
+import { MainButton } from '@ui/components/MainButton/MainButton';
 import {
   IconMicrophone,
   IconHeadphones,
@@ -59,7 +59,7 @@ const PermissionChecklist = ({ state, isPending, command }: ActionProps) => (
             </span>
           ) : (
             <Button
-              variant="secondary"
+              variant="outline"
               disabled={isPending('permission') || !state.updatedAt}
               onClick={() =>
                 void command({
@@ -67,10 +67,11 @@ const PermissionChecklist = ({ state, isPending, command }: ActionProps) => (
                   permission,
                 })
               }
-              size="medium"
-              title={denied ? i18n._('Open settings') : button}
-              Icon={denied ? IconArrowUpRight : undefined}
-            />
+              size="md"
+              startIcon={denied ? <IconArrowUpRight /> : undefined}
+            >
+              {denied ? i18n._('Open settings') : button}
+            </Button>
           )}
         </div>
       );
@@ -112,9 +113,10 @@ export const Permissions = ({
               })
             : onContinue()
         }
-        Icon={intentToRecord ? IconCircleDot : undefined}
-        title={intentToRecord ? i18n._('Start recording') : i18n._('Finish')}
-      />
+        startIcon={intentToRecord ? <IconCircleDot /> : undefined}
+      >
+        {intentToRecord ? i18n._('Start recording') : i18n._('Finish')}
+      </MainButton>
     </section>
   );
 };

@@ -80,20 +80,20 @@ export const SettingsSkillDangerZone = ({
       />
       <StyledDangerButtonsContainer>
         <Button
-          Icon={skill.isActive ? IconArchive : IconArchiveOff}
-          title={skill.isActive ? t`Deactivate` : t`Activate`}
-          size="small"
+          startIcon={skill.isActive ? <IconArchive /> : <IconArchiveOff />}
+          size="sm"
           onClick={handleToggleActive}
-        />
+        >
+          {skill.isActive ? t`Deactivate` : t`Activate`}
+        </Button>
         {skill.isCustom && (
           <Button
-            Icon={IconTrash}
-            title={t`Delete`}
-            size="small"
-            accent="danger"
-            variant="secondary"
+            startIcon={<IconTrash />}
+            size="sm"
             onClick={() => openModal(DELETE_SKILL_MODAL_ID)}
-          />
+            variant="outline"
+            color="danger"
+          >{t`Delete`}</Button>
         )}
       </StyledDangerButtonsContainer>
       <ConfirmationModal

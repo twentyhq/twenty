@@ -1,3 +1,4 @@
+import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -19,13 +20,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 // Expanded, the row is sized off the page card header beside it so the rules
-// read as one line across both columns. Collapsed, the modes stack into the
-// icon rail and the rules would cut it in half, so they go.
+// read as one line across both columns.
 const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   align-items: ${({ isExpanded }) => (isExpanded ? 'center' : 'flex-start')};
   border-bottom: ${({ isExpanded }) =>
-    isExpanded ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
-  border-top: ${({ isExpanded }) =>
     isExpanded ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
   box-sizing: border-box;
   display: flex;
@@ -65,7 +63,10 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${({ isActive, isExpanded }) =>
     isActive && isExpanded ? themeCssVariables.spacing[1] : '0'};
-  height: ${themeCssVariables.spacing[7]};
+  height: ${({ isExpanded }) =>
+    isExpanded
+      ? themeCssVariables.spacing[7]
+      : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
   // A flex item will not shrink past its content without this, so flex-shrink
@@ -78,7 +79,7 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   width: ${({ isExpanded }) =>
-    isExpanded ? 'auto' : themeCssVariables.spacing[6]};
+    isExpanded ? 'auto' : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
 
   &[aria-disabled='true'] {
     color: ${themeCssVariables.font.color.light};

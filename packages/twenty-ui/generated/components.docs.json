@@ -1,5 +1,488 @@
 [
   {
+    "name": "IconButton",
+    "entryPoint": "twenty-ui/components",
+    "slug": "input/icon-button",
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Required accessible name describing the action."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic color of the button."
+      },
+      {
+        "name": "elevated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Adds a shadow to the button."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows a loading indicator and disables activation while preserving the button width."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Square button size: `sm` (24px) or `md` (32px)."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "tooltip",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text displayed when hovering or focusing the button."
+      },
+      {
+        "name": "tooltipDelay",
+        "type": "\"0ms\" | \"300ms\" | \"500ms\" | \"1000ms\"",
+        "required": false,
+        "defaultValue": "TooltipDelay.longDelay",
+        "description": "Delay before showing the tooltip."
+      },
+      {
+        "name": "tooltipOffset",
+        "type": "number",
+        "required": false,
+        "defaultValue": "5",
+        "description": "Distance in pixels between the button and the tooltip."
+      },
+      {
+        "name": "tooltipPlace",
+        "type": "\"top\" | \"left\" | \"right\" | \"bottom\"",
+        "required": false,
+        "defaultValue": "TooltipPosition.Bottom",
+        "description": "Preferred placement of the tooltip relative to the button."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Visual treatment of the button surface."
+      }
+    ]
+  },
+  {
+    "name": "MainButton",
+    "entryPoint": "twenty-ui/components",
+    "slug": "input/main-button",
+    "props": [
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic color of the button."
+      },
+      {
+        "name": "elevated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Adds a shadow to the button."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed after the label."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Expands the button to fill its container width."
+      },
+      {
+        "name": "hotkeys",
+        "type": "string[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Keyboard shortcut hints displayed on non-mobile screens."
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows a loading indicator and disables activation while preserving the button width."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Button height: `sm` (24px) or `md` (32px)."
+      },
+      {
+        "name": "soon",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays a coming-soon label and disables activation."
+      },
+      {
+        "name": "soonLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text for the coming-soon label."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed before the label."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": "solid",
+        "description": "Visual treatment of the button surface."
+      }
+    ]
+  },
+  {
+    "name": "LightButton",
+    "entryPoint": "twenty-ui/components",
+    "slug": "input/light-button",
+    "props": [
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic color of the button."
+      },
+      {
+        "name": "elevated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Adds a shadow to the button."
+      },
+      {
+        "name": "emphasis",
+        "type": "\"standard\" | \"subtle\"",
+        "required": false,
+        "defaultValue": "standard",
+        "description": "Uses secondary or tertiary text for neutral buttons. Semantic colors and solid surfaces retain their contrast treatment."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed after the label."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Expands the button to fill its container width."
+      },
+      {
+        "name": "hotkeys",
+        "type": "string[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Keyboard shortcut hints displayed on non-mobile screens."
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows a loading indicator and disables activation while preserving the button width."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": "sm",
+        "description": "Button height: `sm` (24px) or `md` (32px)."
+      },
+      {
+        "name": "soon",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays a coming-soon label and disables activation."
+      },
+      {
+        "name": "soonLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text for the coming-soon label."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed before the label."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": "ghost",
+        "description": "Visual treatment of the button surface."
+      }
+    ]
+  },
+  {
+    "name": "Button",
+    "entryPoint": "twenty-ui/primitives/input",
+    "slug": "input/button",
+    "props": [
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": "neutral",
+        "description": "Semantic color of the button."
+      },
+      {
+        "name": "elevated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Adds a shadow to the button."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed after the label."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Expands the button to fill its container width."
+      },
+      {
+        "name": "hotkeys",
+        "type": "string[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Keyboard shortcut hints displayed on non-mobile screens."
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Shows a loading indicator and disables activation while preserving the button width."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Button height: `sm` (24px) or `md` (32px)."
+      },
+      {
+        "name": "soon",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Displays a coming-soon label and disables activation."
+      },
+      {
+        "name": "soonLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text for the coming-soon label."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed before the label."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": "outline",
+        "description": "Visual treatment of the button surface."
+      }
+    ]
+  },
+  {
+    "name": "ButtonGroup",
+    "entryPoint": "twenty-ui/primitives/input",
+    "slug": "input/button-group",
+    "props": [
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shared semantic color that overrides the color of buttons in the group."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shared button height that overrides the size of buttons in the group."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shared surface treatment that overrides the variant of buttons in the group."
+      }
+    ]
+  },
+  {
     "name": "Field",
     "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/field",
@@ -1370,7 +1853,7 @@
           },
           {
             "name": "thumbCollisionBehavior",
-            "type": "\"push\" | \"none\" | \"swap\"",
+            "type": "\"none\" | \"push\" | \"swap\"",
             "required": false,
             "defaultValue": "push",
             "description": "Controls how thumbs behave when they collide during pointer interactions.\n\n- `'push'` (default): Thumbs push each other without restoring their previous positions when dragged back.\n- `'swap'`: Thumbs swap places when dragged past each other.\n- `'none'`: Thumbs cannot move past each other; excess movement is ignored."
@@ -4025,7 +4508,7 @@
       },
       {
         "name": "variant",
-        "type": "\"solid\" | \"soft\" | \"ghost\"",
+        "type": "\"solid\" | \"ghost\" | \"soft\"",
         "required": false,
         "defaultValue": "ghost",
         "description": "Background treatment of the chip."
@@ -4102,7 +4585,7 @@
       },
       {
         "name": "variant",
-        "type": "\"solid\" | \"outline\" | \"soft\" | \"ghost\"",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
         "required": false,
         "defaultValue": "soft",
         "description": "Visual treatment of the tag background and border."

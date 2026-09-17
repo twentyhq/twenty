@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -24,8 +26,6 @@ import {
   OverflowingTextWithTooltip,
   TooltipDelay,
 } from 'twenty-ui/primitives/surfaces';
-import { Button } from 'twenty-ui/primitives/input';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SchemaProperty = {
@@ -175,14 +175,12 @@ export const SettingsToolParameterTable = ({
       )}
       {functionLink && (
         <StyledFooter>
-          <UndecoratedLink to={functionLink}>
-            <Button
-              Icon={IconArrowUpRight}
-              title={t`See function`}
-              size="small"
-              variant="secondary"
-            />
-          </UndecoratedLink>
+          <NavigationButton
+            to={functionLink}
+            startIcon={<IconArrowUpRight />}
+            size="sm"
+            variant="outline"
+          >{t`See function`}</NavigationButton>
         </StyledFooter>
       )}
     </Table>

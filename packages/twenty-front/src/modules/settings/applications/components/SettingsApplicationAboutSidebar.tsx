@@ -255,12 +255,11 @@ export const SettingsApplicationAboutSidebar = ({
         </StyledIdentity>
         {isDefined(onShare) && (
           <Button
-            Icon={IconShare2}
-            title={t`Share`}
-            variant="secondary"
-            size="small"
+            startIcon={<IconShare2 />}
+            variant="outline"
+            size="sm"
             onClick={onShare}
-          />
+          >{t`Share`}</Button>
         )}
       </StyledHeader>
 

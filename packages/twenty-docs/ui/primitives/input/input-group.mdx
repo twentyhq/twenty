@@ -71,12 +71,13 @@ export const PasswordField = () => {
         endElement={
           <Button
             type="button"
-            title={visible ? 'Hide' : 'Show'}
-            ariaLabel={visible ? 'Hide password' : 'Show password'}
-            variant="tertiary"
-            size="small"
+            aria-label={visible ? 'Hide password' : 'Show password'}
+            variant="ghost"
+            size="sm"
             onClick={() => setVisible(!visible)}
-          />
+          >
+            {visible ? 'Hide' : 'Show'}
+          </Button>
         }
       >
         <Input

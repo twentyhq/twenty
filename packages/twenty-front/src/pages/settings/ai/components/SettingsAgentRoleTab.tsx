@@ -155,12 +155,11 @@ export const SettingsAgentRoleTab = ({
             description={t`Create a role to define permissions for this agent.`}
           />
           <Button
-            Icon={IconPlus}
-            title={t`Create Role`}
-            variant="secondary"
+            startIcon={<IconPlus />}
             onClick={handleCreateRole}
             disabled={disabled || isCreatingRole}
-          />
+            variant="outline"
+          >{t`Create Role`}</Button>
         </>
       ) : (
         <>
