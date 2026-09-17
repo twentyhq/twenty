@@ -185,16 +185,11 @@ export class CoreWorkflowLifecycleWorkspaceService {
       steps: steps ?? [],
     });
 
-    const currentlyActiveCoreVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: {
-          coreWorkflowId: coreWorkflow.id,
-          status: CoreWorkflowVersionStatus.ACTIVE,
-        },
-      });
-
     const previousPublishedCoreVersionId =
-      currentlyActiveCoreVersion?.id ?? null;
+      await this.findPreviousPublishedCoreVersionId({
+        workspaceId,
+        coreWorkflow,
+      });
 
     if (
       isDefined(previousPublishedCoreVersionId) &&
@@ -417,6 +412,44 @@ export class CoreWorkflowLifecycleWorkspaceService {
       workspaceWorkflowVersionId,
       workspaceWorkflowId,
     };
+  }
+
+  private async findPreviousPublishedCoreVersionId({
+    workspaceId,
+    coreWorkflow,
+  }: {
+    workspaceId: string;
+    coreWorkflow: WorkflowEntity;
+  }): Promise<string | null> {
+    const publishedVersionWhere = isDefined(
+      coreWorkflow.lastPublishedCoreWorkflowVersionId,
+    )
+      ? { id: coreWorkflow.lastPublishedCoreWorkflowVersionId }
+      : isDefined(coreWorkflow.lastPublishedVersionId)
+        ? {
+            workspaceWorkflowVersionId: coreWorkflow.lastPublishedVersionId,
+          }
+        : null;
+
+    const previousPublishedCoreVersion = isDefined(publishedVersionWhere)
+      ? await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+          where: { ...publishedVersionWhere, coreWorkflowId: coreWorkflow.id },
+        })
+      : null;
+
+    if (isDefined(previousPublishedCoreVersion)) {
+      return previousPublishedCoreVersion.id;
+    }
+
+    const currentlyActiveCoreVersion =
+      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+        where: {
+          coreWorkflowId: coreWorkflow.id,
+          status: CoreWorkflowVersionStatus.ACTIVE,
+        },
+      });
+
+    return currentlyActiveCoreVersion?.id ?? null;
   }
 
   private async writeVersionStatusInTransaction({

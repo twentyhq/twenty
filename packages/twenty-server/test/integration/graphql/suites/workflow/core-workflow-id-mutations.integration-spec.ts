@@ -289,6 +289,140 @@ describe('core workflow id mutations (e2e)', () => {
     expect(deactivatedVersion.status).toBe('DEACTIVATED');
   });
 
+  it('archives the previously published version when publishing after a deactivation', async () => {
+    const createResponse = await workflowGraphqlRequest(`
+      mutation {
+        createCoreWorkflow(input: { name: "Core Republish After Deactivation" }) {
+          id
+        }
+      }
+    `);
+
+    expect(createResponse.body.errors).toBeUndefined();
+
+    const republishedCoreWorkflowId =
+      createResponse.body.data.createCoreWorkflow.id;
+
+    coreWorkflowIdsToDelete.push(republishedCoreWorkflowId);
+
+    const [firstVersion] = await getVersions(republishedCoreWorkflowId);
+
+    const triggerResponse = await workflowGraphqlRequest(
+      `
+        mutation UpdateCoreWorkflowVersionTrigger(
+          $input: UpdateCoreWorkflowVersionTriggerInput!
+        ) {
+          updateCoreWorkflowVersionTrigger(input: $input) {
+            trigger
+          }
+        }
+      `,
+      {
+        input: {
+          coreWorkflowVersionId: firstVersion.id,
+          trigger: MANUAL_TRIGGER,
+        },
+      },
+    );
+
+    expect(triggerResponse.body.errors).toBeUndefined();
+
+    const createStepResponse = await workflowGraphqlRequest(
+      `
+        mutation CreateCoreWorkflowVersionStep(
+          $input: CreateCoreWorkflowVersionStepInput!
+        ) {
+          createCoreWorkflowVersionStep(input: $input) {
+            stepsDiff
+          }
+        }
+      `,
+      {
+        input: {
+          coreWorkflowVersionId: firstVersion.id,
+          stepType: 'CODE',
+          parentStepId: 'trigger',
+          position: { x: 200, y: 0 },
+        },
+      },
+    );
+
+    expect(createStepResponse.body.errors).toBeUndefined();
+
+    const activateMutation = `
+      mutation ActivateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
+        activateCoreWorkflowVersion(coreWorkflowVersionId: $coreWorkflowVersionId)
+      }
+    `;
+
+    const firstActivationResponse = await workflowGraphqlRequest(
+      activateMutation,
+      { coreWorkflowVersionId: firstVersion.id },
+    );
+
+    expect(firstActivationResponse.body.errors).toBeUndefined();
+
+    const deactivationResponse = await workflowGraphqlRequest(
+      `
+        mutation DeactivateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
+          deactivateCoreWorkflowVersion(
+            coreWorkflowVersionId: $coreWorkflowVersionId
+          )
+        }
+      `,
+      { coreWorkflowVersionId: firstVersion.id },
+    );
+
+    expect(deactivationResponse.body.errors).toBeUndefined();
+
+    const draftResponse = await workflowGraphqlRequest(
+      `
+        mutation CreateDraftFromCoreWorkflowVersion(
+          $input: CreateDraftFromCoreWorkflowVersionInput!
+        ) {
+          createDraftFromCoreWorkflowVersion(input: $input) {
+            id
+          }
+        }
+      `,
+      {
+        input: {
+          coreWorkflowId: republishedCoreWorkflowId,
+          coreWorkflowVersionIdToCopy: firstVersion.id,
+        },
+      },
+    );
+
+    expect(draftResponse.body.errors).toBeUndefined();
+
+    const secondVersionId =
+      draftResponse.body.data.createDraftFromCoreWorkflowVersion.id;
+
+    const secondActivationResponse = await workflowGraphqlRequest(
+      activateMutation,
+      { coreWorkflowVersionId: secondVersionId },
+    );
+
+    expect(secondActivationResponse.body.errors).toBeUndefined();
+
+    const firstVersionAfterRepublish = await getVersionById(firstVersion.id);
+    const secondVersionAfterRepublish = await getVersionById(secondVersionId);
+
+    expect(firstVersionAfterRepublish.status).toBe('ARCHIVED');
+    expect(secondVersionAfterRepublish.status).toBe('ACTIVE');
+
+    await workflowGraphqlRequest(
+      `
+        mutation DeactivateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
+          deactivateCoreWorkflowVersion(
+            coreWorkflowVersionId: $coreWorkflowVersionId
+          )
+        }
+      `,
+      { coreWorkflowVersionId: secondVersionId },
+    );
+  });
+
   it('creates a draft from a core version, edits it and discards it by core id', async () => {
     const draftResponse = await workflowGraphqlRequest(
       `

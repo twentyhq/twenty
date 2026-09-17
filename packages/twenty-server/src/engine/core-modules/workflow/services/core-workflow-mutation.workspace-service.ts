@@ -427,9 +427,13 @@ export class CoreWorkflowMutationWorkspaceService {
       )
       .filter(isDefined);
 
-    const mirrorWorkflowIds = deletedCoreWorkflows.map(
-      ({ workspaceWorkflowId }) => workspaceWorkflowId,
-    );
+    const mirrorWorkflowIds = await this.findMirrorWorkflowIdsToDelete({
+      workspaceId,
+      coreWorkflowIds,
+      knownMirrorWorkflowIds: deletedCoreWorkflows.map(
+        ({ workspaceWorkflowId }) => workspaceWorkflowId,
+      ),
+    });
 
     if (mirrorWorkflowIds.length > 0) {
       const authContext = buildSystemAuthContext(workspaceId);
@@ -455,6 +459,38 @@ export class CoreWorkflowMutationWorkspaceService {
     );
 
     return deletedCoreWorkflows;
+  }
+
+  private async findMirrorWorkflowIdsToDelete({
+    workspaceId,
+    coreWorkflowIds,
+    knownMirrorWorkflowIds,
+  }: {
+    workspaceId: string;
+    coreWorkflowIds: string[];
+    knownMirrorWorkflowIds: string[];
+  }): Promise<string[]> {
+    const mirrorWorkflows =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.workspaceOrmManager
+            .getRepository<WorkflowWorkspaceEntity>('workflow', {
+              shouldBypassPermissionChecks: true,
+            })
+            .find({
+              where: { coreWorkflowId: In(coreWorkflowIds) },
+              select: { id: true },
+              withDeleted: true,
+            }),
+        buildSystemAuthContext(workspaceId),
+      );
+
+    return [
+      ...new Set([
+        ...knownMirrorWorkflowIds,
+        ...mirrorWorkflows.map(({ id }) => id),
+      ]),
+    ];
   }
 
   async discardDraftVersion(

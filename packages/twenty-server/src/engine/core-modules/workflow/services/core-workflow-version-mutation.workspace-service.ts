@@ -115,7 +115,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId,
-      trigger: updatedTrigger ?? null,
+      trigger: updatedTrigger === trigger ? undefined : updatedTrigger,
       steps: updatedSteps,
     });
 
@@ -170,7 +170,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId,
-      trigger: updatedTrigger ?? null,
       steps: updatedSteps,
     });
 
@@ -244,7 +243,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId,
-      trigger,
       steps: updatedSteps,
     });
 
@@ -260,16 +258,14 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     coreWorkflowVersionId: string;
     trigger: WorkflowTrigger;
   }): Promise<WorkflowVersionTriggerDTO> {
-    const { steps } =
-      await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-        { workspaceId, coreWorkflowVersionId },
-      );
+    await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
+      { workspaceId, coreWorkflowVersionId },
+    );
 
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId,
       trigger,
-      steps,
     });
 
     return { trigger };
@@ -322,8 +318,8 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId,
-      trigger: updatedTrigger ?? null,
-      steps: updatedSteps ?? null,
+      trigger: updatedTrigger === trigger ? undefined : updatedTrigger,
+      steps: updatedSteps === steps ? undefined : (updatedSteps ?? null),
     });
 
     const removedSteps =
@@ -393,7 +389,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         workspaceId,
         coreWorkflowVersionId,
         trigger: updatedTrigger,
-        steps,
       });
 
       return computeWorkflowVersionStepChanges({
@@ -433,7 +428,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       await this.coreWorkflowVersionWriteService.writeContentAndMirror({
         workspaceId,
         coreWorkflowVersionId,
-        trigger,
         steps: updatedSteps,
       });
     }
@@ -492,7 +486,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         workspaceId,
         coreWorkflowVersionId,
         trigger: updatedTrigger,
-        steps,
       });
 
       return computeWorkflowVersionStepChanges({
@@ -540,7 +533,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId,
-      trigger,
       steps: updatedSteps,
     });
 
@@ -572,18 +564,17 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     const updatedTrigger =
       isDefined(triggerPosition) && isDefined(trigger)
         ? { ...trigger, position: triggerPosition.position }
-        : trigger;
+        : undefined;
 
-    const updatedSteps =
-      steps?.map((step) => {
-        const stepPosition = positions.find(
-          (position) => position.id === step.id,
-        );
+    const updatedSteps = steps?.map((step) => {
+      const stepPosition = positions.find(
+        (position) => position.id === step.id,
+      );
 
-        return isDefined(stepPosition)
-          ? { ...step, position: stepPosition.position }
-          : step;
-      }) ?? null;
+      return isDefined(stepPosition)
+        ? { ...step, position: stepPosition.position }
+        : step;
+    });
 
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,

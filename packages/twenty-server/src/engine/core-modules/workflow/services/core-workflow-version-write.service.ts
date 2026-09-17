@@ -92,36 +92,60 @@ export class CoreWorkflowVersionWriteService {
   }: {
     workspaceId: string;
     coreWorkflowVersionId: string;
-    trigger: WorkflowTrigger | null;
-    steps: WorkflowAction[] | null;
+    trigger?: WorkflowTrigger | null;
+    steps?: WorkflowAction[] | null;
   }): Promise<void> {
+    if (trigger === undefined && steps === undefined) {
+      return;
+    }
+
     await this.assertContentIsNotMalformed({
       workspaceId,
       coreWorkflowVersionId,
-      trigger,
-      steps,
+      ...(await this.mergeWithPersistedContent({
+        workspaceId,
+        coreWorkflowVersionId,
+        trigger,
+        steps,
+      })),
     });
+
+    const setClauses: string[] = [];
+    const parameters: (string | null)[] = [coreWorkflowVersionId, workspaceId];
+
+    if (trigger !== undefined) {
+      parameters.push(isDefined(trigger) ? JSON.stringify([trigger]) : null);
+      setClauses.push(`"triggers" = $${parameters.length}`);
+    }
+
+    if (steps !== undefined) {
+      parameters.push(isDefined(steps) ? JSON.stringify(steps) : null);
+      setClauses.push(`"steps" = $${parameters.length}`);
+    }
+
+    const mirrorUpdatePayload: Pick<
+      Partial<WorkflowVersionWorkspaceEntity>,
+      'trigger' | 'steps'
+    > = {
+      ...(trigger === undefined ? {} : { trigger }),
+      ...(steps === undefined ? {} : { steps }),
+    };
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
           await transactionScope.executeRawQuery(
             `UPDATE core."workflowVersion"
-             SET "triggers" = $3, "steps" = $4, "updatedAt" = now()
+             SET ${setClauses.join(', ')}, "updatedAt" = now()
              WHERE "id" = $1 AND "workspaceId" = $2`,
-            [
-              coreWorkflowVersionId,
-              workspaceId,
-              isDefined(trigger) ? JSON.stringify([trigger]) : null,
-              isDefined(steps) ? JSON.stringify(steps) : null,
-            ],
+            parameters,
           );
 
           const mirrorUpdateResult = await transactionScope
             .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
               shouldBypassPermissionChecks: true,
             })
-            .update({ coreWorkflowVersionId }, { trigger, steps });
+            .update({ coreWorkflowVersionId }, mirrorUpdatePayload);
 
           assertExactlyOneMirrorRowWasWritten({
             affected: mirrorUpdateResult.affected,
@@ -230,6 +254,42 @@ export class CoreWorkflowVersionWriteService {
     return this.coreWorkflowVersionRepository.count(workspaceId, {
       where: { coreWorkflowId },
     });
+  }
+
+  private async mergeWithPersistedContent({
+    workspaceId,
+    coreWorkflowVersionId,
+    trigger,
+    steps,
+  }: {
+    workspaceId: string;
+    coreWorkflowVersionId: string;
+    trigger?: WorkflowTrigger | null;
+    steps?: WorkflowAction[] | null;
+  }): Promise<{
+    trigger: WorkflowTrigger | null;
+    steps: WorkflowAction[] | null;
+  }> {
+    if (trigger !== undefined && steps !== undefined) {
+      return { trigger, steps };
+    }
+
+    const persistedCoreWorkflowVersion =
+      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+        where: { id: coreWorkflowVersionId },
+        select: { id: true, triggers: true, steps: true },
+      });
+
+    return {
+      trigger:
+        trigger === undefined
+          ? (persistedCoreWorkflowVersion?.triggers?.[0] ?? null)
+          : trigger,
+      steps:
+        steps === undefined
+          ? (persistedCoreWorkflowVersion?.steps ?? null)
+          : steps,
+    };
   }
 
   private async assertContentIsNotMalformed({
