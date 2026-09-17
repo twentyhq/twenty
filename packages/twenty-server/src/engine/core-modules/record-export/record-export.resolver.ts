@@ -53,9 +53,10 @@ export class RecordExportResolver {
     return this.recordExportWorkspaceService.stream({
       parameters: input,
       authContext,
-      requestTokenHash: this.recordExportWorkspaceService.getRequestTokenHash(
-        context.req,
-      ),
+      requestTokenHash:
+        this.recordExportWorkspaceService.getRequestTokenHashOrThrow(
+          context.req,
+        ),
     });
   }
 }

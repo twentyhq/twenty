@@ -2880,14 +2880,6 @@ type WorkspaceMigration {
   actions: JSON!
 }
 
-type RecordExport {
-  id: UUID!
-  filename: String!
-  progress: Int!
-  errorMessage: String
-  downloadUrl: String
-}
-
 type PublicDomain {
   id: UUID!
   domain: String!
@@ -3309,6 +3301,14 @@ type EventLogQueryResult {
   records: [EventLogRecord!]!
   totalCount: Int!
   pageInfo: EventLogPageInfo!
+}
+
+type RecordExport {
+  id: UUID!
+  filename: String!
+  progress: Int!
+  errorMessage: String
+  downloadUrl: String
 }
 
 type AiChatUsage {

@@ -659,7 +659,7 @@ export class RecordExportWorkspaceService {
         ),
     );
   }
-  getRequestTokenHash(request: Request): string {
+  getRequestTokenHashOrThrow(request: Request): string {
     const token =
       this.jwtWrapperService.extractJwtFromRequest()(request) ??
       this.userSessionCookieService.extractSessionTokenFromRequest(request);
@@ -688,7 +688,7 @@ export class RecordExportWorkspaceService {
       request.workspace?.id !== recordExport.workspaceId ||
       request.userWorkspaceId !== recordExport.userWorkspaceId ||
       request.workspaceMemberId !== recordExport.workspaceMemberId ||
-      this.getRequestTokenHash(request) !== recordExport.requestTokenHash
+      this.getRequestTokenHashOrThrow(request) !== recordExport.requestTokenHash
     ) {
       throw new ForbiddenException(
         t`This export belongs to another session. Please create a new export.`,
@@ -697,7 +697,6 @@ export class RecordExportWorkspaceService {
   }
 
   async capturePermissionsHash(workspaceId: string): Promise<string> {
-    // Capture the data versions used by queries, including any local cache lag.
     const { hashes } =
       await this.workspaceCacheService.getOrRecomputeWithHashes(
         workspaceId,
