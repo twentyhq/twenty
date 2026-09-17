@@ -60,8 +60,7 @@ export const ToolRecordsWidget = ({
       <StyledChips>
         {visibleReferences.map((recordReference) => {
           const objectMetadataItem = objectMetadataItems.find(
-            (item) =>
-              item.nameSingular === recordReference.objectNameSingular,
+            (item) => item.nameSingular === recordReference.objectNameSingular,
           );
           const Icon = getIcon(objectMetadataItem?.icon);
 

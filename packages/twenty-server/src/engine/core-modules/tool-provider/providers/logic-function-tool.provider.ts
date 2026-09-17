@@ -49,7 +49,11 @@ export class LogicFunctionToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
 
-    const { flatLogicFunctionMaps, flatObjectMetadataMaps, flatFrontComponentMaps } =
+    const {
+      flatLogicFunctionMaps,
+      flatObjectMetadataMaps,
+      flatFrontComponentMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: context.workspaceId,

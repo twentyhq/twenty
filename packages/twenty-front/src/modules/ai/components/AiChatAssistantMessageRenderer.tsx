@@ -11,6 +11,7 @@ import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { useToolWidgetByName } from '@/ai/hooks/useToolWidgetByName';
 import { type ToolWidget } from '@/ai/types/tool-widget.type';
 import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
+import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
 import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai/utils/isHiddenCompleteWorkspaceSetupToolPart';
@@ -21,7 +22,6 @@ import {
   type ExtendedUIMessagePart,
   isSucceededCompleteWorkspaceSetupToolPart,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMessagePartsContainer = styled.div`
@@ -72,7 +72,7 @@ const MessagePartRenderer = ({
 
         const widget = widgetByToolName.get(getEffectiveToolName(part));
 
-        if (!isDefined(widget)) {
+        if (!shouldToolPartRenderStandalone(part, widget)) {
           return <ToolStepRenderer toolPart={part} isStreaming={isStreaming} />;
         }
 
@@ -111,14 +111,14 @@ export const AiChatAssistantMessageRenderer = ({
       !isHiddenCompleteWorkspaceSetupToolPart(part) &&
       !(hasCodeExecutionData && isCodeInterpreterToolPart(part)),
   );
-  // A call that has a widget and has finished running renders on its own,
-  // rather than folded into the collapsed step group.
   const renderItems = groupContiguousThinkingStepParts(
     filteredParts,
     (part) =>
       isToolUIPart(part) &&
-      part.state === 'output-available' &&
-      widgetByToolName.has(getEffectiveToolName(part)),
+      shouldToolPartRenderStandalone(
+        part,
+        widgetByToolName.get(getEffectiveToolName(part)),
+      ),
   );
 
   const lastRenderItemIndex = renderItems.length - 1;

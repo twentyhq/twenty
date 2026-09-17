@@ -80,6 +80,20 @@ export const CreatedOneRecord: Story = {
       },
     ],
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Created 1 person record');
+
+    const personLink = await canvas.findByRole('link', {
+      name: /Sylvie Palmer/,
+    });
+
+    await expect(personLink).toHaveAttribute(
+      'href',
+      '/object/person/20202020-3ec3-4fe3-8997-b76aa0bfa408',
+    );
+  },
 };
 
 export const ManyRecordsAreTruncated: Story = {

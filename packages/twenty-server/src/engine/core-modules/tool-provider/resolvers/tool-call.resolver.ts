@@ -12,6 +12,7 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
@@ -38,10 +39,12 @@ export class ToolCallResolver {
     private readonly userRoleService: UserRoleService,
   ) {}
 
-  // Lets a tool widget run a tool without a model turn. The call resolves
-  // against the caller's own role, so a widget can never reach further than
-  // the person looking at it.
+  // Lets a tool widget run a tool without a model turn. The tool registry
+  // resolves the call against the caller's own role, so a widget can never
+  // reach further than the person looking at it and there is no settings flag
+  // to guard on here.
   @Mutation(() => ToolCallResultDTO)
+  @UseGuards(NoPermissionGuard)
   async callTool(
     @Args('toolName') toolName: string,
     @Args('input', { type: () => graphqlTypeJson, nullable: true })

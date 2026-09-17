@@ -2730,6 +2730,14 @@ export interface Webhook {
     __typename: 'Webhook'
 }
 
+export interface ToolCallResult {
+    success: Scalars['Boolean']
+    message: Scalars['String']
+    error?: Scalars['String']
+    result?: Scalars['JSON']
+    __typename: 'ToolCallResult'
+}
+
 export interface ToolIndexEntry {
     name: Scalars['String']
     label: Scalars['String']
@@ -2737,6 +2745,8 @@ export interface ToolIndexEntry {
     category: Scalars['String']
     objectName?: Scalars['String']
     icon?: Scalars['String']
+    widgetName?: Scalars['String']
+    frontComponentId?: Scalars['String']
     inputSchema?: Scalars['JSON']
     __typename: 'ToolIndexEntry'
 }
@@ -3493,6 +3503,7 @@ export interface Mutation {
     deleteEmailingDomain: Scalars['Boolean']
     verifyEmailingDomain: EmailingDomain
     runAgent: RunAgentResult
+    callTool: ToolCallResult
     createWebhook: Webhook
     updateWebhook: Webhook
     deleteWebhook: Webhook
@@ -6435,6 +6446,15 @@ export interface WebhookGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ToolCallResultGenqlSelection{
+    success?: boolean | number
+    message?: boolean | number
+    error?: boolean | number
+    result?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ToolIndexEntryGenqlSelection{
     name?: boolean | number
     label?: boolean | number
@@ -6442,6 +6462,8 @@ export interface ToolIndexEntryGenqlSelection{
     category?: boolean | number
     objectName?: boolean | number
     icon?: boolean | number
+    widgetName?: boolean | number
+    frontComponentId?: boolean | number
     inputSchema?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7270,6 +7292,7 @@ export interface MutationGenqlSelection{
     deleteEmailingDomain?: { __args: {id: Scalars['String']} }
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
+    callTool?: (ToolCallResultGenqlSelection & { __args: {toolName: Scalars['String'], input?: (Scalars['JSON'] | null)} })
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -9820,6 +9843,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isWebhook = (obj?: { __typename?: any } | null): obj is Webhook => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWebhook"')
       return Webhook_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ToolCallResult_possibleTypes: string[] = ['ToolCallResult']
+    export const isToolCallResult = (obj?: { __typename?: any } | null): obj is ToolCallResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isToolCallResult"')
+      return ToolCallResult_possibleTypes.includes(obj.__typename)
     }
     
 

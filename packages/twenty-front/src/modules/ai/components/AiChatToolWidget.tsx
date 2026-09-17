@@ -5,6 +5,8 @@ import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
+import { type ToolInput } from '@/ai/types/ToolInput';
+import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
 
 const FrontComponentRenderer = lazy(() =>
@@ -31,11 +33,19 @@ export const AiChatToolWidget = ({
   frontComponentId,
   isStreaming,
 }: AiChatToolWidgetProps) => {
+  // A call dispatched through execute_tool carries the real tool and its
+  // arguments inside the wrapper; the widget is the dispatched tool's, so it
+  // gets that identity rather than the dispatcher's.
+  const { toolName, toolInput } = unwrapToolInput({
+    input: toolPart.input as ToolInput,
+    toolName: getToolName(toolPart),
+  });
+
   const toolCall = {
     toolCallId: toolPart.toolCallId,
-    toolName: getToolName(toolPart),
+    toolName,
     status: toolPart.state,
-    input: toolPart.input as Record<string, unknown> | undefined,
+    input: toolInput as Record<string, unknown> | undefined,
     output:
       toolPart.state === 'output-available'
         ? (toolPart.output as Record<string, unknown> | undefined)
