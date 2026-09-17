@@ -23,7 +23,7 @@ const findNavigationMenuItemRow = async (
     [navigationMenuItemId],
   );
 
-describe('Navigation menu item side effect on view destroy', () => {
+describe('Navigation menu items on view destroy', () => {
   const uniqueSuffix = Date.now().toString().slice(-8);
 
   let objectMetadataId: string | undefined = undefined;

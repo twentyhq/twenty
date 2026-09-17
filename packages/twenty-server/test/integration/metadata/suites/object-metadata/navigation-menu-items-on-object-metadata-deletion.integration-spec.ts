@@ -35,7 +35,7 @@ const buildCreateObjectInput = (
   nameSingular: `navOrphan${suffix}`,
   labelPlural: `Nav Orphans ${suffix}`,
   labelSingular: `Nav Orphan ${suffix}`,
-  description: 'Object for navigation menu item deletion side effect tests',
+  description: 'Object for navigation menu item deletion tests',
   icon: 'IconBox',
   isLabelSyncedWithName: false,
 });
@@ -182,7 +182,7 @@ const createObjectWithNavigationMenuItems = async (suffix: string) => {
   };
 };
 
-describe('Navigation menu item side effect on object metadata deletion', () => {
+describe('Navigation menu items on object metadata deletion', () => {
   const uniqueSuffix = Date.now().toString().slice(-8);
 
   let objectMetadataIdsToCleanUp: string[] = [];
