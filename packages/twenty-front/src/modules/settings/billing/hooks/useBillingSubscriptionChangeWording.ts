@@ -186,17 +186,23 @@ export const useBillingSubscriptionChangeWording = () => {
       subtitle: [
         t`This cancels the scheduled switch to ${upcomingPlanLabel} on ${getBeautifiedRenewDate()}.`,
         t`You stay on the ${currentPlanLabel} plan.`,
-        getChargeSentence({
-          interval: currentInterval,
-          planKey: currentPlanKey,
-          timing: 'CURRENT',
-        }),
-        isIntervalSwitchScheduled
-          ? t`Your scheduled switch to ${upcomingIntervalAdjective} billing on ${getBeautifiedRenewDate()} is kept.`
-          : undefined,
-      ]
-        .filter(isDefined)
-        .join(' '),
+        ...(isIntervalSwitchScheduled
+          ? [
+              t`Your scheduled switch to ${upcomingIntervalAdjective} billing on ${getBeautifiedRenewDate()} is kept.`,
+              getChargeSentence({
+                interval: upcomingInterval,
+                planKey: currentPlanKey,
+                timing: 'SCHEDULED',
+              }),
+            ]
+          : [
+              getChargeSentence({
+                interval: currentInterval,
+                planKey: currentPlanKey,
+                timing: 'CURRENT',
+              }),
+            ]),
+      ].join(' '),
     };
   };
 
@@ -212,17 +218,23 @@ export const useBillingSubscriptionChangeWording = () => {
         subtitle: [
           t`This cancels the scheduled switch to ${upcomingIntervalAdjective} billing on ${getBeautifiedRenewDate()}.`,
           t`You keep ${currentIntervalAdjective} billing on the ${currentPlanLabel} plan.`,
-          getChargeSentence({
-            interval: currentInterval,
-            planKey: currentPlanKey,
-            timing: 'CURRENT',
-          }),
-          isPlanSwitchScheduled
-            ? t`Your scheduled switch to ${upcomingPlanLabel} on ${getBeautifiedRenewDate()} is kept.`
-            : undefined,
-        ]
-          .filter(isDefined)
-          .join(' '),
+          ...(isPlanSwitchScheduled
+            ? [
+                t`Your scheduled switch to ${upcomingPlanLabel} on ${getBeautifiedRenewDate()} is kept.`,
+                getChargeSentence({
+                  interval: currentInterval,
+                  planKey: upcomingPlanKey,
+                  timing: 'SCHEDULED',
+                }),
+              ]
+            : [
+                getChargeSentence({
+                  interval: currentInterval,
+                  planKey: currentPlanKey,
+                  timing: 'CURRENT',
+                }),
+              ]),
+        ].join(' '),
       };
     };
 
