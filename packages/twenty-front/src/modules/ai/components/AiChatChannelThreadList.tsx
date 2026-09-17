@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
@@ -66,7 +67,7 @@ export const AiChatChannelThreadList = ({
     <StyledList>
       {groups.map((group) => (
         <div key={group.id}>
-          {group.title !== null && (
+          {isDefined(group.title) && (
             <StyledGroupTitle>{group.title}</StyledGroupTitle>
           )}
           {group.threads.map((thread) => (
