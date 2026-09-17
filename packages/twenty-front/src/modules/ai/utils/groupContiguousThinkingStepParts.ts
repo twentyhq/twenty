@@ -7,7 +7,6 @@ import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 
 export const groupContiguousThinkingStepParts = (
   parts: ExtendedUIMessagePart[],
-  // A part that renders as its own widget is never folded into the step group.
   shouldRenderStandalone: (part: ExtendedUIMessagePart) => boolean = () =>
     false,
 ): AssistantMessageRenderItem[] => {

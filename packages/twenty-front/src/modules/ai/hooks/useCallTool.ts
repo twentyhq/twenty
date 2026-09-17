@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
 
 import { type CallToolResult } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CALL_TOOL } from '@/ai/graphql/mutations/callTool';
 import {
@@ -27,7 +28,7 @@ export const useCallTool = () => {
 
         const result = data?.callTool;
 
-        if (!result) {
+        if (!isDefined(result)) {
           return {
             success: false,
             message: 'The tool returned no result',
