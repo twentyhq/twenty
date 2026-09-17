@@ -53,7 +53,6 @@ const StyledModalActions = styled.div`
 
 const StyledActionSlot = styled.div`
   flex: 1;
-  min-width: 0;
 `;
 
 export const SettingsAdminWorkspaceCreditGrantModal = ({

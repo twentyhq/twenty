@@ -178,7 +178,6 @@ const StyledModalActions = styled.div`
 
 const StyledActionSlot = styled.div`
   flex: 1;
-  min-width: 0;
 `;
 
 const PackageSummaryLabelText = ({ label }: { label: string }) => (
