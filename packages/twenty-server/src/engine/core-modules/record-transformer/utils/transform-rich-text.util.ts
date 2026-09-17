@@ -3,7 +3,11 @@ import {
   type RichTextMetadata,
   richTextValueSchema,
 } from 'twenty-shared/types';
-import { convertTipTapBlocksToMarkdown, isDefined } from 'twenty-shared/utils';
+import {
+  convertTipTapBlocksToMarkdown,
+  isDefined,
+  isTipTapBlocksShape,
+} from 'twenty-shared/utils';
 
 import type { ServerBlockNoteEditor } from '@blocknote/server-util';
 
@@ -39,10 +43,24 @@ export const transformRichTextValue = async (
 
   const serverBlockNoteEditor = await getServerBlockNoteEditor();
 
+  const tipTapMarkdown =
+    isDefined(parsedValue.blocknote) &&
+    isTipTapBlocksShape(parsedValue.blocknote)
+      ? convertTipTapBlocksToMarkdown(parsedValue.blocknote)
+      : undefined;
+
+  if (isDefined(tipTapMarkdown)) {
+    return {
+      markdown: parsedValue.markdown || tipTapMarkdown,
+      blocknote: JSON.stringify(
+        await serverBlockNoteEditor.tryParseMarkdownToBlocks(tipTapMarkdown),
+      ),
+    };
+  }
+
   // Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)
   // Todo : This may be resolved once the server-utils library is updated with proper conversion support - #947
   let convertedMarkdown: string | null = null;
-  let normalizedBlocknote: string | null = parsedValue.blocknote || null;
 
   try {
     convertedMarkdown = isDefined(parsedValue.blocknote)
@@ -51,18 +69,7 @@ export const transformRichTextValue = async (
         )
       : null;
   } catch {
-    const markdownFromTipTap = isDefined(parsedValue.blocknote)
-      ? convertTipTapBlocksToMarkdown(parsedValue.blocknote)
-      : undefined;
-
-    convertedMarkdown = markdownFromTipTap ?? null;
-    normalizedBlocknote = isDefined(markdownFromTipTap)
-      ? JSON.stringify(
-          await serverBlockNoteEditor.tryParseMarkdownToBlocks(
-            markdownFromTipTap,
-          ),
-        )
-      : null;
+    convertedMarkdown = parsedValue.blocknote || null;
   }
 
   const convertedBlocknote = parsedValue.markdown
@@ -75,6 +82,6 @@ export const transformRichTextValue = async (
 
   return {
     markdown: parsedValue.markdown || convertedMarkdown,
-    blocknote: normalizedBlocknote || convertedBlocknote,
+    blocknote: parsedValue.blocknote || convertedBlocknote,
   };
 };

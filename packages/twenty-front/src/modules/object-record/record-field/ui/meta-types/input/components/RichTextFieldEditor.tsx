@@ -6,8 +6,7 @@ import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
 import { useReplaceBlockEditorContent } from '@/blocknote-editor/hooks/useReplaceBlockEditorContent';
-import { filterBlocksSupportedBySchema } from '@/blocknote-editor/utils/filterBlocksSupportedBySchema';
-import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
+import { readStoredBlocknote } from '@/blocknote-editor/utils/readStoredBlocknote';
 import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyWithSignedUrls';
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -117,17 +116,14 @@ export const RichTextFieldEditor = ({
       ]
     : null;
 
-  const initialBody = useMemo(() => {
+  const { blocks: initialBody, hasUnreadableStoredValue } = useMemo(() => {
     if (!isDefined(fieldValue)) {
-      return undefined;
+      return { blocks: undefined, hasUnreadableStoredValue: false };
     }
 
-    return filterBlocksSupportedBySchema(
-      parseInitialBlocknote(
-        fieldValue?.blocknote,
-        `Failed to parse body for field ${fieldName} on record ${recordId}`,
-      ),
-      BLOCK_SCHEMA.blockSchema,
+    return readStoredBlocknote(
+      fieldValue?.blocknote,
+      `Failed to parse body for field ${fieldName} on record ${recordId}`,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fieldName, recordId]);
@@ -157,7 +153,7 @@ export const RichTextFieldEditor = ({
       persistDebounceMs: 300,
       resetKey: recordId,
       onPersist: ({ blocknote }) => {
-        if (isRecordFieldReadOnly === true) return;
+        if (isRecordFieldReadOnly === true || hasUnreadableStoredValue) return;
 
         const preparedBlocknote = prepareBodyWithSignedUrls(blocknote);
 

@@ -1,6 +1,6 @@
 import { Command } from 'nest-commander';
 import { richTextCompositeType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isTipTapBlocksShape } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -34,11 +34,9 @@ export class NormalizeTipTapRichTextRecordFieldsCommand extends ProvisionedWorks
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     if (!isDefined(dataSource)) {
-      this.logger.error(
-        `Cannot normalize rich text values for workspace ${workspaceId}: no data source. Skipping, rerun once the workspace is reachable.`,
+      throw new Error(
+        `Cannot normalize rich text values for workspace ${workspaceId}: no data source`,
       );
-
-      return;
     }
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -83,48 +81,54 @@ export class NormalizeTipTapRichTextRecordFieldsCommand extends ProvisionedWorks
         objectMetadata: flatObjectMetadata,
       });
 
-      const rows = await dataSource.query<
-        { id: string; blocknote: string | null }[]
-      >(
-        `SELECT "id", "${columnTarget.blocknoteColumnName}" AS blocknote
-         FROM "${schemaName}"."${tableName}"
-         WHERE "${columnTarget.blocknoteColumnName}" IS NOT NULL`,
-      );
+      let offset = 0;
+      let batch: { id: string; blocknote: string | null }[] = [];
 
-      for (const row of rows) {
-        if (!isDefined(row.blocknote)) {
-          continue;
-        }
-
-        const { blocknote, markdown } = await transformRichTextValue({
-          blocknote: row.blocknote,
-          markdown: null,
-        });
-
-        if (blocknote === row.blocknote) {
-          continue;
-        }
-
-        normalizedRecordCount += 1;
-
-        if (options.dryRun ?? false) {
-          continue;
-        }
-
-        await dataSource.query(
-          `UPDATE "${schemaName}"."${tableName}"
-           SET "${columnTarget.blocknoteColumnName}" = $1,
-               "${columnTarget.markdownColumnName}" = $2
-           WHERE "id" = $3`,
-          [blocknote, markdown, row.id],
+      do {
+        batch = await dataSource.query<
+          { id: string; blocknote: string | null }[]
+        >(
+          `SELECT "id", "${columnTarget.blocknoteColumnName}" AS blocknote
+           FROM "${schemaName}"."${tableName}"
+           WHERE "${columnTarget.blocknoteColumnName}" IS NOT NULL
+           ORDER BY "id"
+           LIMIT ${RECORD_BATCH_SIZE} OFFSET ${offset}`,
         );
-      }
 
-      if (rows.length > RECORD_BATCH_SIZE) {
-        this.logger.log(
-          `Workspace ${workspaceId}: scanned ${rows.length} ${tableName} rows for ${columnTarget.blocknoteColumnName}`,
-        );
-      }
+        for (const row of batch) {
+          if (
+            !isDefined(row.blocknote) ||
+            !isTipTapBlocksShape(row.blocknote)
+          ) {
+            continue;
+          }
+
+          const { blocknote, markdown } = await transformRichTextValue({
+            blocknote: row.blocknote,
+            markdown: null,
+          });
+
+          if (!isDefined(blocknote) || blocknote === row.blocknote) {
+            continue;
+          }
+
+          normalizedRecordCount += 1;
+
+          if (options.dryRun ?? false) {
+            continue;
+          }
+
+          await dataSource.query(
+            `UPDATE "${schemaName}"."${tableName}"
+             SET "${columnTarget.blocknoteColumnName}" = $1,
+                 "${columnTarget.markdownColumnName}" = COALESCE("${columnTarget.markdownColumnName}", $2)
+             WHERE "id" = $3`,
+            [blocknote, markdown, row.id],
+          );
+        }
+
+        offset += RECORD_BATCH_SIZE;
+      } while (batch.length === RECORD_BATCH_SIZE);
     }
 
     if (normalizedRecordCount === 0) {
