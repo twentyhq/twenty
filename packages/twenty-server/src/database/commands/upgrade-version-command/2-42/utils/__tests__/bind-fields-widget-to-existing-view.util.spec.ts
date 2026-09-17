@@ -1,5 +1,4 @@
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { bindFieldsWidgetToExistingView } from 'src/database/commands/upgrade-version-command/2-42/utils/bind-fields-widget-to-existing-view.util';
 
@@ -11,10 +10,7 @@ const OTHER_WIDGET_UNIVERSAL_IDENTIFIER =
 const STANDARD_VIEW_ID = '20202020-0000-0000-0000-000000000010';
 const EXISTING_VIEW_ID = '20202020-0000-0000-0000-000000000011';
 
-const EXISTING_FIELDS_VIEW = {
-  id: EXISTING_VIEW_ID,
-  universalIdentifier: '20202020-0000-0000-0000-0000000000aa',
-} as unknown as FlatView;
+const EXISTING_FIELDS_VIEW = { id: EXISTING_VIEW_ID };
 
 const buildFieldsWidget = (
   overrides: Partial<FlatPageLayoutWidget> = {},

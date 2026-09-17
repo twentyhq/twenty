@@ -14,7 +14,7 @@ export const bindFieldsWidgetToExistingView = ({
 }: {
   flatPageLayoutWidget: FlatPageLayoutWidget;
   fieldsWidgetUniversalIdentifier: string;
-  existingFieldsView: FlatView | undefined;
+  existingFieldsView: Pick<FlatView, 'id'> | undefined;
 }): FlatPageLayoutWidget => {
   if (
     !isDefined(existingFieldsView) ||
