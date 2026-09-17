@@ -38,8 +38,10 @@ const StyledTitleDisplay = styled.div`
   overflow: hidden;
   padding: 0 5px;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     background: ${themeCssVariables.background.transparent.light};
+    outline: none;
   }
 `;
 
@@ -113,8 +115,15 @@ export const AiChatPageThreadHeader = ({
         ) : (
           <StyledTitleDisplay
             role="button"
+            tabIndex={0}
             aria-label={t`Rename chat`}
             onClick={startRename}
+            onKeyDown={(event) => {
+              if (event.key === Key.Enter || event.key === ' ') {
+                event.preventDefault();
+                startRename();
+              }
+            }}
           >
             <OverflowingTextWithTooltip text={displayTitle} />
           </StyledTitleDisplay>
