@@ -32,6 +32,7 @@ import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/en
 import { AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-visibility.enum';
 import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
 import { buildThreadAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-access-where.util';
+import { isForeignKeyViolation } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-foreign-key-violation.util';
 import {
   AiException,
   AiExceptionCode,
@@ -110,8 +111,8 @@ export class AgentChatService {
   }) {
     // The owner row is what grants access, so a thread must never exist
     // without it: both rows land in one transaction.
-    const savedThread = await this.coreDataSource.transaction(
-      async (entityManager) => {
+    const savedThread = await this.coreDataSource
+      .transaction(async (entityManager) => {
         const thread = await this.threadRepository
           .withManager(entityManager)
           .insertAndReturnOne(workspaceId, {
@@ -130,8 +131,19 @@ export class AgentChatService {
           });
 
         return thread;
-      },
-    );
+      })
+      .catch((error: unknown) => {
+        // The channel can be deleted between the caller's access check and
+        // this insert; the foreign key then reports it as gone.
+        if (isDefined(channelId) && isForeignKeyViolation(error)) {
+          throw new AiException(
+            'Channel not found',
+            AiExceptionCode.CHANNEL_NOT_FOUND,
+          );
+        }
+
+        throw error;
+      });
 
     await this.broadcastThreadCreatedToRecipients({
       thread: savedThread,

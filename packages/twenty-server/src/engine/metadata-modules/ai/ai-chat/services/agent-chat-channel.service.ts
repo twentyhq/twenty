@@ -14,6 +14,7 @@ import { AgentChatChannelMemberRole } from 'src/engine/metadata-modules/ai/ai-ch
 import { AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-visibility.enum';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { buildChannelAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-channel-access-where.util';
+import { isForeignKeyViolation } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-foreign-key-violation.util';
 import {
   AiException,
   AiExceptionCode,
@@ -515,11 +516,20 @@ export class AgentChatChannelService {
         workspaceId,
       });
 
-    await this.threadRepository.update(
-      workspaceId,
-      { id: threadId },
-      { channelId },
-    );
+    await this.threadRepository
+      .update(workspaceId, { id: threadId }, { channelId })
+      .catch((error: unknown) => {
+        // The target channel can be deleted between the access check above
+        // and this update; the foreign key then reports it as gone.
+        if (isForeignKeyViolation(error)) {
+          throw new AiException(
+            'Channel not found',
+            AiExceptionCode.CHANNEL_NOT_FOUND,
+          );
+        }
+
+        throw error;
+      });
 
     const updatedThread = { ...thread, channelId };
 
