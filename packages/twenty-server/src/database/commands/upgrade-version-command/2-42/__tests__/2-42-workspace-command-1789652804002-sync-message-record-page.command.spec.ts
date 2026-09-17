@@ -155,8 +155,14 @@ describe('SyncMessageRecordPageCommand', () => {
     }[],
     existingViewFieldGroups = [] as string[],
     existingViewFields = [] as string[],
-    existingPageLayouts = [] as string[],
-    existingPageLayoutTabs = [] as string[],
+    existingPageLayouts = [] as {
+      universalIdentifier: string;
+      deletedAt?: string;
+    }[],
+    existingPageLayoutTabs = [] as {
+      universalIdentifier: string;
+      deletedAt?: string;
+    }[],
     existingPageLayoutWidgets = [] as string[],
   } = {}) => {
     getOrRecomputeMock.mockResolvedValue({
@@ -176,16 +182,8 @@ describe('SyncMessageRecordPageCommand', () => {
           universalIdentifier,
         })),
       ),
-      flatPageLayoutMaps: buildMaps(
-        existingPageLayouts.map((universalIdentifier) => ({
-          universalIdentifier,
-        })),
-      ),
-      flatPageLayoutTabMaps: buildMaps(
-        existingPageLayoutTabs.map((universalIdentifier) => ({
-          universalIdentifier,
-        })),
-      ),
+      flatPageLayoutMaps: buildMaps(existingPageLayouts),
+      flatPageLayoutTabMaps: buildMaps(existingPageLayoutTabs),
       flatPageLayoutWidgetMaps: buildMaps(
         existingPageLayoutWidgets.map((universalIdentifier) => ({
           universalIdentifier,
@@ -289,8 +287,12 @@ describe('SyncMessageRecordPageCommand', () => {
       ],
       existingViewFieldGroups: FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
       existingViewFields: FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
-      existingPageLayouts: [PAGE_LAYOUT_UNIVERSAL_IDENTIFIER],
-      existingPageLayoutTabs: [HOME_TAB_UNIVERSAL_IDENTIFIER],
+      existingPageLayouts: [
+        { universalIdentifier: PAGE_LAYOUT_UNIVERSAL_IDENTIFIER },
+      ],
+      existingPageLayoutTabs: [
+        { universalIdentifier: HOME_TAB_UNIVERSAL_IDENTIFIER },
+      ],
     });
 
     await runOnWorkspace();
@@ -319,8 +321,12 @@ describe('SyncMessageRecordPageCommand', () => {
       ],
       existingViewFieldGroups: FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
       existingViewFields: FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
-      existingPageLayouts: [PAGE_LAYOUT_UNIVERSAL_IDENTIFIER],
-      existingPageLayoutTabs: [HOME_TAB_UNIVERSAL_IDENTIFIER],
+      existingPageLayouts: [
+        { universalIdentifier: PAGE_LAYOUT_UNIVERSAL_IDENTIFIER },
+      ],
+      existingPageLayoutTabs: [
+        { universalIdentifier: HOME_TAB_UNIVERSAL_IDENTIFIER },
+      ],
       existingPageLayoutWidgets: [FIELDS_WIDGET_UNIVERSAL_IDENTIFIER],
     });
 
@@ -361,6 +367,52 @@ describe('SyncMessageRecordPageCommand', () => {
 
     expect(loggerWarnMock).toHaveBeenCalledWith(
       expect.stringContaining('was deleted'),
+    );
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
+  });
+
+  // getStandardFlatEntitiesToCreateOrThrow counts a soft-deleted row as
+  // present, so without an explicit guard the command would create a tab and a
+  // widget hanging off a deleted parent.
+  it('leaves the record page untouched when the layout itself was soft deleted', async () => {
+    mockWorkspaceCache({
+      existingPageLayouts: [
+        {
+          universalIdentifier: PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+          deletedAt: '2026-01-01T00:00:00.000Z',
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(loggerWarnMock).toHaveBeenCalledWith(
+      expect.stringContaining('record page layout was deleted'),
+    );
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('leaves the record page untouched when the home tab was soft deleted', async () => {
+    mockWorkspaceCache({
+      existingPageLayouts: [
+        { universalIdentifier: PAGE_LAYOUT_UNIVERSAL_IDENTIFIER },
+      ],
+      existingPageLayoutTabs: [
+        {
+          universalIdentifier: HOME_TAB_UNIVERSAL_IDENTIFIER,
+          deletedAt: '2026-01-01T00:00:00.000Z',
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(loggerWarnMock).toHaveBeenCalledWith(
+      expect.stringContaining('home tab was deleted'),
     );
     expect(
       validateBuildAndRunLegacyWorkspaceMigrationMock,

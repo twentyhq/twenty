@@ -40,9 +40,10 @@ const FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
 const PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   MESSAGE_RECORD_PAGE.universalIdentifier;
 
-const PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIERS = [
-  MESSAGE_RECORD_PAGE.tabs.home.universalIdentifier,
-];
+const HOME_TAB_UNIVERSAL_IDENTIFIER =
+  MESSAGE_RECORD_PAGE.tabs.home.universalIdentifier;
+
+const PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIERS = [HOME_TAB_UNIVERSAL_IDENTIFIER];
 
 const FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
   MESSAGE_RECORD_PAGE.tabs.home.widgets.fields.universalIdentifier;
@@ -114,6 +115,35 @@ export class SyncMessageRecordPageCommand extends ProvisionedWorkspaceCommandRun
     if (isDefined(existingFieldsView?.deletedAt)) {
       this.logger.warn(
         `The message fields view was deleted in workspace ${workspaceId}, leaving the record page untouched`,
+      );
+
+      return;
+    }
+
+    // getStandardFlatEntitiesToCreateOrThrow treats a soft-deleted row as
+    // present, so it would leave a deleted parent in place and still create the
+    // children under it. The workspace cache loads with withDeleted, so the
+    // check has to be explicit.
+    const softDeletedParent = [
+      {
+        label: 'record page layout',
+        flatEntity:
+          flatPageLayoutMaps.byUniversalIdentifier[
+            PAGE_LAYOUT_UNIVERSAL_IDENTIFIER
+          ],
+      },
+      {
+        label: 'home tab',
+        flatEntity:
+          flatPageLayoutTabMaps.byUniversalIdentifier[
+            HOME_TAB_UNIVERSAL_IDENTIFIER
+          ],
+      },
+    ].find(({ flatEntity }) => isDefined(flatEntity?.deletedAt));
+
+    if (isDefined(softDeletedParent)) {
+      this.logger.warn(
+        `The message ${softDeletedParent.label} was deleted in workspace ${workspaceId}, leaving the record page untouched`,
       );
 
       return;
