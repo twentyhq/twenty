@@ -9,6 +9,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import { bindFieldsWidgetToExistingView } from 'src/database/commands/upgrade-version-command/2-42/utils/bind-fields-widget-to-existing-view.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -17,7 +18,6 @@ import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layou
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -173,8 +173,9 @@ export class SyncMessageRecordPageCommand extends ProvisionedWorkspaceCommandRun
         existingFlatEntityMaps: flatPageLayoutWidgetMaps,
         universalIdentifiers: PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS,
       }).map((flatPageLayoutWidget) =>
-        this.bindFieldsWidgetToExistingView({
+        bindFieldsWidgetToExistingView({
           flatPageLayoutWidget,
+          fieldsWidgetUniversalIdentifier: FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
           existingFieldsView,
         }),
       );
@@ -254,34 +255,5 @@ export class SyncMessageRecordPageCommand extends ProvisionedWorkspaceCommandRun
     this.logger.log(
       `Synced the message record page for workspace ${workspaceId}`,
     );
-  }
-
-  // The standard maps mint a fresh id for the fields view on every call, so a
-  // workspace that already has that view would get a widget pointing at an id
-  // nothing resolves to.
-  private bindFieldsWidgetToExistingView({
-    flatPageLayoutWidget,
-    existingFieldsView,
-  }: {
-    flatPageLayoutWidget: FlatPageLayoutWidget;
-    existingFieldsView: FlatView | undefined;
-  }): FlatPageLayoutWidget {
-    if (
-      !isDefined(existingFieldsView) ||
-      flatPageLayoutWidget.universalIdentifier !==
-        FIELDS_WIDGET_UNIVERSAL_IDENTIFIER ||
-      flatPageLayoutWidget.configuration.configurationType !==
-        WidgetConfigurationType.FIELDS
-    ) {
-      return flatPageLayoutWidget;
-    }
-
-    return {
-      ...flatPageLayoutWidget,
-      configuration: {
-        ...flatPageLayoutWidget.configuration,
-        viewId: existingFieldsView.id,
-      },
-    };
   }
 }
