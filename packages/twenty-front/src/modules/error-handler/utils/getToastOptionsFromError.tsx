@@ -1,3 +1,4 @@
+import { AlreadyReportedError } from '@/error-handler/errors/AlreadyReportedError';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { isErrorLike } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
@@ -18,7 +19,10 @@ export const getToastOptionsFromError = ({
 }: GetToastOptionsFromErrorParams): ToastOptions | undefined => {
   const errorLike = isErrorLike(error) ? error : undefined;
 
-  if (errorLike?.name === 'AbortError') {
+  if (
+    errorLike?.name === 'AbortError' ||
+    error instanceof AlreadyReportedError
+  ) {
     return;
   }
 
@@ -26,26 +30,13 @@ export const getToastOptionsFromError = ({
     ? getConflictingRecordFromApolloError(errorLike)
     : null;
 
-  const children =
-    options.children ??
-    (isDefined(errorLike)
-      ? getErrorMessageFromApolloError(errorLike)
-      : t`An error occurred.`);
-
-  // Nested handlers report the same failure twice; a conflict's action is record-specific, so its record id keeps it apart.
-  const defaultDedupeKey =
-    typeof children === 'string'
-      ? isDefined(conflictingRecord)
-        ? `${children}:${conflictingRecord.conflictingRecordId}`
-        : children
-      : undefined;
-
-  const dedupeKey = options.dedupeKey ?? defaultDedupeKey;
-
   return {
     ...options,
-    children,
-    dedupeKey,
+    children:
+      options.children ??
+      (isDefined(errorLike)
+        ? getErrorMessageFromApolloError(errorLike)
+        : t`An error occurred.`),
     action:
       options.action ??
       (isDefined(conflictingRecord) ? (

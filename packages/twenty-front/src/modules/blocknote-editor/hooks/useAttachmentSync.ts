@@ -8,6 +8,7 @@ import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useAttachmentSync = (attachments: Attachment[]) => {
   const { deleteManyRecords: deleteAttachments } = useDeleteManyRecords({
@@ -56,17 +57,21 @@ export const useAttachmentSync = (attachments: Attachment[]) => {
     );
 
     if (attachmentPathsToRestore.length > 0) {
-      const softDeletedAttachments =
-        (await findSoftDeletedAttachments()) as Attachment[];
+      // The fetch already reported its failure; the renames below must still run.
+      const softDeletedAttachments = (await findSoftDeletedAttachments().catch(
+        () => null,
+      )) as Attachment[] | null;
 
-      const attachmentIdsToRestore = filterAttachmentsToRestore({
-        attachmentPathsToRestore,
-        softDeletedAttachments: softDeletedAttachments ?? [],
-      });
+      if (isDefined(softDeletedAttachments)) {
+        const attachmentIdsToRestore = filterAttachmentsToRestore({
+          attachmentPathsToRestore,
+          softDeletedAttachments,
+        });
 
-      await restoreAttachments({
-        idsToRestore: attachmentIdsToRestore,
-      });
+        await restoreAttachments({
+          idsToRestore: attachmentIdsToRestore,
+        });
+      }
     }
 
     const attachmentsToUpdate = getActivityAttachmentIdsAndNameToUpdate(

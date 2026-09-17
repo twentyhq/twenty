@@ -7,7 +7,9 @@ import { type CommandMenuItemConfirmationModalLinkButton } from '@/command-menu-
 import { type CommandMenuConfirmationModalResultBrowserEventDetail } from 'twenty-shared/types';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { type ButtonColor } from 'twenty-ui/primitives/input';
 
 export type HeadlessConfirmationModalEngineCommandEffectProps = {
@@ -35,6 +37,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
   );
   const unmountCommand = useUnmountCommand();
   const { openConfirmationModal } = useCommandMenuConfirmationModal();
+  const { enqueueToast } = useToast();
 
   useEffect(() => {
     if (isInitializedRef.current) {
@@ -77,11 +80,17 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
         return;
       }
 
-      if (customEvent.detail.confirmationResult === 'confirm') {
-        await execute();
+      try {
+        if (customEvent.detail.confirmationResult === 'confirm') {
+          await execute();
+        }
+      } catch (error) {
+        enqueueToast(getToastOptionsFromError({ error }));
+      } finally {
+        // Unmount even on failure, otherwise the headless command stays mounted
+        // and can never be triggered again.
+        unmountCommand(commandMenuItemId);
       }
-
-      unmountCommand(commandMenuItemId);
     };
 
     window.addEventListener(
@@ -95,7 +104,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
         handleConfirmationResult,
       );
     };
-  }, [execute, commandMenuItemId, unmountCommand]);
+  }, [execute, commandMenuItemId, unmountCommand, enqueueToast]);
 
   return null;
 };

@@ -1,3 +1,4 @@
+import { AlreadyReportedError } from '@/error-handler/errors/AlreadyReportedError';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
@@ -42,6 +43,7 @@ export const useLazyFetchAllRecords = <T>({
   });
 
   // A page that fails must not turn into a shorter result: callers would export or process the partial list as if it were complete.
+  // The find hooks already toast the failure, so it is rethrown as already reported.
   const fetchAllRecords = useCallback(async () => {
     if (!isDefined(findManyRecordsLazy)) {
       return [];
@@ -52,7 +54,7 @@ export const useLazyFetchAllRecords = <T>({
       const findManyRecordsDataResult = await findManyRecordsLazy();
 
       if (isDefined(findManyRecordsDataResult.error)) {
-        throw findManyRecordsDataResult.error;
+        throw new AlreadyReportedError(findManyRecordsDataResult.error);
       }
 
       const firstQueryResult =
@@ -96,7 +98,7 @@ export const useLazyFetchAllRecords = <T>({
         const rawResult = await fetchMoreRecordsLazy(limit);
 
         if (isDefined(rawResult) && 'error' in rawResult) {
-          throw rawResult.error;
+          throw new AlreadyReportedError(rawResult.error);
         }
 
         const fetchMoreResult = rawResult?.data;
