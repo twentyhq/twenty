@@ -1,12 +1,12 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isFieldRawJson';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { removeTypenamesFromCompositeFieldValue } from '@/object-record/utils/removeTypenamesFromCompositeFieldValue';
 import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
-// Apollo adds __typename to cached composites and the server omits null sub-fields it never set, so both are ignored.
-const normalizeCompositeValue = (value: unknown): unknown => {
+const removeNullSubFields = (value: unknown): unknown => {
   if (Array.isArray(value)) {
-    return value.map(normalizeCompositeValue);
+    return value.map(removeNullSubFields);
   }
 
   if (!isDefined(value) || typeof value !== 'object') {
@@ -15,10 +15,14 @@ const normalizeCompositeValue = (value: unknown): unknown => {
 
   return Object.fromEntries(
     Object.entries(value)
-      .filter(([key, subValue]) => key !== '__typename' && isDefined(subValue))
-      .map(([key, subValue]) => [key, normalizeCompositeValue(subValue)]),
+      .filter(([, subValue]) => isDefined(subValue))
+      .map(([key, subValue]) => [key, removeNullSubFields(subValue)]),
   );
 };
+
+// The server omits null sub-fields it never set, so a cached `{ provider: null }` equals an event's `{}`.
+const normalizeCompositeValue = (value: unknown): unknown =>
+  removeNullSubFields(removeTypenamesFromCompositeFieldValue(value));
 
 // Fields the tab never fetched are undefined in the cache and carry no rendered state, so they cannot make the event new.
 export const isRecordUpdateAlreadyInCache = ({
