@@ -6,6 +6,7 @@ import { type BillingSubscriptionChange } from '@/settings/billing/types/billing
 import { type SettingsBillingPlanAction } from '@/settings/billing/types/settingsBillingPlanAction.type';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
 import { getBillingPlanCell } from '@/settings/billing/utils/getBillingPlanCell';
+import { isBillingSubscriptionChangeUpgrade } from '@/settings/billing/utils/isBillingSubscriptionChangeUpgrade';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -80,56 +81,40 @@ export const useBillingPlanActions = ({
     variant: 'outline',
   });
 
-  const createChangeAction = (
-    change: BillingSubscriptionChange,
-  ): SettingsBillingPlanAction => {
-    const action = {
-      disabled: isApplyingBillingSubscriptionChange,
-      isLoading: isApplyingBillingSubscriptionChange,
-      onClick: () => onBillingSubscriptionChangeRequested(change),
-    };
-    const upgradeAction = {
-      ...action,
-      Icon: IconArrowUp,
-      variant: 'solid',
-      color: 'accent',
-    } satisfies Partial<SettingsBillingPlanAction>;
-
+  const getChangeTitle = (change: BillingSubscriptionChange) => {
     switch (change.type) {
       case 'SWITCH_PLAN':
         return change.targetPlanKey === BillingPlanKey.ENTERPRISE
-          ? { ...upgradeAction, title: t`Upgrade to Organization` }
-          : {
-              ...action,
-              Icon: IconArrowDown,
-              title: t`Switch to Pro`,
-              variant: 'outline',
-            };
+          ? t`Upgrade to Organization`
+          : t`Switch to Pro`;
       case 'SWITCH_INTERVAL':
         return change.targetInterval === SubscriptionInterval.Year
-          ? { ...upgradeAction, title: t`Upgrade to annual` }
-          : {
-              ...action,
-              Icon: IconArrowDown,
-              title: t`Switch to monthly`,
-              variant: 'outline',
-            };
+          ? t`Upgrade to annual`
+          : t`Switch to monthly`;
       case 'CANCEL_PLAN_SWITCH':
-        return {
-          ...action,
-          Icon: IconCircleX,
-          title: t`Cancel plan switching`,
-          variant: 'outline',
-        };
+        return t`Cancel plan switching`;
       case 'CANCEL_INTERVAL_SWITCH':
-        return {
-          ...action,
-          Icon: IconCircleX,
-          title: t`Cancel interval switching`,
-          variant: 'outline',
-        };
+        return t`Cancel interval switching`;
     }
   };
+
+  const createChangeAction = (
+    change: BillingSubscriptionChange,
+    isUpgrade: boolean,
+  ): SettingsBillingPlanAction => ({
+    color: isUpgrade ? 'accent' : 'neutral',
+    disabled: isApplyingBillingSubscriptionChange,
+    Icon:
+      change.type === 'SWITCH_PLAN' || change.type === 'SWITCH_INTERVAL'
+        ? isUpgrade
+          ? IconArrowUp
+          : IconArrowDown
+        : IconCircleX,
+    isLoading: isApplyingBillingSubscriptionChange,
+    onClick: () => onBillingSubscriptionChangeRequested(change),
+    title: getChangeTitle(change),
+    variant: isUpgrade ? 'solid' : 'outline',
+  });
 
   const getPlanAction = (
     planKey: BillingPlanKey,
@@ -138,13 +123,15 @@ export const useBillingPlanActions = ({
       return createBillingPortalAction(t`Manage billing`);
     }
 
+    const upcomingInterval = nextInterval ?? currentInterval;
+    const upcomingPlanKey = nextPlan?.planKey ?? currentPlanKey;
     const cell = getBillingPlanCell({
       currentInterval,
       currentPlanKey,
       interval: billingInterval,
       planKey,
-      upcomingInterval: nextInterval ?? currentInterval,
-      upcomingPlanKey: nextPlan?.planKey ?? currentPlanKey,
+      upcomingInterval,
+      upcomingPlanKey,
     });
 
     if (cell.kind === 'current') {
@@ -180,7 +167,13 @@ export const useBillingPlanActions = ({
       };
     }
 
-    return createChangeAction(cell.change);
+    return createChangeAction(
+      cell.change,
+      isBillingSubscriptionChangeUpgrade(cell.change, {
+        upcomingInterval,
+        upcomingPlanKey,
+      }),
+    );
   };
 
   return {

@@ -1,0 +1,28 @@
+import { type BillingSubscriptionChange } from '@/settings/billing/types/billingSubscriptionChange.type';
+import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
+import {
+  BillingPlanKey,
+  SubscriptionInterval,
+} from '~/generated-metadata/graphql';
+
+export const isBillingSubscriptionChangeUpgrade = (
+  change: BillingSubscriptionChange,
+  {
+    upcomingInterval,
+    upcomingPlanKey,
+  }: {
+    upcomingInterval: SettingsBillingPlanInterval;
+    upcomingPlanKey: BillingPlanKey;
+  },
+) => {
+  switch (change.type) {
+    case 'SWITCH_PLAN':
+      return change.targetPlanKey === BillingPlanKey.ENTERPRISE;
+    case 'SWITCH_INTERVAL':
+      return change.targetInterval === SubscriptionInterval.Year;
+    case 'CANCEL_PLAN_SWITCH':
+      return upcomingPlanKey === BillingPlanKey.PRO;
+    case 'CANCEL_INTERVAL_SWITCH':
+      return upcomingInterval === SubscriptionInterval.Month;
+  }
+};
