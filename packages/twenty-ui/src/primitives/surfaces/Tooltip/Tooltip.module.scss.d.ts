@@ -1,11 +1,10 @@
 declare const classNames: {
   readonly positioner: 'positioner';
-  readonly tooltip: 'tooltip';
-  readonly textContent: 'textContent';
+  readonly popup: 'popup';
+  readonly content: 'content';
   readonly title: 'title';
   readonly icon: 'icon';
   readonly description: 'description';
-  readonly interactive: 'interactive';
   readonly arrow: 'arrow';
 };
 export default classNames;

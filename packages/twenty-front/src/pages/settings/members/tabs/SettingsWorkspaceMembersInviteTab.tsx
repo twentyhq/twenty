@@ -7,6 +7,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
@@ -23,7 +24,7 @@ import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { IconButton } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { H2Title } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
@@ -179,19 +180,18 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                           stroke={theme.icon.stroke.sm}
                         />
                       </StyledIconWrapper>
-                      <StyledTextContainerWithEllipsis
-                        id={`invitation-email-${workspaceInvitation.id}`}
-                      >
-                        {workspaceInvitation.email}
-                      </StyledTextContainerWithEllipsis>
-                      <AppTooltip
-                        anchorSelect={`#invitation-email-${workspaceInvitation.id}`}
-                        title={workspaceInvitation.email}
-                        noArrow
-                        place="top"
-                        positionStrategy="fixed"
+                      <Tooltip
+                        content={workspaceInvitation.email}
+                        side="top"
+                        positionMethod="fixed"
                         delay={TooltipDelay.shortDelay}
-                      />
+                      >
+                        <StyledTextContainerWithEllipsis
+                          id={`invitation-email-${workspaceInvitation.id}`}
+                        >
+                          {workspaceInvitation.email}
+                        </StyledTextContainerWithEllipsis>
+                      </Tooltip>
                     </TableCell>
                     <TableCell minWidth="0" overflow="hidden">
                       <StyledTextContainerWithEllipsis>

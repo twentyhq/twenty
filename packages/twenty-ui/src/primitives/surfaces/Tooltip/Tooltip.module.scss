@@ -1,11 +1,8 @@
 .positioner {
-  // the tooltip never intercepts pointer events unless interactive,
-  // like react-tooltip's core styles
-  pointer-events: none;
   z-index: var(--t-last-layer-z-index);
 }
 
-.tooltip {
+.popup {
   backdrop-filter: var(--t-blur-strong);
   background-color: var(--t-tooltip-background);
   border-radius: var(--t-border-radius-md);
@@ -17,8 +14,8 @@
   overflow: visible;
   padding: var(--t-spacing-1) var(--t-spacing-1_5);
   word-break: break-word;
-  width: max-content;
-  max-width: 100%;
+  inline-size: max-content;
+  max-inline-size: min(100%, var(--available-width));
   will-change: opacity;
   transition: opacity 0.15s ease-out;
 
@@ -35,7 +32,7 @@
   }
 }
 
-.textContent {
+.content {
   display: flex;
   flex-direction: column;
   line-height: var(--t-spacing-4);
@@ -46,18 +43,23 @@
   display: flex;
   font-weight: var(--t-font-weight-medium);
   gap: var(--t-spacing-1);
-  min-width: 0;
+  min-inline-size: 0;
 
   span {
-    min-width: 0;
+    min-inline-size: 0;
     overflow-wrap: anywhere;
   }
 }
 
 .icon {
   flex-shrink: 0;
-  height: calc(var(--t-icon-size-sm) * 1px);
-  width: calc(var(--t-icon-size-sm) * 1px);
+  align-items: center;
+  display: inline-flex;
+
+  & > svg {
+    block-size: calc(var(--t-icon-size-sm) * 1px);
+    inline-size: calc(var(--t-icon-size-sm) * 1px);
+  }
 }
 
 .description {
@@ -66,45 +68,47 @@
   white-space: pre-wrap;
 }
 
-.interactive {
-  pointer-events: auto;
-}
-
 .arrow {
-  --tooltip-arrow-size: 6px;
+  --tw-tooltip-arrow-size: 6px;
 
   position: absolute;
   background: inherit;
 
   &[data-side='top'],
   &[data-side='bottom'] {
-    width: calc(2 * var(--tooltip-arrow-size));
-    height: var(--tooltip-arrow-size);
+    width: calc(2 * var(--tw-tooltip-arrow-size));
+    height: var(--tw-tooltip-arrow-size);
   }
 
   &[data-side='left'],
   &[data-side='right'] {
-    width: var(--tooltip-arrow-size);
-    height: calc(2 * var(--tooltip-arrow-size));
+    width: var(--tw-tooltip-arrow-size);
+    height: calc(2 * var(--tw-tooltip-arrow-size));
   }
 
   &[data-side='top'] {
-    bottom: calc(-1 * var(--tooltip-arrow-size));
+    bottom: calc(-1 * var(--tw-tooltip-arrow-size));
     clip-path: polygon(0 0, 100% 0, 50% 100%);
   }
 
   &[data-side='bottom'] {
-    top: calc(-1 * var(--tooltip-arrow-size));
+    top: calc(-1 * var(--tw-tooltip-arrow-size));
     clip-path: polygon(50% 0, 100% 100%, 0 100%);
   }
 
   &[data-side='left'] {
-    right: calc(-1 * var(--tooltip-arrow-size));
+    right: calc(-1 * var(--tw-tooltip-arrow-size));
     clip-path: polygon(0 0, 100% 50%, 0 100%);
   }
 
   &[data-side='right'] {
-    left: calc(-1 * var(--tooltip-arrow-size));
+    left: calc(-1 * var(--tw-tooltip-arrow-size));
     clip-path: polygon(100% 0, 100% 100%, 0 50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popup {
+    transition: none;
   }
 }

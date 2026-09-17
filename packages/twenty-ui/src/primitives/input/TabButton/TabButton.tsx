@@ -1,5 +1,6 @@
 import { type IconComponent } from '@ui/icon';
-import { AppTooltip, TooltipDelay } from '@ui/primitives/surfaces';
+import { isNonEmptyString } from '@sniptt/guards';
+import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 import {
   StyledTabButton,
   StyledTabContainer,
@@ -60,41 +61,39 @@ export const TabButton = ({
   const tabElementId = `tab-${id}`;
 
   return (
-    <div key={id} id={tabElementId} className={styles.tabTooltipWrapper}>
-      <StyledTabButton
-        data-testid={disableTestId ? undefined : `tab-${id}`}
-        active={active}
-        disabled={disabled}
-        to={to}
-        state={state}
-        replace={replace}
-        className={className}
-        onClick={onClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-      >
-        <TabContent
-          id={id}
+    <Tooltip
+      content={tooltipContent}
+      disabled={!isNonEmptyString(tooltipContent)}
+      side="bottom"
+      positionMethod="fixed"
+      delay={300}
+    >
+      <div key={id} id={tabElementId} className={styles.tabTooltipWrapper}>
+        <StyledTabButton
+          data-testid={disableTestId ? undefined : `tab-${id}`}
           active={active}
           disabled={disabled}
-          LeftIcon={LeftIcon}
-          title={title}
-          logo={logo}
-          RightIcon={RightIcon}
-          pill={pill}
-          contentSize={contentSize}
-        />
-      </StyledTabButton>
-      {tooltipContent && (
-        <AppTooltip
-          anchorSelect={`#${tabElementId}`}
-          title={tooltipContent}
-          noArrow
-          place="bottom"
-          positionStrategy="fixed"
-          delay={TooltipDelay.shortDelay}
-        />
-      )}
-    </div>
+          to={to}
+          state={state}
+          replace={replace}
+          className={className}
+          onClick={onClick}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+        >
+          <TabContent
+            id={id}
+            active={active}
+            disabled={disabled}
+            LeftIcon={LeftIcon}
+            title={title}
+            logo={logo}
+            RightIcon={RightIcon}
+            pill={pill}
+            contentSize={contentSize}
+          />
+        </StyledTabButton>
+      </div>
+    </Tooltip>
   );
 };
