@@ -54,7 +54,10 @@ describe('InboxItemToolCallService', () => {
   const coreDataSource = {
     transaction: jest.fn((run: (manager: unknown) => unknown) => run({})),
   };
-  const inboxItemService = { findVisibleItemOrThrow: jest.fn() };
+  const inboxItemService = {
+    findVisibleItemOrThrow: jest.fn(),
+    buildWriteScope: jest.fn(),
+  };
   const inboxTransitionService = { transition: jest.fn() };
   const inboxToolCallExecutionService = { execute: jest.fn() };
 
@@ -115,6 +118,12 @@ describe('InboxItemToolCallService', () => {
     );
     inboxItemRepository.withManager.mockReturnValue(inboxItemRepository);
     inboxItemRepository.findOne.mockResolvedValue({ id: INBOX_ITEM_ID });
+    inboxItemService.buildWriteScope.mockImplementation(
+      ({ inboxItem, actorUserWorkspaceId }) => ({
+        id: inboxItem.id,
+        assigneeUserWorkspaceId: actorUserWorkspaceId,
+      }),
+    );
     coreDataSource.transaction.mockImplementation(
       (run: (manager: unknown) => unknown) => run({}),
     );
@@ -761,7 +770,10 @@ describe('InboxItemToolCallService', () => {
 
       expect(coreDataSource.transaction).toHaveBeenCalledTimes(1);
       expect(inboxItemRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
-        where: { id: INBOX_ITEM_ID },
+        where: {
+          id: INBOX_ITEM_ID,
+          assigneeUserWorkspaceId: actorArgs.actorUserWorkspaceId,
+        },
         lock: { mode: 'pessimistic_write' },
       });
       expect(
@@ -771,7 +783,9 @@ describe('InboxItemToolCallService', () => {
       );
     });
 
-    it('should refuse to add a call to an item that went away before the lock', async () => {
+    // The visibility check and the lock are two reads; an item handed over or
+    // moved between them must not take a step from its previous holder
+    it('should refuse to add a call to an item that changed hands before the lock', async () => {
       inboxItemRepository.findOne.mockResolvedValueOnce(null);
 
       await expect(
@@ -781,7 +795,7 @@ describe('InboxItemToolCallService', () => {
           draft: { toolName: 'send_email', label: 'Reply', proposedInput: {} },
         }),
       ).rejects.toMatchObject({
-        code: InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
+        code: InboxExceptionCode.INBOX_ITEM_CHANGED,
       });
 
       expect(

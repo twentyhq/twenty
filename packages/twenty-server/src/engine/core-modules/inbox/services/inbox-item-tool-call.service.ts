@@ -264,7 +264,7 @@ export class InboxItemToolCallService {
     inboxItemId: string;
     draft: InboxItemToolCallDraft;
   }): Promise<InboxItemToolCallEntity> {
-    await this.inboxItemService.findVisibleItemOrThrow({
+    const inboxItem = await this.inboxItemService.findVisibleItemOrThrow({
       inboxItemId,
       workspaceId,
       actorUserWorkspaceId,
@@ -273,19 +273,25 @@ export class InboxItemToolCallService {
 
     // The item row is the lock every plan write takes, the same one a fold
     // takes, so two additions read the plan one after the other and cannot
-    // land on the same position.
+    // land on the same position. The lock re-applies the scope the read
+    // used, so an item handed over or moved in between takes no step from
+    // whoever held it before.
     return this.coreDataSource.transaction(async (manager) => {
       const lockedItem = await this.inboxItemRepository
         .withManager(manager)
         .findOne(workspaceId, {
-          where: { id: inboxItemId },
+          where: this.inboxItemService.buildWriteScope({
+            inboxItem,
+            actorUserWorkspaceId,
+            accessibleQueueIds,
+          }),
           lock: { mode: 'pessimistic_write' },
         });
 
       if (!isDefined(lockedItem)) {
         throw new InboxException(
-          `Inbox item ${inboxItemId} not found`,
-          InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
+          `Inbox item ${inboxItemId} changed since it was read`,
+          InboxExceptionCode.INBOX_ITEM_CHANGED,
         );
       }
 
