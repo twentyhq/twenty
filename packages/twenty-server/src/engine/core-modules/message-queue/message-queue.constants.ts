@@ -10,7 +10,6 @@ export enum MessageQueue {
   emailQueue = 'email-queue',
   campaignQueue = 'campaign-queue',
   campaignSendQueue = 'campaign-send-queue',
-  campaignEngagementQueue = 'campaign-engagement-queue',
   calendarQueue = 'calendar-queue',
   connectedAccountSyncWebhookQueue = 'connected-account-sync-webhook-queue',
   contactCreationQueue = 'contact-creation-queue',

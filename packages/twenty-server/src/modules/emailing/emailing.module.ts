@@ -25,7 +25,6 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { CampaignTrackingController } from 'src/modules/emailing/controllers/campaign-tracking.controller';
 import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscribe.controller';
-import { RecordCampaignEngagementJob } from 'src/modules/emailing/jobs/record-campaign-engagement.job';
 import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { CampaignEngagementRecordingService } from 'src/modules/emailing/services/campaign-engagement-recording.service';
@@ -117,7 +116,6 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     CampaignEngagementCaptureService,
     CampaignEngagementRecordingService,
     CampaignEngagementEventService,
-    RecordCampaignEngagementJob,
     provideWorkspaceScopedRepository(UnsubscribeTopicEntity),
     provideWorkspaceScopedRepository(CampaignDeliveryEntity),
     EmailingOngoingStaleCronCommand,
