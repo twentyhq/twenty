@@ -17,6 +17,8 @@ export enum UsageOperationType {
   API_REQUEST = 'API_REQUEST',
   WEBHOOK_CALL = 'WEBHOOK_CALL',
   STORAGE_FILE = 'STORAGE_FILE',
+  // Raised by the ORM on every workspace record insert; an app never bills it.
+  RECORD_WRITE = 'RECORD_WRITE',
   // Platform-raised, once per billing period. Also out of
   // USAGE_OPERATION_TYPES: an app declares the amount, it never charges this.
   SUBSCRIPTION = 'SUBSCRIPTION',

@@ -1233,9 +1233,9 @@ export interface UsageQuotaDefinition {
     __typename: 'UsageQuotaDefinition'
 }
 
-export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL' | 'WEBHOOK'
+export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL' | 'WEBHOOK' | 'RECORD'
 
-export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'SUBSCRIPTION'
+export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'RECORD_WRITE' | 'SUBSCRIPTION'
 
 export interface UsageQuotaDefinitions {
     definitions: UsageQuotaDefinition[]
@@ -10686,7 +10686,8 @@ export const enumUsageResourceType = {
    API: 'API' as const,
    LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
    EMAIL: 'EMAIL' as const,
-   WEBHOOK: 'WEBHOOK' as const
+   WEBHOOK: 'WEBHOOK' as const,
+   RECORD: 'RECORD' as const
 }
 
 export const enumUsageOperationType = {
@@ -10701,6 +10702,7 @@ export const enumUsageOperationType = {
    API_REQUEST: 'API_REQUEST' as const,
    WEBHOOK_CALL: 'WEBHOOK_CALL' as const,
    STORAGE_FILE: 'STORAGE_FILE' as const,
+   RECORD_WRITE: 'RECORD_WRITE' as const,
    SUBSCRIPTION: 'SUBSCRIPTION' as const
 }
 
