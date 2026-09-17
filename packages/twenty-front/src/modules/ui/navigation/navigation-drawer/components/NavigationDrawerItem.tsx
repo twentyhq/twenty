@@ -360,7 +360,7 @@ export const NavigationDrawerItem = ({
         }
         as={elementType}
         role={
-          !editingContent && !to && isDefined(rightOptions)
+          !isDefined(editingContent) && !to && isDefined(rightOptions)
             ? 'button'
             : undefined
         }

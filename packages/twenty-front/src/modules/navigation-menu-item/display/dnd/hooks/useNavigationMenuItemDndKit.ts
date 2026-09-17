@@ -58,7 +58,6 @@ export const useNavigationMenuItemDndKit = (
   const [forbiddenDropTargetId, setForbiddenDropTargetId] = useState<
     string | null
   >(null);
-  const [] = useState<DropDestination | null>(null);
 
   const { navigationMenuItems } = useNavigationMenuItemsData();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
