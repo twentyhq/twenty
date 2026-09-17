@@ -14,20 +14,20 @@ import {
   CoreObjectNameSingular,
   MessageParticipantRole,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useEmailThread = (threadId: string | null) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const [lastMessageId, setLastMessageId] = useState<string | null>(null);
   const [isMessagesFetchComplete, setIsMessagesFetchComplete] = useState(false);
 
-  const { record: thread } = useFindOneRecord<EmailThread>({
-    objectNameSingular: CoreObjectNameSingular.MessageThread,
-    objectRecordId: threadId ?? '',
-    recordGqlFields: {
-      id: true,
-    },
-  });
+  const { record: thread, loading: threadRecordLoading } =
+    useFindOneRecord<EmailThread>({
+      objectNameSingular: CoreObjectNameSingular.MessageThread,
+      objectRecordId: threadId ?? '',
+      recordGqlFields: {
+        id: true,
+      },
+    });
 
   useEffect(() => {
     if (thread) {
@@ -81,6 +81,7 @@ export const useEmailThread = (threadId: string | null) => {
 
   const { records: messageSenders } =
     useFindManyRecords<EmailThreadMessageParticipant>({
+      limit: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.variables.limit,
       filter: {
         messageId: {
           in: messages.map(({ id }) => id),
@@ -136,22 +137,18 @@ export const useEmailThread = (threadId: string | null) => {
     loading: replyConnectedAccountLoading,
   } = useReplyConnectedAccount(lastMessageChannelId);
 
-  const messagesWithSender: EmailThreadMessageWithSender[] = messages
-    .map((message) => {
-      const sender = messageSenders.find(
-        (messageSender) => messageSender.messageId === message.id,
-      );
-
-      if (!sender) {
-        return null;
-      }
-
-      return {
-        ...message,
-        sender,
-      };
-    })
-    .filter(isDefined);
+  const messagesWithSender: EmailThreadMessageWithSender[] = messages.map(
+    (message) => ({
+      ...message,
+      sender:
+        messageSenders.find(
+          (messageSender) => messageSender.messageId === message.id,
+        ) ??
+        message.messageParticipants.find(
+          (participant) => participant.role === MessageParticipantRole.FROM,
+        ),
+    }),
+  );
 
   const messageChannelLoading =
     replyConnectedAccountLoading || messageChannelMessageAssociationLoading;
@@ -164,7 +161,7 @@ export const useEmailThread = (threadId: string | null) => {
     connectedAccountId,
     connectedAccountHandle,
     connectedAccountProvider,
-    threadLoading: messagesLoading,
+    threadLoading: threadRecordLoading || messagesLoading,
     messageChannelLoading,
     lastMessageExternalId,
     fetchMoreMessages,

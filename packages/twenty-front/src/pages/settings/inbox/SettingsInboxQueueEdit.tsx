@@ -18,8 +18,8 @@ import {
 import { useInboxSettings } from '@/settings/inbox/hooks/useInboxSettings';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 
 const DELETE_INBOX_QUEUE_MODAL_ID = 'delete-inbox-queue';
 
@@ -28,7 +28,7 @@ export const SettingsInboxQueueEdit = () => {
   const { enqueueToast } = useToast();
   const navigateSettings = useNavigateSettings();
   const { queueId } = useParams<{ queueId?: string }>();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const {
     inboxQueues,
     loading,
@@ -163,15 +163,15 @@ export const SettingsInboxQueueEdit = () => {
               color="danger"
               size="sm"
               variant="outline"
-              onClick={() => openModal(DELETE_INBOX_QUEUE_MODAL_ID)}
+              onClick={() => openDialog(DELETE_INBOX_QUEUE_MODAL_ID)}
             >
               {t`Delete shared inbox`}
             </Button>
           </Section.Root>
         )}
       </SettingsPageContainer>
-      <ConfirmationModal
-        modalInstanceId={DELETE_INBOX_QUEUE_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={DELETE_INBOX_QUEUE_MODAL_ID}
         title={t`Delete ${inboxQueue.label}`}
         subtitle={t`Everyone loses access to this inbox. Work still in it moves to Triage.`}
         onConfirmClick={handleDelete}

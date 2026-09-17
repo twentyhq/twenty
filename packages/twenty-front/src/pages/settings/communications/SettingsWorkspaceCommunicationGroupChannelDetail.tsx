@@ -13,8 +13,8 @@ import { SettingsEmailingDomainDnsRecords } from '@/settings/emailing-domains/co
 import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -61,7 +61,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { messageChannelId } = useParams<{ messageChannelId: string }>();
   const { channels, loading } = useMyMessageChannels();
   const { copyToClipboard } = useCopyToClipboard();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { enqueueToast } = useToast();
   const { deleteEmailGroupChannel, loading: deleting } =
     useDeleteEmailGroupChannel();
@@ -189,7 +189,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
           startIcon={<IconTrash />}
           size="sm"
           disabled={deleting}
-          onClick={() => openModal(DELETE_EMAIL_GROUP_MODAL_ID)}
+          onClick={() => openDialog(DELETE_EMAIL_GROUP_MODAL_ID)}
           variant="outline"
           color="danger"
         >{t`Delete`}</Button>
@@ -291,8 +291,8 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
         )}
         <SettingsAccountsMessageChannelDetails messageChannel={channel} />
       </SettingsPageContainer>
-      <ConfirmationModal
-        modalInstanceId={DELETE_EMAIL_GROUP_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={DELETE_EMAIL_GROUP_MODAL_ID}
         title={t`Delete email channel`}
         subtitle={t`Are you sure you want to delete ${sourceHandle}? Inbound mail forwarded to this address and outbound replies from it will stop working.`}
         onConfirmClick={handleDelete}

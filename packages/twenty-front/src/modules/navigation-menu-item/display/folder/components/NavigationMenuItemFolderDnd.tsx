@@ -45,7 +45,7 @@ import { useFavoritesFolderEdit } from '@/navigation-menu-item/edit/folder/hooks
 import { NavigationMenuItemAddDropdown } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdown';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
@@ -285,10 +285,10 @@ export const NavigationMenuItemFolderDnd = ({
     });
 
   const deleteModal =
-    isEditInPlace && favoritesEdit.isModalOpened
+    isEditInPlace && favoritesEdit.isDialogOpened
       ? createPortal(
-          <ConfirmationModal
-            modalInstanceId={favoritesEdit.modalId}
+          <ConfirmationDialog
+            dialogId={favoritesEdit.modalId}
             title={
               favoritesEdit.navigationMenuItemCount > 1
                 ? t`Remove ${favoritesEdit.navigationMenuItemCount} navigation menu items?`

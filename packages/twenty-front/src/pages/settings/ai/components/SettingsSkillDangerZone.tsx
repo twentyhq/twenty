@@ -10,8 +10,8 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import {
   ActivateSkillDocument,
   DeactivateSkillDocument,
@@ -39,7 +39,7 @@ export const SettingsSkillDangerZone = ({
 }: SettingsSkillDangerZoneProps) => {
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [deleteSkill] = useMutation(DeleteSkillDocument);
@@ -61,7 +61,7 @@ export const SettingsSkillDangerZone = ({
   const handleDelete = () =>
     runAndLeave(async () => {
       await deleteSkill({ variables: { id: skill.id } });
-      closeModal(DELETE_SKILL_MODAL_ID);
+      closeDialog(DELETE_SKILL_MODAL_ID);
     });
 
   const handleToggleActive = () =>
@@ -89,14 +89,14 @@ export const SettingsSkillDangerZone = ({
           <Button
             startIcon={<IconTrash />}
             size="sm"
-            onClick={() => openModal(DELETE_SKILL_MODAL_ID)}
+            onClick={() => openDialog(DELETE_SKILL_MODAL_ID)}
             variant="outline"
             color="danger"
           >{t`Delete`}</Button>
         )}
       </StyledDangerButtonsContainer>
-      <ConfirmationModal
-        modalInstanceId={DELETE_SKILL_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={DELETE_SKILL_MODAL_ID}
         title={t`Delete Skill`}
         subtitle={t`Are you sure you want to delete this skill? This action cannot be undone.`}
         onConfirmClick={handleDelete}
