@@ -1,4 +1,5 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
 import { SettingsMessageFoldersSkeletonLoader } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersSkeletonLoader';
 import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
@@ -7,19 +8,19 @@ import { computeToggleAllFoldersState } from '@/settings/accounts/components/mes
 import { useMyMessageFolders } from '@/settings/accounts/hooks/useMyMessageFolders';
 import { useUpdateMessageFoldersSyncStatus } from '@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo, useState } from 'react';
-import { Label } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/components';
 import { Checkbox } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Label } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledTreeList = styled.ul`
   list-style: none;
@@ -63,7 +64,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
   const { t } = useLingui();
   const [search, setSearch] = useState('');
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const settingsAccountsSelectedMessageChannel = useAtomStateValue(
     settingsAccountsSelectedMessageChannelState,
@@ -100,9 +101,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
         isSynced: targetSyncState,
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
@@ -115,19 +114,17 @@ export const SettingsAccountsMessageFoldersCard = () => {
         isSynced,
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
   if (loading) {
     return (
-      <Section>
+      <Section.Root>
         <Table>
           <SettingsMessageFoldersSkeletonLoader />
         </Table>
-      </Section>
+      </Section.Root>
     );
   }
 
@@ -136,7 +133,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
   }
 
   return (
-    <Section>
+    <Section.Root>
       <Table>
         <StyledSearchInputContainer>
           <SettingsTextInput
@@ -176,6 +173,6 @@ export const SettingsAccountsMessageFoldersCard = () => {
           </StyledTreeList>
         </StyledFoldersContainer>
       </Table>
-    </Section>
+    </Section.Root>
   );
 };

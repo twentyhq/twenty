@@ -1,5 +1,495 @@
 [
   {
+    "name": "IconButton",
+    "entryPoint": "twenty-ui/components",
+    "slug": "input/icon-button",
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Required accessible name describing the action."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Icon content. Decorative and hidden from assistive technology."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic color of the button."
+      },
+      {
+        "name": "elevated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Adds a shadow to the button."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows a loading indicator and disables activation while preserving the button width."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Square button size: `sm` (24px) or `md` (32px)."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "tooltip",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text displayed when hovering or focusing the button."
+      },
+      {
+        "name": "tooltipDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "1000",
+        "description": "Delay before showing the tooltip."
+      },
+      {
+        "name": "tooltipOffset",
+        "type": "number",
+        "required": false,
+        "defaultValue": "5",
+        "description": "Distance in pixels between the button and the tooltip."
+      },
+      {
+        "name": "tooltipPlace",
+        "type": "\"top\" | \"right\" | \"bottom\" | \"left\"",
+        "required": false,
+        "defaultValue": "bottom",
+        "description": "Preferred placement of the tooltip relative to the button."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Visual treatment of the button surface."
+      }
+    ]
+  },
+  {
+    "name": "MainButton",
+    "entryPoint": "twenty-ui/components",
+    "slug": "input/main-button",
+    "props": [
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic color of the button."
+      },
+      {
+        "name": "elevated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Adds a shadow to the button."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed after the label."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Expands the button to fill its container width."
+      },
+      {
+        "name": "hotkeys",
+        "type": "string[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Keyboard shortcut hints displayed on non-mobile screens."
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows a loading indicator and disables activation while preserving the button width."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Button height: `sm` (24px) or `md` (32px)."
+      },
+      {
+        "name": "soon",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays a coming-soon label and disables activation."
+      },
+      {
+        "name": "soonLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text for the coming-soon label."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed before the label."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": "solid",
+        "description": "Visual treatment of the button surface."
+      }
+    ]
+  },
+  {
+    "name": "LightButton",
+    "entryPoint": "twenty-ui/components",
+    "slug": "input/light-button",
+    "props": [
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic color of the button."
+      },
+      {
+        "name": "elevated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Adds a shadow to the button."
+      },
+      {
+        "name": "emphasis",
+        "type": "\"standard\" | \"subtle\"",
+        "required": false,
+        "defaultValue": "standard",
+        "description": "Uses secondary or tertiary text for neutral buttons. Semantic colors and solid surfaces retain their contrast treatment."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed after the label."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Expands the button to fill its container width."
+      },
+      {
+        "name": "hotkeys",
+        "type": "string[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Keyboard shortcut hints displayed on non-mobile screens."
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows a loading indicator and disables activation while preserving the button width."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": "sm",
+        "description": "Button height: `sm` (24px) or `md` (32px)."
+      },
+      {
+        "name": "soon",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays a coming-soon label and disables activation."
+      },
+      {
+        "name": "soonLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text for the coming-soon label."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed before the label."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": "ghost",
+        "description": "Visual treatment of the button surface."
+      }
+    ]
+  },
+  {
+    "name": "Button",
+    "entryPoint": "twenty-ui/primitives/input",
+    "slug": "input/button",
+    "props": [
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": "neutral",
+        "description": "Semantic color of the button."
+      },
+      {
+        "name": "elevated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Adds a shadow to the button."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed after the label."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Expands the button to fill its container width."
+      },
+      {
+        "name": "hotkeys",
+        "type": "string[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Keyboard shortcut hints displayed on non-mobile screens."
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Shows a loading indicator and disables activation while preserving the button width."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Button height: `sm` (24px) or `md` (32px)."
+      },
+      {
+        "name": "soon",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Displays a coming-soon label and disables activation."
+      },
+      {
+        "name": "soonLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text for the coming-soon label."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed before the label."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": "outline",
+        "description": "Visual treatment of the button surface."
+      }
+    ]
+  },
+  {
+    "name": "ButtonGroup",
+    "entryPoint": "twenty-ui/primitives/input",
+    "slug": "input/button-group",
+    "props": [
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shared semantic color that overrides the color of buttons in the group."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shared button height that overrides the size of buttons in the group."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shared surface treatment that overrides the variant of buttons in the group."
+      }
+    ]
+  },
+  {
     "name": "Field",
     "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/field",
@@ -1036,7 +1526,7 @@
           },
           {
             "name": "side",
-            "type": "\"top\" | \"bottom\" | \"left\" | \"right\" | \"inline-end\" | \"inline-start\"",
+            "type": "\"top\" | \"right\" | \"bottom\" | \"left\" | \"inline-end\" | \"inline-start\"",
             "required": false,
             "defaultValue": "bottom",
             "description": "Which side of the anchor element to align the popup against.\nMay automatically change to avoid collisions."
@@ -1370,7 +1860,7 @@
           },
           {
             "name": "thumbCollisionBehavior",
-            "type": "\"push\" | \"none\" | \"swap\"",
+            "type": "\"none\" | \"push\" | \"swap\"",
             "required": false,
             "defaultValue": "push",
             "description": "Controls how thumbs behave when they collide during pointer interactions.\n\n- `'push'` (default): Thumbs push each other without restoring their previous positions when dragged back.\n- `'swap'`: Thumbs swap places when dragged past each other.\n- `'none'`: Thumbs cannot move past each other; excess movement is ignored."
@@ -2610,7 +3100,7 @@
           },
           {
             "name": "side",
-            "type": "\"top\" | \"bottom\" | \"left\" | \"right\" | \"inline-end\" | \"inline-start\"",
+            "type": "\"top\" | \"right\" | \"bottom\" | \"left\" | \"inline-end\" | \"inline-start\"",
             "required": false,
             "defaultValue": null,
             "description": "Side of the anchor the popup is placed on. Defaults to `bottom` for a menu\nand `inline-end` for a submenu."
@@ -3553,7 +4043,7 @@
           },
           {
             "name": "side",
-            "type": "\"top\" | \"bottom\" | \"left\" | \"right\" | \"inline-end\" | \"inline-start\"",
+            "type": "\"top\" | \"right\" | \"bottom\" | \"left\" | \"inline-end\" | \"inline-start\"",
             "required": false,
             "defaultValue": "bottom",
             "description": "Side of the anchor the popup is placed on."
@@ -3656,6 +4146,586 @@
             "required": false,
             "defaultValue": null,
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Tooltip",
+    "entryPoint": "twenty-ui/primitives/surfaces",
+    "slug": "surfaces/tooltip",
+    "props": [
+      {
+        "name": "actionsRef",
+        "type": "RefObject<TooltipRootActions | null>",
+        "required": false,
+        "defaultValue": null,
+        "description": "A ref to imperative actions.\n- `unmount`: Unmounts the tooltip popup.\n- `close`: Closes the tooltip imperatively when called."
+      },
+      {
+        "name": "align",
+        "type": "\"center\" | \"start\" | \"end\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Alignment relative to the trigger. Defaults to center."
+      },
+      {
+        "name": "alignOffset",
+        "type": "number | OffsetFunction",
+        "required": false,
+        "defaultValue": "0",
+        "description": "Offset along the alignment axis in pixels."
+      },
+      {
+        "name": "anchor",
+        "type": "Element | VirtualElement | RefObject<Element | null> | (() => Element | VirtualElement | null) | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "An explicit positioning anchor for the popup."
+      },
+      {
+        "name": "arrow",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Displays an arrow pointing to the trigger. Defaults to false."
+      },
+      {
+        "name": "children",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>>",
+        "required": true,
+        "defaultValue": null,
+        "description": "A single trigger element. Custom components must forward their ref, native attributes, and event handlers."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: TooltipPopupState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Additional CSS class for the popup."
+      },
+      {
+        "name": "closeDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "0",
+        "description": "Delay in milliseconds before closing after hover ends. Defaults to 0."
+      },
+      {
+        "name": "closeOnClick",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the tooltip should close when this trigger is clicked."
+      },
+      {
+        "name": "collisionAvoidance",
+        "type": "CollisionAvoidance",
+        "required": false,
+        "defaultValue": null,
+        "description": "Determines how to handle collisions when positioning the popup.\n\n`side` controls overflow on the preferred placement axis (`top`/`bottom` or `left`/`right`):\n- `'flip'`: keep the requested side when it fits; otherwise try the opposite side\n  (`top` and `bottom`, or `left` and `right`).\n- `'shift'`: never change side; keep the requested side and move the popup within\n  the clipping boundary so it stays visible.\n- `'none'`: do not correct side-axis overflow.\n\n`align` controls overflow on the alignment axis (`start`/`center`/`end`):\n- `'flip'`: keep side, but swap `start` and `end` when the requested alignment overflows.\n- `'shift'`: keep side and requested alignment, then nudge the popup along the\n  alignment axis to fit.\n- `'none'`: do not correct alignment-axis overflow.\n\n`fallbackAxisSide` controls fallback behavior on the perpendicular axis when the\npreferred axis cannot fit:\n- `'start'`: allow perpendicular fallback and try the logical start side first\n  (`top` before `bottom`, or `left` before `right` in LTR).\n- `'end'`: allow perpendicular fallback and try the logical end side first\n  (`bottom` before `top`, or `right` before `left` in LTR).\n- `'none'`: do not fallback to the perpendicular axis.\n\nWhen `side` is `'shift'`, explicitly setting `align` only supports `'shift'` or `'none'`.\nIf `align` is omitted, it defaults to `'flip'`."
+      },
+      {
+        "name": "collisionBoundary",
+        "type": "Boundary",
+        "required": false,
+        "defaultValue": "clipping-ancestors",
+        "description": "An element or a rectangle that delimits the area that the popup is confined to."
+      },
+      {
+        "name": "collisionPadding",
+        "type": "Padding",
+        "required": false,
+        "defaultValue": "5",
+        "description": "Additional space to maintain from the edge of the collision boundary."
+      },
+      {
+        "name": "container",
+        "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Portal destination. Defaults to the current theme container."
+      },
+      {
+        "name": "content",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Supplementary content displayed in the tooltip."
+      },
+      {
+        "name": "defaultOpen",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Initial visibility when the tooltip manages its own state."
+      },
+      {
+        "name": "defaultTriggerId",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the trigger that the tooltip is associated with.\nThis is useful in conjunction with the `defaultOpen` prop to create an initially open tooltip."
+      },
+      {
+        "name": "delay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "600",
+        "description": "Delay in milliseconds before opening on hover. Defaults to 600."
+      },
+      {
+        "name": "disableAnchorTracking",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether to disable the popup from tracking any layout shift of its positioning anchor."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Prevents the tooltip from opening."
+      },
+      {
+        "name": "disableHoverablePopup",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Prevents hovering over the popup from keeping it open."
+      },
+      {
+        "name": "keepMounted",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Keeps the popup mounted while closed."
+      },
+      {
+        "name": "maxWidth",
+        "type": "MaxWidth<string | number>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Maximum popup width. Defaults to 300 pixels."
+      },
+      {
+        "name": "onOpenChange",
+        "type": "((open: boolean, eventDetails: TooltipRootChangeEventDetails) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called when an interaction requests a visibility change."
+      },
+      {
+        "name": "onOpenChangeComplete",
+        "type": "((open: boolean) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Event handler called after any animations complete when the tooltip is opened or closed."
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled visibility of the tooltip."
+      },
+      {
+        "name": "positionMethod",
+        "type": "\"absolute\" | \"fixed\"",
+        "required": false,
+        "defaultValue": "absolute",
+        "description": "CSS positioning method for the popup."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipPopupState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "side",
+        "type": "\"top\" | \"right\" | \"bottom\" | \"left\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Preferred side of the trigger. Defaults to top and may change to avoid collisions."
+      },
+      {
+        "name": "sideOffset",
+        "type": "number | OffsetFunction",
+        "required": false,
+        "defaultValue": "10",
+        "description": "Distance from the trigger in pixels. Defaults to 10."
+      },
+      {
+        "name": "sticky",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether to maintain the popup in the viewport after\nthe anchor element was scrolled out of view."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: TooltipPopupState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles for the popup."
+      },
+      {
+        "name": "trackCursorAxis",
+        "type": "\"none\" | \"both\" | \"x\" | \"y\"",
+        "required": false,
+        "defaultValue": "none",
+        "description": "Determines which axis the tooltip should track the cursor on."
+      },
+      {
+        "name": "triggerId",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the trigger that the tooltip is associated with.\nThis is useful in conjunction with the `open` prop to create a controlled tooltip.\nThere's no need to specify this prop when the tooltip is uncontrolled (that is, when the `open` prop is not set)."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "actionsRef",
+            "type": "RefObject<TooltipRootActions | null>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A ref to imperative actions.\n- `unmount`: Unmounts the tooltip popup.\n- `close`: Closes the tooltip imperatively when called."
+          },
+          {
+            "name": "children",
+            "type": "ReactNode | PayloadChildRenderFunction<Payload>",
+            "required": false,
+            "defaultValue": null,
+            "description": "The content of the tooltip.\nThis can be a regular React node or a render function that receives the `payload` of the active trigger."
+          },
+          {
+            "name": "defaultOpen",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the tooltip is initially open.\n\nTo render a controlled tooltip, use the `open` prop instead."
+          },
+          {
+            "name": "defaultTriggerId",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID of the trigger that the tooltip is associated with.\nThis is useful in conjunction with the `defaultOpen` prop to create an initially open tooltip."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the tooltip is disabled."
+          },
+          {
+            "name": "disableHoverablePopup",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the tooltip contents can be hovered without closing the tooltip."
+          },
+          {
+            "name": "handle",
+            "type": "TooltipHandle<Payload>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A handle to associate the tooltip with a trigger.\nIf specified, allows external triggers to control the tooltip's open state.\nCan be created with the Tooltip.createHandle() method."
+          },
+          {
+            "name": "onOpenChange",
+            "type": "((open: boolean, eventDetails: TooltipRootChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Event handler called when the tooltip is opened or closed."
+          },
+          {
+            "name": "onOpenChangeComplete",
+            "type": "((open: boolean) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Event handler called after any animations complete when the tooltip is opened or closed."
+          },
+          {
+            "name": "open",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether the tooltip is currently open."
+          },
+          {
+            "name": "trackCursorAxis",
+            "type": "\"none\" | \"both\" | \"x\" | \"y\"",
+            "required": false,
+            "defaultValue": "none",
+            "description": "Determines which axis the tooltip should track the cursor on."
+          },
+          {
+            "name": "triggerId",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID of the trigger that the tooltip is associated with.\nThis is useful in conjunction with the `open` prop to create a controlled tooltip.\nThere's no need to specify this prop when the tooltip is uncontrolled (that is, when the `open` prop is not set)."
+          }
+        ]
+      },
+      {
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: TooltipTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "closeDelay",
+            "type": "number",
+            "required": false,
+            "defaultValue": "0",
+            "description": "How long to wait before closing the tooltip. Specified in milliseconds."
+          },
+          {
+            "name": "closeOnClick",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the tooltip should close when this trigger is clicked."
+          },
+          {
+            "name": "delay",
+            "type": "number",
+            "required": false,
+            "defaultValue": "600",
+            "description": "How long to wait before opening the tooltip on hover. Specified in milliseconds."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "If `true`, the tooltip will not open when interacting with this trigger.\nNote that this doesn't apply the `disabled` attribute to the trigger element.\nIf you want to disable the trigger element itself, you can pass the `disabled` prop to the trigger element via the `render` prop."
+          },
+          {
+            "name": "handle",
+            "type": "TooltipHandle<Payload>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A handle to associate the trigger with a tooltip."
+          },
+          {
+            "name": "payload",
+            "type": "Payload",
+            "required": false,
+            "defaultValue": null,
+            "description": "A payload to pass to the tooltip when it is opened."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: TooltipTriggerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Popup",
+        "props": [
+          {
+            "name": "align",
+            "type": "\"center\" | \"start\" | \"end\"",
+            "required": false,
+            "defaultValue": "center",
+            "description": "Alignment relative to the trigger. Defaults to center."
+          },
+          {
+            "name": "alignOffset",
+            "type": "number | OffsetFunction",
+            "required": false,
+            "defaultValue": "0",
+            "description": "Offset along the alignment axis in pixels."
+          },
+          {
+            "name": "anchor",
+            "type": "Element | VirtualElement | RefObject<Element | null> | (() => Element | VirtualElement | null) | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "An explicit positioning anchor for the popup."
+          },
+          {
+            "name": "arrow",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Displays an arrow pointing to the trigger. Defaults to false."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: TooltipPopupState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Additional CSS class for the popup."
+          },
+          {
+            "name": "collisionAvoidance",
+            "type": "CollisionAvoidance",
+            "required": false,
+            "defaultValue": null,
+            "description": "Determines how to handle collisions when positioning the popup.\n\n`side` controls overflow on the preferred placement axis (`top`/`bottom` or `left`/`right`):\n- `'flip'`: keep the requested side when it fits; otherwise try the opposite side\n  (`top` and `bottom`, or `left` and `right`).\n- `'shift'`: never change side; keep the requested side and move the popup within\n  the clipping boundary so it stays visible.\n- `'none'`: do not correct side-axis overflow.\n\n`align` controls overflow on the alignment axis (`start`/`center`/`end`):\n- `'flip'`: keep side, but swap `start` and `end` when the requested alignment overflows.\n- `'shift'`: keep side and requested alignment, then nudge the popup along the\n  alignment axis to fit.\n- `'none'`: do not correct alignment-axis overflow.\n\n`fallbackAxisSide` controls fallback behavior on the perpendicular axis when the\npreferred axis cannot fit:\n- `'start'`: allow perpendicular fallback and try the logical start side first\n  (`top` before `bottom`, or `left` before `right` in LTR).\n- `'end'`: allow perpendicular fallback and try the logical end side first\n  (`bottom` before `top`, or `right` before `left` in LTR).\n- `'none'`: do not fallback to the perpendicular axis.\n\nWhen `side` is `'shift'`, explicitly setting `align` only supports `'shift'` or `'none'`.\nIf `align` is omitted, it defaults to `'flip'`."
+          },
+          {
+            "name": "collisionBoundary",
+            "type": "Boundary",
+            "required": false,
+            "defaultValue": "clipping-ancestors",
+            "description": "An element or a rectangle that delimits the area that the popup is confined to."
+          },
+          {
+            "name": "collisionPadding",
+            "type": "Padding",
+            "required": false,
+            "defaultValue": "5",
+            "description": "Additional space to maintain from the edge of the collision boundary."
+          },
+          {
+            "name": "container",
+            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Portal destination. Defaults to the current theme container."
+          },
+          {
+            "name": "disableAnchorTracking",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to disable the popup from tracking any layout shift of its positioning anchor."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keeps the popup mounted while closed."
+          },
+          {
+            "name": "maxWidth",
+            "type": "MaxWidth<string | number>",
+            "required": false,
+            "defaultValue": "300px",
+            "description": "Maximum popup width. Defaults to 300 pixels."
+          },
+          {
+            "name": "positionMethod",
+            "type": "\"absolute\" | \"fixed\"",
+            "required": false,
+            "defaultValue": "absolute",
+            "description": "CSS positioning method for the popup."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, TooltipPopupState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "side",
+            "type": "\"top\" | \"right\" | \"bottom\" | \"left\"",
+            "required": false,
+            "defaultValue": "top",
+            "description": "Preferred side of the trigger. Defaults to top and may change to avoid collisions."
+          },
+          {
+            "name": "sideOffset",
+            "type": "number | OffsetFunction",
+            "required": false,
+            "defaultValue": "10",
+            "description": "Distance from the trigger in pixels. Defaults to 10."
+          },
+          {
+            "name": "sticky",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to maintain the popup in the viewport after\nthe anchor element was scrolled out of view."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: TooltipPopupState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles for the popup."
+          }
+        ]
+      },
+      {
+        "name": "Content",
+        "props": [
+          {
+            "name": "description",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Secondary explanation beneath the primary text."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "An icon displayed before the text."
+          }
+        ]
+      },
+      {
+        "name": "Provider",
+        "props": [
+          {
+            "name": "closeDelay",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": "How long to wait before closing a tooltip. Specified in milliseconds."
+          },
+          {
+            "name": "delay",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": "How long to wait before opening the tooltip on hover. Specified in milliseconds."
+          },
+          {
+            "name": "timeout",
+            "type": "number",
+            "required": false,
+            "defaultValue": "400",
+            "description": "Another tooltip will open instantly if the previous tooltip\nis closed within this timeout. Specified in milliseconds."
           }
         ]
       }
@@ -4018,14 +5088,14 @@
       },
       {
         "name": "tooltipPlace",
-        "type": "\"top\" | \"left\" | \"right\" | \"bottom\"",
+        "type": "\"top\" | \"right\" | \"bottom\" | \"left\"",
         "required": false,
         "defaultValue": null,
         "description": "Position of the string-label tooltip."
       },
       {
         "name": "variant",
-        "type": "\"solid\" | \"soft\" | \"ghost\"",
+        "type": "\"solid\" | \"ghost\" | \"soft\"",
         "required": false,
         "defaultValue": "ghost",
         "description": "Background treatment of the chip."
@@ -4102,7 +5172,7 @@
       },
       {
         "name": "variant",
-        "type": "\"solid\" | \"outline\" | \"soft\" | \"ghost\"",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
         "required": false,
         "defaultValue": "soft",
         "description": "Visual treatment of the tag background and border."
@@ -4169,6 +5239,198 @@
         "required": false,
         "defaultValue": "regular",
         "description": "Font weight of the label."
+      }
+    ]
+  },
+  {
+    "name": "Heading",
+    "entryPoint": "twenty-ui/primitives/typography",
+    "slug": "typography/heading",
+    "props": [
+      {
+        "name": "color",
+        "type": "\"primary\" | \"secondary\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": "primary",
+        "description": "Theme font color. Defaults to `primary`."
+      },
+      {
+        "name": "level",
+        "type": "5 | 1 | 2 | 3 | 4 | 6",
+        "required": false,
+        "defaultValue": "2",
+        "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Visual font size, independent of the heading level. Defaults to `md`."
+      }
+    ]
+  },
+  {
+    "name": "Section",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/section",
+    "props": [],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "align",
+            "type": "\"center\" | \"left\"",
+            "required": false,
+            "defaultValue": "left",
+            "description": "Text alignment within the section. Defaults to `left`."
+          },
+          {
+            "name": "color",
+            "type": "\"primary\" | \"secondary\" | \"tertiary\"",
+            "required": false,
+            "defaultValue": "primary",
+            "description": "Text color within the section. Defaults to `primary`."
+          },
+          {
+            "name": "fullWidth",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the section fills the available width. Defaults to `true`."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          }
+        ]
+      },
+      {
+        "name": "Header",
+        "props": [
+          {
+            "name": "adornment",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Content alongside the heading, such as an action button or status."
+          },
+          {
+            "name": "color",
+            "type": "\"primary\" | \"secondary\" | \"tertiary\"",
+            "required": false,
+            "defaultValue": "primary",
+            "description": "Theme font color. Defaults to `primary`."
+          },
+          {
+            "name": "description",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Supporting text associated with the heading. Strings support links and overflow tooltips; React nodes render as supplied."
+          },
+          {
+            "name": "descriptionLineClamp",
+            "type": "number",
+            "required": false,
+            "defaultValue": "5",
+            "description": "Maximum visible lines for a string description. Defaults to `5`. Overflowing descriptions can be read in a tooltip on hover or focus."
+          },
+          {
+            "name": "level",
+            "type": "5 | 1 | 2 | 3 | 4 | 6",
+            "required": false,
+            "defaultValue": "2",
+            "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "size",
+            "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+            "required": false,
+            "defaultValue": "md",
+            "description": "Visual font size, independent of the heading level. Defaults to `md`."
+          },
+          {
+            "name": "title",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": "Content of the section heading."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Dialog",
+    "entryPoint": "twenty-ui/primitives/surfaces",
+    "slug": "surfaces/dialog",
+    "props": [],
+    "parts": [
+      {
+        "name": "Title",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogTitleState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "color",
+            "type": "\"primary\" | \"secondary\" | \"tertiary\"",
+            "required": false,
+            "defaultValue": "primary",
+            "description": "Theme font color. Defaults to `primary`."
+          },
+          {
+            "name": "level",
+            "type": "5 | 1 | 2 | 3 | 4 | 6",
+            "required": false,
+            "defaultValue": "2",
+            "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogTitleState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "size",
+            "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+            "required": false,
+            "defaultValue": "lg",
+            "description": "Visual font size, independent of the heading level. Defaults to `lg`."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogTitleState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   }

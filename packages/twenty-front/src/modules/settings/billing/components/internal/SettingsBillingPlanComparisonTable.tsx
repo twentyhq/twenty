@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { AnimatedFormattedNumber } from '@/settings/billing/components/internal/AnimatedFormattedNumber';
 import { SettingsBillingPlanComparisonTableRow } from '@/settings/billing/components/internal/SettingsBillingPlanComparisonTableRow';
 import { SETTINGS_BILLING_COMPARED_PLAN_KEYS } from '@/settings/billing/constants/SettingsBillingComparedPlanKeys';
@@ -179,7 +180,7 @@ export const SettingsBillingPlanComparisonTable = ({
                 <StyledComparisonTitle>{t`Compare plans`}</StyledComparisonTitle>
                 <StyledPlanSubtitle>
                   {billingInterval === SubscriptionInterval.Year
-                    ? t`Save 25% when billed yearly`
+                    ? t`Save 25% when billed annually`
                     : t`Billed monthly`}
                 </StyledPlanSubtitle>
               </StyledHeaderText>
@@ -217,15 +218,18 @@ export const SettingsBillingPlanComparisonTable = ({
                   </StyledHeaderText>
                   <StyledActionSlot>
                     <Button
-                      Icon={action.Icon}
-                      title={action.title}
-                      variant={action.variant}
-                      accent={action.accent ?? 'default'}
-                      size="small"
+                      startIcon={
+                        isDefined(action.Icon) ? <action.Icon /> : undefined
+                      }
+                      size="sm"
                       disabled={action.disabled}
-                      isLoading={action.isLoading}
+                      loading={action.isLoading}
                       onClick={action.onClick}
-                    />
+                      variant={action.variant}
+                      color={action.color}
+                    >
+                      {action.title}
+                    </Button>
                   </StyledActionSlot>
                 </StyledHeaderCell>
               );

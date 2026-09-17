@@ -2,9 +2,8 @@
 
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/components';
 import { IconArrowUp, IconLock } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
 import { billingState } from '@/client-config/states/billingState';
@@ -44,8 +43,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
 
   if (!hasOrganizationPlan) {
     return (
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Record-level`}
           description={t`Ability to filter the records a user can interact with`}
           adornment={<OrganizationAdornment />}
@@ -58,11 +57,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
               description={t`This feature is part of the Organization plan`}
               Button={
                 <Button
-                  title={t`Upgrade`}
-                  variant="primary"
-                  accent="blue"
-                  size="small"
-                  Icon={IconArrowUp}
+                  size="sm"
+                  startIcon={<IconArrowUp />}
                   onClick={() =>
                     navigateSettings(
                       isBillingEnabled
@@ -70,18 +66,20 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
                         : SettingsPath.AdminPanelOrganization,
                     )
                   }
-                />
+                  variant="solid"
+                  color="accent"
+                >{t`Upgrade`}</Button>
               }
             />
           </Card>
         </StyledCardContainer>
-      </Section>
+      </Section.Root>
     );
   }
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Record-level`}
         description={t`Ability to filter the records a user can interact with.`}
       />
@@ -91,6 +89,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
           objectMetadataItem={objectMetadataItem}
         />
       </StyledContent>
-    </Section>
+    </Section.Root>
   );
 };

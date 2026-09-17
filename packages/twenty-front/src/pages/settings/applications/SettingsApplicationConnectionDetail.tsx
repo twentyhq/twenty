@@ -6,11 +6,10 @@ import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 import { IconRefresh, IconTrash, IconUsers } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
@@ -315,49 +314,45 @@ export const SettingsApplicationConnectionDetail = () => {
         {isLoading ? (
           <SettingsSectionSkeletonLoader />
         ) : connection === undefined || provider === undefined ? (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Connection not found`}
               description={t`This connection does not exist or is not available for this application.`}
             />
-          </Section>
+          </Section.Root>
         ) : (
           <>
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={connectionLabel}
                 description={t`Manage this application's OAuth connection.`}
               />
               <StyledActions>
                 {connection.authFailedAt && (
                   <Button
-                    title={t`Reconnect`}
-                    Icon={IconRefresh}
-                    variant="secondary"
-                    accent="blue"
+                    startIcon={<IconRefresh />}
                     onClick={handleReconnect}
-                  />
+                    variant="outline"
+                    color="accent"
+                  >{t`Reconnect`}</Button>
                 )}
                 {connection.visibility !== 'workspace' && (
                   <Button
-                    title={t`Share with workspace`}
-                    Icon={IconUsers}
-                    variant="secondary"
-                    accent="default"
+                    startIcon={<IconUsers />}
                     onClick={() => openModal(shareWithWorkspaceModalId)}
-                  />
+                    variant="outline"
+                  >{t`Share with workspace`}</Button>
                 )}
                 <Button
-                  title={t`Disconnect`}
-                  Icon={IconTrash}
-                  variant="secondary"
-                  accent="danger"
+                  startIcon={<IconTrash />}
                   onClick={() => openModal(deleteModalId)}
-                />
+                  variant="outline"
+                  color="danger"
+                >{t`Disconnect`}</Button>
               </StyledActions>
-            </Section>
-            <Section>
-              <H2Title
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Details`}
                 description={t`OAuth credential metadata for this application connection`}
               />
@@ -382,7 +377,7 @@ export const SettingsApplicationConnectionDetail = () => {
                   ))}
                 </TableSection>
               </Table>
-            </Section>
+            </Section.Root>
             <ConfirmationModal
               modalInstanceId={deleteModalId}
               title={t`Disconnect connection?`}
@@ -406,7 +401,7 @@ export const SettingsApplicationConnectionDetail = () => {
               }
               onConfirmClick={handleShareWithWorkspace}
               confirmButtonText={t`Reconnect and share`}
-              confirmButtonAccent="blue"
+              confirmButtonColor="accent"
             />
           </>
         )}

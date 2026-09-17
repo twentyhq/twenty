@@ -1,38 +1,34 @@
-import { useQuery } from '@apollo/client/react';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useUpdateEmailGroupChannel } from '@/settings/accounts/hooks/useUpdateEmailGroupChannel';
-import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
-
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
-
-import { SettingsEmailingDomainDnsRecords } from '@/settings/emailing-domains/components/SettingsEmailingDomainDnsRecords';
-import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
+import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsEmailingDomainDnsRecords } from '@/settings/emailing-domains/components/SettingsEmailingDomainDnsRecords';
+import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
+import { Section } from 'twenty-ui/components';
 import { IconCopy, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { NotFound } from '~/pages/not-found/NotFound';
+import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { NotFound } from '~/pages/not-found/NotFound';
 
 const DELETE_EMAIL_GROUP_MODAL_ID = 'delete-email-group-channel-modal';
 
@@ -59,7 +55,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { channels, loading } = useMyMessageChannels();
   const { copyToClipboard } = useCopyToClipboard();
   const { openModal } = useModal();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { deleteEmailGroupChannel, loading: deleting } =
     useDeleteEmailGroupChannel();
   const { updateEmailGroupChannel, loading: updatingDisplayName } =
@@ -107,8 +103,9 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
         isNonEmptyString(nextDisplayName) ? nextDisplayName : null,
       );
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update sender name.`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to update sender name.`,
       });
     } finally {
       setDisplayNameDraft(null);
@@ -120,8 +117,9 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       await deleteEmailGroupChannel(channel.id);
       navigateSettings(SettingsPath.WorkspaceCommunications);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to delete email channel.`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to delete email channel.`,
       });
     }
   };
@@ -155,19 +153,18 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       ]}
       actionButton={
         <Button
-          Icon={IconTrash}
-          title={t`Delete`}
-          variant="secondary"
-          accent="danger"
-          size="small"
+          startIcon={<IconTrash />}
+          size="sm"
           disabled={deleting}
           onClick={() => openModal(DELETE_EMAIL_GROUP_MODAL_ID)}
-        />
+          variant="outline"
+          color="danger"
+        >{t`Delete`}</Button>
       }
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Shared email`}
             description={t`The shared email you want to use.`}
           />
@@ -177,9 +174,9 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
             disabled
             fullWidth
           />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Forwarding address`}
             description={t`Set up forwarding from the source address to this destination.`}
           />
@@ -193,20 +190,19 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
               />
             </StyledInputContainer>
             <Button
-              Icon={IconCopy}
-              title={t`Copy`}
+              startIcon={<IconCopy />}
               onClick={() =>
                 copyToClipboard(
                   forwardingAddress,
                   t`Forwarding address copied to clipboard`,
                 )
               }
-            />
+            >{t`Copy`}</Button>
           </StyledInputRow>
-        </Section>
+        </Section.Root>
         {isNonEmptyString(channel.displayName) && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Sender name`}
               description={t`The name recipients see next to your address. It is set when the channel is created.`}
             />
@@ -216,11 +212,11 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
               disabled
               fullWidth
             />
-          </Section>
+          </Section.Root>
         )}
         {isDefined(emailingDomain) && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Sending domain`}
               description={t`Add these records at your DNS provider. Twenty checks them automatically.`}
             />
@@ -242,7 +238,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
                 emailingDomain={emailingDomain}
               />
             </StyledSendingDomainColumn>
-          </Section>
+          </Section.Root>
         )}
         <SettingsAccountsMessageChannelDetails messageChannel={channel} />
       </SettingsPageContainer>
@@ -252,7 +248,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
         subtitle={t`Are you sure you want to delete ${sourceHandle}? Inbound mail forwarded to this address and outbound replies from it will stop working.`}
         onConfirmClick={handleDelete}
         confirmButtonText={t`Delete`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
         loading={deleting}
       />
     </SettingsPageLayout>

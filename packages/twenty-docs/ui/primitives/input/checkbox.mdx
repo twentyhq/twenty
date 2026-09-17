@@ -17,6 +17,8 @@ Use `Checkbox` when each option can be selected independently. For a mutually ex
 
 ## Uncontrolled state
 
+Use `defaultChecked` to set the initial checked state. The checkbox owns subsequent changes.
+
 ```tsx
 import { Checkbox } from 'twenty-ui/primitives/input';
 
@@ -30,7 +32,34 @@ export const EmailPreference = () => (
 
 A checked, named checkbox contributes its value to a form. Set `uncheckedValue` if the form should also submit a value when it is unchecked.
 
-## Controlled and indeterminate states
+## Controlled state
+
+Pass `checked` and update it with `onCheckedChange` to own the same preference in React state. The callback receives the next boolean and event details.
+
+```tsx
+import { useState } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+
+export const EmailPreference = () => {
+  const [checked, setChecked] = useState(true);
+
+  return (
+    <label>
+      <Checkbox
+        name="updates"
+        value="email"
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
+      Receive product updates
+    </label>
+  );
+};
+```
+
+## Indeterminate state
+
+An indeterminate checkbox represents a partial selection. Derive it from the child options independently of the checkbox's checked state.
 
 ```tsx
 import { useState } from 'react';
@@ -66,8 +95,6 @@ export const ColumnSelection = () => {
   );
 };
 ```
-
-The indeterminate state represents a partial selection; the application derives it from the child options. `onCheckedChange` receives the next boolean and event details.
 
 ## Appearance and interaction
 

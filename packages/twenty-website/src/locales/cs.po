@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-15 14:21\n"
+"PO-Revision-Date: 2026-09-16 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -735,6 +735,11 @@ msgstr "Platforma připravená *růst*"
 msgid "A platform ready to grow"
 msgstr "Platforma připravená růst"
 
+#. js-lingui-id: GGXFEW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A proper home on mobile"
+msgstr "Plnohodnotné prostředí v mobilu"
+
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
 msgid ""
@@ -1107,6 +1112,11 @@ msgstr "AI v *migračním workflow*"
 msgid "AI in the migration workflow"
 msgstr "AI v migračním workflow"
 
+#. js-lingui-id: CKvvwf
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "AI settings now show each model’s provider, price per million tokens, context window, maximum output, and data residency."
+msgstr "Nastavení AI nyní zobrazuje poskytovatele každého modelu, cenu za milion tokenů, kontextové okno, maximální výstup a rezidenci dat."
+
 #. js-lingui-id: t97j+F
 #: src/case-studies/case-study-catalog.ts
 msgid "AI-assisted"
@@ -1275,6 +1285,11 @@ msgstr "Dub"
 #: src/partner-application/data/partner-language-options.ts
 msgid "Arabic"
 msgstr "Arabic"
+
+#. js-lingui-id: Qrqy7n
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Arabic and Hebrew read right to left"
+msgstr "Arabština a hebrejština se čtou zprava doleva"
 
 #. js-lingui-id: uicv6Z
 #: src/case-studies/case-study-stories.ts
@@ -1699,6 +1714,11 @@ msgstr "Odkaz na kalendář / rezervaci"
 msgid "Calendar View for Objects"
 msgstr "Kalendářní pohled pro objekty"
 
+#. js-lingui-id: RZgOeI
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Call recordings that have no video now come with an audio player, so click-to-seek and transcript highlighting work there too."
+msgstr "Nahrávky hovorů bez videa nyní obsahují přehrávač zvuku, takže zde funguje i kliknutí pro posun a zvýrazňování přepisu."
+
 #. js-lingui-id: 4yFkf9
 #: src/partner-application/data/partner-country-options.ts
 msgid "Cambodia 🇰🇭"
@@ -1846,6 +1866,16 @@ msgstr "Přesně zvolte, které Gmail štítky nebo Outlook složky se mají syn
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose how to display dates in any field using a universal Unicode date format that best suits your use case."
 msgstr "Vyberte si, jak zobrazovat data v libovolném poli, pomocí univerzálního Unicode formátu data, který nejlépe sedí vašemu use case."
+
+#. js-lingui-id: BZEHq1
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Choose how your AI should behave on a single slider, from Extra Fast to Extra Smart, instead of picking a model by name. Each tier shows what it trades in speed, cost, and intelligence."
+msgstr "Zvolte, jak se má vaše AI chovat, pomocí jediného posuvníku, od Extra rychlé po Extra chytré, místo výběru modelu podle názvu. Každá úroveň ukazuje kompromis mezi rychlostí, cenou a inteligencí."
+
+#. js-lingui-id: oXetDh
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Choose where records open"
+msgstr "Zvolte, kde se záznamy otevírají"
 
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2648,6 +2678,11 @@ msgstr "Pouze obchody, kontakty a produkty"
 msgid "Dear Team, I am pleased to submit our proposal for your consideration. We have carefully reviewed your requirements."
 msgstr "Drahý týme, s potěšením předkládám náš návrh k vašemu zvážení. Pečlivě jsme prostudovali vaše požadavky."
 
+#. js-lingui-id: JG4DOf
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Decide whether records open in the side panel or as a full page, set per object and as your own preference in Settings > Experience."
+msgstr "Rozhodněte, zda se záznamy otevírají v postranním panelu nebo jako celá stránka; můžete to nastavit pro každý objekt i jako vlastní předvolbu v Nastavení > Prostředí."
+
 #. js-lingui-id: 4UlR5Y
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
@@ -2659,6 +2694,11 @@ msgstr "Dedikovaná podpora a SLA"
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Default position/visibility for field…"
 msgstr "Výchozí pozice/viditelnost pole…"
+
+#. js-lingui-id: IOhXZ5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Delete a workflow step from the diagram"
+msgstr "Odstranění kroku pracovního postupu z diagramu"
 
 #. js-lingui-id: 9RARjP
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -2950,6 +2990,11 @@ msgstr "Ecuador 🇪🇨"
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Edit actions"
 msgstr "Upravit akce"
+
+#. js-lingui-id: V4B1Gm
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Edit deactivated objects"
+msgstr "Úprava deaktivovaných objektů"
 
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3386,6 +3431,11 @@ msgstr "Doporučené aplikace"
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
 msgid "Feb"
 msgstr "Úno"
+
+#. js-lingui-id: ATTTRk
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field descriptions on hover"
+msgstr "Popisy polí po najetí myší"
 
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4000,6 +4050,11 @@ msgstr "Hodinově"
 #: src/partner-application/partner-application-copy.ts
 msgid "Hourly rate *"
 msgstr "Hodinová sazba *"
+
+#. js-lingui-id: c+5807
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Hover a column header or a field label to read that field’s description, instead of opening settings to find it."
+msgstr "Najeďte myší na záhlaví sloupce nebo popisek pole, abyste si přečetli popis daného pole, místo otevírání nastavení, kde byste jej hledali."
 
 #. js-lingui-id: XnFo3G
 #: src/case-studies/case-study-stories.ts
@@ -5605,6 +5660,11 @@ msgstr "Jednorázový povinný poplatek za onboarding"
 msgid "Only $5 for SSO. Practically a charity program."
 msgstr "Jen 5 $ za SSO. Prakticky charitativní program."
 
+#. js-lingui-id: Av5T3E
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Open a deactivated object from Settings and change it, instead of deleting it and building it again."
+msgstr "Otevřete deaktivovaný objekt v Nastavení a upravte jej, místo abyste jej odstranili a znovu vytvořili."
+
 #. js-lingui-id: VWC0s5
 #. placeholder {0}: caseStudy.title
 #: src/partners-marketplace/PartnerSelectedWork.tsx
@@ -5810,6 +5870,11 @@ msgstr "Partnerství – strategie pro Q4"
 msgid "Paste the key and click Activate."
 msgstr "Vložte klíč a klikněte na Activate."
 
+#. js-lingui-id: oKV11Q
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Pause the recording bot"
+msgstr "Pozastavit bota pro nahrávání"
+
 #. js-lingui-id: 1wdjme
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -5866,6 +5931,11 @@ msgstr "Peru 🇵🇪"
 msgid "Philippines 🇵🇭"
 msgstr "Philippines 🇵🇭"
 
+#. js-lingui-id: hyGrEm
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Pick an AI model by tier"
+msgstr "Vyberte model AI podle úrovně"
+
 #. js-lingui-id: we6gj5
 #: src/partner-application/partner-application-copy.ts
 msgid "Pick every category that applies."
@@ -5900,6 +5970,11 @@ msgstr "Pipeline, kontakty, synchronizace e‑mailu"
 #: src/platform/routing/static-website-routes.ts
 msgid "Pipelines, custom objects, AI assistants, and a native API on top of Postgres. Twenty is the open source CRM with the modern UX teams actually want to use."
 msgstr "Pipeliny, vlastní objekty, AI asistenti a nativní API nad Postgres. Twenty je open source CRM s moderním UX, které týmy opravdu chtějí používat."
+
+#. js-lingui-id: NjL3pD
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Play audio-only recordings"
+msgstr "Přehrávejte záznamy pouze se zvukem"
 
 #. js-lingui-id: z7gnI9
 #: src/partner-application/partner-application-copy.ts
@@ -6252,6 +6327,11 @@ msgstr "Opakované události z připojených kalendářů Google nyní zůstáva
 msgid "Recurring Google Calendar events"
 msgstr "Opakované události Kalendáře Google"
 
+#. js-lingui-id: pRH3vs
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Reference records and skills in AI chat"
+msgstr "Odkazujte na záznamy a dovednosti v chatu AI"
+
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
 #: src/partners-marketplace/FilterBar.tsx
@@ -6309,6 +6389,11 @@ msgstr "Odebrat filtr {0}"
 #: src/partner-application/partner-application-copy.ts
 msgid "Remove {skill}"
 msgstr "Odebrat {skill}"
+
+#. js-lingui-id: ChVv1j
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Remove a step from its node in the diagram, without opening the side panel first."
+msgstr "Odeberte krok z jeho uzlu v diagramu, aniž byste nejprve otevřeli postranní panel."
 
 #. js-lingui-id: a/aGHe
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -6731,6 +6816,11 @@ msgstr "Zobrazit další funkce"
 msgid "See related records across relationships"
 msgstr "Zobrazujte související záznamy napříč vztahy"
 
+#. js-lingui-id: B79UH5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See the devices on your account"
+msgstr "Zobrazte zařízení ve svém účtu"
+
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
 msgid "See Twenty pricing"
@@ -6740,6 +6830,11 @@ msgstr "Podívejte se na ceny Twenty"
 #: src/sections/three-cards/product-three-cards-data.ts
 msgid "See updates as they happen. Work with your team and agents seamlessly."
 msgstr "Sledujte aktualizace, jakmile se dějí. Spolupracujte se svým týmem a agenty bez zádrhelů."
+
+#. js-lingui-id: DlPcBc
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See what a model costs and where it runs"
+msgstr "Zjistěte, kolik model stojí a kde běží"
 
 #. js-lingui-id: 0kgOPB
 #. placeholder {0}: LATEST_RELEASE.release
@@ -6890,6 +6985,11 @@ msgstr "Serbia 🇷🇸"
 #: src/partners-marketplace/PartnerServices.tsx
 msgid "Services"
 msgstr "Služby"
+
+#. js-lingui-id: y/35JB
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Settings > Profile now lists every device with an active session, marks the one you are on, and lets you sign out any of the others."
+msgstr "Nastavení > Profil nyní uvádí všechna zařízení s aktivní relací, označuje zařízení, které právě používáte, a umožňuje vám odhlásit se z kteréhokoli dalšího zařízení."
 
 #. js-lingui-id: 62gxWx
 #: src/partner-application/data/partner-country-options.ts
@@ -7235,6 +7335,11 @@ msgstr "Přestaňte bojovat s custom. *Začněte stavět, s Twenty*"
 #: src/sections/three-cards/ProductThreeCards.tsx
 msgid "Stop settling for trade-offs."
 msgstr "Přestaňte přistupovat na kompromisy."
+
+#. js-lingui-id: 8b3N0u
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Stop the call recorder from joining calendar meetings with one workspace setting, rather than uninstalling the app. The Recording Bot preference now reads On only when a bot is really scheduled."
+msgstr "Zabraňte rekordéru hovorů v připojování ke schůzkám v kalendáři jediným nastavením pracovního prostoru namísto odinstalování aplikace. Předvolba Bota pro nahrávání se nyní zobrazuje jako Zapnuto pouze tehdy, když je bot skutečně naplánován."
 
 #. js-lingui-id: hjgBcp
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7647,6 +7752,11 @@ msgstr "Obří monolit"
 msgid "The In-house Burden"
 msgstr "Interní břemeno"
 
+#. js-lingui-id: 6U7fek
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The interface now mirrors for right-to-left languages, so Arabic and Hebrew workspaces read in their own direction."
+msgstr "Rozhraní se nyní zrcadlí pro jazyky zprava doleva, takže pracovní prostory v arabštině a hebrejštině se čtou vlastním směrem."
+
 #. js-lingui-id: ZNzKXV
 #: src/case-studies/case-study-stories.ts
 msgid "The key decision was not to build everything from scratch. Twenty covers the data model, permissions, authentication, and workflow engine, the parts that would have taken months to rebuild, so the team could focus on product-specific logic."
@@ -7679,6 +7789,11 @@ msgid ""
 msgstr ""
 "Ceníková cena je jen začátek.\n"
 "Tady je, jak vypadá faktura, jakmile na ní běží reálný tým."
+
+#. js-lingui-id: 5V+Mch
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The navigation menu is now a page of its own, with a real address and a way back. Create actions appear as icons in page headers, and the bottom bar no longer sits on top of your content."
+msgstr "Navigační nabídka je nyní samostatnou stránkou se skutečnou adresou a možností návratu. Akce vytváření se zobrazují jako ikony v záhlavích stránek a spodní lišta už nepřekrývá váš obsah."
 
 #. js-lingui-id: nf1NnD
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8157,6 +8272,11 @@ msgstr "Dvoufaktorová autentizace"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Two-Factor Authentication"
 msgstr "Dvoufaktorová autentizace"
+
+#. js-lingui-id: QMyFdb
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Type <0>@</0> to point the chat at a record, or <1>/</1> to pick one of your workspace’s skills. Both suggest matches as you type."
+msgstr "Zadejte <0>@</0> pro nasměrování chatu na záznam nebo <1>/</1> pro výběr jedné z dovedností pracovního prostoru. Při psaní obě možnosti navrhují shody."
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts

@@ -1,9 +1,8 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
@@ -11,19 +10,19 @@ import { SettingsObjectIndexesSection } from '@/settings/data-model/object-detai
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
+import { Section } from 'twenty-ui/components';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 type ObjectSettingsProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -60,7 +59,7 @@ export const ObjectSettings = ({
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { openModal, closeModal } = useModal();
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
@@ -88,9 +87,7 @@ export const ObjectSettings = ({
     const result = await deleteOneObjectMetadataItem(objectMetadataItem.id);
 
     if (result.status === 'successful') {
-      enqueueSuccessSnackBar({
-        message: t`Object deleted`,
-      });
+      enqueueToast({ variant: 'success', children: t`Object deleted` });
       closeModal(DELETE_OBJECT_MODAL_ID);
       navigate(SettingsPath.Objects);
       return;
@@ -105,30 +102,30 @@ export const ObjectSettings = ({
   return (
     <StyledContentContainer>
       <StyledFormSectionContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`About`}
             description={t`Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms.`}
           />
           <SettingsUpdateDataModelObjectAboutForm
             objectMetadataItem={objectMetadataItem}
           />
-        </Section>
+        </Section.Root>
       </StyledFormSectionContainer>
       <StyledFormSectionContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Options`}
             description={t`Choose the fields that will identify your records`}
           />
           <SettingsDataModelObjectSettingsFormCard
             objectMetadataItem={objectMetadataItem}
           />
-        </Section>
+        </Section.Root>
       </StyledFormSectionContainer>
       <StyledFormSectionContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Translations`}
             description={t`What each language displays for this object's labels`}
           />
@@ -139,12 +136,12 @@ export const ObjectSettings = ({
               label: objectMetadataItem.labelPlural,
             }}
           />
-        </Section>
+        </Section.Root>
       </StyledFormSectionContainer>
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Search`}
               description={t`Configure how this object appears in search results`}
             />
@@ -152,13 +149,13 @@ export const ObjectSettings = ({
               objectMetadataItem={objectMetadataItem}
               isReadOnly={isReadOnly}
             />
-          </Section>
+          </Section.Root>
         </StyledFormSectionContainer>
       </AdvancedSettingsWrapper>
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Indexes`}
               description={t`Speed up reads on the fields you filter or sort by most. Each index also slows down writes and uses disk space, so add them with intent.`}
             />
@@ -166,35 +163,33 @@ export const ObjectSettings = ({
               objectMetadataItem={objectMetadataItem}
               isReadOnly={isReadOnly}
             />
-          </Section>
+          </Section.Root>
         </StyledFormSectionContainer>
       </AdvancedSettingsWrapper>
       {!isReadOnly && (
         <StyledFormSectionContainer>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Danger zone`}
               description={t`Deactivate object`}
             />
             <StyledDangerButtonsContainer>
               <Button
-                Icon={IconArchive}
-                title={t`Deactivate`}
-                size="small"
+                startIcon={<IconArchive />}
+                size="sm"
                 onClick={handleDisable}
-              />
+              >{t`Deactivate`}</Button>
               {getIsMetadataItemCustom(objectMetadataItem) && (
                 <Button
-                  Icon={IconTrash}
-                  title={t`Delete`}
-                  size="small"
-                  accent="danger"
-                  variant="secondary"
+                  startIcon={<IconTrash />}
+                  size="sm"
                   onClick={handleDelete}
-                />
+                  variant="outline"
+                  color="danger"
+                >{t`Delete`}</Button>
               )}
             </StyledDangerButtonsContainer>
-          </Section>
+          </Section.Root>
         </StyledFormSectionContainer>
       )}
       <ConfirmationModal

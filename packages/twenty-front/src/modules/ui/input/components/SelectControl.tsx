@@ -3,7 +3,7 @@ import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVaria
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/primitives/data-display';
+import { Tag, TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -93,7 +93,18 @@ const StyledIconChevronDownWrapper = styled.div<{
   display: flex;
 `;
 
+const StyledTagContainer = styled.div`
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const StyledTag = styled(Tag)`
+  box-sizing: border-box;
+  max-width: 100%;
+`;
+
 export type SelectControlProps = {
+  renderAsTag?: boolean;
   selectedOption: SelectOption<string | number | boolean | null>;
   LeftComponent?: ReactNode;
   isDisabled?: boolean;
@@ -105,6 +116,7 @@ export type SelectControlProps = {
 
 export const SelectControl = ({
   selectedOption,
+  renderAsTag = false,
   LeftComponent,
   isDisabled,
   selectSizeVariant,
@@ -152,13 +164,21 @@ export const SelectControl = ({
           {selectedOption.LeftComponent}
         </StyledLeadingContent>
       ) : null}
-      <OverflowingTextWithTooltip
-        text={
-          selectedOption.contextualText
-            ? `${selectedOption.label} · ${selectedOption.contextualText}`
-            : selectedOption.label
-        }
-      />
+      {renderAsTag && isDefined(selectedOption.color) ? (
+        <StyledTagContainer>
+          <StyledTag color={selectedOption.color}>
+            {selectedOption.label}
+          </StyledTag>
+        </StyledTagContainer>
+      ) : (
+        <OverflowingTextWithTooltip
+          text={
+            selectedOption.contextualText
+              ? `${selectedOption.label} · ${selectedOption.contextualText}`
+              : selectedOption.label
+          }
+        />
+      )}
       <StyledIconChevronDownWrapper disabled={isDisabled}>
         <IconChevronDown size={theme.icon.size.md} />
       </StyledIconChevronDownWrapper>

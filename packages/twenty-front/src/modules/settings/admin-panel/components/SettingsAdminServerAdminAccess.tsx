@@ -1,7 +1,7 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeDash';
 import { TwoFactorAuthenticationVerificationCodeSlot } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeSlot';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -14,8 +14,9 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { OTPInput } from 'input-otp';
 import { useState } from 'react';
-import { Status } from 'twenty-ui/primitives/data-display';
 import { IconDotsVertical } from 'twenty-ui/icon';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { LightIconButton } from 'twenty-ui/primitives/input';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -79,7 +80,7 @@ export const SettingsAdminServerAdminAccess = ({
   const apolloAdminClient = useApolloAdminClient();
   const { openModal } = useModal();
   const { closeDropdown } = useCloseDropdown();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [pendingChange, setPendingChange] =
     useState<PendingServerAdminChange | null>(null);
@@ -127,15 +128,19 @@ export const SettingsAdminServerAdminAccess = ({
         },
       });
       await refetch();
-      enqueueSuccessSnackBar({
-        message: t`Server administrator access updated.`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Server administrator access updated.`,
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error)
-          ? { apolloError: error }
-          : { message: t`Failed to update server administrator access.` }),
-      });
+      enqueueToast(
+        CombinedGraphQLErrors.is(error)
+          ? getToastOptionsFromError({ error })
+          : {
+              variant: 'error',
+              children: t`Failed to update server administrator access.`,
+            },
+      );
     } finally {
       setOtp('');
       setPendingChange(null);
@@ -220,7 +225,7 @@ export const SettingsAdminServerAdminAccess = ({
       <ConfirmationModal
         modalInstanceId={SERVER_ADMIN_ACCESS_CONFIRMATION_MODAL_ID}
         title={pendingChange?.isRevoking ? t`Revoke access` : t`Grant access`}
-        confirmButtonAccent={pendingChange?.isRevoking ? 'danger' : 'blue'}
+        confirmButtonColor={pendingChange?.isRevoking ? 'danger' : 'accent'}
         confirmButtonText={t`Confirm`}
         onConfirmClick={handleConfirm}
         onClose={() => {

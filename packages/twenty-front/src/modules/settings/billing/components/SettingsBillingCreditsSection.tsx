@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ResourceCreditPriceSelector } from '@/settings/billing/components/internal/ResourceCreditPriceSelector';
@@ -21,6 +23,7 @@ import { t } from '@lingui/core/macro';
 import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconChartBar,
   IconCoins,
@@ -29,9 +32,6 @@ import {
 } from 'twenty-ui/icon';
 import { ProgressBar } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import {
   PermissionFlagType,
@@ -216,8 +216,8 @@ export const SettingsBillingCreditsSection = ({
   });
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Credits`}
         description={t`Credits are used by workflows, AI chats, agents, and approved apps`}
       />
@@ -304,19 +304,15 @@ export const SettingsBillingCreditsSection = ({
         </StyledCreditsCardBody>
       </StyledSettingsBillingCard>
       <StyledCreditUsageFooterActions>
-        <UndecoratedLink to={getSettingsPath(SettingsPath.Usage)}>
-          <Button
-            Icon={IconChartBar}
-            title={t`View usage`}
-            variant="secondary"
-            size="small"
-          />
-        </UndecoratedLink>
+        <NavigationButton
+          to={getSettingsPath(SettingsPath.Usage)}
+          startIcon={<IconChartBar />}
+          size="sm"
+          variant="outline"
+        >{t`View usage`}</NavigationButton>
         <Button
-          Icon={IconExternalLink}
-          title={t`How credits work`}
-          variant="secondary"
-          size="small"
+          startIcon={<IconExternalLink />}
+          size="sm"
           onClick={() =>
             window.open(
               creditsDocumentationUrl,
@@ -324,8 +320,9 @@ export const SettingsBillingCreditsSection = ({
               'noopener,noreferrer',
             )
           }
-        />
+          variant="outline"
+        >{t`How credits work`}</Button>
       </StyledCreditUsageFooterActions>
-    </Section>
+    </Section.Root>
   );
 };

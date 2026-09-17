@@ -1,8 +1,8 @@
+import { Section } from '@ui/components/Section/Section';
 import { useNow } from '../hooks/useNow';
 import { MeetingRow } from './MeetingRow';
 import { i18n } from '@lingui/core';
 import { SettingsCardContent } from './SettingsCardContent';
-import { H2Title } from '@ui/primitives/typography/H2Title/H2Title';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { CalendarDayLabel } from './CalendarDayLabel';
@@ -34,7 +34,7 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
   }
   return (
     <section aria-label={calendarTitle}>
-      <H2Title title={calendarTitle} />
+      <Section.Header title={calendarTitle} />
       {meetings.length ? (
         <>
           <Card
@@ -82,16 +82,15 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
           {meetings.length > 3 && (
             <div>
               <Button
-                variant="tertiary"
+                variant="ghost"
                 className="see-more"
-                ariaExpanded={showAllMeetings}
+                aria-expanded={showAllMeetings}
                 onClick={() => setShowAllMeetings(!showAllMeetings)}
-                size="medium"
-                title={
-                  showAllMeetings ? i18n._('Show less') : i18n._('See more')
-                }
-                Icon={IconChevronRight}
-              />
+                size="md"
+                startIcon={<IconChevronRight />}
+              >
+                {showAllMeetings ? i18n._('Show less') : i18n._('See more')}
+              </Button>
             </div>
           )}
         </>
@@ -120,11 +119,12 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
             {!state.calendarConnected && (
               <Button
                 onClick={() => void command({ type: 'open-calendar-settings' })}
-                variant="secondary"
-                size="medium"
-                title={i18n._('Connect calendar')}
-                Icon={IconArrowUpRight}
-              />
+                variant="outline"
+                size="md"
+                startIcon={<IconArrowUpRight />}
+              >
+                {i18n._('Connect calendar')}
+              </Button>
             )}
           </SettingsCardContent>
         </Card>
@@ -141,16 +141,17 @@ export const Home = ({ state, command, isPending }: ActionProps) => {
         className="section recordings-section"
         aria-label={i18n._('Recordings')}
       >
-        <H2Title
+        <Section.Header
           title={i18n._('Recordings')}
           adornment={
             <Button
-              variant="tertiary"
-              title={i18n._('View all in Twenty')}
-              Icon={IconArrowUpRight}
+              variant="ghost"
+              startIcon={<IconArrowUpRight />}
               disabled={isPending('open-recordings')}
               onClick={() => void command({ type: 'open-recordings' })}
-            />
+            >
+              {i18n._('View all in Twenty')}
+            </Button>
           }
         />
         <RecordingList state={state} isPending={isPending} command={command} />

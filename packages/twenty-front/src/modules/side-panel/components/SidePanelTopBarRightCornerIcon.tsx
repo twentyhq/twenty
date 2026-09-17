@@ -8,7 +8,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconEdit } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -43,12 +43,13 @@ export const SidePanelTopBarRightCornerIcon = () => {
   return (
     <StyledIconButtonContainer>
       <IconButton
-        Icon={IconEdit}
-        size="small"
-        variant="tertiary"
+        size="sm"
+        variant="ghost"
         onClick={() => switchToNewChat()}
-        ariaLabel={t`New conversation`}
-      />
+        aria-label={t`New conversation`}
+      >
+        <IconEdit />
+      </IconButton>
     </StyledIconButtonContainer>
   );
 };

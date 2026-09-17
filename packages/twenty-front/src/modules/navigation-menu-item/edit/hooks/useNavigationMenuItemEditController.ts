@@ -1,3 +1,4 @@
+import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { useLingui } from '@lingui/react/macro';
 import { type NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,19 +8,19 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useUpdateManyNavigationMenuItems';
-import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/common/utils/buildCreateNavigationMenuItemInput';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 export type NewNavigationMenuItemInput = {
   type: NavigationMenuItemType;
   targetObjectMetadataId?: string | null;
   viewId?: string | null;
+  pageLayoutId?: string | null;
+  icon?: string | null;
   targetRecordId?: string | null;
   targetRecordIdentifier?: NavigationMenuItem['targetRecordIdentifier'];
   name?: string | null;
@@ -32,18 +33,13 @@ type CreateItemOptions = {
   targetIndex?: number;
 };
 
-// The single create/update/delete API for the add/edit side panel. It forks on
-// the active section (mirroring useHandleNavigationMenuItemDragAndDrop): the
-// workspace section stages changes in the draft (saved on layout exit), while
-// the favorite section persists personal items immediately and optimistically.
-// On the immediate path the mutation hooks roll back on failure, so errors are
-// surfaced here and the rejection is swallowed — callers fire-and-forget.
-export const useNavigationMenuItemEditController = () => {
+// Workspace edits stay in the layout draft; favorites persist immediately.
+// Mutation hooks roll back failed optimistic updates, so report errors here.
+export const useNavigationMenuItemEditController = (
+  section: NavigationMenuItemSection,
+) => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
-  const navigationMenuItemEditSection = useAtomStateValue(
-    navigationMenuItemEditSectionState,
-  );
+  const { enqueueToast } = useToast();
   const {
     navigationMenuItems,
     workspaceNavigationMenuItems,
@@ -56,7 +52,7 @@ export const useNavigationMenuItemEditController = () => {
   const { updateManyNavigationMenuItems } = useUpdateManyNavigationMenuItems();
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
-  const isDraftMode = navigationMenuItemEditSection === 'workspace';
+  const isDraftMode = section === 'workspace';
   const currentItems = isDraftMode
     ? workspaceNavigationMenuItems
     : navigationMenuItems;
@@ -91,6 +87,8 @@ export const useNavigationMenuItemEditController = () => {
       targetRecordId: input.targetRecordId ?? undefined,
       targetRecordIdentifier: input.targetRecordIdentifier,
       viewId: input.viewId ?? undefined,
+      pageLayoutId: input.pageLayoutId ?? undefined,
+      icon: input.icon ?? undefined,
       name: input.name ?? undefined,
       link: input.link ?? undefined,
       color: input.color ?? undefined,
@@ -118,10 +116,16 @@ export const useNavigationMenuItemEditController = () => {
           userWorkspaceId: targetUserWorkspaceId,
         },
       ]).catch(() =>
-        enqueueErrorSnackBar({ message: t`Couldn't add to favorites` }),
+        enqueueToast({
+          variant: 'error',
+          children: t`Couldn't add to favorites`,
+        }),
       );
     } else {
-      enqueueErrorSnackBar({ message: t`Couldn't add to favorites` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Couldn't add to favorites`,
+      });
     }
 
     return id;
@@ -145,7 +149,7 @@ export const useNavigationMenuItemEditController = () => {
     try {
       await updateManyNavigationMenuItems([{ id, update }]);
     } catch {
-      enqueueErrorSnackBar({ message: t`Couldn't update favorite` });
+      enqueueToast({ variant: 'error', children: t`Couldn't update favorite` });
     }
   };
 
@@ -162,7 +166,7 @@ export const useNavigationMenuItemEditController = () => {
     try {
       await deleteManyNavigationMenuItems(ids);
     } catch {
-      enqueueErrorSnackBar({ message: t`Couldn't remove favorite` });
+      enqueueToast({ variant: 'error', children: t`Couldn't remove favorite` });
     }
   };
 

@@ -6,10 +6,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { Section } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { Button } from 'twenty-ui/primitives/input';
 import { useMutation } from '@apollo/client/react';
+import { AppPath } from 'twenty-shared/types';
 import { DeleteCurrentWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const DELETE_WORKSPACE_MODAL_ID = 'delete-workspace-modal';
@@ -27,22 +28,21 @@ export const DeleteWorkspace = () => {
   const deleteWorkspace = async () => {
     await deleteCurrentWorkspace();
     await signOut();
-    redirectToDefaultDomain();
+    redirectToDefaultDomain({ pathname: AppPath.SignInUp });
   };
 
   return (
     <>
-      <H2Title
+      <Section.Header
         title={t`Danger zone`}
         description={t`Delete your whole workspace`}
       />
       <Button
-        accent="danger"
-        variant="secondary"
-        title={t`Delete workspace`}
-        Icon={IconTrash}
+        startIcon={<IconTrash />}
         onClick={() => openModal(DELETE_WORKSPACE_MODAL_ID)}
-      />
+        variant="outline"
+        color="danger"
+      >{t`Delete workspace`}</Button>
 
       <ConfirmationModal
         modalInstanceId={DELETE_WORKSPACE_MODAL_ID}

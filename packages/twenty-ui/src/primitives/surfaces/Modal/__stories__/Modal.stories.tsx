@@ -1,13 +1,11 @@
+import { Section } from '@ui/components/Section/Section';
+import { Dialog } from '@ui/primitives/surfaces/Dialog/Dialog';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { IconX } from '@ui/icon';
-import { H1Title, H1TitleFontColor, H2Title } from '@ui/primitives/typography';
-import { Button, IconButton } from '@ui/primitives/input';
-import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from '@ui/primitives/layout';
+
+import { Button } from '@ui/primitives/input';
+import { IconButton } from '@ui/components';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { Modal } from '@ui/primitives/surfaces/Modal/Modal';
@@ -57,20 +55,22 @@ export const Default: Story = {
       ariaLabel="Edit workspace"
     >
       <ModalHeader>
-        <H2Title
+        <Section.Header
           title="Edit workspace"
           description="Update your workspace settings"
         />
       </ModalHeader>
       <ModalContent>
-        <Section>
+        <Section.Root>
           Workspace name and subdomain can be changed from the settings panel.
           These changes will be reflected across all members.
-        </Section>
+        </Section.Root>
       </ModalContent>
       <ModalFooter>
-        <Button title="Cancel" variant="secondary" />
-        <Button title="Save" variant="primary" accent="blue" />
+        <Button variant="outline">{'Cancel'}</Button>
+        <Button variant="solid" color="accent">
+          {'Save'}
+        </Button>
       </ModalFooter>
     </Modal>
   ),
@@ -99,32 +99,29 @@ export const Confirmation: Story = {
       isOpen={isOpen}
       padding={padding}
       overlay={overlay}
-      ariaLabel="Delete record?"
       smallBorderRadius={smallBorderRadius}
       narrowWidth={narrowWidth}
       autoHeight={autoHeight}
       gap={gap}
     >
-      <div className={styles.centeredTitle}>
-        <H1Title title="Delete record?" fontColor={H1TitleFontColor.Primary} />
-      </div>
+      <Dialog.Title>Delete record?</Dialog.Title>
       <div className={styles.sectionContainer}>
-        <Section
-          alignment={SectionAlignment.Center}
-          fontColor={SectionFontColor.Primary}
-        >
+        <Section.Root align="center" color="primary">
           This action cannot be undone. The record and all of its data will be
           permanently removed.
-        </Section>
+        </Section.Root>
       </div>
-      <Button title="Cancel" variant="secondary" fullWidth justify="center" />
+      <Button fullWidth variant="outline" style={{ justifyContent: 'center' }}>
+        {'Cancel'}
+      </Button>
       <Button
-        title="Delete"
-        variant="secondary"
-        accent="danger"
         fullWidth
-        justify="center"
-      />
+        variant="outline"
+        color="danger"
+        style={{ justifyContent: 'center' }}
+      >
+        {'Delete'}
+      </Button>
     </Modal>
   ),
 };
@@ -145,14 +142,16 @@ export const Small: Story = {
       ariaLabel="Archive item"
     >
       <ModalHeader>
-        <H2Title title="Archive item" />
+        <Section.Header title="Archive item" />
       </ModalHeader>
       <ModalContent>
-        <Section>Are you sure you want to archive this item?</Section>
+        <Section.Root>Are you sure you want to archive this item?</Section.Root>
       </ModalContent>
       <ModalFooter>
-        <Button title="No" variant="secondary" />
-        <Button title="Yes, archive" variant="primary" accent="blue" />
+        <Button variant="outline">{'No'}</Button>
+        <Button variant="solid" color="accent">
+          {'Yes, archive'}
+        </Button>
       </ModalFooter>
     </Modal>
   ),
@@ -175,20 +174,22 @@ export const ExtraLarge: Story = {
       ariaLabel="Import contacts"
     >
       <ModalHeader>
-        <H2Title
+        <Section.Header
           title="Import contacts"
           description="Upload a CSV file to import your contacts"
         />
       </ModalHeader>
       <ModalContent>
-        <Section>
+        <Section.Root>
           The file should include columns for name, email, phone, and company.
           Drag and drop your CSV file here, or click to browse.
-        </Section>
+        </Section.Root>
       </ModalContent>
       <ModalFooter>
-        <Button title="Cancel" variant="secondary" />
-        <Button title="Upload & import" variant="primary" accent="blue" />
+        <Button variant="outline">{'Cancel'}</Button>
+        <Button variant="solid" color="accent">
+          {'Upload & import'}
+        </Button>
       </ModalFooter>
     </Modal>
   ),
@@ -213,12 +214,9 @@ const InteractiveModal = () => {
 
   return (
     <>
-      <Button
-        title="Open Modal"
-        variant="primary"
-        accent="blue"
-        onClick={() => setIsOpen(true)}
-      />
+      <Button onClick={() => setIsOpen(true)} variant="solid" color="accent">
+        {'Open Modal'}
+      </Button>
       <Modal
         isOpen={isOpen}
         size="medium"
@@ -227,32 +225,33 @@ const InteractiveModal = () => {
         onBackdropMouseDown={() => setIsOpen(false)}
       >
         <ModalHeader>
-          <H2Title title="Create record" />
+          <Section.Header title="Create record" />
           <IconButton
-            Icon={IconX}
-            variant="tertiary"
-            size="small"
+            aria-label="Close"
+            variant="ghost"
+            size="sm"
             onClick={() => setIsOpen(false)}
-          />
+          >
+            <IconX />
+          </IconButton>
         </ModalHeader>
         <ModalContent>
-          <Section>
+          <Section.Root>
             Fill in the details below to create a new record. All fields are
             optional.
-          </Section>
+          </Section.Root>
         </ModalContent>
         <ModalFooter>
+          <Button onClick={() => setIsOpen(false)} variant="outline">
+            {'Cancel'}
+          </Button>
           <Button
-            title="Cancel"
-            variant="secondary"
             onClick={() => setIsOpen(false)}
-          />
-          <Button
-            title="Create"
-            variant="primary"
-            accent="blue"
-            onClick={() => setIsOpen(false)}
-          />
+            variant="solid"
+            color="accent"
+          >
+            {'Create'}
+          </Button>
         </ModalFooter>
       </Modal>
     </>

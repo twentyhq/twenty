@@ -193,6 +193,7 @@ export class MessageChannelResolver {
     }
 
     if (
+      messageChannel.type === MessageChannelType.EMAIL &&
       messageChannel.syncStage !==
         MessageChannelSyncStage.PENDING_CONFIGURATION &&
       isDefined(input.update.excludeGroupEmails) &&

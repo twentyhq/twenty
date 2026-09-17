@@ -63,6 +63,7 @@ type UseFindManyRecordsStateParams<
     >,
   ): Promise<ApolloClient.QueryResult<TFetchData>>;
   objectMetadataItem: EnrichedObjectMetadataItem;
+  shouldToastOnError?: boolean;
 };
 
 export const useLazyFetchMoreRecordsWithPagination = <
@@ -75,6 +76,7 @@ export const useLazyFetchMoreRecordsWithPagination = <
   error,
   fetchMore,
   objectMetadataItem,
+  shouldToastOnError = true,
 }: UseFindManyRecordsStateParams<T>) => {
   const store = useStore();
   const queryIdentifier = getQueryIdentifier({
@@ -176,7 +178,9 @@ export const useLazyFetchMoreRecordsWithPagination = <
             }) as T[],
           };
         } catch (error) {
-          handleFindManyRecordsError(error as ErrorLike);
+          if (shouldToastOnError) {
+            handleFindManyRecordsError(error as ErrorLike);
+          }
           return { error: error as ErrorLike };
         }
       }
@@ -189,6 +193,7 @@ export const useLazyFetchMoreRecordsWithPagination = <
       filter,
       orderBy,
       handleFindManyRecordsError,
+      shouldToastOnError,
       store,
     ],
   );

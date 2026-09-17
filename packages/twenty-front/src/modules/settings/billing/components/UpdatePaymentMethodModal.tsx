@@ -2,28 +2,20 @@ import { AddPaymentMethodForm } from '@/settings/billing/components/AddPaymentMe
 import { useMarkBillingPaymentMethodAsAdded } from '@/settings/billing/hooks/useMarkBillingPaymentMethodAsAdded';
 import { useWaitForPaymentRecovery } from '@/settings/billing/hooks/useWaitForPaymentRecovery';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { Section } from 'twenty-ui/components';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
 
 type UpdatePaymentMethodModalProps = {
   modalInstanceId: string;
 };
-
-const StyledCenteredTitle = styled.div`
-  text-align: center;
-`;
 
 const StyledSectionContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[6]};
@@ -38,7 +30,7 @@ export const UpdatePaymentMethodModal = ({
 }: UpdatePaymentMethodModalProps) => {
   const { t } = useLingui();
   const { closeModal } = useModal();
-  const { enqueueSuccessSnackBar, enqueueInfoSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const subscriptionStatus = useSubscriptionStatus();
   const { markBillingPaymentMethodAsAdded } =
     useMarkBillingPaymentMethodAsAdded();
@@ -49,13 +41,14 @@ export const UpdatePaymentMethodModal = ({
     markBillingPaymentMethodAsAdded();
 
     if (!isSubscriptionPaymentOverdue(subscriptionStatus)) {
-      enqueueSuccessSnackBar({ message: t`Payment method added.` });
+      enqueueToast({ variant: 'success', children: t`Payment method added.` });
 
       return;
     }
 
-    enqueueInfoSnackBar({
-      message: t`Payment method added. Retrying your payment...`,
+    enqueueToast({
+      variant: 'info',
+      children: t`Payment method added. Retrying your payment...`,
     });
 
     await waitForPaymentRecovery();
@@ -73,19 +66,11 @@ export const UpdatePaymentMethodModal = ({
       smallBorderRadius
       autoHeight
     >
-      <StyledCenteredTitle>
-        <H1Title
-          title={t`Update your payment method`}
-          fontColor={H1TitleFontColor.Primary}
-        />
-      </StyledCenteredTitle>
+      <Dialog.Title>{t`Update your payment method`}</Dialog.Title>
       <StyledSectionContainer>
-        <Section
-          alignment={SectionAlignment.Center}
-          fontColor={SectionFontColor.Primary}
-        >
+        <Section.Root align="center" color="primary">
           {t`Add a card below to update your billing details and retry your payment.`}
-        </Section>
+        </Section.Root>
       </StyledSectionContainer>
       <AddPaymentMethodForm
         onPaymentMethodAdded={handlePaymentMethodAdded}
@@ -94,11 +79,9 @@ export const UpdatePaymentMethodModal = ({
       <StyledCancelButtonContainer>
         <Button
           onClick={() => closeModal(modalInstanceId)}
-          variant="secondary"
-          title={t`Cancel`}
           fullWidth
-          justify="center"
-        />
+          variant="outline"
+        >{t`Cancel`}</Button>
       </StyledCancelButtonContainer>
     </ModalStatefulWrapper>
   );

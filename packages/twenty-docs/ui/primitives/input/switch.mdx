@@ -17,6 +17,8 @@ Use `Switch` for an on or off preference. Give the control a visible label or an
 
 ## Uncontrolled state
 
+Use `defaultChecked` to set the initial checked state. The switch owns subsequent changes.
+
 ```tsx
 import { Switch } from 'twenty-ui/primitives/input';
 
@@ -30,16 +32,22 @@ export const NotificationsPreference = () => (
 
 ## Controlled state
 
+Pass `checked` and update it with `onCheckedChange` to own the same preference in React state.
+
 ```tsx
 import { useState } from 'react';
 import { Switch } from 'twenty-ui/primitives/input';
 
 export const NotificationsPreference = () => {
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true);
 
   return (
     <label>
-      <Switch checked={checked} onCheckedChange={setChecked} />
+      <Switch
+        name="notifications"
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
       Email notifications
     </label>
   );

@@ -8,17 +8,89 @@ Primitives are the foundational controls in Twenty UI. They include inputs, disp
 
 Import primitives from a family entry point, such as `twenty-ui/primitives/input`. See [Getting started](/ui/getting-started) for installation and theme setup.
 
-All existing UI controls belong to the primitives layer, including controls still being migrated to the new API. [Components](/ui/components/overview) are reserved for larger, reusable app building blocks composed from these primitives.
+[Components](/ui/components/overview) combine these primitives into shared design presets and reusable app building blocks.
+
+## State ownership
+
+Use uncontrolled state when a component can manage its own interactions. A default prop supplies the initial state. Use controlled state when the application needs to coordinate that state with other controls, navigation, or application data.
+
+| State                           | Uncontrolled initial state | Controlled state | Change callback   |
+| ------------------------------- | -------------------------- | ---------------- | ----------------- |
+| Input, selection, or active tab | `defaultValue`             | `value`          | `onValueChange`   |
+| Checkbox or switch              | `defaultChecked`           | `checked`        | `onCheckedChange` |
+| Popup visibility                | `defaultOpen`              | `open`           | `onOpenChange`    |
+
+In controlled mode, pass the current state and update it in the change callback. In uncontrolled mode, you can still listen to changes without taking ownership of the state. Adding a callback alone does not make a component controlled.
+
+Choose a mode for each state and keep it for the lifetime of the component. Default props initialize state; changing them later does not replace the current state. Avoid passing both the default and controlled prop for the same state.
+
+Some components have more than one independent state. For example, [Select](/ui/primitives/input/select#open-state) can have a controlled value and uncontrolled popup visibility. [Menu](/ui/primitives/surfaces/menu#selection-and-submenus) can manage its own visibility while the application controls checkbox and radio selections.
+
+State belongs to the part that manages the interaction. Configure radio selection on [RadioGroup](/ui/primitives/input/radio-group), not on each Radio. Display components such as Text do not have a controlled or uncontrolled mode. [Toast](/ui/primitives/feedback/toast) delegates its visibility and removal to the application.
+
+## Composition
+
+Compound primitives expose parts such as `Select.Root`, `Select.Trigger`, and `Select.Popup`. Keep related parts under the same root in the component tree so they share state and accessibility relationships. Each component's anatomy section identifies the required parts and optional content.
+
+Slots such as `InputGroup.startElement` and `ListItem.actions` accept React nodes as props. They add content within a component's layout. Parts and slots are different APIs; use the names listed in the component guide.
+
+### Popup composition
+
+Twenty UI packages the supporting overlay elements inside each public `Popup` part:
+
+| Component     | Included in `Popup`                    | Configure on `Popup`                                     |
+| ------------- | -------------------------------------- | -------------------------------------------------------- |
+| `Select`      | Portal and positioner                  | Placement, anchor, and portal container                  |
+| `Menu`        | Portal and positioner                  | Placement, anchor, portal container, and mounting        |
+| `Popover`     | Portal, positioner, and optional arrow | Placement, anchor, portal container, mounting, and arrow |
+| `AlertDialog` | Portal, backdrop, and viewport         | Size, portal container, mounting, and focus              |
+
+Place content directly inside these popup parts. Their portal may move the rendered DOM to another container while preserving the component hierarchy and context. See [theming](/ui/theming#scope-an-override) for scoped portal containers.
+
+### Custom components
+
+For parts that support `render`, pass a compatible element or component to replace the default element. For example, `Popover.Trigger` can use a Twenty UI `Button` while retaining its trigger behavior.
+
+A custom wrapper must pass the supplied props and ref to the interactive element. This preserves event handlers, accessibility attributes, positioning, and focus restoration. This example forwards them through `Button`, which attaches them to its native button.
+
+```tsx
+import { type ComponentPropsWithRef } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+type HelpButtonProps = ComponentPropsWithRef<typeof Button>;
+
+const HelpButton = ({ ref, ...props }: HelpButtonProps) => (
+  <Button {...props} ref={ref} variant="outline" />
+);
+
+export const ImportHelp = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<HelpButton>Import help</HelpButton>} />
+    <Popover.Popup>
+      <Popover.Title>Import a CSV file</Popover.Title>
+      <Popover.Description>
+        Use a header row to identify your columns.
+      </Popover.Description>
+      <Popover.Close render={<Button>Got it</Button>} />
+    </Popover.Popup>
+  </Popover.Root>
+);
+```
+
+Pass the button through `render` and keep each action as a single interactive control. Preserve the handlers and ref supplied to your wrapper when adding your own behavior. The ref must reach the element that receives focus.
+
+Use a native button for button-like parts. On parts that expose `nativeButton`, set `nativeButton={false}` only when the rendered element is not a native button. A custom component that ultimately renders a button, such as `HelpButton`, keeps the default button behavior.
 
 ## Browse primitives
 
 Each page includes usage examples, interaction guidance, and a generated API reference.
 
-| Family       | Primitives                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Data display | [Avatar](/ui/primitives/data-display/avatar), [Chip](/ui/primitives/data-display/chip), [Tag](/ui/primitives/data-display/tag), [Status](/ui/primitives/data-display/status)                                                                                                                                                                                                                                             |
-| Forms        | [Field](/ui/primitives/input/field), [Input](/ui/primitives/input/input), [InputGroup](/ui/primitives/input/input-group), [Textarea](/ui/primitives/input/textarea), [Checkbox](/ui/primitives/input/checkbox), [Radio](/ui/primitives/input/radio), [RadioGroup](/ui/primitives/input/radio-group), [Select](/ui/primitives/input/select), [Slider](/ui/primitives/input/slider), [Switch](/ui/primitives/input/switch) |
-| Navigation   | [ListItem](/ui/primitives/navigation/list-item), [Tabs](/ui/primitives/navigation/tabs)                                                                                                                                                                                                                                                                                                                                  |
-| Surfaces     | [AlertDialog](/ui/primitives/surfaces/alert-dialog), [Menu](/ui/primitives/surfaces/menu), [Popover](/ui/primitives/surfaces/popover)                                                                                                                                                                                                                                                                                    |
-| Feedback     | [Toast](/ui/primitives/feedback/toast)                                                                                                                                                                                                                                                                                                                                                                                   |
-| Typography   | [Text](/ui/primitives/typography/text)                                                                                                                                                                                                                                                                                                                                                                                   |
+| Family       | Primitives                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Data display | [Avatar](/ui/primitives/data-display/avatar), [Chip](/ui/primitives/data-display/chip), [Tag](/ui/primitives/data-display/tag), [Status](/ui/primitives/data-display/status)                                                                                                                                                                                                                                                                                                                                      |
+| Forms        | [Button](/ui/primitives/input/button), [ButtonGroup](/ui/primitives/input/button-group), [Field](/ui/primitives/input/field), [Input](/ui/primitives/input/input), [InputGroup](/ui/primitives/input/input-group), [Textarea](/ui/primitives/input/textarea), [Checkbox](/ui/primitives/input/checkbox), [Radio](/ui/primitives/input/radio), [RadioGroup](/ui/primitives/input/radio-group), [Select](/ui/primitives/input/select), [Slider](/ui/primitives/input/slider), [Switch](/ui/primitives/input/switch) |
+| Navigation   | [ListItem](/ui/primitives/navigation/list-item), [Tabs](/ui/primitives/navigation/tabs)                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Surfaces     | [AlertDialog](/ui/primitives/surfaces/alert-dialog), [Dialog](/ui/primitives/surfaces/dialog), [Menu](/ui/primitives/surfaces/menu), [Popover](/ui/primitives/surfaces/popover), [Tooltip](/ui/primitives/surfaces/tooltip)                                                                                                                                                                                                                                                                                       |
+| Feedback     | [Toast](/ui/primitives/feedback/toast)                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Typography   | [Heading](/ui/primitives/typography/heading), [Text](/ui/primitives/typography/text)                                                                                                                                                                                                                                                                                                                                                                                                                              |

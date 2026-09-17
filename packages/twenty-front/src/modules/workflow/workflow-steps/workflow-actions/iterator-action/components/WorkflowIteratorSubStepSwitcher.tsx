@@ -7,10 +7,10 @@ import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrTh
 import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
 import { getWorkflowRunAllStepInfoHistory } from '@/workflow/workflow-steps/utils/getWorkflowRunAllStepInfoHistory';
 import { styled } from '@linaria/react';
-import { plural } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -102,11 +102,13 @@ export const WorkflowIteratorSubStepSwitcher = ({
   return (
     <StyledContainer>
       <IconButton
-        Icon={IconChevronLeft}
-        size="small"
+        aria-label={t`Previous iteration`}
+        size="sm"
         disabled={!canGoToPreviousIndex}
         onClick={handleDecrementIndex}
-      />
+      >
+        <IconChevronLeft />
+      </IconButton>
 
       <StyledCounter>
         {workflowRunIteratorSubStepIterationIndex + 1}/
@@ -117,11 +119,13 @@ export const WorkflowIteratorSubStepSwitcher = ({
       </StyledCounter>
 
       <IconButton
-        Icon={IconChevronRight}
-        size="small"
+        aria-label={t`Next iteration`}
+        size="sm"
         disabled={!canGoToNextIndex}
         onClick={handleIncrementIndex}
-      />
+      >
+        <IconChevronRight />
+      </IconButton>
     </StyledContainer>
   );
 };

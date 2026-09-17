@@ -2151,7 +2151,7 @@ msgid "AKIA..."
 msgstr "AKIA..."
 
 #. js-lingui-id: Zdun41
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 msgid "Alert"
 msgstr "Meldung"
 
@@ -2531,7 +2531,10 @@ msgid "An error occurred while uploading the picture."
 msgstr "Beim Hochladen des Bildes ist ein Fehler aufgetreten."
 
 #. js-lingui-id: XyOToQ
+#: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/command-menu-item/edit/hooks/useResetCommandMenuItemToDefault.ts
+#: src/modules/error-handler/utils/getToastOptionsFromError.tsx
 #: src/modules/logic-functions/hooks/usePersistLogicFunction.ts
 #: src/modules/logic-functions/hooks/usePersistLogicFunction.ts
 #: src/modules/logic-functions/hooks/usePersistLogicFunction.ts
@@ -2547,7 +2550,7 @@ msgstr "Beim Hochladen des Bildes ist ein Fehler aufgetreten."
 #: src/modules/page-layout/hooks/useResetPageLayoutToDefault.ts
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
-#: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
+#: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/views/hooks/internal/usePerformViewApiUpdate.ts
 #: src/modules/views/hooks/internal/usePerformViewEntityApiPersistOperation.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -3938,7 +3941,8 @@ msgstr "Kann nicht gescannt werden? Kopieren Sie das"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Cancel"
@@ -4032,12 +4036,6 @@ msgstr "Endet am"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Cannot delete the only view"
 msgstr "Die einzige Ansicht kann nicht gelöscht werden"
-
-#. js-lingui-id: 8fbdLj
-#: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
-#: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
-msgid "Cannot display message"
-msgstr "Kann Nachricht nicht anzeigen"
 
 #. js-lingui-id: W3MumH
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -4554,7 +4552,8 @@ msgstr "Die Zwischenablage erfordert eine sichere Verbindung (HTTPS). Bitte grei
 #. js-lingui-id: yz7wBu
 #: src/modules/ai/components/AiChatCloseButton.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 msgid "Close"
 msgstr "Schließen"
 
@@ -4970,6 +4969,11 @@ msgstr "Konfigurieren Sie diese DNS-Einträge bei Ihrem Domainanbieter"
 #: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
 msgid "Configure this widget to display fields"
 msgstr "Konfigurieren Sie dieses Widget, um Felder anzuzeigen."
+
+#. js-lingui-id: no/yG9
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Configure what emails should get synced"
+msgstr ""
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -5668,6 +5672,11 @@ msgstr "erstellen"
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 msgid "Create"
 msgstr "Erstellen"
+
+#. js-lingui-id: MKhSSw
+#: src/modules/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems.ts
+msgid "Create {objectLabelSingular}"
+msgstr ""
 
 #. js-lingui-id: QMLXwt
 #. placeholder {0}: objectMetadataItem.labelSingular
@@ -7370,10 +7379,10 @@ msgstr "Keine Kontakte automatisch erstellen."
 msgid "Don't create contacts from/to Gmail, Outlook emails"
 msgstr "Keine Kontakte aus/von Gmail, Outlook E-Mails erstellen"
 
-#. js-lingui-id: yjhBSV
+#. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don't sync emails from team@ support@ noreply@..."
-msgstr "Keine E-Mails von team@ support@ noreply@... synchronisieren"
+msgid "Don't import emails from team@ support@ noreply@..."
+msgstr ""
 
 #. js-lingui-id: DPfwMq
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -8413,7 +8422,7 @@ msgstr "Löschung weicher gelöschter Datensätze"
 #. js-lingui-id: SlfejT
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetErrorDisplay.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -9092,6 +9101,7 @@ msgstr "Die verknüpften Datensätze konnten nicht mit diesem Ereignis verknüpf
 
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
+#: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 msgid "Failed to load billing plans"
 msgstr "Abrechnungspläne konnten nicht geladen werden"
 
@@ -9107,7 +9117,7 @@ msgid "Failed to load front component: {0}"
 msgstr "Fehler beim Laden der Front-Komponente: {0}"
 
 #. js-lingui-id: BTjpvA
-#: src/modules/front-components/components/FrontComponentLoadErrorSnackBarEffect.tsx
+#: src/modules/front-components/components/FrontComponentLoadErrorToastEffect.tsx
 msgid "Failed to load front component: {errorMessage}"
 msgstr "Fehler beim Laden der Front-Komponente: {errorMessage}"
 
@@ -9128,7 +9138,7 @@ msgid "Failed to load the application."
 msgstr "Anwendung konnte nicht geladen werden."
 
 #. js-lingui-id: nKkohy
-#: src/modules/settings/developers/hooks/useWebhookForm.ts
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Failed to load webhook"
 msgstr "Webhook konnte nicht geladen werden"
 
@@ -10106,7 +10116,8 @@ msgid "Go back"
 msgstr "Zurück"
 
 #. js-lingui-id: y0SPQU
-#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
 msgid "Go to billing"
 msgstr "Zur Abrechnung wechseln"
 
@@ -11018,7 +11029,7 @@ msgid "Inferred version"
 msgstr "Ermittelte Version"
 
 #. js-lingui-id: CE+M2e
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Info"
 msgstr "Info"
@@ -14756,6 +14767,12 @@ msgstr "Für diese App ist nichts zu konfigurieren"
 msgid "Nothing to see"
 msgstr "Nichts zu sehen"
 
+#. js-lingui-id: iDNBZe
+#: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
+#: src/modules/ui/feedback/toast/components/AppToaster.tsx
+msgid "Notifications"
+msgstr ""
+
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
 #: src/utils/date-utils.ts
@@ -15289,6 +15306,7 @@ msgstr "Optionales Geheimnis, um die HMAC-Signatur für Webhook-Nutzlasten zu be
 
 #. js-lingui-id: 0zpgxV
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -15707,7 +15725,7 @@ msgid "Payment method added. Retrying your payment..."
 msgstr "Zahlungsmethode hinzugefügt. Ihre Zahlung wird erneut versucht ..."
 
 #. js-lingui-id: OvqmUS
-#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
 msgid "Payment successful."
 msgstr "Zahlung erfolgreich."
 
@@ -19645,7 +19663,8 @@ msgid "Subtitle"
 msgstr "Untertitel"
 
 #. js-lingui-id: zzDlyQ
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 msgid "Success"
 msgstr "Erfolg"
@@ -22506,7 +22525,8 @@ msgid "View Docs"
 msgstr "Dokumentation anzeigen"
 
 #. js-lingui-id: Mv1YVf
-#: src/modules/ui/feedback/snack-bar-manager/utils/buildErrorAction.ts
+#: src/modules/error-handler/utils/getToastOptionsFromError.tsx
+#: src/modules/error-handler/utils/getToastOptionsFromError.tsx
 msgid "View existing record"
 msgstr "Vorhandenen Datensatz anzeigen"
 
@@ -22701,7 +22721,7 @@ msgid "Walkthrough"
 msgstr "Schritt-für-Schritt-Anleitung"
 
 #. js-lingui-id: r6y+jM
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 msgid "Warning"
 msgstr "Warnung"
 
@@ -23552,7 +23572,7 @@ msgid "Your billing interval will switch to yearly immediately and your trial wi
 msgstr "Ihr Abrechnungsintervall wird sofort auf jährlich umgestellt und Ihre Testphase wird fortgesetzt. Wenn sie endet, werden Ihnen ${yearlyPrice} pro Benutzer und Jahr jährlich berechnet."
 
 #. js-lingui-id: u1O1GV
-#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
 msgid "Your card was saved, but the payment still needs attention."
 msgstr "Ihre Karte wurde gespeichert, aber die Zahlung erfordert weiterhin Aufmerksamkeit."
 

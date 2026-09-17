@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -7,6 +9,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/components';
 import {
   IconBook,
   IconChartBar,
@@ -17,8 +20,6 @@ import {
   IconTool,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsAgentSkillsTab';
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
 import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
@@ -86,23 +87,22 @@ export const SettingsAI = () => {
       }
       actionButton={
         isSkillsTab ? (
-          <UndecoratedLink to={getSettingsPath(SettingsPath.AiNewSkill)}>
-            <Button
-              Icon={IconPlus}
-              title={t`New Skill`}
-              accent="blue"
-              size="small"
-            />
-          </UndecoratedLink>
+          <NavigationButton
+            to={getSettingsPath(SettingsPath.AiNewSkill)}
+            startIcon={<IconPlus />}
+            size="sm"
+            variant="solid"
+            color="accent"
+          >{t`New Skill`}</NavigationButton>
         ) : isToolsTab ? (
           <Button
-            Icon={IconPlus}
-            title={t`New Tool`}
-            accent="blue"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={handleCreateTool}
             disabled={isCreatingTool}
-          />
+            variant="solid"
+            color="accent"
+          >{t`New Tool`}</Button>
         ) : undefined
       }
       links={[
@@ -115,7 +115,7 @@ export const SettingsAI = () => {
     >
       <SettingsPageContainer>
         {!isModelsTab && (
-          <Section>
+          <Section.Root>
             <SettingsDiscoveryHeroCard
               lightSrc={AI_HERO_LIGHT}
               darkSrc={AI_HERO_DARK}
@@ -131,7 +131,7 @@ export const SettingsAI = () => {
               ]}
               playButtonAriaLabel={t`Watch AI demo`}
             />
-          </Section>
+          </Section.Root>
         )}
         {isOverviewTab && (
           <>

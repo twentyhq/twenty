@@ -35,13 +35,18 @@ export const RecordList = () => {
   return (
     <StyledContainer ref={setContainerElement}>
       <RecordListResponsiveFieldsEffect containerElement={containerElement} />
-      <ScrollWrapper
-        componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
-        defaultEnableXScroll={false}
-      >
-        {hasRecordGroups ? <RecordListRecordGroupsBody /> : <RecordListBody />}
-      </ScrollWrapper>
-      <RecordListFieldTooltip />
+      <RecordListFieldTooltip>
+        <ScrollWrapper
+          componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
+          defaultEnableXScroll={false}
+        >
+          {hasRecordGroups ? (
+            <RecordListRecordGroupsBody />
+          ) : (
+            <RecordListBody />
+          )}
+        </ScrollWrapper>
+      </RecordListFieldTooltip>
     </StyledContainer>
   );
 };

@@ -1,6 +1,5 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
-import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import {
   FOLDER_HEADER_SLOT_COLLISION_PRIORITY,
   NavigationMenuItemDroppableSlot,
@@ -34,10 +33,6 @@ const StyledListItemRow = styled.div`
   gap: 0;
 `;
 
-const StyledOrphanAppendSlotOverlap = styled.div`
-  margin-top: calc(-1 * ${themeCssVariables.betweenSiblingsGap});
-`;
-
 export const WorkspaceSectionListDndKit = ({
   filteredItems,
   getEditModeProps,
@@ -50,9 +45,6 @@ export const WorkspaceSectionListDndKit = ({
   );
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { isDragging } = useContext(NavigationMenuItemDragContext);
-  const { addToNavigationFallbackDestination } = useContext(
-    NavigationDropTargetContext,
-  );
   const folderCount = filteredItems.filter(
     (item) => item.type === NavigationMenuItemType.FOLDER,
   ).length;
@@ -86,42 +78,21 @@ export const WorkspaceSectionListDndKit = ({
           </NavigationMenuItemSortableItem>
         </StyledListItemRow>
       ))}
-      <StyledOrphanAppendSlotOverlap>
-        <NavigationMenuItemDroppableSlot
-          droppableId={
-            NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
-          }
+      <NavigationMenuItemDroppableSlot
+        droppableId={
+          NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
+        }
+        index={orphanAppendDndIndex}
+        disabled={workspaceDropDisabled}
+        collisionPriority={FOLDER_HEADER_SLOT_COLLISION_PRIORITY}
+      >
+        <NavigationMenuItemOrphanDropTarget
           index={orphanAppendDndIndex}
-          disabled={workspaceDropDisabled}
-          collisionPriority={FOLDER_HEADER_SLOT_COLLISION_PRIORITY}
-        >
-          <NavigationMenuItemOrphanDropTarget
-            index={orphanAppendDndIndex}
-            compact
-            highlightPosition="top"
-          />
-          {isAddMenuItemButtonVisible && <WorkspaceSectionAddMenuItemButton />}
-        </NavigationMenuItemDroppableSlot>
-      </StyledOrphanAppendSlotOverlap>
-      {addToNavigationFallbackDestination?.droppableId ===
-        NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS &&
-        addToNavigationFallbackDestination.index > orphanAppendDndIndex && (
-          <StyledOrphanAppendSlotOverlap>
-            <NavigationMenuItemDroppableSlot
-              droppableId={
-                NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
-              }
-              index={addToNavigationFallbackDestination.index}
-              disabled={workspaceDropDisabled}
-              collisionPriority={FOLDER_HEADER_SLOT_COLLISION_PRIORITY}
-            >
-              <NavigationMenuItemOrphanDropTarget
-                index={addToNavigationFallbackDestination.index}
-                compact
-              />
-            </NavigationMenuItemDroppableSlot>
-          </StyledOrphanAppendSlotOverlap>
-        )}
+          compact
+          highlightPosition="top"
+        />
+        {isAddMenuItemButtonVisible && <WorkspaceSectionAddMenuItemButton />}
+      </NavigationMenuItemDroppableSlot>
     </StyledList>
   );
 };

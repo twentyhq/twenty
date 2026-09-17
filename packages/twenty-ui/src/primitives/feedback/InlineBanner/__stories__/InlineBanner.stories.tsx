@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { InlineBanner } from '@ui/primitives/feedback/InlineBanner/InlineBanner';
 import { IconExternalLink } from '@ui/icon';
@@ -127,9 +127,11 @@ export const TruncatedMessage: Story = {
     ).toHaveTextContent(args.message);
     await userEvent.keyboard('{Escape}');
     await expect(message).toHaveFocus();
-    await expect(
-      within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
-    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+      ).not.toBeInTheDocument(),
+    );
     await userEvent.tab();
     await expect(
       canvas.getByRole('button', { name: /Reconnect/ }),
@@ -139,9 +141,11 @@ export const TruncatedMessage: Story = {
       await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
     ).toHaveTextContent(args.message);
     await userEvent.tab();
-    await expect(
-      within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
-    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+      ).not.toBeInTheDocument(),
+    );
     await userEvent.pointer({ keys: '[TouchA]', target: message });
     await expect(message).toHaveFocus();
     await expect(

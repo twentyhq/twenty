@@ -11,9 +11,8 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputsContainer = styled.div`
@@ -55,7 +54,7 @@ export const SettingsRoleSettings = ({
 
   return (
     <>
-      <Section>
+      <Section.Root>
         <StyledInputsContainer>
           <StyledInputContainer>
             <IconPicker
@@ -98,7 +97,7 @@ export const SettingsRoleSettings = ({
           }}
           disabled={!isEditable}
         />
-      </Section>
+      </Section.Root>
 
       <SettingsRoleApplicability
         values={{
@@ -117,22 +116,21 @@ export const SettingsRoleSettings = ({
 
       {!isCreateMode && (
         <>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Danger zone`}
               description={t`Delete this role and assign a new role to its members`}
             />
             <Button
-              title={t`Delete role`}
-              size="small"
-              variant="secondary"
-              accent="danger"
+              size="sm"
               onClick={() => {
                 openModal(ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID);
               }}
               disabled={!isEditable}
-            />
-          </Section>
+              variant="outline"
+              color="danger"
+            >{t`Delete role`}</Button>
+          </Section.Root>
           <SettingsRoleSettingsDeleteRoleConfirmationModal roleId={roleId} />
         </>
       )}

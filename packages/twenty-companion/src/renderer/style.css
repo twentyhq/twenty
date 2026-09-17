@@ -160,7 +160,8 @@ p {
   text-align: center;
   margin-left: var(--t-spacing-8);
 }
-.notice .notice-close {
+.notice .notice-close,
+.notice .notice-recovery {
   color: var(--t-font-color-inverted);
 }
 .preview-label {
@@ -459,11 +460,8 @@ p {
   gap: var(--t-spacing-3);
   align-items: center;
 }
-.live-heading .small {
-  margin-top: var(--t-spacing-1);
-}
-.live-heading .live-title {
-  margin-bottom: var(--t-spacing-1);
+.live-heading .live-section-header {
+  margin-bottom: 0;
 }
 .live-actions {
   display: flex;

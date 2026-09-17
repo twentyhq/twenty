@@ -3,10 +3,10 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 
 import { SettingsBillingLimitForm } from '@/settings/billing/components/SettingsBillingLimitForm';
 import { useDeleteUsageLimit } from '@/settings/billing/hooks/useDeleteUsageLimit';
@@ -20,7 +20,6 @@ import { buildUsageLimitFormValues } from '@/settings/billing/utils/buildUsageLi
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -38,7 +37,7 @@ export const SettingsBillingLimitEditForm = ({
 }: SettingsBillingLimitEditFormProps) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { usageQuotaDefinitions, loading: definitionsLoading } =
     useUsageQuotaDefinitions();
   const { updateUsageLimit, loading: isSaving } = useUpdateUsageLimit();
@@ -55,10 +54,13 @@ export const SettingsBillingLimitEditForm = ({
   const handleDelete = async () => {
     try {
       await deleteUsageLimit({ variables: { usageLimitId } });
-      enqueueSuccessSnackBar({ message: t`Limit deleted.` });
+      enqueueToast({ variant: 'success', children: t`Limit deleted.` });
       navigate(SettingsPath.BillingLimits);
     } catch {
-      enqueueErrorSnackBar({ message: t`Failed to delete the limit.` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to delete the limit.`,
+      });
     } finally {
       closeModal(DELETE_MODAL_ID);
     }
@@ -74,7 +76,7 @@ export const SettingsBillingLimitEditForm = ({
         variables: { input: { id: usageLimitId, payload: input } },
       });
 
-      enqueueSuccessSnackBar({ message: t`Limit updated.` });
+      enqueueToast({ variant: 'success', children: t`Limit updated.` });
       navigate(SettingsPath.BillingLimits);
     } catch (error) {
       const serverMessage =
@@ -82,8 +84,9 @@ export const SettingsBillingLimitEditForm = ({
           ? error.errors[0]?.message
           : undefined;
 
-      enqueueErrorSnackBar({
-        message: serverMessage ?? t`Failed to update the limit.`,
+      enqueueToast({
+        variant: 'error',
+        children: serverMessage ?? t`Failed to update the limit.`,
       });
     }
   };
@@ -124,20 +127,19 @@ export const SettingsBillingLimitEditForm = ({
               scopeConsumption={scopeConsumption}
               onChange={setValues}
             />
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Danger zone`}
                 description={t`Spending stays capped by your plan allowance and the other limits.`}
               />
               <Button
-                Icon={IconTrash}
-                title={t`Delete limit`}
-                variant="secondary"
-                accent="danger"
-                size="small"
+                startIcon={<IconTrash />}
+                size="sm"
                 disabled={isDeleting}
                 onClick={() => openModal(DELETE_MODAL_ID)}
-              />
+                variant="outline"
+                color="danger"
+              >{t`Delete limit`}</Button>
               <ConfirmationModal
                 modalInstanceId={DELETE_MODAL_ID}
                 title={t`Delete this limit?`}
@@ -146,7 +148,7 @@ export const SettingsBillingLimitEditForm = ({
                 loading={isDeleting}
                 onConfirmClick={handleDelete}
               />
-            </Section>
+            </Section.Root>
           </>
         )}
       </SettingsPageContainer>

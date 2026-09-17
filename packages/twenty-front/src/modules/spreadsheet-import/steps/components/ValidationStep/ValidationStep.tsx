@@ -277,7 +277,7 @@ export const ValidationStep = ({
           { title: t`Cancel` },
           {
             title: t`Submit`,
-            variant: 'primary',
+            variant: 'outline',
             onClick: submitData,
             role: 'confirm',
           },
@@ -330,12 +330,10 @@ export const ValidationStep = ({
             </StyledErrorSwitch>
             <StyledButtonContainer>
               <Button
-                Icon={IconTrash}
-                title={t`Remove`}
-                accent="default"
+                startIcon={<IconTrash />}
                 onClick={deleteSelectedRows}
                 disabled={selectedRows.size === 0}
-              />
+              >{t`Remove`}</Button>
             </StyledButtonContainer>
           </StyledToolbar>
         </StyledContentWrapper>

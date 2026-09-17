@@ -1,6 +1,8 @@
+import { StyledCenteredButton } from '@/ui/layout/modal/components/StyledCenteredButton';
+import { type ConfirmationModalProps } from '@/ui/layout/modal/types/ConfirmationModalProps';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode, useState } from 'react';
+import { useState } from 'react';
 
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
@@ -8,77 +10,13 @@ import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStateful
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
-import { Button, type ButtonAccent } from 'twenty-ui/primitives/input';
-import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui/primitives/layout';
-import { type ModalOverlay } from 'twenty-ui/primitives/surfaces';
+import { Section } from 'twenty-ui/components';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-export type ConfirmationModalProps = {
-  modalInstanceId: string;
-  title: string;
-  loading?: boolean;
-  subtitle: ReactNode;
-  onClose?: () => void;
-  onConfirmClick: () => void;
-  confirmButtonText?: string;
-  confirmationPlaceholder?: string;
-  confirmationValue?: string;
-  confirmButtonAccent?: ButtonAccent;
-  AdditionalButtons?: React.ReactNode;
-  hideCancelButton?: boolean;
-  overlay?: ModalOverlay;
-};
-
-const StyledCenteredButtonContainer = styled.div`
-  box-sizing: border-box;
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
-
-export const StyledCenteredButton = (
-  props: React.ComponentProps<typeof Button>,
-) => (
-  <StyledCenteredButtonContainer>
-    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-    <Button {...props} />
-  </StyledCenteredButtonContainer>
-);
-
-const StyledCenteredTitle = styled.div`
-  text-align: center;
-`;
 
 const StyledSectionContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[6]};
 `;
-
-const StyledConfirmationButtonContainer = styled.div`
-  box-sizing: border-box;
-  margin-top: ${themeCssVariables.spacing[2]};
-  > button {
-    border-color: ${themeCssVariables.border.color.danger};
-    box-shadow: none;
-    color: ${themeCssVariables.color.red};
-    font-size: ${themeCssVariables.font.size.md};
-    line-height: ${themeCssVariables.text.lineHeight.lg};
-    &:hover {
-      background-color: ${themeCssVariables.color.red3};
-    }
-  }
-`;
-
-export const StyledConfirmationButton = (
-  props: React.ComponentProps<typeof Button>,
-) => (
-  <StyledConfirmationButtonContainer>
-    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-    <Button {...props} />
-  </StyledConfirmationButtonContainer>
-);
 
 const defaultConfirmButtonText = msg`Confirm`;
 
@@ -92,7 +30,7 @@ export const ConfirmationModal = ({
   confirmButtonText,
   confirmationValue,
   confirmationPlaceholder,
-  confirmButtonAccent = 'danger',
+  confirmButtonColor = 'danger',
   AdditionalButtons,
   hideCancelButton = false,
   overlay = 'dark',
@@ -147,19 +85,14 @@ export const ConfirmationModal = ({
       narrowWidth
       autoHeight
     >
-      <StyledCenteredTitle>
-        <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
-      </StyledCenteredTitle>
+      <Dialog.Title>{title}</Dialog.Title>
       <StyledSectionContainer>
-        <Section
-          alignment={SectionAlignment.Center}
-          fontColor={SectionFontColor.Primary}
-        >
+        <Section.Root align="center" color="primary">
           {subtitle}
-        </Section>
+        </Section.Root>
       </StyledSectionContainer>
       {confirmationValue && (
-        <Section>
+        <Section.Root>
           <SettingsTextInput
             instanceId="confirmation-modal-input"
             dataTestId="confirmation-modal-input"
@@ -170,31 +103,29 @@ export const ConfirmationModal = ({
             disableHotkeys
             key={'input-' + confirmationValue}
           />
-        </Section>
+        </Section.Root>
       )}
       {!hideCancelButton && (
         <StyledCenteredButton
           onClick={handleCancelClick}
-          variant="secondary"
-          title={t`Cancel`}
           fullWidth
-          justify="center"
-          dataTestId="confirmation-modal-cancel-button"
-        />
+          data-testid="confirmation-modal-cancel-button"
+          variant="outline"
+        >{t`Cancel`}</StyledCenteredButton>
       )}
 
       {AdditionalButtons}
 
       <StyledCenteredButton
         onClick={handleConfirmClick}
-        variant="primary"
-        accent={confirmButtonAccent}
-        title={translatedConfirmButtonText}
         disabled={!isValidValue || loading}
         fullWidth
-        justify="center"
-        dataTestId="confirmation-modal-confirm-button"
-      />
+        data-testid="confirmation-modal-confirm-button"
+        variant={confirmButtonColor === 'neutral' ? 'outline' : 'solid'}
+        color={confirmButtonColor}
+      >
+        {translatedConfirmButtonText}
+      </StyledCenteredButton>
     </ModalStatefulWrapper>
   );
 };

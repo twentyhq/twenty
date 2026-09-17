@@ -12,9 +12,10 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
 import { IconEyeX, IconRefreshDot, IconTrash } from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID =
   'reset-single-widget-tab-to-default-modal';
@@ -117,28 +118,28 @@ export const SingleWidgetTabSettingsContent = ({
               contextualTextPosition="right"
             />
           </SelectableListItem>
-          <div id={RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}>
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-              onEnter={handleResetToDefault}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-                Icon={IconRefreshDot}
-                label={t`Reset to default`}
-                onClick={handleResetToDefault}
-                disabled={isResetToDefaultDisabled}
-              />
-            </SelectableListItem>
-          </div>
-          {isResetToDefaultDisabled && (
-            <AppTooltip
-              anchorSelect={`#${RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}`}
-              title={t`No default configuration available for this tab`}
-              noArrow
-              place="bottom"
-            />
-          )}
+          <Tooltip
+            delay={TooltipDelay.mediumDelay}
+            content={t`No default configuration available for this tab`}
+            side="bottom"
+            disabled={!isResetToDefaultDisabled}
+          >
+            <div id={RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}>
+              <SelectableListItem
+                itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+                onEnter={handleResetToDefault}
+              >
+                <CommandMenuItem
+                  id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+                  Icon={IconRefreshDot}
+                  label={t`Reset to default`}
+                  onClick={handleResetToDefault}
+                  disabled={isResetToDefaultDisabled}
+                />
+              </SelectableListItem>
+            </div>
+          </Tooltip>
+
           {canDelete && (
             <SelectableListItem
               itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE}
@@ -160,7 +161,7 @@ export const SingleWidgetTabSettingsContent = ({
         subtitle={t`This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone.`}
         onConfirmClick={onResetToDefault}
         confirmButtonText={t`Reset`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
       />
     </>
   );
