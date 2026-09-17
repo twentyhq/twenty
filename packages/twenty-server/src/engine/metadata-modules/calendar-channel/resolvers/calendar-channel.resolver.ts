@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -12,10 +12,12 @@ import { CalendarChannelMetadataService } from 'src/engine/metadata-modules/cale
 import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
 import { UpdateCalendarChannelInput } from 'src/engine/metadata-modules/calendar-channel/dtos/update-calendar-channel.input';
 import { CalendarChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/calendar-channel/interceptors/calendar-channel-graphql-api-exception.interceptor';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(CalendarChannelGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => CalendarChannelDTO)
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class CalendarChannelResolver {
   constructor(
     private readonly calendarChannelMetadataService: CalendarChannelMetadataService,

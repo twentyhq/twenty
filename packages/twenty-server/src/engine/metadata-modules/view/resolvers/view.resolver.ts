@@ -46,9 +46,10 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
 import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @MetadataResolver(() => ViewDTO)
-@UseFilters(ViewGraphqlApiExceptionFilter)
+@UseFilters(ViewGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewResolver {
   constructor(

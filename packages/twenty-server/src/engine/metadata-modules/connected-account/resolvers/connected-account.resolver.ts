@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -20,10 +20,12 @@ import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/connected-account/interceptors/connected-account-graphql-api-exception.interceptor';
 import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(ConnectedAccountGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => ConnectedAccountDTO)
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class ConnectedAccountResolver {
   constructor(
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,

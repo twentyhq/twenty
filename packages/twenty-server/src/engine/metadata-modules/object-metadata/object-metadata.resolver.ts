@@ -59,6 +59,7 @@ import { SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -66,6 +67,7 @@ import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata
 @UseFilters(
   PreventNestToAutoLogGraphqlErrorsFilter,
   PermissionsGraphqlApiExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 export class ObjectMetadataResolver {
   constructor(

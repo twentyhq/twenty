@@ -23,6 +23,7 @@ import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/wo
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -43,6 +44,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
   WorkflowQueryValidationGraphqlApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 export class CoreWorkflowResolver {
   constructor(

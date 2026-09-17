@@ -20,6 +20,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { AuthImpersonationContext } from 'src/engine/decorators/auth/auth-impersonation-context.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { ImpersonatePermissionGuard } from 'src/engine/guards/impersonate-permission.guard';
 import { NoImpersonationGuard } from 'src/engine/guards/no-impersonation.guard';
@@ -66,6 +67,7 @@ export class ImpersonationResolver {
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
   @Mutation(() => StopImpersonationDTO)
+  @AllowSuspendedWorkspace()
   async stopImpersonation(
     @AuthImpersonationContext()
     impersonationContext: AuthContext['impersonationContext'],

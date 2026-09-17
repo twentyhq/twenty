@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -26,6 +26,7 @@ import { CommandMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metada
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(
@@ -33,6 +34,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
   CommandMenuItemGraphqlApiExceptionInterceptor,
 )
 @MetadataResolver(() => CommandMenuItemDTO)
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class CommandMenuItemResolver {
   constructor(
     private readonly commandMenuItemService: CommandMenuItemService,

@@ -54,10 +54,12 @@ import { AuthAuthenticatedAt } from 'src/engine/decorators/auth/auth-authenticat
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthImpersonationContext } from 'src/engine/decorators/auth/auth-impersonation-context.decorator';
 import { canCredentialAutoLoginIntoWorkspaces } from 'src/engine/core-modules/auth/utils/can-credential-auto-login-into-workspaces.util';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -87,7 +89,7 @@ const getHMACKey = (email?: string, key?: string | null) => {
 };
 
 @MetadataResolver(() => UserEntity)
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UseFilters(PermissionsGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
 export class UserResolver {
   constructor(
     @InjectRepository(UserEntity)
@@ -381,12 +383,14 @@ export class UserResolver {
 
   @Mutation(() => UserEntity)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @AllowSuspendedWorkspace()
   async deleteUser(@AuthUser() { id: userId }: AuthContextUser) {
     return this.userService.deleteUser(userId);
   }
 
   @Mutation(() => UserWorkspaceEntity)
   @UseGuards(UserAuthGuard, CustomPermissionGuard)
+  @AllowSuspendedWorkspace()
   async deleteUserFromWorkspace(
     @Args('workspaceMemberIdToDelete') workspaceMemberIdToDelete: string,
     @AuthUser() { id: userId }: AuthContextUser,
@@ -456,6 +460,7 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+  @AllowSuspendedWorkspace()
   async updateWorkspaceMemberSettings(
     @Args('input') input: UpdateWorkspaceMemberSettingsInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
