@@ -236,6 +236,7 @@ export class BullMQDriver
             name: job.name,
             retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
             updateData: (data) => job.updateData(data),
+            updateProgress: (progress) => job.updateProgress(progress),
             abortSignal,
           });
           const timeEnd = performance.now();
@@ -567,6 +568,7 @@ export class BullMQDriver
       state,
       attemptsMade: job.attemptsMade,
       failedReason: job.failedReason,
+      progress: job.progress,
       timestamp: job.timestamp,
       processedOn: job.processedOn,
       finishedOn: job.finishedOn,
