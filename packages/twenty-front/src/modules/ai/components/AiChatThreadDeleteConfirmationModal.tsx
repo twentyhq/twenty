@@ -48,7 +48,7 @@ export const AiChatThreadDeleteConfirmationModal = ({
       onConfirmClick={handleDelete}
       onClose={() => setAiChatThreadPendingDelete(null)}
       confirmButtonText={t`Delete`}
-      confirmButtonAccent="danger"
+      confirmButtonColor="danger"
     />
   );
 };

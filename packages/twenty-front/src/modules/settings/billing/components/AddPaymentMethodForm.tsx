@@ -148,15 +148,13 @@ const AddPaymentMethodFormContent = ({
         }}
       />
       <Button
-        title={t`Add credit card`}
         onClick={handleSubmit}
-        variant="secondary"
-        accent="blue"
         fullWidth
-        justify="center"
-        isLoading={isSubmitting}
+        loading={isSubmitting}
         disabled={!isStripeReady || isSubmitting}
-      />
+        variant="outline"
+        color="accent"
+      >{t`Add credit card`}</Button>
     </StyledFormContainer>
   );
 };

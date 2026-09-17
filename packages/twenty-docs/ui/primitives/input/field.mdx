@@ -15,6 +15,30 @@ Use `Field` to group one control with its accessible label and helper text. Comp
   height={240}
 />
 
+## Anatomy
+
+Place one control and its supporting parts inside `Field.Root`. This tree shows a field built with the styled `Input` component.
+
+```text
+Field.Root
+├── Field.Label
+├── Input
+├── Field.Description
+└── Field.Error
+```
+
+| Part                                  | Requirement         | Purpose                                                                      |
+| ------------------------------------- | ------------------- | ---------------------------------------------------------------------------- |
+| `Root`                                | Required            | Shares the name, disabled state, and validation with the control.            |
+| `Label`                               | Recommended         | Supplies a visible, associated label. An accessible name is always required. |
+| `Input` or another integrated control | Required            | Receives user input and connects to the field.                               |
+| `Control`                             | Alternative control | Provides an unstyled input when you do not use an integrated control.        |
+| `Description`                         | Optional            | Adds persistent helper text associated with the control.                     |
+| `Error`                               | Optional            | Shows feedback for a matching validation state.                              |
+| `Validity`                            | Optional            | Exposes validity through a children render function.                         |
+
+`Input` and `Textarea` already integrate with the field. Place them directly inside `Root`; they supply the control behavior themselves. Compound controls such as [Select](/ui/primitives/input/select#compose-with-a-field) keep their own root and parts inside the field.
+
 ## Labeled control
 
 ```tsx
@@ -52,17 +76,6 @@ export const UsernameField = ({ error }: UsernameFieldProps) => (
   </Field.Root>
 );
 ```
-
-## Parts
-
-| Part          | Purpose                                              |
-| ------------- | ---------------------------------------------------- |
-| `Root`        | Shares field state and validation with the control.  |
-| `Label`       | Names the control.                                   |
-| `Control`     | Provides an unstyled input with field integration.   |
-| `Description` | Adds persistent helper text.                         |
-| `Error`       | Shows feedback for a matching validation state.      |
-| `Validity`    | Exposes validity through a children render function. |
 
 Keep error messages actionable and provide a visible label even when the control has a placeholder.
 

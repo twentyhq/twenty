@@ -5,7 +5,7 @@ import crypto from 'crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import ms from 'ms';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { base64UrlEncode, isDefined } from 'twenty-shared/utils';
 
 import {
@@ -196,9 +196,22 @@ export class OAuthService {
       );
     }
 
-    await this.appTokenRepository.update(authCodeToken.id, {
-      revokedAt: new Date(),
-    });
+    // Atomic single-use consume: only the request that flips revokedAt from null proceeds, closing the check-then-use race.
+    const consumeResult = await this.appTokenRepository.update(
+      { id: authCodeToken.id, revokedAt: IsNull() },
+      { revokedAt: new Date() },
+    );
+
+    if (!consumeResult.affected) {
+      this.logger.warn(
+        `Authorization code replay detected for client ${clientId} (concurrent redemption).`,
+      );
+
+      return this.errorResponse(
+        'invalid_grant',
+        'Authorization code has already been used',
+      );
+    }
 
     if (!authCodeToken.userId || !authCodeToken.workspaceId) {
       return this.errorResponse(

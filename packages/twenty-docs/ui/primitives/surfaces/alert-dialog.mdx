@@ -15,6 +15,37 @@ Use `AlertDialog` for a decision that interrupts the current workflow, such as c
   height={440}
 />
 
+## Anatomy
+
+Keep the trigger and popup inside `AlertDialog.Root`. This tree shows the recommended layout for a confirmation dialog.
+
+```text
+AlertDialog.Root
+├── AlertDialog.Trigger
+└── AlertDialog.Popup
+    ├── AlertDialog.Header
+    │   ├── AlertDialog.Title
+    │   └── AlertDialog.Description
+    ├── AlertDialog.Body
+    └── AlertDialog.Footer
+        ├── AlertDialog.Close
+        └── Confirmation action
+```
+
+| Part                       | Requirement                                   | Purpose                                                                  |
+| -------------------------- | --------------------------------------------- | ------------------------------------------------------------------------ |
+| `Root`                     | Required                                      | Coordinates open state and modal behavior.                               |
+| `Trigger`                  | Optional for a programmatically opened dialog | Opens the dialog and provides a return focus target.                     |
+| `Popup`                    | Required                                      | Renders the modal content with focus management.                         |
+| `Title`                    | Recommended                                   | Supplies the visible dialog name. An accessible name is always required. |
+| `Description`              | Recommended for a confirmation                | Explains the decision and its consequences.                              |
+| `Header`, `Body`, `Footer` | Optional layout parts                         | Arrange headings, additional content, and actions.                       |
+| `Close`                    | Recommended for cancellation                  | Supplies an explicit close action.                                       |
+
+`Popup` includes the portal, backdrop, and viewport. Put content directly inside it and set `size`, `container`, and focus props on `Popup`. `Header`, `Body`, and `Footer` arrange content; `Title` and `Description` provide the accessible relationships.
+
+The confirmation action is application content, not an exported part. Use `Close` with a synchronous handler or a `Button` with controlled open state for asynchronous confirmation.
+
 ## Uncontrolled state
 
 Use `defaultOpen` to set the initial visibility. The dialog owns subsequent changes from its trigger, close controls, and dismissal interactions.
@@ -80,18 +111,43 @@ export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
 
 For asynchronous confirmation, use a `Button` with your action handler instead of `AlertDialog.Close`. Keep `open` true while the action is pending, call `setOpen(false)` after it succeeds, and show an error inside the dialog if it fails.
 
-## Parts and sizing
+## Compose with buttons
 
-| Part                   | Purpose                                                      |
-| ---------------------- | ------------------------------------------------------------ |
-| `Root`                 | Coordinates open state and modal behavior.                   |
-| `Trigger`              | Opens the dialog.                                            |
-| `Popup`                | Includes the portal, backdrop, viewport, and dialog content. |
-| `Title`, `Description` | Name the dialog and explain the decision.                    |
-| `Header`               | Groups the title and description.                            |
-| `Body`                 | Holds optional additional content.                           |
-| `Footer`               | Groups confirmation and cancellation actions.                |
-| `Close`                | Closes the dialog; `onClick` can run a synchronous action.   |
+Use `render` to give the trigger and close controls Twenty UI button styling. The dialog parts supply their interaction handlers and refs to the buttons.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root>
+    <AlertDialog.Trigger
+      render={<Button color="danger">Delete record</Button>}
+    />
+    <AlertDialog.Popup>
+      <AlertDialog.Header>
+        <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+        <AlertDialog.Description>
+          This action cannot be undone.
+        </AlertDialog.Description>
+      </AlertDialog.Header>
+      <AlertDialog.Footer>
+        <AlertDialog.Close render={<Button variant="outline">Cancel</Button>} />
+        <AlertDialog.Close
+          onClick={onDelete}
+          render={<Button color="danger">Delete</Button>}
+        />
+      </AlertDialog.Footer>
+    </AlertDialog.Popup>
+  </AlertDialog.Root>
+);
+```
+
+Keep each action as a single interactive control. If you wrap `Button` in your own component, [forward the supplied props and ref](/ui/primitives/overview#custom-components).
+
+## Sizing and portals
 
 `Popup.size` defaults to `md`; see the reference for supported sizes. Use `container` to override the theme's portal container and `keepMounted` to retain mounted content when closed.
 

@@ -160,7 +160,8 @@ p {
   text-align: center;
   margin-left: var(--t-spacing-8);
 }
-.notice .notice-close {
+.notice .notice-close,
+.notice .notice-recovery {
   color: var(--t-font-color-inverted);
 }
 .preview-label {

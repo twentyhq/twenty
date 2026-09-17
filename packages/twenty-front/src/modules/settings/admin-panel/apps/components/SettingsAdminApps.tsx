@@ -193,14 +193,13 @@ export const SettingsAdminApps = () => {
           description={t`Manage the marketplace application catalog`}
         />
         <Button
-          Icon={IconRefresh}
-          title={t`Synchronize catalog`}
-          size="small"
-          variant="secondary"
+          startIcon={<IconRefresh />}
+          size="sm"
           onClick={handleSyncCatalog}
-          isLoading={isSyncing}
+          loading={isSyncing}
           disabled={isSyncing}
-        />
+          variant="outline"
+        >{t`Synchronize catalog`}</Button>
       </Section>
       <Section>
         <H2Title
@@ -321,13 +320,12 @@ export const SettingsAdminApps = () => {
         {hasMore && (
           <StyledShowMoreContainer>
             <Button
-              title={t`Show more`}
-              Icon={IconDotsVertical}
+              startIcon={<IconDotsVertical />}
               onClick={handleShowMore}
               disabled={loading}
-              size="small"
-              variant="secondary"
-            />
+              size="sm"
+              variant="outline"
+            >{t`Show more`}</Button>
           </StyledShowMoreContainer>
         )}
       </Section>

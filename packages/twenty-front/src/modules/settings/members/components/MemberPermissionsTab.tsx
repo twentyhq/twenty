@@ -141,11 +141,10 @@ export const MemberPermissionsTab = ({
             />
           </StyledRoleSelector>
           <Button
-            Icon={IconArrowUpRight}
-            title={t`Open in Roles`}
-            variant="secondary"
+            startIcon={<IconArrowUpRight />}
             onClick={handleOpenRole}
-          />
+            variant="outline"
+          >{t`Open in Roles`}</Button>
         </StyledRoleContainer>
         <SettingsRolePermissions roleId={primaryRole.id} isEditable={false} />
       </Section>
@@ -157,7 +156,7 @@ export const MemberPermissionsTab = ({
           subtitle={t`Are you sure you want to update the role of this user from "${oldRoleLabel}" to "${newRoleLabel}"?`}
           onConfirmClick={handleConfirmRoleChange}
           confirmButtonText={t`Update role`}
-          confirmButtonAccent="blue"
+          confirmButtonColor="accent"
         />
       )}
     </>

@@ -176,20 +176,18 @@ export const ObjectSettings = ({
             />
             <StyledDangerButtonsContainer>
               <Button
-                Icon={IconArchive}
-                title={t`Deactivate`}
-                size="small"
+                startIcon={<IconArchive />}
+                size="sm"
                 onClick={handleDisable}
-              />
+              >{t`Deactivate`}</Button>
               {getIsMetadataItemCustom(objectMetadataItem) && (
                 <Button
-                  Icon={IconTrash}
-                  title={t`Delete`}
-                  size="small"
-                  accent="danger"
-                  variant="secondary"
+                  startIcon={<IconTrash />}
+                  size="sm"
                   onClick={handleDelete}
-                />
+                  variant="outline"
+                  color="danger"
+                >{t`Delete`}</Button>
               )}
             </StyledDangerButtonsContainer>
           </Section>

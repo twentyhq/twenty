@@ -15,6 +15,33 @@ Use `Menu` for actions opened from a trigger. Its items supply keyboard navigati
   height={440}
 />
 
+## Anatomy
+
+Keep the trigger and popup inside the same `Menu.Root`. Put action or selection items inside the popup.
+
+```text
+Menu.Root
+├── Menu.Trigger
+└── Menu.Popup
+    ├── Menu.Item
+    ├── Menu.Separator
+    └── Menu.Item
+```
+
+| Part                            | Requirement                       | Purpose                                                                    |
+| ------------------------------- | --------------------------------- | -------------------------------------------------------------------------- |
+| `Root`                          | Required                          | Owns open state and coordinates menu interaction.                          |
+| `Trigger`                       | Required for a trigger-based menu | Opens the menu and provides its accessible name.                           |
+| `Popup`                         | Required                          | Renders the positioned, portaled menu with keyboard navigation.            |
+| `Item`                          | One per action                    | Runs a command when selected.                                              |
+| `CheckboxItem`                  | Optional                          | Toggles an independent boolean option.                                     |
+| `RadioGroup`, `RadioItem`       | Optional                          | Coordinate mutually exclusive options. Put radio items inside their group. |
+| `Group`, `GroupLabel`           | Optional                          | Group related items under a label.                                         |
+| `Separator`                     | Optional                          | Separates groups visually.                                                 |
+| `SubmenuRoot`, `SubmenuTrigger` | Optional                          | Add a nested menu with its own popup.                                      |
+
+`Popup` includes the portal and positioner. Menu items include the row layout and selection indicators. Supply labels as children and use `startIcon`, `endIcon`, and `description` for supporting content.
+
 ## Uncontrolled state
 
 Use `defaultOpen` to set the initial visibility. The menu owns subsequent changes from its trigger, item selection, and dismissal interactions.
@@ -77,6 +104,18 @@ export const RecordMenu = ({ onDuplicate, onDelete }: RecordMenuProps) => {
 ## Selection and submenus
 
 Item selection is independent of popup visibility. Checkbox items use `defaultChecked` or `checked` with `onCheckedChange`. Radio groups use `defaultValue` or `value` with `onValueChange`.
+
+For a submenu, place `SubmenuRoot` inside the parent popup, with its own trigger and popup. Each nested popup retains its own positioning and keyboard behavior.
+
+```text
+Menu.Popup
+└── Menu.SubmenuRoot
+    ├── Menu.SubmenuTrigger
+    └── Menu.Popup
+        └── Menu.RadioGroup
+            ├── Menu.RadioItem
+            └── Menu.RadioItem
+```
 
 ### Uncontrolled item state
 
@@ -147,17 +186,36 @@ export const ViewMenu = () => {
 
 Checkbox and radio items keep the popup open by default so users can adjust options. Use `closeOnClick` to change that behavior. Nest a `SubmenuRoot`, `SubmenuTrigger`, and `Popup` inside a parent popup for submenus. Each `SubmenuRoot` has its own `defaultOpen`, `open`, and `onOpenChange` props, independent of the parent menu.
 
-## Parts and interaction
+## Compose a trigger
 
-| Part                            | Purpose                                      |
-| ------------------------------- | -------------------------------------------- |
-| `Root`, `Trigger`, `Popup`      | Own, open, and position the menu.            |
-| `Item`                          | Runs an action.                              |
-| `CheckboxItem`                  | Toggles an independent boolean option.       |
-| `RadioGroup`, `RadioItem`       | Coordinate mutually exclusive options.       |
-| `Group`, `GroupLabel`           | Label a group of related items.              |
-| `Separator`                     | Separates groups.                            |
-| `SubmenuRoot`, `SubmenuTrigger` | Coordinate a nested menu with its own popup. |
+Use `render` to make a Twenty UI `Button` the trigger. The menu supplies the button's activation handlers and accessibility attributes.
+
+```tsx
+import { IconCopy, IconTrash } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { Menu } from 'twenty-ui/primitives/surfaces';
+
+type RecordMenuProps = { onDuplicate: () => void; onDelete: () => void };
+
+export const RecordMenu = ({ onDuplicate, onDelete }: RecordMenuProps) => (
+  <Menu.Root>
+    <Menu.Trigger render={<Button variant="outline">Record actions</Button>} />
+    <Menu.Popup>
+      <Menu.Item startIcon={<IconCopy />} onClick={onDuplicate}>
+        Duplicate
+      </Menu.Item>
+      <Menu.Separator />
+      <Menu.Item startIcon={<IconTrash />} color="danger" onClick={onDelete}>
+        Delete
+      </Menu.Item>
+    </Menu.Popup>
+  </Menu.Root>
+);
+```
+
+Put `Button` in the trigger's `render` prop to preserve a single interactive control. For custom wrapper components, [forward the supplied props and ref](/ui/primitives/overview#custom-components).
+
+## Keyboard and placement
 
 Arrow keys move through the items, including disabled ones, which receive focus but cannot be selected; typeahead finds items by their text. Enter or Space selects an item. Escape closes the menu and returns focus to its trigger. Use clear text labels even when items have icons.
 

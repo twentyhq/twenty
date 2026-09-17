@@ -740,7 +740,7 @@ import { Status, Tag } from 'twenty-ui/primitives/data-display';
 const StyledWidget = () => {
   return (
     <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
-      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Button onClick={() => alert('Clicked!')}>Click me</Button>
       <Tag color="green">Active</Tag>
       <Status color="green">Online</Status>
     </div>

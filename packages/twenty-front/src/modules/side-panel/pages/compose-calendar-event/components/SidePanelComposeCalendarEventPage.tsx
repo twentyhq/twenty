@@ -14,7 +14,8 @@ import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconCalendarEvent, IconTrash } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -95,23 +96,23 @@ export const SidePanelComposeCalendarEventPage = () => {
         actions={[
           <IconButton
             key="discard"
-            size="small"
-            variant="primary"
-            Icon={IconTrash}
-            ariaLabel={t`Discard`}
+            size="sm"
+            variant="outline"
+            aria-label={t`Discard`}
             onClick={goBackFromSidePanel}
-          />,
+          >
+            <IconTrash />
+          </IconButton>,
           <Button
             key="create"
-            size="small"
-            variant="primary"
-            accent="blue"
-            title={t`Create event`}
-            Icon={IconCalendarEvent}
+            size="sm"
+            startIcon={<IconCalendarEvent />}
             hotkeys={[getOsControlSymbol(), '⏎']}
             onClick={composerState.handleCreate}
             disabled={!composerState.canCreate}
-          />,
+            variant="solid"
+            color="accent"
+          >{t`Create event`}</Button>,
         ]}
       />
     </StyledContainer>

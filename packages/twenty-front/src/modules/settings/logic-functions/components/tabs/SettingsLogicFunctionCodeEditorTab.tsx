@@ -38,14 +38,13 @@ export const SettingsLogicFunctionCodeEditorTab = ({
   );
   const TestButton = (
     <Button
-      title={t`Test`}
-      variant="primary"
-      accent="blue"
-      size="small"
-      Icon={IconPlayerPlay}
+      size="sm"
+      startIcon={<IconPlayerPlay />}
       disabled={isTesting}
       onClick={handleExecute}
-    />
+      variant="solid"
+      color="accent"
+    >{t`Test`}</Button>
   );
 
   const HeaderTabList = (

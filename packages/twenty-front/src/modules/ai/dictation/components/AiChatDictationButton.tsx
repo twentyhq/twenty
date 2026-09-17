@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { IconMicrophone } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 
 import { useDictation } from '@/ai/dictation/hooks/useDictation';
 
@@ -15,12 +15,13 @@ export const AiChatDictationButton = () => {
 
   return (
     <IconButton
-      variant="tertiary"
-      size="small"
-      accent={isRecording ? 'danger' : 'default'}
+      variant="ghost"
+      size="sm"
+      color={isRecording ? 'danger' : 'neutral'}
       onClick={toggleDictation}
-      Icon={IconMicrophone}
-      ariaLabel={ariaLabel}
-    />
+      aria-label={ariaLabel}
+    >
+      <IconMicrophone />
+    </IconButton>
   );
 };

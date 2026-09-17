@@ -154,14 +154,13 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       ]}
       actionButton={
         <Button
-          Icon={IconTrash}
-          title={t`Delete`}
-          variant="secondary"
-          accent="danger"
-          size="small"
+          startIcon={<IconTrash />}
+          size="sm"
           disabled={deleting}
           onClick={() => openModal(DELETE_EMAIL_GROUP_MODAL_ID)}
-        />
+          variant="outline"
+          color="danger"
+        >{t`Delete`}</Button>
       }
     >
       <SettingsPageContainer>
@@ -192,15 +191,14 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
               />
             </StyledInputContainer>
             <Button
-              Icon={IconCopy}
-              title={t`Copy`}
+              startIcon={<IconCopy />}
               onClick={() =>
                 copyToClipboard(
                   forwardingAddress,
                   t`Forwarding address copied to clipboard`,
                 )
               }
-            />
+            >{t`Copy`}</Button>
           </StyledInputRow>
         </Section>
         {isNonEmptyString(channel.displayName) && (
@@ -251,7 +249,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
         subtitle={t`Are you sure you want to delete ${sourceHandle}? Inbound mail forwarded to this address and outbound replies from it will stop working.`}
         onConfirmClick={handleDelete}
         confirmButtonText={t`Delete`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
         loading={deleting}
       />
     </SettingsPageLayout>

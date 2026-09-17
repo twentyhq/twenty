@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { Menu } from '@base-ui/react/menu';
 import { CalendarEventIndicator } from './CalendarEventIndicator';
-import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import { IconButton } from '@ui/components/IconButton/IconButton';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { MenuItem } from '@ui/primitives/navigation/MenuItem/MenuItem';
 import styles from './MeetingRow.module.scss';
@@ -68,11 +68,12 @@ export const MeetingRow = ({
           <Menu.Trigger
             render={
               <IconButton
-                variant="tertiary"
-                Icon={IconDotsVertical}
-                size="medium"
-                ariaLabel={i18n._('Meeting options')}
-              />
+                variant="ghost"
+                size="md"
+                aria-label={i18n._('Meeting options')}
+              >
+                <IconDotsVertical />
+              </IconButton>
             }
           />
           <Menu.Portal>
@@ -115,11 +116,12 @@ export const MeetingRow = ({
             meetingId: meeting.id,
           })
         }
-        variant="secondary"
-        size="medium"
-        title={i18n._('Join')}
-        Icon={IconArrowUpRight}
-      />
+        variant="outline"
+        size="md"
+        startIcon={<IconArrowUpRight />}
+      >
+        {i18n._('Join')}
+      </Button>
     </div>
   </div>
 );

@@ -15,6 +15,30 @@ Use `Select` for a form value chosen from a list. Use [Menu](/ui/primitives/surf
   height={400}
 />
 
+## Anatomy
+
+Keep the trigger and popup inside the same `Select.Root`. Put option labels directly inside `Select.Item`.
+
+```text
+Select.Root
+├── Select.Trigger
+│   └── Select.Value
+└── Select.Popup
+    └── Select.Item
+```
+
+| Part                  | Requirement                         | Purpose                                                                              |
+| --------------------- | ----------------------------------- | ------------------------------------------------------------------------------------ |
+| `Root`                | Required                            | Owns selection, open state, and form integration.                                    |
+| `Trigger`             | Required for a trigger-based select | Opens the list and displays its current value.                                       |
+| `Value`               | Optional                            | Renders the selected label or a placeholder; you can provide custom trigger content. |
+| `Popup`               | Required for the option list        | Renders the positioned, portaled list.                                               |
+| `Item`                | One per option                      | Provides selection behavior and an option label.                                     |
+| `Group`, `GroupLabel` | Optional                            | Group related options under a label.                                                 |
+| `Separator`           | Optional                            | Separates groups visually.                                                           |
+
+Twenty UI includes the chevron in `Trigger`, the option text and checkmark in `Item`, and the portal and positioner in `Popup`. Compose these public parts directly; placement and portal options belong on `Popup`.
+
 ## Uncontrolled state
 
 Use `defaultValue` to set the initial priority. The select owns subsequent selection changes.
@@ -166,17 +190,44 @@ export const PrioritySelect = () => {
 };
 ```
 
-## Parts and placement
+## Compose with a field
 
-| Part                  | Purpose                                                    |
-| --------------------- | ---------------------------------------------------------- |
-| `Root`                | Owns selection, open state, and form integration.          |
-| `Trigger`             | Opens the list and supports `sm` or `md` sizing.           |
-| `Value`               | Displays the selected label or a placeholder.              |
-| `Popup`               | Provides the portal and positioned list.                   |
-| `Item`                | Represents an option, with optional icons and description. |
-| `Group`, `GroupLabel` | Group related options under an accessible label.           |
-| `Separator`           | Separates groups visually.                                 |
+Wrap the select in `Field.Root` to associate its trigger with a visible label and helper text. The field handles labeling and validation; the select keeps its own selection and popup state.
+
+```tsx
+import { Field, Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PriorityField = () => (
+  <Field.Root name="priority">
+    <Field.Label>Priority</Field.Label>
+    <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
+      <Select.Trigger>
+        <Select.Value />
+      </Select.Trigger>
+      <Select.Popup>
+        {PRIORITIES.map(({ value, label }) => (
+          <Select.Item key={value} value={value}>
+            {label}
+          </Select.Item>
+        ))}
+      </Select.Popup>
+    </Select.Root>
+    <Field.Description>
+      Choose how soon this record needs attention.
+    </Field.Description>
+  </Field.Root>
+);
+```
+
+## Placement and keyboard
+
+Set `size="sm"` or `size="md"` on `Trigger`. Customize option content with `Item.startIcon`, `Item.endIcon`, and `Item.description` while keeping the option's label in its children.
 
 `Popup` defaults to `side="bottom"`, `align="start"`, and `sideOffset={8}`. Set `alignItemWithTrigger` to align the selected option over the trigger. It uses the [theme's portal container](/ui/theming#scope-an-override) unless you provide `container`.
 
