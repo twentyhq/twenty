@@ -12,8 +12,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   IconAt,
@@ -41,7 +41,7 @@ export const SettingsAccountsRowDropdownMenu = ({
   const accountHandle = account.handle;
 
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const navigate = useNavigateSettings();
   const { closeDropdown } = useCloseDropdown();
@@ -141,15 +141,15 @@ export const SettingsAccountsRowDropdownMenu = ({
                 text={t`Remove account`}
                 onClick={() => {
                   closeDropdown(dropdownId);
-                  openModal(deleteAccountModalId);
+                  openDialog(deleteAccountModalId);
                 }}
               />
             </DropdownMenuItemsContainer>
           </DropdownContent>
         }
       />
-      <ConfirmationModal
-        modalInstanceId={deleteAccountModalId}
+      <ConfirmationDialog
+        dialogId={deleteAccountModalId}
         title={t`Data deletion`}
         subtitle={
           <Trans>

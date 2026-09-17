@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { RESET_RECORD_PAGE_LAYOUT_MODAL_ID } from '@/layout-customization/constants/ResetRecordPageLayoutModalId';
 import { useRefreshPageLayoutAfterReset } from '@/page-layout/hooks/useRefreshPageLayoutAfterReset';
 import { useResetPageLayoutToDefault } from '@/page-layout/hooks/useResetPageLayoutToDefault';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 
 type LayoutCustomizationBarResetConfirmationModalProps = {
   pageLayoutId: string;
@@ -24,8 +24,8 @@ export const LayoutCustomizationBarResetConfirmationModal = ({
   };
 
   return (
-    <ConfirmationModal
-      modalInstanceId={RESET_RECORD_PAGE_LAYOUT_MODAL_ID}
+    <ConfirmationDialog
+      dialogId={RESET_RECORD_PAGE_LAYOUT_MODAL_ID}
       title={t`Reset to default`}
       subtitle={t`This action cannot be undone.`}
       onConfirmClick={handleConfirmReset}

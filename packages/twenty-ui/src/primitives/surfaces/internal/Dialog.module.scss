@@ -27,6 +27,14 @@
     display: none;
   }
 
+  &[data-backdrop-hidden='true'] {
+    pointer-events: none;
+
+    > .popup {
+      pointer-events: auto;
+    }
+  }
+
   &:has(> [data-size='fullscreen']) {
     padding: 0;
   }
