@@ -101,6 +101,40 @@ describe('FileUploader.uploadFiles', () => {
     });
   });
 
+  it('should always send forward-slash resource paths to the api, even on windows', async () => {
+    const nestedBuiltPath = join(
+      OUTPUT_DIR,
+      'front-components',
+      'main-page.tsx',
+    );
+    const content = 'content of main-page.tsx';
+
+    await mkdir(join(appPath, OUTPUT_DIR, 'front-components'), {
+      recursive: true,
+    });
+    await writeFile(join(appPath, nestedBuiltPath), content);
+
+    mockCreateApplicationFileUploads.mockResolvedValueOnce({
+      success: true,
+      data: { targets: [], errors: [] },
+    });
+
+    await buildUploader().uploadFiles([
+      { builtPath: nestedBuiltPath, fileFolder: FileFolder.BuiltLogicFunction },
+    ]);
+
+    expect(mockCreateApplicationFileUploads).toHaveBeenCalledWith({
+      applicationUniversalIdentifier: 'application-uid',
+      files: [
+        {
+          fileFolder: FileFolder.BuiltLogicFunction,
+          filePath: 'front-components/main-page.tsx',
+          size: content.length,
+        },
+      ],
+    });
+  });
+
   it('should report the failing file and confirm the rest when one upload fails', async () => {
     mockPutFileToUploadUrl.mockRejectedValueOnce(new Error('storage refused'));
 
