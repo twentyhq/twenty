@@ -140,7 +140,7 @@ export const SettingsApplicationConnectionDetail = () => {
     SettingsPath.ApplicationDetail,
     { applicationId },
     undefined,
-    'settings',
+    'general',
   );
   const detailPath = getSettingsPath(SettingsPath.ApplicationConnectionDetail, {
     applicationId,
@@ -187,7 +187,7 @@ export const SettingsApplicationConnectionDetail = () => {
       { applicationId },
       undefined,
       { replace: true },
-      'settings',
+      'general',
     );
   };
 
