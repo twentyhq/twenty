@@ -2,10 +2,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
+import { Section } from 'twenty-ui/components';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
-import { HorizontalSeparator, Section } from 'twenty-ui/primitives/layout';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 
@@ -63,8 +63,8 @@ export const SettingsUnsubscribePreview = () => {
   const hasPublicTopics = publicTopics.length > 0;
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Unsubscribe page`}
         description={
           hasPublicTopics
@@ -76,7 +76,7 @@ export const SettingsUnsubscribePreview = () => {
         {!loading && (
           <StyledCard rounded>
             <StyledHeader>
-              <H2Title
+              <Section.Header
                 title={t`Do you want to unsubscribe?`}
                 description={
                   hasPublicTopics
@@ -120,6 +120,6 @@ export const SettingsUnsubscribePreview = () => {
           </StyledCard>
         )}
       </StyledViewport>
-    </Section>
+    </Section.Root>
   );
 };

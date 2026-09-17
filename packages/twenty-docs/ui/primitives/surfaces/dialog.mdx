@@ -1,0 +1,39 @@
+---
+title: Dialog
+description: Give a modal a visible heading and accessible name with Dialog.Title.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DialogReference from '/snippets/ui/generated/surfaces/dialog.mdx';
+
+Use `Dialog.Title` inside Twenty UI's existing `Modal`. It provides the shared modal heading style and automatically connects the heading to the modal's accessible name. The public `Dialog` namespace currently exports `Title`.
+
+<StoryEmbed
+  storyId="ui-surfaces-dialog--documentation"
+  title="Dialog title example"
+  height={300}
+/>
+
+## Add a modal title
+
+```tsx
+import { Dialog, Modal } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type CreditModalProps = { isOpen: boolean };
+
+export const CreditModal = ({ isOpen }: CreditModalProps) => (
+  <Modal isOpen={isOpen} padding="large" autoHeight>
+    <Dialog.Title>Grant credits</Dialog.Title>
+    <Text>Add credits to this workspace.</Text>
+  </Modal>
+);
+```
+
+The title defaults to an `h2` with large type, primary text color, centered alignment, and spacing-4 below it. Use `level` to change the document outline independently of `size`. Native `className` and `style` can adjust alignment and spacing.
+
+Native attributes, refs, and `render` are forwarded to the heading. Keep a heading element when using `render`, and keep the title inside `Modal` so its accessible naming relationship is available.
+
+## Props
+
+<DialogReference />

@@ -189,7 +189,7 @@ export const useNavigationMenuItemAddOptions = ({
     }
     if (
       targetStep === 'object' ||
-      (targetStep === 'view' && !objectId && !isSearchingAllItems)
+      (targetStep === 'view' && !isDefined(objectId) && !isSearchingAllItems)
     ) {
       const objects =
         targetStep === 'object'

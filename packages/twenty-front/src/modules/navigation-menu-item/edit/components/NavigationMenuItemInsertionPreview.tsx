@@ -76,7 +76,7 @@ export const NavigationMenuItemInsertionPreview = ({
         label={t`Select a menu item`}
         Icon={getIcon('IconFold')}
         variant="placeholder"
-        indentationLevel={folderId ? 2 : 1}
+        indentationLevel={isDefined(folderId) ? 2 : 1}
         subItemState={subItemState}
       />
     </StyledPreview>

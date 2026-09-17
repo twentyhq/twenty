@@ -10,9 +10,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
 
@@ -53,8 +52,8 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
   return (
     <StyledContentContainer>
       {hasRelations && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Relations`}
             description={t`Relation between this object and other objects`}
           />
@@ -75,10 +74,10 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
               >{t`Add relation`}</NavigationButton>
             )}
           </StyledButtonContainer>
-        </Section>
+        </Section.Root>
       )}
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Fields`}
           description={t`Customise the fields available in the ${objectLabelSingular} views and their display order in the ${objectLabelSingular} detail view and menus.`}
         />
@@ -99,7 +98,7 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
             >{t`Add Field`}</NavigationButton>
           )}
         </StyledButtonContainer>
-      </Section>
+      </Section.Root>
     </StyledContentContainer>
   );
 };

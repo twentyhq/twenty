@@ -19,10 +19,9 @@ import { useParams } from 'react-router-dom';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { AppPath, RelationType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconAlertTriangle } from 'twenty-ui/icon';
 import { Callout, useToast } from 'twenty-ui/primitives/feedback';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { IndexType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -157,28 +156,28 @@ export const SettingsObjectNewIndex = () => {
         }
       >
         <SettingsPageContainer>
-          <Section>
+          <Section.Root>
             <Callout
               variant="warning"
               Icon={IconAlertTriangle}
               title={t`Use indexes sparingly`}
               description={t`Each index speeds up reads on the fields it covers, but slows down every insert and update, and uses disk space. Only add an index when you know which queries it serves.`}
             />
-          </Section>
-          <Section>
-            <H2Title
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
               title={t`Fields`}
               description={t`Pick one or more fields. The order you select them in becomes the column order in the index — important for composite queries. For composite fields like Address, pick the specific sub-column to index.`}
             />
             <SettingsObjectIndexFieldsForm indexableFields={indexableFields} />
-          </Section>
-          <Section>
-            <H2Title
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
               title={t`Options`}
               description={t`Pick the index type. BTREE covers most queries; GIN is for full-text and JSONB.`}
             />
             <SettingsObjectIndexOptionsForm />
-          </Section>
+          </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
     </FormProvider>
