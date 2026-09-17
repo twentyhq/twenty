@@ -25,7 +25,7 @@ export const useRemoveChatThreadParticipant = (threadId: string) => {
         variables: { threadId, userWorkspaceId },
       });
 
-      if (data?.removeChatThreadParticipant !== true) {
+      if (!data?.removeChatThreadParticipant) {
         return false;
       }
 

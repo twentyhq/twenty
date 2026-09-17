@@ -651,12 +651,22 @@ export class AgentChatChannelService {
         workspaceId,
       );
 
-      for (const { thread, recipients: threadRecipients } of threads) {
+      for (const {
+        thread,
+        recipients: threadRecipients,
+        participantUserWorkspaceIds,
+      } of threads) {
+        // A new member who already reads the thread as a participant keeps
+        // it rather than being told about it a second time.
+        const wasAlreadyReader =
+          participantUserWorkspaceIds.includes(userWorkspaceId);
+
         await this.agentChatService.broadcastThreadAccessChange({
           thread,
-          recipientsBefore: isDefined(threadRecipients)
-            ? threadRecipients.filter((id) => id !== userWorkspaceId)
-            : undefined,
+          recipientsBefore:
+            isDefined(threadRecipients) && !wasAlreadyReader
+              ? threadRecipients.filter((id) => id !== userWorkspaceId)
+              : threadRecipients,
           recipientsAfter: threadRecipients,
           updatedFields: ['channelId'],
         });
