@@ -73,15 +73,13 @@ const buildService = ({
         ),
       ),
     delete: jest.fn().mockResolvedValue({ affected: 1 }),
-    insertAndReturnOne: jest
-      .fn()
-      .mockImplementation((_workspaceId, values) =>
-        Promise.resolve({
-          id: 'new-member',
-          ...values,
-          workspaceId: WORKSPACE_ID,
-        }),
-      ),
+    insertAndReturnOne: jest.fn().mockImplementation((_workspaceId, values) =>
+      Promise.resolve({
+        id: 'new-member',
+        ...values,
+        workspaceId: WORKSPACE_ID,
+      }),
+    ),
     createQueryBuilder: jest.fn().mockReturnValue({
       where: jest.fn().mockReturnThis(),
       andWhere: jest.fn().mockReturnThis(),
