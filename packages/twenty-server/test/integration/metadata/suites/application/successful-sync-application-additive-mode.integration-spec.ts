@@ -117,7 +117,7 @@ const findSettingsTabByUniversalIdentifier = async (
   const [frontComponent] = await globalThis.testDataSource.query(
     `SELECT "id", "settingsTab"
      FROM core."frontComponent"
-     WHERE "universalIdentifier" = $1 AND "deletedAt" IS NULL`,
+     WHERE "universalIdentifier" = $1`,
     [universalIdentifier],
   );
 
