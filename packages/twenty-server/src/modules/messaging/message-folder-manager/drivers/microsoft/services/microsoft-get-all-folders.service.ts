@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   type PageCollection,
   PageIterator,
+  type PageIteratorCallback,
 } from '@microsoft/microsoft-graph-client';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -50,34 +51,36 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
       const microsoftClient =
         await this.microsoftOAuth2ClientProvider.getClient(connectedAccount.id);
 
-      const handleFetchError = (error: Error): never => {
-        this.logger.error(
-          `Connected account ${connectedAccount.id}: Error fetching folders: ${error.message}`,
-        );
-
-        return this.microsoftMessageListFetchErrorHandler.handleError(error);
-      };
-
       const firstPage: PageCollection = await microsoftClient
         .api('/me/mailFolders')
         .version('beta')
         .top(MESSAGING_MICROSOFT_MAIL_FOLDERS_LIST_MAX_RESULT)
         .get()
-        .catch(handleFetchError);
+        .catch((error) => {
+          this.logger.error(
+            `Connected account ${connectedAccount.id}: Error fetching folders: ${error.message}`,
+          );
+
+          return this.microsoftMessageListFetchErrorHandler.handleError(error);
+        });
 
       const folders: MicrosoftGraphFolder[] = [];
 
-      await new PageIterator(
+      const callback: PageIteratorCallback = (folder: MicrosoftGraphFolder) => {
+        folders.push(folder);
+
+        return true;
+      };
+
+      const pageIterator = new PageIterator(
         microsoftClient,
         firstPage,
-        (folder: MicrosoftGraphFolder) => {
-          folders.push(folder);
+        callback,
+      );
 
-          return true;
-        },
-      )
-        .iterate()
-        .catch(handleFetchError);
+      await pageIterator.iterate().catch((error: unknown) => {
+        this.microsoftMessageListFetchErrorHandler.handleError(error);
+      });
 
       const rootFolderId = this.getRootFolderId(folders);
       const folderInfos: DiscoveredMessageFolder[] = [];
