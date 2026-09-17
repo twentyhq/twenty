@@ -1,5 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import {
+  type PageCollection,
+  PageIterator,
+} from '@microsoft/microsoft-graph-client';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -46,20 +50,37 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
       const microsoftClient =
         await this.microsoftOAuth2ClientProvider.getClient(connectedAccount.id);
 
-      const response = await microsoftClient
+      const handleFetchError = (error: Error): never => {
+        this.logger.error(
+          `Connected account ${connectedAccount.id}: Error fetching folders: ${error.message}`,
+        );
+
+        return this.microsoftMessageListFetchErrorHandler.handleError(error);
+      };
+
+      const firstPage: PageCollection = await microsoftClient
         .api('/me/mailFolders')
         .version('beta')
         .top(MESSAGING_MICROSOFT_MAIL_FOLDERS_LIST_MAX_RESULT)
         .get()
-        .catch((error) => {
-          this.logger.error(
-            `Connected account ${connectedAccount.id}: Error fetching folders: ${error.message}`,
-          );
+        .catch(handleFetchError);
 
-          return this.microsoftMessageListFetchErrorHandler.handleError(error);
-        });
+      // Any failing page fails the whole discovery: a partial list would mark
+      // the missing folders for deletion.
+      const folders: MicrosoftGraphFolder[] = [];
 
-      const folders = (response.value as MicrosoftGraphFolder[]) || [];
+      await new PageIterator(
+        microsoftClient,
+        firstPage,
+        (folder: MicrosoftGraphFolder) => {
+          folders.push(folder);
+
+          return true;
+        },
+      )
+        .iterate()
+        .catch(handleFetchError);
+
       const rootFolderId = this.getRootFolderId(folders);
       const folderInfos: DiscoveredMessageFolder[] = [];
 
