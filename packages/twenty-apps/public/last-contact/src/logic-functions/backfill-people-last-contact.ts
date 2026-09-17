@@ -10,6 +10,10 @@ import {
   buildPersonAggregates,
   buildPersonUpdateData,
 } from 'src/utils/person-last-contact-aggregation';
+import {
+  type RecordUpsert,
+  upsertRecordsInBatches,
+} from 'src/utils/upsert-records-in-batches';
 
 const handler = async ({ batchId }: BackfillBatchPayload): Promise<object> => {
   const client = new CoreApiClient();
@@ -32,6 +36,7 @@ const handler = async ({ batchId }: BackfillBatchPayload): Promise<object> => {
   }
 
   const aggByPersonId = await buildPersonAggregates(client, personIds);
+  const upserts: RecordUpsert[] = [];
 
   for (const personId of personIds) {
     const agg = aggByPersonId.get(personId);
@@ -41,12 +46,10 @@ const handler = async ({ batchId }: BackfillBatchPayload): Promise<object> => {
       continue;
     }
 
-    await executeWithRetry(() =>
-      client.mutation({
-        updatePerson: { __args: { id: personId, data }, id: true },
-      }),
-    );
+    upserts.push({ id: personId, ...data });
   }
+
+  await upsertRecordsInBatches(client, 'createPeople', upserts);
 
   return { batchId, count: personIds.length };
 };

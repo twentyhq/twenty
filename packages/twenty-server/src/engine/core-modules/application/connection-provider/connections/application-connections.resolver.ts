@@ -1,4 +1,9 @@
-import { UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
+import {
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+  UseFilters,
+} from '@nestjs/common';
 import { Args, ID, Mutation, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -16,11 +21,13 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
 @UseInterceptors(ConnectionProviderGraphqlApiExceptionInterceptor)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class ApplicationConnectionsResolver {
   constructor(
     private readonly listService: ApplicationConnectionsListService,

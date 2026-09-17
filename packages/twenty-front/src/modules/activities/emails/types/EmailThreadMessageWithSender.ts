@@ -2,5 +2,5 @@ import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMe
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 
 export type EmailThreadMessageWithSender = EmailThreadMessage & {
-  sender: EmailThreadMessageParticipant;
+  sender?: EmailThreadMessageParticipant;
 };

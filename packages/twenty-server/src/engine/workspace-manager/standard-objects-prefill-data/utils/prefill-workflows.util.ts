@@ -886,6 +886,7 @@ export const prefillWorkflows = async (
       'status',
       'workflowId',
       'coreWorkflowId',
+      'workspaceWorkflowVersionId',
     ])
     .orIgnore()
     .values([
@@ -899,6 +900,7 @@ export const prefillWorkflows = async (
         status: 'ACTIVE',
         workflowId: quickLeadWorkflowId,
         coreWorkflowId: coreQuickLeadWorkflowId,
+        workspaceWorkflowVersionId: quickLeadWorkflowVersionId,
       },
       {
         id: coreCreateCompanyWorkflowVersionId,
@@ -910,6 +912,7 @@ export const prefillWorkflows = async (
         status: 'ACTIVE',
         workflowId: createCompanyWorkflowId,
         coreWorkflowId: coreCreateCompanyWorkflowId,
+        workspaceWorkflowVersionId: createCompanyWorkflowVersionId,
       },
     ])
     .execute();

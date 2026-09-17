@@ -10,9 +10,11 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -40,7 +42,10 @@ import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/eve
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard, NoPermissionGuard)
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
-@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
+@UseFilters(
+  PreventNestToAutoLogGraphqlErrorsFilter,
+  AuthGraphqlApiExceptionFilter,
+)
 export class LogicFunctionResolver {
   constructor(
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
@@ -75,6 +80,7 @@ export class LogicFunctionResolver {
   }
 
   @Query(() => [LogicFunctionDTO])
+  @AllowSuspendedWorkspace()
   async findManyLogicFunctions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO[]> {
