@@ -51,20 +51,36 @@ runs:
 
         echo "Current version: $CURRENT_VERSION (directory: $CURRENT_DIR)"
 
-        # Between the tag push and the version bump PR, TWENTY_CURRENT_VERSION
-        # still names the released version. Once its tag exists, its directory
-        # is a previous version like any other: the tag already shipped it.
-        IS_CURRENT_VERSION_RELEASED=false
-
-        if git ls-remote --exit-code --tags origin "refs/tags/twenty/v${CURRENT_VERSION}" >/dev/null; then
-          IS_CURRENT_VERSION_RELEASED=true
-          echo "twenty/v${CURRENT_VERSION} is already tagged: ${CURRENT_DIR} is frozen until the version bump lands."
-        fi
-
         DIFF=$(git diff --name-status --find-renames "$BASE_SHA" HEAD -- "$COMMANDS_ROOT")
 
         ADDED_FILES=$(echo "$DIFF" | awk '$1 == "A" { print $2 } $1 ~ /^[RC]/ { print $3 }')
         MODIFIED_FILES=$(echo "$DIFF" | awk '$1 == "M" { print $2 }')
+
+        # Between the tag push and the version bump PR, TWENTY_CURRENT_VERSION
+        # still names the released version. Once its tag exists, its directory
+        # is a previous version like any other: the tag already shipped it.
+        # The lookup only runs when the change touches that directory, and a
+        # lookup that cannot answer fails the check instead of passing it.
+        IS_CURRENT_VERSION_RELEASED=false
+
+        if echo "$ADDED_FILES $MODIFIED_FILES" | grep -qF "upgrade-version-command/${CURRENT_DIR}/"; then
+          LS_REMOTE_STATUS=0
+          git ls-remote --exit-code --tags origin "refs/tags/twenty/v${CURRENT_VERSION}" >/dev/null || LS_REMOTE_STATUS=$?
+
+          case "$LS_REMOTE_STATUS" in
+            0)
+              IS_CURRENT_VERSION_RELEASED=true
+              echo "twenty/v${CURRENT_VERSION} is already tagged: ${CURRENT_DIR} is frozen until the version bump lands."
+              ;;
+            2)
+              echo "twenty/v${CURRENT_VERSION} is not tagged yet: ${CURRENT_DIR} is writable."
+              ;;
+            *)
+              echo "::error::Could not determine whether twenty/v${CURRENT_VERSION} is tagged (git ls-remote exited ${LS_REMOTE_STATUS}). Re-run the job."
+              exit 1
+              ;;
+          esac
+        fi
 
         ADDED_OFFENDERS=""
         MODIFIED_OFFENDERS=""
