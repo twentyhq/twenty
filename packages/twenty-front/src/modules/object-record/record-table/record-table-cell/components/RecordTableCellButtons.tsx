@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { LightIconButton } from 'twenty-ui/components';
@@ -34,10 +35,12 @@ export const RecordTableCellButtons = ({
 }: {
   buttons: RecordTableCellButtonsProps;
 }) => {
+  const { t } = useLingui();
+
   return (
     <AnimatedContainer>
       <StyledButtonContainer>
-        <ButtonGroup attached={false}>
+        <ButtonGroup aria-label={t`Cell controls`} attached={false}>
           {buttons.map(({ Icon, onClick, ariaLabel }, index) => (
             <LightIconButton
               key={index}

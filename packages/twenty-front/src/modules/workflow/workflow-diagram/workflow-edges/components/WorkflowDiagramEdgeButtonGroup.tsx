@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -22,13 +23,19 @@ export const WorkflowDiagramEdgeButtonGroup = ({
   selected = false,
   children,
 }: WorkflowDiagramEdgeButtonGroupProps) => {
+  const { t } = useLingui();
   const Container = selected
     ? StyledSelectedButtonGroupContainer
     : StyledButtonGroupContainer;
 
   return (
     <Container>
-      <ButtonGroup framed attached={false} className="nodrag nopan">
+      <ButtonGroup
+        aria-label={t`Workflow connection controls`}
+        framed
+        attached={false}
+        className="nodrag nopan"
+      >
         {children}
       </ButtonGroup>
     </Container>

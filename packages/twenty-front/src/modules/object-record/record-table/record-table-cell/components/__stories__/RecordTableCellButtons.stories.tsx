@@ -24,7 +24,7 @@ export const Default: Story = {
     const unavailable = canvas.getByRole('button', {
       name: 'Unavailable action',
     });
-    const group = canvas.getByRole('group');
+    const group = canvas.getByRole('group', { name: 'Cell controls' });
     const frame = group.parentElement;
     if (!isDefined(frame)) {
       throw new Error('Missing table action frame');
