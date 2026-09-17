@@ -1,4 +1,4 @@
-import { getNativeMimeTypesForModalities } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-native-mime-types-for-modalities.util';
+import { getNativeMimeTypesForModalities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-mime-types-for-modalities.util';
 
 describe('getNativeMimeTypesForModalities', () => {
   it('returns an empty set when no modalities are provided', () => {
