@@ -1,45 +1,59 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
+import { useNextInterval } from '@/settings/billing/hooks/useNextInterval';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
-import { useSwitchBillingPlan } from '@/settings/billing/hooks/useSwitchBillingPlan';
+import { type BillingSubscriptionChange } from '@/settings/billing/types/billingSubscriptionChange.type';
 import { type SettingsBillingPlanAction } from '@/settings/billing/types/settingsBillingPlanAction.type';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
+import { getBillingPlanCell } from '@/settings/billing/utils/getBillingPlanCell';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconArrowDown, IconArrowUp, IconCheck } from 'twenty-ui/icon';
+import {
+  IconArrowDown,
+  IconArrowUp,
+  IconCheck,
+  IconCircleX,
+} from 'twenty-ui/icon';
 import {
   BillingPlanKey,
   PermissionFlagType,
+  SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
 
 type UseBillingPlanActionsParams = {
+  billingInterval: SettingsBillingPlanInterval;
   currentPlanKey: BillingPlanKey;
+  isApplyingBillingSubscriptionChange: boolean;
+  onBillingSubscriptionChangeRequested: (
+    change: BillingSubscriptionChange,
+  ) => void;
 };
 
 export const useBillingPlanActions = ({
+  billingInterval,
   currentPlanKey,
+  isApplyingBillingSubscriptionChange,
+  onBillingSubscriptionChangeRequested,
 }: UseBillingPlanActionsParams) => {
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const subscriptionStatus = useSubscriptionStatus();
-  const { openModal } = useModal();
   const { nextPlan } = useNextPlan();
+  const { nextInterval } = useNextInterval();
   const permissionMap = usePermissionFlagMap();
-
-  const { isSwitchingPlan, switchBillingPlan } = useSwitchBillingPlan();
 
   const { isBillingPortalSessionDisabled, openBillingPortal } =
     useBillingPortalSession(getSettingsPath(SettingsPath.BillingPlans));
 
   const currentBillingSubscription =
     currentWorkspace?.currentBillingSubscription;
+  const currentInterval = currentBillingSubscription?.interval;
   const hasPermissionToManageBilling =
     permissionMap[PermissionFlagType.BILLING] ?? false;
 
@@ -66,14 +80,74 @@ export const useBillingPlanActions = ({
     variant: 'outline',
   });
 
+  const createChangeAction = (
+    change: BillingSubscriptionChange,
+  ): SettingsBillingPlanAction => {
+    const action = {
+      disabled: isApplyingBillingSubscriptionChange,
+      isLoading: isApplyingBillingSubscriptionChange,
+      onClick: () => onBillingSubscriptionChangeRequested(change),
+    };
+    const upgradeAction = {
+      ...action,
+      Icon: IconArrowUp,
+      variant: 'solid',
+      color: 'accent',
+    } satisfies Partial<SettingsBillingPlanAction>;
+
+    switch (change.type) {
+      case 'SWITCH_PLAN':
+        return change.targetPlanKey === BillingPlanKey.ENTERPRISE
+          ? { ...upgradeAction, title: t`Upgrade to Organization` }
+          : {
+              ...action,
+              Icon: IconArrowDown,
+              title: t`Switch to Pro`,
+              variant: 'outline',
+            };
+      case 'SWITCH_INTERVAL':
+        return change.targetInterval === SubscriptionInterval.Year
+          ? { ...upgradeAction, title: t`Upgrade to annual` }
+          : {
+              ...action,
+              Icon: IconArrowDown,
+              title: t`Switch to monthly`,
+              variant: 'outline',
+            };
+      case 'CANCEL_PLAN_SWITCH':
+        return {
+          ...action,
+          Icon: IconCircleX,
+          title: t`Cancel plan switching`,
+          variant: 'outline',
+        };
+      case 'CANCEL_INTERVAL_SWITCH':
+        return {
+          ...action,
+          Icon: IconCircleX,
+          title: t`Cancel interval switching`,
+          variant: 'outline',
+        };
+    }
+  };
+
   const getPlanAction = (
     planKey: BillingPlanKey,
   ): SettingsBillingPlanAction => {
-    if (isSubscriptionCanceled) {
+    if (isSubscriptionCanceled || !isDefined(currentInterval)) {
       return createBillingPortalAction(t`Manage billing`);
     }
 
-    if (currentPlanKey === planKey) {
+    const cell = getBillingPlanCell({
+      currentInterval,
+      currentPlanKey,
+      interval: billingInterval,
+      planKey,
+      upcomingInterval: nextInterval ?? currentInterval,
+      upcomingPlanKey: nextPlan?.planKey ?? currentPlanKey,
+    });
+
+    if (cell.kind === 'current') {
       return {
         disabled: true,
         Icon: IconCheck,
@@ -82,7 +156,7 @@ export const useBillingPlanActions = ({
       };
     }
 
-    if (nextPlan?.planKey === planKey) {
+    if (cell.kind === 'scheduled') {
       return {
         disabled: true,
         title: t`Scheduled`,
@@ -106,30 +180,13 @@ export const useBillingPlanActions = ({
       };
     }
 
-    const isSwitchingToOrganizationPlan = planKey === BillingPlanKey.ENTERPRISE;
-
-    return {
-      disabled: isSwitchingPlan,
-      Icon: isSwitchingToOrganizationPlan ? IconArrowUp : IconArrowDown,
-      isLoading: isSwitchingPlan,
-      onClick: () =>
-        openModal(
-          isSwitchingToOrganizationPlan
-            ? BILLING_MODAL_IDS.switchBillingPlanToEnterprise
-            : BILLING_MODAL_IDS.switchBillingPlanToPro,
-        ),
-      title: isSwitchingToOrganizationPlan ? t`Upgrade` : t`Switch to Pro`,
-      variant: isSwitchingToOrganizationPlan ? 'solid' : 'outline',
-      color: isSwitchingToOrganizationPlan ? 'accent' : 'neutral',
-    };
+    return createChangeAction(cell.change);
   };
 
   return {
-    isSwitchingPlan,
     planActions: {
       [BillingPlanKey.PRO]: getPlanAction(BillingPlanKey.PRO),
       [BillingPlanKey.ENTERPRISE]: getPlanAction(BillingPlanKey.ENTERPRISE),
     },
-    switchBillingPlan,
   };
 };
