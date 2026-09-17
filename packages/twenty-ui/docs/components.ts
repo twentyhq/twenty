@@ -10,6 +10,8 @@ import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescription
 import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
+import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
+import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
   {
@@ -136,6 +138,16 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Popover/Popover.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/popover',
+  },
+  {
+    name: 'Tooltip',
+    source: 'primitives/surfaces/Tooltip/Tooltip.tsx',
+    entryPoint: 'twenty-ui/primitives/surfaces',
+    slug: 'surfaces/tooltip',
+    parts: ['Root', 'Trigger', 'Popup', 'Content', 'Provider'],
+    propDescriptions: TOOLTIP_PROP_DESCRIPTIONS,
+    propDefaults: { sideOffset: '10' },
+    partPropDescriptions: TOOLTIP_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'Toast',

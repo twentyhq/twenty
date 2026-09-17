@@ -5,7 +5,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { IconInfoCircle, IconRefresh, useIcons } from 'twenty-ui/icon';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip, Card } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
@@ -19,6 +19,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { type FindOneSkillQuery } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSkillDangerZone } from '~/pages/settings/ai/components/SettingsSkillDangerZone';
@@ -231,23 +232,20 @@ export const SettingsSkillFormContent = ({
                     fullWidth
                     RightIcon={() =>
                       apiNameTooltipText && (
-                        <>
+                        <Tooltip
+                          content={apiNameTooltipText}
+                          sideOffset={5}
+                          side="bottom"
+                          positionMethod="fixed"
+                          delay={TooltipDelay.shortDelay}
+                        >
                           <IconInfoCircle
                             id="info-circle-id-skill-name"
                             size={theme.icon.size.md}
                             color={theme.font.color.tertiary}
                             style={{ outline: 'none' }}
                           />
-                          <AppTooltip
-                            anchorSelect="#info-circle-id-skill-name"
-                            title={apiNameTooltipText}
-                            offset={5}
-                            noArrow
-                            place="bottom"
-                            positionStrategy="fixed"
-                            delay={TooltipDelay.shortDelay}
-                          />
-                        </>
+                        </Tooltip>
                       )
                     }
                   />

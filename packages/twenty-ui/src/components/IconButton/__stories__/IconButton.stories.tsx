@@ -2,7 +2,6 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { IconPlus, IconSearch } from '@ui/icon';
-import { TooltipDelay } from '@ui/primitives/surfaces/AppTooltip/AppTooltip';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
 import { type ButtonColor } from '@ui/primitives/input/Button/types/ButtonColor';
 import { type ButtonVariant } from '@ui/primitives/input/Button/types/ButtonVariant';
@@ -88,7 +87,7 @@ export const Link: Story = {
 
 export const Tooltip: Story = {
   ...Default,
-  args: { tooltip: 'Search records', tooltipDelay: TooltipDelay.noDelay },
+  args: { tooltip: 'Search records', tooltipDelay: 0 },
   play: async ({ canvasElement }) => {
     const button = within(canvasElement).getByRole('button', {
       name: 'Search',

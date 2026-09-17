@@ -1,12 +1,12 @@
 import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -76,6 +76,7 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
   showProviderColumn = true,
   anchorPrefix,
 }: SettingsAiModelsTableProps<TModel>) => {
+  const hoveredRowRef = useRef<HTMLDivElement>(null);
   const [hoveredModelId, setHoveredModelId] = useState<string | null>(null);
   const { theme } = useContext(ThemeContext);
 
@@ -139,7 +140,10 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
                 gridTemplateColumns={gridColumns}
                 onMouseEnter={
                   anchorPrefix
-                    ? () => setHoveredModelId(model.modelId)
+                    ? (event) => {
+                        hoveredRowRef.current = event.currentTarget;
+                        setHoveredModelId(model.modelId);
+                      }
                     : undefined
                 }
                 onMouseLeave={
@@ -215,18 +219,18 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
       </Table>
 
       {anchorPrefix && hoveredModel && (
-        <AppTooltip
-          anchorSelect={`#${anchorPrefix}-${sanitizeIdForSelector(hoveredModel.modelId)}`}
-          place="top-end"
-          noArrow
-          offset={8}
-          delay={TooltipDelay.noDelay}
-          className={hoverCardTooltipClass}
-          maxWidth="320px"
-          isOpen={true}
-        >
-          <SettingsAiModelHoverCard model={hoveredModel} />
-        </AppTooltip>
+        <Tooltip.Root key={hoveredModel.modelId} open>
+          <Tooltip.Popup
+            anchor={hoveredRowRef}
+            side="top"
+            align="end"
+            sideOffset={8}
+            className={hoverCardTooltipClass}
+            maxWidth="320px"
+          >
+            <SettingsAiModelHoverCard model={hoveredModel} />
+          </Tooltip.Popup>
+        </Tooltip.Root>
       )}
     </>
   );

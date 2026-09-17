@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiModelTierIndicator } from '@/ai/components/AiModelTierIndicator';
@@ -14,6 +14,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { formatNumber } from '~/utils/format/formatNumber';
 
 const GRID_TEMPLATE_COLUMNS = '1fr 1fr 1fr 1fr';
@@ -23,15 +24,20 @@ const StyledInheritedValue = styled.span`
   color: ${themeCssVariables.font.color.light};
 `;
 
-const INHERITED_BENCHMARK_CLASS_NAME = 'ai-model-tier-inherited-benchmark';
-
-// The reading belongs to the base model, so it is dimmed and explained rather
-// than passed off as a measurement at this effort.
-const renderBenchmarkValue = (tier: ResolvedAiModelTier, value: string) =>
+const renderBenchmarkValue = ({
+  tier,
+  value,
+}: {
+  tier: ResolvedAiModelTier;
+  value: string;
+}) =>
   (tier.model?.isBenchmarkInherited ?? false) && value !== EMPTY_VALUE ? (
-    <StyledInheritedValue className={INHERITED_BENCHMARK_CLASS_NAME}>
-      {value}
-    </StyledInheritedValue>
+    <Tooltip
+      content={t`Not measured at this effort yet. Showing the base model's reading.`}
+      delay={TooltipDelay.shortDelay}
+    >
+      <StyledInheritedValue>{value}</StyledInheritedValue>
+    </Tooltip>
   ) : (
     value
   );
@@ -79,56 +85,57 @@ export const SettingsAiModelTiersPreview = () => {
           <TableHeader align="right">{t`Intelligence`}</TableHeader>
           <TableHeader align="right">{t`Output cost`}</TableHeader>
         </TableRow>
-        {tiers.map((tier) => (
-          <TableRow key={tier.tier} gridTemplateColumns={GRID_TEMPLATE_COLUMNS}>
-            <TableCell color={themeCssVariables.font.color.primary}>
-              <StyledMode
-                data-tooltip-id={`ai-model-mode-${tier.tier}`}
-                tabIndex={0}
-              >
-                <AiModelTierIndicator tier={tier.tier} />
-                {tier.label}
-              </StyledMode>
-              <AppTooltip
-                anchorSelect={`[data-tooltip-id="ai-model-mode-${tier.tier}"]`}
-                Icon={
-                  isDefined(tier.model)
-                    ? getModelIcon(
-                        tier.model.modelFamily,
-                        tier.model.providerName,
-                      )
-                    : undefined
-                }
-                title={getAiModelModeDescription(tier, {
-                  showAutomatic: false,
+        {tiers.map((tier) => {
+          const ModelIcon = isDefined(tier.model)
+            ? getModelIcon(tier.model.modelFamily, tier.model.providerName)
+            : undefined;
+          return (
+            <TableRow
+              key={tier.tier}
+              gridTemplateColumns={GRID_TEMPLATE_COLUMNS}
+            >
+              <TableCell color={themeCssVariables.font.color.primary}>
+                <Tooltip
+                  delay={TooltipDelay.shortDelay}
+                  content={
+                    <Tooltip.Content
+                      startIcon={
+                        isDefined(ModelIcon) ? <ModelIcon /> : undefined
+                      }
+                      description={
+                        !isDefined(tier.model)
+                          ? t`No model is available for this mode.`
+                          : tier.isPinned
+                            ? t`Manually selected for this mode.`
+                            : t`Automatically selected by Twenty for this mode.`
+                      }
+                    >
+                      {getAiModelModeDescription(tier, {
+                        showAutomatic: false,
+                      })}
+                    </Tooltip.Content>
+                  }
+                >
+                  <StyledMode tabIndex={0}>
+                    <AiModelTierIndicator tier={tier.tier} />
+                    {tier.label}
+                  </StyledMode>
+                </Tooltip>
+              </TableCell>
+              <TableCell align="right">
+                {renderBenchmarkValue({ tier, value: formatSpeed(tier) })}
+              </TableCell>
+              <TableCell align="right">
+                {renderBenchmarkValue({
+                  tier,
+                  value: formatIntelligence(tier),
                 })}
-                description={
-                  !isDefined(tier.model)
-                    ? t`No model is available for this mode.`
-                    : tier.isPinned
-                      ? t`Manually selected for this mode.`
-                      : t`Automatically selected by Twenty for this mode.`
-                }
-                delay={TooltipDelay.shortDelay}
-              />
-            </TableCell>
-            <TableCell align="right">
-              {renderBenchmarkValue(tier, formatSpeed(tier))}
-            </TableCell>
-            <TableCell align="right">
-              {renderBenchmarkValue(tier, formatIntelligence(tier))}
-            </TableCell>
-            <TableCell align="right">{formatCost(tier)}</TableCell>
-          </TableRow>
-        ))}
+              </TableCell>
+              <TableCell align="right">{formatCost(tier)}</TableCell>
+            </TableRow>
+          );
+        })}
       </StyledTable>
-      {tiers.some((tier) => tier.model?.isBenchmarkInherited ?? false) && (
-        <AppTooltip
-          anchorSelect={`.${INHERITED_BENCHMARK_CLASS_NAME}`}
-          title={t`Not measured at this effort yet. Showing the base model's reading.`}
-          delay={TooltipDelay.shortDelay}
-        />
-      )}
     </Section.Root>
   );
 };

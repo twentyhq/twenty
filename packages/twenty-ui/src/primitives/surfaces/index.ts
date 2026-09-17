@@ -18,12 +18,6 @@ export type { AlertDialogRootProps } from './AlertDialog/types/AlertDialogRootPr
 export type { AlertDialogSize } from './AlertDialog/types/AlertDialogSize';
 export type { AlertDialogTitleProps } from './AlertDialog/types/AlertDialogTitleProps';
 export type { AlertDialogTriggerProps } from './AlertDialog/types/AlertDialogTriggerProps';
-export type { AppTooltipProps } from './AppTooltip/AppTooltip';
-export {
-  TooltipPosition,
-  TooltipDelay,
-  AppTooltip,
-} from './AppTooltip/AppTooltip';
 export { Card } from './Card/Card';
 export { CardContent } from './CardContent/CardContent';
 export { CardFooter } from './CardFooter/CardFooter';
@@ -68,3 +62,12 @@ export type { PopoverRootProps } from './Popover/types/PopoverRootProps';
 export type { PopoverSide } from './Popover/types/PopoverSide';
 export type { PopoverTitleProps } from './Popover/types/PopoverTitleProps';
 export type { PopoverTriggerProps } from './Popover/types/PopoverTriggerProps';
+export { Tooltip } from './Tooltip/Tooltip';
+export type { TooltipAlign } from './Tooltip/types/TooltipAlign';
+export type { TooltipContentProps } from './Tooltip/types/TooltipContentProps';
+export type { TooltipPopupProps } from './Tooltip/types/TooltipPopupProps';
+export type { TooltipProps } from './Tooltip/types/TooltipProps';
+export type { TooltipProviderProps } from './Tooltip/types/TooltipProviderProps';
+export type { TooltipRootProps } from './Tooltip/types/TooltipRootProps';
+export type { TooltipSide } from './Tooltip/types/TooltipSide';
+export type { TooltipTriggerProps } from './Tooltip/types/TooltipTriggerProps';

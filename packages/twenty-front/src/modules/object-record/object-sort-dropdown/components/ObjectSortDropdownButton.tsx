@@ -112,7 +112,6 @@ export const ObjectSortDropdownButton = () => {
 
   const handleDropdownOpen = () => {
     resetSortDropdown();
-    setSelectedItemId(selectableItemIdArray[0]);
   };
 
   const { closeSortDropdown } = useCloseSortDropdown();
@@ -154,11 +153,6 @@ export const ObjectSortDropdownButton = () => {
   ];
 
   const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
-  const setSelectedItemId = useSetAtomComponentState(
     selectedItemIdComponentState,
     dropdownId,
   );

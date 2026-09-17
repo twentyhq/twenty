@@ -6,7 +6,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
@@ -15,6 +15,7 @@ import {
   type RoleWithPartialMembers,
 } from '@/settings/roles/types/RoleWithPartialMembers';
 import { ROLE_TARGET_CONFIG } from '@/settings/roles/role-assignment/constants/RoleTargetConfig';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
 const StyledAssignToMemberContainer = styled.div`
   display: flex;
@@ -66,8 +67,14 @@ export const RoleAssignmentSection = ({
           dropdownId={config.dropdownId}
           dropdownOffset={{ x: 0, y: 4 }}
           clickableComponent={
-            <>
-              <div id={config.tooltip?.anchorId}>
+            <Tooltip
+              content={config.tooltip?.content()}
+              delay={TooltipDelay.noDelay}
+              disabled={
+                !config.tooltip?.shouldShow(allWorkspaceMembersHaveThisRole)
+              }
+            >
+              <div>
                 <Button
                   startIcon={<IconPlus />}
                   size="sm"
@@ -77,17 +84,7 @@ export const RoleAssignmentSection = ({
                   {config.buttonTitle()}
                 </Button>
               </div>
-              {config.tooltip && (
-                <AppTooltip
-                  anchorSelect={`#${config.tooltip.anchorId}`}
-                  title={config.tooltip.content()}
-                  delay={TooltipDelay.noDelay}
-                  hidden={
-                    !config.tooltip.shouldShow(allWorkspaceMembersHaveThisRole)
-                  }
-                />
-              )}
-            </>
+            </Tooltip>
           }
           dropdownComponents={
             roleTargetType === 'member' ? (

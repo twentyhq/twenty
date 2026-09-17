@@ -1,6 +1,7 @@
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -12,11 +13,7 @@ import { Section } from 'twenty-ui/components';
 import { IconShare, IconTrash, IconUserPlus } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import {
-  Dialog,
-  AppTooltip,
-  TooltipDelay,
-} from 'twenty-ui/primitives/surfaces';
+import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type ApplicationRegistration,
@@ -201,24 +198,27 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
           description={t`Delete or transfer this app registration`}
         />
         <StyledDangerButtonGroup>
-          <Button
-            id={DELETE_REGISTRATION_BUTTON_ID}
-            startIcon={<IconTrash />}
-            disabled={hasActiveInstalls}
-            onClick={() => openModal(DELETE_REGISTRATION_MODAL_ID)}
-            variant="outline"
-            color="danger"
-          >{t`Delete app`}</Button>
-          {hasActiveInstalls && (
-            <AppTooltip
-              anchorSelect={`#${DELETE_REGISTRATION_BUTTON_ID}`}
-              title={t`Uninstall this app from all workspaces before deleting it`}
-              noArrow
-              place="bottom"
-              positionStrategy="fixed"
-              delay={TooltipDelay.shortDelay}
-            />
-          )}
+          <Tooltip
+            content={t`Uninstall this app from all workspaces before deleting it`}
+            side="bottom"
+            positionMethod="fixed"
+            delay={TooltipDelay.shortDelay}
+            disabled={!hasActiveInstalls}
+          >
+            <span tabIndex={hasActiveInstalls ? 0 : undefined}>
+              <Button
+                id={DELETE_REGISTRATION_BUTTON_ID}
+                color="danger"
+                variant="outline"
+                startIcon={<IconTrash />}
+                disabled={hasActiveInstalls}
+                onClick={() => openModal(DELETE_REGISTRATION_MODAL_ID)}
+              >
+                {t`Delete app`}
+              </Button>
+            </span>
+          </Tooltip>
+
           {isUnclaimed
             ? fromAdmin && (
                 <Button
