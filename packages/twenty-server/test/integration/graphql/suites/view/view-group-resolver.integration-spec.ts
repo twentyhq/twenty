@@ -7,6 +7,7 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createOneViewGroup } from 'test/integration/metadata/suites/view-group/utils/create-one-view-group.util';
 import { deleteOneViewGroup } from 'test/integration/metadata/suites/view-group/utils/delete-one-view-group.util';
 import { destroyOneViewGroup } from 'test/integration/metadata/suites/view-group/utils/destroy-one-view-group.util';
+import { findViewGroups } from 'test/integration/metadata/suites/view-group/utils/find-view-groups.util';
 import { updateOneViewGroup } from 'test/integration/metadata/suites/view-group/utils/update-one-view-group.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { assertViewGroupStructure } from 'test/integration/utils/view-test.util';
@@ -189,7 +190,15 @@ describe('View Group Resolver', () => {
       expect(data.deleteViewGroup).toMatchObject({
         id: viewGroup.id,
       });
-      expect(data.deleteViewGroup.deletedAt).toBeDefined();
+
+      const { data: findData } = await findViewGroups({
+        viewId: testViewId,
+        expectToFail: false,
+      });
+
+      expect(
+        findData.getViewGroups.map((existingViewGroup) => existingViewGroup.id),
+      ).not.toContain(viewGroup.id);
     });
 
     it('should throw an error when deleting non-existent view group', async () => {
@@ -216,13 +225,6 @@ describe('View Group Resolver', () => {
         },
       });
       const viewGroup = createData.createViewGroup;
-
-      await deleteOneViewGroup({
-        input: {
-          id: viewGroup.id,
-        },
-        expectToFail: false,
-      });
 
       const { data } = await destroyOneViewGroup({
         expectToFail: false,

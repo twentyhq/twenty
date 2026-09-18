@@ -1,3 +1,4 @@
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
@@ -35,7 +36,8 @@ export const WorkflowDiagramEffect = () => {
   );
   const setFlow = useSetAtomComponentState(flowComponentState);
   const flow = useAtomComponentStateValue(flowComponentState);
-  const { populateStepsOutputSchema } = useStepsOutputSchema();
+  const { populateStepsOutputSchema, deleteStepsOutputSchema } =
+    useStepsOutputSchema();
 
   const workflowLastCreatedStepId = useAtomComponentStateCallbackState(
     workflowLastCreatedStepIdComponentState,
@@ -44,9 +46,8 @@ export const WorkflowDiagramEffect = () => {
   const store = useStore();
   const currentVersion = workflowWithCurrentVersion?.currentVersion;
 
-  const { content, refetchContent } = useWorkflowVersionContent(
-    currentVersion?.id,
-  );
+  const { content, refetchContent, contentUpdatedAt } =
+    useWorkflowVersionContent(currentVersion?.id);
 
   const [shouldWorkflowRefetchRequest, setShouldWorkflowRefetchRequest] =
     useAtomFamilyState(
@@ -55,6 +56,10 @@ export const WorkflowDiagramEffect = () => {
     );
 
   const [seededVersionId, setSeededVersionId] = useState<string>();
+  const [seededVersionUpdatedAt, setSeededVersionUpdatedAt] =
+    useState<string>();
+  const [previousDiagramUpdatedAt, setPreviousDiagramUpdatedAt] =
+    useState<string>();
   const [previousDiagramVersionId, setPreviousDiagramVersionId] =
     useState<string>();
 
@@ -131,18 +136,39 @@ export const WorkflowDiagramEffect = () => {
       return;
     }
 
-    if (seededVersionId === currentVersion.id) {
+    if (
+      seededVersionId === currentVersion.id &&
+      seededVersionUpdatedAt === contentUpdatedAt
+    ) {
       return;
     }
 
+    if (isDefined(contentUpdatedAt)) {
+      deleteStepsOutputSchema({
+        workflowVersionId: currentVersion.id,
+        stepIds: [
+          TRIGGER_STEP_ID,
+          ...(content.steps ?? []).map((step: WorkflowAction) => step.id),
+        ],
+      });
+    }
     setSeededVersionId(currentVersion.id);
+    setSeededVersionUpdatedAt(contentUpdatedAt);
 
     setFlow({
       workflowVersionId: currentVersion.id,
       trigger: content.trigger,
       steps: content.steps,
     });
-  }, [content, currentVersion, seededVersionId, setFlow]);
+  }, [
+    content,
+    currentVersion,
+    seededVersionId,
+    seededVersionUpdatedAt,
+    contentUpdatedAt,
+    setFlow,
+    deleteStepsOutputSchema,
+  ]);
 
   useEffect(() => {
     if (!isDefined(flow)) {
@@ -151,13 +177,16 @@ export const WorkflowDiagramEffect = () => {
 
     const isSameVersion = previousDiagramVersionId === flow.workflowVersionId;
     const isTransitionToDraft = currentVersion?.status === 'DRAFT';
-    const shouldPreservePositions = isSameVersion || isTransitionToDraft;
+    const shouldPreservePositions =
+      (isSameVersion || isTransitionToDraft) &&
+      previousDiagramUpdatedAt === contentUpdatedAt;
 
     setPreviousDiagramVersionId(flow.workflowVersionId);
+    setPreviousDiagramUpdatedAt(contentUpdatedAt);
 
     computeAndMergeNewWorkflowDiagram(flow, shouldPreservePositions);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [computeAndMergeNewWorkflowDiagram, flow]);
+  }, [computeAndMergeNewWorkflowDiagram, flow, contentUpdatedAt]);
 
   useEffect(() => {
     if (!isDefined(currentVersion) || !isDefined(flow)) {

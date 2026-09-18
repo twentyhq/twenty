@@ -734,6 +734,10 @@ export class ApplicationService {
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
+        await this.fileStorageService.invalidateStorageStock({
+          workspaceId,
+          applicationId: application.id,
+        });
       }
 
       throw error;

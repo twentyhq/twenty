@@ -8,6 +8,8 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
 import { CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
+import { CoreWorkflowWithCurrentVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-with-current-version.dto';
+import { CoreWorkflowsWithCurrentVersionsInput } from 'src/engine/core-modules/workflow/dtos/core-workflows-with-current-versions.input';
 import { CreateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/create-core-workflow.input';
 import { DeletedCoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/deleted-core-workflow.dto';
 import { DeleteCoreWorkflowsInput } from 'src/engine/core-modules/workflow/dtos/delete-core-workflows.input';
@@ -156,6 +158,17 @@ export class CoreWorkflowResolver {
     return this.coreWorkflowListService.findOneById({
       workspaceId,
       coreWorkflowId,
+    });
+  }
+
+  @Query(() => [CoreWorkflowWithCurrentVersionDTO])
+  async coreWorkflowsWithCurrentVersions(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('input') { coreWorkflowIds }: CoreWorkflowsWithCurrentVersionsInput,
+  ): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
+    return this.coreWorkflowListService.findManyWithCurrentVersions({
+      workspaceId,
+      coreWorkflowIds,
     });
   }
 
