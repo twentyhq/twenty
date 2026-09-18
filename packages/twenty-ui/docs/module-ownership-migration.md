@@ -13,6 +13,8 @@ This change removes the previous exports immediately. Release it as a breaking p
 
 Foundational controls keep their `twenty-ui/primitives/<family>` imports. Import shared components and their public types from `twenty-ui/components`. The code editor keeps `twenty-ui/components/code-editor`. The `twenty-ui/primitives/json-visualizer` entry point is removed. Root imports still expose the supported public interface.
 
+Source folders group shared components by `data-display`, `feedback`, `input`, `layout`, `navigation`, and `typography`, matching the primitive families. The optional `code-editor` folder remains separate. These folders organize the implementation; public imports use `twenty-ui/components` or `twenty-ui/components/code-editor`.
+
 ### Primitives
 
 `VisibilityHidden`, `Avatar`, `Chip`, `ColorSample`, `Status`, `Tag`, `Banner`, `CircularProgressBar`, `Loader`, `ProgressBar`, `Button`, `ButtonGroup`, `Checkbox`, `Field`, `Input`, `InputGroup`, `Radio`, `RadioGroup`, `SegmentedControl`, `Select`, `Slider`, `Switch`, `Textarea`, `AnimatedExpandableContainer`, `HorizontalSeparator`, `ResizeHandle`, `TextDirectionProvider`, `ClickToActionLink`, `ListItem`, `Tabs`, `AlertDialog`, `Card`, `CardContent`, `CardFooter`, `CardHeader`, `Dialog`, `Menu`, `Popover`, `Tooltip`, `Heading`, `Text`.

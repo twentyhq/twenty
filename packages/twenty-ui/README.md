@@ -85,6 +85,8 @@ import { Button } from 'twenty-ui/primitives/input';
 
 # Development
 
+Shared component sources live in `src/components/{data-display,feedback,input,layout,navigation,typography}`, with the optional editor in `src/components/code-editor`. Keep each component's types, stories, tests, and private parts beside its implementation. The generated `components` barrel provides the public imports.
+
 Primitive guides belong in `packages/twenty-docs/ui/primitives`. Shared component guides belong in `packages/twenty-docs/ui/components`. For each stateful API that supports both modes, include separate **Uncontrolled state** and **Controlled state** examples with the same scenario, labels, and initial state. Keep each example complete, with public imports and one exported example component.
 
 Explain state ownership before advanced behavior such as indeterminate selection or manual tab activation. Document independent states, such as selection and popup visibility, separately. For components that delegate state to a parent or group, explain that ownership and link to the relevant examples.

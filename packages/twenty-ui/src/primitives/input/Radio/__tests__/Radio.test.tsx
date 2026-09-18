@@ -1,8 +1,8 @@
 import { type ReactNode } from 'react';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
-import { CardPicker } from '@ui/components/CardPicker/CardPicker';
-import cardPickerStyles from '@ui/components/CardPicker/CardPicker.module.scss';
+import { CardPicker } from '@ui/components/input/CardPicker/CardPicker';
+import cardPickerStyles from '@ui/components/input/CardPicker/CardPicker.module.scss';
 import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
 import groupStyles from '@ui/primitives/input/RadioGroup/RadioGroup.module.scss';
 

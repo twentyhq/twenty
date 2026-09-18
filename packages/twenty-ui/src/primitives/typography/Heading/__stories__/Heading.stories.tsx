@@ -1,4 +1,4 @@
-import { Section } from '@ui/components/Section/Section';
+import { Section } from '@ui/components/layout/Section/Section';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 

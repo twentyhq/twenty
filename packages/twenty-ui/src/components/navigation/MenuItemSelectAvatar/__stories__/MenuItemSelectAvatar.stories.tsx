@@ -1,0 +1,109 @@
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+
+import { MenuItemSelectAvatar } from '@ui/components/navigation/MenuItemSelectAvatar/MenuItemSelectAvatar';
+import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
+import {
+  A11Y_DEFER_COLOR_CONTRAST,
+  AVATAR_URL_MOCK,
+  CatalogDecorator,
+  ComponentDecorator,
+  type CatalogDimension,
+  type CatalogOptions,
+  type CatalogStory,
+} from '@ui/testing';
+
+const meta: Meta<typeof MenuItemSelectAvatar> = {
+  title: 'UI/Navigation/Menu/MenuItem/MenuItemSelectAvatar',
+  component: MenuItemSelectAvatar,
+};
+
+export default meta;
+
+type Story = StoryObj<typeof MenuItemSelectAvatar>;
+export const Default: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: {
+    text: 'First option',
+    contextualText: 'Contextual text',
+    avatar: <Avatar src={AVATAR_URL_MOCK} name="L" />,
+  },
+  argTypes: {
+    className: { control: false },
+  },
+  decorators: [
+    (Story) => (
+      <div role="listbox" aria-label="Options">
+        <Story />
+      </div>
+    ),
+    ComponentDecorator,
+  ],
+};
+
+export const Catalog: CatalogStory<Story, typeof MenuItemSelectAvatar> = {
+  args: { text: 'Menu item' },
+  argTypes: {
+    className: { control: false },
+  },
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
+    catalog: {
+      dimensions: [
+        {
+          name: 'withAvatar',
+          values: [true, false],
+          props: (withAvatar: boolean) => ({
+            avatar: withAvatar ? (
+              <Avatar src={AVATAR_URL_MOCK} name="L" />
+            ) : (
+              <Avatar src="" name="L" />
+            ),
+          }),
+          labels: (withAvatar: boolean) =>
+            withAvatar ? 'With avatar' : 'Without avatar',
+        },
+        {
+          name: 'states',
+          values: [
+            'default',
+            'hover',
+            'disabled',
+            'selected',
+            'hover+selected',
+          ],
+          props: (state: string) => {
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+                return { className: 'hover' };
+              case 'disabled':
+                return { disabled: true };
+              case 'selected':
+                return { selected: true };
+
+              case 'hover+selected':
+                return { className: 'hover', selected: true };
+              default:
+                return {};
+            }
+          },
+        },
+      ] as CatalogDimension[],
+      options: {
+        elementContainer: {
+          width: 200,
+        },
+      } as CatalogOptions,
+    },
+  },
+  decorators: [
+    (Story) => (
+      <div role="listbox" aria-label="Options">
+        <Story />
+      </div>
+    ),
+    CatalogDecorator,
+  ],
+};
