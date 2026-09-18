@@ -7327,6 +7327,23 @@ export default {
             "currentUserSessions": [
                 173
             ],
+            "billingPortalSession": [
+                178,
+                {
+                    "returnUrlPath": [
+                        1
+                    ],
+                    "forPaymentMethodUpdate": [
+                        8
+                    ]
+                }
+            ],
+            "listPlans": [
+                176
+            ],
+            "getResourceCreditUsage": [
+                175
+            ],
             "myConnectedAccounts": [
                 193
             ],
@@ -7347,23 +7364,6 @@ export default {
                         "UUID!"
                     ]
                 }
-            ],
-            "billingPortalSession": [
-                178,
-                {
-                    "returnUrlPath": [
-                        1
-                    ],
-                    "forPaymentMethodUpdate": [
-                        8
-                    ]
-                }
-            ],
-            "listPlans": [
-                176
-            ],
-            "getResourceCreditUsage": [
-                175
             ],
             "getInviteSuggestions": [
                 185
@@ -8833,31 +8833,6 @@ export default {
             "revokeAllOtherUserSessions": [
                 28
             ],
-            "deleteConnectedAccount": [
-                193,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "updateOneApplicationVariable": [
-                8,
-                {
-                    "key": [
-                        1,
-                        "String!"
-                    ],
-                    "value": [
-                        1,
-                        "String!"
-                    ],
-                    "applicationId": [
-                        3
-                    ]
-                }
-            ],
             "checkoutSession": [
                 178,
                 {
@@ -8931,6 +8906,31 @@ export default {
             ],
             "cancelSwitchResourceCreditPrice": [
                 179
+            ],
+            "deleteConnectedAccount": [
+                193,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "updateOneApplicationVariable": [
+                8,
+                {
+                    "key": [
+                        1,
+                        "String!"
+                    ],
+                    "value": [
+                        1,
+                        "String!"
+                    ],
+                    "applicationId": [
+                        3
+                    ]
+                }
             ],
             "skipSyncEmailOnboardingStep": [
                 187,
