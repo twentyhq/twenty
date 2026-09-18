@@ -39,8 +39,10 @@ export type MicrosoftMock = {
   ) => void;
   moveMessageToFolder: (messageId: string, targetFolderId: string) => void;
   deleteMessage: (messageId: string) => void;
+  failMessageFetch: (messageId: string) => void;
   failSubscriptionRenewal: () => void;
   failMessageDelta: (failure: MicrosoftGraphFailure) => void;
+  failMailFolderNextPages: (failure: MicrosoftGraphFailure) => void;
   failCalendarDelta: (failure: MicrosoftGraphFailure) => void;
   declineTokenRefresh: () => void;
 };
@@ -63,11 +65,13 @@ export const setupMicrosoftMock = ({
   aliases = [],
   folders = DEFAULT_FOLDERS,
   messages = [],
+  mailFolderPageSize,
 }: {
   handle: string;
   aliases?: string[];
   folders?: MailFolder[];
   messages?: Array<Record<string, unknown>>;
+  mailFolderPageSize?: number;
 }): MicrosoftMock => {
   const folderStore = createMockEntityStore(
     folders,
@@ -111,6 +115,7 @@ export const setupMicrosoftMock = ({
       folderStore,
       messages,
       removedMessageIdsByFolderId,
+      { mailFolderPageSize },
     ),
     ...microsoftWebhookSubscriptionHandlers(subscriptionStore),
     http.post('*/me/messages', async ({ request }) => {
@@ -220,6 +225,15 @@ export const setupMicrosoftMock = ({
 
       messages.splice(messages.indexOf(message), 1);
     },
+    failMessageFetch: (messageId) =>
+      httpMock.use(
+        ...microsoftMailboxHandlers(
+          folderStore,
+          messages,
+          removedMessageIdsByFolderId,
+          { unfetchableMessageIds: [messageId], mailFolderPageSize },
+        ),
+      ),
     failSubscriptionRenewal: () =>
       httpMock.use(
         ...microsoftWebhookSubscriptionHandlers(subscriptionStore, {
@@ -248,6 +262,14 @@ export const setupMicrosoftMock = ({
         }),
         http.get('*/messages/delta', () =>
           microsoftGraphErrorResponse(failure),
+        ),
+      ),
+    failMailFolderNextPages: (failure) =>
+      httpMock.use(
+        http.get('*/me/mailFolders', ({ request }) =>
+          new URL(request.url).searchParams.has('$skip')
+            ? microsoftGraphErrorResponse(failure)
+            : undefined,
         ),
       ),
     failCalendarDelta: (failure) =>

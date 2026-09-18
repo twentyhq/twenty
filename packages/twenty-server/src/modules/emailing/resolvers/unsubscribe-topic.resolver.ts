@@ -20,13 +20,17 @@ import {
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   WorkspaceAuthGuard,
   FeatureFlagGuard,
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )
-@UseFilters(EmailGroupAccessGraphqlApiExceptionFilter)
+@UseFilters(
+  EmailGroupAccessGraphqlApiExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
+)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => UnsubscribeTopicDTO)
 export class UnsubscribeTopicResolver {

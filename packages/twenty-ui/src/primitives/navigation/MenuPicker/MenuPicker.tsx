@@ -2,30 +2,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { type IconComponent } from '@ui/icon';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from '@ui/primitives/surfaces';
+import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 import { useTheme } from '@ui/theme-constants';
 
 import styles from './MenuPicker.module.scss';
 
-export type MenuPickerProps = {
-  id: string;
-  className?: string;
-  disabled?: boolean;
-  icon: IconComponent;
-  label?: string;
-  onClick?: () => void;
-  selected?: boolean;
-  showLabel?: boolean;
-  testId?: string;
-  tooltipContent?: string;
-  tooltipDelay?: TooltipDelay;
-  tooltipOffset?: number;
-};
+import { type MenuPickerProps } from './types/MenuPickerProps';
 
 export const MenuPicker = ({
   id,
@@ -38,13 +20,20 @@ export const MenuPicker = ({
   className,
   testId,
   tooltipContent,
-  tooltipDelay = TooltipDelay.noDelay,
+  tooltipDelay = 0,
   tooltipOffset = 5,
 }: MenuPickerProps) => {
   const theme = useTheme();
 
   return (
-    <>
+    <Tooltip
+      content={tooltipContent}
+      disabled={!isNonEmptyString(tooltipContent)}
+      sideOffset={tooltipOffset}
+      side="bottom"
+      positionMethod="fixed"
+      delay={tooltipDelay}
+    >
       <button
         id={id}
         disabled={disabled}
@@ -70,18 +59,6 @@ export const MenuPicker = ({
           </div>
         )}
       </button>
-
-      {isNonEmptyString(tooltipContent) && (
-        <AppTooltip
-          anchorSelect={`#${id}`}
-          offset={tooltipOffset}
-          title={tooltipContent}
-          place={TooltipPosition.Bottom}
-          positionStrategy="fixed"
-          delay={tooltipDelay}
-          noArrow
-        />
-      )}
-    </>
+    </Tooltip>
   );
 };

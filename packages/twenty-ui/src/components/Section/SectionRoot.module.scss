@@ -1,0 +1,27 @@
+.root {
+  inline-size: auto;
+
+  &:where([data-align='left']) {
+    text-align: left;
+  }
+
+  &:where([data-align='center']) {
+    text-align: center;
+  }
+
+  &:where([data-color='primary']) {
+    color: var(--t-font-color-primary);
+  }
+
+  &:where([data-color='secondary']) {
+    color: var(--t-font-color-secondary);
+  }
+
+  &:where([data-color='tertiary']) {
+    color: var(--t-font-color-tertiary);
+  }
+}
+
+.fullWidth {
+  inline-size: 100%;
+}

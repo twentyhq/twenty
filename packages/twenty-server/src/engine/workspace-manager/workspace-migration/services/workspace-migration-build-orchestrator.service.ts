@@ -266,10 +266,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
         workspaceMigrationCommandMenuItemActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
-        ALL_METADATA_NAME.navigationMenuItem,
-        workspaceMigrationNavigationMenuItemActionsBuilderService,
-      ),
-      createEntityActionsBuilderTask(
         ALL_METADATA_NAME.pageLayout,
         workspaceMigrationPageLayoutActionsBuilderService,
       ),
@@ -280,6 +276,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.pageLayoutWidget,
         workspaceMigrationPageLayoutWidgetActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.navigationMenuItem,
+        workspaceMigrationNavigationMenuItemActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.webhook,

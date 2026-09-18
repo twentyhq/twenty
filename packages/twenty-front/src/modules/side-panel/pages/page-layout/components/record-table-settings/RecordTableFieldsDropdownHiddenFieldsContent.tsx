@@ -1,3 +1,4 @@
+import { LightIconButton } from 'twenty-ui/components';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
@@ -104,12 +105,14 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
           <MenuItem
             key={fieldMetadataItem.id}
             LeftIcon={getIcon(fieldMetadataItem.icon)}
-            iconButtons={[
-              {
-                Icon: IconEye,
-                onClick: () => handleShowField(fieldMetadataItem.id),
-              },
-            ]}
+            iconButtons={
+              <LightIconButton
+                aria-label={t`Show field`}
+                onClick={() => handleShowField(fieldMetadataItem.id)}
+              >
+                <IconEye />
+              </LightIconButton>
+            }
             text={fieldMetadataItem.label}
           />
         ))}

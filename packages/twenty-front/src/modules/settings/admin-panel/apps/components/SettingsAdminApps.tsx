@@ -21,6 +21,7 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
+import { SettingsRow, Section } from 'twenty-ui/components';
 import {
   IconChevronRight,
   IconDotsVertical,
@@ -30,9 +31,6 @@ import {
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebounce } from 'use-debounce';
 import {
@@ -187,8 +185,8 @@ export const SettingsAdminApps = () => {
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`General`}
           description={t`Manage the marketplace application catalog`}
         />
@@ -200,9 +198,9 @@ export const SettingsAdminApps = () => {
           disabled={isSyncing}
           variant="outline"
         >{t`Synchronize catalog`}</Button>
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`All App Registrations`}
           description={t`All application registrations across the platform, including orphaned marketplace apps (${totalCount} matching)`}
         />
@@ -219,69 +217,59 @@ export const SettingsAdminApps = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemSwitch
-                      LeftIcon={IconPinned}
+                    <SettingsRow
+                      startIcon={<IconPinned />}
                       onCheckedChange={() =>
                         setShowPreInstalledOnly(!showPreInstalledOnly)
                       }
                       checked={showPreInstalledOnly}
-                      text={t`Pre-installed only`}
-                      size="sm"
-                    />
+                    >{t`Pre-installed only`}</SettingsRow>
                     <DropdownMenuSectionLabel label={t`Source`} />
                     {SOURCE_TYPE_FILTER_OPTIONS.map(({ sourceType, label }) => (
-                      <MenuItemSwitch
+                      <SettingsRow
                         key={sourceType}
                         onCheckedChange={() =>
                           toggleSourceTypeFilter(sourceType)
                         }
                         checked={sourceTypeFilters.includes(sourceType)}
-                        text={label}
-                        size="sm"
-                      />
+                      >
+                        {label}
+                      </SettingsRow>
                     ))}
                     <DropdownMenuSectionLabel label={t`Listed`} />
-                    <MenuItemSwitch
+                    <SettingsRow
                       onCheckedChange={() =>
                         setIsListedFilter(
                           isListedFilter === true ? undefined : true,
                         )
                       }
                       checked={isListedFilter === true}
-                      text={t`Listed`}
-                      size="sm"
-                    />
-                    <MenuItemSwitch
+                    >{t`Listed`}</SettingsRow>
+                    <SettingsRow
                       onCheckedChange={() =>
                         setIsListedFilter(
                           isListedFilter === false ? undefined : false,
                         )
                       }
                       checked={isListedFilter === false}
-                      text={t`Not listed`}
-                      size="sm"
-                    />
+                    >{t`Not listed`}</SettingsRow>
                     <DropdownMenuSectionLabel label={t`Configured`} />
-                    <MenuItemSwitch
+                    <SettingsRow
                       onCheckedChange={() =>
                         setIsConfiguredFilter(
                           isConfiguredFilter === true ? undefined : true,
                         )
                       }
                       checked={isConfiguredFilter === true}
-                      text={t`Configured`}
-                      size="sm"
-                    />
-                    <MenuItemSwitch
+                    >{t`Configured`}</SettingsRow>
+                    <SettingsRow
                       onCheckedChange={() =>
                         setIsConfiguredFilter(
                           isConfiguredFilter === false ? undefined : false,
                         )
                       }
                       checked={isConfiguredFilter === false}
-                      text={t`Not configured`}
-                      size="sm"
-                    />
+                    >{t`Not configured`}</SettingsRow>
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }
@@ -328,7 +316,7 @@ export const SettingsAdminApps = () => {
             >{t`Show more`}</Button>
           </StyledShowMoreContainer>
         )}
-      </Section>
+      </Section.Root>
     </>
   );
 };

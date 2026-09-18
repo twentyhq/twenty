@@ -1,3 +1,4 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -19,6 +20,7 @@ import { useIcons } from 'twenty-ui/icon';
 import { useStore } from 'jotai';
 
 export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
+  const isCore = useIsWorkflowCoreEnabled();
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const { openWorkflowRunViewStepInSidePanel } =
@@ -50,6 +52,16 @@ export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
         return;
       }
 
+      const workflowId = isCore
+        ? (workflowRunRecord.coreWorkflowId ?? workflowRunRecord.workflowId)
+        : workflowRunRecord.workflowId;
+      const workflowVersionId = isCore
+        ? (workflowRunRecord.coreWorkflowVersionId ??
+          workflowRunRecord.workflowVersionId)
+        : workflowRunRecord.workflowVersionId;
+      if (!isDefined(workflowId) || !isDefined(workflowVersionId)) {
+        return;
+      }
       const { stepToOpenByDefault } = generateWorkflowRunDiagram({
         steps: workflowRunRecord.state.flow.steps,
         stepInfos: workflowRunRecord.state.stepInfos,
@@ -74,14 +86,14 @@ export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
         workflowVisualizerWorkflowIdComponentState.atomFamily({
           instanceId,
         }),
-        workflowRunRecord.workflowId,
+        workflowId,
       );
       store.set(
         flowComponentState.atomFamily({
           instanceId,
         }),
         {
-          workflowVersionId: workflowRunRecord.workflowVersionId,
+          workflowVersionId,
           trigger: workflowRunRecord.state.flow.trigger,
           steps: workflowRunRecord.state.flow.steps,
         },
@@ -106,7 +118,7 @@ export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
         ],
       );
       openWorkflowRunViewStepInSidePanel({
-        workflowId: workflowRunRecord.workflowId,
+        workflowId,
         workflowRunId: workflowRunRecord.id,
         title: stepToOpenByDefault.data.name,
         icon: getIcon(getWorkflowNodeIconKey(stepToOpenByDefault.data)),
@@ -115,6 +127,7 @@ export const useRunWorkflowRunOpeningInSidePanelEffects = () => {
       });
     },
     [
+      isCore,
       apolloCoreClient.cache,
       objectPermissionsByObjectMetadataId,
       openWorkflowRunViewStepInSidePanel,

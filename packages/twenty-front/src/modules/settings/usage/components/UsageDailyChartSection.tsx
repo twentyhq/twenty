@@ -7,10 +7,9 @@ import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsD
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 import { formatDate } from '~/utils/date-utils';
+import { Section } from 'twenty-ui/components';
 
 const StyledLineChartContainer = styled.div`
   height: 200px;
@@ -73,8 +72,8 @@ export const UsageDailyChartSection = ({
   ];
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={title}
         description={description}
         adornment={
@@ -105,6 +104,6 @@ export const UsageDailyChartSection = ({
           </WidgetComponentInstanceContext.Provider>
         </StyledLineChartContainer>
       </SubscriptionInfoContainer>
-    </Section>
+    </Section.Root>
   );
 };

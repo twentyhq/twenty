@@ -2,8 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { type ThemeColor } from 'twenty-ui/theme';
 import {
   type DomainRecord,
@@ -57,12 +56,12 @@ export const SettingsDomainRecords = ({
   });
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Domain Setup`}
         description={t`Configure these DNS records with your domain provider`}
       />
       <SettingsDnsRecordsTable records={transformedRecords} />
-    </Section>
+    </Section.Root>
   );
 };

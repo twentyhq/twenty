@@ -8,8 +8,8 @@ import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyToken
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -20,10 +20,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconRepeat, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AssignRoleToApiKeyDocument,
@@ -58,7 +57,7 @@ const REGENERATE_API_KEY_MODAL_ID = 'regenerate-api-key-modal';
 export const SettingsDevelopersApiKeyDetail = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigateSettings();
@@ -272,10 +271,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
           ]}
         >
           <SettingsPageContainer>
-            <Section>
+            <Section.Root>
               {apiKeyToken ? (
                 <>
-                  <H2Title
+                  <Section.Header
                     title={t`API Key`}
                     description={t`Copy this key as it will not be visible again`}
                   />
@@ -283,14 +282,14 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 </>
               ) : (
                 <>
-                  <H2Title
+                  <Section.Header
                     title={t`API Key`}
                     description={t`Regenerate an API key`}
                   />
                   <StyledInputContainer>
                     <Button
                       startIcon={<IconRepeat />}
-                      onClick={() => openModal(REGENERATE_API_KEY_MODAL_ID)}
+                      onClick={() => openDialog(REGENERATE_API_KEY_MODAL_ID)}
                     >{t`Regenerate Key`}</Button>
                     <StyledInfo>
                       {formatExpiration(apiKey?.expiresAt || '', true, false)}
@@ -298,18 +297,21 @@ export const SettingsDevelopersApiKeyDetail = () => {
                   </StyledInputContainer>
                 </>
               )}
-            </Section>
-            <Section>
-              <H2Title title={t`Name`} description={t`Name of your API key`} />
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
+                title={t`Name`}
+                description={t`Name of your API key`}
+              />
               <ApiKeyNameInput
                 apiKeyName={apiKeyName}
                 apiKeyId={apiKey?.id}
                 disabled={isLoading}
                 onNameUpdate={setApiKeyName}
               />
-            </Section>
-            <Section>
-              <H2Title
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Role`}
                 description={t`What this API can do: Select a user role to define its permissions.`}
               />
@@ -318,9 +320,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 onChange={handleRoleChange}
                 roles={roles}
               />
-            </Section>
-            <Section>
-              <H2Title
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Expiration`}
                 description={t`When the key will be disabled`}
               />
@@ -331,26 +333,26 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 disabled
                 fullWidth
               />
-            </Section>
-            <Section>
-              <H2Title
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Danger zone`}
                 description={t`Delete this integration`}
               />
               <Button
                 startIcon={<IconTrash />}
-                onClick={() => openModal(DELETE_API_KEY_MODAL_ID)}
+                onClick={() => openDialog(DELETE_API_KEY_MODAL_ID)}
                 variant="outline"
                 color="danger"
               >{t`Delete`}</Button>
-            </Section>
+            </Section.Root>
           </SettingsPageContainer>
         </SettingsPageLayout>
       )}
-      <ConfirmationModal
+      <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalInstanceId={DELETE_API_KEY_MODAL_ID}
+        dialogId={DELETE_API_KEY_MODAL_ID}
         title={t`Delete API key`}
         subtitle={
           <Trans>
@@ -363,10 +365,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
         confirmButtonText={t`Delete`}
         loading={isLoading}
       />
-      <ConfirmationModal
+      <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalInstanceId={REGENERATE_API_KEY_MODAL_ID}
+        dialogId={REGENERATE_API_KEY_MODAL_ID}
         title={t`Regenerate an API key`}
         subtitle={
           <Trans>

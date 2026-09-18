@@ -22,11 +22,6 @@ jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
   useIsMobile: () => false,
 }));
 
-jest.mock('twenty-ui/primitives/surfaces', () => ({
-  ...jest.requireActual('twenty-ui/primitives/surfaces'),
-  AppTooltip: () => null,
-}));
-
 const mockSwitchNavigationDrawerMode = jest.fn();
 
 const renderModeSwitcher = (isLayoutCustomizationModeEnabled = false) => {

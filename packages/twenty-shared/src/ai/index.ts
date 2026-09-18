@@ -60,6 +60,12 @@ export type {
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type { ModelConfiguration } from './types/model-configuration.type';
 export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
+export type { ToolWidgetName, ToolRecordReference } from './types/ToolWidget';
+export {
+  RECORDS_TOOL_WIDGET_NAME,
+  TOOL_WIDGET_NAMES,
+  isToolWidgetName,
+} from './types/ToolWidget';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';

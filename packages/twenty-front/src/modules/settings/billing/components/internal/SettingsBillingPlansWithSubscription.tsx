@@ -1,15 +1,20 @@
 import { SettingsBillingPlanComparisonTable } from '@/settings/billing/components/internal/SettingsBillingPlanComparisonTable';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
+import { useApplyBillingSubscriptionChange } from '@/settings/billing/hooks/useApplyBillingSubscriptionChange';
 import { useBillingPlanActions } from '@/settings/billing/hooks/useBillingPlanActions';
-import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
+import { useBillingSubscriptionChangeWording } from '@/settings/billing/hooks/useBillingSubscriptionChangeWording';
+import { type BillingSubscriptionChange } from '@/settings/billing/types/billingSubscriptionChange.type';
 import {
   type SettingsBillingPlanInterval,
   type SettingsBillingPlanPrices,
 } from '@/settings/billing/types/settingsBillingPlanComparison.type';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useLingui } from '@lingui/react/macro';
-import { BillingPlanKey } from '~/generated-metadata/graphql';
+import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { type BillingPlanKey } from '~/generated-metadata/graphql';
 
 type SettingsBillingPlansWithSubscriptionProps = {
   billingInterval: SettingsBillingPlanInterval;
@@ -27,12 +32,31 @@ export const SettingsBillingPlansWithSubscription = ({
   planPrices,
 }: SettingsBillingPlansWithSubscriptionProps) => {
   const { t } = useLingui();
+  const { openDialog } = useDialog();
+  const [pendingChange, setPendingChange] =
+    useState<BillingSubscriptionChange | null>(null);
   const {
-    confirmationModalSwitchToOrganizationMessage,
-    confirmationModalSwitchToProMessage,
-  } = useBillingWording();
-  const { isSwitchingPlan, planActions, switchBillingPlan } =
-    useBillingPlanActions({ currentPlanKey });
+    applyBillingSubscriptionChange,
+    isApplyingBillingSubscriptionChange,
+  } = useApplyBillingSubscriptionChange();
+  const { getBillingSubscriptionChangeWording } =
+    useBillingSubscriptionChangeWording();
+  const { planActions } = useBillingPlanActions({
+    billingInterval,
+    currentPlanKey,
+    isApplyingBillingSubscriptionChange,
+    onBillingSubscriptionChangeRequested: (change) => {
+      setPendingChange(change);
+      openDialog(BILLING_MODAL_IDS.confirmSubscriptionChange);
+    },
+  });
+
+  const pendingChangeWording = isDefined(pendingChange)
+    ? getBillingSubscriptionChangeWording({
+        change: pendingChange,
+        selectedInterval: billingInterval,
+      })
+    : undefined;
 
   return (
     <SettingsPageContainer overflow="visible">
@@ -42,24 +66,17 @@ export const SettingsBillingPlansWithSubscription = ({
         planActions={planActions}
         planPrices={planPrices}
       />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToEnterprise}
-        title={t`Change to Organization Plan?`}
-        subtitle={confirmationModalSwitchToOrganizationMessage()}
-        onConfirmClick={() => switchBillingPlan(BillingPlanKey.ENTERPRISE)}
-        confirmButtonText={t`Confirm`}
-        confirmButtonColor="accent"
-        loading={isSwitchingPlan}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToPro}
-        title={t`Change to Pro Plan?`}
-        subtitle={confirmationModalSwitchToProMessage()}
-        onConfirmClick={() => switchBillingPlan(BillingPlanKey.PRO)}
-        confirmButtonText={t`Confirm`}
-        confirmButtonColor="accent"
-        loading={isSwitchingPlan}
-      />
+      {isDefined(pendingChange) && isDefined(pendingChangeWording) && (
+        <ConfirmationDialog
+          dialogId={BILLING_MODAL_IDS.confirmSubscriptionChange}
+          title={pendingChangeWording.title}
+          subtitle={pendingChangeWording.subtitle}
+          onConfirmClick={() => applyBillingSubscriptionChange(pendingChange)}
+          confirmButtonText={t`Confirm`}
+          confirmButtonColor="accent"
+          loading={isApplyingBillingSubscriptionChange}
+        />
+      )}
     </SettingsPageContainer>
   );
 };

@@ -5,6 +5,7 @@ import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-funct
 import { ServerRouteTriggerController } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.controller';
 import { ServerRouteTriggerService } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.service';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -12,6 +13,9 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
     LogicFunctionExecutorModule,
   ],
   controllers: [ServerRouteTriggerController],
-  providers: [ServerRouteTriggerService],
+  providers: [
+    provideWorkspaceScopedRepository(LogicFunctionEntity),
+    ServerRouteTriggerService,
+  ],
 })
 export class ServerRouteTriggerModule {}

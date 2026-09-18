@@ -2,7 +2,6 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { IconPlus, IconSearch } from '@ui/icon';
-import { TooltipDelay } from '@ui/primitives/surfaces/AppTooltip/AppTooltip';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
 import { type ButtonColor } from '@ui/primitives/input/Button/types/ButtonColor';
 import { type ButtonVariant } from '@ui/primitives/input/Button/types/ButtonVariant';
@@ -88,7 +87,7 @@ export const Link: Story = {
 
 export const Tooltip: Story = {
   ...Default,
-  args: { tooltip: 'Search records', tooltipDelay: TooltipDelay.noDelay },
+  args: { tooltip: 'Search records', tooltipDelay: 0 },
   play: async ({ canvasElement }) => {
     const button = within(canvasElement).getByRole('button', {
       name: 'Search',
@@ -100,6 +99,11 @@ export const Tooltip: Story = {
       await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
     ).toHaveTextContent('Search records');
   },
+};
+
+export const TooltipDocumentation: Story = {
+  ...Tooltip,
+  play: undefined,
 };
 
 export const TooltipDisabled: Story = {
@@ -222,4 +226,56 @@ export const CatalogDark: CatalogStory<Story, typeof IconButton> = {
   ...Catalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
+};
+
+export const Round: Story = {
+  ...Default,
+  render: () => (
+    <>
+      <IconButton
+        aria-label="Compact round"
+        size="xs"
+        shape="round"
+        variant="solid"
+        color="accent"
+      >
+        <IconPlus />
+      </IconButton>
+      <IconButton
+        aria-label="Small round"
+        size="sm"
+        shape="round"
+        variant="solid"
+        color="accent"
+      >
+        <IconPlus />
+      </IconButton>
+      <IconButton
+        aria-label="Disabled round"
+        size="sm"
+        shape="round"
+        variant="solid"
+        color="accent"
+        disabled
+      >
+        <IconPlus />
+      </IconButton>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    for (const [name, size] of [
+      ['Compact round', 20],
+      ['Small round', 24],
+      ['Disabled round', 24],
+    ] as const) {
+      const button = canvas.getByRole('button', { name });
+      await expect(button.getBoundingClientRect().width).toBe(size);
+      await expect(button.getBoundingClientRect().height).toBe(size);
+      await expect(getComputedStyle(button).borderTopLeftRadius).toBe('50%');
+    }
+    const disabled = canvas.getByRole('button', { name: 'Disabled round' });
+    await expect(disabled).toBeDisabled();
+    await expect(getComputedStyle(disabled).opacity).toBe('1');
+  },
 };

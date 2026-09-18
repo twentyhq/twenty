@@ -22,6 +22,7 @@ import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.typ
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -59,6 +60,7 @@ import { SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -66,6 +68,7 @@ import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata
 @UseFilters(
   PreventNestToAutoLogGraphqlErrorsFilter,
   PermissionsGraphqlApiExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 export class ObjectMetadataResolver {
   constructor(
@@ -79,6 +82,7 @@ export class ObjectMetadataResolver {
 
   @UseGuards(NoPermissionGuard)
   @Query(() => ObjectConnectionDTO)
+  @AllowSuspendedWorkspace()
   async objects(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('paging', {

@@ -26,11 +26,6 @@ export type { CheckboxProps } from './Checkbox/types/CheckboxProps';
 export type { CheckboxShape } from './Checkbox/types/CheckboxShape';
 export type { CheckboxSize } from './Checkbox/types/CheckboxSize';
 export type { CheckboxVariant } from './Checkbox/types/CheckboxVariant';
-export { CodeEditor } from './CodeEditor/CodeEditor';
-export { BASE_CODE_EDITOR_THEME_ID } from './CodeEditor/constants/BaseCodeEditorThemeId';
-export { getBaseCodeEditorTheme } from './CodeEditor/utils/getBaseCodeEditorTheme';
-export type { CoreEditorHeaderProps } from './CodeEditorHeader/CodeEditorHeader';
-export { CoreEditorHeader } from './CodeEditorHeader/CodeEditorHeader';
 export { ColorPickerButton } from './ColorPickerButton/ColorPickerButton';
 export type {
   ColorSchemeSegmentProps,
@@ -56,8 +51,6 @@ export type {
 export { FloatingIconButton } from './FloatingIconButton/FloatingIconButton';
 export type { FloatingIconButtonGroupProps } from './FloatingIconButtonGroup/FloatingIconButtonGroup';
 export { FloatingIconButtonGroup } from './FloatingIconButtonGroup/FloatingIconButtonGroup';
-export type { IconButtonGroupProps } from './IconButtonGroup/IconButtonGroup';
-export { IconButtonGroup } from './IconButtonGroup/IconButtonGroup';
 export { IconListViewGrip } from './IconListViewGrip/IconListViewGrip';
 export { Input } from './Input/Input';
 export type { InputProps } from './Input/types/InputProps';
@@ -65,22 +58,10 @@ export { InputGroup } from './InputGroup/InputGroup';
 export type { InputGroupProps } from './InputGroup/types/InputGroupProps';
 export { InputHint } from './InputHint/InputHint';
 export { InputLabel } from './InputLabel/InputLabel';
-export type { InsideButtonProps } from './InsideButton/InsideButton';
-export { InsideButton } from './InsideButton/InsideButton';
-export type {
-  LightIconButtonAccent,
-  LightIconButtonSize,
-  LightIconButtonProps,
-} from './LightIconButton/LightIconButton';
-export { LightIconButton } from './LightIconButton/LightIconButton';
-export type { LightIconButtonGroupProps } from './LightIconButtonGroup/LightIconButtonGroup';
-export { LightIconButtonGroup } from './LightIconButtonGroup/LightIconButtonGroup';
 export { Radio } from './Radio/Radio';
 export type { RadioProps } from './Radio/types/RadioProps';
 export { RadioGroup } from './RadioGroup/RadioGroup';
 export type { RadioGroupProps } from './RadioGroup/types/RadioGroupProps';
-export type { RoundedIconButtonSize } from './RoundedIconButton/RoundedIconButton';
-export { RoundedIconButton } from './RoundedIconButton/RoundedIconButton';
 export type { SearchInputProps } from './SearchInput/SearchInput';
 export { SearchInput } from './SearchInput/SearchInput';
 export type {
@@ -108,12 +89,6 @@ export type { SliderValueProps } from './Slider/types/SliderValueProps';
 export { Switch } from './Switch/Switch';
 export type { SwitchProps } from './Switch/types/SwitchProps';
 export type { SwitchSize } from './Switch/types/SwitchSize';
-export type { TabContentProps } from './TabButton/TabButton';
-export {
-  StyledTabContainer,
-  TabContent,
-  TabButton,
-} from './TabButton/TabButton';
 export { Textarea } from './Textarea/Textarea';
 export type { TextareaProps } from './Textarea/types/TextareaProps';
 export type { ColorScheme } from './types/ColorScheme';

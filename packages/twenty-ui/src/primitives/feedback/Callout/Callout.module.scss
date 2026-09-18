@@ -113,3 +113,7 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.closeButton {
+  @include square-button;
+}

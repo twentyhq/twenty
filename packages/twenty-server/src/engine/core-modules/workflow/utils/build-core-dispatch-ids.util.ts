@@ -9,6 +9,14 @@ export const buildCoreDispatchIds = ({
   coreWorkflowVersionId?: string | null;
   workspaceWorkflowVersionId?: string | null;
 }): CoreDispatchIds =>
-  isDefined(coreWorkflowVersionId) && isDefined(workspaceWorkflowVersionId)
-    ? { coreWorkflowVersionId, workspaceWorkflowVersionId }
-    : { coreWorkflowVersionId: null, workspaceWorkflowVersionId: null };
+  isDefined(coreWorkflowVersionId)
+    ? {
+        coreWorkflowVersionId,
+        ...(isDefined(workspaceWorkflowVersionId)
+          ? { workspaceWorkflowVersionId }
+          : {}),
+      }
+    : {
+        coreWorkflowVersionId: null,
+        workspaceWorkflowVersionId: workspaceWorkflowVersionId ?? null,
+      };

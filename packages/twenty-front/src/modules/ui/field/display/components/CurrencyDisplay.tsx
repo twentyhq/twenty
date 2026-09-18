@@ -1,11 +1,6 @@
-import { useContext, useId, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useContext } from 'react';
 import { styled } from '@linaria/react';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { isDefined, formatToShortNumber } from 'twenty-shared/utils';
 
@@ -16,6 +11,7 @@ import {
   type FieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { EllipsisDisplay } from 'twenty-ui/primitives/data-display';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -35,8 +31,6 @@ export const CurrencyDisplay = ({
   fieldDefinition,
 }: CurrencyDisplayProps) => {
   const { theme } = useContext(ThemeContext);
-  const instanceId = useId();
-  const [shouldRenderTooltip, setShouldRenderTooltip] = useState(false);
 
   const currencyCode = currencyValue?.currencyCode;
   const currencyMetadata = isDefined(currencyCode)
@@ -53,7 +47,6 @@ export const CurrencyDisplay = ({
   const decimalsToUse = decimals ?? DEFAULT_DECIMAL_VALUE;
 
   const { formatNumber } = useNumberFormat();
-  const tooltipAnchorId = `currency-icon-${instanceId.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
   const currencyTooltipContent = isDefined(currencyCode)
     ? `${currencyCode}${currencyMetadata?.label ? ` - ${currencyMetadata.label}` : ''}`
     : undefined;
@@ -63,41 +56,30 @@ export const CurrencyDisplay = ({
     isDefined(currencyTooltipContent);
 
   return (
-    <>
-      <EllipsisDisplay>
-        {shouldShowCurrencyTooltip && (
-          <>
-            <StyledCurrencyIconContainer
-              id={tooltipAnchorId}
-              onMouseEnter={() => setShouldRenderTooltip(true)}
-              onMouseLeave={() => setShouldRenderTooltip(false)}
-            >
+    <EllipsisDisplay>
+      {shouldShowCurrencyTooltip && (
+        <>
+          <Tooltip
+            content={currencyTooltipContent}
+            delay={TooltipDelay.shortDelay}
+            side="top"
+            positionMethod="fixed"
+          >
+            <StyledCurrencyIconContainer>
               <CurrencyIcon
                 color={theme.font.color.primary}
                 size={theme.icon.size.md}
                 stroke={theme.icon.stroke.sm}
               />
-            </StyledCurrencyIconContainer>{' '}
-          </>
-        )}
-        {amountToDisplay !== null
-          ? !isDefined(format) || format === 'short'
-            ? formatToShortNumber(amountToDisplay)
-            : formatNumber(amountToDisplay, { decimals: decimalsToUse })
-          : null}
-      </EllipsisDisplay>
-      {shouldRenderTooltip &&
-        shouldShowCurrencyTooltip &&
-        createPortal(
-          <AppTooltip
-            anchorSelect={`#${tooltipAnchorId}`}
-            title={currencyTooltipContent}
-            delay={TooltipDelay.shortDelay}
-            place={TooltipPosition.Top}
-            positionStrategy="fixed"
-          />,
-          document.body,
-        )}
-    </>
+            </StyledCurrencyIconContainer>
+          </Tooltip>{' '}
+        </>
+      )}
+      {amountToDisplay !== null
+        ? !isDefined(format) || format === 'short'
+          ? formatToShortNumber(amountToDisplay)
+          : formatNumber(amountToDisplay, { decimals: decimalsToUse })
+        : null}
+    </EllipsisDisplay>
   );
 };

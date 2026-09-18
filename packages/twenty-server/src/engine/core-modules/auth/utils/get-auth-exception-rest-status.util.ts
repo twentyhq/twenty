@@ -12,6 +12,7 @@ export const getAuthExceptionRestStatus = (exception: AuthException) => {
     case AuthExceptionCode.INVALID_INPUT:
       return 400;
     case AuthExceptionCode.FORBIDDEN_EXCEPTION:
+    case AuthExceptionCode.WORKSPACE_SUSPENDED:
     case AuthExceptionCode.INSUFFICIENT_SCOPES:
     case AuthExceptionCode.OAUTH_ACCESS_DENIED:
     case AuthExceptionCode.SSO_AUTH_FAILED:
