@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createCoreApiClientMock } from 'src/logic-functions/__mocks__/create-core-api-client-mock';
-import { findExistingCoreWorkflowId } from 'src/logic-functions/utils/find-existing-workflow-id';
+import { findExistingCoreWorkflowId } from 'src/logic-functions/utils/find-existing-core-workflow-id';
 
 const buildClient = (nodes: { id: string; name: string }[]) =>
   createCoreApiClientMock({

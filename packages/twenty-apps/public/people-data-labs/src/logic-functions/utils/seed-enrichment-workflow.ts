@@ -11,7 +11,7 @@ import {
   updateCoreWorkflowVersionStep,
   updateCoreWorkflowVersionTrigger,
 } from 'src/logic-functions/utils/core-workflow-operations';
-import { findExistingCoreWorkflowId } from 'src/logic-functions/utils/find-existing-workflow-id';
+import { findExistingCoreWorkflowId } from 'src/logic-functions/utils/find-existing-core-workflow-id';
 import { type EnrichmentWorkflowSeed } from 'src/types/enrichment-workflow-seed';
 import { type SeedEnrichmentWorkflowResult } from 'src/types/seed-enrichment-workflow-result';
 import { isDefined } from 'src/utils/is-defined';
