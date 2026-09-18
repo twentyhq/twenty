@@ -26,7 +26,10 @@ export type { DatabaseCrudOperation } from './constants/database-crud-operation.
 export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.const';
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
+export { RECORDS_TOOL_WIDGET_NAME } from './constants/records-tool-widget-name.const';
 export { ToolCategory } from './constants/tool-category.const';
+export type { ToolWidgetName } from './constants/tool-widget-name.const';
+export { TOOL_WIDGET_NAMES } from './constants/tool-widget-name.const';
 export type {
   AgentResponseFormatType,
   AgentTextResponseFormat,
@@ -60,12 +63,7 @@ export type {
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type { ModelConfiguration } from './types/model-configuration.type';
 export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
-export type { ToolWidgetName, ToolRecordReference } from './types/ToolWidget';
-export {
-  RECORDS_TOOL_WIDGET_NAME,
-  TOOL_WIDGET_NAMES,
-  isToolWidgetName,
-} from './types/ToolWidget';
+export type { ToolRecordReference } from './types/ToolRecordReference';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
@@ -76,5 +74,6 @@ export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';
 export { isCompleteWorkspaceSetupToolPart } from './utils/is-complete-workspace-setup-tool-part.util';
 export { isDataResidency } from './utils/is-data-residency.util';
 export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
+export { isToolWidgetName } from './utils/is-tool-widget-name.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';
 export { parseAiModelVariantId } from './utils/parse-ai-model-variant-id.util';
