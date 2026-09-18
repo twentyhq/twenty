@@ -126,4 +126,86 @@ describe('createPhonesFromFieldValue test suite', () => {
     const result = createPhonesFromFieldValue(fieldValue);
     expect(result).toEqual([]);
   });
+
+  it('should complete an additional phone missing its country code', () => {
+    const fieldValue = {
+      primaryPhoneNumber: '123456789',
+      primaryPhoneCountryCode: 'US',
+      primaryPhoneCallingCode: '+1',
+      additionalPhones: [{ number: '987654321', callingCode: '+44' }],
+    } as unknown as FieldPhonesValue;
+
+    const result = createPhonesFromFieldValue(fieldValue);
+
+    expect(result).toEqual([
+      { number: '123456789', callingCode: '+1', countryCode: 'US' },
+      { number: '987654321', callingCode: '+44', countryCode: '' },
+    ]);
+  });
+
+  it('should complete an additional phone missing its calling code', () => {
+    const fieldValue = {
+      primaryPhoneNumber: '',
+      primaryPhoneCountryCode: '',
+      additionalPhones: [{ number: '987654321', countryCode: 'GB' }],
+    } as unknown as FieldPhonesValue;
+
+    const result = createPhonesFromFieldValue(fieldValue);
+
+    expect(result).toEqual([
+      { number: '987654321', callingCode: '', countryCode: 'GB' },
+    ]);
+  });
+
+  it('should complete an additional phone whose codes are null', () => {
+    const fieldValue = {
+      primaryPhoneNumber: '',
+      primaryPhoneCountryCode: '',
+      additionalPhones: [
+        { number: '987654321', callingCode: null, countryCode: null },
+      ],
+    } as unknown as FieldPhonesValue;
+
+    const result = createPhonesFromFieldValue(fieldValue);
+
+    expect(result).toEqual([
+      { number: '987654321', callingCode: '', countryCode: '' },
+    ]);
+  });
+
+  it('should drop an additional phone without a number', () => {
+    const fieldValue = {
+      primaryPhoneNumber: '',
+      primaryPhoneCountryCode: '',
+      additionalPhones: [
+        { number: '', callingCode: '+44', countryCode: 'GB' },
+        { callingCode: '+33', countryCode: 'FR' },
+        null,
+      ],
+    } as unknown as FieldPhonesValue;
+
+    const result = createPhonesFromFieldValue(fieldValue);
+
+    expect(result).toEqual([]);
+  });
+
+  it('should keep well-formed additional phones when one of them is malformed', () => {
+    const fieldValue = {
+      primaryPhoneNumber: '',
+      primaryPhoneCountryCode: '',
+      additionalPhones: [
+        { number: '987654321', callingCode: '+44', countryCode: 'GB' },
+        { number: '555555555' },
+        { number: '111222333', callingCode: '+33', countryCode: 'FR' },
+      ],
+    } as unknown as FieldPhonesValue;
+
+    const result = createPhonesFromFieldValue(fieldValue);
+
+    expect(result).toEqual([
+      { number: '987654321', callingCode: '+44', countryCode: 'GB' },
+      { number: '555555555', callingCode: '', countryCode: '' },
+      { number: '111222333', callingCode: '+33', countryCode: 'FR' },
+    ]);
+  });
 });

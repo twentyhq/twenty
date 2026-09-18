@@ -144,25 +144,43 @@ export const PhonesFieldInput = () => {
     updatedPhones: PhoneRecord[],
     event: MouseEvent | TouchEvent,
   ) => {
-    onClickOutside?.({
-      newValue: parseArrayToPhonesValue(updatedPhones),
-      event,
-    });
+    const nextValue = parseArrayToPhonesValue(updatedPhones);
+
+    if (!isDefined(nextValue)) {
+      return;
+    }
+
+    onClickOutside?.({ newValue: nextValue, event });
   };
 
   const handleEscape = (updatedPhones: PhoneRecord[]) => {
-    onEscape?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
+    const nextValue = parseArrayToPhonesValue(updatedPhones);
+
+    if (!isDefined(nextValue)) {
+      return;
+    }
+
+    onEscape?.({ newValue: nextValue });
   };
 
   const handleEnter = (updatedPhones: PhoneRecord[]) => {
-    onEnter?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
+    const nextValue = parseArrayToPhonesValue(updatedPhones);
+
+    if (!isDefined(nextValue)) {
+      return;
+    }
+
+    onEnter?.({ newValue: nextValue });
   };
 
   const handleSubmit = (updatedPhones: PhoneRecord[]) => {
-    onSubmit?.({
-      newValue: parseArrayToPhonesValue(updatedPhones),
-      skipClose: true,
-    });
+    const nextValue = parseArrayToPhonesValue(updatedPhones);
+
+    if (!isDefined(nextValue)) {
+      return;
+    }
+
+    onSubmit?.({ newValue: nextValue, skipClose: true });
   };
 
   return (

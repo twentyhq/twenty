@@ -2,6 +2,11 @@ import { z } from 'zod';
 
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
+const additionalPhoneCodeSchema = z.preprocess(
+  (code) => code ?? '',
+  z.string(),
+);
+
 export const phonesFieldValueSchema = z.object({
   primaryPhoneNumber: z.string(),
   primaryPhoneCountryCode: z.string(),
@@ -10,8 +15,8 @@ export const phonesFieldValueSchema = z.object({
     .array(
       z.object({
         number: z.string(),
-        callingCode: z.string(),
-        countryCode: z.string(),
+        callingCode: additionalPhoneCodeSchema,
+        countryCode: additionalPhoneCodeSchema,
       }),
     )
     .nullable(),

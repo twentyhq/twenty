@@ -55,7 +55,7 @@ export const PhonesDisplay = ({
         .map(({ number, callingCode }) => {
           return {
             number,
-            callingCode,
+            callingCode: callingCode ?? '',
           };
         }),
     [
