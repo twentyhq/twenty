@@ -83,13 +83,7 @@ export class EntityEventsToDbListener {
       return;
     }
 
-    const shouldCreateEventLog =
-      batchEvent.objectMetadata?.isAuditLogged === true &&
-      action !== DatabaseEventAction.DESTROYED &&
-      (await this.billingSubscriptionService.getWorkspaceEntitlementValue(
-        batchEvent.workspaceId,
-        BillingEntitlementKey.AUDIT_LOGS,
-      ));
+    const isAuditLogBatchEvent = batchEvent.objectMetadata?.isAuditLogged;
     const shouldCreateTimelineActivity =
       action !== DatabaseEventAction.DESTROYED &&
       (await this.timelineActivityRoutingPlanService.shouldProcessEvent({
@@ -136,16 +130,30 @@ export class EntityEventsToDbListener {
       );
     }
 
-    if (shouldCreateEventLog) {
-      promises.push(
-        this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
-          CreateEventLogFromInternalEvent.name,
-          batchEvent,
-          { retryLimit: 1 },
-        ),
-      );
+    if (isAuditLogBatchEvent && action !== DatabaseEventAction.DESTROYED) {
+      promises.push(this.enqueueEventLogIfEntitled(batchEvent));
     }
 
     await Promise.all(promises);
+  }
+
+  private async enqueueEventLogIfEntitled<T extends ObjectRecordEvent>(
+    batchEvent: WorkspaceEventBatch<T>,
+  ) {
+    const hasAuditLogsEntitlement =
+      await this.billingSubscriptionService.getWorkspaceEntitlementValue(
+        batchEvent.workspaceId,
+        BillingEntitlementKey.AUDIT_LOGS,
+      );
+
+    if (!hasAuditLogsEntitlement) {
+      return;
+    }
+
+    await this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
+      CreateEventLogFromInternalEvent.name,
+      batchEvent,
+      { retryLimit: 1 },
+    );
   }
 }
