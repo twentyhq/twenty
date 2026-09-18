@@ -581,8 +581,8 @@ export class AgentChatService {
       .leftJoin(
         RoleTargetEntity,
         'channelRoleTarget',
-        'channelRoleTarget.roleId = channelRole.roleId AND channelRoleTarget.userWorkspaceId = :userWorkspaceId',
-        { userWorkspaceId },
+        'channelRoleTarget.roleId = channelRole.roleId AND channelRoleTarget.userWorkspaceId = :userWorkspaceId AND channelRoleTarget.workspaceId = :workspaceId',
+        { userWorkspaceId, workspaceId },
       )
       .where('thread.workspaceId = :workspaceId', { workspaceId })
       // The creator clause mirrors buildThreadAccessWhere: the owner

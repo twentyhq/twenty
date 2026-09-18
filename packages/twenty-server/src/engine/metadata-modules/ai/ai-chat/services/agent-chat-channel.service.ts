@@ -123,6 +123,7 @@ export class AgentChatChannelService {
         .innerJoin('member.channel', 'channel')
         .where('member.workspaceId = :workspaceId', { workspaceId }),
       userWorkspaceId,
+      workspaceId,
     )
       .orderBy('member.createdAt', 'ASC')
       .getMany();
@@ -140,6 +141,7 @@ export class AgentChatChannelService {
         .innerJoin('channelRole.channel', 'channel')
         .where('channelRole.workspaceId = :workspaceId', { workspaceId }),
       userWorkspaceId,
+      workspaceId,
     )
       .orderBy('channelRole.createdAt', 'ASC')
       .getMany();
@@ -1129,6 +1131,7 @@ export class AgentChatChannelService {
   private addChannelVisibilityToViewer<TEntity extends ObjectLiteral>(
     query: SelectQueryBuilder<TEntity>,
     userWorkspaceId: string,
+    workspaceId: string,
   ): SelectQueryBuilder<TEntity> {
     return query
       .leftJoin(
@@ -1141,8 +1144,8 @@ export class AgentChatChannelService {
       .leftJoin(
         RoleTargetEntity,
         'viewerRoleTarget',
-        'viewerRoleTarget.roleId = viewerChannelRole.roleId AND viewerRoleTarget.userWorkspaceId = :userWorkspaceId',
-        { userWorkspaceId },
+        'viewerRoleTarget.roleId = viewerChannelRole.roleId AND viewerRoleTarget.userWorkspaceId = :userWorkspaceId AND viewerRoleTarget.workspaceId = :workspaceId',
+        { userWorkspaceId, workspaceId },
       )
       .andWhere(
         '(channel.visibility = :publicVisibility OR viewer.id IS NOT NULL OR viewerRoleTarget.id IS NOT NULL)',
