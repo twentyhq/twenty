@@ -1,0 +1,15 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="64"
+  height="64"
+  viewBox="0 0 64 64"
+  fill="none"
+  role="img"
+>
+  <title>Microsoft Teams</title>
+  <rect width="64" height="64" rx="14" fill="#6264A7" />
+  <path
+    fill="#FFFFFF"
+    d="M16 18h32v8H36v20h-8V26H16z"
+  />
+</svg>
