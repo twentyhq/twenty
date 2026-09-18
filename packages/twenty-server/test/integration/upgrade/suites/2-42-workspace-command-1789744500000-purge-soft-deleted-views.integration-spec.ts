@@ -16,6 +16,7 @@ import {
   ViewFilterOperand,
   ViewSortDirection,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { type PurgeSoftDeletedViewsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789744500000-purge-soft-deleted-views.command';
@@ -102,6 +103,10 @@ describe('2-42 workspace command 1789744500000 - PurgeSoftDeletedViewsCommand (i
       },
       gqlFields: 'id labelIdentifierFieldMetadataId',
     });
+
+    if (!isDefined(labelIdentifierFieldMetadataId)) {
+      throw new Error('purgeViewsObject has no label identifier field');
+    }
 
     objectMetadataId = createdObjectMetadataId;
 
