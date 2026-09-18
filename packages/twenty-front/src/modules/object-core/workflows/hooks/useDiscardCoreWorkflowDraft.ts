@@ -1,5 +1,6 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useMutation } from '@apollo/client/react';
+import { useSearchParams } from 'react-router-dom';
 
 import { DISCARD_CORE_WORKFLOW_DRAFT } from '@/object-core/workflows/graphql/mutations/discardCoreWorkflowDraft';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
@@ -12,6 +13,7 @@ import {
 export const useDiscardCoreWorkflowDraft = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const apolloCoreClient = useApolloCoreClient();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [discardCoreWorkflowDraftMutation] = useMutation<
     DiscardCoreWorkflowDraftMutation,
@@ -34,6 +36,13 @@ export const useDiscardCoreWorkflowDraft = () => {
         id: coreWorkflowVersionId,
       }),
     });
+
+    if (searchParams.get('version') === coreWorkflowVersionId) {
+      const nextSearchParams = new URLSearchParams(searchParams);
+
+      nextSearchParams.delete('version');
+      setSearchParams(nextSearchParams, { replace: true });
+    }
 
     await invalidateCoreWorkflowVersions(apolloCoreClient);
   };

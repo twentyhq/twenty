@@ -25,11 +25,11 @@ Before rollout, the SSE dependency must provide:
 
 Deliver the backend contract and frontend consumer together in a separate follow-up PR, which may be stacked on this frontend PR. The consumer must invalidate `coreWorkflows`, `coreWorkflowById`, `coreWorkflowVersionsByCoreWorkflowId` and `coreWorkflowVersionById`, reconcile removed selections and update open diagrams. It must not subscribe using workspace definition IDs. Local mutation refetches and the explicit Refresh action are implemented; remote live updates are not complete. Keep general rollout blocked until that contract and consumer land and multi-session/reconnect tests pass.
 
-## Execution dependency
+## Execution integration
 
-B-async (#26098) must make the shared execution engine, automated triggers and webhook resolution consume core definitions independently of the UI flag. Core webhook URLs contain a core workflow ID; deployed webhook ingress must accept that ID while preserving existing workspace-ID URLs. Completion of a core API request alone does not establish that scheduled or queued execution has migrated.
+B-async (#26098) is merged. The shared execution engine, automated triggers and webhook resolution now consume core definitions independently of the UI flag. Core webhook URLs contain a core workflow ID, while existing workspace-ID URLs remain supported.
 
-This frontend PR is rebased and retargeted onto `main` after #26068 merged. The currently published #26098 head (`c90111feb3fd9324a571bf4d0fb1fb8118a6e213`) predates that merge and conflicts with the integrated API and frontend branch. B-async must publish a reconciled head without moving execution-engine work into this PR. The branches overlap in core-version UI/context and generated GraphQL, workflow lifecycle/list services, and instance-command registration. Verify the combined result rather than relying on either branch's standalone acceptance: rerun the complete create → edit → activate → run → inspect flow, command-menu lifecycle after the core-only rename/deletion cleanup, connected If/Else duplication, and ON → OFF → ON rollback behavior against the integrated backend.
+This frontend PR is rebased and retargeted onto `main` after #26068 and #26098 merged. Their overlapping core-version UI/context, generated GraphQL, workflow lifecycle/list services and instance-command registrations are reconciled on this branch. Before enabling the flag, rerun the complete create → edit → activate → run → inspect flow, command-menu lifecycle after the core-only rename/deletion cleanup, connected If/Else duplication, and ON → OFF → ON rollback behavior against the integrated backend.
 
 ## Integrated duplication verification
 

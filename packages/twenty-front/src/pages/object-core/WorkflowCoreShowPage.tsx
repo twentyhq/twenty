@@ -119,6 +119,7 @@ const CoreWorkflowShowContent = ({
   const selectedVersion = isDefined(requestedVersionId)
     ? versions.coreWorkflowVersions.find(({ id }) => id === requestedVersionId)
     : currentVersion;
+  const isReadOnlyVersion = isDefined(requestedVersionId);
   const isHistoricalVersion =
     isDefined(requestedVersionId) && selectedVersion?.id !== currentVersion?.id;
   const { renameWorkflow, validate, isValidating } = useCoreWorkflowShowActions(
@@ -202,7 +203,7 @@ const CoreWorkflowShowContent = ({
             }
             actionButton={
               <>
-                {!isHistoricalVersion && <RecordShowCommandMenu />}
+                {!isReadOnlyVersion && <RecordShowCommandMenu />}
                 <SidePanelToggleButton />
               </>
             }
@@ -230,7 +231,7 @@ const CoreWorkflowShowContent = ({
               key={selectedVersion.id}
               coreWorkflowId={coreWorkflowId}
               coreWorkflowVersionId={selectedVersion.id}
-              readonly={isHistoricalVersion}
+              readonly={isReadOnlyVersion}
             />
           ) : (
             <WorkspaceRouteUnavailable>{t`Workflow version not found.`}</WorkspaceRouteUnavailable>
