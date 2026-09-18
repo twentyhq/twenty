@@ -11,7 +11,8 @@ import {
   IconDownload,
   IconFile,
 } from 'twenty-ui/icon';
-import { CodeEditor, LightIconButton } from 'twenty-ui/primitives/input';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';

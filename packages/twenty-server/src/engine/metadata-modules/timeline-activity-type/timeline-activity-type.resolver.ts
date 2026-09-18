@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -28,6 +28,7 @@ import { TimelineActivityTypeGraphqlApiExceptionInterceptor } from 'src/engine/m
 import { TimelineActivityTypeService } from 'src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.service';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(
@@ -35,6 +36,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
   TimelineActivityTypeGraphqlApiExceptionInterceptor,
 )
 @MetadataResolver(() => TimelineActivityTypeDTO)
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class TimelineActivityTypeResolver {
   constructor(
     private readonly timelineActivityTypeService: TimelineActivityTypeService,

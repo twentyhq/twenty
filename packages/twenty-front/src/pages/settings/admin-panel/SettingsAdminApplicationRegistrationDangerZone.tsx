@@ -1,6 +1,8 @@
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -8,20 +10,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconShare, IconTrash, IconUserPlus } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui/primitives/layout';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
-import {
-  H1Title,
-  H1TitleFontColor,
-  H2Title,
-} from 'twenty-ui/primitives/typography';
+import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type ApplicationRegistration,
@@ -32,12 +25,6 @@ import {
   TransferApplicationRegistrationOwnershipDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import {
-  StyledAppModal,
-  StyledAppModalButton,
-  StyledAppModalSection,
-  StyledAppModalTitle,
-} from '~/pages/settings/applications/components/SettingsAppModalLayout';
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
 
@@ -48,6 +35,14 @@ const CLAIM_OWNERSHIP_MODAL_ID =
   'claim-application-registration-ownership-modal';
 
 const DELETE_REGISTRATION_BUTTON_ID = 'delete-registration-button';
+
+const StyledActionButton = styled(Button)`
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledDescriptionSection = styled(Section.Root)`
+  margin-bottom: ${themeCssVariables.spacing[6]};
+`;
 
 const StyledDangerButtonGroup = styled.div`
   display: flex;
@@ -64,7 +59,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
   const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isTransferring, setIsTransferring] = useState(false);
@@ -186,7 +181,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         variant: 'success',
         children: t`Ownership claimed successfully`,
       });
-      closeModal(CLAIM_OWNERSHIP_MODAL_ID);
+      closeDialog(CLAIM_OWNERSHIP_MODAL_ID);
     } catch {
       enqueueToast({
         variant: 'error',
@@ -201,52 +196,55 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Danger zone`}
           description={t`Delete or transfer this app registration`}
         />
         <StyledDangerButtonGroup>
-          <Button
-            id={DELETE_REGISTRATION_BUTTON_ID}
-            startIcon={<IconTrash />}
-            disabled={hasActiveInstalls}
-            onClick={() => openModal(DELETE_REGISTRATION_MODAL_ID)}
-            variant="outline"
-            color="danger"
-          >{t`Delete app`}</Button>
-          {hasActiveInstalls && (
-            <AppTooltip
-              anchorSelect={`#${DELETE_REGISTRATION_BUTTON_ID}`}
-              title={t`Uninstall this app from all workspaces before deleting it`}
-              noArrow
-              place="bottom"
-              positionStrategy="fixed"
-              delay={TooltipDelay.shortDelay}
-            />
-          )}
+          <Tooltip
+            content={t`Uninstall this app from all workspaces before deleting it`}
+            side="bottom"
+            positionMethod="fixed"
+            delay={TooltipDelay.shortDelay}
+            disabled={!hasActiveInstalls}
+          >
+            <span tabIndex={hasActiveInstalls ? 0 : undefined}>
+              <Button
+                id={DELETE_REGISTRATION_BUTTON_ID}
+                color="danger"
+                variant="outline"
+                startIcon={<IconTrash />}
+                disabled={hasActiveInstalls}
+                onClick={() => openDialog(DELETE_REGISTRATION_MODAL_ID)}
+              >
+                {t`Delete app`}
+              </Button>
+            </span>
+          </Tooltip>
+
           {isUnclaimed
             ? fromAdmin && (
                 <Button
                   startIcon={<IconUserPlus />}
-                  onClick={() => openModal(CLAIM_OWNERSHIP_MODAL_ID)}
+                  onClick={() => openDialog(CLAIM_OWNERSHIP_MODAL_ID)}
                   variant="outline"
                 >{t`Claim ownership`}</Button>
               )
             : !isUnclaimed && (
                 <Button
                   startIcon={<IconShare />}
-                  onClick={() => openModal(TRANSFER_OWNERSHIP_MODAL_ID)}
+                  onClick={() => openDialog(TRANSFER_OWNERSHIP_MODAL_ID)}
                   variant="outline"
                 >{t`Transfer ownership`}</Button>
               )}
         </StyledDangerButtonGroup>
-      </Section>
+      </Section.Root>
 
-      <ConfirmationModal
+      <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalInstanceId={DELETE_REGISTRATION_MODAL_ID}
+        dialogId={DELETE_REGISTRATION_MODAL_ID}
         title={t`Delete app`}
         subtitle={
           <Trans>
@@ -260,8 +258,8 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         loading={isLoading}
       />
 
-      <ConfirmationModal
-        modalInstanceId={CLAIM_OWNERSHIP_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={CLAIM_OWNERSHIP_MODAL_ID}
         title={t`Claim ownership`}
         subtitle={
           <Trans>
@@ -275,55 +273,57 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         loading={isClaiming}
       />
 
-      <StyledAppModal
-        modalId={TRANSFER_OWNERSHIP_MODAL_ID}
-        isClosable
+      <DialogInstance
+        dialogId={TRANSFER_OWNERSHIP_MODAL_ID}
+        dismissible
         onClose={() => setTransferSubdomain('')}
-        padding="large"
-        dataGloballyPreventClickOutside
       >
-        <StyledAppModalTitle>
-          <H1Title
-            title={t`Transfer ownership`}
-            fontColor={H1TitleFontColor.Primary}
-          />
-        </StyledAppModalTitle>
-        <StyledAppModalSection
-          alignment={SectionAlignment.Center}
-          fontColor={SectionFontColor.Primary}
-        >
-          {t`Enter the workspace subdomain to transfer this app to. You will lose access to manage it.`}
-        </StyledAppModalSection>
-        <Section>
-          <SettingsTextInput
-            instanceId="transfer-ownership-subdomain"
-            value={transferSubdomain}
-            onChange={setTransferSubdomain}
-            placeholder={t`e.g. my-workspace`}
-            fullWidth
-            disableHotkeys
-            label={t`Target workspace subdomain`}
-            autoFocusOnMount
-          />
-        </Section>
-        <StyledAppModalButton
-          onClick={() => {
-            closeModal(TRANSFER_OWNERSHIP_MODAL_ID);
-            setTransferSubdomain('');
-          }}
-          fullWidth
-          variant="outline"
-        >{t`Cancel`}</StyledAppModalButton>
-        <StyledAppModalButton
-          onClick={handleTransferOwnership}
-          disabled={
-            !isNonEmptyString(transferSubdomain.trim()) || isTransferring
-          }
-          fullWidth
-          variant="outline"
-          color="danger"
-        >{t`Transfer`}</StyledAppModalButton>
-      </StyledAppModal>
+        {({ container, backdrop, viewportProps, onKeyDown }) => (
+          <Dialog.Popup
+            {...{ container, backdrop, viewportProps, onKeyDown }}
+            data-globally-prevent-click-outside
+            style={{
+              padding: 'var(--t-spacing-6)',
+              borderRadius: 'var(--t-spacing-1)',
+              width: 'calc(400px - var(--t-spacing-32))',
+            }}
+          >
+            <Dialog.Title>{t`Transfer ownership`}</Dialog.Title>
+            <StyledDescriptionSection align="center" color="primary">
+              {t`Enter the workspace subdomain to transfer this app to. You will lose access to manage it.`}
+            </StyledDescriptionSection>
+            <Section.Root>
+              <SettingsTextInput
+                instanceId="transfer-ownership-subdomain"
+                value={transferSubdomain}
+                onChange={setTransferSubdomain}
+                placeholder={t`e.g. my-workspace`}
+                fullWidth
+                disableHotkeys
+                label={t`Target workspace subdomain`}
+                autoFocusOnMount
+              />
+            </Section.Root>
+            <StyledActionButton
+              onClick={() => {
+                closeDialog(TRANSFER_OWNERSHIP_MODAL_ID);
+                setTransferSubdomain('');
+              }}
+              fullWidth
+              variant="outline"
+            >{t`Cancel`}</StyledActionButton>
+            <StyledActionButton
+              onClick={handleTransferOwnership}
+              disabled={
+                !isNonEmptyString(transferSubdomain.trim()) || isTransferring
+              }
+              fullWidth
+              variant="outline"
+              color="danger"
+            >{t`Transfer`}</StyledActionButton>
+          </Dialog.Popup>
+        )}
+      </DialogInstance>
     </>
   );
 };

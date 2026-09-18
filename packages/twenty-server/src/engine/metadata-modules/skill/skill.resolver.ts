@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -15,6 +15,7 @@ import { UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-
 import { SkillGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/skill/interceptors/skill-graphql-api-exception.interceptor';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 // Reads are open to chat users so the composer can list skills; mutations
 // stay behind AI settings.
@@ -24,6 +25,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
   SkillGraphqlApiExceptionInterceptor,
 )
 @MetadataResolver(() => SkillDTO)
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class SkillResolver {
   constructor(private readonly skillService: SkillService) {}
 

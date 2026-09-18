@@ -7,16 +7,15 @@ import {
   useSettingsSubdomain,
 } from '@/settings/domains/hooks/useSettingsSubdomain';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { Section } from 'twenty-ui/components';
 
 const StyledDomainFormWrapper = styled.div`
   align-items: center;
@@ -64,8 +63,8 @@ export const SettingsSubdomain = () => {
         }
       >
         <SettingsPageContainer>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Subdomain`}
               description={t`Set the name of your subdomain`}
             />
@@ -84,11 +83,11 @@ export const SettingsSubdomain = () => {
                 fullWidth
               />
             </StyledDomainFormWrapper>
-          </Section>
+          </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
-      <ConfirmationModal
-        modalInstanceId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
         title={t`Change subdomain?`}
         subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
         onConfirmClick={handleConfirm}

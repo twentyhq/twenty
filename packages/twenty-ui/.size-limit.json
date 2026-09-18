@@ -16,6 +16,11 @@
     "limit": "95 kB"
   },
   {
+    "name": "components/code-editor",
+    "path": "dist/components/code-editor.mjs",
+    "limit": "15 kB"
+  },
+  {
     "name": "primitives",
     "path": "dist/primitives.mjs",
     "limit": "210 kB"

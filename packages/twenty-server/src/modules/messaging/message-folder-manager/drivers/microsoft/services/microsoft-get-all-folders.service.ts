@@ -1,5 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import {
+  type PageCollection,
+  PageIterator,
+  type PageIteratorCallback,
+} from '@microsoft/microsoft-graph-client';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -46,7 +51,7 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
       const microsoftClient =
         await this.microsoftOAuth2ClientProvider.getClient(connectedAccount.id);
 
-      const response = await microsoftClient
+      const firstPage: PageCollection = await microsoftClient
         .api('/me/mailFolders')
         .version('beta')
         .top(MESSAGING_MICROSOFT_MAIL_FOLDERS_LIST_MAX_RESULT)
@@ -59,7 +64,24 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
           return this.microsoftMessageListFetchErrorHandler.handleError(error);
         });
 
-      const folders = (response.value as MicrosoftGraphFolder[]) || [];
+      const folders: MicrosoftGraphFolder[] = [];
+
+      const callback: PageIteratorCallback = (folder: MicrosoftGraphFolder) => {
+        folders.push(folder);
+
+        return true;
+      };
+
+      const pageIterator = new PageIterator(
+        microsoftClient,
+        firstPage,
+        callback,
+      );
+
+      await pageIterator.iterate().catch((error: unknown) => {
+        this.microsoftMessageListFetchErrorHandler.handleError(error);
+      });
+
       const rootFolderId = this.getRootFolderId(folders);
       const folderInfos: DiscoveredMessageFolder[] = [];
 

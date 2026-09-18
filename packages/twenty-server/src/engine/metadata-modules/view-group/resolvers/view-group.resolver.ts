@@ -15,9 +15,10 @@ import { ViewGroupService } from 'src/engine/metadata-modules/view-group/service
 import { ViewGroupGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view-group/utils/view-group-graphql-api-exception.filter';
 import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-child-entity-permission.guard';
 import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-child-entity-permission.guard';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @MetadataResolver(() => ViewGroupDTO)
-@UseFilters(ViewGroupGraphqlApiExceptionFilter)
+@UseFilters(ViewGroupGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewGroupResolver {
   constructor(private readonly viewGroupService: ViewGroupService) {}

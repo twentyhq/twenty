@@ -264,11 +264,11 @@ export const SettingsBillingSubscriptionInfoCard = ({
                   </StyledBillingIntervalSeparator>
                   <SettingsTextLink
                     variant="secondary"
-                    title={t`Switch to yearly`}
+                    title={t`Switch to annual`}
                     onClick={onSwitchToYearly}
                     disabled={isSubscriptionActionDisabled}
                   >
-                    {t`Switch to yearly`}
+                    {t`Switch to annual`}
                   </SettingsTextLink>
                 </>
               )}

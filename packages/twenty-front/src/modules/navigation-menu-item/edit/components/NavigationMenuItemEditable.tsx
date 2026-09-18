@@ -168,45 +168,44 @@ export const NavigationMenuItemEditable = ({
     row
   );
   return (
-    <StyledRow
-      id={anchorId}
-      onContextMenu={(event) => {
-        if (
-          !canOrganize ||
-          !(event.target instanceof Node) ||
-          !event.currentTarget.contains(event.target)
-        ) {
-          return;
-        }
-        event.preventDefault();
-        event.stopPropagation();
-        open('actions');
-      }}
+    <NavigationMenuItemTypeTooltip
+      type={item.type}
+      hidden={
+        !isLayoutCustomizationModeEnabled ||
+        isDropdownOpen ||
+        isColorPickerOpen ||
+        selectedNavigationMenuItemIdInEditMode === item.id
+      }
     >
-      {shouldOpenLinkEditor && (
-        <NavigationMenuItemLinkEditorOpenEffect
-          dropdownId={dropdownId}
-          onOpen={openEditMode}
-        />
-      )}
-      {content}
-      {canOrganize && isExpanded && (
-        <NavigationMenuItemRowActions
-          rightOptions={rightOptions}
-          onOpenActions={() => open('actions')}
-        />
-      )}
-      {isLayoutCustomizationModeEnabled && (
-        <NavigationMenuItemTypeTooltip
-          type={item.type}
-          anchorId={anchorId}
-          hidden={
-            isDropdownOpen ||
-            isColorPickerOpen ||
-            selectedNavigationMenuItemIdInEditMode === item.id
+      <StyledRow
+        id={anchorId}
+        onContextMenu={(event) => {
+          if (
+            !canOrganize ||
+            !(event.target instanceof Node) ||
+            !event.currentTarget.contains(event.target)
+          ) {
+            return;
           }
-        />
-      )}
-    </StyledRow>
+          event.preventDefault();
+          event.stopPropagation();
+          open('actions');
+        }}
+      >
+        {shouldOpenLinkEditor && (
+          <NavigationMenuItemLinkEditorOpenEffect
+            dropdownId={dropdownId}
+            onOpen={openEditMode}
+          />
+        )}
+        {content}
+        {canOrganize && isExpanded && (
+          <NavigationMenuItemRowActions
+            rightOptions={rightOptions}
+            onOpenActions={() => open('actions')}
+          />
+        )}
+      </StyledRow>
+    </NavigationMenuItemTypeTooltip>
   );
 };

@@ -13,13 +13,17 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
 @MetadataResolver(() => ApplicationVariableEntityDTO)
-@UseFilters(ApplicationVariableEntityExceptionFilter)
+@UseFilters(
+  ApplicationVariableEntityExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
+)
 export class ApplicationVariableEntityResolver {
   constructor(
     private readonly applicationVariableService: ApplicationVariableEntityService,
