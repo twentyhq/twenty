@@ -243,13 +243,39 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       updatedSteps.push(...additionalCreatedSteps);
     }
 
-    await this.coreWorkflowVersionWriteService.writeContentAndMirror({
-      workspaceId,
-      coreWorkflowVersionId,
-      expectedVersion: coreWorkflowVersion,
-      trigger,
-      steps: updatedSteps,
-    });
+    try {
+      await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+        workspaceId,
+        coreWorkflowVersionId,
+        expectedVersion: coreWorkflowVersion,
+        trigger,
+        steps: updatedSteps,
+      });
+    } catch (error) {
+      if (isStepTypeChanged) {
+        await Promise.allSettled(
+          [updatedStep, ...(additionalCreatedSteps ?? [])].map((createdStep) =>
+            this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
+              {
+                step: createdStep,
+                workspaceId,
+              },
+            ),
+          ),
+        );
+      }
+
+      throw error;
+    }
+
+    if (isStepTypeChanged) {
+      await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
+        {
+          step: existingStep,
+          workspaceId,
+        },
+      );
+    }
 
     return updatedStep;
   }
@@ -716,13 +742,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     updatedStep: WorkflowAction;
     additionalCreatedSteps?: WorkflowAction[];
   }> {
-    await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
-      {
-        step: existingStep,
-        workspaceId,
-      },
-    );
-
     const { builtStep, additionalCreatedSteps } =
       await this.workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep(
         {
