@@ -29,7 +29,7 @@ export const handleCallRecordingArtifactsImportJob = async (
   if (
     isUndefined(callRecordingId) ||
     isUndefined(requestedAt) ||
-    (scope !== 'transcript' && scope !== 'media')
+    (scope !== 'transcript' && scope !== 'audio' && scope !== 'video')
   ) {
     return {
       status: 'skipped',

@@ -346,8 +346,9 @@ describe('importCallRecordingMedia', () => {
 
     expect(updateData).toEqual({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+      callRecorderFailureReason: 'video_import_failed',
     });
-    expect(hasRetryableFailure).toBe(true);
+    expect(hasRetryableFailure).toBe(false);
     expect(cancelMock).toHaveBeenCalledTimes(1);
     expect(getUploadRequestCall('video.mp4')).toBeUndefined();
     expect(console.warn).toHaveBeenCalledWith(
@@ -355,7 +356,7 @@ describe('importCallRecordingMedia', () => {
     );
   });
 
-  it('keeps the artifact it imported and asks for a redelivery when the other download has no content length', async () => {
+  it('keeps audio and settles video when its download has no content length', async () => {
     const cancelMock = vi.fn().mockRejectedValue(new Error('cancel exploded'));
 
     stubFetch({
@@ -377,8 +378,9 @@ describe('importCallRecordingMedia', () => {
 
     expect(updateData).toEqual({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+      callRecorderFailureReason: 'video_import_failed',
     });
-    expect(hasRetryableFailure).toBe(true);
+    expect(hasRetryableFailure).toBe(false);
     expect(getUploadRequestCall('video.mp4')).toBeUndefined();
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('content-length'),
@@ -628,8 +630,8 @@ describe('importCallRecordingMedia', () => {
     expect(fetchMock.mock.calls.some(([url]) => url === VIDEO_URL)).toBe(false);
   });
 
-  it('stops before the next transfer when saving the first file loses the claim', async () => {
-    saveProgressMock.mockRejectedValue(new Error('Import claim lost'));
+  it('stops before the next transfer when saving the first file fails', async () => {
+    saveProgressMock.mockRejectedValue(new Error('Progress save failed'));
 
     await expect(
       importCallRecordingMedia({
@@ -639,7 +641,7 @@ describe('importCallRecordingMedia', () => {
         hasAudio: false,
         saveProgress: saveProgressMock,
       }),
-    ).rejects.toThrow('Import claim lost');
+    ).rejects.toThrow('Progress save failed');
 
     expect(fetchMock.mock.calls.some(([url]) => url === AUDIO_URL)).toBe(false);
   });

@@ -7,6 +7,8 @@ import {
 } from 'src/constants/universal-identifiers';
 import { CALL_RECORDER_MAX_MEDIA_FILE_SIZE_BYTES } from 'src/logic-functions/constants/call-recorder-max-media-file-size-bytes';
 import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recall-api-not-found-status';
+import { VIDEO_IMPORT_WORK_BUDGET_MS } from 'src/logic-functions/constants/artifact-import-work-budget-ms';
+import { VIDEO_IMPORT_FAILED_FAILURE_REASON } from 'src/logic-functions/constants/video-import-failed-failure-reason';
 import {
   AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
   VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
@@ -64,6 +66,7 @@ const MEDIA_ARTIFACT_DESCRIPTORS = [
       CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER,
     tooLargeFailureReason: VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
     expiredFailureReason: VIDEO_IMPORT_EXPIRED_FAILURE_REASON,
+    timeoutMs: VIDEO_IMPORT_WORK_BUDGET_MS,
   },
   {
     field: 'audio',
@@ -72,6 +75,7 @@ const MEDIA_ARTIFACT_DESCRIPTORS = [
       CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER,
     tooLargeFailureReason: AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
     expiredFailureReason: AUDIO_IMPORT_EXPIRED_FAILURE_REASON,
+    timeoutMs: MEDIA_TRANSFER_TIMEOUT_MS,
   },
 ] as const;
 
@@ -188,6 +192,7 @@ export const importCallRecordingMedia = async ({
       fieldMetadataUniversalIdentifier:
         descriptor.fieldMetadataUniversalIdentifier,
       maxMediaFileSizeBytes: CALL_RECORDER_MAX_MEDIA_FILE_SIZE_BYTES,
+      timeoutMs: descriptor.timeoutMs,
       signal,
     });
 
@@ -201,7 +206,11 @@ export const importCallRecordingMedia = async ({
     }
 
     if (importResult.outcome === 'failed') {
-      failedMediaArtifactFields.push(descriptor.field);
+      if (descriptor.field === 'video') {
+        await recordUnrecoverableFailure(VIDEO_IMPORT_FAILED_FAILURE_REASON);
+      } else {
+        failedMediaArtifactFields.push(descriptor.field);
+      }
     }
   }
 
@@ -219,6 +228,7 @@ const importMediaArtifact = async ({
   fileName,
   fieldMetadataUniversalIdentifier,
   maxMediaFileSizeBytes,
+  timeoutMs,
   signal,
 }: {
   callRecordingId: string;
@@ -227,10 +237,11 @@ const importMediaArtifact = async ({
   fileName: string;
   fieldMetadataUniversalIdentifier: string;
   maxMediaFileSizeBytes: number;
+  timeoutMs: number;
   signal?: AbortSignal;
 }): Promise<ImportMediaArtifactResult> => {
   const transferSignal = buildAbortSignalWithTimeout({
-    timeoutMs: MEDIA_TRANSFER_TIMEOUT_MS,
+    timeoutMs,
     signal,
   });
 

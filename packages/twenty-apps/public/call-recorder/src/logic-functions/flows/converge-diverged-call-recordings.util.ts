@@ -1,16 +1,14 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import {
-  IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-  STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/universal-identifiers';
+import { STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { CALL_RECORDING_ARTIFACT_IMPORT_SCOPES } from 'src/logic-functions/constants/call-recording-artifact-import-scopes';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
+import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/enqueue-call-recording-artifacts-import.util';
 import { type ConnectionPage } from 'src/logic-functions/data/fetch-all-nodes.util';
 import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
@@ -83,19 +81,13 @@ export const convergeDivergedCallRecordings = async ({
     throw new Error('Call recording recovery returned an invalid next cursor');
   }
 
-  const importPayloads: Record<string, unknown>[] = [];
+  const importCallRecordingIds: string[] = [];
   const reconcilePayloads: Record<string, unknown>[] = [];
   const enqueuedCallRecordingIds: string[] = [];
 
   for (const { node } of page.edges ?? []) {
     if (node.status === CallRecordingStatus.PROCESSING) {
-      for (const scope of CALL_RECORDING_ARTIFACT_IMPORT_SCOPES) {
-        importPayloads.push({
-          callRecordingId: node.id,
-          requestedAt: now.toISOString(),
-          scope,
-        });
-      }
+      importCallRecordingIds.push(node.id);
     } else {
       const startsAt = node.calendarEvent?.startsAt;
 
@@ -112,10 +104,11 @@ export const convergeDivergedCallRecordings = async ({
     enqueuedCallRecordingIds.push(node.id);
   }
 
-  await enqueueLogicFunctionJobs({
-    logicFunctionUniversalIdentifier:
-      IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-    payloads: importPayloads,
+  await enqueueCallRecordingArtifactsImport({
+    callRecordingIds: importCallRecordingIds,
+    scopes: CALL_RECORDING_ARTIFACT_IMPORT_SCOPES,
+    trigger: 'recovery',
+    requestedAt: now.toISOString(),
   });
   await enqueueLogicFunctionJobs({
     logicFunctionUniversalIdentifier:

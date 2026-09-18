@@ -7,9 +7,15 @@ import {
 } from 'src/constants/universal-identifiers';
 import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
 
-const enqueueJobsMock = vi.hoisted(() => vi.fn());
+const { enqueueJobsMock, getJobsMock } = vi.hoisted(() => ({
+  enqueueJobsMock: vi.fn(),
+  getJobsMock: vi.fn(),
+}));
 
-vi.mock('twenty-sdk/logic-function', () => ({ enqueueJobs: enqueueJobsMock }));
+vi.mock('twenty-sdk/logic-function', () => ({
+  enqueueJobs: enqueueJobsMock,
+  getJobs: getJobsMock,
+}));
 
 const NOW = new Date('2026-06-10T12:00:00.000Z');
 
@@ -49,11 +55,19 @@ const buildClient = (nodes: Candidate[]) => ({
 });
 
 const queuedBatches = (): EnqueuedBatch[] =>
-  enqueueJobsMock.mock.calls.map(([batch]) => batch);
+  enqueueJobsMock.mock.calls.map(([batch]) => ({
+    ...batch,
+    payloads:
+      batch.payloads ??
+      batch.jobs.map(
+        (job: { payload: Record<string, unknown> }) => job.payload,
+      ),
+  }));
 
 describe('convergeDivergedCallRecordings', () => {
   beforeEach(() => {
     enqueueJobsMock.mockReset().mockResolvedValue({ enqueued: true });
+    getJobsMock.mockReset().mockResolvedValue([]);
     vi.stubGlobal(
       'fetch',
       vi.fn(() => {
@@ -76,7 +90,7 @@ describe('convergeDivergedCallRecordings', () => {
     expect(client.mutation).not.toHaveBeenCalled();
   });
 
-  it('enqueues the existing media and transcript workers in one batch', async () => {
+  it('dispatches transcript, audio and video independently', async () => {
     const client = buildClient([{ id: 'recording-1', status: 'PROCESSING' }]);
 
     await convergeDivergedCallRecordings({
@@ -84,23 +98,13 @@ describe('convergeDivergedCallRecordings', () => {
       now: NOW,
     });
 
-    expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith({
-      logicFunctionUniversalIdentifier:
-        IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      retryLimit: 2,
-      payloads: [
-        {
-          callRecordingId: 'recording-1',
-          requestedAt: NOW.toISOString(),
-          scope: 'transcript',
-        },
-        {
-          callRecordingId: 'recording-1',
-          requestedAt: NOW.toISOString(),
-          scope: 'media',
-        },
-      ],
-    });
+    expect(queuedBatches().flatMap(({ payloads }) => payloads)).toEqual(
+      ['transcript', 'audio', 'video'].map((scope) => ({
+        callRecordingId: 'recording-1',
+        requestedAt: NOW.toISOString(),
+        scope,
+      })),
+    );
     expect(client.mutation).not.toHaveBeenCalled();
     expect(fetch).not.toHaveBeenCalled();
   });
@@ -120,7 +124,7 @@ describe('convergeDivergedCallRecordings', () => {
 
     await runPage();
     expect(client.query).toHaveBeenCalledTimes(1);
-    expect(queuedBatches()[0].payloads).toHaveLength(200);
+    expect(queuedBatches()[0].payloads).toHaveLength(100);
 
     for (
       let batchIndex = 0;
@@ -147,7 +151,7 @@ describe('convergeDivergedCallRecordings', () => {
       )
       .flatMap(({ payloads }) =>
         payloads
-          .filter(({ scope }) => scope === 'media')
+          .filter(({ scope }) => scope === 'video')
           .map(({ callRecordingId }) => callRecordingId),
       );
 

@@ -13,18 +13,20 @@ export const buildExpiredMediaImportUpdate = ({
   audio,
   video,
   callRecorderFailureReason,
+  scope,
 }: {
   audio: FilesFieldValue | undefined;
   video: FilesFieldValue | undefined;
   callRecorderFailureReason: string | undefined;
+  scope: 'audio' | 'video';
 }): Pick<CallRecordingUpdateFields, 'callRecorderFailureReason'> => {
   const { isAudioUnrecoverable, isVideoUnrecoverable } =
     parseUnrecoverableMediaMarkers(callRecorderFailureReason);
   const expiredFailureReasons = [
-    ...(isNonEmptyArray(video) || isVideoUnrecoverable
+    ...(scope === 'audio' || isNonEmptyArray(video) || isVideoUnrecoverable
       ? []
       : [VIDEO_IMPORT_EXPIRED_FAILURE_REASON]),
-    ...(isNonEmptyArray(audio) || isAudioUnrecoverable
+    ...(scope === 'video' || isNonEmptyArray(audio) || isAudioUnrecoverable
       ? []
       : [AUDIO_IMPORT_EXPIRED_FAILURE_REASON]),
   ];

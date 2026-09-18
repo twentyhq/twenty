@@ -1,7 +1,10 @@
 import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { ARTIFACT_IMPORT_WORK_BUDGET_MS } from 'src/logic-functions/constants/artifact-import-work-budget-ms';
+import {
+  ARTIFACT_IMPORT_WORK_BUDGET_MS,
+  VIDEO_IMPORT_WORK_BUDGET_MS,
+} from 'src/logic-functions/constants/artifact-import-work-budget-ms';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recall-api-not-found-status';
 import { buildCallRecordingSyncUpdate } from 'src/logic-functions/domain/build-call-recording-sync-update.util';
@@ -9,7 +12,8 @@ import { buildExpiredMediaImportUpdate } from 'src/logic-functions/domain/build-
 import { hasCallRecordingUpdateFields } from 'src/logic-functions/domain/has-call-recording-update-fields.util';
 import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
 import { importCallRecordingTranscript } from 'src/logic-functions/flows/import-call-recording-transcript.util';
-import { runCallRecordingArtifactImportWithClaim } from 'src/logic-functions/flows/run-call-recording-artifact-import-with-claim.util';
+import { findCallRecordingForArtifactsImport } from 'src/logic-functions/data/find-call-recording-for-artifacts-import.util';
+import { saveCallRecordingImportProgress } from 'src/logic-functions/data/save-call-recording-import-progress.util';
 import { settleCallRecordingImport } from 'src/logic-functions/flows/settle-call-recording-import.util';
 import { extractRecallBotSyncState } from 'src/logic-functions/recall-api/extract-recall-bot-sync-state.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
@@ -56,84 +60,89 @@ export const importCallRecordingArtifacts = async ({
   request: CallRecordingArtifactsImportRequest;
   scope: CallRecordingArtifactImportScope;
 }): Promise<ImportCallRecordingArtifactsResult> => {
-  const signal = AbortSignal.timeout(ARTIFACT_IMPORT_WORK_BUDGET_MS);
-  const artifactImportExecution = await runCallRecordingArtifactImportWithClaim(
-    {
-      client,
-      callRecordingId: request.callRecordingId,
-      scope,
-      now: new Date(),
-      runImport: async (callRecording, saveProgress) => {
-        const botSync = await syncRecallBotState({ callRecording, signal });
-
-        await saveProgress(botSync.updateData);
-
-        if (
-          !isUndefined(botSync.updateData.status) &&
-          botSync.updateData.status !== CallRecordingStatus.PROCESSING
-        ) {
-          return {
-            status: 'skipped',
-            callRecordingId: callRecording.id,
-            scope,
-            reason: 'call recording is not processing',
-          } satisfies ImportCallRecordingArtifactsResult;
-        }
-
-        const scopeArtifactsImport = await importScopeArtifacts({
-          callRecording,
-          scope,
-          requestedAt: request.requestedAt,
-          externalRecordingId: botSync.externalRecordingId,
-          isMediaExpired: botSync.isMediaExpired,
-          saveProgress,
-          signal,
-        });
-
-        if (scopeArtifactsImport.hasRetryableFailure) {
-          throw new Error(
-            `Recall ${scope} artifacts for call recording ${callRecording.id} could not be imported`,
-          );
-        }
-
-        signal.throwIfAborted();
-
-        const hasSettled = await settleCallRecordingImport(client, {
-          callRecordingId: callRecording.id,
-        });
-        const hasUpdates =
-          hasCallRecordingUpdateFields(botSync.updateData) ||
-          hasCallRecordingUpdateFields(scopeArtifactsImport.updateData);
-
-        if (!hasUpdates && !hasSettled) {
-          return {
-            status: 'skipped',
-            callRecordingId: callRecording.id,
-            scope,
-            reason: 'no artifact updates',
-          } satisfies ImportCallRecordingArtifactsResult;
-        }
-
-        return {
-          status: 'imported',
-          callRecordingId: callRecording.id,
-          scope,
-          outcome: 'call-recording-artifacts-imported',
-        } satisfies ImportCallRecordingArtifactsResult;
-      },
-    },
+  const signal = AbortSignal.timeout(
+    scope === 'video'
+      ? VIDEO_IMPORT_WORK_BUDGET_MS
+      : ARTIFACT_IMPORT_WORK_BUDGET_MS,
+  );
+  const callRecording = await findCallRecordingForArtifactsImport(
+    client,
+    request.callRecordingId,
   );
 
-  if (artifactImportExecution.status === 'skipped') {
+  if (
+    isUndefined(callRecording) ||
+    callRecording.status !== CallRecordingStatus.PROCESSING
+  ) {
     return {
       status: 'skipped',
       callRecordingId: request.callRecordingId,
       scope,
-      reason: 'no claimable processing call recording',
+      reason: 'call recording is not processing',
     };
   }
 
-  return artifactImportExecution.result;
+  const saveProgress: SaveProgress = (data) =>
+    saveCallRecordingImportProgress(client, {
+      callRecordingId: callRecording.id,
+      externalBotId: callRecording.externalBotId,
+      data,
+    });
+  const botSync = await syncRecallBotState({ callRecording, signal });
+
+  await saveProgress(botSync.updateData);
+
+  if (
+    !isUndefined(botSync.updateData.status) &&
+    botSync.updateData.status !== CallRecordingStatus.PROCESSING
+  ) {
+    return {
+      status: 'skipped',
+      callRecordingId: callRecording.id,
+      scope,
+      reason: 'call recording is not processing',
+    };
+  }
+
+  const scopeArtifactsImport = await importScopeArtifacts({
+    callRecording,
+    scope,
+    requestedAt: request.requestedAt,
+    externalRecordingId: botSync.externalRecordingId,
+    isMediaExpired: botSync.isMediaExpired,
+    saveProgress,
+    signal,
+  });
+
+  if (scopeArtifactsImport.hasRetryableFailure) {
+    throw new Error(
+      `Recall ${scope} artifacts for call recording ${callRecording.id} could not be imported`,
+    );
+  }
+
+  // A video deadline is a saved terminal outcome; settlement still needs to run.
+  const hasSettled = await settleCallRecordingImport(client, {
+    callRecordingId: callRecording.id,
+  });
+  const hasUpdates =
+    hasCallRecordingUpdateFields(botSync.updateData) ||
+    hasCallRecordingUpdateFields(scopeArtifactsImport.updateData);
+
+  if (!hasUpdates && !hasSettled) {
+    return {
+      status: 'skipped',
+      callRecordingId: callRecording.id,
+      scope,
+      reason: 'no artifact updates',
+    };
+  }
+
+  return {
+    status: 'imported',
+    callRecordingId: callRecording.id,
+    scope,
+    outcome: 'call-recording-artifacts-imported',
+  };
 };
 
 // One GET /bot fills whatever the webhooks did not deliver; a vanished bot means its media is gone too.
@@ -219,7 +228,10 @@ const importScopeArtifacts = async ({
   }
 
   if (isMediaExpired) {
-    const updateData = buildExpiredMediaImportUpdate(callRecording);
+    const updateData = buildExpiredMediaImportUpdate({
+      ...callRecording,
+      scope,
+    });
 
     await saveProgress(updateData);
 
@@ -233,14 +245,14 @@ const importScopeArtifacts = async ({
   const mediaImport = await importCallRecordingMedia({
     callRecordingId: callRecording.id,
     externalRecordingId,
-    hasAudio: isNonEmptyArray(callRecording.audio),
-    hasVideo: isNonEmptyArray(callRecording.video),
+    hasAudio: scope === 'video' || isNonEmptyArray(callRecording.audio),
+    hasVideo: scope === 'audio' || isNonEmptyArray(callRecording.video),
     callRecorderFailureReason: callRecording.callRecorderFailureReason,
     saveProgress,
     signal,
   });
   const expiredMediaUpdate = mediaImport.isRecordingGone
-    ? buildExpiredMediaImportUpdate(callRecording)
+    ? buildExpiredMediaImportUpdate({ ...callRecording, scope })
     : {};
 
   await saveProgress(expiredMediaUpdate);

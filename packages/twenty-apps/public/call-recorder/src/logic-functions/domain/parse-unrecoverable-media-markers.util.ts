@@ -7,6 +7,7 @@ import {
   VIDEO_IMPORT_EXPIRED_FAILURE_REASON,
 } from 'src/logic-functions/constants/media-import-expired-failure-reasons';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { VIDEO_IMPORT_FAILED_FAILURE_REASON } from 'src/logic-functions/constants/video-import-failed-failure-reason';
 
 export type UnrecoverableMediaMarkers = {
   isAudioUnrecoverable: boolean;
@@ -25,6 +26,7 @@ export const parseUnrecoverableMediaMarkers = (
       failureReasons.includes(AUDIO_FILE_TOO_LARGE_FAILURE_REASON) ||
       failureReasons.includes(AUDIO_IMPORT_EXPIRED_FAILURE_REASON),
     isVideoUnrecoverable:
+      failureReasons.includes(VIDEO_IMPORT_FAILED_FAILURE_REASON) ||
       failureReasons.includes(VIDEO_FILE_TOO_LARGE_FAILURE_REASON) ||
       failureReasons.includes(VIDEO_IMPORT_EXPIRED_FAILURE_REASON),
   };
