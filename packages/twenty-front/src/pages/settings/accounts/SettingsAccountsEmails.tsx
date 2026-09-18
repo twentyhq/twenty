@@ -75,6 +75,7 @@ export const SettingsAccountsEmails = () => {
       secondaryBar={
         tabs.length > 1 ? (
           <SettingsTabBar
+            aria-label={t`Email accounts`}
             tabs={tabs}
             componentInstanceId={
               SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID
