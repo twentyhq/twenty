@@ -1,7 +1,10 @@
+import { isDefined } from 'twenty-shared/utils';
+import { BUTTON_INVERTED_CLASS_NAME } from '@/ui/input/styles/ButtonInvertedClassName';
 import { InformationBannerComponentInstanceContext } from '@/information-banner/states/contexts/InformationBannerComponentInstanceContext';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 import { t } from '@lingui/core/macro';
 import {
   Banner,
@@ -9,7 +12,8 @@ import {
   type BannerVariant,
 } from 'twenty-ui/primitives/feedback';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -17,7 +21,7 @@ const StyledText = styled.div`
   min-width: 0;
 `;
 
-const StyledInvertedIconButton = styled(IconButton)`
+const INVERTED_ICON_BUTTON_CLASS_NAME = css`
   color: ${themeCssVariables.font.color.inverted} !important;
 `;
 
@@ -36,7 +40,7 @@ export const InformationBanner = ({
   color = 'blue',
   variant = 'primary',
   buttonTitle,
-  buttonIcon,
+  buttonIcon: ButtonIcon,
   buttonOnClick,
   isButtonDisabled = false,
   onClose,
@@ -58,7 +62,7 @@ export const InformationBanner = ({
   );
 
   const isPrimary = variant === 'primary';
-  const buttonAccent = color === 'danger' ? 'danger' : 'blue';
+  const buttonColor = color === 'danger' ? 'danger' : 'accent';
 
   return (
     <InformationBannerComponentInstanceContext.Provider
@@ -78,35 +82,39 @@ export const InformationBanner = ({
             </StyledText>
             {buttonTitle && buttonOnClick && (
               <Button
-                variant="secondary"
-                accent={buttonAccent}
-                title={buttonTitle}
-                Icon={buttonIcon}
-                size="small"
-                inverted={isPrimary}
+                className={isPrimary ? BUTTON_INVERTED_CLASS_NAME : undefined}
+                startIcon={isDefined(ButtonIcon) ? <ButtonIcon /> : undefined}
+                size="sm"
                 onClick={buttonOnClick}
                 disabled={isButtonDisabled}
-              />
+                variant="outline"
+                color={isPrimary ? 'neutral' : buttonColor}
+              >
+                {buttonTitle}
+              </Button>
             )}
           </StyledContent>
           {onClose &&
             (isPrimary ? (
-              <StyledInvertedIconButton
-                Icon={IconX}
-                size="small"
-                variant="tertiary"
+              <IconButton
+                className={INVERTED_ICON_BUTTON_CLASS_NAME}
+                size="sm"
+                variant="ghost"
                 onClick={onClose}
-                ariaLabel={t`Close banner`}
-              />
+                aria-label={t`Close banner`}
+              >
+                <IconX />
+              </IconButton>
             ) : (
               <IconButton
-                Icon={IconX}
-                size="small"
-                variant="tertiary"
-                accent={buttonAccent}
+                size="sm"
+                variant="ghost"
+                color={buttonColor}
                 onClick={onClose}
-                ariaLabel={t`Close banner`}
-              />
+                aria-label={t`Close banner`}
+              >
+                <IconX />
+              </IconButton>
             ))}
         </Banner>
       )}

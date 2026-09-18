@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
-  FeatureFlagKey,
   MetadataReadability,
   type ObjectRecord,
   type ObjectsPermissions,
@@ -31,17 +30,17 @@ import {
   validateOperationIsPermittedOrThrow,
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-import { type InheritedReadabilityChildRecords } from 'src/engine/twenty-orm/types/inherited-readability-child-records.type';
-import { type InheritedReadabilityChildrenParent } from 'src/engine/twenty-orm/types/inherited-readability-children-parent.type';
-import { type InheritedReadabilityColumnParent } from 'src/engine/twenty-orm/types/inherited-readability-column-parent.type';
-import { type InheritedReadabilityParent } from 'src/engine/twenty-orm/types/inherited-readability-parent.type';
-import { type InheritedReadabilityParentLink } from 'src/engine/twenty-orm/types/inherited-readability-parent-link.type';
-import { type RowAccessPolicy } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { type InheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
+import { type InheritedReadabilityChildrenParent } from 'src/engine/core-modules/record-share/types/inherited-readability-children-parent.type';
+import { type InheritedReadabilityColumnParent } from 'src/engine/core-modules/record-share/types/inherited-readability-column-parent.type';
+import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-share/types/inherited-readability-parent.type';
+import { type InheritedReadabilityParentLink } from 'src/engine/core-modules/record-share/types/inherited-readability-parent-link.type';
 import {
-  buildRowAccessPolicy,
+  type RowAccessPolicy,
   type RowAccessPolicyEnvironment,
   type RowAccessPolicySubject,
-} from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
+} from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -53,8 +52,8 @@ import {
 import { isChildRecordBoundAtDeletion } from 'src/engine/twenty-orm/utils/is-child-record-bound-at-deletion.util';
 import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
-import { resolveInheritedReadabilityChildLinks } from 'src/engine/twenty-orm/utils/resolve-inherited-readability-child-links.util';
-import { resolveInheritedReadabilityParents } from 'src/engine/twenty-orm/utils/resolve-inherited-readability-parents.util';
+import { resolveInheritedReadabilityChildLinks } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-child-links.util';
+import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import {
@@ -1422,9 +1421,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private isRecordSharingEnabled(): boolean {
-    return this.options.internalContext.featureFlagsMap[
-      FeatureFlagKey.IS_RECORD_SHARING_ENABLED
-    ];
+    return this.options.internalContext.isRecordSharingEnabled;
   }
 
   private async resolveWritableRecordIds({

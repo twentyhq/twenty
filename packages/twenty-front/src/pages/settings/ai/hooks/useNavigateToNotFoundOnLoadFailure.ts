@@ -2,8 +2,9 @@ import { type ErrorLike } from '@apollo/client';
 import { useEffect } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useNavigateToNotFoundOnLoadFailure = ({
@@ -16,22 +17,18 @@ export const useNavigateToNotFoundOnLoadFailure = ({
   notFoundMessage: string;
 }) => {
   const navigateApp = useNavigateApp();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   useEffect(() => {
     if (!hasFailedToLoad) {
       return;
     }
 
-    enqueueErrorSnackBar(
-      isDefined(error) ? { apolloError: error } : { message: notFoundMessage },
+    enqueueToast(
+      isDefined(error)
+        ? getToastOptionsFromError({ error })
+        : { variant: 'error', children: notFoundMessage },
     );
     navigateApp(AppPath.NotFound);
-  }, [
-    hasFailedToLoad,
-    error,
-    notFoundMessage,
-    enqueueErrorSnackBar,
-    navigateApp,
-  ]);
+  }, [hasFailedToLoad, error, notFoundMessage, enqueueToast, navigateApp]);
 };

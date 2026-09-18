@@ -1,12 +1,11 @@
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
-import { createElement, type ReactNode } from 'react';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { act, renderHook } from '@testing-library/react';
+import { createElement, type ReactNode } from 'react';
 
 const mockMutate = jest.fn();
 const mockGetRecordFromCache = jest.fn();
 const mockMarkStepForRecomputation = jest.fn();
-const mockEnqueueErrorSnackBar = jest.fn();
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({ cache: {} }),
@@ -24,8 +23,11 @@ jest.mock('@/object-record/hooks/useObjectPermissions', () => ({
   useObjectPermissions: () => ({ objectPermissionsByObjectMetadataId: {} }),
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({ enqueueErrorSnackBar: mockEnqueueErrorSnackBar }),
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/primitives/feedback', () => ({
+  ...jest.requireActual('twenty-ui/primitives/feedback'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 jest.mock('@/object-record/cache/hooks/useGetRecordFromCache', () => ({

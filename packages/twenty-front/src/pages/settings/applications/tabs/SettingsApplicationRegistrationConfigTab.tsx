@@ -9,8 +9,7 @@ import {
   UpdateAdminApplicationRegistrationVariableDocument,
 } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -140,8 +139,8 @@ export const SettingsApplicationRegistrationConfigTab = ({
 
   return (
     variables.length > 0 && (
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Server Variables`}
           description={t`Server variables are applied to all workspace installations.`}
         />
@@ -163,7 +162,7 @@ export const SettingsApplicationRegistrationConfigTab = ({
             );
           })}
         </StyledContainer>
-      </Section>
+      </Section.Root>
     )
   );
 };

@@ -1,3 +1,4 @@
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -13,8 +14,6 @@ import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
 
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { ColumnGrid } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid';
@@ -216,7 +215,7 @@ export const MatchColumnsStep = ({
           {
             title: t`Continue`,
             onClick: handleAlertOnContinue,
-            variant: 'primary',
+            variant: 'outline',
             role: 'confirm',
           },
         ],
@@ -262,7 +261,8 @@ export const MatchColumnsStep = ({
         {
           title: t`Restart`,
           onClick: onBackConfirmation,
-          accent: 'danger',
+          color: 'danger',
+          variant: 'solid',
           role: 'confirm',
         },
       ],
@@ -271,7 +271,15 @@ export const MatchColumnsStep = ({
 
   return (
     <>
-      <ModalContent noPadding isVerticallyCentered>
+      <Dialog.Body
+        style={{
+          display: 'flex',
+          flex: '1 1 0%',
+          flexDirection: 'column',
+          padding: 0,
+          alignItems: 'center',
+        }}
+      >
         <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
           <ColumnGrid
             columns={columns}
@@ -299,7 +307,7 @@ export const MatchColumnsStep = ({
             )}
           />
         </ScrollWrapper>
-      </ModalContent>
+      </Dialog.Body>
       <StepNavigationButton
         onContinue={handleOnContinue}
         isLoading={isLoading}

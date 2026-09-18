@@ -954,6 +954,128 @@ type ApplicationRegistration {
   galleryImagesUrls: [String!]!
 }
 
+type BillingSubscriptionSchedulePhaseItem {
+  price: String!
+  quantity: Float
+}
+
+type BillingSubscriptionSchedulePhase {
+  start_date: Float!
+  end_date: Float!
+  items: [BillingSubscriptionSchedulePhaseItem!]!
+}
+
+type BillingProductMetadata {
+  planKey: BillingPlanKey!
+  priceUsageBased: BillingUsageType!
+  productKey: BillingProductKey!
+  isLegacy: String
+}
+
+"""The different billing plans available"""
+enum BillingPlanKey {
+  PRO
+  ENTERPRISE
+}
+
+enum BillingUsageType {
+  METERED
+  LICENSED
+}
+
+"""The different billing products available"""
+enum BillingProductKey {
+  BASE_PRODUCT
+  RESOURCE_CREDIT
+}
+
+type BillingPriceLicensed {
+  recurringInterval: SubscriptionInterval!
+  unitAmount: Float!
+  stripePriceId: String!
+  priceUsageType: BillingUsageType!
+  creditAmount: Float
+  isSellable: Boolean!
+}
+
+enum SubscriptionInterval {
+  Month
+  Year
+}
+
+type BillingPriceTier {
+  upTo: Float
+  flatAmount: Float
+  unitAmount: Float
+}
+
+type BillingPriceMetered {
+  tiers: [BillingPriceTier!]!
+  recurringInterval: SubscriptionInterval!
+  stripePriceId: String!
+  priceUsageType: BillingUsageType!
+}
+
+type BillingProduct {
+  name: String!
+  description: String!
+  images: [String!]
+  metadata: BillingProductMetadata!
+}
+
+type BillingLicensedProduct implements BillingProductDTO {
+  name: String!
+  description: String!
+  images: [String!]
+  metadata: BillingProductMetadata!
+  prices: [BillingPriceLicensed!]
+}
+
+type BillingMeteredProduct implements BillingProductDTO {
+  name: String!
+  description: String!
+  images: [String!]
+  metadata: BillingProductMetadata!
+  prices: [BillingPriceMetered!]
+}
+
+type BillingSubscriptionItem {
+  id: UUID!
+  hasReachedCurrentPeriodCap: Boolean!
+  quantity: Float
+  stripePriceId: String!
+  unitAmount: Float
+  creditAmount: Float
+  billingProduct: BillingProductDTO!
+}
+
+type BillingSubscription {
+  id: UUID!
+  status: SubscriptionStatus!
+  interval: SubscriptionInterval
+  billingSubscriptionItems: [BillingSubscriptionItem!]
+  currentPeriodEnd: DateTime
+  metadata: JSON!
+  phases: [BillingSubscriptionSchedulePhase!]!
+  cancelAt: DateTime
+}
+
+enum SubscriptionStatus {
+  Active
+  Canceled
+  Incomplete
+  IncompleteExpired
+  PastDue
+  Paused
+  Trialing
+  Unpaid
+}
+
+type BillingCustomer {
+  id: UUID!
+  hasPaymentMethod: Boolean
+}
+
 type SdkClientChecksums {
   core: String
   metadata: String!
@@ -1414,128 +1536,6 @@ type ApplicationConnectionProvider {
   logoUrl: String
 }
 
-type BillingSubscriptionSchedulePhaseItem {
-  price: String!
-  quantity: Float
-}
-
-type BillingSubscriptionSchedulePhase {
-  start_date: Float!
-  end_date: Float!
-  items: [BillingSubscriptionSchedulePhaseItem!]!
-}
-
-type BillingProductMetadata {
-  planKey: BillingPlanKey!
-  priceUsageBased: BillingUsageType!
-  productKey: BillingProductKey!
-  isLegacy: String
-}
-
-"""The different billing plans available"""
-enum BillingPlanKey {
-  PRO
-  ENTERPRISE
-}
-
-enum BillingUsageType {
-  METERED
-  LICENSED
-}
-
-"""The different billing products available"""
-enum BillingProductKey {
-  BASE_PRODUCT
-  RESOURCE_CREDIT
-}
-
-type BillingPriceLicensed {
-  recurringInterval: SubscriptionInterval!
-  unitAmount: Float!
-  stripePriceId: String!
-  priceUsageType: BillingUsageType!
-  creditAmount: Float
-  isSellable: Boolean!
-}
-
-enum SubscriptionInterval {
-  Month
-  Year
-}
-
-type BillingPriceTier {
-  upTo: Float
-  flatAmount: Float
-  unitAmount: Float
-}
-
-type BillingPriceMetered {
-  tiers: [BillingPriceTier!]!
-  recurringInterval: SubscriptionInterval!
-  stripePriceId: String!
-  priceUsageType: BillingUsageType!
-}
-
-type BillingProduct {
-  name: String!
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-}
-
-type BillingLicensedProduct implements BillingProductDTO {
-  name: String!
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  prices: [BillingPriceLicensed!]
-}
-
-type BillingMeteredProduct implements BillingProductDTO {
-  name: String!
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  prices: [BillingPriceMetered!]
-}
-
-type BillingSubscriptionItem {
-  id: UUID!
-  hasReachedCurrentPeriodCap: Boolean!
-  quantity: Float
-  stripePriceId: String!
-  unitAmount: Float
-  creditAmount: Float
-  billingProduct: BillingProductDTO!
-}
-
-type BillingCustomer {
-  id: UUID!
-  hasPaymentMethod: Boolean
-}
-
-type BillingSubscription {
-  id: UUID!
-  status: SubscriptionStatus!
-  interval: SubscriptionInterval
-  billingSubscriptionItems: [BillingSubscriptionItem!]
-  currentPeriodEnd: DateTime
-  metadata: JSON!
-  phases: [BillingSubscriptionSchedulePhase!]!
-  cancelAt: DateTime
-}
-
-enum SubscriptionStatus {
-  Active
-  Canceled
-  Incomplete
-  IncompleteExpired
-  PastDue
-  Paused
-  Trialing
-  Unpaid
-}
-
 type LogicFunctionExecutionResult {
   """Execution result in JSON format"""
   data: JSON
@@ -1574,92 +1574,6 @@ type EnterpriseSubscriptionStatusDTO {
   cancelAt: DateTime
   currentPeriodEnd: DateTime
   isCancellationScheduled: Boolean!
-}
-
-type UsageQuotaDefinition {
-  resourceType: UsageResourceType!
-  limitKind: String!
-  allowedOperationTypes: [UsageOperationType!]!
-  allowedSpenderTypes: [String!]!
-  allowedMeters: [String!]!
-}
-
-enum UsageResourceType {
-  AI
-  WORKFLOW
-  APP
-  STORAGE
-  API
-  LOGIC_FUNCTION
-  EMAIL
-  WEBHOOK
-  RECORD
-}
-
-enum UsageOperationType {
-  ALL
-  AI_CHAT_TOKEN
-  AI_WORKFLOW_TOKEN
-  WORKFLOW_EXECUTION
-  CODE_EXECUTION
-  WEB_SEARCH
-  CALL_RECORDING
-  EMAIL_SEND
-  API_REQUEST
-  WEBHOOK_CALL
-  STORAGE_FILE
-  RECORD_WRITE
-  SUBSCRIPTION
-}
-
-type UsageQuotaDefinitions {
-  definitions: [UsageQuotaDefinition!]!
-  isIntraWorkspaceLimitEntitled: Boolean!
-  hasAllowancePeriod: Boolean!
-}
-
-type UsageQuotaWithConsumption {
-  id: UUID!
-  resourceType: UsageResourceType!
-  operationType: UsageOperationType!
-  spenderType: String!
-  spenderId: String
-  spenderLabel: String
-  periodUnit: String!
-  meter: String!
-  limitValue: BigInt!
-  isEnforced: Boolean!
-  consumedValue: BigInt
-  remainingValue: BigInt
-  periodStart: DateTime
-  periodEnd: DateTime
-}
-
-"""
-The `BigInt` scalar type represents non-fractional signed whole numeric values.
-"""
-scalar BigInt
-
-type UsageQuotaScopeConsumption {
-  consumedValue: BigInt
-  periodStart: DateTime!
-  periodEnd: DateTime!
-}
-
-type UsageLimit {
-  id: UUID!
-  resourceType: UsageResourceType!
-  operationType: UsageOperationType!
-  spenderType: String!
-  spenderId: String
-  limitKind: String!
-  periodCount: Int!
-  periodUnit: String!
-  meter: String!
-  limitValue: BigInt!
-  burstValue: BigInt
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type FileWithSignedUrl {
@@ -1880,6 +1794,92 @@ type UsageAnalytics {
   userDailyUsage: UsageUserDaily
 }
 
+type UsageQuotaDefinition {
+  resourceType: UsageResourceType!
+  limitKind: String!
+  allowedOperationTypes: [UsageOperationType!]!
+  allowedSpenderTypes: [String!]!
+  allowedMeters: [String!]!
+}
+
+enum UsageResourceType {
+  AI
+  WORKFLOW
+  APP
+  STORAGE
+  API
+  LOGIC_FUNCTION
+  EMAIL
+  WEBHOOK
+  RECORD
+}
+
+enum UsageOperationType {
+  ALL
+  AI_CHAT_TOKEN
+  AI_WORKFLOW_TOKEN
+  WORKFLOW_EXECUTION
+  CODE_EXECUTION
+  WEB_SEARCH
+  CALL_RECORDING
+  EMAIL_SEND
+  API_REQUEST
+  WEBHOOK_CALL
+  STORAGE_FILE
+  RECORD_WRITE
+  SUBSCRIPTION
+}
+
+type UsageQuotaDefinitions {
+  definitions: [UsageQuotaDefinition!]!
+  isIntraWorkspaceLimitEntitled: Boolean!
+  hasAllowancePeriod: Boolean!
+}
+
+type UsageQuotaWithConsumption {
+  id: UUID!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String
+  spenderLabel: String
+  periodUnit: String!
+  meter: String!
+  limitValue: BigInt!
+  isEnforced: Boolean!
+  consumedValue: BigInt
+  remainingValue: BigInt
+  periodStart: DateTime
+  periodEnd: DateTime
+}
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+type UsageQuotaScopeConsumption {
+  consumedValue: BigInt
+  periodStart: DateTime!
+  periodEnd: DateTime!
+}
+
+type UsageLimit {
+  id: UUID!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String
+  limitKind: String!
+  periodCount: Int!
+  periodUnit: String!
+  meter: String!
+  limitValue: BigInt!
+  burstValue: BigInt
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type ApprovedAccessDomain {
   id: UUID!
   domain: String!
@@ -1987,6 +1987,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_ASYNC_CSV_EXPORT_ENABLED
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
@@ -1996,11 +1997,10 @@ enum FeatureFlagKey {
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
-  IS_API_RATE_LIMIT_V2_ENABLED
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
-  IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_SHARING_ENABLED
+  IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_WEBHOOK_RATE_LIMIT_ENABLED
 }
 
@@ -2403,6 +2403,7 @@ type MarketplaceAppDetail {
   issueReportUrl: String
   screenshots: [String!]! @deprecated(reason: "Use galleryImages instead")
   galleryImages: [String!]!
+  installCount: Int!
   defaultRoleUniversalIdentifier: String
   roles: [MarketplaceAppRole!]
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
@@ -2630,6 +2631,7 @@ enum BillingEntitlementKey {
   SSO
   CUSTOM_DOMAIN
   RLS
+  RECORD_SHARING
   AUDIT_LOGS
   USAGE_LIMIT
 }
@@ -2843,6 +2845,7 @@ type ApplicationFileUploadTarget {
 }
 
 enum FileFolder {
+  RecordExport
   CorePicture
   AgentChat
   BuiltLogicFunction
@@ -3303,6 +3306,14 @@ type EventLogQueryResult {
   pageInfo: EventLogPageInfo!
 }
 
+type RecordExport {
+  id: UUID!
+  filename: String!
+  progress: Int!
+  errorMessage: String
+  downloadUrl: String
+}
+
 type AiChatUsage {
   limitValue: BigInt!
   consumedValue: BigInt
@@ -3637,11 +3648,11 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   usageLimits: [UsageLimit!]!
   usageQuotasWithConsumption: [UsageQuotaWithConsumption!]!
   usageQuotaDefinitions: UsageQuotaDefinitions!
   usageQuotaScopeConsumption(input: UsageQuotaScopeInput!): UsageQuotaScopeConsumption
-  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
   getViewFilterGroup(id: String!): ViewFilterGroup
   getViewFilters(viewId: String): [ViewFilter!]!
@@ -3780,6 +3791,13 @@ type Query {
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
 }
 
+input UsageAnalyticsInput {
+  periodStart: DateTime
+  periodEnd: DateTime
+  userWorkspaceId: String
+  operationTypes: [UsageOperationType!]
+}
+
 input UsageQuotaScopeInput {
   resourceType: UsageResourceType!
   operationType: UsageOperationType!
@@ -3787,13 +3805,6 @@ input UsageQuotaScopeInput {
   spenderId: String
   periodUnit: String!
   meter: String!
-}
-
-input UsageAnalyticsInput {
-  periodStart: DateTime
-  periodEnd: DateTime
-  userWorkspaceId: String
-  operationTypes: [UsageOperationType!]
 }
 
 input GetApiKeyInput {
@@ -4017,7 +4028,7 @@ type Mutation {
   createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   deleteApplicationRegistrationVariable(id: String!): Boolean!
-  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
+  uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration!
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
@@ -5504,6 +5515,7 @@ type Subscription {
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
   eventLogsLive(table: EventLogTable!): [EventLogRecord!]
+  exportRecords(input: CreateRecordExportInput!): RecordExport!
 }
 
 input LogicFunctionLogsInput {
@@ -5512,4 +5524,11 @@ input LogicFunctionLogsInput {
   name: String
   id: UUID
   universalIdentifier: UUID
+}
+
+input CreateRecordExportInput {
+  objectMetadataId: UUID!
+  fieldMetadataIds: [UUID!]!
+  filter: JSON
+  orderBy: JSON
 }

@@ -321,11 +321,9 @@ export const WorkflowEditActionEmailBase = ({
               dropdownPlacement="bottom-start"
               clickableComponent={
                 <Button
-                  title={t`Advanced options`}
-                  variant="secondary"
-                  accent="default"
-                  size="small"
-                />
+                  size="sm"
+                  variant="outline"
+                >{t`Advanced options`}</Button>
               }
               dropdownComponents={
                 <DropdownContent

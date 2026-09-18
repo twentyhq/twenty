@@ -16,10 +16,14 @@ Twenty UI is Twenty's React component library. It provides components, icons, an
 For a standalone React application, install the library and its peer dependencies:
 
 ```bash
-yarn add twenty-ui monaco-editor react@^19 react-dom@^19
+yarn add twenty-ui react@^19 react-dom@^19
 ```
 
-`monaco-editor` powers the code editor components, but install it even if you never render an editor: the `twenty-ui/primitives/input`, `twenty-ui/primitives/feedback`, and `twenty-ui/primitives/navigation` entry points reference it, and bundlers fail to resolve it otherwise.
+The [code editor](/ui/components/code-editor) has a separate entry point, `twenty-ui/components/code-editor`. Other components do not require Monaco. To use the code editor, install its optional peer dependencies and configure Monaco workers for your bundler before mounting it:
+
+```bash
+yarn add @monaco-editor/react monaco-editor
+```
 
 If you are building a Twenty app, follow [Using Twenty UI components](/developers/extend/apps/layout/front-components#using-twenty-ui-components). The front component renderer supplies the workspace theme and has a different setup from a standalone browser application.
 
@@ -52,21 +56,27 @@ The component stylesheet includes a global reset. Review its effect when adding 
 Import components from their public subpath to keep imports focused:
 
 Primitives are foundational controls, including compound controls such as Select,
-Menu, and AlertDialog. Higher-level components combine primitives into reusable
-app building blocks, such as tables, boards, and pickers. Both receive data and
-callbacks from the application.
+Menu, and AlertDialog. Shared components combine primitives into recurring
+design presets and reusable app building blocks. Both receive data and callbacks
+from the application.
 
-All existing UI components live in `primitives/`, including controls still being
-migrated to the new API. The `components/` folder is reserved for higher-level
-app building blocks. Each primitive family has a matching public entry point,
-such as `twenty-ui/primitives/input`.
+Use [MainButton](/ui/components/input/main-button) for prominent actions and
+[LightButton](/ui/components/input/light-button) for lightweight actions. Both
+come from `twenty-ui/components` and share the foundational
+[Button](/ui/primitives/input/button) interaction contract. Routing and page
+layout remain in the application.
+
+Each primitive family has a matching public entry point, such as
+`twenty-ui/primitives/input`.
 
 | Import                                 | Contents                                                     |
 | -------------------------------------- | ------------------------------------------------------------ |
+| `twenty-ui/components`                 | Shared design presets and reusable app building blocks       |
+| `twenty-ui/components/code-editor`     | Code editor, editor header, and editor theme helpers         |
 | `twenty-ui/primitives/accessibility`   | Hidden elements and keyboard interaction helpers             |
 | `twenty-ui/primitives/data-display`    | Avatars, chips, tags, status indicators, and display helpers |
 | `twenty-ui/primitives/feedback`        | Toasts, banners, progress bars, and loaders                  |
-| `twenty-ui/primitives/input`           | Buttons, form controls, pickers, and code editors            |
+| `twenty-ui/primitives/input`           | Buttons, form controls, and pickers                          |
 | `twenty-ui/primitives/json-visualizer` | JSON tree viewer                                             |
 | `twenty-ui/primitives/layout`          | Layout, animation, resizing, and section components          |
 | `twenty-ui/primitives/navigation`      | Links, list items, menus, and tabs                           |
@@ -82,15 +92,7 @@ Import individual icons, such as `IconCheck`, from `twenty-ui/icon`. The dynamic
 - [Theming](/ui/theming): use semantic tokens and scoped overrides.
 - [Dark mode](/ui/dark-mode): switch between light and dark palettes.
 
-## Components
+## Browse the library
 
-Each page includes usage examples, interaction guidance, and a generated API reference.
-
-| Family       | Components                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Data display | [Avatar](/ui/components/data-display/avatar), [Chip](/ui/components/data-display/chip), [Tag](/ui/components/data-display/tag), [Status](/ui/components/data-display/status)                                                                                                                                                                                                                                             |
-| Forms        | [Field](/ui/components/input/field), [Input](/ui/components/input/input), [InputGroup](/ui/components/input/input-group), [Textarea](/ui/components/input/textarea), [Checkbox](/ui/components/input/checkbox), [Radio](/ui/components/input/radio), [RadioGroup](/ui/components/input/radio-group), [Select](/ui/components/input/select), [Slider](/ui/components/input/slider), [Switch](/ui/components/input/switch) |
-| Navigation   | [ListItem](/ui/components/navigation/list-item), [Tabs](/ui/components/navigation/tabs)                                                                                                                                                                                                                                                                                                                                  |
-| Surfaces     | [AlertDialog](/ui/components/surfaces/alert-dialog), [Menu](/ui/components/surfaces/menu), [Popover](/ui/components/surfaces/popover)                                                                                                                                                                                                                                                                                    |
-| Feedback     | [Toast](/ui/components/feedback/toast)                                                                                                                                                                                                                                                                                                                                                                                   |
-| Typography   | [Text](/ui/components/typography/text)                                                                                                                                                                                                                                                                                                                                                                                   |
+- [Primitives](/ui/primitives/overview): foundational controls grouped by family, with usage examples and API references.
+- [Components](/ui/components/overview): shared design presets and reusable app building blocks composed from primitives.

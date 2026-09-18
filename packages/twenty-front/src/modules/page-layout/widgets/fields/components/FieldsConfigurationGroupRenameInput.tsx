@@ -65,12 +65,11 @@ export const FieldsConfigurationGroupRenameInput = ({
         placeholder={t`Group name`}
       />
       <Button
-        variant="primary"
-        accent="blue"
-        size="small"
-        title={t`Done`}
+        size="sm"
         onClick={handleSave}
-      />
+        variant="solid"
+        color="accent"
+      >{t`Done`}</Button>
     </StyledContainer>
   );
 };

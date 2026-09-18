@@ -1,22 +1,22 @@
 import { RUN_EVALUATION_INPUT } from '@/ai/graphql/mutations/runEvaluationInput';
 import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useMutation } from '@apollo/client/react';
-import { getOperationName } from '~/utils/getOperationName';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Section } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   IconDotsVertical,
   IconMessage,
@@ -25,11 +25,11 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidv4 } from 'uuid';
 import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
+import { getOperationName } from '~/utils/getOperationName';
 
 const DELETE_EVAL_INPUT_MODAL_ID = 'delete-eval-input-modal';
 
@@ -65,9 +65,9 @@ export const SettingsAgentEvalsTab = ({
 }: SettingsAgentEvalsTabProps) => {
   const [newInput, setNewInput] = useState('');
   const [inputToDelete, setInputToDelete] = useState<string | null>(null);
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { closeDropdown } = useCloseDropdown();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const navigate = useNavigate();
 
   const tabListComponentId = `${SETTINGS_AGENT_DETAIL_TABS.COMPONENT_INSTANCE_ID}-${agentId}`;
@@ -83,8 +83,9 @@ export const SettingsAgentEvalsTab = ({
       navigate(`#${logsTabId}`);
     },
     onError: () => {
-      enqueueErrorSnackBar({
-        message: t`Failed to execute evaluation input`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to execute evaluation input`,
       });
     },
     refetchQueries: [getOperationName(GET_AGENT_TURNS) ?? ''],
@@ -117,7 +118,7 @@ export const SettingsAgentEvalsTab = ({
 
   const openDeleteModal = (id: string) => {
     setInputToDelete(id);
-    openModal(DELETE_EVAL_INPUT_MODAL_ID);
+    openDialog(DELETE_EVAL_INPUT_MODAL_ID);
   };
 
   const handleRunInput = (text: string, itemId: string) => {
@@ -129,7 +130,7 @@ export const SettingsAgentEvalsTab = ({
 
   return (
     <>
-      <Section>
+      <Section.Root>
         <StyledInputContainer>
           <TextInput
             placeholder={t`Add test input for evaluation (e.g., "Find all customers in NY")`}
@@ -145,14 +146,13 @@ export const SettingsAgentEvalsTab = ({
             fullWidth
           />
           <Button
-            Icon={IconPlus}
-            variant="primary"
-            accent="blue"
-            size="small"
-            title={t`Add`}
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={handleAddInput}
             disabled={disabled || !newInput.trim()}
-          />
+            variant="solid"
+            color="accent"
+          >{t`Add`}</Button>
         </StyledInputContainer>
 
         {evalInputs.length > 0 ? (
@@ -195,10 +195,10 @@ export const SettingsAgentEvalsTab = ({
         ) : (
           <StyledEmptyMessage>{t`No evaluation inputs yet. Add your first test input above.`}</StyledEmptyMessage>
         )}
-      </Section>
+      </Section.Root>
 
-      <ConfirmationModal
-        modalInstanceId={DELETE_EVAL_INPUT_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={DELETE_EVAL_INPUT_MODAL_ID}
         title={t`Delete Evaluation Input`}
         subtitle={t`Are you sure you want to delete this evaluation input?`}
         onConfirmClick={handleDeleteInput}

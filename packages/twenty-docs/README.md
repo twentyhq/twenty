@@ -11,7 +11,7 @@ Visit the documentation at [docs.twenty.com](https://docs.twenty.com)
 This repository contains:
 - **User Guide** (46 pages) - Complete guide for Twenty users
 - **Developers** (24 pages) - Technical documentation for developers
-- **UI Library** - Guides and component references
+- **UI Library** - Guides, primitives, and components
 
 ## 🚀 Local Development
 
@@ -31,7 +31,7 @@ The documentation will be available at `http://localhost:3000`
 1. Edit MDX files in the appropriate directory:
    - `user-guide/` - User documentation
    - `developers/` - Developer documentation
-   - `ui/` - UI library guides and component references
+   - `ui/` - UI library guides, with primitive references under `ui/primitives/` and app building blocks under `ui/components/`
 
 2. Update `navigation/base-structure.json` if you need to change the tab/group hierarchy or add/remove pages. This file stays in the repo and is **not** uploaded to Crowdin.
 3. Keep the translation template (`navigation/navigation.template.json`) in sync by running `yarn docs:generate-navigation-template` after editing the base structure. This template is the only file that should be pushed to Crowdin.

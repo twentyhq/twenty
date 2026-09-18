@@ -24,7 +24,12 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import { styled } from '@linaria/react';
-import { type MouseEvent, type ReactNode, useCallback } from 'react';
+import {
+  type MouseEvent,
+  type ReactNode,
+  useCallback,
+  useLayoutEffect,
+} from 'react';
 import { flushSync } from 'react-dom';
 import { type Keys } from 'react-hotkeys-hook';
 import { isDefined } from 'twenty-shared/utils';
@@ -54,6 +59,7 @@ export type DropdownProps = {
   globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
   dropdownId: string;
   dropdownPlacement?: Placement;
+  positionReference?: HTMLElement | null;
   dropdownOffset?: DropdownOffset;
   onClickOutside?: () => void;
   onClose?: () => void;
@@ -76,6 +82,7 @@ export const Dropdown = ({
   dropdownId,
   globalHotkeysConfig,
   dropdownPlacement = 'bottom-end',
+  positionReference,
   dropdownOffset,
   onClickOutside,
   onClose,
@@ -169,6 +176,16 @@ export const Dropdown = ({
     whileElementsMounted: autoUpdate,
     strategy: 'fixed',
   });
+
+  useLayoutEffect(() => {
+    if (!isDefined(positionReference)) {
+      return;
+    }
+    // Keep the original trigger for click-outside handling.
+    const trigger = refs.domReference.current;
+    refs.setPositionReference(positionReference);
+    return () => refs.setPositionReference(trigger);
+  }, [positionReference, refs]);
 
   const handleClickableComponentClick = useCallback(
     async (event: MouseEvent) => {

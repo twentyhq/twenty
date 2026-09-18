@@ -22,7 +22,10 @@ const computeStepOutputSchemaSchema = z.object({
 });
 
 export const createComputeStepOutputSchemaTool = (
-  deps: Pick<WorkflowToolDependencies, 'workflowSchemaService'>,
+  deps: Pick<
+    WorkflowToolDependencies,
+    'workflowSchemaService' | 'workflowCommonService'
+  >,
   context: WorkflowToolContext,
 ) => ({
   name: 'compute_step_output_schema' as const,
@@ -34,10 +37,19 @@ export const createComputeStepOutputSchemaTool = (
     workflowVersionId: string;
   }) => {
     try {
+      const workflowVersion =
+        await deps.workflowCommonService.getWorkflowVersionOrFail({
+          workflowVersionId: parameters.workflowVersionId,
+          workspaceId: context.workspaceId,
+        });
+
       return await deps.workflowSchemaService.computeStepOutputSchema({
         step: parameters.step,
         workspaceId: context.workspaceId,
-        workflowVersionId: parameters.workflowVersionId,
+        workflowVersionContent: {
+          trigger: workflowVersion.trigger,
+          steps: workflowVersion.steps,
+        },
       });
     } catch (error) {
       return {

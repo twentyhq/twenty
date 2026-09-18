@@ -1,0 +1,139 @@
+---
+title: Slider
+description: Choose a numeric value or range with draggable, keyboard-accessible thumbs.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SliderReference from '/snippets/ui/generated/input/slider.mdx';
+
+`Slider` supports a single number or an array of numbers for a range. Compose its label, track, indicator, and thumbs inside `Root`.
+
+<StoryEmbed
+  storyId="ui-input-slider--default"
+  title="Slider example"
+  height={240}
+/>
+
+## Anatomy
+
+Put the track and thumbs inside `Slider.Control`, which handles pointer interaction. This tree shows a single-thumb slider.
+
+```text
+Slider.Root
+├── Slider.Label
+├── Slider.Value
+└── Slider.Control
+    └── Slider.Track
+        ├── Slider.Indicator
+        └── Slider.Thumb
+```
+
+| Part        | Requirement                   | Purpose                                                         |
+| ----------- | ----------------------------- | --------------------------------------------------------------- |
+| `Root`      | Required                      | Owns the value, bounds, step, and orientation.                  |
+| `Control`   | Required                      | Handles pointer interaction and positions the thumbs.           |
+| `Track`     | Required for the styled track | Shows the full value range.                                     |
+| `Thumb`     | One per adjustable value      | Provides a focusable handle with keyboard interaction.          |
+| `Label`     | Recommended                   | Supplies a visible label; every thumb needs an accessible name. |
+| `Value`     | Optional                      | Displays the current numeric value.                             |
+| `Indicator` | Optional                      | Shows the selected portion of the track.                        |
+
+For a range, add a thumb for each value with its matching `index` and a distinct accessible name. Labels and numeric output stay outside `Control`, so they do not become part of the draggable area.
+
+## Uncontrolled state
+
+Use `defaultValue` to set the initial volume. The slider owns subsequent changes.
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const VolumeSlider = () => (
+  <Slider.Root name="volume" defaultValue={40} min={0} max={100} step={1}>
+    <Slider.Label>Volume</Slider.Label>
+    <Slider.Value />
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+## Controlled state
+
+Pass `value` and update it with `onValueChange` to own the same volume in React state. The callback receives the next value and event details.
+
+```tsx
+import { useState } from 'react';
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const VolumeSlider = () => {
+  const [volume, setVolume] = useState(40);
+
+  return (
+    <Slider.Root
+      name="volume"
+      value={volume}
+      onValueChange={setVolume}
+      min={0}
+      max={100}
+      step={1}
+    >
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.Value />
+      <Slider.Control>
+        <Slider.Track>
+          <Slider.Indicator />
+          <Slider.Thumb />
+        </Slider.Track>
+      </Slider.Control>
+    </Slider.Root>
+  );
+};
+```
+
+Use `onValueChange` to keep the controlled value current during an interaction. `onValueCommitted` handles the final value when the interaction finishes, for example to save it. Both callbacks are also available in uncontrolled mode without taking ownership of the value.
+
+## Range
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const PriceRange = () => (
+  <Slider.Root
+    defaultValue={[25, 75]}
+    min={0}
+    max={100}
+    minStepsBetweenValues={10}
+  >
+    <Slider.Label>Price range</Slider.Label>
+    <Slider.Value />
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb index={0} aria-label="Minimum price" />
+        <Slider.Thumb index={1} aria-label="Maximum price" />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+Give range thumbs distinct accessible names and an `index` corresponding to their value. `minStepsBetweenValues` sets the minimum gap in steps. The root's generic value type is a number or a readonly array of numbers.
+
+To control a range, store the array in React state and pass it through `value` and `onValueChange`, just as for a single value.
+
+## Keyboard and appearance
+
+Arrow keys adjust a focused thumb by a step. Home and End move it toward the bounds while respecting range constraints. `orientation="vertical"` changes the layout and keyboard direction. Use `disabled` on `Root` to prevent changes.
+
+Set `color="success"` for the alternative palette; the default is `accent`.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<SliderReference />

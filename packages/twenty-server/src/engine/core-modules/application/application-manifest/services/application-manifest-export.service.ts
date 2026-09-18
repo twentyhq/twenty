@@ -13,6 +13,7 @@ import { reconstructDataModelManifest } from 'src/engine/core-modules/applicatio
 import { getResolvableReferenceUniversalIdentifiers } from 'src/engine/core-modules/application/application-manifest/utils/get-resolvable-reference-universal-identifiers.util';
 import { reconstructNavigationMenuItemsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-navigation-menu-items-manifest.util';
 import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-page-layouts-manifest.util';
+import { reconstructRolesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-roles-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import {
@@ -85,6 +86,20 @@ export class ApplicationManifestExportService {
       objects.map(({ universalIdentifier }) => universalIdentifier),
     );
     const {
+      permissionFlags,
+      roles,
+      coverage: rolesCoverage,
+    } = reconstructRolesManifest({
+      applicationAllFlatEntityMaps,
+      allFlatEntityMaps,
+      exportedObjectUniversalIdentifiers,
+      resolvableFieldUniversalIdentifiers:
+        getResolvableReferenceUniversalIdentifiers({
+          coverage: dataModelCoverage,
+          metadataName: 'fieldMetadata',
+        }),
+    });
+    const {
       views,
       viewFields,
       coverage: viewsCoverage,
@@ -139,8 +154,8 @@ export class ApplicationManifestExportService {
       indexes,
       logicFunctions: [],
       frontComponents: [],
-      permissionFlags: [],
-      roles: [],
+      permissionFlags,
+      roles,
       skills: [],
       agents: [],
       publicAssets: [],
@@ -168,6 +183,7 @@ export class ApplicationManifestExportService {
         allFlatEntityMaps,
         reconstructedCoverage: [
           ...dataModelCoverage,
+          ...rolesCoverage,
           ...viewsCoverage,
           ...pageLayoutsCoverage,
           ...navigationMenuItemsCoverage,

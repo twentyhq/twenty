@@ -1,18 +1,16 @@
-import { useCallback, useContext, useState } from 'react';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
-
 import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportDataStep';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
-import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
+import { useCallback, useContext, useState } from 'react';
+import { CircularProgressBar, useToast } from 'twenty-ui/primitives/feedback';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
 import { ValidationStep } from './ValidationStep/ValidationStep';
-import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type SpreadsheetImportStepperProps = {
   nextStep: () => void;
@@ -37,15 +35,13 @@ export const SpreadsheetImportStepper = ({
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const handleError = useCallback(
     (description: string) => {
-      enqueueErrorSnackBar({
-        message: description,
-      });
+      enqueueToast({ variant: 'error', children: description });
     },
-    [enqueueErrorSnackBar],
+    [enqueueToast],
   );
 
   const handleBack = useCallback(() => {
@@ -128,13 +124,22 @@ export const SpreadsheetImportStepper = ({
     case SpreadsheetImportStepType.loading:
     default:
       return (
-        <ModalContent isVerticallyCentered isHorizontallyCentered>
+        <Dialog.Body
+          style={{
+            display: 'flex',
+            flex: '1 1 0%',
+            flexDirection: 'column',
+            padding: 'var(--t-spacing-10)',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <CircularProgressBar
             size={80}
             barWidth={8}
             barColor={theme.font.color.primary}
           />
-        </ModalContent>
+        </Dialog.Body>
       );
   }
 };

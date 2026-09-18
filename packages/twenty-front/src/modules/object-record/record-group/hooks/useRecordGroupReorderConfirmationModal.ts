@@ -6,7 +6,7 @@ import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { type ViewType } from '@/views/types/ViewType';
@@ -27,7 +27,7 @@ export const useRecordGroupReorderConfirmationModal = ({
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const [pendingDragEndHandlerParams, setPendingDragEndHandlerParams] =
     useState<DraggableListDropResult | null>(null);
@@ -60,7 +60,7 @@ export const useRecordGroupReorderConfirmationModal = ({
   const handleDragEndWithModal = (result: DraggableListDropResult) => {
     if (!isDragableSortRecordGroup) {
       closeAnyOpenDropdown();
-      openModal(getRecordGroupReorderConfirmationModalId(recordIndexId));
+      openDialog(getRecordGroupReorderConfirmationModalId(recordIndexId));
       setActiveDropdownFocusIdAndMemorizePrevious(null);
       setPendingDragEndHandlerParams(result);
     } else {

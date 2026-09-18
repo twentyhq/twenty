@@ -9,12 +9,11 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { Section } from 'twenty-ui/components';
 import { Avatar, Status } from 'twenty-ui/primitives/data-display';
 import { Info } from 'twenty-ui/primitives/feedback';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
@@ -64,8 +63,8 @@ export const SettingsApplicationConnectionsSection = ({
         );
 
         return (
-          <Section key={provider.id}>
-            <H2Title
+          <Section.Root key={provider.id}>
+            <Section.Header
               title={provider.displayName}
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
               adornment={
@@ -161,11 +160,8 @@ export const SettingsApplicationConnectionsSection = ({
             {isClientCredentialsConfigured && (
               <StyledFooter>
                 <Button
-                  title={t`Add connection`}
-                  Icon={IconPlus}
-                  variant="secondary"
-                  accent="default"
-                  size="small"
+                  startIcon={<IconPlus />}
+                  size="sm"
                   onClick={() =>
                     triggerAppOAuth({
                       applicationId,
@@ -173,10 +169,11 @@ export const SettingsApplicationConnectionsSection = ({
                       visibility: 'workspace',
                     })
                   }
-                />
+                  variant="outline"
+                >{t`Add connection`}</Button>
               </StyledFooter>
             )}
-          </Section>
+          </Section.Root>
         );
       })}
     </>

@@ -1,15 +1,14 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconMail } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const SettingsWorkspaceEmailSyncSection = () => {
@@ -18,7 +17,7 @@ export const SettingsWorkspaceEmailSyncSection = () => {
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
   const handleSyncInternalEmailsChange = (value: boolean) => {
@@ -41,16 +40,14 @@ export const SettingsWorkspaceEmailSyncSection = () => {
           isInternalMessagesImportEnabled: value,
         },
       },
-    }).catch((err) => {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+    }).catch((error) => {
+      enqueueToast(getToastOptionsFromError({ error }));
     });
   };
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Sync`}
         description={t`Control what the workspace imports from connected mailboxes and calendars`}
       />
@@ -64,6 +61,6 @@ export const SettingsWorkspaceEmailSyncSection = () => {
           advancedMode
         />
       </Card>
-    </Section>
+    </Section.Root>
   );
 };

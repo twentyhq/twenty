@@ -196,6 +196,7 @@ const buildFlatView = ({
   viewFilterIds: [],
   viewGroupIds: [],
   viewFilterGroupIds: [],
+  navigationMenuItemIds: [],
   viewSortIds: [],
   ...flatViewProperties,
 });
