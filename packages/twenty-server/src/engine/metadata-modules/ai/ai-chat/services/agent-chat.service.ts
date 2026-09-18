@@ -1272,6 +1272,30 @@ export class AgentChatService {
           AiExceptionCode.QUESTION_NOT_PENDING,
         );
       }
+
+      // The part was read as pending before the claim was taken. Adopting an
+      // orphaned question means somebody else held it in between, and they
+      // may have answered it, so the part is read again under the claim
+      // rather than trusting what this request saw first.
+      const isStillPending = await this.isQuestionPartStillPending({
+        partId: pendingPart.id,
+        workspaceId,
+      });
+
+      if (!isStillPending) {
+        await this.threadRepository
+          .update(
+            workspaceId,
+            { id: threadId, activeStreamId: streamId },
+            { activeStreamId: null },
+          )
+          .catch(() => {});
+
+        throw new AiException(
+          'No pending question to answer',
+          AiExceptionCode.QUESTION_NOT_PENDING,
+        );
+      }
     }
 
     try {
@@ -1306,6 +1330,24 @@ export class AgentChatService {
       turnId: message.turnId,
       rollback: { partId: pendingPart.id, previousOutput },
     };
+  }
+
+  private async isQuestionPartStillPending({
+    partId,
+    workspaceId,
+  }: {
+    partId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const part = await this.messagePartRepository.findOne(workspaceId, {
+      where: { id: partId },
+      select: ['id', 'toolOutput'],
+    });
+
+    return (
+      (part?.toolOutput as { result?: AskQuestionsToolResult } | null)?.result
+        ?.status === 'pending'
+    );
   }
 
   private async claimOrphanedQuestion({

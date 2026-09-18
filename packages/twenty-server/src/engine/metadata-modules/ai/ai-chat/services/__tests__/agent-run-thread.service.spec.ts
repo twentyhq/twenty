@@ -180,6 +180,56 @@ describe('AgentRunThreadService', () => {
     );
   });
 
+  it('keeps the claim until the answer is written, so a second answer cannot adopt the question', async () => {
+    const { service, agentChatService, threadRepository } = buildService();
+    const callOrder: string[] = [];
+
+    agentChatService.addMessage.mockImplementation(async () => {
+      callOrder.push('addMessage');
+
+      return { id: 'answer-message-id' };
+    });
+    threadRepository.update.mockImplementation(async (...args: unknown[]) => {
+      const values = args[2] as { activeStreamId?: string | null };
+
+      if (values?.activeStreamId === null) {
+        callOrder.push('releaseClaim');
+      }
+
+      return { affected: 1 };
+    });
+
+    await service.answerRunQuestion({
+      thread: buildThread() as never,
+      messageId: 'question-message-id',
+      answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+      userWorkspaceId: OWNER_ID,
+    });
+
+    expect(callOrder).toEqual(['addMessage', 'releaseClaim']);
+  });
+
+  it('releases the claim even when writing the answer fails, so the thread is not left held', async () => {
+    const { service, agentChatService, threadRepository } = buildService();
+
+    agentChatService.addMessage.mockRejectedValue(new Error('write failed'));
+
+    await expect(
+      service.answerRunQuestion({
+        thread: buildThread() as never,
+        messageId: 'question-message-id',
+        answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+        userWorkspaceId: OWNER_ID,
+      }),
+    ).rejects.toThrow('write failed');
+
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      expect.objectContaining({ id: THREAD_ID }),
+      { activeStreamId: null },
+    );
+  });
+
   it('answers the question, records the answer and re-queues the step', async () => {
     const {
       service,

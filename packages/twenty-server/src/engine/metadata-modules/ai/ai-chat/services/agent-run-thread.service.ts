@@ -305,25 +305,35 @@ export class AgentRunThreadService {
       workspaceId: thread.workspaceId,
     });
 
-    // The claim taken to mark the question answered is a chat stream slot;
-    // the workflow job does the continuation, so it is released right away.
-    await this.threadRepository.update(
-      thread.workspaceId,
-      { id: thread.id, activeStreamId: claimStreamId },
-      { activeStreamId: null },
-    );
+    // The claim is a chat stream slot and the workflow job does the
+    // continuation, so it could be released as soon as the question is marked
+    // answered. It is held until the answer is written instead: releasing it
+    // first leaves the thread with no pending question and no claim, which is
+    // exactly the state a second answer adopts, and two answers would then
+    // overwrite each other and post twice.
+    let answerMessage;
 
-    const answerMessage = await this.agentChatService.addMessage({
-      threadId: thread.id,
-      uiMessage: {
-        role: 'user',
-        parts: [
-          { type: 'text', text: this.formatAnswers({ questions, answers }) },
-        ],
-      },
-      workspaceId: thread.workspaceId,
-      authorUserWorkspaceId: userWorkspaceId,
-    });
+    try {
+      answerMessage = await this.agentChatService.addMessage({
+        threadId: thread.id,
+        uiMessage: {
+          role: 'user',
+          parts: [
+            { type: 'text', text: this.formatAnswers({ questions, answers }) },
+          ],
+        },
+        workspaceId: thread.workspaceId,
+        authorUserWorkspaceId: userWorkspaceId,
+      });
+    } finally {
+      await this.threadRepository
+        .update(
+          thread.workspaceId,
+          { id: thread.id, activeStreamId: claimStreamId },
+          { activeStreamId: null },
+        )
+        .catch(() => {});
+    }
 
     await this.eventPublisherService.publish({
       threadId: thread.id,
