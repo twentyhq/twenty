@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { PDL_ACCESS_ERROR_MESSAGE } from 'src/constants/pdl-access-error-message';
 import { buildEnrichmentSnackbarParams } from 'src/front-components/utils/build-enrichment-snackbar-params';
 import { aggregateBulkEnrichResult } from 'src/logic-functions/utils/aggregate-bulk-enrich-result';
 import { buildErrorResult } from 'src/logic-functions/utils/build-error-result';
@@ -32,14 +33,21 @@ describe('buildEnrichmentSnackbarParams', () => {
     expect(
       buildEnrichmentSnackbarParams(
         aggregateBulkEnrichResult([
-          buildErrorResult({ recordId: 'a', error: 'Invalid API key' }),
-          buildErrorResult({ recordId: 'b', error: 'Invalid API key' }),
+          buildErrorResult({
+            recordId: 'a',
+            error: PDL_ACCESS_ERROR_MESSAGE,
+          }),
+          buildErrorResult({
+            recordId: 'b',
+            error: PDL_ACCESS_ERROR_MESSAGE,
+          }),
         ]),
       ),
     ).toEqual({
       message: 'Records enrichment failed',
       variant: 'error',
-      detailedMessage: 'Invalid API key',
+      detailedMessage:
+        'People Data Labs enrichment is unavailable. Contact your workspace admin.',
     });
   });
 

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { chargeCredits } from 'twenty-sdk/billing';
 
+import { PDL_ACCESS_ERROR_MESSAGE } from 'src/constants/pdl-access-error-message';
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
 import { runBatchEnrichment } from 'src/logic-functions/utils/run-batch-enrichment';
@@ -452,10 +453,15 @@ describe('runBatchEnrichment', () => {
       },
     });
     expect(result).toMatchObject({ total: 150, errored: 150, success: false });
+    expect(result.results[0]).toMatchObject({
+      recordId: 'r0',
+      status: 'ERROR',
+      error: PDL_ACCESS_ERROR_MESSAGE,
+    });
     expect(result.results[149]).toMatchObject({
       recordId: 'r149',
       status: 'ERROR',
-      error: 'Invalid API key',
+      error: PDL_ACCESS_ERROR_MESSAGE,
     });
   });
 
@@ -463,7 +469,7 @@ describe('runBatchEnrichment', () => {
     const ids = buildRecordIds(150);
     const harness = buildHarness(ids.map((id) => ({ id })));
     harness.enrichBatch.mockRejectedValue(
-      new PdlConfigError('No People Data Labs API key is configured.'),
+      new PdlConfigError('PDL_API_KEY is not set.'),
     );
 
     const result = await runBatchEnrichment({
@@ -474,9 +480,8 @@ describe('runBatchEnrichment', () => {
 
     expect(harness.enrichBatch).toHaveBeenCalledTimes(1);
     expect(result).toMatchObject({ total: 150, errored: 150 });
-    expect(result.results[149].error).toBe(
-      'No People Data Labs API key is configured.',
-    );
+    expect(result.results[0].error).toBe(PDL_ACCESS_ERROR_MESSAGE);
+    expect(result.results[149].error).toBe(PDL_ACCESS_ERROR_MESSAGE);
   });
 
   it('keeps enriching the remaining chunks after a chunk fails for another reason', async () => {
