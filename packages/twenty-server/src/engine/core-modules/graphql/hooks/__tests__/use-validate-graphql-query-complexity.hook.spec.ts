@@ -44,6 +44,7 @@ describe('useValidateGraphqlQueryComplexity', () => {
   const captureResolversHeader = (
     query: string,
     options: Parameters<typeof useValidateGraphqlQueryComplexity>[0] = {},
+    operationName?: string,
   ): { header: string | undefined; error: Error | null } => {
     const plugin = useValidateGraphqlQueryComplexity(options);
 
@@ -59,7 +60,7 @@ describe('useValidateGraphqlQueryComplexity', () => {
     };
 
     const onParseResult = plugin.onParse({
-      context: { res },
+      context: { res, params: { operationName } },
       params: { source: query },
       parseFn: parse,
       setParseFn: () => {},
@@ -428,6 +429,75 @@ describe('useValidateGraphqlQueryComplexity', () => {
 
       expect(error).not.toBeNull();
       expect(header).toBe('userOne,userTwo');
+    });
+
+    it('should expose only the executed operation of a multi operation document', () => {
+      const query = `
+        query ReadPeople {
+          findManyPeople {
+            id
+          }
+        }
+        mutation WipePeople {
+          deleteManyPeople {
+            id
+          }
+        }
+      `;
+
+      expect(captureResolversHeader(query, {}, 'ReadPeople').header).toBe(
+        'findManyPeople',
+      );
+      expect(captureResolversHeader(query, {}, 'WipePeople').header).toBe(
+        'deleteManyPeople',
+      );
+    });
+
+    it('should not set the header when operationName does not select an operation', () => {
+      const query = `
+        query ReadPeople {
+          findManyPeople {
+            id
+          }
+        }
+        mutation WipePeople {
+          deleteManyPeople {
+            id
+          }
+        }
+      `;
+
+      expect(
+        captureResolversHeader(query, {}, 'Unknown').header,
+      ).toBeUndefined();
+      expect(captureResolversHeader(query).header).toBeUndefined();
+    });
+
+    it('should expose the single operation when no operationName is given', () => {
+      const { header } = captureResolversHeader(`
+        query {
+          findManyPeople {
+            id
+          }
+        }
+      `);
+
+      expect(header).toBe('findManyPeople');
+    });
+
+    it('should expose root resolvers reached through a fragment spread', () => {
+      const { header } = captureResolversHeader(`
+        query ReadPeople {
+          ...RootFields
+        }
+        fragment RootFields on Query {
+          findManyPeople {
+            id
+          }
+        }
+      `);
+
+      expect(header).toBe('findManyPeople');
     });
 
     it('should truncate a long resolver list with a remainder count', () => {

@@ -4,10 +4,12 @@ import {
   type FieldNode,
   type FragmentDefinitionNode,
   type SelectionNode,
+  getOperationAST,
   Kind,
 } from 'graphql';
 import { type ServerResponse } from 'http';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Plugin } from 'graphql-yoga';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -55,7 +57,7 @@ export const useValidateGraphqlQueryComplexity = ({
 
       // Set before the threshold checks below throw: a query rejected for
       // asking too much is exactly the one worth attributing afterwards.
-      exposeRootResolvers(context, analysis.rootResolverNames);
+      exposeRootResolvers(context, document, fragmentMap);
 
       if (
         isDefined(maximumAllowedNestedFields) &&
@@ -97,11 +99,31 @@ const MAX_EXPOSED_ROOT_RESOLVERS_LENGTH = 512;
 
 const exposeRootResolvers = (
   context: unknown,
-  rootResolverNames: string[],
+  document: DocumentNode,
+  fragmentMap: Map<string, FragmentDefinitionNode>,
 ): void => {
   const response = (context as { res?: ServerResponse } | undefined)?.res;
 
-  if (!isDefined(response) || rootResolverNames.length === 0) {
+  if (!isDefined(response)) {
+    return;
+  }
+
+  // A document may hold several named operations while only the one selected
+  // by operationName executes. Attributing the whole document would report
+  // resolvers that never ran, so only the executed operation is exposed.
+  const operation = getOperationAST(document, extractOperationName(context));
+
+  if (!isDefined(operation)) {
+    return;
+  }
+
+  const rootResolverNames = analyzeSelectionSet(
+    operation.selectionSet.selections,
+    fragmentMap,
+    0,
+  ).rootFieldNames;
+
+  if (rootResolverNames.length === 0) {
     return;
   }
 
@@ -109,6 +131,25 @@ const exposeRootResolvers = (
     REQUEST_RESOLVERS_HEADER,
     truncateResolverNames(rootResolverNames),
   );
+};
+
+const extractOperationName = (context: unknown): string | undefined => {
+  const typedContext = context as
+    | {
+        params?: { operationName?: unknown };
+        req?: { body?: { operationName?: unknown } };
+      }
+    | undefined;
+
+  const fromParams = typedContext?.params?.operationName;
+
+  if (isNonEmptyString(fromParams)) {
+    return fromParams;
+  }
+
+  const fromBody = typedContext?.req?.body?.operationName;
+
+  return isNonEmptyString(fromBody) ? fromBody : undefined;
 };
 
 const truncateResolverNames = (rootResolverNames: string[]): string => {
