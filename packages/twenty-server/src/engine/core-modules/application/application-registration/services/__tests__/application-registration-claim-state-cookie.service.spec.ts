@@ -1,8 +1,8 @@
 import { type Request, type Response } from 'express';
 
 import {
-  APPLICATION_REGISTRATION_CLAIM_STATE_COOKIE_NAME,
-  APPLICATION_REGISTRATION_CLAIM_STATE_SECURE_COOKIE_NAME,
+  getApplicationRegistrationClaimStateCookieName,
+  getApplicationRegistrationClaimStateSecureCookieName,
 } from 'src/engine/core-modules/application/application-registration/constants/application-registration-claim-state-cookie-name.constant';
 import { ApplicationRegistrationClaimStateCookieService } from 'src/engine/core-modules/application/application-registration/services/application-registration-claim-state-cookie.service';
 
@@ -23,16 +23,21 @@ const buildService = ({
     ),
   } as never);
 
+const REGISTRATION_ID = '33333333-3333-4333-8333-333333333333';
+const OTHER_REGISTRATION_ID = '44444444-4444-4444-8444-444444444444';
+
 const attachNonce = (
   service: ApplicationRegistrationClaimStateCookieService,
+  applicationRegistrationId = REGISTRATION_ID,
 ) => {
   const cookie = jest.fn();
 
-  service.attachNonceToResponse(
-    { cookie } as unknown as Response,
-    'nonce',
-    1000,
-  );
+  service.attachNonceToResponse({
+    response: { cookie } as unknown as Response,
+    applicationRegistrationId,
+    nonce: 'nonce',
+    maxAgeMs: 1000,
+  });
 
   return cookie.mock.calls[0];
 };
@@ -54,7 +59,9 @@ describe('ApplicationRegistrationClaimStateCookieService', () => {
   it('issues an httpOnly secure cookie under the __Host- name on https', () => {
     const [name, value, options] = attachNonce(buildService());
 
-    expect(name).toBe(APPLICATION_REGISTRATION_CLAIM_STATE_SECURE_COOKIE_NAME);
+    expect(name).toBe(
+      getApplicationRegistrationClaimStateSecureCookieName(REGISTRATION_ID),
+    );
     expect(value).toBe('nonce');
     expect(options).toMatchObject({
       httpOnly: true,
@@ -70,19 +77,44 @@ describe('ApplicationRegistrationClaimStateCookieService', () => {
       buildService({ serverUrl: 'http://localhost:3000' }),
     );
 
-    expect(name).toBe(APPLICATION_REGISTRATION_CLAIM_STATE_COOKIE_NAME);
+    expect(name).toBe(
+      getApplicationRegistrationClaimStateCookieName(REGISTRATION_ID),
+    );
     expect(options.secure).toBe(false);
+  });
+
+  it('keeps concurrent claims on separate cookies', () => {
+    const service = buildService();
+
+    const [firstName] = attachNonce(service, REGISTRATION_ID);
+    const [secondName] = attachNonce(service, OTHER_REGISTRATION_ID);
+
+    expect(firstName).not.toBe(secondName);
+
+    expect(
+      service.extractNonceFromRequest(
+        {
+          headers: {
+            cookie: `${firstName}=first; ${secondName}=second`,
+          },
+        } as Request,
+        OTHER_REGISTRATION_ID,
+      ),
+    ).toBe('second');
   });
 
   it('reads the nonce back from the cookie header', () => {
     const service = buildService();
 
     expect(
-      service.extractNonceFromRequest({
-        headers: {
-          cookie: `other=x; ${APPLICATION_REGISTRATION_CLAIM_STATE_SECURE_COOKIE_NAME}=abc123`,
-        },
-      } as Request),
+      service.extractNonceFromRequest(
+        {
+          headers: {
+            cookie: `other=x; ${getApplicationRegistrationClaimStateSecureCookieName(REGISTRATION_ID)}=abc123`,
+          },
+        } as Request,
+        REGISTRATION_ID,
+      ),
     ).toBe('abc123');
   });
 
@@ -90,11 +122,14 @@ describe('ApplicationRegistrationClaimStateCookieService', () => {
     const service = buildService();
 
     expect(
-      service.extractNonceFromRequest({
-        headers: {
-          cookie: `${APPLICATION_REGISTRATION_CLAIM_STATE_COOKIE_NAME}=planted`,
-        },
-      } as Request),
+      service.extractNonceFromRequest(
+        {
+          headers: {
+            cookie: `${getApplicationRegistrationClaimStateCookieName(REGISTRATION_ID)}=planted`,
+          },
+        } as Request,
+        REGISTRATION_ID,
+      ),
     ).toBeUndefined();
   });
 });

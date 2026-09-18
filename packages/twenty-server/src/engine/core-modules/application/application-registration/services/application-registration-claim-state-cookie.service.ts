@@ -4,8 +4,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CookieOptions, type Request, type Response } from 'express';
 
 import {
-  APPLICATION_REGISTRATION_CLAIM_STATE_COOKIE_NAME,
-  APPLICATION_REGISTRATION_CLAIM_STATE_SECURE_COOKIE_NAME,
+  getApplicationRegistrationClaimStateCookieName,
+  getApplicationRegistrationClaimStateSecureCookieName,
 } from 'src/engine/core-modules/application/application-registration/constants/application-registration-claim-state-cookie-name.constant';
 import { readRequestCookie } from 'src/engine/core-modules/application/application-registration/utils/read-request-cookie.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -26,21 +26,32 @@ const isHttpsUrl = (url: string | undefined): boolean => {
 export class ApplicationRegistrationClaimStateCookieService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  attachNonceToResponse(
-    response: Response,
-    nonce: string,
-    maxAgeMs: number,
-  ): void {
-    response.cookie(this.resolveCookieName(), nonce, {
+  attachNonceToResponse({
+    response,
+    applicationRegistrationId,
+    nonce,
+    maxAgeMs,
+  }: {
+    response: Response;
+    applicationRegistrationId: string;
+    nonce: string;
+    maxAgeMs: number;
+  }): void {
+    response.cookie(this.resolveCookieName(applicationRegistrationId), nonce, {
       ...this.resolveCookieOptions(),
       maxAge: maxAgeMs,
     });
   }
 
-  extractNonceFromRequest(request: Request): string | undefined {
+  extractNonceFromRequest(
+    request: Request,
+    applicationRegistrationId: string,
+  ): string | undefined {
     const secureNonce = readRequestCookie(
       request,
-      APPLICATION_REGISTRATION_CLAIM_STATE_SECURE_COOKIE_NAME,
+      getApplicationRegistrationClaimStateSecureCookieName(
+        applicationRegistrationId,
+      ),
     );
 
     if (isNonEmptyString(secureNonce)) {
@@ -53,27 +64,36 @@ export class ApplicationRegistrationClaimStateCookieService {
 
     return readRequestCookie(
       request,
-      APPLICATION_REGISTRATION_CLAIM_STATE_COOKIE_NAME,
+      getApplicationRegistrationClaimStateCookieName(applicationRegistrationId),
     );
   }
 
-  clearNonceCookie(response: Response): void {
+  clearNonceCookie(
+    response: Response,
+    applicationRegistrationId: string,
+  ): void {
     const options = this.resolveCookieOptions();
 
     response.clearCookie(
-      APPLICATION_REGISTRATION_CLAIM_STATE_SECURE_COOKIE_NAME,
+      getApplicationRegistrationClaimStateSecureCookieName(
+        applicationRegistrationId,
+      ),
       options,
     );
     response.clearCookie(
-      APPLICATION_REGISTRATION_CLAIM_STATE_COOKIE_NAME,
+      getApplicationRegistrationClaimStateCookieName(applicationRegistrationId),
       options,
     );
   }
 
-  private resolveCookieName(): string {
+  private resolveCookieName(applicationRegistrationId: string): string {
     return this.isSecureDeployment()
-      ? APPLICATION_REGISTRATION_CLAIM_STATE_SECURE_COOKIE_NAME
-      : APPLICATION_REGISTRATION_CLAIM_STATE_COOKIE_NAME;
+      ? getApplicationRegistrationClaimStateSecureCookieName(
+          applicationRegistrationId,
+        )
+      : getApplicationRegistrationClaimStateCookieName(
+          applicationRegistrationId,
+        );
   }
 
   private resolveCookieOptions(): CookieOptions {

@@ -1,11 +1,13 @@
 import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { Request, Response } from 'express';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
 import { ApplicationRegistrationClaimStateCookieService } from 'src/engine/core-modules/application/application-registration/services/application-registration-claim-state-cookie.service';
+import { claimStateNonceMatches } from 'src/engine/core-modules/application/application-registration/utils/hash-claim-state-nonce.util';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
@@ -42,11 +44,6 @@ export class ApplicationRegistrationClaimController {
   ) {
     let workspace: WorkspaceEntity | null = null;
 
-    const stateNonce =
-      this.claimStateCookieService.extractNonceFromRequest(req);
-
-    this.claimStateCookieService.clearNonceCookie(res);
-
     try {
       const statePayload =
         await this.applicationRegistrationClaimService.verifyClaimState(
@@ -57,6 +54,22 @@ export class ApplicationRegistrationClaimController {
         await this.applicationRegistrationClaimService.findWorkspaceById(
           statePayload.workspaceId,
         );
+
+      const stateNonce = this.claimStateCookieService.extractNonceFromRequest(
+        req,
+        statePayload.applicationRegistrationId,
+      );
+
+      if (
+        isNonEmptyString(stateNonce) &&
+        isNonEmptyString(statePayload.nonceHash) &&
+        claimStateNonceMatches(stateNonce, statePayload.nonceHash)
+      ) {
+        this.claimStateCookieService.clearNonceCookie(
+          res,
+          statePayload.applicationRegistrationId,
+        );
+      }
 
       if (oauthError !== undefined || code === undefined) {
         throw new ApplicationRegistrationException(

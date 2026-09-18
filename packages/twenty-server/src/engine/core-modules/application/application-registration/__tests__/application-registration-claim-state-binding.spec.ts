@@ -131,17 +131,19 @@ describe('ApplicationRegistrationClaimService claim state binding', () => {
 
     expect(attachNonceToResponse).toHaveBeenCalledTimes(1);
 
-    const [, nonce, maxAgeMs] = attachNonceToResponse.mock.calls[0];
+    const [{ nonce, maxAgeMs, applicationRegistrationId }] =
+      attachNonceToResponse.mock.calls[0];
 
     expect(nonce).toHaveLength(64);
     expect(maxAgeMs).toBe(15 * 60 * 1000);
+    expect(applicationRegistrationId).toBe(REGISTRATION_ID);
   });
 
   it('completes the claim for the browser that started it', async () => {
     const { service, claimOwnership, attachNonceToResponse } = setupService();
 
     const state = await startClaim(service, {});
-    const [, nonce] = attachNonceToResponse.mock.calls[0];
+    const [{ nonce }] = attachNonceToResponse.mock.calls[0];
 
     await service.completeGithubClaim({
       statePayload: await service.verifyClaimState(state),
@@ -179,7 +181,7 @@ describe('ApplicationRegistrationClaimService claim state binding', () => {
     const state = await startClaim(service, {});
 
     await startClaim(service, {});
-    const [, otherClaimNonce] = attachNonceToResponse.mock.calls[1];
+    const [{ nonce: otherClaimNonce }] = attachNonceToResponse.mock.calls[1];
 
     await expect(
       service.completeGithubClaim({

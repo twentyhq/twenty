@@ -122,11 +122,12 @@ export class ApplicationRegistrationClaimService {
       expiresIn: GITHUB_CLAIM_STATE_EXPIRES_IN,
     });
 
-    this.claimStateCookieService.attachNonceToResponse(
-      params.response,
+    this.claimStateCookieService.attachNonceToResponse({
+      response: params.response,
+      applicationRegistrationId: registration.id,
       nonce,
-      GITHUB_CLAIM_STATE_TTL_MS,
-    );
+      maxAgeMs: GITHUB_CLAIM_STATE_TTL_MS,
+    });
 
     const authorizationUrl = new URL(
       'https://github.com/login/oauth/authorize',
