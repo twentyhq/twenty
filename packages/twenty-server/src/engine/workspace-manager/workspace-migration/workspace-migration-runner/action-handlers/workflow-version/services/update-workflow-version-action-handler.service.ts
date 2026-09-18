@@ -50,9 +50,14 @@ export class UpdateWorkflowVersionActionHandlerService extends WorkspaceMigratio
     const { entityId, update } = flatAction;
 
     const workflowVersionRepository =
-      queryRunner.manager.getRepository<WorkflowVersionEntity>(WorkflowVersionEntity);
+      queryRunner.manager.getRepository<WorkflowVersionEntity>(
+        WorkflowVersionEntity,
+      );
 
-    await workflowVersionRepository.update({ id: entityId, workspaceId }, update);
+    await workflowVersionRepository.update(
+      { id: entityId, workspaceId },
+      update,
+    );
   }
 
   async executeForWorkspaceSchema(

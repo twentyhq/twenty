@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { type CoreWorkflowBroadcastOperation } from 'src/engine/core-modules/workflow/types/core-workflow-broadcast-operation.type';
 import { type WorkspaceBroadcastEvent } from 'src/engine/subscriptions/workspace-event-broadcaster/types/workspace-broadcast-event.type';
@@ -7,14 +8,14 @@ export const buildCoreWorkflowBroadcastEvent = ({
   operation,
   coreWorkflowId,
   coreWorkflowVersionId,
-  recipientUserWorkspaceIds,
 }: {
   operation: CoreWorkflowBroadcastOperation;
   coreWorkflowId?: string | null;
   coreWorkflowVersionId?: string | null;
-  recipientUserWorkspaceIds: string[];
 }): WorkspaceBroadcastEvent | null => {
-  const record = isNonEmptyString(coreWorkflowVersionId)
+  const isWorkflowVersionEvent = isNonEmptyString(coreWorkflowVersionId);
+
+  const record = isWorkflowVersionEvent
     ? {
         id: coreWorkflowVersionId,
         ...(isNonEmptyString(coreWorkflowId) ? { coreWorkflowId } : {}),
@@ -29,12 +30,10 @@ export const buildCoreWorkflowBroadcastEvent = ({
 
   return {
     type: operation,
-    entityName: isNonEmptyString(coreWorkflowVersionId)
-      ? 'coreWorkflowVersion'
-      : 'coreWorkflow',
+    entityName: isWorkflowVersionEvent ? 'workflowVersion' : 'workflow',
     recordId: record.id,
     properties:
       operation === 'deleted' ? { before: record } : { after: record },
-    recipientUserWorkspaceIds,
+    requiredPermissionFlag: PermissionFlagType.WORKFLOWS,
   };
 };

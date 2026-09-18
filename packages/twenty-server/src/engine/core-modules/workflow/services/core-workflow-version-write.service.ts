@@ -11,7 +11,10 @@ import {
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { CoreWorkflowEventService } from 'src/engine/core-modules/workflow/services/core-workflow-event.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { CoreWorkflowMigrationWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-migration-write.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -41,7 +44,9 @@ export class CoreWorkflowVersionWriteService {
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
-    private readonly coreWorkflowEventService: CoreWorkflowEventService,
+    private readonly coreWorkflowMigrationWriteService: CoreWorkflowMigrationWriteService,
+    private readonly applicationService: ApplicationService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
@@ -133,31 +138,40 @@ export class CoreWorkflowVersionWriteService {
       ...(steps === undefined ? {} : { steps }),
     };
 
+    const { flatWorkflowVersionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
+      );
+
+    const flatWorkflowVersion = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: coreWorkflowVersionId,
+      flatEntityMaps: flatWorkflowVersionMaps,
+    });
+
+    await this.coreWorkflowMigrationWriteService.run({
+      workspaceId,
+      failureMessage:
+        'Multiple validation errors occurred while writing workflow version content',
+      operations: {
+        workflowVersion: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [
+            {
+              ...flatWorkflowVersion,
+              ...(trigger === undefined
+                ? {}
+                : { triggers: isDefined(trigger) ? [trigger] : null }),
+              ...(steps === undefined ? {} : { steps }),
+            },
+          ],
+        },
+      },
+    });
+
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
-          const updatedRows = (await transactionScope.executeRawQuery(
-            `UPDATE core."workflowVersion"
-             SET ${setClauses.join(', ')}, "updatedAt" = now()
-             WHERE "id" = $1 AND "workspaceId" = $2
-             RETURNING "coreWorkflowId"`,
-            parameters,
-          )) as { coreWorkflowId: string | null }[];
-
-          const updatedCoreWorkflowId = updatedRows[0]?.coreWorkflowId;
-
-          this.coreWorkflowEventService.publishWorkflowEventsAfterCommit({
-            workspaceId,
-            transactionScope,
-            events: [
-              {
-                operation: 'updated',
-                coreWorkflowId: updatedCoreWorkflowId,
-                coreWorkflowVersionId,
-              },
-            ],
-          });
-
           const mirrorUpdateResult = await transactionScope
             .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
               shouldBypassPermissionChecks: true,
@@ -181,14 +195,12 @@ export class CoreWorkflowVersionWriteService {
     workspaceId,
     coreWorkflowId,
     workspaceWorkflowId,
-    applicationId,
     trigger,
     steps,
   }: {
     workspaceId: string;
     coreWorkflowId: string;
     workspaceWorkflowId: string;
-    applicationId: string;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
   }): Promise<{ coreWorkflowVersionId: string }> {
@@ -216,38 +228,44 @@ export class CoreWorkflowVersionWriteService {
       workspaceId,
     });
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const createdAt = new Date().toISOString();
+
+    await this.coreWorkflowMigrationWriteService.run({
+      workspaceId,
+      failureMessage:
+        'Multiple validation errors occurred while creating workflow version draft',
+      operations: {
+        workflowVersion: {
+          flatEntityToCreate: [
+            {
+              id: coreWorkflowVersionId,
+              universalIdentifier: uuidv4(),
+              workflowId: workspaceWorkflowId,
+              coreWorkflowId,
+              triggers: isDefined(trigger) ? [trigger] : null,
+              steps: steps ?? null,
+              status: CoreWorkflowVersionStatus.DRAFT,
+              workspaceWorkflowVersionId,
+              applicationUniversalIdentifier:
+                workspaceCustomFlatApplication.universalIdentifier,
+              createdAt,
+              updatedAt: createdAt,
+            },
+          ],
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [],
+        },
+      },
+    });
+
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
-          await transactionScope.executeRawQuery(
-            `INSERT INTO core."workflowVersion"
-               ("id", "workspaceId", "workflowId", "coreWorkflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "workspaceWorkflowVersionId")
-             VALUES ($1, $2, $3, $4, $5, $6, 'DRAFT', $7, $8, $9)`,
-            [
-              coreWorkflowVersionId,
-              workspaceId,
-              workspaceWorkflowId,
-              coreWorkflowId,
-              isDefined(trigger) ? JSON.stringify([trigger]) : null,
-              isDefined(steps) ? JSON.stringify(steps) : null,
-              uuidv4(),
-              applicationId,
-              workspaceWorkflowVersionId,
-            ],
-          );
-
-          this.coreWorkflowEventService.publishWorkflowEventsAfterCommit({
-            workspaceId,
-            transactionScope,
-            events: [
-              {
-                operation: 'created',
-                coreWorkflowId,
-                coreWorkflowVersionId,
-              },
-            ],
-          });
-
           await transactionScope
             .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
               shouldBypassPermissionChecks: true,

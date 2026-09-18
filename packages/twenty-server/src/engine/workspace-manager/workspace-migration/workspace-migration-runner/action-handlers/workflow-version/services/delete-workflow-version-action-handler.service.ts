@@ -33,7 +33,9 @@ export class DeleteWorkflowVersionActionHandlerService extends WorkspaceMigratio
     const { flatAction, queryRunner, workspaceId } = context;
 
     const workflowVersionRepository =
-      queryRunner.manager.getRepository<WorkflowVersionEntity>(WorkflowVersionEntity);
+      queryRunner.manager.getRepository<WorkflowVersionEntity>(
+        WorkflowVersionEntity,
+      );
 
     await workflowVersionRepository.delete({
       id: flatAction.entityId,

@@ -8,7 +8,11 @@ import { In, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { CoreWorkflowEventService } from 'src/engine/core-modules/workflow/services/core-workflow-event.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { CoreWorkflowMigrationWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-migration-write.service';
+import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -29,7 +33,9 @@ export class WorkflowCoreSyncService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly coreWorkflowEventService: CoreWorkflowEventService,
+    private readonly coreWorkflowMigrationWriteService: CoreWorkflowMigrationWriteService,
+    private readonly applicationService: ApplicationService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async upsertToCore(
@@ -45,6 +51,11 @@ export class WorkflowCoreSyncService {
     }
 
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
 
     const workspaceWorkflowIdByOwnedCoreWorkflowId =
       await this.resolveWorkspaceWorkflowIdByOwnedCoreWorkflowId(
@@ -103,24 +114,61 @@ export class WorkflowCoreSyncService {
       };
     });
 
-    await this.coreWorkflowRepository.upsert(workspaceId, coreRows, ['id']);
+    const { flatWorkflowMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatWorkflowMaps'] },
+      );
+
+    const flatWorkflowsToCreate: FlatWorkflow[] = [];
+    const flatWorkflowsToUpdate: FlatWorkflow[] = [];
+
+    for (const coreRow of coreRows) {
+      const existingFlatWorkflow = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: coreRow.id,
+        flatEntityMaps: flatWorkflowMaps,
+      });
+
+      const flatWorkflow = {
+        id: coreRow.id,
+        universalIdentifier: coreRow.universalIdentifier,
+        name: coreRow.name,
+        workspaceWorkflowId: coreRow.workspaceWorkflowId,
+        lastPublishedVersionId: coreRow.lastPublishedVersionId,
+        lastPublishedCoreWorkflowVersionId:
+          coreRow.lastPublishedCoreWorkflowVersionId,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        createdAt: coreRow.createdAt.toISOString(),
+        updatedAt: new Date().toISOString(),
+      } as unknown as FlatWorkflow;
+
+      if (isDefined(existingFlatWorkflow)) {
+        flatWorkflowsToUpdate.push({
+          ...existingFlatWorkflow,
+          ...flatWorkflow,
+        });
+      } else {
+        flatWorkflowsToCreate.push(flatWorkflow);
+      }
+    }
+
+    await this.coreWorkflowMigrationWriteService.run({
+      workspaceId,
+      failureMessage:
+        'Multiple validation errors occurred while mirroring workflows to core',
+      operations: {
+        workflow: {
+          flatEntityToCreate: flatWorkflowsToCreate,
+          flatEntityToDelete: [],
+          flatEntityToUpdate: flatWorkflowsToUpdate,
+        },
+      },
+    });
 
     await this.writeBackCoreWorkflowIds(
       workspaceId,
       coreWorkflowIdByWorkspaceRecordId,
     );
-
-    this.coreWorkflowEventService.publishWorkflowEvents({
-      workspaceId,
-      events: coreRows.map((coreRow) => ({
-        operation: coreWorkflowIdByWorkspaceRecordId.has(
-          coreRow.workspaceWorkflowId,
-        )
-          ? 'created'
-          : 'updated',
-        coreWorkflowId: coreRow.id,
-      })),
-    });
   }
 
   private async resolveCoreVersionIdByWorkspaceVersionId(
@@ -189,16 +237,35 @@ export class WorkflowCoreSyncService {
       return;
     }
 
-    await this.coreWorkflowRepository.delete(workspaceId, {
-      id: In(coreWorkflowIds),
-    });
+    const { flatWorkflowMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatWorkflowMaps'] },
+      );
 
-    this.coreWorkflowEventService.publishWorkflowEvents({
+    const flatWorkflowsToDelete = coreWorkflowIds
+      .map((coreWorkflowId) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: coreWorkflowId,
+          flatEntityMaps: flatWorkflowMaps,
+        }),
+      )
+      .filter(isDefined);
+
+    if (flatWorkflowsToDelete.length === 0) {
+      return;
+    }
+
+    await this.coreWorkflowMigrationWriteService.run({
       workspaceId,
-      events: coreWorkflowIds.map((coreWorkflowId) => ({
-        operation: 'deleted',
-        coreWorkflowId,
-      })),
+      failureMessage:
+        'Multiple validation errors occurred while deleting workflows',
+      operations: {
+        workflow: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: flatWorkflowsToDelete,
+          flatEntityToUpdate: [],
+        },
+      },
     });
   }
 

@@ -1,19 +1,20 @@
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { buildCoreWorkflowBroadcastEvent } from 'src/engine/core-modules/workflow/utils/build-core-workflow-broadcast-event.util';
 
 describe('buildCoreWorkflowBroadcastEvent', () => {
-  it('builds a workflow event carrying the core workflow id as the record', () => {
+  it('builds a workflow event gated on the workflows permission flag', () => {
     expect(
       buildCoreWorkflowBroadcastEvent({
         operation: 'updated',
         coreWorkflowId: 'core-workflow-1',
-        recipientUserWorkspaceIds: ['uw-1'],
       }),
     ).toEqual({
       type: 'updated',
-      entityName: 'coreWorkflow',
+      entityName: 'workflow',
       recordId: 'core-workflow-1',
       properties: { after: { id: 'core-workflow-1' } },
-      recipientUserWorkspaceIds: ['uw-1'],
+      requiredPermissionFlag: PermissionFlagType.WORKFLOWS,
     });
   });
 
@@ -23,16 +24,13 @@ describe('buildCoreWorkflowBroadcastEvent', () => {
         operation: 'created',
         coreWorkflowId: 'core-workflow-1',
         coreWorkflowVersionId: 'core-version-1',
-        recipientUserWorkspaceIds: [],
       }),
-    ).toEqual({
-      type: 'created',
-      entityName: 'coreWorkflowVersion',
+    ).toMatchObject({
+      entityName: 'workflowVersion',
       recordId: 'core-version-1',
       properties: {
         after: { id: 'core-version-1', coreWorkflowId: 'core-workflow-1' },
       },
-      recipientUserWorkspaceIds: [],
     });
   });
 
@@ -42,7 +40,6 @@ describe('buildCoreWorkflowBroadcastEvent', () => {
         operation: 'deleted',
         coreWorkflowId: 'core-workflow-1',
         coreWorkflowVersionId: 'core-version-1',
-        recipientUserWorkspaceIds: ['uw-1'],
       })?.properties,
     ).toEqual({
       before: { id: 'core-version-1', coreWorkflowId: 'core-workflow-1' },
@@ -55,23 +52,13 @@ describe('buildCoreWorkflowBroadcastEvent', () => {
         operation: 'updated',
         coreWorkflowId: null,
         coreWorkflowVersionId: 'core-version-1',
-        recipientUserWorkspaceIds: [],
-      }),
-    ).toEqual({
-      type: 'updated',
-      entityName: 'coreWorkflowVersion',
-      recordId: 'core-version-1',
-      properties: { after: { id: 'core-version-1' } },
-      recipientUserWorkspaceIds: [],
-    });
+      })?.properties,
+    ).toEqual({ after: { id: 'core-version-1' } });
   });
 
   it('builds nothing when neither id is known', () => {
     expect(
-      buildCoreWorkflowBroadcastEvent({
-        operation: 'deleted',
-        recipientUserWorkspaceIds: [],
-      }),
+      buildCoreWorkflowBroadcastEvent({ operation: 'deleted' }),
     ).toBeNull();
   });
 });

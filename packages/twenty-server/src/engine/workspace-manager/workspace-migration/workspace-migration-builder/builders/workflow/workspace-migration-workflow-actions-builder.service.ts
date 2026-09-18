@@ -20,17 +20,13 @@ export class WorkspaceMigrationWorkflowActionsBuilderService extends WorkspaceEn
   }
 
   protected validateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<
-      typeof ALL_METADATA_NAME.workflow
-    >,
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.workflow>,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.workflow,
     'create'
   > {
     const validationResult =
-      this.flatWorkflowValidatorService.validateFlatWorkflowCreation(
-        args,
-      );
+      this.flatWorkflowValidatorService.validateFlatWorkflowCreation(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -52,17 +48,13 @@ export class WorkspaceMigrationWorkflowActionsBuilderService extends WorkspaceEn
   }
 
   protected validateFlatEntityDeletion(
-    args: UniversalFlatEntityValidationArgs<
-      typeof ALL_METADATA_NAME.workflow
-    >,
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.workflow>,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.workflow,
     'delete'
   > {
     const validationResult =
-      this.flatWorkflowValidatorService.validateFlatWorkflowDeletion(
-        args,
-      );
+      this.flatWorkflowValidatorService.validateFlatWorkflowDeletion(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -78,24 +70,19 @@ export class WorkspaceMigrationWorkflowActionsBuilderService extends WorkspaceEn
       action: {
         type: 'delete',
         metadataName: 'workflow',
-        universalIdentifier:
-          flatWorkflowToValidate.universalIdentifier,
+        universalIdentifier: flatWorkflowToValidate.universalIdentifier,
       },
     };
   }
 
   protected validateFlatEntityUpdate(
-    args: FlatEntityUpdateValidationArgs<
-      typeof ALL_METADATA_NAME.workflow
-    >,
+    args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.workflow>,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.workflow,
     'update'
   > {
     const validationResult =
-      this.flatWorkflowValidatorService.validateFlatWorkflowUpdate(
-        args,
-      );
+      this.flatWorkflowValidatorService.validateFlatWorkflowUpdate(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -106,13 +93,12 @@ export class WorkspaceMigrationWorkflowActionsBuilderService extends WorkspaceEn
 
     const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateWorkflowAction: UniversalUpdateWorkflowAction =
-      {
-        type: 'update',
-        metadataName: 'workflow',
-        universalIdentifier,
-        update: flatEntityUpdate,
-      };
+    const updateWorkflowAction: UniversalUpdateWorkflowAction = {
+      type: 'update',
+      metadataName: 'workflow',
+      universalIdentifier,
+      update: flatEntityUpdate,
+    };
 
     return {
       status: 'success',

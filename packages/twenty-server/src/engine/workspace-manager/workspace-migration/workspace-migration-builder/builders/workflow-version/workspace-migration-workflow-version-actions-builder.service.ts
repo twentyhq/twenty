@@ -78,8 +78,7 @@ export class WorkspaceMigrationWorkflowVersionActionsBuilderService extends Work
       action: {
         type: 'delete',
         metadataName: 'workflowVersion',
-        universalIdentifier:
-          flatWorkflowVersionToValidate.universalIdentifier,
+        universalIdentifier: flatWorkflowVersionToValidate.universalIdentifier,
       },
     };
   }
@@ -106,13 +105,12 @@ export class WorkspaceMigrationWorkflowVersionActionsBuilderService extends Work
 
     const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateWorkflowVersionAction: UniversalUpdateWorkflowVersionAction =
-      {
-        type: 'update',
-        metadataName: 'workflowVersion',
-        universalIdentifier,
-        update: flatEntityUpdate,
-      };
+    const updateWorkflowVersionAction: UniversalUpdateWorkflowVersionAction = {
+      type: 'update',
+      metadataName: 'workflowVersion',
+      universalIdentifier,
+      update: flatEntityUpdate,
+    };
 
     return {
       status: 'success',
