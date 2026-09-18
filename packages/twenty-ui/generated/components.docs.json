@@ -2451,6 +2451,20 @@
             "description": "Whether the Tab is disabled.\n\nIf a first Tab on a `<Tabs.List>` is disabled, it won't initially be selected.\nInstead, the next enabled Tab will be selected.\nHowever, it does not work like this during server-side rendering, as it is not known\nduring pre-rendering which Tabs are disabled.\nTo work around it, ensure that `defaultValue` or `value` on `<Tabs.Root>` is set to an enabled Tab's value."
           },
           {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Decorative content after the label and before the badge."
+          },
+          {
+            "name": "highlighted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Emphasizes the tab content without changing selection."
+          },
+          {
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
@@ -2531,6 +2545,367 @@
             "required": true,
             "defaultValue": null,
             "description": "The value of the TabPanel. It will be shown when the Tab with the corresponding value is active."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Dialog",
+    "entryPoint": "twenty-ui/primitives/surfaces",
+    "slug": "surfaces/dialog",
+    "props": [],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "actionsRef",
+            "type": "RefObject<DialogRootActions | null>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the dialog.\nCall this after any externally controlled closing animation finishes.\n- `close`: Closes the dialog imperatively when called."
+          },
+          {
+            "name": "children",
+            "type": "ReactNode | PayloadChildRenderFunction<Payload>",
+            "required": false,
+            "defaultValue": null,
+            "description": "The content of the dialog.\nThis can be a regular React node or a render function that receives the `payload` of the active trigger."
+          },
+          {
+            "name": "defaultOpen",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the dialog is initially open.\n\nTo render a controlled dialog, use the `open` prop instead."
+          },
+          {
+            "name": "defaultTriggerId",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID of the trigger that the dialog is associated with.\nThis is useful in conjunction with the `defaultOpen` prop to create an initially open dialog."
+          },
+          {
+            "name": "disablePointerDismissal",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether to prevent the dialog from closing on outside presses.\nFor non-modal dialogs, this also prevents the dialog from closing when focus moves outside of it."
+          },
+          {
+            "name": "handle",
+            "type": "DialogHandle<Payload>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A handle to associate the dialog with a trigger.\nIf specified, allows external triggers to control the dialog's open state.\nCan be created with the Dialog.createHandle() method."
+          },
+          {
+            "name": "modal",
+            "type": "boolean | \"trap-focus\"",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Determines if the dialog enters a modal state when open.\n- `true`: user interaction is limited to just the dialog: focus is trapped, document page scroll is locked, and pointer interactions on outside elements are disabled.\n- `false`: user interaction with the rest of the document is allowed.\n- `'trap-focus'`: focus is trapped inside the dialog, but document page scroll is not locked and pointer interactions outside of it remain enabled.\n\nWhen `modal` is `true` or `'trap-focus'`, render `<Dialog.Close>` inside `<Dialog.Popup>` so\ntouch screen readers can escape the popup."
+          },
+          {
+            "name": "onOpenChange",
+            "type": "((open: boolean, eventDetails: DialogRootChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Event handler called when the dialog is opened or closed."
+          },
+          {
+            "name": "onOpenChangeComplete",
+            "type": "((open: boolean) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Event handler called after any animations complete when the dialog is opened or closed."
+          },
+          {
+            "name": "open",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether the dialog is currently open."
+          },
+          {
+            "name": "triggerId",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID of the trigger that the dialog is associated with.\nThis is useful in conjunction with the `open` prop to create a controlled dialog.\nThere's no need to specify this prop when the dialog is uncontrolled (that is, when the `open` prop is not set)."
+          }
+        ]
+      },
+      {
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "handle",
+            "type": "DialogHandle<Payload>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A handle to associate the trigger with a dialog.\nCan be created with the Dialog.createHandle() method."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the dialog in controlled mode (with the DialogRoot `triggerId` prop)."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+          },
+          {
+            "name": "payload",
+            "type": "Payload",
+            "required": false,
+            "defaultValue": null,
+            "description": "A payload to pass to the dialog when it is opened."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogTriggerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Popup",
+        "props": [
+          {
+            "name": "backdrop",
+            "type": "boolean | DialogBackdropProps",
+            "required": false,
+            "defaultValue": "true",
+            "description": ""
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: DialogPopupState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "container",
+            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "finalFocus",
+            "type": "boolean | RefObject<HTMLElement | null> | ((closeType: InteractionType) => boolean | void | HTMLElement | null)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Determines the element to focus when the dialog is closed.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (trigger or previously focused element).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing."
+          },
+          {
+            "name": "initialFocus",
+            "type": "boolean | RefObject<HTMLElement | null> | ((openType: InteractionType) => boolean | void | HTMLElement | null)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Determines the element to focus when the dialog is opened.\nBy default, focus moves to the first tabbable element inside the popup, except when the dialog\nis opened by touch — then the popup itself is focused to avoid opening the virtual keyboard.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (first tabbable element or popup).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogPopupState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "size",
+            "type": "\"sm\" | \"md\" | \"lg\" | \"xl\" | \"fullscreen\"",
+            "required": false,
+            "defaultValue": "md",
+            "description": ""
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogPopupState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "viewportProps",
+            "type": "DialogViewportProps",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          }
+        ]
+      },
+      {
+        "name": "Title",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogTitleState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "color",
+            "type": "\"primary\" | \"secondary\" | \"tertiary\"",
+            "required": false,
+            "defaultValue": "primary",
+            "description": "Theme font color. Defaults to `primary`."
+          },
+          {
+            "name": "level",
+            "type": "5 | 1 | 2 | 3 | 4 | 6",
+            "required": false,
+            "defaultValue": "2",
+            "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogTitleState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "size",
+            "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+            "required": false,
+            "defaultValue": "lg",
+            "description": "Visual font size, independent of the heading level. Defaults to `lg`."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogTitleState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Description",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogDescriptionState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogDescriptionState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogDescriptionState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Close",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogCloseState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogCloseState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogCloseState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Header",
+        "props": [
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          }
+        ]
+      },
+      {
+        "name": "Body",
+        "props": [
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          }
+        ]
+      },
+      {
+        "name": "Footer",
+        "props": [
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
           }
         ]
       }
@@ -5380,57 +5755,205 @@
     ]
   },
   {
-    "name": "Dialog",
-    "entryPoint": "twenty-ui/primitives/surfaces",
-    "slug": "surfaces/dialog",
-    "props": [],
-    "parts": [
+    "name": "CodeEditor",
+    "entryPoint": "twenty-ui/components/code-editor",
+    "slug": "components/code-editor",
+    "props": [
       {
-        "name": "Title",
-        "props": [
-          {
-            "name": "className",
-            "type": "string | ((state: DialogTitleState) => string | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "color",
-            "type": "\"primary\" | \"secondary\" | \"tertiary\"",
-            "required": false,
-            "defaultValue": "primary",
-            "description": "Theme font color. Defaults to `primary`."
-          },
-          {
-            "name": "level",
-            "type": "5 | 1 | 2 | 3 | 4 | 6",
-            "required": false,
-            "defaultValue": "2",
-            "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
-          },
-          {
-            "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogTitleState>",
-            "required": false,
-            "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          },
-          {
-            "name": "size",
-            "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
-            "required": false,
-            "defaultValue": "lg",
-            "description": "Visual font size, independent of the heading level. Defaults to `lg`."
-          },
-          {
-            "name": "style",
-            "type": "CSSProperties | ((state: DialogTitleState) => CSSProperties | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          }
-        ]
+        "name": "autoHeight",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Grows the editor to fit its content instead of using `height`. Ignored when `resizable` is set."
+      },
+      {
+        "name": "contentPadding",
+        "type": "\"default\" | \"comfortable\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "`default` pads the top and bottom of the content. `comfortable` also widens the gap between line numbers and code."
+      },
+      {
+        "name": "height",
+        "type": "string | number",
+        "required": false,
+        "defaultValue": "450",
+        "description": "Editor height in pixels or as a CSS length. With `resizable`, a numeric height sets the initial height."
+      },
+      {
+        "name": "isLoading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Shows a loader at the editor height instead of the editor. A loader also shows while Monaco loads."
+      },
+      {
+        "name": "language",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Monaco language identifier for highlighting and language services, such as `json` or `typescript`."
+      },
+      {
+        "name": "onChange",
+        "type": "((value: string) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the full content whenever it changes."
+      },
+      {
+        "name": "onMount",
+        "type": "OnMount",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called when the editor is ready, with the editor instance and the Monaco namespace. The Twenty theme is already applied."
+      },
+      {
+        "name": "onValidate",
+        "type": "OnValidate",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the markers Monaco reports after validating the content, such as JSON syntax errors."
+      },
+      {
+        "name": "options",
+        "type": "IStandaloneEditorConstructionOptions",
+        "required": false,
+        "defaultValue": null,
+        "description": "Monaco editor options merged over the Twenty defaults. `padding` is ignored; use `contentPadding` instead."
+      },
+      {
+        "name": "resizable",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Adds a handle below the editor to drag its height."
+      },
+      {
+        "name": "setMarkers",
+        "type": "((value: string) => IMarkerData[])",
+        "required": false,
+        "defaultValue": null,
+        "description": "Returns custom validation markers for the content. Runs when the editor mounts and after every change, replacing the previous custom markers."
+      },
+      {
+        "name": "transparentBackground",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Removes the editor background so the surrounding surface shows through."
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content of the editor. Pair it with `onChange` to control the editor."
+      },
+      {
+        "name": "variant",
+        "type": "\"default\" | \"with-header\" | \"borderless\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "Border treatment: `default` draws a rounded border, `with-header` attaches the editor below a `CodeEditorHeader`, and `borderless` removes the border."
+      }
+    ]
+  },
+  {
+    "name": "CodeEditorHeader",
+    "entryPoint": "twenty-ui/components/code-editor",
+    "slug": "components/code-editor-header",
+    "props": [
+      {
+        "name": "leftNodes",
+        "type": "ReactNode[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Elements shown at the start of the header, such as tabs."
+      },
+      {
+        "name": "rightNodes",
+        "type": "ReactNode[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Elements shown at the end of the header, such as actions."
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text shown at the start of the header, after `leftNodes`."
+      }
+    ]
+  },
+  {
+    "name": "TabButton",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/tab-button",
+    "props": [
+      {
+        "name": "active",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Highlights the current destination or an action associated with the active tab. Does not change the control role."
+      },
+      {
+        "name": "badge",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content following the label and trailing icon, such as a count."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed after the label."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": "sm",
+        "description": "Padding of the tab content: sm or md."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content displayed before the label."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
       }
     ]
   }

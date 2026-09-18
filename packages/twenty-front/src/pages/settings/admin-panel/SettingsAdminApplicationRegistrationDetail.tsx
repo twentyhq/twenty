@@ -121,6 +121,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
       ]}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Application registration`}
           tabs={tabs}
           componentInstanceId={REGISTRATION_DETAIL_TAB_LIST_ID}
         />

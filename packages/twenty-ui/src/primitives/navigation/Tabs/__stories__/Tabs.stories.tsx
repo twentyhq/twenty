@@ -164,6 +164,24 @@ export const Disabled: Story = {
   },
 };
 
+export const Highlighted: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 360 } },
+  args: { highlighted: true },
+  render: (args) => (
+    <TabsExample tabProps={args} rootProps={{ defaultValue: 'activity' }} />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const overview = canvas.getByRole('tab', { name: 'Overview' });
+
+    expect(overview).toHaveAttribute('aria-selected', 'false');
+    expect(canvas.getByRole('tabpanel', { name: 'Activity' })).toBeVisible();
+    await userEvent.click(overview);
+    expect(canvas.getByRole('tabpanel', { name: 'Overview' })).toBeVisible();
+  },
+};
+
 export const Vertical: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 360 } },

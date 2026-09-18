@@ -195,6 +195,7 @@ import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 's
 import { AddAppMessageChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789395506192-add-app-message-channel-type';
 import { AddAppMessageChannelUniqueHandleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789418882171-add-app-message-channel-unique-handle';
 import { CoreWorkflowCommandMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789654995357-core-workflow-command-menu-items';
+import { AddWorkflowExecutionCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789719131000-add-workflow-execution-compatibility';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -388,8 +389,9 @@ export const INSTANCE_COMMANDS = [
   AddWorkspaceWorkflowIdToWorkflowFastInstanceCommand,
   AddCoreVersionPointersFastInstanceCommand,
   AddWorkspaceWorkflowVersionIdToWorkflowVersionFastInstanceCommand,
+  CoreWorkflowCommandMenuItemsFastInstanceCommand,
+  AddWorkflowExecutionCompatibilityFastInstanceCommand,
   AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand,
   AddAppMessageChannelTypeFastInstanceCommand,
   AddAppMessageChannelUniqueHandleFastInstanceCommand,
-  CoreWorkflowCommandMenuItemsFastInstanceCommand,
 ];

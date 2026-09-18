@@ -1,6 +1,12 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { IconButton, LightButton, MainButton } from 'twenty-ui/components';
+import {
+  IconButton,
+  LightButton,
+  MainButton,
+  TabButton,
+} from 'twenty-ui/components';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
+import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
   AnimatedButton,
   AnimatedLightIconButton,
@@ -9,7 +15,6 @@ import {
   ColorPickerButton,
   ColorSchemeCard,
   ColorSchemePicker,
-  CoreEditorHeader,
   FloatingButton,
   FloatingButtonGroup,
   FloatingIconButton,
@@ -22,9 +27,6 @@ import {
   RoundedIconButton,
   SearchInput,
   SegmentedControl,
-  StyledTabContainer,
-  TabButton,
-  TabContent,
   CardPicker,
   Checkbox,
   Radio,
@@ -84,8 +86,8 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'CoreEditorHeader',
-    node: <CoreEditorHeader title="Editor" />,
+    name: 'CodeEditorHeader',
+    node: <CodeEditorHeader title="Editor" />,
   },
   {
     name: 'ColorPickerButton',
@@ -231,20 +233,8 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'StyledTabContainer',
-    node: (
-      <StyledTabContainer>
-        <TabButton id="t1" title="Tab" />
-      </StyledTabContainer>
-    ),
-  },
-  {
     name: 'TabButton',
-    node: <TabButton id="tab1" title="Tab" />,
-  },
-  {
-    name: 'TabContent',
-    node: <TabContent id="tc1" title="Content" />,
+    node: <TabButton>Tab</TabButton>,
   },
   {
     name: 'Switch',

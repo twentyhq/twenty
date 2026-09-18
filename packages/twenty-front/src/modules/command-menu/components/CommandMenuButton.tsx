@@ -1,3 +1,4 @@
+import { getCommandMenuButtonLabel } from '@/command-menu/utils/getCommandMenuButtonLabel';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
@@ -21,6 +22,8 @@ export type CommandMenuButtonProps = {
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   to?: string;
   disabled?: boolean;
+  progress?: number;
+  loading?: boolean;
   isPrimaryAction?: boolean;
   shouldHideLabel?: boolean;
 };
@@ -30,6 +33,8 @@ export const CommandMenuButton = ({
   onClick,
   to,
   disabled = false,
+  progress,
+  loading = false,
   isPrimaryAction = false,
   shouldHideLabel = false,
 }: CommandMenuButtonProps) => {
@@ -39,10 +44,12 @@ export const CommandMenuButton = ({
     ? `${command.label} (${hotKeys.join(' → ')})`
     : command.label;
 
-  const resolvedShortLabel =
-    isDefined(command.shortLabel) && !shouldHideLabel
-      ? command.shortLabel
-      : undefined;
+  const resolvedShortLabel = getCommandMenuButtonLabel({
+    shortLabel: command.shortLabel,
+    isLoading: loading,
+    progress,
+    shouldHideLabel,
+  });
 
   const buttonAccent =
     isPrimaryAction || command.isPrimaryCTA === true ? 'blue' : 'default';
@@ -63,6 +70,7 @@ export const CommandMenuButton = ({
             to={to}
             onClick={onClick}
             disabled={disabled}
+            loading={loading && !isDefined(progress)}
             aria-label={command.label}
             variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
             color={buttonAccent === 'blue' ? 'accent' : 'neutral'}

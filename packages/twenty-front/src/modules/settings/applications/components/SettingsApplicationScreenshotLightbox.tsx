@@ -1,4 +1,5 @@
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -98,51 +99,57 @@ export const SettingsApplicationScreenshotLightbox = ({
   });
 
   return (
-    <ModalStatefulWrapper
-      modalInstanceId={modalInstanceId}
-      size="fullscreen"
-      padding="none"
-      overlay="transparent"
-      isClosable
+    <DialogInstance
+      dialogId={modalInstanceId}
+      dismissible
       onClose={onClose}
       renderInDocumentBody
     >
-      <StyledContainer>
-        <StyledCloseButton>
-          <FloatingIconButton
-            Icon={IconX}
-            ariaLabel={t`Close`}
-            onClick={onClose}
-          />
-        </StyledCloseButton>
-        {hasSeveralScreenshots && (
-          <StyledPreviousButton>
-            <FloatingIconButton
-              Icon={IconChevronLeft}
-              ariaLabel={t`Previous screenshot`}
-              onClick={showPrevious}
-            />
-          </StyledPreviousButton>
-        )}
-        <StyledImage
-          src={screenshots[selectedIndex]}
-          alt={`${displayName} screenshot ${selectedIndex + 1}`}
-        />
-        {hasSeveralScreenshots && (
-          <>
-            <StyledNextButton>
+      {({ container, backdrop, viewportProps, onKeyDown }) => (
+        <Dialog.Popup
+          aria-label={displayName}
+          {...{ container, backdrop, viewportProps, onKeyDown }}
+          size="fullscreen"
+          style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
+        >
+          <StyledContainer>
+            <StyledCloseButton>
               <FloatingIconButton
-                Icon={IconChevronRight}
-                ariaLabel={t`Next screenshot`}
-                onClick={showNext}
+                Icon={IconX}
+                ariaLabel={t`Close`}
+                onClick={onClose}
               />
-            </StyledNextButton>
-            <StyledCounter>
-              {selectedIndex + 1} / {screenshotCount}
-            </StyledCounter>
-          </>
-        )}
-      </StyledContainer>
-    </ModalStatefulWrapper>
+            </StyledCloseButton>
+            {hasSeveralScreenshots && (
+              <StyledPreviousButton>
+                <FloatingIconButton
+                  Icon={IconChevronLeft}
+                  ariaLabel={t`Previous screenshot`}
+                  onClick={showPrevious}
+                />
+              </StyledPreviousButton>
+            )}
+            <StyledImage
+              src={screenshots[selectedIndex]}
+              alt={`${displayName} screenshot ${selectedIndex + 1}`}
+            />
+            {hasSeveralScreenshots && (
+              <>
+                <StyledNextButton>
+                  <FloatingIconButton
+                    Icon={IconChevronRight}
+                    ariaLabel={t`Next screenshot`}
+                    onClick={showNext}
+                  />
+                </StyledNextButton>
+                <StyledCounter>
+                  {selectedIndex + 1} / {screenshotCount}
+                </StyledCounter>
+              </>
+            )}
+          </StyledContainer>
+        </Dialog.Popup>
+      )}
+    </DialogInstance>
   );
 };

@@ -1,3 +1,4 @@
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -48,6 +49,7 @@ export class WorkflowCommonWorkspaceService {
   private readonly logger = new Logger(WorkflowCommonWorkspaceService.name);
 
   constructor(
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
@@ -267,6 +269,12 @@ export class WorkflowCommonWorkspaceService {
           { shouldBypassPermissionChecks: true },
         );
 
+      const workflowRepository =
+        this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+          'workflow',
+          { shouldBypassPermissionChecks: true },
+        );
+
       const workflowAutomatedTriggerRepository =
         this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
           'workflowAutomatedTrigger',
@@ -295,13 +303,9 @@ export class WorkflowCommonWorkspaceService {
 
             break;
           case 'restore':
-            await workflowAutomatedTriggerRepository.restore({
+            await this.workflowCoreSyncService.upsertToCore(workspaceId, [
               workflowId,
-            });
-
-            await workflowRunRepository.restore({
-              workflowId,
-            });
+            ]);
 
             await workflowVersionRepository.restore({
               workflowId,
@@ -312,6 +316,58 @@ export class WorkflowCommonWorkspaceService {
               workflowId,
             );
 
+            const workflow = await workflowRepository.findOne({
+              where: { id: workflowId },
+              select: { coreWorkflowId: true },
+            });
+            const workflowVersions = await workflowVersionRepository.find({
+              where: { workflowId },
+              select: { id: true, coreWorkflowVersionId: true },
+            });
+
+            if (
+              !isDefined(workflow?.coreWorkflowId) ||
+              workflowVersions.some(
+                (workflowVersion) =>
+                  !isDefined(workflowVersion.coreWorkflowVersionId),
+              )
+            ) {
+              throw new Error(
+                `Missing core mapping while restoring workflow ${workflowId}`,
+              );
+            }
+
+            await this.workspaceOrmManager.runInWorkspaceTransaction(
+              async ({ getRepository }) => {
+                const transactionalWorkflowRunRepository =
+                  getRepository<WorkflowRunWorkspaceEntity>('workflowRun', {
+                    shouldBypassPermissionChecks: true,
+                  });
+
+                await transactionalWorkflowRunRepository.restore({
+                  workflowId,
+                });
+                await transactionalWorkflowRunRepository.update(
+                  { workflowId },
+                  { coreWorkflowId: workflow.coreWorkflowId },
+                );
+
+                for (const workflowVersion of workflowVersions) {
+                  await transactionalWorkflowRunRepository.update(
+                    { workflowId, workflowVersionId: workflowVersion.id },
+                    {
+                      coreWorkflowVersionId:
+                        workflowVersion.coreWorkflowVersionId,
+                    },
+                  );
+                }
+              },
+            );
+
+            await workflowAutomatedTriggerRepository.restore({
+              workflowId,
+            });
+
             break;
         }
 
@@ -321,6 +377,13 @@ export class WorkflowCommonWorkspaceService {
           workspaceId,
           operation,
         });
+
+        if (operation !== 'destroy') {
+          await this.workflowCoreSyncService.reconcileWorkspaceWorkflows(
+            workspaceId,
+            [workflowId],
+          );
+        }
 
         await this.handleLogicFunctionSubEntities({
           workflowVersionRepository,

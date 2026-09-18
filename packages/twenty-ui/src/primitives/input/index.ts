@@ -26,11 +26,6 @@ export type { CheckboxProps } from './Checkbox/types/CheckboxProps';
 export type { CheckboxShape } from './Checkbox/types/CheckboxShape';
 export type { CheckboxSize } from './Checkbox/types/CheckboxSize';
 export type { CheckboxVariant } from './Checkbox/types/CheckboxVariant';
-export { CodeEditor } from './CodeEditor/CodeEditor';
-export { BASE_CODE_EDITOR_THEME_ID } from './CodeEditor/constants/BaseCodeEditorThemeId';
-export { getBaseCodeEditorTheme } from './CodeEditor/utils/getBaseCodeEditorTheme';
-export type { CoreEditorHeaderProps } from './CodeEditorHeader/CodeEditorHeader';
-export { CoreEditorHeader } from './CodeEditorHeader/CodeEditorHeader';
 export { ColorPickerButton } from './ColorPickerButton/ColorPickerButton';
 export type {
   ColorSchemeSegmentProps,
@@ -108,12 +103,6 @@ export type { SliderValueProps } from './Slider/types/SliderValueProps';
 export { Switch } from './Switch/Switch';
 export type { SwitchProps } from './Switch/types/SwitchProps';
 export type { SwitchSize } from './Switch/types/SwitchSize';
-export type { TabContentProps } from './TabButton/TabButton';
-export {
-  StyledTabContainer,
-  TabContent,
-  TabButton,
-} from './TabButton/TabButton';
 export { Textarea } from './Textarea/Textarea';
 export type { TextareaProps } from './Textarea/types/TextareaProps';
 export type { ColorScheme } from './types/ColorScheme';
