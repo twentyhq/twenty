@@ -253,6 +253,7 @@ export const PageLayoutTabsRenderer = () => {
 
             <StyledTabsAndDashboardContainer>
               <PageLayoutTabListEffect
+                isInEditMode={isPageLayoutInEditMode}
                 tabs={sortedTabs}
                 componentInstanceId={tabListInstanceId}
                 defaultTabToFocusOnMobileAndSidePanelId={

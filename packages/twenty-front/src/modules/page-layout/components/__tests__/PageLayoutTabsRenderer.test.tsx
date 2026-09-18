@@ -13,7 +13,6 @@ let mockActiveTabId = 'hidden-transcript-tab-id';
 let mockPrerenderedTabIds: string[] = [];
 let mockTargetRecordId = 'calendar-event-id';
 let mockIsInSidePanel = false;
-const mockSetActiveTabId = jest.fn();
 const mockSetPrerenderedTabIds = jest.fn();
 
 const homeTab = {
@@ -123,10 +122,6 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomComponentState', () => ({
   useSetAtomComponentState: () => mockSetPrerenderedTabIds,
 }));
 
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentState', () => ({
-  useAtomComponentState: () => [mockActiveTabId, mockSetActiveTabId],
-}));
-
 jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
   useIsMobile: () => false,
 }));
@@ -167,7 +162,6 @@ describe('PageLayoutTabsRenderer', () => {
     mockPrerenderedTabIds = [];
     mockTargetRecordId = 'calendar-event-id';
     mockIsInSidePanel = false;
-    mockSetActiveTabId.mockClear();
     mockSetPrerenderedTabIds.mockClear();
   });
 
@@ -177,7 +171,6 @@ describe('PageLayoutTabsRenderer', () => {
     render(<PageLayoutTabsRenderer />, { wrapper: TestWrapper });
 
     expect(screen.queryByText(/Rendered tab:/)).not.toBeInTheDocument();
-    expect(mockSetActiveTabId).toHaveBeenCalledWith('home-tab-id');
   });
 
   it('renders content when the active tab remains renderable', () => {

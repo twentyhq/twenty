@@ -44,7 +44,6 @@ import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnable
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { TabListDropdown } from '@/ui/layout/tab-list/components/TabListDropdown';
-import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDefined } from 'twenty-shared/utils';
@@ -188,9 +187,11 @@ export const PageLayoutTabList = ({
     return hiddenTabs.some((tab) => tab.id === activeTabId);
   }, [hasHiddenTabs, hiddenTabs, activeTabId]);
 
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
   const selectTab = useCallback(
     (tabId: string) => {
-      if (workspaceSurface.ownsRouteLocation) {
+      if (!isPageLayoutInEditMode && workspaceSurface.ownsRouteLocation) {
         navigate(
           { search: location.search, hash: `#${tabId}` },
           {
@@ -203,6 +204,7 @@ export const PageLayoutTabList = ({
       onChangeTab?.(tabId);
     },
     [
+      isPageLayoutInEditMode,
       navigate,
       location.search,
       location.state,
@@ -296,7 +298,6 @@ export const PageLayoutTabList = ({
     },
   });
 
-  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const [pageLayoutTabSettingsOpenTabId, setPageLayoutTabSettingsOpenTabId] =
     useAtomComponentState(
       pageLayoutTabSettingsOpenTabIdComponentState,
@@ -410,10 +411,6 @@ export const PageLayoutTabList = ({
     <TabListComponentInstanceContext.Provider
       value={{ instanceId: componentInstanceId }}
     >
-      <TabListFromUrlOptionalEffect
-        tabListIds={tabsWithIcons.map((tab) => tab.id)}
-      />
-
       {tabsWithIcons.length > 1 && !shouldScrollTabs && (
         <TabListHiddenMeasurements
           visibleTabs={tabsWithIcons}

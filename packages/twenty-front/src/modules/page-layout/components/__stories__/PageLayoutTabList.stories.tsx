@@ -150,6 +150,7 @@ const PageLayoutTabListPlayground = ({
   return (
     <StyledContainer containerWidth={containerWidth}>
       <PageLayoutTabListEffect
+        isInEditMode={false}
         tabs={sortedTabs}
         componentInstanceId="page-layout-tab-list-story"
       />
