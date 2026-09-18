@@ -1,7 +1,11 @@
 import { existsSync } from 'fs';
 import { dirname, isAbsolute, join } from 'path';
 
-import { DataSource, type DataSourceOptions } from 'typeorm';
+import {
+  DataSource,
+  type DataSourceOptions,
+  type EntityMetadata,
+} from 'typeorm';
 
 import {
   STRUCTURAL_EXEMPTIONS,
@@ -25,7 +29,9 @@ const findPackageRoot = (): string => {
 const toAbsolute = (entityGlob: string): string =>
   isAbsolute(entityGlob) ? entityGlob : join(findPackageRoot(), entityGlob);
 
-const buildCoreEntityClassNames = async (): Promise<Set<string>> => {
+const buildCoreEntityMetadatas = async (): Promise<
+  Map<string, EntityMetadata>
+> => {
   const billingEnabled = process.env.IS_BILLING_ENABLED;
 
   process.env.IS_BILLING_ENABLED = 'true';
@@ -42,10 +48,11 @@ const buildCoreEntityClassNames = async (): Promise<Set<string>> => {
 
     await dataSource.buildMetadatas();
 
-    return new Set(
-      dataSource.entityMetadatas.map(
-        (entityMetadata) => entityMetadata.targetName,
-      ),
+    return new Map(
+      dataSource.entityMetadatas.map((entityMetadata) => [
+        entityMetadata.targetName,
+        entityMetadata,
+      ]),
     );
   } finally {
     process.env.IS_BILLING_ENABLED = billingEnabled;
@@ -53,20 +60,45 @@ const buildCoreEntityClassNames = async (): Promise<Set<string>> => {
 };
 
 describe('prefer-workspace-scoped-repository exemptions', () => {
-  let entityClassNames: Set<string>;
+  let entityMetadataByClassName: Map<string, EntityMetadata>;
 
   beforeAll(async () => {
-    entityClassNames = await buildCoreEntityClassNames();
+    entityMetadataByClassName = await buildCoreEntityMetadatas();
   });
 
-  it('loads the core entity metadata', () => {
-    expect(entityClassNames.size).toBeGreaterThan(50);
-  });
+  // The wrapper builds its predicate from the workspaceId property, so an
+  // entity exposing the column under another property name is unreachable
+  // through it and counts as having none.
+  const findWorkspaceIdColumn = (entityClassName: string) =>
+    entityMetadataByClassName
+      .get(entityClassName)
+      ?.columns.find((column) => column.propertyName === 'workspaceId');
 
   it.each([...STRUCTURAL_EXEMPTIONS, ...WORKSPACE_SCOPED_EXEMPTIONS])(
     '%s is a known entity',
     (exemptedEntityName) => {
-      expect([...entityClassNames]).toContain(exemptedEntityName);
+      expect([...entityMetadataByClassName.keys()]).toContain(
+        exemptedEntityName,
+      );
+    },
+  );
+
+  it.each(STRUCTURAL_EXEMPTIONS)(
+    '%s has no workspaceId, or a nullable one',
+    (exemptedEntityName) => {
+      const workspaceIdColumn = findWorkspaceIdColumn(exemptedEntityName);
+
+      expect(workspaceIdColumn?.isNullable ?? true).toBe(true);
+    },
+  );
+
+  it.each(WORKSPACE_SCOPED_EXEMPTIONS)(
+    '%s has a NOT NULL workspaceId',
+    (exemptedEntityName) => {
+      const workspaceIdColumn = findWorkspaceIdColumn(exemptedEntityName);
+
+      expect(workspaceIdColumn).toBeDefined();
+      expect(workspaceIdColumn?.isNullable).toBe(false);
     },
   );
 });
