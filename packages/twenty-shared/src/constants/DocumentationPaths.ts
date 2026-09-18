@@ -136,6 +136,7 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_INPUT_MAIN_BUTTON: '/ui/components/input/main-button',
   UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
   UI_COMPONENTS_SECTION: '/ui/components/section',
+  UI_COMPONENTS_SETTINGS_ROW: '/ui/components/settings-row',
   UI_COMPONENTS_TAB_BUTTON: '/ui/components/tab-button',
   UI_DARK_MODE: '/ui/dark-mode',
   UI_GETTING_STARTED: '/ui/getting-started',

@@ -5800,6 +5800,104 @@
     ]
   },
   {
+    "name": "SettingsRow",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/settings-row",
+    "props": [
+      {
+        "name": "checked",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled checked state of the switch."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Visible label and accessible name of the switch. Use non-interactive content."
+      },
+      {
+        "name": "defaultChecked",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Initial checked state when uncontrolled."
+      },
+      {
+        "name": "description",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Non-interactive supporting content, associated with the switch as its accessible description."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables both the row and its switch."
+      },
+      {
+        "name": "focused",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Applies the highlighted row style without moving keyboard focus."
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Name of the hidden checkbox used in form submission."
+      },
+      {
+        "name": "onCheckedChange",
+        "type": "((checked: boolean, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called when the switch value changes, with the next checked state and Base UI event details."
+      },
+      {
+        "name": "readOnly",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Keeps the switch focusable while preventing changes."
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Requires the switch to be checked for form submission."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "sm",
+        "description": "Visual size of the switch. The row height stays the same."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative content before the label."
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Value submitted when the switch is checked."
+      }
+    ]
+  },
+  {
     "name": "Section",
     "entryPoint": "twenty-ui/components",
     "slug": "components/section",

@@ -12,6 +12,7 @@ import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
 import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
+import { SETTINGS_ROW_PROP_DESCRIPTIONS } from './settingsRowPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
 import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
@@ -220,6 +221,13 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/typography',
     slug: 'typography/heading',
     propDescriptions: HEADING_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'SettingsRow',
+    source: 'components/SettingsRow/SettingsRow.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/settings-row',
+    propDescriptions: SETTINGS_ROW_PROP_DESCRIPTIONS,
   },
   {
     name: 'Section',
