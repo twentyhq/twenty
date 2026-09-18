@@ -2879,23 +2879,6 @@ type WorkspaceMigration {
   actions: JSON!
 }
 
-type RecordExport {
-  id: UUID!
-  filename: String!
-  status: RecordExportStatus!
-  processedRecordCount: Int!
-  totalRecordCount: Int
-  errorMessage: String
-  downloadUrl: String
-}
-
-enum RecordExportStatus {
-  QUEUED
-  PROCESSING
-  COMPLETED
-  FAILED
-}
-
 type PublicDomain {
   id: UUID!
   domain: String!
@@ -3317,6 +3300,14 @@ type EventLogQueryResult {
   records: [EventLogRecord!]!
   totalCount: Int!
   pageInfo: EventLogPageInfo!
+}
+
+type RecordExport {
+  id: UUID!
+  filename: String!
+  progress: Int!
+  errorMessage: String
+  downloadUrl: String
 }
 
 type AiChatUsage {

@@ -23,10 +23,7 @@ import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/v
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
-import {
-  FILE_STATUS,
-  type FileStatus,
-} from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -528,7 +525,6 @@ export class FileStorageService {
   async deleteFolder(
     params: Omit<ResourceIdentifier, 'resourcePath'> & {
       folderPath: string;
-      fileStatus?: FileStatus;
     },
   ): Promise<void> {
     const {
@@ -558,7 +554,6 @@ export class FileStorageService {
     await this.fileRepository.delete(workspaceId, {
       path: Like(`${validatedFolderPath}%`),
       applicationId,
-      ...(isDefined(params.fileStatus) ? { status: params.fileStatus } : {}),
     });
   }
 
