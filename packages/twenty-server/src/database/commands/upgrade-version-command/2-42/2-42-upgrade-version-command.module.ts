@@ -1,6 +1,7 @@
 import { BackfillWorkspaceWorkflowVersionIdCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789652804001-backfill-workspace-workflow-version-id.command';
 import { BackfillWorkflowExecutionCoreIdsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789719131001-backfill-workflow-execution-core-ids.command';
 import { MakeWorkflowRunProjectionRelationsNullableCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789719131002-make-workflow-run-projection-relations-nullable.command';
+import { PurgeSoftDeletedRowLevelPermissionPredicatesCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789744560000-purge-soft-deleted-row-level-permission-predicates.command';
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
@@ -31,6 +32,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     BackfillWorkflowExecutionCoreIdsCommand,
     MakeWorkflowRunProjectionRelationsNullableCommand,
     BackfillMissingSystemRelationIndexesCommand,
+    PurgeSoftDeletedRowLevelPermissionPredicatesCommand,
   ],
   exports: [RelinkWorkflowVersionsToCoreWorkflowsCommand],
 })

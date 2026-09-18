@@ -3,15 +3,15 @@ import { Command } from 'nest-commander';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { computeRowLevelPermissionRowsToPurge } from 'src/database/commands/upgrade-version-command/2-41/utils/compute-row-level-permission-rows-to-purge.util';
+import { computeRowLevelPermissionRowsToPurge } from 'src/database/commands/upgrade-version-command/2-42/utils/compute-row-level-permission-rows-to-purge.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.41.0', 1789568272000)
+@RegisteredWorkspaceCommand('2.42.0', 1789744560000)
 @Command({
-  name: 'upgrade:2-41:purge-soft-deleted-row-level-permission-predicates',
+  name: 'upgrade:2-42:purge-soft-deleted-row-level-permission-predicates',
   description:
     'Hard-delete soft-deleted row-level permission predicates and groups, along with the rows nested under a soft-deleted group',
 })

@@ -1,4 +1,4 @@
-import { computeRowLevelPermissionRowsToPurge } from 'src/database/commands/upgrade-version-command/2-41/utils/compute-row-level-permission-rows-to-purge.util';
+import { computeRowLevelPermissionRowsToPurge } from 'src/database/commands/upgrade-version-command/2-42/utils/compute-row-level-permission-rows-to-purge.util';
 
 const DELETED_AT = '2026-09-16T10:00:00.000Z';
 
