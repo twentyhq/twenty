@@ -1607,7 +1607,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED'
+export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -2469,7 +2469,7 @@ export interface ApplicationFileUploadTarget {
     __typename: 'ApplicationFileUploadTarget'
 }
 
-export type FileFolder = 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
+export type FileFolder = 'RecordExport' | 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
 
 export interface ApplicationFileUploadError {
     fileFolder: FileFolder
@@ -2495,6 +2495,19 @@ export interface WorkspaceMigration {
     actions: Scalars['JSON']
     __typename: 'WorkspaceMigration'
 }
+
+export interface RecordExport {
+    id: Scalars['UUID']
+    filename: Scalars['String']
+    status: RecordExportStatus
+    processedRecordCount: Scalars['Int']
+    totalRecordCount?: Scalars['Int']
+    errorMessage?: Scalars['String']
+    downloadUrl?: Scalars['String']
+    __typename: 'RecordExport'
+}
+
+export type RecordExportStatus = 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED'
 
 export interface PublicDomain {
     id: Scalars['UUID']
@@ -2982,6 +2995,10 @@ export interface AgentChatThread {
     totalOutputCredits: Scalars['Float']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
+    status: AgentChatThreadStatus
+    snoozedUntil?: Scalars['DateTime']
+    assigneeUserWorkspaceId?: Scalars['UUID']
+    mentionedUserWorkspaceIds: Scalars['UUID'][]
     deletedAt?: Scalars['DateTime']
     lastMessageAt?: Scalars['DateTime']
     lastMessagePreview?: Scalars['String']
@@ -2989,6 +3006,8 @@ export interface AgentChatThread {
     lastMessageAuthorUserWorkspaceId?: Scalars['UUID']
     __typename: 'AgentChatThread'
 }
+
+export type AgentChatThreadStatus = 'OPEN' | 'SNOOZED' | 'DONE'
 
 export interface AgentMessage {
     id: Scalars['UUID']
@@ -3579,6 +3598,8 @@ export interface Mutation {
     answerAgentChatQuestion: SendChatMessageResult
     stopAgentChatStream: Scalars['Boolean']
     renameChatThread: AgentChatThread
+    setChatThreadStatus: AgentChatThread
+    assignChatThread: AgentChatThread
     archiveChatThread: AgentChatThread
     unarchiveChatThread: AgentChatThread
     deleteChatThread: Scalars['Boolean']
@@ -3671,6 +3692,7 @@ export interface Subscription {
     logicFunctionLogs: LogicFunctionLogs
     onAgentChatEvent: AgentChatEvent
     eventLogsLive?: EventLogRecord[]
+    exportRecords: RecordExport
     __typename: 'Subscription'
 }
 
@@ -6282,6 +6304,18 @@ export interface WorkspaceMigrationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface RecordExportGenqlSelection{
+    id?: boolean | number
+    filename?: boolean | number
+    status?: boolean | number
+    processedRecordCount?: boolean | number
+    totalRecordCount?: boolean | number
+    errorMessage?: boolean | number
+    downloadUrl?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface PublicDomainGenqlSelection{
     id?: boolean | number
     domain?: boolean | number
@@ -6785,6 +6819,10 @@ export interface AgentChatThreadGenqlSelection{
     totalOutputCredits?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
+    status?: boolean | number
+    snoozedUntil?: boolean | number
+    assigneeUserWorkspaceId?: boolean | number
+    mentionedUserWorkspaceIds?: boolean | number
     deletedAt?: boolean | number
     lastMessageAt?: boolean | number
     lastMessagePreview?: boolean | number
@@ -7433,6 +7471,8 @@ export interface MutationGenqlSelection{
     answerAgentChatQuestion?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], messageId: Scalars['UUID'], answers: AgentChatQuestionAnswerInput[], modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     renameChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID'], title: Scalars['String']} })
+    setChatThreadStatus?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID'], status: AgentChatThreadStatus, snoozedUntil?: (Scalars['DateTime'] | null)} })
+    assignChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID'], assigneeUserWorkspaceId?: (Scalars['UUID'] | null)} })
     archiveChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     unarchiveChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteChatThread?: { __args: {id: Scalars['UUID']} }
@@ -7960,11 +8000,14 @@ export interface SubscriptionGenqlSelection{
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
     onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     eventLogsLive?: (EventLogRecordGenqlSelection & { __args: {table: EventLogTable} })
+    exportRecords?: (RecordExportGenqlSelection & { __args: {input: CreateRecordExportInput} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
 export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null),applicationUniversalIdentifier?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null)}
+
+export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fieldMetadataIds: Scalars['UUID'][],filter?: (Scalars['JSON'] | null),orderBy?: (Scalars['JSON'] | null)}
 
 
     const BillingProductDTO_possibleTypes: string[] = ['BillingLicensedProduct','BillingMeteredProduct']
@@ -9799,6 +9842,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const RecordExport_possibleTypes: string[] = ['RecordExport']
+    export const isRecordExport = (obj?: { __typename?: any } | null): obj is RecordExport => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordExport"')
+      return RecordExport_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const PublicDomain_possibleTypes: string[] = ['PublicDomain']
     export const isPublicDomain = (obj?: { __typename?: any } | null): obj is PublicDomain => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicDomain"')
@@ -10943,6 +10994,7 @@ export const enumEmailConnectionSecurity = {
 }
 
 export const enumFeatureFlagKey = {
+   IS_ASYNC_CSV_EXPORT_ENABLED: 'IS_ASYNC_CSV_EXPORT_ENABLED' as const,
    IS_APP_CLAIMING_ENABLED: 'IS_APP_CLAIMING_ENABLED' as const,
    IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
@@ -11056,6 +11108,7 @@ export const enumApplicationExportCoverageStatus = {
 }
 
 export const enumFileFolder = {
+   RecordExport: 'RecordExport' as const,
    CorePicture: 'CorePicture' as const,
    AgentChat: 'AgentChat' as const,
    BuiltLogicFunction: 'BuiltLogicFunction' as const,
@@ -11070,6 +11123,13 @@ export const enumFileFolder = {
    AppTarball: 'AppTarball' as const,
    GeneratedSdkClient: 'GeneratedSdkClient' as const,
    Dpa: 'Dpa' as const
+}
+
+export const enumRecordExportStatus = {
+   QUEUED: 'QUEUED' as const,
+   PROCESSING: 'PROCESSING' as const,
+   COMPLETED: 'COMPLETED' as const,
+   FAILED: 'FAILED' as const
 }
 
 export const enumEmailingDomainStatus = {
@@ -11164,6 +11224,12 @@ export const enumAgentChatChannelMemberRole = {
 export const enumAgentChatChannelVisibility = {
    PUBLIC: 'PUBLIC' as const,
    PRIVATE: 'PRIVATE' as const
+}
+
+export const enumAgentChatThreadStatus = {
+   OPEN: 'OPEN' as const,
+   SNOOZED: 'SNOOZED' as const,
+   DONE: 'DONE' as const
 }
 
 export const enumAgentChatThreadParticipantRole = {

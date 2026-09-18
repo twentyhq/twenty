@@ -83,7 +83,7 @@ export class AgentChatSubscriptionResolver {
     // the Redis channel is shared by every reader of the thread.
     const wrappedIterator: AsyncIterableIterator<{
       onAgentChatEvent: AgentChatEventDTO;
-    }> = wrapAsyncIteratorWithLifecycle(iterator, {
+    }> = wrapAsyncIteratorWithLifecycle(() => iterator, {
       initialValue: keepalivePayload,
       onHeartbeat: async () => {
         if (

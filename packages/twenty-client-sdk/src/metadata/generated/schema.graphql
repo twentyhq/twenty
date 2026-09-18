@@ -1983,6 +1983,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_ASYNC_CSV_EXPORT_ENABLED
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
@@ -2840,6 +2841,7 @@ type ApplicationFileUploadTarget {
 }
 
 enum FileFolder {
+  RecordExport
   CorePicture
   AgentChat
   BuiltLogicFunction
@@ -2875,6 +2877,23 @@ type DevelopmentApplication {
 type WorkspaceMigration {
   applicationUniversalIdentifier: String!
   actions: JSON!
+}
+
+type RecordExport {
+  id: UUID!
+  filename: String!
+  status: RecordExportStatus!
+  processedRecordCount: Int!
+  totalRecordCount: Int
+  errorMessage: String
+  downloadUrl: String
+}
+
+enum RecordExportStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
 }
 
 type PublicDomain {
@@ -3380,11 +3399,21 @@ type AgentChatThread {
   totalOutputCredits: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
+  status: AgentChatThreadStatus!
+  snoozedUntil: DateTime
+  assigneeUserWorkspaceId: UUID
+  mentionedUserWorkspaceIds: [UUID!]!
   deletedAt: DateTime
   lastMessageAt: DateTime
   lastMessagePreview: String
   lastMessageRole: String
   lastMessageAuthorUserWorkspaceId: UUID
+}
+
+enum AgentChatThreadStatus {
+  OPEN
+  SNOOZED
+  DONE
 }
 
 type AgentMessage {
@@ -4154,6 +4183,8 @@ type Mutation {
   answerAgentChatQuestion(threadId: UUID!, messageId: UUID!, answers: [AgentChatQuestionAnswerInput!]!, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   renameChatThread(id: UUID!, title: String!): AgentChatThread!
+  setChatThreadStatus(id: UUID!, status: AgentChatThreadStatus!, snoozedUntil: DateTime): AgentChatThread!
+  assignChatThread(id: UUID!, assigneeUserWorkspaceId: UUID): AgentChatThread!
   archiveChatThread(id: UUID!): AgentChatThread!
   unarchiveChatThread(id: UUID!): AgentChatThread!
   deleteChatThread(id: UUID!): Boolean!
@@ -5597,6 +5628,7 @@ type Subscription {
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
   eventLogsLive(table: EventLogTable!): [EventLogRecord!]
+  exportRecords(input: CreateRecordExportInput!): RecordExport!
 }
 
 input LogicFunctionLogsInput {
@@ -5605,4 +5637,11 @@ input LogicFunctionLogsInput {
   name: String
   id: UUID
   universalIdentifier: UUID
+}
+
+input CreateRecordExportInput {
+  objectMetadataId: UUID!
+  fieldMetadataIds: [UUID!]!
+  filter: JSON
+  orderBy: JSON
 }
