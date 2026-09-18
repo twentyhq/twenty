@@ -6862,6 +6862,7 @@ export enum UsageOperationType {
   CALL_RECORDING = 'CALL_RECORDING',
   CODE_EXECUTION = 'CODE_EXECUTION',
   EMAIL_SEND = 'EMAIL_SEND',
+  STORAGE_FILE = 'STORAGE_FILE',
   SUBSCRIPTION = 'SUBSCRIPTION',
   WEBHOOK_CALL = 'WEBHOOK_CALL',
   WEB_SEARCH = 'WEB_SEARCH',
@@ -6873,6 +6874,7 @@ export type UsageQuotaDefinition = {
   allowedMeters: Array<Scalars['String']['output']>;
   allowedOperationTypes: Array<UsageOperationType>;
   allowedSpenderTypes: Array<Scalars['String']['output']>;
+  limitKind: Scalars['String']['output'];
   resourceType: UsageResourceType;
 };
 

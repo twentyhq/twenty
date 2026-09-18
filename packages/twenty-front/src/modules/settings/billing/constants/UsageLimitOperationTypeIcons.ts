@@ -2,6 +2,7 @@ import {
   IconApi,
   IconCode,
   type IconComponent,
+  IconFiles,
   IconMail,
   IconMessageCircle,
   IconPhone,
@@ -29,5 +30,6 @@ export const USAGE_LIMIT_OPERATION_TYPE_ICONS: Record<
   [UsageOperationType.EMAIL_SEND]: IconMail,
   [UsageOperationType.API_REQUEST]: IconApi,
   [UsageOperationType.WEBHOOK_CALL]: IconWebhook,
+  [UsageOperationType.STORAGE_FILE]: IconFiles,
   [UsageOperationType.SUBSCRIPTION]: IconRepeat,
 };

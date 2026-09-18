@@ -9,7 +9,6 @@ import { FileUploadExceptionCode } from 'src/engine/core-modules/file/file-uploa
 import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
-import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 describe('FileUploadCompletionService.completeUploadedFile', () => {
   const workspaceId = '20202020-0000-4000-8000-000000000001';
@@ -23,7 +22,6 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
   ]);
 
   let fileStorageService: jest.Mocked<FileStorageService>;
-  let fileRepository: jest.Mocked<WorkspaceScopedRepository<FileEntity>>;
 
   const buildStorageLocation = (ext: string) => ({
     fileFolder: FileFolder.FilesField,
@@ -43,7 +41,7 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
     }) as FileEntity;
 
   const buildService = () =>
-    new FileUploadCompletionService(fileStorageService, fileRepository);
+    new FileUploadCompletionService(fileStorageService);
 
   beforeEach(() => {
     fileStorageService = {
@@ -55,11 +53,8 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
       writeFileStream: jest.fn().mockResolvedValue(undefined),
       move: jest.fn().mockResolvedValue(undefined),
       deleteFileObject: jest.fn().mockResolvedValue(undefined),
+      markFileUploaded: jest.fn().mockResolvedValue({ affected: 1 }),
     } as unknown as jest.Mocked<FileStorageService>;
-
-    fileRepository = {
-      update: jest.fn().mockResolvedValue({ affected: 1 }),
-    } as unknown as jest.Mocked<WorkspaceScopedRepository<FileEntity>>;
   });
 
   afterEach(() => {
@@ -85,7 +80,7 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
     });
 
     expect(fileStorageService.readFile).not.toHaveBeenCalled();
-    expect(fileRepository.update).not.toHaveBeenCalled();
+    expect(fileStorageService.markFileUploaded).not.toHaveBeenCalled();
   });
 
   it('should report an oversized read as FILE_TOO_LARGE when storage understated the size', async () => {
@@ -109,7 +104,7 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
       code: FileUploadExceptionCode.FILE_TOO_LARGE,
     });
 
-    expect(fileRepository.update).not.toHaveBeenCalled();
+    expect(fileStorageService.markFileUploaded).not.toHaveBeenCalled();
   });
 
   it('should refuse to promote a sanitized SVG whose new identity is unreadable', async () => {
@@ -187,11 +182,11 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
     expect(completedFile.mimeType).toBe('image/svg+xml');
     expect(completedFile.size).toBeLessThan(size);
     expect(fileStorageService.writeFileStream).toHaveBeenCalledTimes(1);
-    expect(fileRepository.update).toHaveBeenCalledWith(
-      workspaceId,
-      { id: fileId },
+    expect(fileStorageService.markFileUploaded).toHaveBeenCalledWith(
       expect.objectContaining({
-        status: FILE_STATUS.UPLOADED,
+        workspaceId,
+        fileId,
+        chargedSize: size,
         mimeType: 'image/svg+xml',
         size: completedFile.size,
       }),
@@ -273,7 +268,7 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
     });
 
     expect(fileStorageService.move).not.toHaveBeenCalled();
-    expect(fileRepository.update).not.toHaveBeenCalled();
+    expect(fileStorageService.markFileUploaded).not.toHaveBeenCalled();
   });
 
   it('should fail without touching storage when the row was reaped mid-completion', async () => {
@@ -284,7 +279,7 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
       checksum: '"etag-a"',
     });
     fileStorageService.readFilePrefix.mockResolvedValue(pngContent);
-    fileRepository.update.mockResolvedValue({
+    fileStorageService.markFileUploaded.mockResolvedValue({
       affected: 0,
       raw: [],
       generatedMaps: [],
