@@ -12,6 +12,7 @@ import { type SlackMessageFile } from 'src/logic-functions/types/slack-message-f
 import { downloadSlackFile } from 'src/logic-functions/utils/download-slack-file';
 import { getSlackMessageFileNames } from 'src/logic-functions/utils/get-slack-message-file-names';
 import { isSlackAttachmentCandidate } from 'src/logic-functions/utils/is-slack-attachment-candidate';
+import { reportSlackConnectionAuthFailure } from 'src/logic-functions/utils/report-slack-connection-auth-failure';
 import { resolveSlackFileDetails } from 'src/logic-functions/utils/resolve-slack-file-details';
 import { uploadFileToAgentChat } from 'src/logic-functions/utils/upload-file-to-agent-chat';
 
@@ -35,15 +36,20 @@ const NO_ATTACHMENTS: ImportedSlackAttachments = {
   attachedSourceFiles: [],
 };
 
+const FILES_READ_SCOPE_MISSING_REASON =
+  'Slack refused to serve a shared file, which means the stored bot token predates the files:read scope. Reconnect Slack so the assistant can read files shared with it.';
+
 export const importSlackAssistantAttachments = async ({
   client,
   files,
   botToken,
+  connectionId,
   deadlineAtMs,
 }: {
   client: WebClient | undefined;
   files: SlackMessageFile[] | undefined;
   botToken: string | undefined;
+  connectionId: string | undefined;
   deadlineAtMs: number;
 }): Promise<ImportedSlackAttachments> => {
   if (
@@ -77,6 +83,7 @@ export const importSlackAssistantAttachments = async ({
     attachedFileNames: [],
     attachedSourceFiles: [],
   };
+  let isFilesReadScopeMissing = false;
 
   for (const { resolved: candidate, sourceFile } of candidates) {
     if (imported.attachments.length >= SLACK_ASSISTANT_MAX_ATTACHMENTS) {
@@ -105,6 +112,8 @@ export const importSlackAssistantAttachments = async ({
     });
 
     if (!download.success) {
+      isFilesReadScopeMissing ||= download.reason === 'missing-scope';
+
       console.warn(
         `[slack] attachment "${fileName}" stays a name in the prompt: ${download.error}`,
       );
@@ -131,6 +140,15 @@ export const importSlackAssistantAttachments = async ({
         `[slack] attachment "${fileName}" stays a name in the prompt: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
+  }
+
+  // Every file failure degrades silently, so the connection is the only place
+  // an admin can learn that reconnecting is what restores file reading
+  if (isFilesReadScopeMissing && isNonEmptyString(connectionId)) {
+    await reportSlackConnectionAuthFailure({
+      connectionId,
+      reason: FILES_READ_SCOPE_MISSING_REASON,
+    });
   }
 
   return imported;

@@ -3,10 +3,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { downloadSlackFile } from 'src/logic-functions/utils/download-slack-file';
 import { importSlackAssistantAttachments } from 'src/logic-functions/utils/import-slack-assistant-attachments';
+import { reportSlackConnectionAuthFailure } from 'src/logic-functions/utils/report-slack-connection-auth-failure';
 import { uploadFileToAgentChat } from 'src/logic-functions/utils/upload-file-to-agent-chat';
 
 vi.mock('src/logic-functions/utils/download-slack-file');
 vi.mock('src/logic-functions/utils/upload-file-to-agent-chat');
+vi.mock('src/logic-functions/utils/report-slack-connection-auth-failure');
 vi.mock('twenty-client-sdk/metadata', () => ({
   MetadataApiClient: vi.fn(),
 }));
@@ -28,6 +30,7 @@ const importFiles = async (files: (typeof PNG_FILE)[]) =>
     client: slackClient,
     files,
     botToken: 'xoxb-token',
+    connectionId: 'connection-1',
     deadlineAtMs: Date.now() + 60_000,
   });
 
@@ -48,6 +51,7 @@ describe('importSlackAssistantAttachments', () => {
         client: slackClient,
         files: undefined,
         botToken: 'xoxb-token',
+        connectionId: 'connection-1',
         deadlineAtMs: Date.now() + 60_000,
       }),
     ).toEqual({
@@ -63,6 +67,7 @@ describe('importSlackAssistantAttachments', () => {
         client: slackClient,
         files: [PNG_FILE],
         botToken: undefined,
+        connectionId: 'connection-1',
         deadlineAtMs: Date.now() + 60_000,
       }),
     ).toEqual({
@@ -97,7 +102,11 @@ describe('importSlackAssistantAttachments', () => {
 
   it('should keep going when one download fails', async () => {
     vi.mocked(downloadSlackFile)
-      .mockResolvedValueOnce({ success: false, error: 'status 403' })
+      .mockResolvedValueOnce({
+        success: false,
+        error: 'status 403',
+        reason: 'download-failed',
+      })
       .mockResolvedValueOnce({
         success: true,
         bytes: new Uint8Array([1]),
@@ -143,6 +152,7 @@ describe('importSlackAssistantAttachments', () => {
     vi.mocked(downloadSlackFile).mockResolvedValueOnce({
       success: false,
       error: 'status 403',
+      reason: 'download-failed',
     });
 
     const files = Array.from({ length: 12 }, (_, index) => ({
@@ -157,11 +167,61 @@ describe('importSlackAssistantAttachments', () => {
     expect(result.attachedFileNames).not.toContain('screenshot-0.png');
   });
 
+  it('should invite the workspace to reconnect when Slack withholds a file', async () => {
+    vi.mocked(downloadSlackFile).mockResolvedValue({
+      success: false,
+      error: 'expected image/png but Slack returned text/html',
+      reason: 'missing-scope',
+    });
+
+    await importFiles([PNG_FILE]);
+
+    expect(reportSlackConnectionAuthFailure).toHaveBeenCalledWith({
+      connectionId: 'connection-1',
+      reason: expect.stringContaining('files:read'),
+    });
+  });
+
+  it('should invite the workspace to reconnect once for a whole message', async () => {
+    vi.mocked(downloadSlackFile).mockResolvedValue({
+      success: false,
+      error: 'expected image/png but Slack returned text/html',
+      reason: 'missing-scope',
+    });
+
+    await importFiles([
+      PNG_FILE,
+      { ...PNG_FILE, id: 'F2', name: 'diagram.png' },
+      { ...PNG_FILE, id: 'F3', name: 'chart.png' },
+    ]);
+
+    expect(reportSlackConnectionAuthFailure).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not invite a reconnect when the download fails for another reason', async () => {
+    vi.mocked(downloadSlackFile).mockResolvedValue({
+      success: false,
+      error: 'status 500',
+      reason: 'download-failed',
+    });
+
+    await importFiles([PNG_FILE]);
+
+    expect(reportSlackConnectionAuthFailure).not.toHaveBeenCalled();
+  });
+
+  it('should not invite a reconnect when every file is served', async () => {
+    await importFiles([PNG_FILE]);
+
+    expect(reportSlackConnectionAuthFailure).not.toHaveBeenCalled();
+  });
+
   it('should attach nothing once the import window has already closed', async () => {
     const result = await importSlackAssistantAttachments({
       client: slackClient,
       files: [PNG_FILE],
       botToken: 'xoxb-token',
+      connectionId: 'connection-1',
       deadlineAtMs: Date.now() - 1,
     });
 

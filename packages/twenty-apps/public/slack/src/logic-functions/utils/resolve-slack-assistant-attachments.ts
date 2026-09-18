@@ -40,19 +40,33 @@ const buildNamesOnlyFileNames = ({
   );
 };
 
-const resolveSlackBotToken = async (): Promise<string | undefined> => {
-  const connection = await getSlackConnection();
-
-  if (!connection.success) {
-    console.warn(
-      `[slack] shared files stay names in the prompt, the bot token is unavailable: ${connection.error}`,
-    );
-
-    return undefined;
-  }
-
-  return connection.accessToken;
+type SlackAttachmentCredentials = {
+  botToken: string | undefined;
+  connectionId: string | undefined;
 };
+
+const NO_CREDENTIALS: SlackAttachmentCredentials = {
+  botToken: undefined,
+  connectionId: undefined,
+};
+
+const resolveSlackAttachmentCredentials =
+  async (): Promise<SlackAttachmentCredentials> => {
+    const connection = await getSlackConnection();
+
+    if (!connection.success) {
+      console.warn(
+        `[slack] shared files stay names in the prompt, the bot token is unavailable: ${connection.error}`,
+      );
+
+      return NO_CREDENTIALS;
+    }
+
+    return {
+      botToken: connection.accessToken,
+      connectionId: connection.connectionId,
+    };
+  };
 
 export const resolveSlackAssistantAttachments = async ({
   slackClient,
@@ -65,13 +79,16 @@ export const resolveSlackAssistantAttachments = async ({
   sharedFiles: SlackMessageFile[];
   agentDeadlineAtMs: number;
 }): Promise<ResolvedSlackAssistantAttachments> => {
+  const { botToken, connectionId } = isNonEmptyArray(requestFiles)
+    ? await resolveSlackAttachmentCredentials()
+    : NO_CREDENTIALS;
+
   const { attachments, attachedFileNames, attachedSourceFiles } =
     await importSlackAssistantAttachments({
       client: slackClient,
       files: requestFiles,
-      botToken: isNonEmptyArray(requestFiles)
-        ? await resolveSlackBotToken()
-        : undefined,
+      botToken,
+      connectionId,
       deadlineAtMs: Math.min(
         Date.now() + SLACK_ASSISTANT_ATTACHMENT_IMPORT_MAX_MS,
         agentDeadlineAtMs - SLACK_ASSISTANT_AGENT_MIN_BUDGET_MS,

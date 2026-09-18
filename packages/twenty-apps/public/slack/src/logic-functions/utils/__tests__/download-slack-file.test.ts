@@ -81,12 +81,34 @@ describe('downloadSlackFile', () => {
     );
   });
 
+
+  it('should name the missing scope as the reason for the sign-in page', async () => {
+    mockFetchResponse({
+      headers: new Headers({ 'content-type': 'text/html; charset=utf-8' }),
+    });
+
+    const result = await downloadPngFile();
+
+    expect(result).toMatchObject({ success: false, reason: 'missing-scope' });
+  });
+
+  it('should name a transport failure as a download failure', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('socket hang up')));
+
+    const result = await downloadPngFile();
+
+    expect(result).toMatchObject({ success: false, reason: 'download-failed' });
+  });
   it('should fail on a non-ok response', async () => {
     mockFetchResponse({ ok: false, status: 404 });
 
     const result = await downloadPngFile();
 
-    expect(result).toEqual({ success: false, error: 'status 404' });
+    expect(result).toEqual({
+      success: false,
+      error: 'status 404',
+      reason: 'download-failed',
+    });
   });
 
   it('should fail when the fetch itself throws', async () => {
@@ -94,7 +116,11 @@ describe('downloadSlackFile', () => {
 
     const result = await downloadPngFile();
 
-    expect(result).toEqual({ success: false, error: 'timed out' });
+    expect(result).toEqual({
+      success: false,
+      error: 'timed out',
+      reason: 'download-failed',
+    });
   });
 
   it('should refuse an oversized file on its content length without reading it', async () => {
