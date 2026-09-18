@@ -4,7 +4,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { CUSTOM_AI_PROVIDER_ACCESS_REFRESH_INTERVAL_MS } from 'src/engine/core-modules/enterprise/constants/custom-ai-provider-access-refresh-interval.constant';
 import { CUSTOM_AI_PROVIDER_ACCESS_RETRY_INTERVAL_MS } from 'src/engine/core-modules/enterprise/constants/custom-ai-provider-access-retry-interval.constant';
-import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
+import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-organization-key.constant';
 import { CustomAiProviderAccessService } from 'src/engine/core-modules/enterprise/services/custom-ai-provider-access.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';

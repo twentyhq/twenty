@@ -4,7 +4,7 @@ import { SettingsSecuritySsoRowDropdownMenu } from '@/settings/security/componen
 import { type SsoIdentityProvider } from '@/settings/security/types/SsoIdentityProvider';
 import { getColorBySsoIdentityProviderStatus } from '@/settings/security/utils/getColorBySsoIdentityProviderStatus';
 import { styled } from '@linaria/react';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowRightContainer = styled.div`

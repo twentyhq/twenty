@@ -4,11 +4,12 @@ import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permis
 import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -65,25 +66,22 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
   const containerId = `object-level-permission-override-${roleId}-${objectPermissionKey}-${objectMetadataItem.id}`;
 
   return (
-    <>
+    <Tooltip
+      content={
+        permissionValue === false
+          ? t`${roleLabel} can't ${humanReadableAction} ${objectLabel} records`
+          : t`${roleLabel} can ${humanReadableAction} ${objectLabel} records`
+      }
+      delay={TooltipDelay.shortDelay}
+      side="bottom"
+      positionMethod="fixed"
+    >
       <StyledContainer id={containerId}>
         <PermissionIcon
           permission={objectPermissionKey}
           state={permissionValue === false ? 'revoked' : 'granted'}
         />
       </StyledContainer>
-      <AppTooltip
-        anchorSelect={`#${containerId}`}
-        title={
-          permissionValue === false
-            ? t`${roleLabel} can't ${humanReadableAction} ${objectLabel} records`
-            : t`${roleLabel} can ${humanReadableAction} ${objectLabel} records`
-        }
-        delay={TooltipDelay.shortDelay}
-        noArrow
-        place="bottom"
-        positionStrategy="fixed"
-      />
-    </>
+    </Tooltip>
   );
 };

@@ -3,7 +3,7 @@ import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIs
 
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableCellButtons } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButtons';
-import { useGetSecondaryRecordTableCellButton } from '@/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton';
+import { useGetSecondaryFieldButton } from '@/object-record/record-field/ui/hooks/useGetSecondaryFieldButton';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,7 +16,7 @@ export const RecordTableCellEditButton = () => {
   const isFirstColumn = cellPosition.column === 0;
   const customButtonIcon = useGetButtonIcon();
 
-  const secondaryButton = useGetSecondaryRecordTableCellButton();
+  const secondaryButton = useGetSecondaryFieldButton();
 
   const mainButtonIcon = isFirstColumn
     ? IconArrowUpRight

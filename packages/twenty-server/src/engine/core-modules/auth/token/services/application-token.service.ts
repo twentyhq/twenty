@@ -201,6 +201,41 @@ export class ApplicationTokenService {
     }
   }
 
+  async validateApplicationRefreshTokenForSessionOrThrow({
+    applicationRefreshToken,
+    workspaceId,
+    userId,
+    userWorkspaceId,
+  }: {
+    applicationRefreshToken: string;
+    workspaceId: string;
+    userId: string;
+    userWorkspaceId: string;
+  }): Promise<ApplicationRefreshTokenJwtPayload> {
+    const applicationRefreshTokenPayload =
+      await this.validateApplicationRefreshToken(applicationRefreshToken);
+
+    if (applicationRefreshTokenPayload.workspaceId !== workspaceId) {
+      throw new ApplicationException(
+        'Refresh token workspace does not match authenticated workspace',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
+    const hasMismatchedUser = applicationRefreshTokenPayload.userId !== userId;
+    const hasMismatchedUserWorkspace =
+      applicationRefreshTokenPayload.userWorkspaceId !== userWorkspaceId;
+
+    if (hasMismatchedUser || hasMismatchedUserWorkspace) {
+      throw new ApplicationException(
+        'Refresh token does not match authenticated session',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
+    return applicationRefreshTokenPayload;
+  }
+
   async validateApplicationAccessToken(
     token: string,
   ): Promise<ApplicationAccessTokenJwtPayload> {

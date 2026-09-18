@@ -1,9 +1,10 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useState } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { SearchInput } from 'twenty-ui/input';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { SearchInput } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsBillingLimitSpenderCell } from '@/settings/billing/components/SettingsBillingLimitSpenderCell';
@@ -17,12 +18,12 @@ import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRi
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNameCellSecondaryLabel';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
-import { ProgressRing } from '@/ui/feedback/progress-ring/components/ProgressRing';
+import { ProgressRingWithLabel } from '@/ui/feedback/progress-ring/components/ProgressRingWithLabel';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const GRID_AUTO_COLUMNS = '1.2fr 1fr 120px 96px';
-
-const USED_RING_SIZE = 14;
 
 const StyledCell = styled.div`
   align-items: center;
@@ -96,18 +97,16 @@ const NameCell = ({ item }: { item: UsageLimitRow }) => {
       <StyledNameContainer>
         <StyledName>{item.name}</StyledName>
         {!item.isEnforced && (
-          <>
+          <Tooltip
+            content={t`Limits on members, API keys and apps require the Organization plan.`}
+            side="top"
+            delay={TooltipDelay.shortDelay}
+            positionMethod="fixed"
+          >
             <SettingsNameCellSecondaryLabel id={deactivatedAnchorId}>
               {t`Deactivated`}
             </SettingsNameCellSecondaryLabel>
-            <AppTooltip
-              anchorSelect={`#${deactivatedAnchorId}`}
-              title={t`Limits on members, API keys and apps require the Organization plan.`}
-              place="top"
-              delay={TooltipDelay.shortDelay}
-              positionStrategy="fixed"
-            />
-          </>
+          </Tooltip>
         )}
       </StyledNameContainer>
     </StyledCell>
@@ -120,28 +119,11 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
   const anchorId = `usage-limit-ring-${item.id}`;
 
   return (
-    <StyledUsed id={anchorId}>
-      {isDefined(item.consumedPercentage) ? (
-        <>
-          <span>{item.consumedPercentage}%</span>
-          <ProgressRing
-            size={USED_RING_SIZE}
-            value={item.consumedPercentage}
-            barColor={getUsageLimitRingColor({
-              consumedPercentage: item.consumedPercentage,
-              isExhausted: item.isExhausted,
-            })}
-          />
-        </>
-      ) : (
-        <StyledEmptyValue>—</StyledEmptyValue>
-      )}
-      <AppTooltip
-        anchorSelect={`#${anchorId}`}
-        place="top"
-        delay={TooltipDelay.shortDelay}
-        positionStrategy="fixed"
-      >
+    <Tooltip
+      side="top"
+      delay={TooltipDelay.shortDelay}
+      positionMethod="fixed"
+      content={
         <StyledTooltipRows>
           {isDefined(item.consumedText) && (
             <StyledTooltipRow>
@@ -160,8 +142,22 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
             />
           </StyledTooltipRow>
         </StyledTooltipRows>
-      </AppTooltip>
-    </StyledUsed>
+      }
+    >
+      <StyledUsed id={anchorId}>
+        {isDefined(item.consumedPercentage) ? (
+          <ProgressRingWithLabel
+            value={item.consumedPercentage}
+            barColor={getUsageLimitRingColor({
+              consumedPercentage: item.consumedPercentage,
+              isExhausted: item.isExhausted,
+            })}
+          />
+        ) : (
+          <StyledEmptyValue>—</StyledEmptyValue>
+        )}
+      </StyledUsed>
+    </Tooltip>
   );
 };
 
@@ -173,6 +169,7 @@ export const SettingsBillingLimitsTable = ({
   quotas,
 }: SettingsBillingLimitsTableProps) => {
   const { t } = useLingui();
+  const navigate = useNavigateSettings();
 
   const [searchText, setSearchText] = useState('');
   const [resourceType, setResourceType] = useState<UsageResourceType | null>(
@@ -242,6 +239,10 @@ export const SettingsBillingLimitsTable = ({
           { label: t`Used`, align: 'right', Cell: UsedCell },
         ]}
         gridAutoColumns={GRID_AUTO_COLUMNS}
+        showRowChevron
+        onRowClick={(row) =>
+          navigate(SettingsPath.BillingLimitEdit, { usageLimitId: row.id })
+        }
       />
       {filteredRows.length === 0 && (
         <SettingsEmptyPlaceholder>

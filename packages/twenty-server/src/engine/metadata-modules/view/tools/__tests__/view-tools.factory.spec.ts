@@ -288,11 +288,12 @@ describe('ViewToolsFactory', () => {
 
         expect(
           viewQueryParamsService.resolveViewToQueryParams,
-        ).toHaveBeenCalledWith(
-          mockViewId,
-          mockWorkspaceId,
-          'workspace-member-id',
-        );
+        ).toHaveBeenCalledWith({
+          viewId: mockViewId,
+          workspaceId: mockWorkspaceId,
+          currentWorkspaceMemberId: 'workspace-member-id',
+          currentUserWorkspaceId: mockUserWorkspaceId,
+        });
         expect(result).toEqual(mockQueryParams);
       });
     });

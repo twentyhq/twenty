@@ -1,3 +1,4 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -34,8 +35,6 @@ import {
   IconPlus,
   IconSettings,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
@@ -167,31 +166,29 @@ export const SettingsObjectDetailPage = () => {
       ]}
       actionButton={
         <>
-          <Button
-            Icon={IconArrowUpRight}
-            title={t`See records`}
-            variant="tertiary"
-            size="small"
+          <NavigationButton
+            startIcon={<IconArrowUpRight />}
+            size="sm"
             to={getAppPath(AppPath.RecordIndexPage, {
               objectNamePlural: objectMetadataItem.namePlural,
             })}
-          />
+            variant="ghost"
+          >{t`See records`}</NavigationButton>
           {!readonly &&
             activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
-              <UndecoratedLink to="./new-field/select">
-                <Button
-                  title={t`New Field`}
-                  variant="primary"
-                  size="small"
-                  accent="blue"
-                  Icon={IconPlus}
-                />
-              </UndecoratedLink>
+              <NavigationButton
+                to="./new-field/select"
+                size="sm"
+                startIcon={<IconPlus />}
+                variant="solid"
+                color="accent"
+              >{t`New Field`}</NavigationButton>
             )}
         </>
       }
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Object settings`}
           tabs={tabs}
           componentInstanceId={tabsComponentInstanceId}
         />

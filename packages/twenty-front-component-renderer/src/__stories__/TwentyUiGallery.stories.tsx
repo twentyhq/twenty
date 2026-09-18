@@ -1,3 +1,5 @@
+import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
+import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { type Meta } from '@storybook/react-vite';
 
 import {
@@ -16,8 +18,11 @@ import {
 import {
   statusControlsTest,
   tagControlsTest,
+  avatarControlsTest,
+  chipControlsTest,
 } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
+import { typographyTest } from '@/__stories__/twenty-ui-gallery/utils/typographyTest';
 import {
   codeEditorTest,
   dataDisplayTest,
@@ -25,7 +30,6 @@ import {
   galleryRenderTest,
   inputPreactTest,
   inputReactTest,
-  modalOpenHangTest,
   navigationTest,
   themeTokenTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
@@ -41,6 +45,7 @@ import {
   tabsReactTest,
 } from '@/__stories__/twenty-ui-gallery/utils/sandboxFailureTests';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+import { createTooltipSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createTooltipSandboxFailureTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
@@ -142,15 +147,15 @@ export const SurfacesPreact: Story = createGalleryStory({
   play: galleryRenderTest,
 });
 
-export const ModalOpenReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-modal-open-gallery',
+export const DialogReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dialog',
   runtime: 'react',
-  play: modalOpenHangTest,
+  play: dialogTest,
 });
-export const ModalOpenPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-modal-open-gallery',
+export const DialogPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dialog',
   runtime: 'preact',
-  play: galleryRenderTest,
+  play: dialogTest,
 });
 
 export const CodeEditorReact: Story = createGalleryStory({
@@ -167,12 +172,12 @@ export const CodeEditorPreact: Story = createGalleryStory({
 export const TypographyReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-typography-gallery',
   runtime: 'react',
-  play: galleryRenderTest,
+  play: typographyTest,
 });
 export const TypographyPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-typography-gallery',
   runtime: 'preact',
-  play: galleryRenderTest,
+  play: typographyTest,
 });
 
 export const ThemeTokensReact: Story = createGalleryStory({
@@ -247,6 +252,18 @@ export const PopoverPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-popover',
   runtime: 'preact',
   play: popoverTest,
+});
+
+export const TooltipReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tooltip',
+  runtime: 'react',
+  play: createTooltipSandboxFailureTest('react'),
+});
+
+export const TooltipPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tooltip',
+  runtime: 'preact',
+  play: createTooltipSandboxFailureTest('preact'),
 });
 
 export const MenuReact: Story = createGalleryStory({
@@ -381,4 +398,40 @@ export const TagControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-tag-controls',
   runtime: 'preact',
   play: tagControlsTest,
+});
+
+export const ButtonControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-button-controls',
+  runtime: 'react',
+  play: buttonControlsTest,
+});
+
+export const ButtonControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-button-controls',
+  runtime: 'preact',
+  play: buttonControlsTest,
+});
+
+export const AvatarControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-avatar-controls',
+  runtime: 'react',
+  play: avatarControlsTest,
+});
+
+export const AvatarControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-avatar-controls',
+  runtime: 'preact',
+  play: avatarControlsTest,
+});
+
+export const ChipControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-chip-controls',
+  runtime: 'react',
+  play: chipControlsTest,
+});
+
+export const ChipControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-chip-controls',
+  runtime: 'preact',
+  play: chipControlsTest,
 });

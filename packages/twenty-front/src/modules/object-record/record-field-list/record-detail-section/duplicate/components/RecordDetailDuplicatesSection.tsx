@@ -1,3 +1,4 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { useOpenMergeRecordsPageInSidePanel } from '@/side-panel/hooks/useOpenMergeRecordsPageInSidePanel';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordChip } from '@/object-record/components/RecordChip';
@@ -7,9 +8,10 @@ import { RecordDetailRecordsListItemContainer } from '@/object-record/record-fie
 import { RecordDetailSectionContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailSectionContainer';
 
 import { t } from '@lingui/core/macro';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowMerge } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 
 export const RecordDetailDuplicatesSection = ({
   objectRecordId,
@@ -22,7 +24,7 @@ export const RecordDetailDuplicatesSection = ({
     objectNameSingular,
   });
 
-  const { results: queryResults } = useFindDuplicateRecords({
+  const { results: queryResults, error } = useFindDuplicateRecords({
     objectRecordIds: [objectRecordId],
     objectNameSingular,
     skip: !isDefined(objectMetadataItem.duplicateCriteria),
@@ -40,35 +42,33 @@ export const RecordDetailDuplicatesSection = ({
       objectRecordIds: duplicateRecordIds,
     });
 
-  if (
-    !isDefined(queryResults) ||
-    !isDefined(queryResults[0]) ||
-    queryResults[0].length === 0
-  )
-    return null;
-
   return (
-    <RecordDetailSectionContainer
-      title={t`Duplicates`}
-      rightAdornment={
-        <LightIconButton
-          className="displayOnHover"
-          Icon={IconArrowMerge}
-          accent="tertiary"
-          onClick={openMergeRecordsPageInSidePanel}
-        />
-      }
-    >
-      <RecordDetailRecordsListContainer>
-        {queryResults[0].slice(0, 5).map((duplicateRecord) => (
-          <RecordDetailRecordsListItemContainer key={duplicateRecord.id}>
-            <RecordChip
-              record={duplicateRecord}
-              objectNameSingular={objectNameSingular}
+    <>
+      <ToastOnQueryErrorEffect error={error} />
+      {isNonEmptyArray(duplicateRecords) && (
+        <RecordDetailSectionContainer
+          title={t`Duplicates`}
+          rightAdornment={
+            <LightIconButton
+              className="displayOnHover"
+              Icon={IconArrowMerge}
+              accent="tertiary"
+              onClick={openMergeRecordsPageInSidePanel}
             />
-          </RecordDetailRecordsListItemContainer>
-        ))}
-      </RecordDetailRecordsListContainer>
-    </RecordDetailSectionContainer>
+          }
+        >
+          <RecordDetailRecordsListContainer>
+            {duplicateRecords.slice(0, 5).map((duplicateRecord) => (
+              <RecordDetailRecordsListItemContainer key={duplicateRecord.id}>
+                <RecordChip
+                  record={duplicateRecord}
+                  objectNameSingular={objectNameSingular}
+                />
+              </RecordDetailRecordsListItemContainer>
+            ))}
+          </RecordDetailRecordsListContainer>
+        </RecordDetailSectionContainer>
+      )}
+    </>
   );
 };

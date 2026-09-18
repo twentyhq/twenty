@@ -1,16 +1,14 @@
-import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
+import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -19,45 +17,41 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/feedback';
 import {
   IconAlertTriangle,
-  IconBox,
-  IconBrandTypescript,
-  IconGraph,
-  IconInfoCircle,
-  IconLego,
-  IconListDetails,
-  IconLock,
+  IconAdjustments,
+  IconDeviceFloppy,
   IconSettings,
+  IconVariable,
 } from 'twenty-ui/icon';
+import { InlineBanner } from 'twenty-ui/primitives/feedback';
+import { Button } from 'twenty-ui/primitives/input';
 import {
   FindMarketplaceAppDetailDocument,
-  FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
   IsApplicationStoppedDocument,
-  PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
-import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
-import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
-import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
-import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
-import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
-import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
+import { useApplicationVariablesDraft } from '~/pages/settings/applications/hooks/useApplicationVariablesDraft';
+import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection';
+import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab';
+import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailVariablesTab';
+import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
+import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
+
+const GENERAL_TAB_ID = 'general';
+const VARIABLES_TAB_ID = 'variables';
+const CUSTOM_SETTINGS_TAB_ID = 'settings';
 
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
@@ -76,15 +70,7 @@ export const SettingsApplicationDetails = () => {
 
   const application = data?.findOneApplication;
 
-  const { connectionProviders } =
-    useFindApplicationConnectionProviders(applicationId);
-
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
-    variables: { universalIdentifier: application?.universalIdentifier ?? '' },
-    skip: !application?.universalIdentifier,
-  });
-
-  const { data: manifestData } = useQuery(FindMarketplaceAppManifestDocument, {
     variables: { universalIdentifier: application?.universalIdentifier ?? '' },
     skip: !application?.universalIdentifier,
   });
@@ -105,9 +91,6 @@ export const SettingsApplicationDetails = () => {
     isApplicationStoppedData?.isApplicationStopped === true;
 
   const detail = detailData?.findMarketplaceAppDetail;
-  const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
-    | Manifest
-    | undefined;
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isStandardApplication = isTwentyStandardApplication(application);
   const isCustomApplication = isWorkspaceCustomApplication(
@@ -121,24 +104,14 @@ export const SettingsApplicationDetails = () => {
     detail?.name ?? application?.name ?? t`Application details`;
   const description = detail?.description ?? resolvedDescription;
 
-  const getScreenshots = () => {
-    if (detail?.galleryImages?.length) return detail.galleryImages;
-    if (isStandardApplication) return STANDARD_APPLICATION_ILLUSTRATIONS;
-    if (isCustomApplication) return CUSTOM_APPLICATION_ILLUSTRATIONS;
+  const getCoverImageUrl = () => {
+    if (detail?.galleryImages?.length) return detail.galleryImages[0];
+    if (isStandardApplication) return STANDARD_APPLICATION_ILLUSTRATIONS[0];
+    if (isCustomApplication) return CUSTOM_APPLICATION_ILLUSTRATIONS[0];
     return undefined;
   };
 
-  const screenshots = getScreenshots();
-
   const { upgrade, isUpgrading } = useUpgradeApplication();
-
-  const { isInstalling } = useInstallMarketplaceApp({
-    universalIdentifier: application?.universalIdentifier,
-  });
-
-  const canInstallMarketplaceApps = useHasPermissionFlag(
-    PermissionFlagType.APPLICATIONS,
-  );
 
   const sourceType = application?.applicationRegistration?.sourceType;
   const registrationId = detail?.id ?? application?.applicationRegistration?.id;
@@ -173,101 +146,41 @@ export const SettingsApplicationDetails = () => {
     onCompleted: handleUninstallCompleted,
   });
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-
-  const applicationObjectIds = useMemo(
-    () => new Set((application?.objects ?? []).map((obj) => obj.id)),
-    [application?.objects],
+  const displayedApplicationVariables = getDisplayedApplicationVariables(
+    application?.applicationVariables ?? [],
   );
 
-  const appFieldExtensionsCount = useMemo(() => {
-    if (!isDefined(application)) return 0;
+  const {
+    draftApplicationVariables,
+    setApplicationVariableValue,
+    hasUnsavedApplicationVariables,
+    saveApplicationVariables,
+    isSavingApplicationVariables,
+  } = useApplicationVariablesDraft({
+    applicationId,
+    applicationVariables: displayedApplicationVariables,
+  });
 
-    return objectMetadataItems
-      .filter((item) => !applicationObjectIds.has(item.id))
-      .reduce(
-        (total, item) =>
-          total +
-          item.fields.filter((field) => field.applicationId === application.id)
-            .length,
-        0,
-      );
-  }, [objectMetadataItems, applicationObjectIds, application]);
-
-  const contentEntries = [
-    {
-      icon: IconBox,
-      count: (application?.objects ?? []).length,
-      one: t`object`,
-      many: t`objects`,
-    },
-    {
-      icon: IconListDetails,
-      count: appFieldExtensionsCount,
-      one: t`field`,
-      many: t`fields`,
-    },
-    {
-      icon: IconBrandTypescript,
-      count: (application?.logicFunctions ?? []).length,
-      one: t`logic function`,
-      many: t`logic functions`,
-    },
-    {
-      icon: IconGraph,
-      count: (application?.frontComponents ?? []).length,
-      one: t`front component`,
-      many: t`front components`,
-    },
-    {
-      icon: IconLego,
-      count: (application?.agents ?? []).length,
-      one: t`agent`,
-      many: t`agents`,
-    },
-  ];
+  const settingsFrontComponentId =
+    application?.settingsCustomTabFrontComponentId;
+  const hasCustomSettingsTab = isDefined(settingsFrontComponentId);
 
   const tabs: SingleTabProps[] = [
-    { id: 'about', title: t`About`, Icon: IconInfoCircle },
-    { id: 'content', title: t`Content`, Icon: IconBox },
-    {
-      id: 'permissions',
-      title: t`Permissions`,
-      Icon: IconLock,
-      tooltipContent: !isDefined(application?.defaultRoleId)
-        ? t`No permission defined for this application`
-        : undefined,
-      disabled: !isDefined(application?.defaultRoleId),
-    },
-    (() => {
-      const hasVariables =
-        getDisplayedApplicationVariables(
-          application?.applicationVariables ?? [],
-        ).length > 0;
-      const hasConnectionProviders = connectionProviders.length > 0;
-      const hasHttpTriggeredFunctions =
-        applicationHasHttpTriggeredFunctions(application);
-      const canShowFunctionDomain = hasHttpTriggeredFunctions;
-      const hasSettingsFrontComponent = isDefined(
-        application?.settingsCustomTabFrontComponentId,
-      );
-      const hasNothingToConfigure =
-        !hasVariables &&
-        !hasConnectionProviders &&
-        !canShowFunctionDomain &&
-        !hasSettingsFrontComponent &&
-        !isUpgradableApplicationSourceType(sourceType);
-
-      return {
-        id: 'settings',
-        title: t`Settings`,
-        Icon: IconSettings,
-        tooltipContent: hasNothingToConfigure
-          ? t`Nothing to configure for this application`
-          : undefined,
-        disabled: hasNothingToConfigure,
-      };
-    })(),
+    { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
+    // A custom settings tab lays out the application variables itself, so
+    // exposing them again would duplicate the same fields.
+    ...(!hasCustomSettingsTab && displayedApplicationVariables.length > 0
+      ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
+      : []),
+    ...(hasCustomSettingsTab
+      ? [
+          {
+            id: CUSTOM_SETTINGS_TAB_ID,
+            title: t`Settings`,
+            Icon: IconAdjustments,
+          },
+        ]
+      : []),
   ];
 
   const renderActiveTabContent = () => {
@@ -276,64 +189,35 @@ export const SettingsApplicationDetails = () => {
     }
 
     switch (activeTabId) {
-      case 'about':
+      case GENERAL_TAB_ID:
         return (
-          <SettingsApplicationDetailAboutTab
+          <SettingsApplicationDetailGeneralTab
+            application={application}
             displayName={displayName}
-            description={description}
-            aboutDescription={detail?.aboutDescription ?? undefined}
-            pricingDescription={detail?.pricingDescription ?? undefined}
-            screenshots={screenshots}
-            author={detail?.author ?? undefined}
-            category={detail?.category ?? undefined}
-            contentEntries={contentEntries}
-            currentVersion={currentVersion ?? undefined}
-            latestAvailableVersion={latestAvailableVersion ?? undefined}
-            developerLinks={
-              isDefined(detail)
-                ? {
-                    websiteUrl: detail.websiteUrl ?? undefined,
-                    termsUrl: detail.termsUrl ?? undefined,
-                    emailSupport: detail.emailSupport ?? undefined,
-                    issueReportUrl: detail.issueReportUrl ?? undefined,
-                  }
-                : undefined
-            }
-            isInstalled={true}
-            isInstalling={isInstalling}
-            canInstallMarketplaceApps={canInstallMarketplaceApps}
+            description={getApplicationDescriptionSummary(description)}
+            coverImageUrl={getCoverImageUrl()}
+            marketplaceUniversalIdentifier={detail?.universalIdentifier}
             hasUpdate={hasUpdate}
+            latestAvailableVersion={latestAvailableVersion ?? undefined}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}
-            canBeUninstalled={application.canBeUninstalled}
             onUninstall={uninstall}
             isUninstalling={isUninstalling}
           />
         );
-      case 'content':
+      case VARIABLES_TAB_ID:
         return (
-          <SettingsApplicationDetailContentTab
-            applicationId={application.id}
-            installedApplication={application}
-            manifestContent={manifest}
-            applicationInfo={{
-              id: application.id,
-              name: displayName,
-              logoUrl: application.logoUrl,
-              universalIdentifier: application.universalIdentifier,
-            }}
+          <SettingsApplicationDetailVariablesTab
+            applicationVariables={draftApplicationVariables}
+            onVariableChange={setApplicationVariableValue}
           />
         );
-      case 'permissions':
-        return (
-          <SettingsApplicationPermissionsTab
-            defaultRoleId={application.defaultRoleId}
+      case CUSTOM_SETTINGS_TAB_ID:
+        return hasCustomSettingsTab ? (
+          <SettingsApplicationCustomSettingsSection
+            frontComponentId={settingsFrontComponentId}
           />
-        );
-      case 'settings':
-        return (
-          <SettingsApplicationDetailSettingsTab application={application} />
-        );
+        ) : null;
       default:
         return <></>;
     }
@@ -362,19 +246,34 @@ export const SettingsApplicationDetails = () => {
             href: getSettingsPath(SettingsPath.General),
           },
           {
-            children: t`Applications`,
+            children: t`Apps`,
             href: getSettingsPath(SettingsPath.Applications),
           },
           { children: displayName },
         ]}
+        actionButton={
+          activeTabId === VARIABLES_TAB_ID ? (
+            <Button
+              startIcon={<IconDeviceFloppy />}
+              variant="solid"
+              color="accent"
+              size="sm"
+              onClick={saveApplicationVariables}
+              disabled={
+                !hasUnsavedApplicationVariables || isSavingApplicationVariables
+              }
+            >{t`Save settings`}</Button>
+          ) : undefined
+        }
         secondaryBar={
           <SettingsTabBar
+            aria-label={t`Application details`}
             tabs={tabs}
             componentInstanceId={APPLICATION_DETAIL_ID}
           />
         }
       >
-        <SettingsPageContainer>
+        <SettingsPageContainer overflow="visible">
           {isApplicationStopped && (
             <InlineBanner
               color="danger"

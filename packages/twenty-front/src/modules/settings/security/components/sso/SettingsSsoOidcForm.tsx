@@ -4,10 +4,9 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
+import { Section } from 'twenty-ui/components';
 import { IconCopy } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -45,8 +44,8 @@ export const SettingsSsoOidcForm = () => {
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Client Settings`}
           description={t`Provide your OIDC provider details`}
         />
@@ -63,8 +62,7 @@ export const SettingsSsoOidcForm = () => {
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
-                Icon={IconCopy}
-                title={t`Copy`}
+                startIcon={<IconCopy />}
                 onClick={() => {
                   copyToClipboard(
                     authorizedUrl,
@@ -72,7 +70,7 @@ export const SettingsSsoOidcForm = () => {
                   );
                 }}
                 type="button"
-              />
+              >{t`Copy`}</Button>
             </StyledButtonCopy>
           </StyledContainer>
           <StyledContainer>
@@ -87,22 +85,21 @@ export const SettingsSsoOidcForm = () => {
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
-                Icon={IconCopy}
-                title={t`Copy`}
+                startIcon={<IconCopy />}
                 onClick={() => {
                   copyToClipboard(
                     redirectionUrl,
-                    t`Redirect Url copied to clipboard`,
+                    t`Redirect URL copied to clipboard`,
                   );
                 }}
                 type="button"
-              />
+              >{t`Copy`}</Button>
             </StyledButtonCopy>
           </StyledContainer>
         </StyledInputsContainer>
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Identity Provider`}
           description={t`Enter the credentials to set the connection`}
         />
@@ -154,7 +151,7 @@ export const SettingsSsoOidcForm = () => {
             )}
           />
         </StyledInputsContainer>
-      </Section>
+      </Section.Root>
     </>
   );
 };

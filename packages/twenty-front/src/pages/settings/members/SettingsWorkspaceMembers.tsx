@@ -1,6 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconLock,
   IconSparkle2,
@@ -14,7 +15,6 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import coverDark from '~/pages/settings/members/assets/cover-dark.png';
 import coverLight from '~/pages/settings/members/assets/cover-light.png';
@@ -67,7 +67,11 @@ export const SettingsWorkspaceMembers = () => {
     <SettingsPageLayout
       title={t`Members`}
       secondaryBar={
-        <SettingsTabBar tabs={tabs} componentInstanceId={MEMBERS_TAB_LIST_ID} />
+        <SettingsTabBar
+          aria-label={t`Workspace members`}
+          tabs={tabs}
+          componentInstanceId={MEMBERS_TAB_LIST_ID}
+        />
       }
       links={[
         {
@@ -78,7 +82,7 @@ export const SettingsWorkspaceMembers = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
+        <Section.Root>
           <SettingsDiscoveryHeroCard
             lightSrc={coverLight}
             darkSrc={coverDark}
@@ -94,7 +98,7 @@ export const SettingsWorkspaceMembers = () => {
             ]}
             playButtonAriaLabel={t`Watch members demo`}
           />
-        </Section>
+        </Section.Root>
         {renderActiveTabContent()}
       </SettingsPageContainer>
     </SettingsPageLayout>

@@ -20,11 +20,10 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { Avatar } from 'twenty-ui/data-display';
+import { Section } from 'twenty-ui/components';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AdminPanelRecentUsersDocument,
@@ -84,20 +83,20 @@ export const SettingsAdminGeneral = () => {
     <>
       {canAccessFullAdminPanel && (
         <>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`About`}
               description={t`Version of the application`}
             />
             <SettingsAdminVersionContainer />
-          </Section>
+          </Section.Root>
           <SettingsAdminServerAdmins />
         </>
       )}
 
       {(canImpersonate || canAccessFullAdminPanel) && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Recent Users`}
             description={
               canManageFeatureFlags
@@ -145,14 +144,14 @@ export const SettingsAdminGeneral = () => {
                       overflow="hidden"
                     >
                       <Avatar
-                        avatarUrl={getAbsoluteImageUrl(user.avatarUrl)}
-                        placeholder={
+                        src={getAbsoluteImageUrl(user.avatarUrl)}
+                        name={
                           `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
                           user.email
                         }
-                        placeholderColorSeed={user.id}
+                        colorSeed={user.id}
                         size="md"
-                        type="rounded"
+                        shape="circle"
                       />
                       <OverflowingTextWithTooltip
                         text={
@@ -169,9 +168,9 @@ export const SettingsAdminGeneral = () => {
                       {user.workspaceId ? (
                         <>
                           <Avatar
-                            avatarUrl={getAbsoluteImageUrl(user.workspaceLogo)}
-                            placeholder={user.workspaceName || ''}
-                            placeholderColorSeed={user.workspaceId}
+                            src={getAbsoluteImageUrl(user.workspaceLogo)}
+                            name={user.workspaceName || ''}
+                            colorSeed={user.workspaceId}
                             size="sm"
                           />
                           <OverflowingTextWithTooltip
@@ -194,12 +193,12 @@ export const SettingsAdminGeneral = () => {
               </TableBody>
             </Table>
           )}
-        </Section>
+        </Section.Root>
       )}
 
       {canImpersonate && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Top Workspaces`}
             description={t`Top 10 workspaces by number of users`}
           />
@@ -243,9 +242,9 @@ export const SettingsAdminGeneral = () => {
                       overflow="hidden"
                     >
                       <Avatar
-                        avatarUrl={getAbsoluteImageUrl(workspace.logoUrl)}
-                        placeholder={workspace.name || ''}
-                        placeholderColorSeed={workspace.id}
+                        src={getAbsoluteImageUrl(workspace.logoUrl)}
+                        name={workspace.name || ''}
+                        colorSeed={workspace.id}
                         size="md"
                       />
                       <OverflowingTextWithTooltip
@@ -267,7 +266,7 @@ export const SettingsAdminGeneral = () => {
               </TableBody>
             </Table>
           )}
-        </Section>
+        </Section.Root>
       )}
     </>
   );

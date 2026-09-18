@@ -10,6 +10,7 @@ import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider
 
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/compact-tool-output.util';
+import { normalizeToolOutputToJsonValues } from 'src/engine/core-modules/tool-provider/output-transforms/normalize-tool-output-to-json-values.util';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
@@ -144,13 +145,15 @@ export class ToolRegistryService {
           ? (compactToolOutput(result) as ToolOutput)
           : result;
 
-        return spillLargeOutput
-          ? this.toolOutputSpillService.spillIfTooLarge(
+        const inlined = spillLargeOutput
+          ? await this.toolOutputSpillService.spillIfTooLarge(
               compacted,
               { workspaceId: context.workspaceId },
               { toolName: descriptor.name },
             )
           : compacted;
+
+        return normalizeToolOutputToJsonValues(inlined);
       };
 
       toolSet[descriptor.name] = {
@@ -335,13 +338,15 @@ export class ToolRegistryService {
         ? (compactToolOutput(result) as ToolOutput)
         : result;
 
-      return options?.spillLargeOutput
-        ? this.toolOutputSpillService.spillIfTooLarge(
+      const inlined = options?.spillLargeOutput
+        ? await this.toolOutputSpillService.spillIfTooLarge(
             compacted,
             { workspaceId: fullContext.workspaceId },
             { toolName },
           )
         : compacted;
+
+      return normalizeToolOutputToJsonValues(inlined);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);

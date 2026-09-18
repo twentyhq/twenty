@@ -1,7 +1,10 @@
 import { NORMALIZATION_RULES } from './constants/normalization-rules.constant';
 import { type CrowdinContext } from './types/crowdin-context.type';
 import { type CrowdinTranslation } from './types/crowdin-translation.type';
-import { type NormalizationRule } from './types/normalization-rule.type';
+import {
+  type CatalogFormat,
+  type NormalizationRule,
+} from './types/normalization-rule.type';
 import { addTranslation } from './utils/add-translation.util';
 import { deleteTranslation } from './utils/delete-translation.util';
 import { evaluateRules } from './utils/evaluate-rules.util';
@@ -43,20 +46,46 @@ function parseProjectIdOrThrow(): number {
   return projectId;
 }
 
+const CATALOG_FORMATS: CatalogFormat[] = ['po', 'mdx'];
+
+// Selecting by format rather than by name means a new rule protects every
+// project holding that format, instead of only the workflow someone remembered
+// to edit. --rules stays for narrowing a run to one rule by hand.
 function selectRulesOrThrow(): NormalizationRule[] {
+  const requestedFormat = getArgumentValue('format');
   const requestedNames = (getArgumentValue('rules') ?? '')
     .split(',')
     .map((name) => name.trim())
     .filter(Boolean);
+
+  if ((requestedFormat === undefined) === (requestedNames.length === 0)) {
+    throw new Error(
+      `Pass exactly one of --format=${CATALOG_FORMATS.join('|')} or --rules=<name,...>`,
+    );
+  }
+
+  if (requestedFormat !== undefined) {
+    const format = CATALOG_FORMATS.find(
+      (candidate) => candidate === requestedFormat,
+    );
+
+    if (format === undefined) {
+      throw new Error(
+        `Unknown --format=${requestedFormat}. Available: ${CATALOG_FORMATS.join(', ')}`,
+      );
+    }
+
+    return NORMALIZATION_RULES.filter((rule) => rule.formats.includes(format));
+  }
 
   const availableNames = NORMALIZATION_RULES.map((rule) => rule.name);
   const unknownNames = requestedNames.filter(
     (name) => !availableNames.includes(name),
   );
 
-  if (requestedNames.length === 0 || unknownNames.length > 0) {
+  if (unknownNames.length > 0) {
     throw new Error(
-      `Missing or unknown --rules=${unknownNames.join(',')}. Available: ${availableNames.join(', ')}`,
+      `Unknown --rules=${unknownNames.join(',')}. Available: ${availableNames.join(', ')}`,
     );
   }
 
@@ -163,11 +192,16 @@ async function repairOne(
   finding: NormalizationFinding,
 ): Promise<boolean> {
   try {
-    await addTranslation(context, {
-      stringId: finding.stringId,
-      languageId: finding.languageId,
-      text: finding.fixedText,
-    });
+    // An empty repair means the translation could not be salvaged: deleting it
+    // without a replacement falls back to English until Crowdin retranslates.
+    if (finding.fixedText !== '') {
+      await addTranslation(context, {
+        stringId: finding.stringId,
+        languageId: finding.languageId,
+        text: finding.fixedText,
+      });
+    }
+
     await deleteTranslation(context, { translationId: finding.translationId });
 
     return true;
@@ -206,7 +240,9 @@ async function main() {
   );
   console.log(`Rules: ${rules.map((rule) => rule.name).join(', ')}`);
 
-  const needsSourceStrings = rules.some((rule) => rule.sourceFilter);
+  const needsSourceStrings = rules.some(
+    (rule) => rule.sourceFilter !== undefined || rule.needsSourceText === true,
+  );
   const sourceStrings = needsSourceStrings
     ? await fetchSourceStringsById(context)
     : undefined;
@@ -221,7 +257,11 @@ async function main() {
     );
     if (finding.sourceText) console.log(`  source: ${finding.sourceText}`);
     console.log(`  trans:  ${finding.originalText}`);
-    console.log(`  fixed:  ${finding.fixedText}`);
+    console.log(
+      finding.fixedText === ''
+        ? '  fixed:  <deleted, falls back to English until retranslated>'
+        : `  fixed:  ${finding.fixedText}`,
+    );
   }
 
   if (findings.length === 0) {

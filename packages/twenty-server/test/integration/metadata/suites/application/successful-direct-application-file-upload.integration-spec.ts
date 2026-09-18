@@ -1,13 +1,10 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-import request from 'supertest';
-import {
-  type ApplicationFileUploadTarget,
-  completeApplicationFileUploads,
-  createApplicationFileUploads,
-} from 'test/integration/metadata/suites/application/utils/create-application-file-uploads.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { completeApplicationFileUploads } from 'test/integration/metadata/suites/application/utils/complete-application-file-uploads.util';
+import { createApplicationFileUploads } from 'test/integration/metadata/suites/application/utils/create-application-file-uploads.util';
+import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites/application/utils/put-application-file-upload-target.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -25,18 +22,6 @@ const LOGO_CONTENT =
   '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script><circle r="10" /></svg>';
 const EXPECTED_SANITIZED_LOGO_CONTENT =
   '<svg xmlns="http://www.w3.org/2000/svg"><circle r="10"></circle></svg>';
-
-const putToUploadTarget = (
-  uploadTarget: ApplicationFileUploadTarget,
-  body: Buffer,
-) => {
-  const { pathname, search } = new URL(uploadTarget.uploadUrl);
-
-  return request(`http://localhost:${APP_PORT}`)
-    .put(`${pathname}${search}`)
-    .set('Content-Type', uploadTarget.contentType)
-    .send(body);
-};
 
 const readStoredFile = (fileFolder: string, filePath: string) =>
   readFileSync(
@@ -108,8 +93,14 @@ describe('Direct application file upload', () => {
     expect(pendingRow.status).toBe('PENDING');
     expect(pendingRow.mimeType).toBe('application/octet-stream');
 
-    const handlerResponse = await putToUploadTarget(targets[0], handlerBuffer);
-    const logoResponse = await putToUploadTarget(targets[1], logoBuffer);
+    const handlerResponse = await putApplicationFileUploadTarget({
+      uploadTarget: targets[0],
+      body: handlerBuffer,
+    });
+    const logoResponse = await putApplicationFileUploadTarget({
+      uploadTarget: targets[1],
+      body: logoBuffer,
+    });
 
     expect(handlerResponse.status).toBe(204);
     expect(logoResponse.status).toBe(204);

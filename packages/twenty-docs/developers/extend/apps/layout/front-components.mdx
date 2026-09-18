@@ -16,13 +16,13 @@ Front components can render in three locations within Twenty:
 
 - **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
 - **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
-- **App settings** — Defined with [`defineSettingsFrontComponent()`](#custom-settings-component), the front component renders as a section inside the app's **Settings** tab, in place of the default variable configuration UI.
+- **App settings** — Defined with [`defineSettingsFrontComponent()`](#custom-settings-component), the front component is the whole content of the app's **Settings** tab, in place of the default **Variables** tab.
 
 A front component on its own isn't reachable from the UI — you need to *surface* it. The three ways to do that are:
 
 - **Pair it with a [command menu item](/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
 - **Embed it as a widget in a [page layout](/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
-- **Define it with [`defineSettingsFrontComponent()`](#custom-settings-component)** — renders it as a section inside the app's **Settings** tab, in place of the default variable configuration UI.
+- **Define it with [`defineSettingsFrontComponent()`](#custom-settings-component)** — makes it the whole content of the app's **Settings** tab, in place of the default **Variables** tab.
 
 ## Basic example
 
@@ -85,9 +85,9 @@ Beyond commands, you can embed a front component directly into a record page by 
 
 ## Custom settings component
 
-To replace the auto-generated variable configuration UI in your app's **Settings** tab with your own component, define it with `defineSettingsFrontComponent` instead of `defineFrontComponent`. It takes the same [configuration fields](#configuration-fields) (except `isHeadless`, which is not accepted since a settings component always renders visible UI) and additionally marks the component as the app's settings UI.
+To replace the auto-generated variable configuration UI with your own component, define it with `defineSettingsFrontComponent` instead of `defineFrontComponent`. It takes the same [configuration fields](#configuration-fields) (except `isHeadless`, which is not accepted since a settings component always renders visible UI) and additionally marks the component as the app's settings UI.
 
-The component renders as a section **inside** the Settings tab, not as a replacement for the whole tab. Twenty's system-managed sections — auto-upgrade, App URL, and connections — always render above it and cannot be overridden by the app.
+The component is the whole content of a dedicated **Settings** tab, and it replaces the auto-generated **Variables** tab: your app is expected to render its own variables. Twenty's system-managed sections — auto-upgrade, App URL, and connections — live in the app's **General** tab and cannot be overridden by the app.
 
 ```tsx src/front-components/app-settings.tsx
 import { defineSettingsFrontComponent } from 'twenty-sdk/define';
@@ -109,7 +109,7 @@ export default defineSettingsFrontComponent({
 });
 ```
 
-Only one settings front component is allowed per app; declaring more than one fails the build. When present, the app's **Settings** tab renders this component in place of the default variable configuration UI.
+Only one settings front component is allowed per app; declaring more than one fails the build. When present, the app gains a **Settings** tab rendering this component, in place of the default **Variables** tab.
 
 ## Headless vs non-headless
 
@@ -646,7 +646,11 @@ By default, every front component bundles its own copy of the libraries it impor
 
 ```json package.json
 {
-  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+  "frontComponentSharedDependencies": [
+    "react",
+    "react-dom/client",
+    "twenty-ui/primitives/input"
+  ]
 }
 ```
 
@@ -672,7 +676,7 @@ export default defineFrontComponent({
 A few things to know:
 
 - **One shared dependencies bundle per app.** The bundle is built from your app's own dependencies, so you keep full control of the versions you ship.
-- **List the exact specifiers you import.** `twenty-ui/input` and `twenty-ui/display` are two entries; a package name alone does not cover its subpaths. Listing `react` automatically covers `react/jsx-runtime`.
+- **List the exact specifiers you import.** `twenty-ui/primitives/input` and `twenty-ui/primitives/data-display` are two entries; a package name alone does not cover its subpaths. Listing `react` automatically covers `react/jsx-runtime`.
 - **Share `react-dom/client` alongside `react`.** Every component renders through `createRoot`, so leaving it out means each component still bundles React DOM.
 - **The bundle is cached.** It is served under a content-hash URL with a long-lived immutable cache, so it is downloaded once and reused across all components of the app until one of its dependencies changes.
 - **Components that import none of the shared packages never download it.**
@@ -693,7 +697,8 @@ Front components support multiple styling approaches. You can use:
 Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/package/twenty-ui) package. Front components can use it for buttons, tags, status pills, chips, avatars, icons, typography, and theme tokens that automatically match the workspace's light and dark theme.
 
 <Warning>
-`twenty-ui` is still in alpha. Its version number follows the Twenty SDK release cycle. APIs and component behavior may change between releases.
+  `twenty-ui` is still in alpha. Its version number follows the Twenty SDK
+  release cycle. APIs and component behavior may change between releases.
 </Warning>
 
 ### Installation
@@ -701,7 +706,7 @@ Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/pa
 `twenty-ui` is published alongside the SDK packages with the same version. Add it to your app, pinned to the version of `twenty-sdk` and `twenty-client-sdk` you use:
 
 ```bash
-yarn add -D twenty-ui@2.40.0
+yarn add -D twenty-ui@2.42.0
 ```
 
 `twenty-ui` is bundled into your front component at build time, so it only needs to be a dependency of your app — there is nothing to configure at runtime.
@@ -710,26 +715,35 @@ yarn add -D twenty-ui@2.40.0
 
 Import from the matching subpath rather than the package root, so only the components you use end up in your bundle:
 
+Foundational controls are grouped under `twenty-ui/primitives/<family>`.
+Shared design presets and app building blocks are available from `twenty-ui/components`.
+These entry points do not require `monaco-editor`.
+
 | Subpath | What it exports |
 | --- | --- |
-| `twenty-ui/input` | `Button` and form inputs |
-| `twenty-ui/data-display` | `Tag`, `Status`, `Chip`, `Avatar`, and more |
-| `twenty-ui/feedback` | `Callout`, `Banner`, `Info`, and more |
-| `twenty-ui/typography` | `H1Title`, `H2Title`, `H3Title`, `Label`, and more |
+| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers |
+| `twenty-ui/primitives/data-display` | Avatars, chips, tags, status indicators, and display helpers |
+| `twenty-ui/primitives/feedback` | Toasts, banners, progress bars, and loaders |
+| `twenty-ui/primitives/input` | Buttons, form controls, and pickers |
+| `twenty-ui/primitives/json-visualizer` | JSON tree viewer |
+| `twenty-ui/primitives/layout` | Layout, animation, resizing, and section components |
+| `twenty-ui/primitives/navigation` | Links, list items, menus, and tabs |
+| `twenty-ui/primitives/surfaces` | Cards, dialogs, menus, popovers, and tooltips |
+| `twenty-ui/primitives/typography` | Text, headings, labels, and typography helpers |
 | `twenty-ui/icon` | `Icon*` components (e.g. `IconCheck`) |
 | `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables` |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Status, Tag } from 'twenty-ui/data-display';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Status, Tag } from 'twenty-ui/primitives/data-display';
 
 const StyledWidget = () => {
   return (
     <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
-      <Button title="Click me" onClick={() => alert('Clicked!')} />
-      <Tag text="Active" color="green" />
-      <Status color="green" text="Online" />
+      <Button onClick={() => alert('Clicked!')}>Click me</Button>
+      <Tag color="green">Active</Tag>
+      <Status color="green">Online</Status>
     </div>
   );
 };

@@ -2,7 +2,6 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpgradeHealthStatusBadge';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -13,16 +12,16 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { formatUpgradeCommandName, getSettingsPath } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
+import { Section } from 'twenty-ui/components';
 import {
   IconAlertTriangle,
   IconCalendar,
   IconProgressCheck,
   IconStatusChange,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { useToast } from 'twenty-ui/primitives/feedback';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
@@ -44,7 +43,7 @@ const StyledCommandValue = styled.span`
 
 export const SettingsAdminInstanceStatus = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
@@ -80,12 +79,14 @@ export const SettingsAdminInstanceStatus = () => {
     try {
       await refreshUpgradeStatus();
       await refetch();
-      enqueueSuccessSnackBar({
-        message: t`Upgrade status refreshed`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Upgrade status refreshed`,
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      enqueueToast({
+        variant: 'error',
+        children:
           error instanceof Error
             ? error.message
             : t`Failed to refresh upgrade status`,
@@ -110,8 +111,8 @@ export const SettingsAdminInstanceStatus = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Instance status`}
             description={t`Health of the latest instance command`}
           />
@@ -167,13 +168,12 @@ export const SettingsAdminInstanceStatus = () => {
           />
           <StyledRefreshButtonContainer>
             <Button
-              variant="secondary"
-              title={t`Refresh status`}
               onClick={handleRefreshUpgradeStatus}
               disabled={isRefreshingUpgradeStatus || isLoadingUpgradeStatus}
-            />
+              variant="outline"
+            >{t`Refresh status`}</Button>
           </StyledRefreshButtonContainer>
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

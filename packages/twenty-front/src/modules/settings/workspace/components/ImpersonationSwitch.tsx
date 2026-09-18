@@ -1,16 +1,18 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { IconLifebuoy } from 'twenty-ui/icon';
-import { Card } from 'twenty-ui/surfaces';
-import { useMutation } from '@apollo/client/react';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
+import { useToast } from 'twenty-ui/primitives/feedback';
+
 export const ImpersonationSwitch = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -35,9 +37,7 @@ export const ImpersonationSwitch = () => {
         allowImpersonation: value,
       });
     } catch (err: any) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error: err }));
     }
   };
 

@@ -23,6 +23,7 @@ const buildThread = (id: string, title: string): AgentChatThread => ({
   lastMessageAt: '2026-09-07T00:00:00.000Z',
   totalInputTokens: 0,
   totalOutputTokens: 0,
+  totalCacheReadTokens: 0,
   conversationSize: 0,
   totalInputCredits: 0,
   totalOutputCredits: 0,

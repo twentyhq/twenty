@@ -37,9 +37,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg({ message: `Id`, context: 'fieldMetadata.label' })),
+      label: i18nLabel(msg({ message: `ID`, context: 'fieldMetadata.label' })),
       description: i18nLabel(
-        msg({ message: `Id`, context: 'fieldMetadata.description' }),
+        msg({ message: `ID`, context: 'fieldMetadata.description' }),
       ),
       icon: 'Icon123',
       isSystem: true,
@@ -290,7 +290,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       fieldName: 'avatarUrl',
       type: FieldMetadataType.TEXT,
       label: i18nLabel(
-        msg({ message: `Avatar Url`, context: 'fieldMetadata.label' }),
+        msg({ message: `Avatar URL`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
@@ -395,11 +395,11 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       fieldName: 'userId',
       type: FieldMetadataType.UUID,
       label: i18nLabel(
-        msg({ message: `User Id`, context: 'fieldMetadata.label' }),
+        msg({ message: `User ID`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
-          message: `Associated User Id`,
+          message: `Associated User ID`,
           context: 'fieldMetadata.description',
         }),
       ),

@@ -6,9 +6,8 @@ import { MemberNameFields } from '@/settings/members/components/MemberNameFields
 import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type MemberInfosTabProps = {
@@ -43,17 +42,17 @@ export const MemberInfosTab = ({
 
   return (
     <>
-      <Section>
-        <H2Title title={t`Picture`} />
+      <Section.Root>
+        <Section.Header title={t`Picture`} />
         <WorkspaceMemberPictureUploader
           workspaceMemberId={member.id}
           avatarUrl={avatarUrl}
           onAvatarUpdated={setAvatarUrl}
         />
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Name`}
           description={t`As it will be displayed in the workspace`}
         />
@@ -73,39 +72,37 @@ export const MemberInfosTab = ({
             }}
           />
         </StyledNameRow>
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Email`}
           description={t`The email associated to this account`}
         />
         <MemberEmailField email={member.userEmail} />
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Admin`}
           description={t`Perform administrative actions or permanently delete this user`}
         />
         <StyledActionRow>
           {onImpersonate && (
             <Button
-              title={t`Impersonate`}
-              variant="secondary"
-              size="small"
+              size="sm"
               onClick={onImpersonate}
-            />
+              variant="outline"
+            >{t`Impersonate`}</Button>
           )}
           <Button
-            accent="danger"
-            title={t`Delete account`}
-            variant="secondary"
-            size="small"
+            size="sm"
             onClick={onDelete}
-          />
+            variant="outline"
+            color="danger"
+          >{t`Delete account`}</Button>
         </StyledActionRow>
-      </Section>
+      </Section.Root>
     </>
   );
 };

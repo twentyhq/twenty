@@ -1,3 +1,5 @@
+import { Section } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -6,9 +8,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { Tag } from 'twenty-ui/data-display';
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { FindAdminApplicationRegistrationClaimsDocument } from '~/generated-admin/graphql';
 
 const CLAIMS_TABLE_GRID = '1fr 140px';
@@ -33,8 +33,8 @@ export const SettingsAdminApplicationRegistrationClaims = ({
   }
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Ownership`}
         description={t`The workspace that claimed this app registration`}
       />
@@ -49,7 +49,10 @@ export const SettingsAdminApplicationRegistrationClaims = ({
               key={claim.workspaceId}
               gridAutoColumns={CLAIMS_TABLE_GRID}
             >
-              <TableCell overflow="hidden">
+              <TableCell
+                color={themeCssVariables.font.color.primary}
+                overflow="hidden"
+              >
                 {claim.workspaceDisplayName ?? claim.workspaceId}
               </TableCell>
               <TableCell>
@@ -59,6 +62,6 @@ export const SettingsAdminApplicationRegistrationClaims = ({
           ))}
         </TableBody>
       </Table>
-    </Section>
+    </Section.Root>
   );
 };

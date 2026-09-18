@@ -2,12 +2,10 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingPublicDomainRowDropdownMenu } from '@/settings/domains/components/SettingPublicDomainRowDropdownMenu';
 import { useGetAddedRelativeDateDescription } from '@/settings/hooks/useGetAddedRelativeDateDescription';
-import { selectedApplicationIdForPublicDomainState } from '@/settings/domains/states/selectedApplicationIdForPublicDomainState';
-import { selectedPublicDomainState } from '@/settings/domains/states/selectedPublicDomainState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { Status } from 'twenty-ui/data-display';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { IconWorld } from 'twenty-ui/icon';
 import { useQuery } from '@apollo/client/react';
 import {
@@ -27,11 +25,6 @@ export const SettingsPublicDomainsListCard = ({
   const { getAddedRelativeDateDescription } =
     useGetAddedRelativeDateDescription();
 
-  const setSelectedPublicDomain = useSetAtomState(selectedPublicDomainState);
-  const setSelectedApplicationIdForPublicDomain = useSetAtomState(
-    selectedApplicationIdForPublicDomainState,
-  );
-
   const { data, loading } = useQuery(FindManyPublicDomainsDocument);
 
   const publicDomains = data?.findManyPublicDomains?.filter(
@@ -42,17 +35,18 @@ export const SettingsPublicDomainsListCard = ({
     return null;
   }
 
-  const navigateToCreate = () => {
-    setSelectedPublicDomain(undefined);
-    setSelectedApplicationIdForPublicDomain(applicationId);
-    navigate(SettingsPath.PublicDomain);
-  };
+  // The empty-state card and the footer button are plain buttons, they cannot
+  // carry a Link.
+  // oxlint-disable-next-line twenty/no-navigate-prefer-link
+  const navigateToCreate = () =>
+    navigate(SettingsPath.ApplicationPublicDomainNew, { applicationId });
 
   if (publicDomains.length === 0) {
     return (
       <SettingsCard
         title={t`Add Custom Domain`}
         Icon={<IconWorld />}
+        // oxlint-disable-next-line twenty/no-navigate-prefer-link
         onClick={navigateToCreate}
       />
     );
@@ -66,11 +60,12 @@ export const SettingsPublicDomainsListCard = ({
         getAddedRelativeDateDescription(createdAt)
       }
       RowIcon={IconWorld}
-      onRowClick={(publicDomain: PublicDomain) => {
-        setSelectedPublicDomain(publicDomain);
-        setSelectedApplicationIdForPublicDomain(applicationId);
-        navigate(SettingsPath.PublicDomain);
-      }}
+      to={(publicDomain: PublicDomain) =>
+        getSettingsPath(SettingsPath.ApplicationPublicDomainDetail, {
+          applicationId,
+          publicDomainId: publicDomain.id,
+        })
+      }
       RowRightComponent={({ item: publicDomain }) => (
         <>
           {!publicDomain.isValidated && (

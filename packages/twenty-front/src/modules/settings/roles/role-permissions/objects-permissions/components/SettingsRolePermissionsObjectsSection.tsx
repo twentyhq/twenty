@@ -6,8 +6,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTable = styled.div`
@@ -157,8 +156,8 @@ export const SettingsRolePermissionsObjectsSection = ({
   ];
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Objects`}
         description={t`Objects and fields permissions settings`}
       />
@@ -178,6 +177,6 @@ export const SettingsRolePermissionsObjectsSection = ({
           ))}
         </StyledTableRows>
       </StyledTable>
-    </Section>
+    </Section.Root>
   );
 };

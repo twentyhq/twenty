@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { t } from '@lingui/core/macro';
 import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { styled } from '@linaria/react';

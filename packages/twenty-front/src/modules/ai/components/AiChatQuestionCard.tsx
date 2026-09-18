@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent, useContext, useMemo, useState } from 'react';
 import { type AskQuestionAnswer, type AskQuestionItem } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
   IconArrowUp,
   IconChevronLeft,
@@ -20,7 +20,7 @@ import {
   IconSquareNumber8,
   IconSquareNumber9,
 } from 'twenty-ui/icon';
-import { LightIconButton, RoundedIconButton } from 'twenty-ui/input';
+import { LightIconButton, RoundedIconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
@@ -31,6 +31,7 @@ import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { useSubmitQuestionAnswer } from '@/ai/hooks/useSubmitQuestionAnswer';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const NUMBER_ICONS: IconComponent[] = [
@@ -177,7 +178,7 @@ const StyledLeftActions = styled.div`
 const StyledRightActions = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const areAllQuestionsAnswered = (
@@ -454,7 +455,11 @@ export const AiChatQuestionCard = ({
                   )}
                 </StyledOptionLeft>
                 {isDefined(option.description) && (
-                  <>
+                  <Tooltip
+                    content={option.description}
+                    delay={TooltipDelay.shortDelay}
+                    side="left"
+                  >
                     <span
                       id={tooltipId}
                       onClick={(event) => event.stopPropagation()}
@@ -465,13 +470,7 @@ export const AiChatQuestionCard = ({
                         accent="tertiary"
                       />
                     </span>
-                    <AppTooltip
-                      anchorSelect={`#${tooltipId}`}
-                      title={option.description}
-                      delay={TooltipDelay.shortDelay}
-                      place="left"
-                    />
-                  </>
+                  </Tooltip>
                 )}
               </StyledOptionRow>
             );

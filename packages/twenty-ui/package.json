@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "2.41.0",
+  "version": "2.42.0",
   "description": "Twenty's shared React UI component library.",
   "license": "MIT",
   "repository": {
@@ -30,7 +30,9 @@
   ],
   "devDependencies": {
     "@argos-ci/storybook": "6.2.3",
+    "@fontsource/dm-mono": "^5.2.7",
     "@fontsource/inter": "^5.2.8",
+    "@monaco-editor/react": "^4.7.0",
     "@prettier/sync": "^0.5.2",
     "@size-limit/preset-small-lib": "^12.1.0",
     "@storybook-community/storybook-addon-cookie": "^5.0.0",
@@ -51,8 +53,10 @@
     "esbuild": "^0.28.1",
     "glob": "^11.1.0",
     "jsdom": "^30.0.1",
+    "monaco-editor": "0.52.2",
     "prettier": "^3.1.1",
     "react": "^19.2.0",
+    "react-docgen-typescript": "^2.2.2",
     "react-dom": "^19.2.0",
     "sass": "^1.83.0",
     "sass-embedded": "^1.83.0",
@@ -69,7 +73,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
-    "@monaco-editor/react": "^4.7.0",
+    "@base-ui/utils": "0.4.0",
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "clsx": "^2.1.1",
@@ -79,6 +83,7 @@
     "zod": "^4.1.11"
   },
   "peerDependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "monaco-editor": ">= 0.25.0 < 1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -102,60 +107,80 @@
     "./style.css": "./dist/style.css",
     "./theme-light.css": "./dist/theme-light.css",
     "./theme-dark.css": "./dist/theme-dark.css",
-    "./accessibility": {
-      "types": "./dist/accessibility/index.d.ts",
-      "import": "./dist/accessibility.mjs",
-      "require": "./dist/accessibility.cjs"
-    },
     "./assets": {
       "types": "./dist/assets/index.d.ts",
       "import": "./dist/assets.mjs",
       "require": "./dist/assets.cjs"
     },
-    "./data-display": {
-      "types": "./dist/data-display/index.d.ts",
-      "import": "./dist/data-display.mjs",
-      "require": "./dist/data-display.cjs"
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components.mjs",
+      "require": "./dist/components.cjs"
     },
-    "./feedback": {
-      "types": "./dist/feedback/index.d.ts",
-      "import": "./dist/feedback.mjs",
-      "require": "./dist/feedback.cjs"
+    "./components/code-editor": {
+      "types": "./dist/components/code-editor/index.d.ts",
+      "import": "./dist/components/code-editor.mjs",
+      "require": "./dist/components/code-editor.cjs"
     },
     "./icon": {
       "types": "./dist/icon/index.d.ts",
       "import": "./dist/icon.mjs",
       "require": "./dist/icon.cjs"
     },
-    "./input": {
-      "types": "./dist/input/index.d.ts",
-      "import": "./dist/input.mjs",
-      "require": "./dist/input.cjs"
+    "./primitives": {
+      "types": "./dist/primitives/index.d.ts",
+      "import": "./dist/primitives.mjs",
+      "require": "./dist/primitives.cjs"
     },
-    "./json-visualizer": {
-      "types": "./dist/json-visualizer/index.d.ts",
-      "import": "./dist/json-visualizer.mjs",
-      "require": "./dist/json-visualizer.cjs"
+    "./primitives/accessibility": {
+      "types": "./dist/primitives/accessibility/index.d.ts",
+      "import": "./dist/primitives/accessibility.mjs",
+      "require": "./dist/primitives/accessibility.cjs"
     },
-    "./layout": {
-      "types": "./dist/layout/index.d.ts",
-      "import": "./dist/layout.mjs",
-      "require": "./dist/layout.cjs"
+    "./primitives/data-display": {
+      "types": "./dist/primitives/data-display/index.d.ts",
+      "import": "./dist/primitives/data-display.mjs",
+      "require": "./dist/primitives/data-display.cjs"
     },
-    "./navigation": {
-      "types": "./dist/navigation/index.d.ts",
-      "import": "./dist/navigation.mjs",
-      "require": "./dist/navigation.cjs"
+    "./primitives/feedback": {
+      "types": "./dist/primitives/feedback/index.d.ts",
+      "import": "./dist/primitives/feedback.mjs",
+      "require": "./dist/primitives/feedback.cjs"
+    },
+    "./primitives/input": {
+      "types": "./dist/primitives/input/index.d.ts",
+      "import": "./dist/primitives/input.mjs",
+      "require": "./dist/primitives/input.cjs"
+    },
+    "./primitives/json-visualizer": {
+      "types": "./dist/primitives/json-visualizer/index.d.ts",
+      "import": "./dist/primitives/json-visualizer.mjs",
+      "require": "./dist/primitives/json-visualizer.cjs"
+    },
+    "./primitives/layout": {
+      "types": "./dist/primitives/layout/index.d.ts",
+      "import": "./dist/primitives/layout.mjs",
+      "require": "./dist/primitives/layout.cjs"
+    },
+    "./primitives/navigation": {
+      "types": "./dist/primitives/navigation/index.d.ts",
+      "import": "./dist/primitives/navigation.mjs",
+      "require": "./dist/primitives/navigation.cjs"
+    },
+    "./primitives/surfaces": {
+      "types": "./dist/primitives/surfaces/index.d.ts",
+      "import": "./dist/primitives/surfaces.mjs",
+      "require": "./dist/primitives/surfaces.cjs"
+    },
+    "./primitives/typography": {
+      "types": "./dist/primitives/typography/index.d.ts",
+      "import": "./dist/primitives/typography.mjs",
+      "require": "./dist/primitives/typography.cjs"
     },
     "./styles": {
       "types": "./dist/styles/index.d.ts",
       "import": "./dist/styles.mjs",
       "require": "./dist/styles.cjs"
-    },
-    "./surfaces": {
-      "types": "./dist/surfaces/index.d.ts",
-      "import": "./dist/surfaces.mjs",
-      "require": "./dist/surfaces.cjs"
     },
     "./testing": {
       "types": "./dist/testing/index.d.ts",
@@ -172,11 +197,6 @@
       "import": "./dist/theme-constants.mjs",
       "require": "./dist/theme-constants.cjs"
     },
-    "./typography": {
-      "types": "./dist/typography/index.d.ts",
-      "import": "./dist/typography.mjs",
-      "require": "./dist/typography.cjs"
-    },
     "./utilities": {
       "types": "./dist/utilities/index.d.ts",
       "import": "./dist/utilities.mjs",
@@ -185,38 +205,50 @@
   },
   "typesVersions": {
     "*": {
-      "accessibility": [
-        "dist/accessibility/index.d.ts"
-      ],
       "assets": [
         "dist/assets/index.d.ts"
       ],
-      "data-display": [
-        "dist/data-display/index.d.ts"
+      "components": [
+        "dist/components/index.d.ts"
       ],
-      "feedback": [
-        "dist/feedback/index.d.ts"
+      "components/code-editor": [
+        "dist/components/code-editor/index.d.ts"
       ],
       "icon": [
         "dist/icon/index.d.ts"
       ],
-      "input": [
-        "dist/input/index.d.ts"
+      "primitives": [
+        "dist/primitives/index.d.ts"
       ],
-      "json-visualizer": [
-        "dist/json-visualizer/index.d.ts"
+      "primitives/accessibility": [
+        "dist/primitives/accessibility/index.d.ts"
       ],
-      "layout": [
-        "dist/layout/index.d.ts"
+      "primitives/data-display": [
+        "dist/primitives/data-display/index.d.ts"
       ],
-      "navigation": [
-        "dist/navigation/index.d.ts"
+      "primitives/feedback": [
+        "dist/primitives/feedback/index.d.ts"
+      ],
+      "primitives/input": [
+        "dist/primitives/input/index.d.ts"
+      ],
+      "primitives/json-visualizer": [
+        "dist/primitives/json-visualizer/index.d.ts"
+      ],
+      "primitives/layout": [
+        "dist/primitives/layout/index.d.ts"
+      ],
+      "primitives/navigation": [
+        "dist/primitives/navigation/index.d.ts"
+      ],
+      "primitives/surfaces": [
+        "dist/primitives/surfaces/index.d.ts"
+      ],
+      "primitives/typography": [
+        "dist/primitives/typography/index.d.ts"
       ],
       "styles": [
         "dist/styles/index.d.ts"
-      ],
-      "surfaces": [
-        "dist/surfaces/index.d.ts"
       ],
       "testing": [
         "dist/testing/index.d.ts"
@@ -227,12 +259,17 @@
       "theme-constants": [
         "dist/theme-constants/index.d.ts"
       ],
-      "typography": [
-        "dist/typography/index.d.ts"
-      ],
       "utilities": [
         "dist/utilities/index.d.ts"
       ]
+    }
+  },
+  "peerDependenciesMeta": {
+    "@monaco-editor/react": {
+      "optional": true
+    },
+    "monaco-editor": {
+      "optional": true
     }
   }
 }

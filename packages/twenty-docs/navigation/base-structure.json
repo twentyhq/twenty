@@ -444,6 +444,7 @@
                 "developers/extend/apps/logic/background-jobs",
                 "developers/extend/apps/logic/skills-and-agents",
                 "developers/extend/apps/logic/connections",
+                "developers/extend/apps/logic/messaging-channels",
                 "developers/extend/apps/logic/credits"
               ]
             },
@@ -467,14 +468,8 @@
                 "developers/extend/apps/operations/cli",
                 "developers/extend/apps/operations/sync-and-recovery",
                 "developers/extend/apps/operations/testing",
+                "developers/extend/apps/operations/translations",
                 "developers/extend/apps/operations/publishing"
-              ]
-            },
-            {
-              "key": "appsTranslations",
-              "label": "Translations",
-              "pages": [
-                "developers/extend/apps/translations/overview"
               ]
             }
           ]
@@ -505,6 +500,103 @@
             "developers/contribute/capabilities/local-setup",
             "developers/contribute/commands",
             "developers/contribute/style-guide"
+          ]
+        },
+        {
+          "key": "uiLibrary",
+          "label": "UI Library",
+          "pages": [
+            {
+              "key": "uiGuides",
+              "label": "Guides",
+              "pages": [
+                "ui/getting-started",
+                "ui/theming",
+                "ui/tokens",
+                "ui/dark-mode",
+                "ui/ssr",
+                "ui/accessibility"
+              ]
+            },
+            {
+              "key": "uiPrimitives",
+              "label": "Primitives",
+              "pages": [
+                "ui/primitives/overview",
+                {
+                  "key": "uiDataDisplay",
+                  "label": "Data display",
+                  "pages": [
+                    "ui/primitives/data-display/avatar",
+                    "ui/primitives/data-display/chip",
+                    "ui/primitives/data-display/tag",
+                    "ui/primitives/data-display/status"
+                  ]
+                },
+                {
+                  "key": "uiForms",
+                  "label": "Forms",
+                  "pages": [
+                    "ui/primitives/input/button",
+                    "ui/primitives/input/button-group",
+                    "ui/primitives/input/field",
+                    "ui/primitives/input/input",
+                    "ui/primitives/input/input-group",
+                    "ui/primitives/input/textarea",
+                    "ui/primitives/input/checkbox",
+                    "ui/primitives/input/radio",
+                    "ui/primitives/input/radio-group",
+                    "ui/primitives/input/select",
+                    "ui/primitives/input/slider",
+                    "ui/primitives/input/switch"
+                  ]
+                },
+                {
+                  "key": "uiNavigation",
+                  "label": "Navigation",
+                  "pages": [
+                    "ui/primitives/navigation/list-item",
+                    "ui/primitives/navigation/tabs"
+                  ]
+                },
+                {
+                  "key": "uiSurfaces",
+                  "label": "Surfaces",
+                  "pages": [
+                    "ui/primitives/surfaces/alert-dialog",
+                    "ui/primitives/surfaces/dialog",
+                    "ui/primitives/surfaces/menu",
+                    "ui/primitives/surfaces/popover"
+                  ]
+                },
+                {
+                  "key": "uiFeedback",
+                  "label": "Feedback",
+                  "pages": ["ui/primitives/feedback/toast"]
+                },
+                {
+                  "key": "uiTypography",
+                  "label": "Typography",
+                  "pages": [
+                    "ui/primitives/typography/heading",
+                    "ui/primitives/typography/text"
+                  ]
+                }
+              ]
+            },
+            {
+              "key": "uiComponents",
+              "label": "Components",
+              "pages": [
+                "ui/components/overview",
+                "ui/components/input/main-button",
+                "ui/components/input/light-button",
+                "ui/components/input/icon-button",
+                "ui/components/section",
+                "ui/components/tab-button",
+                "ui/components/code-editor"
+              ]
+            }
           ]
         }
       ]

@@ -10,25 +10,25 @@ import {
   makeTab,
   makeWidget,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
-import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getIsFirstTabPinned } from '@/page-layout/utils/getIsFirstTabPinned';
+import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SidePanelPageLayoutTabSettingsContent } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { PageLayoutType } from '~/generated-metadata/graphql';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const PAGE_LAYOUT_ID = 'tab-settings-story';
 const RECORD_ID = 'record-id';
@@ -43,6 +43,7 @@ const TAB_LIST_INSTANCE_ID = getTabListInstanceIdFromPageLayoutAndRecord({
 
 const TabSelectionPreview = () => {
   const { hash } = useLocation();
+  const isInEditMode = useAtomStateValue(isLayoutCustomizationModeEnabledState);
   const { cancel } = useCancelLayoutCustomization();
   const isMobile = useIsMobile();
   const pageLayoutDraft = useAtomComponentStateValue(
@@ -61,11 +62,9 @@ const TabSelectionPreview = () => {
   return (
     <>
       <PageLayoutTabListEffect
+        isInEditMode={isInEditMode}
         tabs={tabsToRenderInTabList}
         componentInstanceId={TAB_LIST_INSTANCE_ID}
-      />
-      <TabListFromUrlOptionalEffect
-        tabListIds={tabsToRenderInTabList.map((tab) => tab.id)}
       />
       <output aria-label="Current tab URL">{hash}</output>
       <output aria-label="Active tab">{activeTabId}</output>
@@ -141,7 +140,7 @@ const meta: Meta<typeof SidePanelPageLayoutTabSettingsContent> = {
     ]);
   },
   decorators: [
-    SnackBarDecorator,
+    ToastDecorator,
     (Story, { parameters }) => (
       <MemoryRouter
         initialEntries={[

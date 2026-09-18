@@ -1,6 +1,7 @@
+import { Section } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -11,14 +12,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { IconArchive, IconSettings } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { SearchInput } from 'twenty-ui/input';
-import { MenuItemSwitch } from 'twenty-ui/navigation';
+import { SearchInput } from 'twenty-ui/primitives/input';
+import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/layout';
 import {
   ActivateSkillDocument,
   DeleteSkillDocument,
@@ -35,7 +34,7 @@ const StyledSearchContainer = styled.div`
 
 export const SettingsAgentSkillsTab = () => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const { data, loading, refetch } = useQuery(FindManySkillsDocument);
   const [activateSkill] = useMutation(ActivateSkillDocument);
@@ -102,26 +101,26 @@ export const SettingsAgentSkillsTab = () => {
   const handleActivate = async (skillId: string) => {
     try {
       await activateSkill({ variables: { id: skillId } });
-      enqueueSuccessSnackBar({ message: t`Skill activated` });
+      enqueueToast({ variant: 'success', children: t`Skill activated` });
       refetch();
     } catch {
-      enqueueErrorSnackBar({ message: t`Failed to activate skill` });
+      enqueueToast({ variant: 'error', children: t`Failed to activate skill` });
     }
   };
 
   const handleDelete = async (skillId: string) => {
     try {
       await deleteSkill({ variables: { id: skillId } });
-      enqueueSuccessSnackBar({ message: t`Skill deleted` });
+      enqueueToast({ variant: 'success', children: t`Skill deleted` });
       refetch();
     } catch {
-      enqueueErrorSnackBar({ message: t`Failed to delete skill` });
+      enqueueToast({ variant: 'error', children: t`Failed to delete skill` });
     }
   };
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Skills`}
         description={t`Use filter to see existing skills or create your own`}
       />
@@ -169,6 +168,6 @@ export const SettingsAgentSkillsTab = () => {
         onActivate={handleActivate}
         onDelete={handleDelete}
       />
-    </Section>
+    </Section.Root>
   );
 };

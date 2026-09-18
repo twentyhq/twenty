@@ -9,7 +9,7 @@ import {
   JsonTreeContextProvider,
   type JsonTreeContextType,
   JsonValueNode,
-} from 'twenty-ui/json-visualizer';
+} from 'twenty-ui/primitives/json-visualizer';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import {
@@ -118,7 +118,7 @@ const JSON_VISUALIZER_ENTRIES: GalleryEntry[] = [
 const JsonVisualizerGallery = () => (
   <ThemeProvider colorScheme="light">
     <ComponentGallery
-      title="twenty-ui/json-visualizer"
+      title="twenty-ui/primitives/json-visualizer"
       entries={JSON_VISUALIZER_ENTRIES}
     />
   </ThemeProvider>
@@ -128,6 +128,6 @@ export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000106',
   name: 'twenty-ui-json-visualizer-gallery',
   description:
-    'Renders every twenty-ui/json-visualizer component in the sandbox',
+    'Renders every twenty-ui/primitives/json-visualizer component in the sandbox',
   component: JsonVisualizerGallery,
 });

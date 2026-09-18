@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { TintedIconTile } from 'twenty-ui/data-display';
+import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import {
   IconBuildingSkyscraper,
   IconDotsVertical,
   IconLayoutSidebarRight,
   IconPlus,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/input';
+import { Button, LightIconButton } from 'twenty-ui/primitives/input';
 
 import { BackgroundMockTable } from '@/sign-in-background-mock/components/BackgroundMockTable';
 import { BackgroundMockViewBar } from '@/sign-in-background-mock/components/BackgroundMockViewBar';
@@ -33,22 +33,21 @@ export const BackgroundMockPage = () => {
           actionButton={
             <>
               <Button
-                Icon={IconPlus}
-                title={t`New Company`}
-                variant="primary"
-                accent="blue"
-                size="small"
-              />
+                startIcon={<IconPlus />}
+                size="sm"
+                variant="solid"
+                color="accent"
+              >{t`New Company`}</Button>
               <LightIconButton
                 Icon={IconDotsVertical}
                 accent="tertiary"
                 size="small"
               />
               <Button
-                Icon={IconLayoutSidebarRight}
-                variant="secondary"
-                accent="default"
-                size="small"
+                startIcon={<IconLayoutSidebarRight />}
+                aria-label={t`Open side panel`}
+                size="sm"
+                variant="outline"
               />
             </>
           }

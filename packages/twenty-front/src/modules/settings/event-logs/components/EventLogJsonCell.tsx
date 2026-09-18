@@ -2,11 +2,14 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useRef, useState } from 'react';
 
-import { JsonDisplay } from 'twenty-ui/data-display';
+import { JsonDisplay } from 'twenty-ui/primitives/data-display';
 import { ExpandedFieldDisplay } from '@/ui/layout/expandable-list/components/ExpandedFieldDisplay';
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
-import { isTwoFirstDepths, JsonTree } from 'twenty-ui/json-visualizer';
+import {
+  isTwoFirstDepths,
+  JsonTree,
+} from 'twenty-ui/primitives/json-visualizer';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

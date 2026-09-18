@@ -11,10 +11,7 @@ import {
   AutogrowWrapper,
   HorizontalSeparator,
   ResizeHandle,
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui/layout';
+} from 'twenty-ui/primitives/layout';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import {
@@ -74,28 +71,21 @@ const LAYOUT_ENTRIES: GalleryEntry[] = [
     name: 'ResizeHandle',
     node: <ResizeHandle />,
   },
-  {
-    name: 'Section',
-    node: (
-      <Section
-        alignment={SectionAlignment.Left}
-        fontColor={SectionFontColor.Primary}
-      >
-        Section
-      </Section>
-    ),
-  },
 ];
 
 const LayoutGallery = () => (
   <ThemeProvider colorScheme="light">
-    <ComponentGallery title="twenty-ui/layout" entries={LAYOUT_ENTRIES} />
+    <ComponentGallery
+      title="twenty-ui/primitives/layout"
+      entries={LAYOUT_ENTRIES}
+    />
   </ThemeProvider>
 );
 
 export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000103',
   name: 'twenty-ui-layout-gallery',
-  description: 'Renders every twenty-ui/layout component in the sandbox',
+  description:
+    'Renders every twenty-ui/primitives/layout component in the sandbox',
   component: LayoutGallery,
 });

@@ -14,14 +14,18 @@ import { SETTINGS_UNSUBSCRIBERS_ALL_FILTER } from '@/settings/unsubscribers/cons
 import { MESSAGE_SUPPRESSIONS_PAGE_SIZE } from '@/settings/unsubscribers/constants/MessageSuppressionsPageSize';
 import { useMessageSuppressions } from '@/settings/unsubscribers/hooks/useMessageSuppressions';
 import { getMessageSuppressionReasonBadge } from '@/settings/unsubscribers/utils/getMessageSuppressionReasonBadge';
-import { Status } from 'twenty-ui/data-display';
-import { SearchInput } from 'twenty-ui/input';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { SearchInput } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   MessageSuppressionReason,
   type MessageSuppressionsQuery,
 } from '~/generated-metadata/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
+
+const StyledEmailAddress = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+`;
 
 type MessageSuppression =
   MessageSuppressionsQuery['messageSuppressions']['records'][number];
@@ -145,7 +149,9 @@ export const SettingsUnsubscribersList = () => {
         columns={[
           {
             label: t`Email address`,
-            Cell: ({ item }) => <>{item.emailAddress}</>,
+            Cell: ({ item }) => (
+              <StyledEmailAddress>{item.emailAddress}</StyledEmailAddress>
+            ),
           },
           {
             label: t`Scope`,

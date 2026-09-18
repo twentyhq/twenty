@@ -2,11 +2,11 @@ import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabL
 import { makeTab } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
-import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { render, screen } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
+import { StrictMode } from 'react';
 import { MemoryRouter, useLocation, useNavigationType } from 'react-router-dom';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
@@ -106,18 +106,52 @@ describe('PageLayoutTabListEffect', () => {
       expectedActiveTabId: 'timeline',
       expectedNavigationType: 'REPLACE',
     },
+    {
+      name: 'ignores a deep link while editing',
+      activeTabId: 'timeline',
+      hash: '#notes',
+      isInEditMode: true,
+      isInSidePanel: false,
+      ownsRouteLocation: true,
+      expectedHash: '#notes',
+      expectedActiveTabId: 'timeline',
+      expectedNavigationType: 'POP',
+    },
+    {
+      name: 'does not rewrite a stale hash while editing',
+      activeTabId: 'home',
+      hash: '#home',
+      isInEditMode: true,
+      isInSidePanel: false,
+      ownsRouteLocation: true,
+      expectedHash: '#home',
+      expectedActiveTabId: 'timeline',
+      expectedNavigationType: 'POP',
+    },
+    {
+      name: 'ignores the main URL when initializing an embedded side panel',
+      activeTabId: null,
+      hash: '#notes',
+      isInSidePanel: true,
+      ownsRouteLocation: false,
+      expectedHash: '#notes',
+      expectedActiveTabId: 'timeline',
+      expectedNavigationType: 'POP',
+    },
   ])(
     '$name',
     ({
       activeTabId,
       hash,
       isInSidePanel,
+      isInEditMode = false,
       ownsRouteLocation,
       expectedHash,
       expectedActiveTabId,
       expectedNavigationType,
     }) => {
       const store = createStore();
+      const onChangeTab = jest.fn();
       const surfaceInstanceId = isInSidePanel ? 'side-panel-page-1' : 'main';
       const activeTabAtom = activeTabIdComponentState.atomFamily({
         instanceId: TAB_LIST_INSTANCE_ID,
@@ -125,46 +159,47 @@ describe('PageLayoutTabListEffect', () => {
       store.set(activeTabAtom, activeTabId);
 
       render(
-        <Provider store={store}>
-          <MemoryRouter
-            initialEntries={[
-              `/object/company/record-id?viewId=company-view${hash}`,
-            ]}
-          >
-            <WorkspaceSurfaceContext.Provider
-              value={{
-                type: isInSidePanel ? 'side-panel' : 'main',
-                instanceId: surfaceInstanceId,
-                ownsRouteLocation,
-              }}
+        <StrictMode>
+          <Provider store={store}>
+            <MemoryRouter
+              initialEntries={[
+                `/object/company/record-id?viewId=company-view${hash}`,
+              ]}
             >
-              <LayoutRenderingProvider
+              <WorkspaceSurfaceContext.Provider
                 value={{
-                  layoutType: PageLayoutType.RECORD_PAGE,
-                  targetRecordIdentifier: {
-                    id: 'record-id',
-                    targetObjectNameSingular: 'company',
-                  },
+                  type: isInSidePanel ? 'side-panel' : 'main',
+                  instanceId: surfaceInstanceId,
+                  ownsRouteLocation,
                 }}
               >
-                <TabListComponentInstanceContext.Provider
+                <LayoutRenderingProvider
                   value={{
-                    instanceId: TAB_LIST_INSTANCE_ID,
+                    layoutType: PageLayoutType.RECORD_PAGE,
+                    targetRecordIdentifier: {
+                      id: 'record-id',
+                      targetObjectNameSingular: 'company',
+                    },
                   }}
                 >
-                  <PageLayoutTabListEffect
-                    tabs={[makeTab('timeline', []), makeTab('notes', [], 1)]}
-                    componentInstanceId={TAB_LIST_INSTANCE_ID}
-                  />
-                  <TabListFromUrlOptionalEffect
-                    tabListIds={['timeline', 'notes']}
-                  />
-                  <CurrentLocation />
-                </TabListComponentInstanceContext.Provider>
-              </LayoutRenderingProvider>
-            </WorkspaceSurfaceContext.Provider>
-          </MemoryRouter>
-        </Provider>,
+                  <TabListComponentInstanceContext.Provider
+                    value={{
+                      instanceId: TAB_LIST_INSTANCE_ID,
+                    }}
+                  >
+                    <PageLayoutTabListEffect
+                      isInEditMode={isInEditMode}
+                      onChangeTab={onChangeTab}
+                      tabs={[makeTab('timeline', []), makeTab('notes', [], 1)]}
+                      componentInstanceId={TAB_LIST_INSTANCE_ID}
+                    />
+                    <CurrentLocation />
+                  </TabListComponentInstanceContext.Provider>
+                </LayoutRenderingProvider>
+              </WorkspaceSurfaceContext.Provider>
+            </MemoryRouter>
+          </Provider>
+        </StrictMode>,
       );
 
       expect(
@@ -173,6 +208,12 @@ describe('PageLayoutTabListEffect', () => {
         `/object/company/record-id?viewId=company-view${expectedHash}`,
       );
       expect(store.get(activeTabAtom)).toBe(expectedActiveTabId);
+      expect(onChangeTab).toHaveBeenCalledTimes(
+        activeTabId === expectedActiveTabId ? 0 : 1,
+      );
+      if (activeTabId !== expectedActiveTabId) {
+        expect(onChangeTab).toHaveBeenCalledWith(expectedActiveTabId);
+      }
       expect(
         screen.getByRole('status', { name: 'Navigation type' }),
       ).toHaveTextContent(expectedNavigationType);

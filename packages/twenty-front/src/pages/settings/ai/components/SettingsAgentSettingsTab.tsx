@@ -7,12 +7,11 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent } from '~/generated-metadata/graphql';
 import { SettingsAgentDeleteConfirmationModal } from '~/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal';
@@ -62,7 +61,7 @@ export const SettingsAgentSettingsTab = ({
   agent,
 }: SettingsAgentSettingsTabProps) => {
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const aiModels = useAtomStateValue(aiModelsState);
   const noModelsAvailable = aiModels.length === 0;
@@ -157,16 +156,18 @@ export const SettingsAgentSettingsTab = ({
         />
       </StyledFormContainer>
       {!disabled && agent && formValues.isCustom && (
-        <Section>
-          <H2Title title={t`Danger zone`} description={t`Delete this agent`} />
-          <Button
-            accent="danger"
-            variant="secondary"
-            title={t`Delete Agent`}
-            Icon={IconTrash}
-            onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
+        <Section.Root>
+          <Section.Header
+            title={t`Danger zone`}
+            description={t`Delete this agent`}
           />
-        </Section>
+          <Button
+            startIcon={<IconTrash />}
+            onClick={() => openDialog(DELETE_AGENT_MODAL_ID)}
+            variant="outline"
+            color="danger"
+          >{t`Delete Agent`}</Button>
+        </Section.Root>
       )}
       {!disabled && agent && (
         <SettingsAgentDeleteConfirmationModal

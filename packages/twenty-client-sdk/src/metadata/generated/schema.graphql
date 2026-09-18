@@ -266,6 +266,7 @@ type Object {
   isSearchable: Boolean!
   openRecordIn: ObjectOpenRecordIn!
   readability: MetadataReadability!
+  readabilityParentFieldUniversalIdentifiers: [UUID!]
   writability: MetadataWritability!
   applicationId: UUID!
   createdAt: DateTime!
@@ -953,6 +954,128 @@ type ApplicationRegistration {
   galleryImagesUrls: [String!]!
 }
 
+type BillingSubscriptionSchedulePhaseItem {
+  price: String!
+  quantity: Float
+}
+
+type BillingSubscriptionSchedulePhase {
+  start_date: Float!
+  end_date: Float!
+  items: [BillingSubscriptionSchedulePhaseItem!]!
+}
+
+type BillingProductMetadata {
+  planKey: BillingPlanKey!
+  priceUsageBased: BillingUsageType!
+  productKey: BillingProductKey!
+  isLegacy: String
+}
+
+"""The different billing plans available"""
+enum BillingPlanKey {
+  PRO
+  ENTERPRISE
+}
+
+enum BillingUsageType {
+  METERED
+  LICENSED
+}
+
+"""The different billing products available"""
+enum BillingProductKey {
+  BASE_PRODUCT
+  RESOURCE_CREDIT
+}
+
+type BillingPriceLicensed {
+  recurringInterval: SubscriptionInterval!
+  unitAmount: Float!
+  stripePriceId: String!
+  priceUsageType: BillingUsageType!
+  creditAmount: Float
+  isSellable: Boolean!
+}
+
+enum SubscriptionInterval {
+  Month
+  Year
+}
+
+type BillingPriceTier {
+  upTo: Float
+  flatAmount: Float
+  unitAmount: Float
+}
+
+type BillingPriceMetered {
+  tiers: [BillingPriceTier!]!
+  recurringInterval: SubscriptionInterval!
+  stripePriceId: String!
+  priceUsageType: BillingUsageType!
+}
+
+type BillingProduct {
+  name: String!
+  description: String!
+  images: [String!]
+  metadata: BillingProductMetadata!
+}
+
+type BillingLicensedProduct implements BillingProductDTO {
+  name: String!
+  description: String!
+  images: [String!]
+  metadata: BillingProductMetadata!
+  prices: [BillingPriceLicensed!]
+}
+
+type BillingMeteredProduct implements BillingProductDTO {
+  name: String!
+  description: String!
+  images: [String!]
+  metadata: BillingProductMetadata!
+  prices: [BillingPriceMetered!]
+}
+
+type BillingSubscriptionItem {
+  id: UUID!
+  hasReachedCurrentPeriodCap: Boolean!
+  quantity: Float
+  stripePriceId: String!
+  unitAmount: Float
+  creditAmount: Float
+  billingProduct: BillingProductDTO!
+}
+
+type BillingSubscription {
+  id: UUID!
+  status: SubscriptionStatus!
+  interval: SubscriptionInterval
+  billingSubscriptionItems: [BillingSubscriptionItem!]
+  currentPeriodEnd: DateTime
+  metadata: JSON!
+  phases: [BillingSubscriptionSchedulePhase!]!
+  cancelAt: DateTime
+}
+
+enum SubscriptionStatus {
+  Active
+  Canceled
+  Incomplete
+  IncompleteExpired
+  PastDue
+  Paused
+  Trialing
+  Unpaid
+}
+
+type BillingCustomer {
+  id: UUID!
+  hasPaymentMethod: Boolean
+}
+
 type SdkClientChecksums {
   core: String
   metadata: String!
@@ -1413,128 +1536,6 @@ type ApplicationConnectionProvider {
   logoUrl: String
 }
 
-type BillingSubscriptionSchedulePhaseItem {
-  price: String!
-  quantity: Float
-}
-
-type BillingSubscriptionSchedulePhase {
-  start_date: Float!
-  end_date: Float!
-  items: [BillingSubscriptionSchedulePhaseItem!]!
-}
-
-type BillingProductMetadata {
-  planKey: BillingPlanKey!
-  priceUsageBased: BillingUsageType!
-  productKey: BillingProductKey!
-  isLegacy: String
-}
-
-"""The different billing plans available"""
-enum BillingPlanKey {
-  PRO
-  ENTERPRISE
-}
-
-enum BillingUsageType {
-  METERED
-  LICENSED
-}
-
-"""The different billing products available"""
-enum BillingProductKey {
-  BASE_PRODUCT
-  RESOURCE_CREDIT
-}
-
-type BillingPriceLicensed {
-  recurringInterval: SubscriptionInterval!
-  unitAmount: Float!
-  stripePriceId: String!
-  priceUsageType: BillingUsageType!
-  creditAmount: Float
-  isSellable: Boolean!
-}
-
-enum SubscriptionInterval {
-  Month
-  Year
-}
-
-type BillingPriceTier {
-  upTo: Float
-  flatAmount: Float
-  unitAmount: Float
-}
-
-type BillingPriceMetered {
-  tiers: [BillingPriceTier!]!
-  recurringInterval: SubscriptionInterval!
-  stripePriceId: String!
-  priceUsageType: BillingUsageType!
-}
-
-type BillingProduct {
-  name: String!
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-}
-
-type BillingLicensedProduct implements BillingProductDTO {
-  name: String!
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  prices: [BillingPriceLicensed!]
-}
-
-type BillingMeteredProduct implements BillingProductDTO {
-  name: String!
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  prices: [BillingPriceMetered!]
-}
-
-type BillingSubscriptionItem {
-  id: UUID!
-  hasReachedCurrentPeriodCap: Boolean!
-  quantity: Float
-  stripePriceId: String!
-  unitAmount: Float
-  creditAmount: Float
-  billingProduct: BillingProductDTO!
-}
-
-type BillingCustomer {
-  id: UUID!
-  hasPaymentMethod: Boolean
-}
-
-type BillingSubscription {
-  id: UUID!
-  status: SubscriptionStatus!
-  interval: SubscriptionInterval
-  billingSubscriptionItems: [BillingSubscriptionItem!]
-  currentPeriodEnd: DateTime
-  metadata: JSON!
-  phases: [BillingSubscriptionSchedulePhase!]!
-  cancelAt: DateTime
-}
-
-enum SubscriptionStatus {
-  Active
-  Canceled
-  Incomplete
-  IncompleteExpired
-  PastDue
-  Paused
-  Trialing
-  Unpaid
-}
-
 type LogicFunctionExecutionResult {
   """Execution result in JSON format"""
   data: JSON
@@ -1973,7 +1974,7 @@ type ApplicationConnectedAccountDTO {
   createdAt: DateTime!
   updatedAt: DateTime!
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
-  isOwnedByCurrentUser: Boolean!
+  isOwnedByCurrentUser: Boolean! @deprecated(reason: "Ownership no longer gates connection actions, every application admin manages a workspace-shared connection")
 }
 
 type FeatureFlag {
@@ -1982,20 +1983,20 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_ASYNC_CSV_EXPORT_ENABLED
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_JSON_FILTER_ENABLED
-  IS_EMAIL_GROUP_ENABLED
+  IS_MESSAGE_CAMPAIGN_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
-  IS_API_RATE_LIMIT_V2_ENABLED
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
-  IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_SHARING_ENABLED
+  IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_WEBHOOK_RATE_LIMIT_ENABLED
 }
 
@@ -2398,6 +2399,7 @@ type MarketplaceAppDetail {
   issueReportUrl: String
   screenshots: [String!]! @deprecated(reason: "Use galleryImages instead")
   galleryImages: [String!]!
+  installCount: Int!
   defaultRoleUniversalIdentifier: String
   roles: [MarketplaceAppRole!]
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
@@ -2625,6 +2627,7 @@ enum BillingEntitlementKey {
   SSO
   CUSTOM_DOMAIN
   RLS
+  RECORD_SHARING
   AUDIT_LOGS
   USAGE_LIMIT
 }
@@ -2838,6 +2841,7 @@ type ApplicationFileUploadTarget {
 }
 
 enum FileFolder {
+  RecordExport
   CorePicture
   AgentChat
   BuiltLogicFunction
@@ -2957,6 +2961,7 @@ enum MessageChannelType {
   EMAIL
   SMS
   EMAIL_GROUP
+  APP
 }
 
 enum MessageChannelContactAutoCreationPolicy {
@@ -2993,6 +2998,16 @@ enum MessageChannelSyncStage {
   MESSAGES_IMPORT_SCHEDULED
   MESSAGES_IMPORT_ONGOING
   FAILED
+}
+
+type IngestedAppMessage {
+  externalId: String!
+  messageId: UUID!
+  messageThreadId: UUID!
+}
+
+type IngestAppMessagesOutput {
+  messages: [IngestedAppMessage!]!
 }
 
 type CreateEmailGroupChannelOutput {
@@ -3287,6 +3302,20 @@ type EventLogQueryResult {
   pageInfo: EventLogPageInfo!
 }
 
+type RecordExport {
+  id: UUID!
+  filename: String!
+  progress: Int!
+  errorMessage: String
+  downloadUrl: String
+}
+
+type AiChatUsage {
+  limitValue: BigInt!
+  consumedValue: BigInt
+  periodEnd: DateTime
+}
+
 type Skill {
   id: UUID!
   name: String!
@@ -3317,6 +3346,7 @@ type AgentMessage {
 type AgentChatThread {
   id: ID!
   title: String
+  totalCacheReadTokens: Int!
   totalInputTokens: Int!
   totalOutputTokens: Int!
   contextWindowTokens: Int
@@ -3711,6 +3741,7 @@ type Query {
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   unsubscribeTopics: [UnsubscribeTopic!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
+  appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
   getEmailingDomains: [EmailingDomain!]!
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
@@ -3724,6 +3755,7 @@ type Query {
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
+  aiChatUsage: AiChatUsage
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
@@ -3810,6 +3842,10 @@ input FindMessageSuppressionsInput {
   unsubscribeTopicId: UUID
   limit: Int! = 30
   offset: Int! = 0
+}
+
+input ListAppMessageChannelsInput {
+  connectedAccountId: UUID
 }
 
 input ListAppConnectionsInput {
@@ -3988,7 +4024,7 @@ type Mutation {
   createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   deleteApplicationRegistrationVariable(id: String!): Boolean!
-  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
+  uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration!
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
@@ -4031,6 +4067,10 @@ type Mutation {
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
   deleteEmailGroupChannel(id: UUID!): MessageChannel!
+  createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
+  updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
+  deleteAppMessageChannel(id: UUID!): MessageChannel!
+  ingestAppMessages(input: IngestAppMessagesInput!): IngestAppMessagesOutput!
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
@@ -4769,6 +4809,7 @@ input UpdateLogicFunctionFromSourceInputUpdates {
 
 input CreateCommandMenuItemInput {
   workflowVersionId: UUID
+  coreWorkflowVersionId: UUID
   frontComponentId: UUID
   engineComponentKey: EngineComponentKey!
   label: String!
@@ -4874,9 +4915,6 @@ input UpdateApplicationRegistrationPayload {
   name: String
   oAuthRedirectUris: [String!]
   oAuthScopes: [String!]
-  isListed: Boolean
-  isPreInstalled: Boolean
-  isVetted: Boolean
 }
 
 input CreateApplicationRegistrationVariableInput {
@@ -5175,6 +5213,50 @@ input UpdateEmailGroupChannelInput {
   displayName: String
 }
 
+input CreateAppMessageChannelInput {
+  connectedAccountId: UUID!
+  handle: String!
+  displayName: String
+  visibility: MessageChannelVisibility!
+}
+
+input UpdateAppMessageChannelInput {
+  id: UUID!
+  displayName: String
+  visibility: MessageChannelVisibility
+  isSyncEnabled: Boolean
+}
+
+input IngestAppMessagesInput {
+  messageChannelId: UUID!
+  messages: [AppMessageInput!]!
+}
+
+input AppMessageInput {
+  externalId: String!
+  threadExternalId: String!
+  subject: String
+  text: String!
+  receivedAt: DateTime!
+  participants: [AppMessageParticipantInput!]!
+}
+
+input AppMessageParticipantInput {
+  role: MessageParticipantRole!
+  handle: String!
+  displayName: String
+  personId: UUID
+  workspaceMemberId: UUID
+}
+
+enum MessageParticipantRole {
+  FROM
+  TO
+  CC
+  BCC
+  REPLY_TO
+}
+
 input CreateEmailingDomainInput {
   domain: String!
 }
@@ -5189,11 +5271,17 @@ input RunAgentInput {
 input RunAgentMessageInput {
   role: RunAgentMessageRole!
   content: String!
+  attachments: [RunAgentMessageAttachmentInput!]
 }
 
 enum RunAgentMessageRole {
   user
   assistant
+}
+
+input RunAgentMessageAttachmentInput {
+  fileId: UUID!
+  filename: String
 }
 
 input CreateWebhookInput {
@@ -5423,6 +5511,7 @@ type Subscription {
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
   eventLogsLive(table: EventLogTable!): [EventLogRecord!]
+  exportRecords(input: CreateRecordExportInput!): RecordExport!
 }
 
 input LogicFunctionLogsInput {
@@ -5431,4 +5520,11 @@ input LogicFunctionLogsInput {
   name: String
   id: UUID
   universalIdentifier: UUID
+}
+
+input CreateRecordExportInput {
+  objectMetadataId: UUID!
+  fieldMetadataIds: [UUID!]!
+  filter: JSON
+  orderBy: JSON
 }

@@ -1,10 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 import { RESTORE_CORE_WORKFLOW_VERSION_MODAL_ID } from '@/object-core/workflows/versions/constants/RestoreCoreWorkflowVersionModalId';
 import { useRestoreCoreWorkflowVersionAsDraft } from '@/object-core/workflows/versions/hooks/useRestoreCoreWorkflowVersionAsDraft';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 
 export const CoreWorkflowVersionRestoreButton = ({
   workflowId,
@@ -14,7 +14,7 @@ export const CoreWorkflowVersionRestoreButton = ({
   workspaceWorkflowVersionId: string;
 }) => {
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const {
     restoreCoreWorkflowVersionAsDraft,
     isRestoring,
@@ -27,7 +27,7 @@ export const CoreWorkflowVersionRestoreButton = ({
 
   const handleRestoreClick = () => {
     if (hasExistingDraft) {
-      openModal(RESTORE_CORE_WORKFLOW_VERSION_MODAL_ID);
+      openDialog(RESTORE_CORE_WORKFLOW_VERSION_MODAL_ID);
 
       return;
     }
@@ -38,15 +38,14 @@ export const CoreWorkflowVersionRestoreButton = ({
   return (
     <>
       <Button
-        title={t`Restore`}
-        variant="primary"
-        accent="blue"
-        size="small"
+        size="sm"
         disabled={isRestoring || isLoadingCoreWorkflowVersions}
         onClick={handleRestoreClick}
-      />
-      <ConfirmationModal
-        modalInstanceId={RESTORE_CORE_WORKFLOW_VERSION_MODAL_ID}
+        variant="solid"
+        color="accent"
+      >{t`Restore`}</Button>
+      <ConfirmationDialog
+        dialogId={RESTORE_CORE_WORKFLOW_VERSION_MODAL_ID}
         title={t`A draft already exists`}
         subtitle={t`A draft already exists for this workflow. Are you sure you want to erase it?`}
         confirmButtonText={t`Override Draft`}

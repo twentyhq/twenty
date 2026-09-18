@@ -158,6 +158,7 @@ export const mockPersonFlatObjectMetadata = (
   universalIdentifier: objectMetadataId,
   indexMetadataIds: [],
   searchFieldMetadataIds: [],
+  navigationMenuItemIds: [],
   commandMenuItemIds: [],
   objectPermissionIds: [],
   fieldPermissionIds: [],
@@ -175,6 +176,7 @@ export const mockPersonFlatObjectMetadata = (
   isUICreatable: true,
   writability: MetadataWritability.OPEN,
   readability: MetadataReadability.OPEN,
+  readabilityParentFieldUniversalIdentifiers: null,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   applicationUniversalIdentifier: 'test-application-id',
   fieldUniversalIdentifiers: mockFieldMetadatas.map(
@@ -186,6 +188,7 @@ export const mockPersonFlatObjectMetadata = (
   fieldPermissionUniversalIdentifiers: [],
   indexMetadataUniversalIdentifiers: [],
   searchFieldMetadataUniversalIdentifiers: [],
+  navigationMenuItemUniversalIdentifiers: [],
   commandMenuItemUniversalIdentifiers: [],
   labelIdentifierFieldMetadataUniversalIdentifier: null,
   imageIdentifierFieldMetadataUniversalIdentifier: null,

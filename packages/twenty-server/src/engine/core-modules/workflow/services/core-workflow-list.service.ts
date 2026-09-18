@@ -18,10 +18,8 @@ import {
 import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-filter-predicate.util';
 import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
 
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-
 type CoreWorkflowRow = {
+  createdAt: Date;
   id: string;
   cursorSortValue: string | null;
   name: string | null;
@@ -60,12 +58,13 @@ const SORT_COLUMN_BY_FIELD: Record<
   },
 };
 
-const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."updatedAt"`;
+const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."createdAt", c."updatedAt"`;
 
 const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
          c.name,
          c."lastPublishedVersionId",
          c."applicationId",
+         c."createdAt",
          c."updatedAt",
          coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion",
          coalesce(bool_or(v.status = 'ACTIVE'), false) AS "hasActiveVersion",
@@ -82,14 +81,14 @@ const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
   lastPublishedVersionId: row.lastPublishedVersionId,
   applicationId: row.applicationId,
   workspaceWorkflowId: row.workspaceWorkflowId,
+  createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
 });
 
-const buildWorkflowVersionsJoinClause = (schemaName: string) =>
-  `LEFT JOIN ${schemaName}."workflow" wf
-     ON wf."coreWorkflowId" = c.id AND wf."deletedAt" IS NULL
-   LEFT JOIN core."workflowVersion" v
-     ON v."workflowId" = wf.id AND v."workspaceId" = $1`;
+const CORE_WORKFLOW_VERSIONS_JOIN_CLAUSE = `LEFT JOIN core."workflowVersion" v
+     ON v."coreWorkflowId" = c.id AND v."workspaceId" = $1`;
+
+const GROUP_BY_CLAUSE = `${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId", c."workspaceWorkflowId"`;
 
 @Injectable()
 export class CoreWorkflowListService {
@@ -102,7 +101,6 @@ export class CoreWorkflowListService {
     workspaceId: string,
     { first, after, orderBy, orderByDirection, filter }: CoreWorkflowsArgs,
   ): Promise<CoreWorkflowConnectionDTO> {
-    const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
     const { column, cursorExpression, nullable, cast } =
       SORT_COLUMN_BY_FIELD[orderBy];
     const isAscending = orderByDirection === CoreWorkflowOrderByDirection.ASC;
@@ -154,13 +152,13 @@ export class CoreWorkflowListService {
       `SELECT
          c.id,
          ${cursorExpression} AS "cursorSortValue",
-         min(wf.id::text) AS "workspaceWorkflowId",
+         c."workspaceWorkflowId",
          ${CORE_WORKFLOW_AGGREGATE_COLUMNS}
        FROM core."workflow" c
-       ${buildWorkflowVersionsJoinClause(schemaName)}
+       ${CORE_WORKFLOW_VERSIONS_JOIN_CLAUSE}
        WHERE c."workspaceId" = $1
        ${keysetCondition}
-       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId"
+       GROUP BY ${GROUP_BY_CLAUSE}
        ${havingClause}
        ORDER BY ${column} ${direction}${nullsClause}, c.id ${direction}
        LIMIT ${limitParameter}`,
@@ -169,7 +167,6 @@ export class CoreWorkflowListService {
 
     const totalCount = await this.countByWorkspaceId({
       workspaceId,
-      schemaName,
       filterPredicate,
       filterParameters,
     });
@@ -195,6 +192,20 @@ export class CoreWorkflowListService {
     };
   }
 
+  async findOneById({
+    workspaceId,
+    coreWorkflowId,
+  }: {
+    workspaceId: string;
+    coreWorkflowId: string;
+  }): Promise<CoreWorkflowDTO | null> {
+    return this.findOneByFilterExpression({
+      workspaceId,
+      filterExpression: 'c.id = $2',
+      filterParameter: coreWorkflowId,
+    });
+  }
+
   async findOneByWorkspaceWorkflowId({
     workspaceId,
     workspaceWorkflowId,
@@ -202,24 +213,34 @@ export class CoreWorkflowListService {
     workspaceId: string;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowDTO | null> {
-    const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
+    return this.findOneByFilterExpression({
+      workspaceId,
+      filterExpression: 'c."workspaceWorkflowId" = $2',
+      filterParameter: workspaceWorkflowId,
+    });
+  }
 
+  private async findOneByFilterExpression({
+    workspaceId,
+    filterExpression,
+    filterParameter,
+  }: {
+    workspaceId: string;
+    filterExpression: string;
+    filterParameter: string;
+  }): Promise<CoreWorkflowDTO | null> {
     const rows: CoreWorkflowRow[] = await this.coreDataSource.query(
       `SELECT
          c.id,
          null AS "cursorSortValue",
-         wf.id::text AS "workspaceWorkflowId",
+         c."workspaceWorkflowId",
          ${CORE_WORKFLOW_AGGREGATE_COLUMNS}
        FROM core."workflow" c
-       JOIN ${schemaName}."workflow" wf
-         ON wf."coreWorkflowId" = c.id
-         AND wf."deletedAt" IS NULL
-         AND wf.id = $2
-       LEFT JOIN core."workflowVersion" v
-         ON v."workflowId" = wf.id AND v."workspaceId" = $1
+       ${CORE_WORKFLOW_VERSIONS_JOIN_CLAUSE}
        WHERE c."workspaceId" = $1
-       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId", wf.id`,
-      [workspaceId, workspaceWorkflowId],
+         AND ${filterExpression}
+       GROUP BY ${GROUP_BY_CLAUSE}`,
+      [workspaceId, filterParameter],
     );
 
     const [row] = rows;
@@ -233,12 +254,10 @@ export class CoreWorkflowListService {
 
   private async countByWorkspaceId({
     workspaceId,
-    schemaName,
     filterPredicate,
     filterParameters,
   }: {
     workspaceId: string;
-    schemaName: string;
     filterPredicate?: string;
     filterParameters: unknown[];
   }): Promise<number> {
@@ -264,7 +283,7 @@ export class CoreWorkflowListService {
          FROM (
            SELECT c.id
            FROM core."workflow" c
-           ${buildWorkflowVersionsJoinClause(schemaName)}
+           ${CORE_WORKFLOW_VERSIONS_JOIN_CLAUSE}
            WHERE c."workspaceId" = $1
            GROUP BY ${GROUPED_WORKFLOW_COLUMNS}
            HAVING ${filterPredicate}

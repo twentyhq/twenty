@@ -5,16 +5,11 @@ import { type BackgroundMockCompany } from '@/sign-in-background-mock/constants/
 import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import {
-  Avatar,
-  Chip,
-  ChipAccent,
-  ChipSize,
-  ChipVariant,
-} from 'twenty-ui/data-display';
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { IconLink } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { Checkbox } from 'twenty-ui/input';
+
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 
 const StyledRow = styled.div`
@@ -86,20 +81,16 @@ const PersonChip = ({ fullName }: { fullName: string | null }) => {
 
   return (
     <Chip
-      label={fullName}
-      size={ChipSize.Small}
-      variant={ChipVariant.Transparent}
-      accent={ChipAccent.TextPrimary}
-      clickable={false}
-      leftComponent={
-        <Avatar
-          type="rounded"
-          placeholder={fullName}
-          placeholderColorSeed={fullName}
-          size="md"
-        />
+      size="sm"
+      variant="ghost"
+      color="primary"
+      startElement={
+        <Avatar shape="circle" name={fullName} colorSeed={fullName} size="md" />
       }
-    />
+      style={{ paddingInlineStart: 0 }}
+    >
+      {fullName}
+    </Chip>
   );
 };
 
@@ -118,37 +109,40 @@ export const BackgroundMockTableRow = ({
       </StyledCheckboxColumn>
       <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Name}>
         <Chip
-          label={company.name}
-          size={ChipSize.Small}
-          variant={ChipVariant.Transparent}
-          accent={ChipAccent.TextPrimary}
-          clickable={false}
-          leftComponent={
+          size="sm"
+          variant="ghost"
+          color="primary"
+          startElement={
             <Avatar
-              type="squared"
-              avatarUrl={getAbsoluteImageUrl(logoUrl)}
-              placeholder={company.name}
-              placeholderColorSeed={company.id}
+              shape="square"
+              src={getAbsoluteImageUrl(logoUrl)}
+              name={company.name}
+              colorSeed={company.id}
               size="md"
             />
           }
-        />
+          style={{ paddingInlineStart: 0 }}
+        >
+          {company.name}
+        </Chip>
       </StyledCell>
       <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Domain}>
         <Chip
-          label={company.domainName}
-          size={ChipSize.Small}
-          variant={ChipVariant.Transparent}
-          accent={ChipAccent.TextSecondary}
-          clickable={false}
-          leftComponent={
+          size="sm"
+          variant="ghost"
+          color="secondary"
+          weight="medium"
+          startElement={
             <IconLink
               size={theme.icon.size.sm}
               stroke={theme.icon.stroke.sm}
               color={theme.font.color.tertiary}
             />
           }
-        />
+          style={{ paddingInlineStart: 0 }}
+        >
+          {company.domainName}
+        </Chip>
       </StyledCell>
       <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS['Created by']}>
         <PersonChip fullName={company.createdBy} />

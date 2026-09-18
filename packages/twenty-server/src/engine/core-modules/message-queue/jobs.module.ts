@@ -27,6 +27,7 @@ import { InstallOnboardingAppsJob } from 'src/engine/core-modules/onboarding/job
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { RecordExportModule } from 'src/engine/core-modules/record-export/record-export.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { MaterializeCampaignChunkJob } from 'src/modules/emailing/jobs/materialize-campaign-chunk.job';
 import { MaterializeCampaignJob } from 'src/modules/emailing/jobs/materialize-campaign.job';
@@ -78,6 +79,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
       BillingProductEntity,
     ]),
     ObjectMetadataModule,
+    RecordExportModule,
     TypeORMModule,
     UserModule,
     UserVarsModule,

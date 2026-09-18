@@ -1,6 +1,7 @@
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
-import { Status } from 'twenty-ui/data-display';
-import { AppTooltip } from 'twenty-ui/surfaces';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -24,14 +25,15 @@ export const PageLayoutWidgetStatusDisplay = ({
 }: PageLayoutWidgetStatusDisplayProps) => {
   return (
     <StyledContainer>
-      <div id={tooltipId}>
-        <Status color={color}>{text}</Status>
-      </div>
-      <AppTooltip
-        anchorSelect={`#${tooltipId}`}
-        title={tooltipContent}
-        place="top"
-      />
+      <Tooltip
+        delay={TooltipDelay.mediumDelay}
+        content={tooltipContent}
+        side="top"
+      >
+        <div id={tooltipId}>
+          <Status color={color}>{text}</Status>
+        </div>
+      </Tooltip>
     </StyledContainer>
   );
 };

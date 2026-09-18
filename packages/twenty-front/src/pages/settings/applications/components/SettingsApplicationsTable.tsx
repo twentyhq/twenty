@@ -1,5 +1,5 @@
+import { Section } from 'twenty-ui/components';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -14,8 +14,7 @@ import {
 import { useContext, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
-import { Section } from 'twenty-ui/layout';
-import { SearchInput } from 'twenty-ui/input';
+import { SearchInput } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 
@@ -61,8 +60,8 @@ export const SettingsApplicationsTable = ({
     });
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Installed apps`}
         description={t`All the applications currently installed on this workspace`}
       />
@@ -119,6 +118,6 @@ export const SettingsApplicationsTable = ({
           })}
         </StyledTableRowsContainer>
       </Table>
-    </Section>
+    </Section.Root>
   );
 };

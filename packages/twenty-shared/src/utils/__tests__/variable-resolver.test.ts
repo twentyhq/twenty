@@ -1,4 +1,4 @@
-import { resolveInput } from '../variable-resolver';
+import { resolveInput, resolveStringTemplate } from '../variable-resolver';
 
 describe('resolveInput', () => {
   const context = {
@@ -199,5 +199,34 @@ describe('resolveInput', () => {
         'dotted value',
       );
     });
+  });
+});
+
+describe('resolveStringTemplate', () => {
+  const context = { trigger: { amount: 42, meta: { source: 'form' } } };
+
+  it('keeps a whole-string variable a string instead of its native type', () => {
+    expect(resolveStringTemplate('{{trigger.amount}}', context)).toBe('42');
+    expect(resolveInput('{{trigger.amount}}', context)).toBe(42);
+  });
+
+  it('interpolates variables inside text', () => {
+    expect(
+      resolveStringTemplate('Amount: {{trigger.amount}} EUR', context),
+    ).toBe('Amount: 42 EUR');
+  });
+
+  it('serializes an object variable as JSON', () => {
+    expect(resolveStringTemplate('{{trigger.meta}}', context)).toBe(
+      '{"source":"form"}',
+    );
+  });
+
+  it('serializes an array variable as JSON', () => {
+    expect(
+      resolveStringTemplate('IDs: {{trigger.ids}}', {
+        trigger: { ids: [1, 2, 3] },
+      }),
+    ).toBe('IDs: [1,2,3]');
   });
 });

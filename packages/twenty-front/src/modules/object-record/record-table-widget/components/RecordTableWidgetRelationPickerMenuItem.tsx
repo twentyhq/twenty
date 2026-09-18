@@ -4,8 +4,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { Avatar } from 'twenty-ui/data-display';
-import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { MenuItemSelectAvatar } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type RecordTableWidgetRelationPickerMenuItemProps = {
@@ -39,11 +39,11 @@ export const RecordTableWidgetRelationPickerMenuItem = ({
         focused={isSelectedItemId}
         avatar={
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(relationRecord.avatarUrl)}
-            placeholderColorSeed={relationRecord.id}
-            placeholder={relationRecord.name}
+            src={getAbsoluteImageUrl(relationRecord.avatarUrl)}
+            colorSeed={relationRecord.id}
+            name={relationRecord.name}
             size="md"
-            type={relationRecord.avatarType ?? 'rounded'}
+            shape={relationRecord.avatarShape ?? 'circle'}
           />
         }
       />

@@ -57,6 +57,7 @@ const THREAD: AgentChatThread = {
   lastMessageAt: '2026-09-01T00:00:00.000Z',
   totalInputTokens: 0,
   totalOutputTokens: 0,
+  totalCacheReadTokens: 0,
   conversationSize: 0,
   totalInputCredits: 0,
   totalOutputCredits: 0,
@@ -249,6 +250,38 @@ describe('AiChatPageHeader', () => {
     await user.click(screen.getByText('Unarchive'));
     expect(unarchiveChatThread).toHaveBeenCalledWith(THREAD.id);
   });
+
+  it('opens the rename editor when clicking the title', async () => {
+    const user = userEvent.setup();
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+    await user.click(screen.getByRole('button', { name: 'Rename chat' }));
+    const input = screen.getByRole('textbox');
+    expect(input).toHaveValue('Best leads');
+    expect(input).toHaveFocus();
+
+    await user.clear(input);
+    await user.type(input, 'Qualified leads{Enter}');
+    expect(renameChatThread).toHaveBeenCalledTimes(1);
+    expect(renameChatThread).toHaveBeenCalledWith(THREAD.id, 'Qualified leads');
+    expect(screen.queryByRole('textbox')).toBeNull();
+  });
+
+  it.each(['{Enter}', ' '])(
+    'opens the rename editor from the keyboard with %s',
+    async (key) => {
+      const user = userEvent.setup();
+      render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+      await user.tab();
+      expect(screen.getByRole('button', { name: 'Rename chat' })).toHaveFocus();
+      await user.keyboard(key);
+
+      expect(screen.getByRole('textbox')).toHaveValue('Best leads');
+      expect(screen.getByRole('textbox')).toHaveFocus();
+      expect(renameChatThread).not.toHaveBeenCalled();
+    },
+  );
 
   it('renames the current chat and discards the rename editor when switching threads', async () => {
     const user = userEvent.setup();

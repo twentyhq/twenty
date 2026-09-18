@@ -4,7 +4,7 @@ import { type ComponentType, useContext } from 'react';
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
 
 import { type IconComponent, IconPlus } from 'twenty-ui/icon';
-import { Card, CardFooter } from 'twenty-ui/surfaces';
+import { Card, CardFooter } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 

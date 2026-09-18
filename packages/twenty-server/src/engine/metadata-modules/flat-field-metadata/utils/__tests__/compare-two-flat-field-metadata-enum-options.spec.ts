@@ -2,8 +2,8 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
+import { type FieldMetadataDefaultOption } from 'twenty-shared/types';
 
-import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import {
   type CompareToFlatFieldMetadataEnumOptionsArgs,
   compareTwoFlatFieldMetadataEnumOptions,

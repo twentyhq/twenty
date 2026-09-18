@@ -21,8 +21,12 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import {
+  MenuItem,
+  MenuItemSelect,
+  MenuItemSelectTag,
+} from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -36,6 +40,7 @@ export type CallToActionButton = {
 
 export type SelectProps<Value extends SelectValue> = {
   className?: string;
+  renderAsTag?: boolean;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   dropdownId: string;
@@ -56,6 +61,7 @@ export type SelectProps<Value extends SelectValue> = {
   dropdownOffset?: DropdownOffset;
   hasRightElement?: boolean;
   showContextualTextInControl?: boolean;
+  showIconInControl?: boolean;
   isDropdownInModal?: boolean;
   variant?: FormFieldInputVariant;
 };
@@ -99,8 +105,10 @@ export const Select = <Value extends SelectValue>({
   dropdownOffset,
   hasRightElement,
   showContextualTextInControl = true,
+  showIconInControl = true,
   isDropdownInModal = false,
   variant = 'default',
+  renderAsTag = false,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -169,14 +177,18 @@ export const Select = <Value extends SelectValue>({
   const { setSelectedItemId } = useSelectableList(dropdownId);
 
   const controlSelectedOption = useMemo(() => {
-    if (!isDefined(selectedOption) || showContextualTextInControl) {
+    if (!isDefined(selectedOption)) {
       return selectedOption;
     }
 
-    const { contextualText: _, ...rest } = selectedOption;
-
-    return rest;
-  }, [selectedOption, showContextualTextInControl]);
+    return {
+      ...selectedOption,
+      contextualText: showContextualTextInControl
+        ? selectedOption.contextualText
+        : undefined,
+      Icon: showIconInControl ? selectedOption.Icon : undefined,
+    };
+  }, [selectedOption, showContextualTextInControl, showIconInControl]);
 
   const handleDropdownOpen = () => {
     if (
@@ -202,6 +214,7 @@ export const Select = <Value extends SelectValue>({
       {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
         <SelectControl
+          renderAsTag={renderAsTag}
           selectedOption={controlSelectedOption}
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
@@ -217,6 +230,7 @@ export const Select = <Value extends SelectValue>({
           onOpen={handleDropdownOpen}
           clickableComponent={
             <SelectControl
+              renderAsTag={renderAsTag}
               selectedOption={controlSelectedOption}
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
@@ -240,6 +254,7 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuItemsContainer scrollable={false}>
                   <MenuItemSelect
                     LeftIcon={pinnedOption.Icon}
+                    LeftComponent={pinnedOption.LeftComponent}
                     leftIconColor={pinnedOption.iconThemeColor}
                     text={pinnedOption.label}
                     contextualText={pinnedOption.contextualText}
@@ -265,34 +280,47 @@ export const Select = <Value extends SelectValue>({
                     focusId={dropdownId}
                     selectableItemIdArray={selectableItemIdArray}
                   >
-                    {filteredOptions.map((option) => (
-                      <SelectableListItem
-                        key={`${option.value}-${option.label}`}
-                        itemId={option.label}
-                        onEnter={() => {
-                          onChange?.(option.value);
-                          onBlur?.();
-                          closeDropdown(dropdownId);
-                        }}
-                      >
-                        <MenuItemSelect
-                          LeftIcon={option.Icon}
-                          leftIconColor={option.iconThemeColor}
-                          text={option.label}
-                          contextualText={option.contextualText}
-                          selected={
-                            controlSelectedOption.value === option.value
-                          }
-                          focused={selectedItemId === option.label}
-                          needIconCheck={needIconCheck}
-                          onClick={() => {
-                            onChange?.(option.value);
-                            onBlur?.();
-                            closeDropdown(dropdownId);
-                          }}
-                        />
-                      </SelectableListItem>
-                    ))}
+                    {filteredOptions.map((option) => {
+                      const handleSelectOption = () => {
+                        onChange?.(option.value);
+                        onBlur?.();
+                        closeDropdown(dropdownId);
+                      };
+
+                      return (
+                        <SelectableListItem
+                          key={`${option.value}-${option.label}`}
+                          itemId={option.label}
+                          onEnter={handleSelectOption}
+                        >
+                          {renderAsTag && isDefined(option.color) ? (
+                            <MenuItemSelectTag
+                              text={option.label}
+                              color={option.color}
+                              selected={
+                                controlSelectedOption.value === option.value
+                              }
+                              focused={selectedItemId === option.label}
+                              onClick={handleSelectOption}
+                            />
+                          ) : (
+                            <MenuItemSelect
+                              LeftIcon={option.Icon}
+                              LeftComponent={option.LeftComponent}
+                              leftIconColor={option.iconThemeColor}
+                              text={option.label}
+                              contextualText={option.contextualText}
+                              selected={
+                                controlSelectedOption.value === option.value
+                              }
+                              focused={selectedItemId === option.label}
+                              needIconCheck={needIconCheck}
+                              onClick={handleSelectOption}
+                            />
+                          )}
+                        </SelectableListItem>
+                      );
+                    })}
                   </SelectableList>
                 </DropdownMenuItemsContainer>
               )}

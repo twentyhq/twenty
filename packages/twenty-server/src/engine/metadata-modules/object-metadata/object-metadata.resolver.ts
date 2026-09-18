@@ -22,6 +22,7 @@ import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.typ
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -56,8 +57,10 @@ import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-met
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -65,6 +68,7 @@ import { ApplicationTranslationCatalogService } from 'src/engine/metadata-module
 @UseFilters(
   PreventNestToAutoLogGraphqlErrorsFilter,
   PermissionsGraphqlApiExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 export class ObjectMetadataResolver {
   constructor(
@@ -78,6 +82,7 @@ export class ObjectMetadataResolver {
 
   @UseGuards(NoPermissionGuard)
   @Query(() => ObjectConnectionDTO)
+  @AllowSuspendedWorkspace()
   async objects(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('paging', {
@@ -92,7 +97,7 @@ export class ObjectMetadataResolver {
       description: 'Specify to filter the records returned.',
     })
     filter: ObjectFilterInput,
-  ): Promise<CursorConnection<ObjectMetadataEntity>> {
+  ): Promise<CursorConnection<ObjectMetadataDTO>> {
     const queryBuilder = this.objectMetadataRepository
       .createQueryBuilder('objectMetadata')
       .where('"objectMetadata"."workspaceId" = :workspaceId', { workspaceId });
@@ -104,11 +109,19 @@ export class ObjectMetadataResolver {
       columnByFilterField: OBJECT_FILTER_COLUMN_BY_FILTER_FIELD,
     });
 
-    return findManyWithCursorPagination({
+    const connection = await findManyWithCursorPagination({
       queryBuilder,
       alias: 'objectMetadata',
       paging,
     });
+
+    return {
+      ...connection,
+      edges: connection.edges.map((edge) => ({
+        ...edge,
+        node: fromObjectMetadataEntityToObjectMetadataDto(edge.node),
+      })),
+    };
   }
 
   @UseGuards(NoPermissionGuard)
@@ -120,7 +133,7 @@ export class ObjectMetadataResolver {
     })
     id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ObjectMetadataEntity> {
+  ): Promise<ObjectMetadataDTO> {
     const objectMetadata = await this.objectMetadataRepository.findOne({
       where: { id, workspaceId },
     });
@@ -131,7 +144,7 @@ export class ObjectMetadataResolver {
       );
     }
 
-    return objectMetadata;
+    return fromObjectMetadataEntityToObjectMetadataDto(objectMetadata);
   }
 
   @ResolveField(() => ObjectFieldsConnectionDTO)

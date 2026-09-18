@@ -1,3 +1,4 @@
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { Module } from '@nestjs/common';
 
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
@@ -43,10 +44,11 @@ import { WorkflowVersionUpdateManyPreQueryHook } from 'src/modules/workflow/comm
 import { WorkflowVersionUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-one.pre-query.hook';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
-import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
+import { WorkflowVersionQueryValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service';
 
 @Module({
   imports: [
+    WorkflowCoreModule,
     LogicFunctionModule,
     RecordPositionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
@@ -85,7 +87,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     WorkflowVersionRestoreManyPreQueryHook,
     WorkflowCreateOnePostQueryHook,
     WorkflowCreateManyPostQueryHook,
-    WorkflowVersionValidationWorkspaceService,
+    WorkflowVersionQueryValidationWorkspaceService,
     WorkflowCommonWorkspaceService,
     WorkflowDeleteManyPostQueryHook,
     WorkflowDeleteOnePostQueryHook,

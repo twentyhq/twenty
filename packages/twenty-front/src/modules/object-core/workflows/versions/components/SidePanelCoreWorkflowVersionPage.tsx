@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CoreWorkflowVersionCard } from '@/object-core/workflows/versions/components/CoreWorkflowVersionCard';
@@ -47,10 +47,12 @@ export const SidePanelCoreWorkflowVersionPage = () => {
       <StyledActions>
         <Tag color={tagProps.color}>{t(tagProps.label)}</Tag>
         <StyledSpacer />
-        <CoreWorkflowVersionRestoreButton
-          workflowId={coreWorkflowVersion.workspaceWorkflowId}
-          workspaceWorkflowVersionId={workspaceWorkflowVersionId}
-        />
+        {isDefined(coreWorkflowVersion.workspaceWorkflowId) && (
+          <CoreWorkflowVersionRestoreButton
+            workflowId={coreWorkflowVersion.workspaceWorkflowId}
+            workspaceWorkflowVersionId={workspaceWorkflowVersionId}
+          />
+        )}
       </StyledActions>
       <CoreWorkflowVersionCard
         workspaceWorkflowVersionId={workspaceWorkflowVersionId}
