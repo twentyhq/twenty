@@ -5,13 +5,12 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ResolvedRunAgentAttachment } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-run-agent-attachment.type';
+import { formatUnsupportedFilePlaceholder } from 'src/engine/metadata-modules/ai/ai-models/utils/format-unsupported-file-placeholder.util';
 import { getNativeMimeTypesForModalities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-mime-types-for-modalities.util';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-
-const DEFAULT_ATTACHMENT_FILENAME = 'uploaded_file';
 
 export const buildRunAgentModelMessageOrThrow = ({
   message,
@@ -41,16 +40,12 @@ export const buildRunAgentModelMessageOrThrow = ({
     }
 
     if (!supportedMediaTypes.has(resolvedAttachment.mediaType)) {
-      const filename = isNonEmptyString(attachment.filename)
-        ? attachment.filename
-        : DEFAULT_ATTACHMENT_FILENAME;
-      const mediaType = isNonEmptyString(resolvedAttachment.mediaType)
-        ? resolvedAttachment.mediaType
-        : 'unknown';
-
       return {
         type: 'text',
-        text: `[Attached file: ${filename} (type: ${mediaType}) — file type is not supported for direct analysis]`,
+        text: formatUnsupportedFilePlaceholder({
+          filename: attachment.filename,
+          mediaType: resolvedAttachment.mediaType,
+        }),
       };
     }
 
