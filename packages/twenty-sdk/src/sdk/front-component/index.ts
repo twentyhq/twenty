@@ -28,10 +28,8 @@ export type {
   TranslationValues,
 } from './translations/message';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
-export type {
-  FrontComponentToolCall,
-  FrontComponentToolCallStatus,
-} from './types/FrontComponentToolCall';
+export type { FrontComponentToolCall } from './types/FrontComponentToolCall';
+export type { FrontComponentToolCallStatus } from './types/FrontComponentToolCallStatus';
 export type { FrontComponentStorageType } from './types/FrontComponentStorageType';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
 export type {
