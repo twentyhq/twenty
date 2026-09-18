@@ -5,12 +5,14 @@ import { enqueueSlackAssistantRequest } from 'src/logic-functions/utils/enqueue-
 const {
   coreApiClientMock,
   isSlackChannelSilencedMock,
+  notifySilencedSlackChannelMock,
   gateSlackThreadFollowUpMock,
   enqueueSlackAssistantRequestRecordMock,
   replyToEmptySlackAssistantRequestMock,
 } = vi.hoisted(() => ({
   coreApiClientMock: vi.fn(),
   isSlackChannelSilencedMock: vi.fn(),
+  notifySilencedSlackChannelMock: vi.fn(),
   gateSlackThreadFollowUpMock: vi.fn(),
   enqueueSlackAssistantRequestRecordMock: vi.fn(),
   replyToEmptySlackAssistantRequestMock: vi.fn(),
@@ -22,6 +24,10 @@ vi.mock('twenty-client-sdk/core', () => ({
 
 vi.mock('src/logic-functions/utils/is-slack-channel-silenced', () => ({
   isSlackChannelSilenced: isSlackChannelSilencedMock,
+}));
+
+vi.mock('src/logic-functions/utils/notify-silenced-slack-channel', () => ({
+  notifySilencedSlackChannel: notifySilencedSlackChannelMock,
 }));
 
 vi.mock('src/logic-functions/utils/gate-slack-thread-follow-up', () => ({
@@ -68,6 +74,13 @@ const EMPTY_MENTION_BODY = buildBody({
   text: `<@${BOT_USER_ID}>`,
 });
 
+const MENTION_IN_THREAD_BODY = buildBody({
+  type: 'app_mention',
+  channel: 'C0FIN',
+  thread_ts: '1700000000.000001',
+  text: `<@${BOT_USER_ID}> how many open deals?`,
+});
+
 const DIRECT_MESSAGE_BODY = buildBody({
   type: 'message',
   channel: 'D123',
@@ -90,6 +103,7 @@ describe('enqueueSlackAssistantRequest', () => {
       return {};
     });
     isSlackChannelSilencedMock.mockResolvedValue(false);
+    notifySilencedSlackChannelMock.mockResolvedValue(undefined);
     gateSlackThreadFollowUpMock.mockResolvedValue(undefined);
     enqueueSlackAssistantRequestRecordMock.mockResolvedValue({
       ok: true,
@@ -117,6 +131,23 @@ describe('enqueueSlackAssistantRequest', () => {
       skipped: 'Channel is silenced by a channel rule',
     });
     expect(enqueueSlackAssistantRequestRecordMock).not.toHaveBeenCalled();
+    expect(notifySilencedSlackChannelMock).toHaveBeenCalledWith({
+      slackChannelId: 'C0FIN',
+      slackUserId: 'U123',
+      parentMessageTimestamp: undefined,
+    });
+  });
+
+  it('should tell the requester in the thread they mentioned the assistant in', async () => {
+    isSlackChannelSilencedMock.mockResolvedValue(true);
+
+    await enqueueSlackAssistantRequest(MENTION_IN_THREAD_BODY);
+
+    expect(notifySilencedSlackChannelMock).toHaveBeenCalledWith({
+      slackChannelId: 'C0FIN',
+      slackUserId: 'U123',
+      parentMessageTimestamp: '1700000000.000001',
+    });
   });
 
   it('should drop an empty mention in a silenced channel without replying', async () => {
@@ -129,6 +160,7 @@ describe('enqueueSlackAssistantRequest', () => {
       skipped: 'Channel is silenced by a channel rule',
     });
     expect(replyToEmptySlackAssistantRequestMock).not.toHaveBeenCalled();
+    expect(notifySilencedSlackChannelMock).toHaveBeenCalledTimes(1);
   });
 
   it('should still answer an empty mention in a channel that is not silenced', async () => {
@@ -142,6 +174,7 @@ describe('enqueueSlackAssistantRequest', () => {
 
     expect(result).toEqual({ ok: true, request: { id: 'request-1' } });
     expect(isSlackChannelSilencedMock).not.toHaveBeenCalled();
+    expect(notifySilencedSlackChannelMock).not.toHaveBeenCalled();
   });
 
   it('should drop a thread follow-up in a silenced channel before the thread gate can nudge it', async () => {
@@ -154,6 +187,7 @@ describe('enqueueSlackAssistantRequest', () => {
       skipped: 'Channel is silenced by a channel rule',
     });
     expect(gateSlackThreadFollowUpMock).not.toHaveBeenCalled();
+    expect(notifySilencedSlackChannelMock).not.toHaveBeenCalled();
   });
 
   it('should keep gating thread follow-ups by subscription when the channel is not silenced', async () => {

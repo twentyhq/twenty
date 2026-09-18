@@ -10,5 +10,5 @@ export const SLACK_CHANNEL_RULE_MODE_DESCRIPTIONS: Record<
   [SLACK_CHANNEL_RULE_MODE.LINKED_MEMBERS_ONLY]:
     'Only Slack accounts linked to a workspace member get an answer. Others are asked to have an admin link them.',
   [SLACK_CHANNEL_RULE_MODE.SILENT]:
-    'The assistant ignores the channel: no reply, no thinking status, nothing recorded.',
+    'The assistant ignores the channel: no thinking status, nothing recorded. Whoever mentions it gets a private note that it is silenced there.',
 };
