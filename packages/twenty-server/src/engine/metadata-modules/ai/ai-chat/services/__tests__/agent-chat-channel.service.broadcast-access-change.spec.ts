@@ -90,7 +90,10 @@ describe('AgentChatChannelService.broadcastChannelAccessChange', () => {
     );
   });
 
-  it('tells the whole workspace when a channel becomes public', async () => {
+  // An update is only something to apply for somebody already holding the
+  // channel. The rest of the workspace has nothing to update, so they are
+  // handed the channel instead of being told a channel they never had changed.
+  it('hands the channel to the workspace when it becomes public', async () => {
     const { service, broadcastChannel } = buildService();
 
     await callBroadcastAccessChange(service, {
@@ -99,11 +102,37 @@ describe('AgentChatChannelService.broadcastChannelAccessChange', () => {
       updatedFields: ['visibility'],
     });
 
+    expect(broadcastChannel).toHaveBeenCalledWith('created', CHANNEL, [
+      'uw-b',
+      'uw-c',
+    ]);
+    expect(broadcastChannel).toHaveBeenCalledWith(
+      'updated',
+      CHANNEL,
+      ['uw-a'],
+      ['visibility'],
+    );
+  });
+
+  it('updates the whole workspace when a channel that was already public changes', async () => {
+    const { service, broadcastChannel } = buildService();
+
+    await callBroadcastAccessChange(service, {
+      recipientsBefore: undefined,
+      recipientsAfter: undefined,
+      updatedFields: ['name'],
+    });
+
     expect(broadcastChannel).toHaveBeenCalledWith(
       'updated',
       CHANNEL,
       undefined,
-      ['visibility'],
+      ['name'],
+    );
+    expect(broadcastChannel).not.toHaveBeenCalledWith(
+      'created',
+      CHANNEL,
+      expect.anything(),
     );
   });
 });

@@ -86,4 +86,50 @@ describe('AgentChatService.broadcastThreadAccessChange', () => {
       expect.objectContaining({ recipientUserWorkspaceIds: ['uw-b'] }),
     );
   });
+
+  // An update is only something to apply for somebody already holding the
+  // thread. The rest of the workspace has nothing to update, so they are
+  // handed the thread instead of being told one they never had changed.
+  it('hands the thread to the workspace when it becomes public', async () => {
+    const {
+      service,
+      broadcastThreadCreatedToRecipients,
+      broadcastThreadUpdated,
+    } = buildService();
+
+    await service.broadcastThreadAccessChange({
+      thread: THREAD,
+      recipientsBefore: ['uw-a'],
+      recipientsAfter: undefined,
+      updatedFields: ['channelId'],
+    });
+
+    expect(broadcastThreadCreatedToRecipients).toHaveBeenCalledWith({
+      thread: THREAD,
+      recipientUserWorkspaceIds: ['uw-b', 'uw-c'],
+    });
+    expect(broadcastThreadUpdated).toHaveBeenCalledWith(THREAD, ['channelId'], {
+      userWorkspaceIds: ['uw-a'],
+    });
+  });
+
+  it('updates the whole workspace when a thread that was already public changes', async () => {
+    const {
+      service,
+      broadcastThreadCreatedToRecipients,
+      broadcastThreadUpdated,
+    } = buildService();
+
+    await service.broadcastThreadAccessChange({
+      thread: THREAD,
+      recipientsBefore: undefined,
+      recipientsAfter: undefined,
+      updatedFields: ['title'],
+    });
+
+    expect(broadcastThreadUpdated).toHaveBeenCalledWith(THREAD, ['title'], {
+      userWorkspaceIds: undefined,
+    });
+    expect(broadcastThreadCreatedToRecipients).not.toHaveBeenCalled();
+  });
 });

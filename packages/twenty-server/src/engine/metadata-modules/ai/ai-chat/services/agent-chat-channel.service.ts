@@ -1061,8 +1061,44 @@ export class AgentChatChannelService {
     recipientsAfter: string[] | undefined;
     updatedFields: string[];
   }): Promise<void> {
+    // The channel is readable by the whole workspace now. An update is only
+    // something to apply for a reader who already holds the channel; everyone
+    // else has nothing to update, and would not see it until a reload.
     if (!isDefined(recipientsAfter)) {
-      await this.broadcastChannel('updated', channel, undefined, updatedFields);
+      // It was public already, so nobody gains it and the whole workspace is
+      // holding it: a plain update.
+      if (!isDefined(recipientsBefore)) {
+        await this.broadcastChannel(
+          'updated',
+          channel,
+          undefined,
+          updatedFields,
+        );
+
+        return;
+      }
+
+      const workspaceUserWorkspaceIds =
+        await this.agentChatService.getWorkspaceUserWorkspaceIds(
+          channel.workspaceId,
+        );
+      const previousRecipients = new Set(recipientsBefore);
+      const gainingRecipients = workspaceUserWorkspaceIds.filter(
+        (userWorkspaceId) => !previousRecipients.has(userWorkspaceId),
+      );
+
+      if (gainingRecipients.length > 0) {
+        await this.broadcastChannel('created', channel, gainingRecipients);
+      }
+
+      if (recipientsBefore.length > 0 && updatedFields.length > 0) {
+        await this.broadcastChannel(
+          'updated',
+          channel,
+          recipientsBefore,
+          updatedFields,
+        );
+      }
 
       return;
     }
