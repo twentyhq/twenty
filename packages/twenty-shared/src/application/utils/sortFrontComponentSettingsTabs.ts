@@ -1,6 +1,5 @@
+import { DEFAULT_FRONT_COMPONENT_SETTINGS_TAB } from '@/application/constants/DefaultFrontComponentSettingsTab';
 import { type FrontComponentSettingsTabManifest } from '@/application/frontComponentSettingsTabType';
-
-export const DEFAULT_FRONT_COMPONENT_SETTINGS_TAB_POSITION = 0;
 
 type SortableFrontComponentSettingsTab = {
   universalIdentifier: string;
@@ -15,9 +14,9 @@ export const sortFrontComponentSettingsTabs = <
   [...frontComponents].sort((a, b) => {
     const positionDifference =
       (a.settingsTab?.position ??
-        DEFAULT_FRONT_COMPONENT_SETTINGS_TAB_POSITION) -
+        DEFAULT_FRONT_COMPONENT_SETTINGS_TAB.position) -
       (b.settingsTab?.position ??
-        DEFAULT_FRONT_COMPONENT_SETTINGS_TAB_POSITION);
+        DEFAULT_FRONT_COMPONENT_SETTINGS_TAB.position);
 
     if (positionDifference !== 0) {
       return positionDifference;

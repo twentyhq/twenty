@@ -11,6 +11,7 @@ import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/uti
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { extractFrontComponentSharedDependencies } from '@/cli/utilities/build/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
+import { validateSettingsFrontComponentTabs } from '@/cli/utilities/build/manifest/utils/validate-settings-front-component-tabs';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
 import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
@@ -612,6 +613,8 @@ export const buildManifest = async (
   if (applicationRoleUniversalIdentifiers.length > 1) {
     errors.push('Only one defineApplicationRole is allowed per application');
   }
+
+  errors.push(...validateSettingsFrontComponentTabs({ frontComponents }));
 
   const { sharedDependencies, errors: sharedDependenciesErrors } =
     await extractFrontComponentSharedDependencies(appPath);

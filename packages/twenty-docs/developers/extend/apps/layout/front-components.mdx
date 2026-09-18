@@ -118,13 +118,17 @@ export default defineSettingsFrontComponent({
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `tab.label` | No | Tab title. Defaults to the component's `name`. `General` is reserved for the built-in tab and fails the build |
+| `tab.label` | No | Tab title. `General` is reserved for the built-in tab and fails the build |
 | `tab.icon` | No | Icon name, for example `IconRefresh`. An unknown name falls back to a default icon |
-| `tab.position` | No | Sort key among your app's tabs. Defaults to `0`; may be negative |
+| `tab.position` | No | Sort key among your app's tabs; may be negative |
+
+Omitting `tab` entirely gives the tab the generated **Variables** tab's own presentation — label `Variables`, icon `IconVariable`, position `0` — since a single settings tab stands in for that tab rather than sitting beside it.
 
 ### Ordering
 
 Declare as many settings tabs as you need. They render after **General**, sorted by ascending `position`; tabs sharing a position fall back to their `universalIdentifier` in alphabetical order, so the order is stable across syncs.
+
+Once you declare more than one, each has to carry its own `tab` — the build fails otherwise, since two components falling back to the same default would render as identically labelled tabs on the same position.
 
 ### Application variables
 
