@@ -14,7 +14,7 @@ export default defineApplication({
   logo: 'public/logo.png',
   author: 'Twenty',
   category: 'Productivity',
-  websiteUrl: 'https://docs.twenty.com/developers/extend/apps/getting-started',
+  websiteUrl: 'https://www.granola.ai',
   termsUrl: 'https://www.twenty.com/terms',
   emailSupport: 'contact@twenty.com',
   issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
