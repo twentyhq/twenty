@@ -1,13 +1,36 @@
-import { buildSchema } from 'graphql';
+import { NestFactory } from '@nestjs/core';
+import {
+  GraphQLSchemaBuilderModule,
+  GraphQLSchemaFactory,
+} from '@nestjs/graphql';
+
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import {
+  buildSchema,
+  isScalarType,
+  lexicographicSortSchema,
+  printType,
+  validateSchema,
+  type GraphQLNamedType,
+  type GraphQLSchema,
+} from 'graphql';
 
 import { appendCoreWorkflowAppOperationsToSdl } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/utils/append-core-workflow-app-operations-to-sdl.util';
+import {
+  CORE_WORKFLOW_APP_MUTATION_NAMES,
+  CORE_WORKFLOW_APP_QUERY_NAMES,
+} from 'src/engine/api/graphql/workspace-graphql-schema-sdl/utils/build-core-workflow-app-operations-sdl.util';
+import { CoreWorkflowVersionMutationResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-version-mutation.resolver';
+import { CoreWorkflowResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow.resolver';
 
-const WORKSPACE_SDL_WITH_SCALARS = /* GraphQL */ `
+jest.setTimeout(60000);
+
+const BASE_SDL = /* GraphQL */ `
   scalar UUID
-  scalar JSON
 
   type Company {
     id: UUID!
+    name: String
   }
 
   type Query {
@@ -19,60 +42,93 @@ const WORKSPACE_SDL_WITH_SCALARS = /* GraphQL */ `
   }
 `;
 
-const WORKSPACE_SDL_WITHOUT_SCALARS = /* GraphQL */ `
-  type Query {
-    _placeholder: String
-  }
+const describeField = (schema: GraphQLSchema, operationName: string) => {
+  const field =
+    schema.getQueryType()?.getFields()[operationName] ??
+    schema.getMutationType()?.getFields()[operationName];
 
-  type Mutation {
-    _placeholder: String
-  }
-`;
+  return {
+    type: field?.type.toString(),
+    args: field?.args
+      .map((argument) => `${argument.name}: ${argument.type.toString()}`)
+      .sort(),
+  };
+};
 
 describe('appendCoreWorkflowAppOperationsToSdl', () => {
-  it('produces a valid schema exposing the operations the app client seeds with', () => {
-    const schema = buildSchema(
-      appendCoreWorkflowAppOperationsToSdl(WORKSPACE_SDL_WITH_SCALARS),
+  let coreSchema: GraphQLSchema;
+  let mergedSchema: GraphQLSchema;
+
+  beforeAll(async () => {
+    const applicationContext = await NestFactory.createApplicationContext(
+      GraphQLSchemaBuilderModule,
+      { logger: false },
     );
 
-    const queryFields = schema.getQueryType()?.getFields() ?? {};
-    const mutationFields = schema.getMutationType()?.getFields() ?? {};
+    coreSchema = await applicationContext
+      .get(GraphQLSchemaFactory)
+      .create([CoreWorkflowResolver, CoreWorkflowVersionMutationResolver]);
 
-    expect(queryFields).toHaveProperty('coreWorkflows');
-    expect(queryFields).toHaveProperty('coreWorkflowVersionsByCoreWorkflowId');
-    expect(queryFields).toHaveProperty('companies');
-    expect(mutationFields).toHaveProperty('createCoreWorkflow');
-    expect(mutationFields).toHaveProperty('updateCoreWorkflowVersionTrigger');
-    expect(mutationFields).toHaveProperty('createCoreWorkflowVersionStep');
-    expect(mutationFields).toHaveProperty('updateCoreWorkflowVersionStep');
-    expect(mutationFields).toHaveProperty('activateCoreWorkflowVersion');
-    expect(mutationFields).toHaveProperty('createCompany');
+    await applicationContext.close();
+
+    mergedSchema = buildSchema(
+      await appendCoreWorkflowAppOperationsToSdl(BASE_SDL),
+    );
   });
 
-  it('exposes the filter enums the app sends unquoted', () => {
-    const schema = buildSchema(
-      appendCoreWorkflowAppOperationsToSdl(WORKSPACE_SDL_WITH_SCALARS),
+  it('produces a valid schema that keeps the workspace operations', () => {
+    expect(validateSchema(mergedSchema)).toEqual([]);
+    expect(mergedSchema.getQueryType()?.getFields()).toHaveProperty(
+      'companies',
+    );
+    expect(mergedSchema.getMutationType()?.getFields()).toHaveProperty(
+      'createCompany',
+    );
+  });
+
+  it.each([
+    ...CORE_WORKFLOW_APP_QUERY_NAMES,
+    ...CORE_WORKFLOW_APP_MUTATION_NAMES,
+  ])(
+    'exposes %s with the signature the core schema declares',
+    (operationName) => {
+      const coreField = describeField(coreSchema, operationName);
+
+      expect(coreField.type).toBeDefined();
+      expect(describeField(mergedSchema, operationName)).toEqual(coreField);
+    },
+  );
+
+  it('carries every referenced type over unchanged', () => {
+    const coreTypeNames = Object.values(coreSchema.getTypeMap())
+      .filter(
+        (type: GraphQLNamedType) =>
+          !type.name.startsWith('__') && !isScalarType(type),
+      )
+      .map((type) => type.name)
+      .filter((typeName) => !['Query', 'Mutation'].includes(typeName));
+
+    const referencedTypeNames = coreTypeNames.filter((typeName) =>
+      Boolean(mergedSchema.getType(typeName)),
     );
 
-    expect(schema.getType('CoreWorkflowFilterLogicalOperator')).toBeDefined();
-    expect(schema.getType('CoreWorkflowFilterFieldKey')).toBeDefined();
-    expect(schema.getType('CoreWorkflowFilterOperand')).toBeDefined();
+    expect(referencedTypeNames.length).toBeGreaterThan(0);
+
+    const sortedCoreSchema = lexicographicSortSchema(coreSchema);
+
+    for (const typeName of referencedTypeNames) {
+      const mergedType = mergedSchema.getType(typeName);
+      const coreType = sortedCoreSchema.getType(typeName);
+
+      expect(mergedType && printType(mergedType)).toEqual(
+        coreType && printType(coreType),
+      );
+    }
   });
 
-  it('declares the UUID and JSON scalars when the base schema does not', () => {
-    const schema = buildSchema(
-      appendCoreWorkflowAppOperationsToSdl(WORKSPACE_SDL_WITHOUT_SCALARS),
-    );
+  it('is accepted by the sdk client generator schema builder', async () => {
+    const typeDefs = await appendCoreWorkflowAppOperationsToSdl(BASE_SDL);
 
-    expect(schema.getType('UUID')).toBeDefined();
-    expect(schema.getType('JSON')).toBeDefined();
-  });
-
-  it('does not redeclare scalars the base schema already has', () => {
-    expect(() =>
-      buildSchema(
-        appendCoreWorkflowAppOperationsToSdl(WORKSPACE_SDL_WITH_SCALARS),
-      ),
-    ).not.toThrow();
+    expect(() => makeExecutableSchema({ typeDefs })).not.toThrow();
   });
 });

@@ -173,6 +173,70 @@ const APP_SCHEMA_INTROSPECTION = `
   }
 `;
 
+const SCHEMA_OPERATION_SIGNATURES = `
+  query OperationSignatures {
+    __schema {
+      queryType {
+        fields {
+          name
+          type { ...TypeRef }
+          args { name type { ...TypeRef } }
+        }
+      }
+      mutationType {
+        fields {
+          name
+          type { ...TypeRef }
+          args { name type { ...TypeRef } }
+        }
+      }
+    }
+  }
+
+  fragment TypeRef on __Type {
+    kind
+    name
+    ofType {
+      kind
+      name
+      ofType {
+        kind
+        name
+        ofType { kind name }
+      }
+    }
+  }
+`;
+
+type IntrospectedField = {
+  name: string;
+  type: object;
+  args: { name: string; type: object }[];
+};
+
+const indexSignaturesByOperationName = (responseBody: {
+  data?: {
+    __schema?: {
+      queryType?: { fields?: IntrospectedField[] };
+      mutationType?: { fields?: IntrospectedField[] };
+    };
+  };
+}): Record<string, string> =>
+  Object.fromEntries(
+    [
+      ...(responseBody.data?.__schema?.queryType?.fields ?? []),
+      ...(responseBody.data?.__schema?.mutationType?.fields ?? []),
+    ].map((field) => [
+      field.name,
+      JSON.stringify({
+        type: field.type,
+        args: [...field.args]
+          .sort((left, right) => left.name.localeCompare(right.name))
+          .map((argument) => ({ name: argument.name, type: argument.type })),
+      }),
+    ]),
+  );
+
 const CORE_WORKFLOW_SEEDING_QUERY_FIELDS = [
   'coreWorkflows',
   'coreWorkflowVersionsByCoreWorkflowId',
@@ -441,6 +505,34 @@ describe('core workflow API with application credentials (integration)', () => {
 
     for (const fieldName of CORE_WORKFLOW_SEEDING_MUTATION_FIELDS) {
       expect(mutationFieldNames).toContain(fieldName);
+    }
+  });
+
+  it('should declare the seeded operations exactly as the core schema declares them', async () => {
+    const [appSchemaResponse, coreSchemaResponse] = await Promise.all([
+      graphqlAs(authorizedApplication.accessToken, SCHEMA_OPERATION_SIGNATURES),
+      graphqlAs(APPLE_JANE_ADMIN_ACCESS_TOKEN, SCHEMA_OPERATION_SIGNATURES),
+    ]);
+
+    expect(appSchemaResponse.body.errors).toBeUndefined();
+    expect(coreSchemaResponse.body.errors).toBeUndefined();
+
+    const appSignatures = indexSignaturesByOperationName(
+      appSchemaResponse.body,
+    );
+    const coreSignatures = indexSignaturesByOperationName(
+      coreSchemaResponse.body,
+    );
+
+    for (const operationName of [
+      ...CORE_WORKFLOW_SEEDING_QUERY_FIELDS,
+      ...CORE_WORKFLOW_SEEDING_MUTATION_FIELDS,
+    ]) {
+      expect(coreSignatures[operationName]).toBeDefined();
+      expect({
+        operationName,
+        signature: appSignatures[operationName],
+      }).toEqual({ operationName, signature: coreSignatures[operationName] });
     }
   });
 

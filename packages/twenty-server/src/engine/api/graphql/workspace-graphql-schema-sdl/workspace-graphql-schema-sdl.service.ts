@@ -150,7 +150,7 @@ export class WorkspaceGraphqlSchemaSDLService {
 
     return {
       sdl: isDefined(applicationId)
-        ? appendCoreWorkflowAppOperationsToSdl(sdl)
+        ? await appendCoreWorkflowAppOperationsToSdl(sdl)
         : sdl,
       usedScalarNames,
       flatObjectMetadataMaps,
