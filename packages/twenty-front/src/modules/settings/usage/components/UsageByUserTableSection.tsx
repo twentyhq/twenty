@@ -9,11 +9,10 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
+import { Section } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { SearchInput } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -77,8 +76,8 @@ export const UsageByUserTableSection = ({
   });
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={title}
         description={description}
         adornment={
@@ -139,6 +138,6 @@ export const UsageByUserTableSection = ({
           </TableRow>
         ))}
       </Table>
-    </Section>
+    </Section.Root>
   );
 };

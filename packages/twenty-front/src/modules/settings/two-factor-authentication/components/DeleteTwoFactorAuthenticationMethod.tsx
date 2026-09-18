@@ -2,8 +2,8 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '@/settings/two-factor-authentication/hooks/useWorkspaceTwoFactorAuthenticationPolicy';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useMutation } from '@apollo/client/react';
@@ -11,9 +11,9 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { DeleteTwoFactorAuthenticationMethodDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -21,7 +21,7 @@ const DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID =
   'delete-two-factor-authentication-modal';
 export const DeleteTwoFactorAuthentication = () => {
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const { enqueueToast } = useToast();
   const { signOut } = useAuth();
@@ -83,21 +83,21 @@ export const DeleteTwoFactorAuthentication = () => {
 
   return (
     <>
-      <H2Title
+      <Section.Header
         title={t`Delete Two-Factor Authentication Method`}
         description={t`Deleting this method will remove it permanently from your account.`}
       />
 
       <Button
-        onClick={() => openModal(DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID)}
+        onClick={() => openDialog(DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID)}
         variant="outline"
         color="danger"
       >{t`Reset 2FA`}</Button>
 
-      <ConfirmationModal
+      <ConfirmationDialog
         confirmationValue={userEmail}
         confirmationPlaceholder={userEmail ?? ''}
-        modalInstanceId={DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID}
+        dialogId={DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID}
         title={t`2FA Method Reset`}
         subtitle={
           isTwoFactorAuthenticationEnforced ? (

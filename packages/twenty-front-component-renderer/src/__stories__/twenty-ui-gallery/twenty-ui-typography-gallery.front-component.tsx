@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { Section } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   VisibilityHidden,
@@ -5,10 +8,8 @@ import {
 } from 'twenty-ui/primitives/accessibility';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 import {
-  H1Title,
-  H1TitleFontColor,
-  H2Title,
-  H3Title,
+  Heading,
+  Text,
   Label,
   LinkifiedText,
   SeparatorLineText,
@@ -22,18 +23,45 @@ import {
   type GalleryEntry,
 } from '../shared/front-components/component-gallery';
 
+const SectionExample = () => {
+  const [activations, setActivations] = useState(0);
+
+  return (
+    <Section.Root>
+      <Section.Header
+        title="Workspace preferences"
+        description="Manage the settings for your workspace."
+        adornment={
+          <Button onClick={() => setActivations((count) => count + 1)}>
+            Edit workspace
+          </Button>
+        }
+      />
+      <Text aria-label="Workspace edits">{activations}</Text>
+    </Section.Root>
+  );
+};
+
 const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
   {
-    name: 'H1Title',
-    node: <H1Title title="Heading 1" fontColor={H1TitleFontColor.Primary} />,
+    name: 'Heading',
+    node: (
+      <Heading level={1} size="lg">
+        Heading 1
+      </Heading>
+    ),
   },
   {
-    name: 'H2Title',
-    node: <H2Title title="Heading 2" />,
+    name: 'Section',
+    node: <SectionExample />,
   },
   {
-    name: 'H3Title',
-    node: <H3Title title="Heading 3" />,
+    name: 'HeadingLevel',
+    node: (
+      <Heading level={3} size="sm">
+        Heading 3
+      </Heading>
+    ),
   },
   {
     name: 'Label',

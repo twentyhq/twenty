@@ -18,7 +18,6 @@ const STRUCTURAL_EXEMPTIONS = new Set<string>([
   // user-scoped auth sessions; workspaceId is null for workspace-agnostic sessions
   'UserSessionEntity',
 
-  'ApplicationVariableEntity',
   'BillingMeterEntity',
   'BillingPriceEntity',
   'BillingProductEntity',

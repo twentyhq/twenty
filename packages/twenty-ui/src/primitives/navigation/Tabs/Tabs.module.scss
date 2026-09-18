@@ -111,6 +111,12 @@
   white-space: nowrap;
 }
 
+.tab[data-highlighted] .content {
+  border-radius: var(--t-border-radius-sm);
+  outline: 1px solid var(--t-color-blue);
+  outline-offset: -1px;
+}
+
 .label {
   min-inline-size: 0;
   overflow: hidden;

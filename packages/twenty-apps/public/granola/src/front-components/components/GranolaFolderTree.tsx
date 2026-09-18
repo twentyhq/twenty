@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { t } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { Label } from 'twenty-ui/typography';
 
@@ -25,6 +26,7 @@ const StyledLabelContainer = styled.span`
   align-items: center;
   color: ${() => themeCssVariables.font.color.tertiary};
   display: flex;
+  justify-content: space-between;
   margin-bottom: ${() => themeCssVariables.spacing[2]};
   margin-top: ${() => themeCssVariables.spacing[2]};
 `;
@@ -51,6 +53,7 @@ type GranolaFolderTreeProps = {
   folders: GranolaSettingsFolder[];
   selectedFolderIds: string[];
   selectionLimit: number;
+  hint: string | undefined;
   onToggleFolder: (folderId: string, checked: boolean) => void;
   onReplaceSelection: (folderIds: string[]) => void;
 };
@@ -59,6 +62,7 @@ export const GranolaFolderTree = ({
   folders,
   selectedFolderIds,
   selectionLimit,
+  hint,
   onToggleFolder,
   onReplaceSelection,
 }: GranolaFolderTreeProps) => {
@@ -107,6 +111,9 @@ export const GranolaFolderTree = ({
       </StyledSearchInputContainer>
       <StyledLabelContainer>
         <Label>{t('Folders')}</Label>
+        <Label>
+          {selectedFolderIds.length}/{selectionLimit}
+        </Label>
       </StyledLabelContainer>
       <StyledSectionHeader>
         <Label>{t('Toggle all folders')}</Label>
@@ -136,6 +143,7 @@ export const GranolaFolderTree = ({
           />
         ))}
       </StyledTreeList>
+      {isDefined(hint) && <StyledSettingsHint>{hint}</StyledSettingsHint>}
     </StyledContainer>
   );
 };

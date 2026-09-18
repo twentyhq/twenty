@@ -10,6 +10,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     { label: MessageDescriptor; description: MessageDescriptor }
   >
 > = {
+  [FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED]: {
+    label: msg`Async CSV export`,
+    description: msg`Generate CSV exports in the background with progress and automatic downloads.`,
+  },
   [FeatureFlagKey.IS_APP_CLAIMING_ENABLED]: {
     label: msg`App claiming`,
     description: msg`Allow developers to claim ownership of applications.`,
@@ -42,10 +46,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Workflow index page`,
     description: msg`Use the dedicated workflow index page to browse workflows and their versions.`,
   },
-  [FeatureFlagKey.IS_API_RATE_LIMIT_V2_ENABLED]: {
-    label: msg`API rate limits v2`,
-    description: msg`Use the usage limit engine to enforce API request speed limits.`,
-  },
   [FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED]: {
     label: msg`Message and calendar target reads`,
     description: msg`Use target relations to find messages and calendar events linked to records.`,
@@ -53,10 +53,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
   [FeatureFlagKey.IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED]: {
     label: msg`Credit allowance quotas`,
     description: msg`Use the quota engine to enforce credit allowances.`,
-  },
-  [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
-    label: msg`Record creation form`,
-    description: msg`Use a dedicated form when creating records.`,
   },
   [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: {
     label: msg`Record sharing`,

@@ -1483,6 +1483,13 @@ export type CreatePageLayoutWidgetInput = {
   type: WidgetType;
 };
 
+export type CreateRecordExportInput = {
+  fieldMetadataIds: Array<Scalars['UUID']['input']>;
+  filter?: InputMaybe<Scalars['JSON']['input']>;
+  objectMetadataId: Scalars['UUID']['input'];
+  orderBy?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type CreateRoleInput = {
   canAccessAllTools?: InputMaybe<Scalars['Boolean']['input']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2044,8 +2051,8 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
-  IS_API_RATE_LIMIT_V2_ENABLED = 'IS_API_RATE_LIMIT_V2_ENABLED',
   IS_APP_CLAIMING_ENABLED = 'IS_APP_CLAIMING_ENABLED',
+  IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_INITIAL_OBJECT_VIEW_ENABLED = 'IS_INITIAL_OBJECT_VIEW_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
@@ -2054,7 +2061,6 @@ export enum FeatureFlagKey {
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED = 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED = 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED',
-  IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_SHARING_ENABLED = 'IS_RECORD_SHARING_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
@@ -2226,6 +2232,7 @@ export enum FileFolder {
   FilesField = 'FilesField',
   GeneratedSdkClient = 'GeneratedSdkClient',
   PublicAsset = 'PublicAsset',
+  RecordExport = 'RecordExport',
   Source = 'Source',
   Workflow = 'Workflow'
 }
@@ -4250,7 +4257,7 @@ export type MutationUpdateOneAgentArgs = {
 
 
 export type MutationUpdateOneApplicationVariableArgs = {
-  applicationId: Scalars['UUID']['input'];
+  applicationId?: InputMaybe<Scalars['UUID']['input']>;
   key: Scalars['String']['input'];
   value: Scalars['String']['input'];
 };
@@ -5614,6 +5621,15 @@ export type RatioAggregateConfig = {
   optionValue: Scalars['String']['output'];
 };
 
+export type RecordExport = {
+  __typename?: 'RecordExport';
+  downloadUrl?: Maybe<Scalars['String']['output']>;
+  errorMessage?: Maybe<Scalars['String']['output']>;
+  filename: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  progress: Scalars['Int']['output'];
+};
+
 export type RecordIdentifier = {
   __typename?: 'RecordIdentifier';
   id: Scalars['UUID']['output'];
@@ -6018,6 +6034,7 @@ export type SubdomainAvailabilityDto = {
 export type Subscription = {
   __typename?: 'Subscription';
   eventLogsLive?: Maybe<Array<EventLogRecord>>;
+  exportRecords: RecordExport;
   logicFunctionLogs: LogicFunctionLogs;
   onAgentChatEvent: AgentChatEvent;
   onEventSubscription?: Maybe<EventSubscription>;
@@ -6026,6 +6043,11 @@ export type Subscription = {
 
 export type SubscriptionEventLogsLiveArgs = {
   table: EventLogTable;
+};
+
+
+export type SubscriptionExportRecordsArgs = {
+  input: CreateRecordExportInput;
 };
 
 
@@ -8928,6 +8950,13 @@ export type PieChartDataQueryVariables = Exact<{
 
 export type PieChartDataQuery = { __typename?: 'Query', pieChartData: { __typename?: 'PieChartData', showLegend: boolean, showDataLabels: boolean, showCenterMetric: boolean, hasTooManyGroups: boolean, formattedToRawLookup: any, data: Array<{ __typename?: 'PieChartDataItem', key: string, value: number }> } };
 
+export type ExportRecordsSubscriptionVariables = Exact<{
+  input: CreateRecordExportInput;
+}>;
+
+
+export type ExportRecordsSubscription = { __typename?: 'Subscription', exportRecords: { __typename?: 'RecordExport', id: string, filename: string, progress: number, errorMessage?: string | null, downloadUrl?: string | null } };
+
 export type CreateEmailGroupChannelMutationVariables = Exact<{
   input: CreateEmailGroupChannelInput;
 }>;
@@ -10231,6 +10260,7 @@ export const CallRecordingIdForCalendarEventDocument = {"kind":"Document","defin
 export const BarChartDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"BarChartData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BarChartDataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"barChartData"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"indexBy"}},{"kind":"Field","name":{"kind":"Name","value":"keys"}},{"kind":"Field","name":{"kind":"Name","value":"series"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"Field","name":{"kind":"Name","value":"xAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"yAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"showDataLabels"}},{"kind":"Field","name":{"kind":"Name","value":"layout"}},{"kind":"Field","name":{"kind":"Name","value":"groupMode"}},{"kind":"Field","name":{"kind":"Name","value":"hasTooManyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"formattedToRawLookup"}}]}}]}}]} as unknown as DocumentNode<BarChartDataQuery, BarChartDataQueryVariables>;
 export const LineChartDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LineChartData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LineChartDataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lineChartData"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"xAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"yAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"showDataLabels"}},{"kind":"Field","name":{"kind":"Name","value":"hasTooManyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"formattedToRawLookup"}}]}}]}}]} as unknown as DocumentNode<LineChartDataQuery, LineChartDataQueryVariables>;
 export const PieChartDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PieChartData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PieChartDataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pieChartData"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"showDataLabels"}},{"kind":"Field","name":{"kind":"Name","value":"showCenterMetric"}},{"kind":"Field","name":{"kind":"Name","value":"hasTooManyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"formattedToRawLookup"}}]}}]}}]} as unknown as DocumentNode<PieChartDataQuery, PieChartDataQueryVariables>;
+export const ExportRecordsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"ExportRecords"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateRecordExportInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exportRecords"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"progress"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}},{"kind":"Field","name":{"kind":"Name","value":"downloadUrl"}}]}}]}}]} as unknown as DocumentNode<ExportRecordsSubscription, ExportRecordsSubscriptionVariables>;
 export const CreateEmailGroupChannelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateEmailGroupChannel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateEmailGroupChannelInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createEmailGroupChannel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messageChannel"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"isSyncEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"excludeGroupEmails"}},{"kind":"Field","name":{"kind":"Name","value":"contactAutoCreationPolicy"}}]}},{"kind":"Field","name":{"kind":"Name","value":"forwardingAddress"}}]}}]}}]} as unknown as DocumentNode<CreateEmailGroupChannelMutation, CreateEmailGroupChannelMutationVariables>;
 export const DeleteConnectedAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteConnectedAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteConnectedAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteConnectedAccountMutation, DeleteConnectedAccountMutationVariables>;
 export const DeleteEmailGroupChannelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteEmailGroupChannel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteEmailGroupChannel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteEmailGroupChannelMutation, DeleteEmailGroupChannelMutationVariables>;

@@ -1,3 +1,5 @@
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
+import { Tabs } from 'twenty-ui/primitives/navigation';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
@@ -37,6 +39,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconCreditCard,
   IconEyeShare,
@@ -47,12 +50,11 @@ import {
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button, Switch } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import {
   Card,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/primitives/surfaces';
-import { H2Title, Text } from 'twenty-ui/primitives/typography';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetUpgradeStatusDocument,
@@ -81,6 +83,11 @@ const WORKSPACE_DETAIL_TAB_IDS = {
   FEATURE_FLAGS: 'feature-flags',
   CHATS: 'chats',
 };
+
+const StyledTabPanel = styled.div`
+  height: 100%;
+  min-height: 0;
+`;
 
 export const SettingsAdminWorkspaceDetail = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
@@ -300,187 +307,203 @@ export const SettingsAdminWorkspaceDetail = () => {
   }
 
   return (
-    <SettingsPageLayout
-      title={workspaceName}
-      icon={
-        <Avatar
-          src={getAbsoluteImageUrl(workspaceLogo)}
-          name={workspaceName}
-          colorSeed={workspace?.id}
-          size="md"
-        />
-      }
-      links={[
-        {
-          children: t`Other`,
-          href: getSettingsPath(SettingsPath.AdminPanel),
-        },
-        {
-          children: t`Admin Panel - AI`,
-          href: AI_ADMIN_PATH,
-        },
-        {
-          children: workspaceName,
-        },
-      ]}
-      secondaryBar={
-        <SettingsTabBar
-          tabs={tabs}
-          behaveAsLinks={false}
-          componentInstanceId={WORKSPACE_DETAIL_TABS_ID}
-        />
-      }
-    >
-      <SettingsPageContainer>
-        {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.INFO && workspace && (
-          <SettingsAdminWorkspaceContent
-            activeWorkspace={workspace}
-            workspaceUpgradeStatus={workspaceUpgradeStatusData?.getUpgradeStatus?.find(
-              (status) => status?.workspaceId === workspaceId,
-            )}
+    <TabListRoot componentInstanceId={WORKSPACE_DETAIL_TABS_ID}>
+      <SettingsPageLayout
+        title={workspaceName}
+        icon={
+          <Avatar
+            src={getAbsoluteImageUrl(workspaceLogo)}
+            name={workspaceName}
+            colorSeed={workspace?.id}
+            size="md"
           />
-        )}
+        }
+        links={[
+          {
+            children: t`Other`,
+            href: getSettingsPath(SettingsPath.AdminPanel),
+          },
+          {
+            children: t`Admin Panel - AI`,
+            href: AI_ADMIN_PATH,
+          },
+          {
+            children: workspaceName,
+          },
+        ]}
+        secondaryBar={
+          <SettingsTabBar
+            aria-label={t`Workspace details`}
+            tabs={tabs}
+            behaveAsLinks={false}
+            componentInstanceId={WORKSPACE_DETAIL_TABS_ID}
+          />
+        }
+      >
+        <Tabs.Panel value={effectiveTabId} render={<StyledTabPanel />}>
+          <SettingsPageContainer>
+            {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.INFO && workspace && (
+              <SettingsAdminWorkspaceContent
+                activeWorkspace={workspace}
+                workspaceUpgradeStatus={workspaceUpgradeStatusData?.getUpgradeStatus?.find(
+                  (status) => status?.workspaceId === workspaceId,
+                )}
+              />
+            )}
 
-        {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.BILLING &&
-          isBillingEnabled &&
-          workspaceId && (
-            <SettingsAdminWorkspaceBillingContent workspaceId={workspaceId} />
-          )}
+            {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.BILLING &&
+              isBillingEnabled &&
+              workspaceId && (
+                <SettingsAdminWorkspaceBillingContent
+                  workspaceId={workspaceId}
+                />
+              )}
 
-        {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.MEMBERS && workspace && (
-          <Section>
-            <H2Title title={t`Members`} description={t`Workspace members`} />
-            <Table>
-              <TableBody>
-                <TableRow gridTemplateColumns="1fr 2fr 100px">
-                  <TableHeader>{t`Name`}</TableHeader>
-                  <TableHeader>{t`Email`}</TableHeader>
-                  <TableHeader align="right">{t`Actions`}</TableHeader>
-                </TableRow>
-                {workspace.users?.map((user) => {
-                  const userId = user.id;
+            {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.MEMBERS &&
+              workspace && (
+                <Section.Root>
+                  <Section.Header
+                    title={t`Members`}
+                    description={t`Workspace members`}
+                  />
+                  <Table>
+                    <TableBody>
+                      <TableRow gridTemplateColumns="1fr 2fr 100px">
+                        <TableHeader>{t`Name`}</TableHeader>
+                        <TableHeader>{t`Email`}</TableHeader>
+                        <TableHeader align="right">{t`Actions`}</TableHeader>
+                      </TableRow>
+                      {workspace.users?.map((user) => {
+                        const userId = user.id;
 
-                  if (!isDefined(userId)) return null;
+                        if (!isDefined(userId)) return null;
 
-                  return (
-                    <TableRow
-                      key={userId}
-                      gridTemplateColumns="1fr 2fr 100px"
-                      to={getSettingsPath(SettingsPath.AdminPanelUserDetail, {
-                        userId,
+                        return (
+                          <TableRow
+                            key={userId}
+                            gridTemplateColumns="1fr 2fr 100px"
+                            to={getSettingsPath(
+                              SettingsPath.AdminPanelUserDetail,
+                              {
+                                userId,
+                              },
+                            )}
+                          >
+                            <TableCell
+                              color={themeCssVariables.font.color.primary}
+                              gap={themeCssVariables.spacing[2]}
+                              overflow="hidden"
+                            >
+                              <Avatar
+                                src={getAbsoluteImageUrl(user.avatarUrl)}
+                                name={
+                                  `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                                  user.email
+                                }
+                                colorSeed={user.id}
+                                size="md"
+                                shape="circle"
+                              />
+                              <OverflowingTextWithTooltip
+                                text={
+                                  `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                                  '\u2014'
+                                }
+                              />
+                            </TableCell>
+                            <TableCell>{user.email}</TableCell>
+                            <TableCell align="right">
+                              {workspace.allowImpersonation &&
+                                isDefined(currentUser?.id) &&
+                                userId !== currentUser.id && (
+                                  <Button
+                                    startIcon={<IconEyeShare />}
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      handleImpersonate(userId, workspaceId!);
+                                    }}
+                                    disabled={impersonatingUserId === userId}
+                                    variant="outline"
+                                  >{t`Impersonate`}</Button>
+                                )}
+                            </TableCell>
+                          </TableRow>
+                        );
                       })}
-                    >
+                    </TableBody>
+                  </Table>
+                </Section.Root>
+              )}
+
+            {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.FEATURE_FLAGS &&
+              workspace && (
+                <SettingsTableListSection
+                  title={t`Feature Flags`}
+                  description={t`Manage feature flags for this workspace`}
+                  gridAutoColumns="minmax(0, 240px) minmax(0, 1fr) 56px"
+                  items={featureFlagItems}
+                  columns={featureFlagColumns}
+                />
+              )}
+
+            {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.CHATS && (
+              <Section.Root>
+                <Section.Header
+                  title={t`Chat Sessions`}
+                  description={t`AI chat threads for this workspace`}
+                />
+                {isLoadingThreads ? (
+                  <SettingsSectionSkeletonLoader />
+                ) : threads.length === 0 ? (
+                  <Card rounded>
+                    <TableRow gridTemplateColumns="1fr">
                       <TableCell
-                        color={themeCssVariables.font.color.primary}
-                        gap={themeCssVariables.spacing[2]}
-                        overflow="hidden"
+                        color={themeCssVariables.font.color.tertiary}
+                        align="center"
                       >
-                        <Avatar
-                          src={getAbsoluteImageUrl(user.avatarUrl)}
-                          name={
-                            `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
-                            user.email
-                          }
-                          colorSeed={user.id}
-                          size="md"
-                          shape="circle"
-                        />
-                        <OverflowingTextWithTooltip
-                          text={
-                            `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
-                            '\u2014'
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell align="right">
-                        {workspace.allowImpersonation &&
-                          isDefined(currentUser?.id) &&
-                          userId !== currentUser.id && (
-                            <Button
-                              startIcon={<IconEyeShare />}
-                              size="sm"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleImpersonate(userId, workspaceId!);
-                              }}
-                              disabled={impersonatingUserId === userId}
-                              variant="outline"
-                            >{t`Impersonate`}</Button>
-                          )}
+                        {t`No chat threads found.`}
                       </TableCell>
                     </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Section>
-        )}
-
-        {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.FEATURE_FLAGS &&
-          workspace && (
-            <SettingsTableListSection
-              title={t`Feature Flags`}
-              description={t`Manage feature flags for this workspace`}
-              gridAutoColumns="minmax(0, 240px) minmax(0, 1fr) 56px"
-              items={featureFlagItems}
-              columns={featureFlagColumns}
-            />
-          )}
-
-        {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.CHATS && (
-          <Section>
-            <H2Title
-              title={t`Chat Sessions`}
-              description={t`AI chat threads for this workspace`}
-            />
-            {isLoadingThreads ? (
-              <SettingsSectionSkeletonLoader />
-            ) : threads.length === 0 ? (
-              <Card rounded>
-                <TableRow gridTemplateColumns="1fr">
-                  <TableCell
-                    color={themeCssVariables.font.color.tertiary}
-                    align="center"
-                  >
-                    {t`No chat threads found.`}
-                  </TableCell>
-                </TableRow>
-              </Card>
-            ) : (
-              <Table>
-                <TableRow gridTemplateColumns="1fr 120px 120px">
-                  <TableHeader>{t`Title`}</TableHeader>
-                  <TableHeader align="right">{t`Messages`}</TableHeader>
-                  <TableHeader align="right">{t`Updated`}</TableHeader>
-                </TableRow>
-                {threads.map((thread) => (
-                  <TableRow
-                    key={thread.id}
-                    gridTemplateColumns="1fr 120px 120px"
-                    to={getSettingsPath(
-                      SettingsPath.AdminPanelWorkspaceChatThread,
-                      {
-                        workspaceId: workspaceId ?? '',
-                        threadId: thread.id,
-                      },
-                    )}
-                  >
-                    <TableCell color={themeCssVariables.font.color.primary}>
-                      {thread.title || t`Untitled`}
-                    </TableCell>
-                    <TableCell align="right">{thread.messageCount}</TableCell>
-                    <TableCell align="right">
-                      {new Date(thread.updatedAt).toLocaleDateString()}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </Table>
+                  </Card>
+                ) : (
+                  <Table>
+                    <TableRow gridTemplateColumns="1fr 120px 120px">
+                      <TableHeader>{t`Title`}</TableHeader>
+                      <TableHeader align="right">{t`Messages`}</TableHeader>
+                      <TableHeader align="right">{t`Updated`}</TableHeader>
+                    </TableRow>
+                    {threads.map((thread) => (
+                      <TableRow
+                        key={thread.id}
+                        gridTemplateColumns="1fr 120px 120px"
+                        to={getSettingsPath(
+                          SettingsPath.AdminPanelWorkspaceChatThread,
+                          {
+                            workspaceId: workspaceId ?? '',
+                            threadId: thread.id,
+                          },
+                        )}
+                      >
+                        <TableCell color={themeCssVariables.font.color.primary}>
+                          {thread.title || t`Untitled`}
+                        </TableCell>
+                        <TableCell align="right">
+                          {thread.messageCount}
+                        </TableCell>
+                        <TableCell align="right">
+                          {new Date(thread.updatedAt).toLocaleDateString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </Table>
+                )}
+              </Section.Root>
             )}
-          </Section>
-        )}
-      </SettingsPageContainer>
-    </SettingsPageLayout>
+          </SettingsPageContainer>
+        </Tabs.Panel>
+      </SettingsPageLayout>
+    </TabListRoot>
   );
 };

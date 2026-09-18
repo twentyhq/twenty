@@ -24,16 +24,19 @@ describe('resolveWorkflowTriggerDispatchMode', () => {
     ).toEqual({ mode: 'LEGACY' });
   });
 
-  it('should report a half resolved pair instead of downgrading it', () => {
+  it('should accept both core-only and legacy workspace-only envelopes', () => {
     expect(
       resolveWorkflowTriggerDispatchMode({
         coreWorkflowVersionId: 'core-version-1',
       }),
-    ).toEqual({ mode: 'INCOMPLETE' });
+    ).toEqual({
+      mode: 'CORE',
+      coreWorkflowVersionId: 'core-version-1',
+    });
     expect(
       resolveWorkflowTriggerDispatchMode({
         workspaceWorkflowVersionId: 'workspace-version-1',
       }),
-    ).toEqual({ mode: 'INCOMPLETE' });
+    ).toEqual({ mode: 'LEGACY' });
   });
 });
