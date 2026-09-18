@@ -21,7 +21,6 @@ export const SortableTableHeader = ({
   align = 'left',
   initialSort,
   Icon,
-  onSort,
 }: {
   tableId: string;
   fieldName: string;
@@ -29,7 +28,6 @@ export const SortableTableHeader = ({
   align?: 'left' | 'center' | 'right';
   initialSort?: TableSortValue;
   Icon?: IconComponent;
-  onSort?: () => void;
 }) => {
   const sortedFieldByTable = useAtomFamilyStateValue(
     sortedFieldByTableFamilyState,
@@ -52,7 +50,6 @@ export const SortableTableHeader = ({
   const isSortActive = isSortOnThisField;
 
   const handleClick = () => {
-    onSort?.();
     setSortedFieldByTable({
       fieldName,
       direction: isDesc ? 'asc' : 'desc',

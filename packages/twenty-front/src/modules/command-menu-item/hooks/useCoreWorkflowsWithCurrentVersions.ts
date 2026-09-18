@@ -3,14 +3,15 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { buildWorkflowVersionFromCore } from '@/object-core/workflows/utils/buildWorkflowVersionFromCore';
+import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { GetCoreWorkflowsWithCurrentVersionsDocument } from '~/generated/graphql';
 
 export const useCoreWorkflowsWithCurrentVersions = (
   coreWorkflowIds: string[],
-) => {
+): WorkflowWithCurrentVersion[] => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, previousData, loading, error } = useQuery(
+  const { data } = useQuery(
     GetCoreWorkflowsWithCurrentVersionsDocument,
     coreWorkflowIds.length === 0
       ? skipToken
@@ -20,9 +21,7 @@ export const useCoreWorkflowsWithCurrentVersions = (
         },
   );
 
-  const workflows = (
-    data ?? previousData
-  )?.coreWorkflowsWithCurrentVersions.flatMap(
+  return (data?.coreWorkflowsWithCurrentVersions ?? []).flatMap(
     ({ workflow, versions, currentVersion }) => {
       const builtCurrentVersion = buildWorkflowVersionFromCore(currentVersion);
 
@@ -49,6 +48,4 @@ export const useCoreWorkflowsWithCurrentVersions = (
       ];
     },
   );
-
-  return { workflows: workflows ?? [], loading, error };
 };

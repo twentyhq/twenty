@@ -1,12 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import {
-  ArrayMaxSize,
-  ArrayNotEmpty,
-  ArrayUnique,
-  IsArray,
-  IsUUID,
-} from 'class-validator';
+import { ArrayMaxSize, ArrayNotEmpty, IsArray, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -16,7 +10,6 @@ export class CoreWorkflowsWithCurrentVersionsInput {
   @IsArray()
   @ArrayNotEmpty()
   @ArrayMaxSize(500)
-  @ArrayUnique()
   @IsUUID(undefined, { each: true })
   coreWorkflowIds: string[];
 }

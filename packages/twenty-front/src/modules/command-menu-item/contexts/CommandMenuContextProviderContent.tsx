@@ -46,12 +46,6 @@ const WORKSPACE_DEFINITION_COMMANDS = new Set<EngineComponentKey>([
   EngineComponentKey.NAVIGATE_TO_PREVIOUS_RECORD,
 ]);
 
-const WORKSPACE_DELETE_COMMANDS = new Set<EngineComponentKey>([
-  EngineComponentKey.DELETE_RECORDS,
-  EngineComponentKey.DELETE_SINGLE_RECORD,
-  EngineComponentKey.DELETE_MULTIPLE_RECORDS,
-]);
-
 type CommandMenuContextProviderContentProps = {
   displayType: CommandMenuContextType['displayType'];
   containerType: CommandMenuContextType['containerType'];
@@ -106,7 +100,7 @@ export const CommandMenuContextProviderContent = ({
       .filter(
         (item) =>
           !isCoreWorkflowIndex ||
-          !WORKSPACE_DELETE_COMMANDS.has(item.engineComponentKey),
+          item.engineComponentKey !== EngineComponentKey.DELETE_RECORDS,
       )
       .filter(
         (item) =>
