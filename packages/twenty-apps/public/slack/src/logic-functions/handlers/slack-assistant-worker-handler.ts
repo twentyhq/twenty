@@ -1,4 +1,4 @@
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -6,8 +6,6 @@ import { SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/univer
 import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
 import { SLACK_ACCESS_UNVERIFIABLE_ERROR } from 'src/logic-functions/constants/slack-access-unverifiable-error';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
-import { SLACK_ASSISTANT_AGENT_MIN_BUDGET_MS } from 'src/logic-functions/constants/slack-assistant-agent-min-budget-ms';
-import { SLACK_ASSISTANT_ATTACHMENT_IMPORT_MAX_MS } from 'src/logic-functions/constants/slack-assistant-attachment-import-max-ms';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { claimSlackAssistantRequest } from 'src/logic-functions/data/claim-slack-assistant-request';
@@ -22,14 +20,12 @@ import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-s
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
-import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
-import { importSlackAssistantAttachments } from 'src/logic-functions/utils/import-slack-assistant-attachments';
 import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-slack-assistant-request-resumable';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-mode';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
-import { getSlackMessageFileNames } from 'src/logic-functions/utils/get-slack-message-file-names';
 import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
+import { resolveSlackAssistantAttachments } from 'src/logic-functions/utils/resolve-slack-assistant-attachments';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
@@ -176,27 +172,13 @@ export const slackAssistantWorkerHandler = async (
       return { done: true, declined: true };
     }
 
-    const requestFiles = requestMessage?.files;
-    const slackConnection = isNonEmptyArray(requestFiles)
-      ? await getSlackConnection()
-      : undefined;
-    const { attachments, attachedFileNames, attachedSourceFiles } =
-      await importSlackAssistantAttachments({
-        client: slackClient,
-        files: requestFiles,
-        botToken: slackConnection?.success
-          ? slackConnection.accessToken
-          : undefined,
-        deadlineAtMs: Math.min(
-          Date.now() + SLACK_ASSISTANT_ATTACHMENT_IMPORT_MAX_MS,
-          agentDeadlineAtMs - SLACK_ASSISTANT_AGENT_MIN_BUDGET_MS,
-        ),
+    const { attachments, attachedFileNames, namesOnlyFileNames } =
+      await resolveSlackAssistantAttachments({
+        slackClient,
+        requestFiles: requestMessage?.files,
+        sharedFiles,
+        agentDeadlineAtMs,
       });
-
-    // by file rather than by name, since two shared files can carry one name
-    const namesOnlyFileNames = getSlackMessageFileNames(
-      sharedFiles.filter((file) => !attachedSourceFiles.includes(file)),
-    );
 
     const resolvedMentions = await resolveSlackAssistantMentions({
       requestText,
