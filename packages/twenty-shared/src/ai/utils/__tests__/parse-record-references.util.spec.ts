@@ -32,9 +32,9 @@ describe('parseRecordReferences', () => {
       displayName: 'Ada',
     })} today?`;
 
-    expect(parseRecordReferences(text).map((r) => r.objectNameSingular)).toEqual(
-      ['workspaceMember', 'person'],
-    );
+    expect(
+      parseRecordReferences(text).map((r) => r.objectNameSingular),
+    ).toEqual(['workspaceMember', 'person']);
   });
 
   it('keeps a display name that holds a colon', () => {
@@ -44,9 +44,7 @@ describe('parseRecordReferences', () => {
       displayName: 'Acme: the sequel',
     });
 
-    expect(parseRecordReferences(text)[0].displayName).toBe(
-      'Acme: the sequel',
-    );
+    expect(parseRecordReferences(text)[0].displayName).toBe('Acme: the sequel');
   });
 
   it('returns nothing for text that only looks like a reference', () => {
