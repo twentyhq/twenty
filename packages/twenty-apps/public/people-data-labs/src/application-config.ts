@@ -18,13 +18,13 @@ export default defineApplication({
     },
     PDL_PERSON_MIN_LIKELIHOOD: {
       description:
-        'Default minimum likelihood (1-10) for people enrichment. Used by command menu actions and workflow nodes without an explicit minimum likelihood. When unset, uses 2 for strong identifiers and 6 for name-based matches.',
+        'Default minimum likelihood (1-10) for people enrichment. Used by command menu items and workflow nodes without an explicit minimum likelihood. When unset, uses 2 for strong identifiers and 6 for name-based matches.',
       type: FieldType.NUMBER,
       isSecret: false,
     },
     PDL_COMPANY_MIN_LIKELIHOOD: {
       description:
-        'Default minimum likelihood (1-10) for company enrichment. Used by command menu actions and workflow nodes without an explicit minimum likelihood. When unset, uses 2 for strong identifiers and 6 for name-based matches.',
+        'Default minimum likelihood (1-10) for company enrichment. Used by command menu items and workflow nodes without an explicit minimum likelihood. When unset, uses 2 for strong identifiers and 6 for name-based matches.',
       type: FieldType.NUMBER,
       isSecret: false,
     },
