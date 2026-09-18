@@ -1,10 +1,8 @@
-import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
 import { render, screen } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { expect, it } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
-import { Modal } from '@ui/primitives/surfaces/Modal/Modal';
 import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
 
 import { Dialog } from '../Dialog';
@@ -12,7 +10,7 @@ import { Dialog } from '../Dialog';
 import styles from '../DialogTitle.module.scss';
 
 const DialogRootWrapper = ({ children }: { children: ReactNode }) => (
-  <DialogPrimitive.Root>{children}</DialogPrimitive.Root>
+  <Dialog.Root>{children}</Dialog.Root>
 );
 
 runComponentConformance({
@@ -23,14 +21,16 @@ runComponentConformance({
   wrapper: DialogRootWrapper,
 });
 
-it('labels the modal and keeps the title level independent of its size', () => {
+it('labels the dialog and keeps the title level independent of its size', () => {
   render(
     <ThemeProvider colorScheme="light">
-      <Modal isOpen>
-        <Dialog.Title level={3} size="sm">
-          Grant credits
-        </Dialog.Title>
-      </Modal>
+      <Dialog.Root open>
+        <Dialog.Popup initialFocus={false}>
+          <Dialog.Title level={3} size="sm">
+            Grant credits
+          </Dialog.Title>
+        </Dialog.Popup>
+      </Dialog.Root>
     </ThemeProvider>,
   );
 

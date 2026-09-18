@@ -1,8 +1,8 @@
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { Select } from '@/ui/input/components/Select';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -54,7 +54,7 @@ export const MemberPermissionsTab = ({
   const { getIcon } = useIcons();
   const navigateSettings = useNavigateSettings();
   const { enqueueToast } = useToast();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const [pendingRole, setPendingRole] = useState<RoleWithPartialMembers | null>(
     null,
   );
@@ -77,7 +77,7 @@ export const MemberPermissionsTab = ({
     if (!newRole || newRoleId === primaryRole?.id) return;
 
     setPendingRole(newRole);
-    openModal(CONFIRM_ROLE_CHANGE_MODAL_ID);
+    openDialog(CONFIRM_ROLE_CHANGE_MODAL_ID);
   };
 
   const handleConfirmRoleChange = async () => {
@@ -149,8 +149,8 @@ export const MemberPermissionsTab = ({
       </Section.Root>
 
       {pendingRole && (
-        <ConfirmationModal
-          modalInstanceId={CONFIRM_ROLE_CHANGE_MODAL_ID}
+        <ConfirmationDialog
+          dialogId={CONFIRM_ROLE_CHANGE_MODAL_ID}
           title={t`Confirm role update`}
           subtitle={t`Are you sure you want to update the role of this user from "${oldRoleLabel}" to "${newRoleLabel}"?`}
           onConfirmClick={handleConfirmRoleChange}

@@ -1990,6 +1990,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_ASYNC_CSV_EXPORT_ENABLED
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
@@ -1999,7 +2000,6 @@ enum FeatureFlagKey {
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
-  IS_API_RATE_LIMIT_V2_ENABLED
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
   IS_RECORD_SHARING_ENABLED
@@ -2848,6 +2848,7 @@ type ApplicationFileUploadTarget {
 }
 
 enum FileFolder {
+  RecordExport
   CorePicture
   AgentChat
   BuiltLogicFunction
@@ -2883,6 +2884,23 @@ type DevelopmentApplication {
 type WorkspaceMigration {
   applicationUniversalIdentifier: String!
   actions: JSON!
+}
+
+type RecordExport {
+  id: UUID!
+  filename: String!
+  status: RecordExportStatus!
+  processedRecordCount: Int!
+  totalRecordCount: Int
+  errorMessage: String
+  downloadUrl: String
+}
+
+enum RecordExportStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
 }
 
 type PublicDomain {
@@ -5509,6 +5527,7 @@ type Subscription {
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
   eventLogsLive(table: EventLogTable!): [EventLogRecord!]
+  exportRecords(input: CreateRecordExportInput!): RecordExport!
 }
 
 input LogicFunctionLogsInput {
@@ -5517,4 +5536,11 @@ input LogicFunctionLogsInput {
   name: String
   id: UUID
   universalIdentifier: UUID
+}
+
+input CreateRecordExportInput {
+  objectMetadataId: UUID!
+  fieldMetadataIds: [UUID!]!
+  filter: JSON
+  orderBy: JSON
 }

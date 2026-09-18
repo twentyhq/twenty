@@ -42,10 +42,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Workflow index page`,
     description: msg`Use the dedicated workflow index page to browse workflows and their versions.`,
   },
-  [FeatureFlagKey.IS_API_RATE_LIMIT_V2_ENABLED]: {
-    label: msg`API rate limits v2`,
-    description: msg`Use the usage limit engine to enforce API request speed limits.`,
-  },
   [FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED]: {
     label: msg`Message and calendar target reads`,
     description: msg`Use target relations to find messages and calendar events linked to records.`,

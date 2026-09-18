@@ -28,7 +28,7 @@ export interface MessageQueueDriver {
   ): Promise<string[]>;
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
-    handler: (job: MessageQueueJob<T>) => Promise<void> | void,
+    handler: (job: MessageQueueJob<T>) => Promise<unknown> | unknown,
     options?: MessageQueueWorkerOptions,
   ): void;
   addCron<T extends MessageQueueJobData | undefined>({
@@ -75,6 +75,7 @@ export type QueueJobDetails<T extends MessageQueueJobData> = {
   attemptsMade: number;
   failedReason?: string;
   progress?: unknown;
+  result?: unknown;
   timestamp: number;
   processedOn?: number;
   finishedOn?: number;
