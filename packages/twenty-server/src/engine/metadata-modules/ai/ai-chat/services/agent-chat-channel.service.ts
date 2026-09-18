@@ -1085,7 +1085,16 @@ export class AgentChatChannelService {
         await this.broadcastChannel('deleted', channel, losingRecipients);
       }
 
-      await this.broadcastChannel('created', channel, recipientsAfter);
+      // The readers it keeps already had it, since everyone did, so they are
+      // told what changed rather than handed a channel they are holding.
+      if (recipientsAfter.length > 0 && updatedFields.length > 0) {
+        await this.broadcastChannel(
+          'updated',
+          channel,
+          recipientsAfter,
+          updatedFields,
+        );
+      }
 
       return;
     }
