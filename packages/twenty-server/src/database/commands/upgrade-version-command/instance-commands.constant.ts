@@ -196,8 +196,8 @@ import { AddAppMessageChannelTypeFastInstanceCommand } from 'src/database/comman
 import { AddAppMessageChannelUniqueHandleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789418882171-add-app-message-channel-unique-handle';
 import { AddWorkflowExecutionCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789719131000-add-workflow-execution-compatibility';
 import { CoreWorkflowCommandMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789730706712-core-workflow-command-menu-items';
-import { CreateInboxTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789731960000-create-inbox-tables';
-import { AddMessageChannelDefaultInboxQueueFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789732020000-add-message-channel-default-inbox-queue';
+import { CreateInboxTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789750560000-create-inbox-tables';
+import { AddMessageChannelDefaultInboxQueueFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789750620000-add-message-channel-default-inbox-queue';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
