@@ -9,7 +9,7 @@ import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/S
 import { SelectHeaderStep } from '@/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { isDialogOpenedComponentState } from '@/ui/layout/dialog/states/isDialogOpenedComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { Provider as JotaiProvider } from 'jotai';
 
@@ -22,7 +22,7 @@ const meta: Meta<typeof SelectHeaderStep> = {
   decorators: [
     (Story) => {
       jotaiStore.set(
-        isModalOpenedComponentState.atomFamily({
+        isDialogOpenedComponentState.atomFamily({
           instanceId: 'select-header-step',
         }),
         true,
