@@ -122,6 +122,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     provideWorkspaceScopedRepository(AgentMessageEntity),
     provideWorkspaceScopedRepository(AgentMessagePartEntity),
     provideWorkspaceScopedRepository(FileEntity),
+    provideWorkspaceScopedRepository(UserWorkspaceEntity),
   ],
   exports: [
     AgentChatService,
