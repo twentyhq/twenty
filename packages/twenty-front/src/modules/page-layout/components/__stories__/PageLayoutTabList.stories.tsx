@@ -226,9 +226,14 @@ export const Default: Story = {
   args: {
     isReorderEnabled: true,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const tabList = await canvas.findByRole('tablist');
 
+    expect(getComputedStyle(tabList, '::after').display).toBe('none');
+    expect(getComputedStyle(tabList.parentElement!, '::after').display).toBe(
+      args.presentation === 'identifier-bar' ? 'none' : 'block',
+    );
     expect(await canvas.findByRole('tab', { name: 'Overview' })).toBeVisible();
     expect(canvas.getByRole('tab', { name: 'Forecasts' })).toBeVisible();
     expect(
