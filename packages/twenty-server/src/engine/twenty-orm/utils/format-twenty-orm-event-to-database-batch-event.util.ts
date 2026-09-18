@@ -1,11 +1,11 @@
 import {
-  ObjectRecordCreateEvent,
   ObjectRecordDeleteEvent,
-  ObjectRecordDestroyEvent,
   ObjectRecordRestoreEvent,
   ObjectRecordUpdateEvent,
-  ObjectRecordUpsertEvent,
+  type ObjectRecordCreateEvent,
+  type ObjectRecordDestroyEvent,
   type ObjectRecordDiff,
+  type ObjectRecordUpsertEvent,
 } from 'twenty-shared/database-events';
 import {
   assertUnreachable,
@@ -90,14 +90,13 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
       }
 
       events =
-        recordsAfter?.map((recordAfter) => {
-          const event = Object.assign(new ObjectRecordCreateEvent<T>(), author);
-
-          event.recordId = recordAfter.id;
-          event.properties = { after: recordAfter };
-
-          return event;
-        }) ?? [];
+        recordsAfter?.map(
+          (recordAfter): ObjectRecordCreateEvent<T> => ({
+            ...author,
+            recordId: recordAfter.id,
+            properties: { after: recordAfter },
+          }),
+        ) ?? [];
       break;
     }
     case DatabaseEventAction.UPDATED:
@@ -204,17 +203,16 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         break;
       }
 
-      events = recordsBefore.map((recordBefore) => {
-        const event = Object.assign(new ObjectRecordDestroyEvent<T>(), author);
-
-        event.recordId = recordBefore.id;
-        event.properties = {
-          before: recordBefore,
-          ...buildInheritedReadabilityChildRecordsProperty(recordBefore.id),
-        };
-
-        return event;
-      });
+      events = recordsBefore.map(
+        (recordBefore): ObjectRecordDestroyEvent<T> => ({
+          ...author,
+          recordId: recordBefore.id,
+          properties: {
+            before: recordBefore,
+            ...buildInheritedReadabilityChildRecordsProperty(recordBefore.id),
+          },
+        }),
+      );
       break;
     }
     case DatabaseEventAction.UPSERTED: {
@@ -226,41 +224,36 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         break;
       }
 
-      events = recordsAfter.map((recordAfter) => {
-        const event = Object.assign(new ObjectRecordUpsertEvent<T>(), author);
-
-        event.recordId = recordAfter.id;
-
+      events = recordsAfter.map((recordAfter): ObjectRecordUpsertEvent<T> => {
         const correspondingRecordBefore = recordsBefore?.find(
           (recordBeforeToFind) => recordBeforeToFind.id === recordAfter.id,
         );
 
-        let updatedFields;
-        let diff;
-
-        diff = objectRecordChangedValues(
+        const diff = objectRecordChangedValues(
           correspondingRecordBefore ?? {},
           recordAfter,
           objectMetadataItem,
           flatFieldMetadataMaps,
         ) as Partial<ObjectRecordDiff<T>>;
 
-        updatedFields = computeUpdatedFieldsFromDiff(
+        const updatedFields = computeUpdatedFieldsFromDiff(
           diff,
           objectMetadataItem,
           flatFieldMetadataMaps,
         );
 
-        event.properties = {
-          after: recordAfter,
-          ...(correspondingRecordBefore && {
-            before: correspondingRecordBefore,
-          }),
-          ...(diff && { diff }),
-          ...(updatedFields && { updatedFields }),
+        return {
+          ...author,
+          recordId: recordAfter.id,
+          properties: {
+            after: recordAfter,
+            ...(correspondingRecordBefore && {
+              before: correspondingRecordBefore,
+            }),
+            ...(diff && { diff }),
+            ...(updatedFields && { updatedFields }),
+          },
         };
-
-        return event;
       });
       break;
     }
