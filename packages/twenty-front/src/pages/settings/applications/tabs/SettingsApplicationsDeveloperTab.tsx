@@ -18,11 +18,9 @@ import { IconArrowUpRight, IconChevronRight, IconCopy } from 'twenty-ui/icon';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
 import {
   type ApplicationRegistrationListItemFragment,
-  FeatureFlagKey,
   FindManyApplicationRegistrationsDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import {
   APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
@@ -59,10 +57,6 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   const canClaimApplications = useHasPermissionFlag(
     PermissionFlagType.APPLICATIONS,
-  );
-
-  const isAppClaimingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_CLAIMING_ENABLED,
   );
 
   const [myAppsSearchTerm, setMyAppsSearchTerm] = useState('');
@@ -123,9 +117,7 @@ export const SettingsApplicationsDeveloperTab = () => {
         </StyledButtonContainer>
       </Section.Root>
 
-      {canClaimApplications && isAppClaimingEnabled && (
-        <SettingsClaimApplicationSection />
-      )}
+      {canClaimApplications && <SettingsClaimApplicationSection />}
 
       {registrations.length > 0 && (
         <Section.Root>
