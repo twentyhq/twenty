@@ -3,6 +3,7 @@ import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delet
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import { createClient } from 'redis';
@@ -13,6 +14,7 @@ import { RECORD_STOCK_TRACKED_SYSTEM_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/en
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -129,6 +131,11 @@ describe('Record stock limit', () => {
   const dropStockCounter = () =>
     dropKeys(`*{${SEED_APPLE_WORKSPACE_ID}}:stock:RECORD:*`);
 
+  const refreshUsageLimitsCache = () =>
+    getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['usageLimits']);
+
   const expectRefused = (response: { body: { errors?: unknown[] } }) => {
     expect(
       (response.body.errors?.[0] as { extensions?: { subCode?: string } })
@@ -169,8 +176,7 @@ describe('Record stock limit', () => {
 
     usageLimitId = usageLimit.id;
 
-    await dropKeys(`*usageLimits:${SEED_APPLE_WORKSPACE_ID}*`);
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await refreshUsageLimitsCache();
   });
 
   beforeEach(async () => {
@@ -190,7 +196,7 @@ describe('Record stock limit', () => {
 
   afterAll(async () => {
     await usageLimitRepository.delete({ id: usageLimitId });
-    await dropKeys(`*usageLimits:${SEED_APPLE_WORKSPACE_ID}*`);
+    await refreshUsageLimitsCache();
     await dropStockCounter();
     await redis.quit();
   });
