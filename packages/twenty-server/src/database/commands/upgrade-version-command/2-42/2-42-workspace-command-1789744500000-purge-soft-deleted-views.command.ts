@@ -1,5 +1,6 @@
 import { Command } from 'nest-commander';
 
+import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -35,6 +36,7 @@ export class PurgeSoftDeletedViewsCommand extends ProvisionedWorkspaceCommandRun
     const isDryRun = options.dryRun ?? false;
 
     const {
+      flatObjectMetadataMaps,
       flatViewMaps,
       flatViewFieldMaps,
       flatViewFieldGroupMaps,
@@ -43,6 +45,7 @@ export class PurgeSoftDeletedViewsCommand extends ProvisionedWorkspaceCommandRun
       flatViewGroupMaps,
       flatViewSortMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
       'flatViewMaps',
       'flatViewFieldMaps',
       'flatViewFieldGroupMaps',
@@ -78,12 +81,15 @@ export class PurgeSoftDeletedViewsCommand extends ProvisionedWorkspaceCommandRun
       );
     }
 
-    const deletedViewIds = new Set(viewsToDelete.map((flatView) => flatView.id));
+    const deletedViewIds = new Set(
+      viewsToDelete.map((flatView) => flatView.id),
+    );
 
     const isSoftDeletedOutsideDeletedView = (flatEntity: {
       deletedAt?: string | null;
       viewId: string;
-    }) => isDefined(flatEntity.deletedAt) && !deletedViewIds.has(flatEntity.viewId);
+    }) =>
+      isDefined(flatEntity.deletedAt) && !deletedViewIds.has(flatEntity.viewId);
 
     const hasSoftDeletedViewFilterGroupInChain = (
       viewFilterGroupId: string | null | undefined,
@@ -116,11 +122,65 @@ export class PurgeSoftDeletedViewsCommand extends ProvisionedWorkspaceCommandRun
       return false;
     };
 
-    const viewFieldsToDelete = Object.values(
+    const remainingFlatViewById = new Map(
+      flatViews
+        .filter((flatView) => !deletedViewIds.has(flatView.id))
+        .map((flatView) => [flatView.id, flatView]),
+    );
+
+    const flatViewFields = Object.values(
       flatViewFieldMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(isSoftDeletedOutsideDeletedView);
+    ).filter(isDefined);
+
+    const isOnlyLabelIdentifierViewFieldOfItsView = (
+      flatViewField: (typeof flatViewFields)[number],
+    ): boolean => {
+      const flatView = remainingFlatViewById.get(flatViewField.viewId);
+
+      if (!isDefined(flatView) || flatView.type === ViewType.FIELDS_WIDGET) {
+        return false;
+      }
+
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatView.objectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+      if (
+        !isDefined(flatObjectMetadata) ||
+        flatObjectMetadata.labelIdentifierFieldMetadataId !==
+          flatViewField.fieldMetadataId
+      ) {
+        return false;
+      }
+
+      return !flatViewFields.some(
+        (otherFlatViewField) =>
+          otherFlatViewField.id !== flatViewField.id &&
+          otherFlatViewField.viewId === flatViewField.viewId &&
+          otherFlatViewField.fieldMetadataId ===
+            flatViewField.fieldMetadataId &&
+          !isDefined(otherFlatViewField.deletedAt),
+      );
+    };
+
+    const softDeletedViewFields = flatViewFields.filter(
+      isSoftDeletedOutsideDeletedView,
+    );
+
+    const viewFieldsToDelete = softDeletedViewFields.filter(
+      (flatViewField) =>
+        !isOnlyLabelIdentifierViewFieldOfItsView(flatViewField),
+    );
+
+    const skippedViewFieldCount =
+      softDeletedViewFields.length - viewFieldsToDelete.length;
+
+    if (skippedViewFieldCount > 0) {
+      this.logger.warn(
+        `Skipping ${skippedViewFieldCount} soft-deleted view field(s) that are the only label identifier view field of their view in workspace ${workspaceId}`,
+      );
+    }
     const viewFieldGroupsToDelete = Object.values(
       flatViewFieldGroupMaps.byUniversalIdentifier,
     )
