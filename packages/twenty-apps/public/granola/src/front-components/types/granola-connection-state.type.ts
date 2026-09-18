@@ -1,4 +1,5 @@
 export type GranolaConnectionState =
+  | 'CHECKING'
   | 'CONNECTING'
   | 'CONNECTED'
   | 'INVALID_KEY'

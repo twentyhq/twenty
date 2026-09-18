@@ -5,12 +5,12 @@ import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 
 type GranolaDangerZoneSectionProps = {
-  isDisconnecting: boolean;
+  isDisabled: boolean;
   onDisconnect: () => void;
 };
 
 export const GranolaDangerZoneSection = ({
-  isDisconnecting,
+  isDisabled,
   onDisconnect,
 }: GranolaDangerZoneSectionProps) => {
   const handleDisconnectClick = async () => {
@@ -41,7 +41,7 @@ export const GranolaDangerZoneSection = ({
         title={t('Disconnect')}
         variant="secondary"
         accent="danger"
-        disabled={isDisconnecting}
+        disabled={isDisabled}
         onClick={handleDisconnectClick}
       />
     </Section>

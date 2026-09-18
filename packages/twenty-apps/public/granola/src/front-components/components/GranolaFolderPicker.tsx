@@ -1,16 +1,21 @@
 import { useState } from 'react';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import { Info } from 'twenty-ui/feedback';
 
 import { GRANOLA_FOLDER_SELECTION_LIMIT } from 'src/constants/granola-api.constant';
 import { GranolaFolderEmptyState } from 'src/front-components/components/GranolaFolderEmptyState';
-import { GranolaFolderPolicyIcon } from 'src/front-components/components/GranolaFolderPolicyIcon';
+import { GranolaFolderPolicyRadioCard } from 'src/front-components/components/GranolaFolderPolicyRadioCard';
 import { GranolaFolderTree } from 'src/front-components/components/GranolaFolderTree';
-import { SettingsRadioCard } from 'src/front-components/components/SettingsRadioCard';
+import { GranolaFolderTreeSkeleton } from 'src/front-components/components/GranolaFolderTreeSkeleton';
+import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { useAutosaveGranolaFolderSelection } from 'src/front-components/hooks/use-autosave-granola-folder-selection';
 import { type GranolaFolderPolicy } from 'src/front-components/types/granola-folder-policy.type';
 import { type GranolaFoldersResult } from 'src/front-components/types/granola-folders-result.type';
+import { type GranolaSettingsFolder } from 'src/front-components/types/granola-settings-folder.type';
 import { computeGranolaFolderSelection } from 'src/front-components/utils/compute-granola-folder-selection.util';
+import { dropInaccessibleGranolaFolders } from 'src/front-components/utils/drop-inaccessible-granola-folders.util';
+import { fetchGranolaFoldersOrThrow } from 'src/front-components/utils/fetch-granola-folders-or-throw.util';
 
 const getSelectionHint = (selectedFolderCount: number) => {
   if (selectedFolderCount === 0) {
@@ -30,18 +35,70 @@ const getSelectionHint = (selectedFolderCount: number) => {
   return undefined;
 };
 
-type GranolaFolderPickerProps = {
-  foldersResult: GranolaFoldersResult;
-  onSaveError: () => void;
-};
+type GranolaFolderListState =
+  | { step: 'NOT_LOADED' }
+  | { step: 'LOADING' }
+  | { step: 'FAILED' }
+  | { step: 'LOADED'; folders: GranolaSettingsFolder[] };
+
+type GranolaFolderPickerProps = Pick<
+  GranolaFoldersResult,
+  'selectedFolderIds' | 'pendingFolderIds'
+>;
 
 export const GranolaFolderPicker = ({
-  foldersResult,
-  onSaveError,
+  selectedFolderIds,
+  pendingFolderIds,
 }: GranolaFolderPickerProps) => {
   const [selection, setSelection] = useState(() =>
-    computeGranolaFolderSelection(foldersResult),
+    computeGranolaFolderSelection({ selectedFolderIds, pendingFolderIds }),
   );
+  const [folderList, setFolderList] = useState<GranolaFolderListState>({
+    step: 'NOT_LOADED',
+  });
+  const [isLocked, setIsLocked] = useState(false);
+
+  // After a failed save the server is the only truth, so the picker locks until it is reloaded.
+  const loadFolderList = async ({
+    isSelectionStale,
+  }: {
+    isSelectionStale: boolean;
+  }) => {
+    if (isSelectionStale) {
+      setIsLocked(true);
+    }
+    setFolderList({ step: 'LOADING' });
+
+    const foldersResult = await fetchGranolaFoldersOrThrow().catch(
+      () => undefined,
+    );
+
+    if (!isDefined(foldersResult)) {
+      setFolderList({ step: 'FAILED' });
+
+      return;
+    }
+
+    setSelection((current) =>
+      dropInaccessibleGranolaFolders({
+        selection: isSelectionStale
+          ? computeGranolaFolderSelection(foldersResult)
+          : current,
+        folders: foldersResult.folders,
+      }),
+    );
+    setFolderList({ step: 'LOADED', folders: foldersResult.folders });
+
+    if (isSelectionStale) {
+      setIsLocked(false);
+    }
+  };
+
+  const loadFolderListIfSelected = () => {
+    if (selection.policy === 'SELECTED_FOLDERS') {
+      loadFolderList({ isSelectionStale: false });
+    }
+  };
 
   const { save } = useAutosaveGranolaFolderSelection({
     onSaveSuccess: (folderIds) =>
@@ -55,7 +112,7 @@ export const GranolaFolderPicker = ({
         message: t('Could not save the folder selection. Try again.'),
         variant: 'error',
       });
-      onSaveError();
+      loadFolderList({ isSelectionStale: true });
     },
   });
 
@@ -70,6 +127,13 @@ export const GranolaFolderPicker = ({
 
   const handlePolicyChange = (nextPolicy: GranolaFolderPolicy) => {
     setSelection((current) => ({ ...current, policy: nextPolicy }));
+
+    if (
+      nextPolicy === 'SELECTED_FOLDERS' &&
+      (folderList.step === 'NOT_LOADED' || folderList.step === 'FAILED')
+    ) {
+      loadFolderList({ isSelectionStale: false });
+    }
 
     if (
       nextPolicy === 'ALL_FOLDERS' &&
@@ -88,46 +152,53 @@ export const GranolaFolderPicker = ({
     );
   };
 
+  const getSelectedFoldersContent = () => {
+    if (folderList.step === 'FAILED') {
+      return undefined;
+    }
+
+    if (folderList.step !== 'LOADED') {
+      return <GranolaFolderTreeSkeleton />;
+    }
+
+    if (folderList.folders.length === 0) {
+      return <GranolaFolderEmptyState />;
+    }
+
+    return (
+      <GranolaFolderTree
+        folders={folderList.folders}
+        selectedFolderIds={selection.selectedFolderIds}
+        selectionLimit={GRANOLA_FOLDER_SELECTION_LIMIT}
+        hint={
+          selection.hasInaccessibleSelection
+            ? undefined
+            : getSelectionHint(selection.selectedFolderIds.length)
+        }
+        onToggleFolder={handleToggleFolder}
+        onReplaceSelection={handleReplaceSelection}
+      />
+    );
+  };
+
   return (
     <>
-      <SettingsRadioCard
-        value={selection.policy}
+      <OnMountEffect onMount={loadFolderListIfSelected} />
+      <GranolaFolderPolicyRadioCard
+        policy={isLocked ? undefined : selection.policy}
+        selectedFoldersContent={getSelectedFoldersContent()}
         onChange={handlePolicyChange}
-        options={[
-          {
-            value: 'ALL_FOLDERS',
-            cardMedia: <GranolaFolderPolicyIcon policy="ALL_FOLDERS" />,
-            title: t('Everything'),
-            description: t('Sync notes from every folder you can access'),
-          },
-          {
-            value: 'SELECTED_FOLDERS',
-            cardMedia: <GranolaFolderPolicyIcon policy="SELECTED_FOLDERS" />,
-            title: t('Some folders'),
-            description: t(
-              'Sync only the folders you pick, including their subfolders',
-            ),
-            expandedContent:
-              foldersResult.folders.length > 0 ? (
-                <GranolaFolderTree
-                  folders={foldersResult.folders}
-                  selectedFolderIds={selection.selectedFolderIds}
-                  selectionLimit={GRANOLA_FOLDER_SELECTION_LIMIT}
-                  hint={
-                    selection.hasInaccessibleSelection
-                      ? undefined
-                      : getSelectionHint(selection.selectedFolderIds.length)
-                  }
-                  onToggleFolder={handleToggleFolder}
-                  onReplaceSelection={handleReplaceSelection}
-                />
-              ) : (
-                <GranolaFolderEmptyState />
-              ),
-          },
-        ]}
       />
-      {selection.hasInaccessibleSelection && (
+      {folderList.step === 'FAILED' &&
+        (isLocked || selection.policy === 'SELECTED_FOLDERS') && (
+          <Info
+            accent="danger"
+            text={t('Could not load your Granola folders.')}
+            buttonTitle={t('Retry')}
+            onClick={() => loadFolderList({ isSelectionStale: isLocked })}
+          />
+        )}
+      {!isLocked && selection.hasInaccessibleSelection && (
         <Info
           accent="danger"
           text={t(
@@ -135,16 +206,18 @@ export const GranolaFolderPicker = ({
           )}
         />
       )}
-      {selection.isSelectionPending && !selection.hasInaccessibleSelection && (
-        <Info
-          accent="blue"
-          text={t(
-            'This selection is not applied in Granola yet. It is retried at the next daily catch-up.',
-          )}
-          buttonTitle={t('Retry now')}
-          onClick={() => save(selection.selectedFolderIds)}
-        />
-      )}
+      {!isLocked &&
+        selection.isSelectionPending &&
+        !selection.hasInaccessibleSelection && (
+          <Info
+            accent="blue"
+            text={t(
+              'This selection is not applied in Granola yet. It is retried at the next daily catch-up.',
+            )}
+            buttonTitle={t('Retry now')}
+            onClick={() => save(selection.selectedFolderIds)}
+          />
+        )}
     </>
   );
 };

@@ -16,11 +16,13 @@ const StyledKeyRow = styled.div`
 
 type GranolaApiKeyFormProps = {
   errorMessage: string | undefined;
+  isConnectDisabled: boolean;
   onConnect: (apiKey: string) => void;
 };
 
 export const GranolaApiKeyForm = ({
   errorMessage,
+  isConnectDisabled,
   onConnect,
 }: GranolaApiKeyFormProps) => {
   const inputId = useId();
@@ -31,7 +33,7 @@ export const GranolaApiKeyForm = ({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!isNonEmptyString(trimmedApiKeyDraft)) {
+    if (isConnectDisabled || !isNonEmptyString(trimmedApiKeyDraft)) {
       return;
     }
 
@@ -58,7 +60,9 @@ export const GranolaApiKeyForm = ({
             type="submit"
             title={t('Connect')}
             accent="blue"
-            disabled={!isNonEmptyString(trimmedApiKeyDraft)}
+            disabled={
+              isConnectDisabled || !isNonEmptyString(trimmedApiKeyDraft)
+            }
           />
         </StyledKeyRow>
       </LabelledSettingsField>

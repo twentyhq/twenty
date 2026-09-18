@@ -4,12 +4,15 @@ import { Info } from 'twenty-ui/feedback';
 import { IconKey } from 'twenty-ui/icon';
 import { type ThemeColor } from 'twenty-ui/theme';
 
+import { SettingsControlLoader } from 'src/front-components/components/SettingsControlLoader';
 import { SettingsOptionCardContent } from 'src/front-components/components/SettingsOptionCardContent';
 import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 import { type GranolaConnectionState } from 'src/front-components/types/granola-connection-state.type';
 
+type GranolaKnownConnectionState = Exclude<GranolaConnectionState, 'CHECKING'>;
+
 const STATUS_COLOR_BY_CONNECTION_STATE: Record<
-  GranolaConnectionState,
+  GranolaKnownConnectionState,
   ThemeColor
 > = {
   CONNECTING: 'turquoise',
@@ -20,7 +23,7 @@ const STATUS_COLOR_BY_CONNECTION_STATE: Record<
   SETUP_INCOMPLETE: 'orange',
 };
 
-const getStatusText = (connectionState: GranolaConnectionState) =>
+const getStatusText = (connectionState: GranolaKnownConnectionState) =>
   ({
     CONNECTING: t('Connecting'),
     CONNECTED: t('Connected'),
@@ -37,6 +40,10 @@ const getDescription = ({
   connectionState: GranolaConnectionState;
   isWorkspaceKey: boolean;
 }) => {
+  if (connectionState === 'CHECKING') {
+    return t('Checking the connection with Granola.');
+  }
+
   if (connectionState === 'CONNECTING') {
     return t('Setting up live sync. This may take a few seconds.');
   }
@@ -70,12 +77,16 @@ export const GranolaConnectionCard = ({
         title={t('API key')}
         description={getDescription({ connectionState, isWorkspaceKey })}
       >
-        <Status
-          color={STATUS_COLOR_BY_CONNECTION_STATE[connectionState]}
-          text={getStatusText(connectionState)}
-          isLoaderVisible={connectionState === 'CONNECTING'}
-          weight="medium"
-        />
+        {connectionState === 'CHECKING' ? (
+          <SettingsControlLoader />
+        ) : (
+          <Status
+            color={STATUS_COLOR_BY_CONNECTION_STATE[connectionState]}
+            text={getStatusText(connectionState)}
+            isLoaderVisible={connectionState === 'CONNECTING'}
+            weight="medium"
+          />
+        )}
       </SettingsOptionCardContent>
     </StyledSettingsCard>
     {connectionState === 'INVALID_KEY' && (

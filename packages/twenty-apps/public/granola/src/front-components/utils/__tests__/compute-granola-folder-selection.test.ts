@@ -2,16 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { computeGranolaFolderSelection } from 'src/front-components/utils/compute-granola-folder-selection.util';
 
-const FOLDERS = [
-  { id: 'fol_sales', name: 'Sales', parent_folder_id: null },
-  { id: 'fol_support', name: 'Support', parent_folder_id: null },
-];
-
 describe('computeGranolaFolderSelection', () => {
   it('syncs everything when no folder is stored', () => {
     expect(
       computeGranolaFolderSelection({
-        folders: FOLDERS,
         selectedFolderIds: [],
         pendingFolderIds: undefined,
       }),
@@ -23,15 +17,14 @@ describe('computeGranolaFolderSelection', () => {
     });
   });
 
-  it('restores the stored folders that are still accessible', () => {
+  it('restores the stored folders', () => {
     expect(
       computeGranolaFolderSelection({
-        folders: FOLDERS,
-        selectedFolderIds: ['fol_sales', 'fol_removed'],
+        selectedFolderIds: ['fol_sales', 'fol_support'],
         pendingFolderIds: undefined,
       }),
     ).toEqual({
-      selectedFolderIds: ['fol_sales'],
+      selectedFolderIds: ['fol_sales', 'fol_support'],
       policy: 'SELECTED_FOLDERS',
       hasInaccessibleSelection: false,
       isSelectionPending: false,
@@ -41,7 +34,6 @@ describe('computeGranolaFolderSelection', () => {
   it('prefers a selection that is not applied in Granola yet', () => {
     expect(
       computeGranolaFolderSelection({
-        folders: FOLDERS,
         selectedFolderIds: ['fol_sales'],
         pendingFolderIds: ['fol_support'],
       }),
@@ -53,18 +45,17 @@ describe('computeGranolaFolderSelection', () => {
     });
   });
 
-  it('flags a stored selection whose folders are all gone', () => {
+  it('marks a pending switch back to everything', () => {
     expect(
       computeGranolaFolderSelection({
-        folders: FOLDERS,
-        selectedFolderIds: ['fol_removed'],
-        pendingFolderIds: undefined,
+        selectedFolderIds: ['fol_sales'],
+        pendingFolderIds: [],
       }),
     ).toEqual({
       selectedFolderIds: [],
-      policy: 'SELECTED_FOLDERS',
-      hasInaccessibleSelection: true,
-      isSelectionPending: false,
+      policy: 'ALL_FOLDERS',
+      hasInaccessibleSelection: false,
+      isSelectionPending: true,
     });
   });
 });

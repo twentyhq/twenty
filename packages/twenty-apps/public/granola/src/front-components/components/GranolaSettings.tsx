@@ -20,9 +20,7 @@ import {
 import { GRANOLA_WEBHOOK_REGISTRATION_ROUTE_PATH } from 'src/constants/granola-webhook-registration-route-path';
 import { GRANOLA_WEBHOOK_REMOVAL_ROUTE_PATH } from 'src/constants/granola-webhook-removal-route-path';
 import { GranolaApiKeyForm } from 'src/front-components/components/GranolaApiKeyForm';
-import { GranolaApiKeyFormSkeleton } from 'src/front-components/components/GranolaApiKeyFormSkeleton';
 import { GranolaConnectionCard } from 'src/front-components/components/GranolaConnectionCard';
-import { GranolaConnectionCardSkeleton } from 'src/front-components/components/GranolaConnectionCardSkeleton';
 import { GranolaConnectionSection } from 'src/front-components/components/GranolaConnectionSection';
 import { GranolaDangerZoneSection } from 'src/front-components/components/GranolaDangerZoneSection';
 import { GranolaFolderSection } from 'src/front-components/components/GranolaFolderSection';
@@ -55,7 +53,6 @@ type GranolaSettingsState =
 
 const shouldSetUpLiveSync = (status: GranolaConnectionStatus) =>
   status.isConnected &&
-  status.canManage &&
   status.needsRegistration &&
   !isDefined(status.registration);
 
@@ -196,9 +193,16 @@ export const GranolaSettings = () => {
         isConnecting: isSettingUpConnection,
         hasSetupFailed,
       })
-    : undefined;
-  const hasApiKeyOrIsSettingUp =
-    isDefined(status) && (status.isApiKeySet || isSettingUpConnection);
+    : 'CHECKING';
+  const isConnectionExpected = state.step === 'loading' && isApiKeyExpected;
+  const showsConnectionCard =
+    isConnectionExpected ||
+    (isDefined(status) && (status.isApiKeySet || isSettingUpConnection));
+  const showsLiveSyncSections =
+    isConnectionExpected || connectionState === 'CONNECTED';
+  const showsDangerZone =
+    isConnectionExpected ||
+    (isDefined(status) && status.isApiKeySet && !isSettingUpConnection);
 
   // twenty-ui components read icon sizes off ThemeContext, and the context
   // default resolves them to var() strings an SVG size attribute cannot use.
@@ -214,12 +218,6 @@ export const GranolaSettings = () => {
       <StyledContainer>
         <OnMountEffect onMount={loadConnectionStatus} />
         <GranolaConnectionSection>
-          {state.step === 'loading' && isApiKeyExpected && (
-            <GranolaConnectionCardSkeleton />
-          )}
-          {state.step === 'loading' && !isApiKeyExpected && (
-            <GranolaApiKeyFormSkeleton />
-          )}
           {state.step === 'unavailable' && (
             <Info
               accent="danger"
@@ -228,40 +226,35 @@ export const GranolaSettings = () => {
               onClick={loadConnectionStatus}
             />
           )}
-          {isDefined(status) && !hasApiKeyOrIsSettingUp && (
+          {state.step !== 'unavailable' && !showsConnectionCard && (
             <GranolaApiKeyForm
               errorMessage={connectError}
+              isConnectDisabled={!isDefined(status)}
               onConnect={handleConnect}
             />
           )}
-          {isDefined(status) &&
-            isDefined(connectionState) &&
-            hasApiKeyOrIsSettingUp && (
-              <GranolaConnectionCard
-                connectionState={connectionState}
-                isWorkspaceKey={
-                  status.registration?.scopes.includes('workspace') ?? false
-                }
-                onRetry={
-                  status.isConnected && status.canManage
-                    ? registerLiveSync
-                    : loadConnectionStatus
-                }
-                onReplaceKey={handleRemoveApiKey}
-              />
-            )}
-        </GranolaConnectionSection>
-        {isDefined(status) &&
-          status.canManage &&
-          connectionState === 'CONNECTED' && (
-            <>
-              <GranolaFolderSection />
-              <GranolaImportHistorySection />
-            </>
+          {showsConnectionCard && (
+            <GranolaConnectionCard
+              connectionState={connectionState}
+              isWorkspaceKey={
+                status?.registration?.scopes.includes('workspace') ?? false
+              }
+              onRetry={
+                status?.isConnected ? registerLiveSync : loadConnectionStatus
+              }
+              onReplaceKey={handleRemoveApiKey}
+            />
           )}
-        {isDefined(status) && status.isApiKeySet && !isSettingUpConnection && (
+        </GranolaConnectionSection>
+        {showsLiveSyncSections && (
+          <>
+            <GranolaFolderSection registration={status?.registration} />
+            <GranolaImportHistorySection />
+          </>
+        )}
+        {showsDangerZone && (
           <GranolaDangerZoneSection
-            isDisconnecting={isRemoving}
+            isDisabled={isRemoving || !isDefined(status)}
             onDisconnect={handleRemoveApiKey}
           />
         )}
