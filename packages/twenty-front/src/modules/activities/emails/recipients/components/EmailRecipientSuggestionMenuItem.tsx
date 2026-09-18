@@ -1,5 +1,5 @@
+import { MenuItemSelectAvatar } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItemSelectAvatar } from 'twenty-ui/primitives/navigation';
 
 import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/types/EmailRecipientSuggestion';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';

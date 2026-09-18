@@ -1,3 +1,4 @@
+import { Separator } from '@/settings/components/Separator';
 import {
   StyledSettingsCardContent,
   StyledSettingsCardDescription,
@@ -5,12 +6,11 @@ import {
   StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
-import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { styled } from '@linaria/react';
-import { type IconComponent } from 'twenty-ui/icon';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
+import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsOptionCardContentSelectProps = {

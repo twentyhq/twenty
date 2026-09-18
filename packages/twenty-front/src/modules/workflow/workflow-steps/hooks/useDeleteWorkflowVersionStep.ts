@@ -5,7 +5,7 @@ import { DELETE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/delet
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
 import { useMutation } from '@apollo/client/react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   type DeleteWorkflowVersionStepInput,
   type DeleteWorkflowVersionStepMutation,

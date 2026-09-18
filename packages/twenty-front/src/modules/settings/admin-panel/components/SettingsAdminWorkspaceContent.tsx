@@ -3,6 +3,8 @@ import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpgradeHealthStatusBadge';
 import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/getWorkspaceSchemaName';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
+import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -16,13 +18,7 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { type GetUpgradeStatusQuery } from '~/generated-admin/graphql';
-import { Section } from 'twenty-ui/components';
-import {
-  AvatarOrIcon,
-  LinkChip,
-  Status,
-} from 'twenty-ui/primitives/data-display';
+import { OverflowingTextWithTooltip, Section } from 'twenty-ui/components';
 import {
   IconCalendar,
   IconHome,
@@ -31,8 +27,9 @@ import {
   IconStatusChange,
   IconUser,
 } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type GetUpgradeStatusQuery } from '~/generated-admin/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';

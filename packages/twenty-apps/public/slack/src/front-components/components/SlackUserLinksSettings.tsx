@@ -7,11 +7,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { enqueueSnackbar, useColorScheme } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Callout } from 'twenty-ui/feedback';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Callout, Section } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
 import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
 
 import { SlackAccessModeSection } from 'src/front-components/components/SlackAccessModeSection';
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
@@ -20,9 +18,9 @@ import { UnlinkedSlackUsersList } from 'src/front-components/components/Unlinked
 import { SLACK_CONNECTION_HEALTH_CALLOUTS } from 'src/front-components/constants/slack-connection-health-callouts.constant';
 import { useCanManageSlackUserLinks } from 'src/front-components/hooks/use-can-manage-slack-user-links';
 import { useMatchSlackUserLinks } from 'src/front-components/hooks/use-match-slack-user-links';
-import { useSlackConnectionStatus } from 'src/front-components/hooks/use-slack-connection-status';
 import { useRemoveSlackUserLink } from 'src/front-components/hooks/use-remove-slack-user-link';
 import { useResendSlackUserLinkConsent } from 'src/front-components/hooks/use-resend-slack-user-link-consent';
+import { useSlackConnectionStatus } from 'src/front-components/hooks/use-slack-connection-status';
 import { useSlackUserLinks } from 'src/front-components/hooks/use-slack-user-links';
 import { useUnlinkedSlackUsers } from 'src/front-components/hooks/use-unlinked-slack-users';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
@@ -216,8 +214,8 @@ const SlackUserLinksSettingsContent = () => {
       )}
       <SlackAccessModeSection canManage={canManage} />
       {canManage && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title="Unlinked Slack users"
             description="These Slack users talk to the assistant with its default role. Pick a workspace member on a row to link them in place, or auto-link everyone whose Slack email matches a workspace member."
           />
@@ -240,17 +238,18 @@ const SlackUserLinksSettingsContent = () => {
             )}
             <Button
               type="button"
-              title={isMatching ? 'Auto-linking…' : 'Auto-link by email'}
-              size="small"
-              variant="secondary"
+              size="sm"
+              variant="outline"
               disabled={isMatching}
               onClick={handleMatchByEmail}
-            />
+            >
+              {isMatching ? 'Auto-linking…' : 'Auto-link by email'}
+            </Button>
           </StyledMatchAction>
-        </Section>
+        </Section.Root>
       )}
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title="Slack user links"
           description="Each link maps a Slack account to the workspace member whose permissions the assistant borrows."
         />
@@ -270,7 +269,7 @@ const SlackUserLinksSettingsContent = () => {
             resendingLinkId={resendingLinkId}
           />
         )}
-      </Section>
+      </Section.Root>
       {canManage &&
         (isManualFormOpen ? (
           <SlackUserLinkForm
@@ -281,11 +280,12 @@ const SlackUserLinksSettingsContent = () => {
           <StyledDisclosure>
             <Button
               type="button"
-              title="Link someone not listed above"
-              size="small"
-              variant="secondary"
+              size="sm"
+              variant="outline"
               onClick={() => setIsManualFormOpen(true)}
-            />
+            >
+              {'Link someone not listed above'}
+            </Button>
           </StyledDisclosure>
         ))}
     </StyledContainer>

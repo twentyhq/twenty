@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { t } from 'twenty-sdk/front-component';
 import { IconFolder } from 'twenty-ui/icon';
-import { ICON } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEmptyState = styled.div`
@@ -17,7 +16,12 @@ const StyledEmptyState = styled.div`
 
 export const GranolaFolderEmptyState = () => (
   <StyledEmptyState>
-    <IconFolder size={ICON.size.md} />
+    <IconFolder
+      style={{
+        width: `calc(${themeCssVariables.icon.size.md} * 1px)`,
+        height: `calc(${themeCssVariables.icon.size.md} * 1px)`,
+      }}
+    />
     <div>{t('No folders found for this key')}</div>
   </StyledEmptyState>
 );

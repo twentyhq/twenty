@@ -13,8 +13,8 @@ import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { capitalize } from 'twenty-shared/utils';
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItemMultiSelectAvatar } from 'twenty-ui/primitives/navigation';
 
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { type SearchRecord } from '~/generated/graphql';

@@ -1,10 +1,10 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { MenuItem, MenuItemAvatar } from 'twenty-ui/primitives/navigation';
-import { type SearchRecord } from '~/generated/graphql';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { MenuItem, MenuItemAvatar } from 'twenty-ui/components';
+import { type SearchRecord } from '~/generated/graphql';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;

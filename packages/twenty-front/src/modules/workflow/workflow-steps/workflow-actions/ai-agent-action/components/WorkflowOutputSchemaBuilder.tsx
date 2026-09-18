@@ -1,21 +1,21 @@
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
-import {
-  InputLabel,
-  AnimatedLightIconButton,
-  LightIconButton,
-} from 'twenty-ui/primitives/input';
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useContext, useState } from 'react';
 import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
+import {
+  AnimatedLightIconButton,
+  LightIconButton,
+  MenuItem,
+} from 'twenty-ui/components';
 import { IconChevronDown, IconPlus, IconVariable, IconX } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
 type WorkflowOutputSchemaBuilderProps = {

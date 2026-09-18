@@ -13,9 +13,11 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useContext, useRef, useState } from 'react';
+import {
+  LightIconButton,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/components';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { LightIconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type GraphWidgetLegendItem = {

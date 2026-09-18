@@ -6,8 +6,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/components';
 import { IconCheck } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   aggregateOperations,

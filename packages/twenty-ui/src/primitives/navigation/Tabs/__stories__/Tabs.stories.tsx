@@ -3,14 +3,14 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
-import { NotificationCounter } from '@ui/primitives/data-display/NotificationCounter/NotificationCounter';
+import { NotificationCounter } from '@ui/components/NotificationCounter/NotificationCounter';
 import { IconInfoCircle } from '@ui/icon';
 import { Input } from '@ui/primitives/input/Input/Input';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
-  type CatalogStory,
   ComponentDecorator,
+  type CatalogStory,
 } from '@ui/testing';
 
 import { Tabs } from '../Tabs';

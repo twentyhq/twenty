@@ -18,8 +18,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { MenuItem } from 'twenty-ui/components';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 const StyledDropdownMenuContainer = styled.div`

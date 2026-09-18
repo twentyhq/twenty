@@ -10,7 +10,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { MenuItem } from 'twenty-ui/components';
 
 type WorkflowObjectDropdownContentProps = {
   dropdownId: string;

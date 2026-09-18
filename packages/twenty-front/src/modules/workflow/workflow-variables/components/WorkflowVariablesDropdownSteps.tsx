@@ -1,3 +1,4 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -5,7 +6,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
@@ -18,9 +18,12 @@ import { getWorkflowVariableSelectionFromSearchResult } from '@/workflow/workflo
 import { searchWorkflowVariables } from '@/workflow/workflow-variables/utils/searchWorkflowVariables';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import {
+  MenuItem,
+  MenuItemSelect,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/components';
 import { IconX, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
 type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;

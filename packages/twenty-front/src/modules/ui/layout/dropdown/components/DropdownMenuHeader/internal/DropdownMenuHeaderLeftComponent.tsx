@@ -1,11 +1,11 @@
-import { type MouseEvent, type ReactElement, useContext } from 'react';
 import { styled } from '@linaria/react';
+import { type MouseEvent, type ReactElement, useContext } from 'react';
+import { LightIconButton } from 'twenty-ui/components';
+import { type IconComponent } from 'twenty-ui/icon';
 import {
   type Avatar,
   type AvatarProps,
 } from 'twenty-ui/primitives/data-display';
-import { type IconComponent } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNonClickableStartIcon = styled.div`

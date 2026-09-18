@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
+import { LightIconButton, MenuItem } from 'twenty-ui/components';
 import {
   IconArchive,
   IconArchiveOff,
@@ -7,19 +8,17 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
-import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useChatThreadArchiveActions } from '@/ai/hooks/useChatThreadArchiveActions';
 import { aiChatThreadPendingDeleteFamilyState } from '@/ai/states/aiChatThreadPendingDeleteFamilyState';
+import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 type AiChatThreadItemMenuProps = {

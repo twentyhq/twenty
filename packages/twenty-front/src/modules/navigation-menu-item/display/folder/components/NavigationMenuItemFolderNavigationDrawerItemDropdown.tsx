@@ -1,12 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
+import { LightIconButton, MenuItem } from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconEdit,
   IconPlus,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

@@ -12,8 +12,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { MenuItemSelect } from 'twenty-ui/components';
 import { IconChevronDown, IconSquareCheck, IconSquareX } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';

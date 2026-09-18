@@ -4,7 +4,7 @@ import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 import { type AgentChatFileUIPart } from '@/ai/types/agent-chat-file-ui-part.type';
 import { FileFolder } from '~/generated-metadata/graphql';

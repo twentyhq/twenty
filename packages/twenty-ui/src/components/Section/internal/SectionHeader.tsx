@@ -3,8 +3,8 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useId } from 'react';
 
-import { OverflowingTextWithTooltip } from '@ui/primitives/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { Heading } from '@ui/primitives/typography/Heading/Heading';
+import { OverflowingTextWithTooltip } from '@ui/primitives/typography/internal/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type SectionHeaderProps } from '../types/SectionHeaderProps';

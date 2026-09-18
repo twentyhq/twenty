@@ -1,12 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
+import { LightIconButton, MenuItem } from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconNewSection,
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { getFieldsConfigurationGroupEditDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupEditDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';

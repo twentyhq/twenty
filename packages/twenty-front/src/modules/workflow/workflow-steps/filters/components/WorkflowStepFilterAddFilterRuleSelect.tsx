@@ -8,11 +8,11 @@ import { useAddStepFilterToGroup } from '@/workflow/workflow-steps/filters/hooks
 import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/filters/hooks/useChildStepFiltersAndChildStepFilterGroups';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
 import { buildEmptyStepFilter } from '@/workflow/workflow-steps/filters/utils/buildEmptyStepFilter';
+import { t } from '@lingui/core/macro';
 import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { t } from '@lingui/core/macro';
+import { MenuItem } from 'twenty-ui/components';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 
 type WorkflowStepFilterAddFilterRuleSelectProps = {

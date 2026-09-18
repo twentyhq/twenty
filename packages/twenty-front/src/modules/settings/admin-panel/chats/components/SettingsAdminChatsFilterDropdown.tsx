@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 
+import { MenuItemSwitch } from 'twenty-ui/components';
 import { IconAlertTriangle, IconMessage, IconSparkles } from 'twenty-ui/icon';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 
 import { type AdminChatsFilterState } from '@/settings/admin-panel/chats/types/AdminChatsFilterState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';

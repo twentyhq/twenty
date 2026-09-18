@@ -9,8 +9,8 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
-import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
@@ -22,9 +22,11 @@ import {
 } from '@/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  MenuItemSelect,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/components';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 
 type WorkflowVariablesDropdownStepItemsProps = {
   step: StepOutputSchemaV2;

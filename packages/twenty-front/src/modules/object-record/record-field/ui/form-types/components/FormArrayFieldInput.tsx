@@ -1,4 +1,3 @@
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
@@ -9,7 +8,7 @@ import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/i
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ArrayDisplay } from '@/ui/field/display/components/ArrayDisplay';
 import { TextInput } from '@/ui/field/input/components/TextInput';
-import { Field } from 'twenty-ui/primitives/input';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -21,15 +20,16 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
+import { MenuItem } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
+import { Field } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { toSpliced } from '~/utils/array/toSpliced';
 
 type FormArrayFieldInputProps = {

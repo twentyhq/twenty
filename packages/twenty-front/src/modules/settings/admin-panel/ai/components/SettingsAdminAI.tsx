@@ -1,47 +1,46 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
-import { Section } from 'twenty-ui/components';
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { useMemo, useState } from 'react';
+import { Section, useToast } from 'twenty-ui/components';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { IconMessage } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { billingState } from '@/client-config/states/billingState';
-import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
-import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useClientConfig } from '@/client-config/hooks/useClientConfig';
+import { billingState } from '@/client-config/states/billingState';
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
-import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
 import { SET_ADMIN_DEFAULT_AI_MODEL } from '@/settings/admin-panel/ai/graphql/mutations/setAdminDefaultAiModel';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_ADMIN_AI_USAGE_BY_WORKSPACE } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiUsageByWorkspace';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
+import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
+import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
 import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
 import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   type AdminAiModelConfig,
   type AdminAiModelTierDefault,

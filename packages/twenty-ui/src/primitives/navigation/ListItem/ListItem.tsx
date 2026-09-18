@@ -4,11 +4,11 @@ import { clsx } from 'clsx';
 import { type MouseEvent } from 'react';
 
 import { IconCheck, IconChevronRight } from '@ui/icon';
-import { MenuItemHotKeys } from '@ui/primitives/navigation/MenuItemHotKeys/MenuItemHotKeys';
+import { MenuItemHotKeys } from '@ui/primitives/navigation/ListItem/internal/MenuItemHotKeys/MenuItemHotKeys';
 
-import { isRenderableSlot } from './internal/isRenderableSlot';
-import { ListItemCheckboxIndicator } from './internal/ListItemCheckboxIndicator';
 import styles from './ListItem.module.scss';
+import { ListItemCheckboxIndicator } from './internal/ListItemCheckboxIndicator';
+import { isRenderableSlot } from './internal/isRenderableSlot';
 import { type ListItemProps } from './types/ListItemProps';
 
 export const ListItem = ({
@@ -22,6 +22,7 @@ export const ListItem = ({
   description,
   descriptionPlacement = 'inline',
   actions,
+  actionsVisibility = 'hover',
   hotkeys,
   hasSubmenu = false,
   className,
@@ -48,6 +49,7 @@ export const ListItem = ({
     state: { color, indicator, selected, highlighted: focused, disabled },
     props: {
       ...props,
+      'data-actions-visibility': actionsVisibility,
       className: clsx(styles.root, className),
       'aria-disabled': disabled || undefined,
       onClick: handleClick,

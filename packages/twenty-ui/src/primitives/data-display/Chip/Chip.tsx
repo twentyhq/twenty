@@ -3,7 +3,7 @@ import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
 import { type CSSProperties } from 'react';
 
-import { OverflowingTextWithTooltip } from '@ui/primitives/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+import { OverflowingTextWithTooltip } from '@ui/primitives/typography/internal/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Chip.module.scss';

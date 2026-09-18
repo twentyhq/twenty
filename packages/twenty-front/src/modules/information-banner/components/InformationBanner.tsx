@@ -1,20 +1,19 @@
-import { isDefined } from 'twenty-shared/utils';
-import { BUTTON_INVERTED_CLASS_NAME } from '@/ui/input/styles/ButtonInvertedClassName';
 import { InformationBannerComponentInstanceContext } from '@/information-banner/states/contexts/InformationBannerComponentInstanceContext';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
+import { BUTTON_INVERTED_CLASS_NAME } from '@/ui/input/styles/ButtonInvertedClassName';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
 import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { IconButton, OverflowingTextWithTooltip } from 'twenty-ui/components';
+import { type IconComponent, IconX } from 'twenty-ui/icon';
 import {
   Banner,
   type BannerColor,
   type BannerVariant,
 } from 'twenty-ui/primitives/feedback';
-import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`

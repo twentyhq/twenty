@@ -13,9 +13,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { IconButton, MenuItem } from 'twenty-ui/components';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type AdvancedFilterRecordFilterOptionsDropdownProps = {
   recordFilterId: string;

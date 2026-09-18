@@ -16,6 +16,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useLingui } from '@lingui/react/macro';
 import { createPath, useLocation } from 'react-router-dom';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/components';
 import {
   IconChevronLeft,
   IconCircle,
@@ -23,10 +24,9 @@ import {
   IconCopy,
 } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import {
-  ViewVisibility,
   PermissionFlagType,
+  ViewVisibility,
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

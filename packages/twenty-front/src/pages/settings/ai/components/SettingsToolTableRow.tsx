@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
+import { AppChip } from '@/applications/components/AppChip';
+import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
-import { AppChip } from '@/applications/components/AppChip';
 
 export type SettingsToolTableRowProps = {
   leftIcon: ReactNode;

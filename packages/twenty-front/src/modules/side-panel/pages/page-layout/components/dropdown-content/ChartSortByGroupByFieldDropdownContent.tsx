@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ChartManualSortSubMenuContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent';
 import { AGGREGATE_SORT_BY_OPTIONS } from '@/side-panel/pages/page-layout/constants/AggregateSortByOptions';
 import { useGraphGroupBySortOptionLabels } from '@/side-panel/pages/page-layout/hooks/useGraphGroupBySortOptionLabels';
@@ -10,7 +11,6 @@ import { filterSortOptionsByFieldType } from '@/side-panel/pages/page-layout/uti
 import { getDefaultManualSortOrder } from '@/side-panel/pages/page-layout/utils/getDefaultManualSortOrder';
 import { getSortIconForFieldType } from '@/side-panel/pages/page-layout/utils/getSortIconForFieldType';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -20,7 +20,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { MenuItemSelect } from 'twenty-ui/components';
 import {
   GraphOrderBy,
   type GraphOrderBy as GraphOrderByType,

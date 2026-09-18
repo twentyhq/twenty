@@ -11,6 +11,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 import {
   IconArrowUpRight,
   IconInfoCircle,
@@ -22,10 +23,7 @@ import {
   IllustrationIconText,
   IllustrationIconToggle,
 } from 'twenty-ui/icon';
-import {
-  Tooltip,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SchemaProperty = {

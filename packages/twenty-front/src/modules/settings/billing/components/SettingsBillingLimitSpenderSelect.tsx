@@ -1,12 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { MenuItemSelect, MenuItemSelectAvatar } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import {
-  MenuItemSelect,
-  MenuItemSelectAvatar,
-} from 'twenty-ui/primitives/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingLimitNestedSelect } from '@/settings/billing/components/internal/SettingsBillingLimitNestedSelect';
@@ -26,8 +23,8 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const SPENDER_DROPDOWN_ID = 'usage-limit-spender';

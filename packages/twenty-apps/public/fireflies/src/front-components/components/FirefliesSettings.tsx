@@ -3,9 +3,8 @@ import 'twenty-ui/style.css';
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 import { useState } from 'react';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
 
 import { FIREFLIES_API_KEY_VARIABLE_KEY } from 'src/constants/fireflies-api-key-variable-key.constant';
 import { ApplicationVariableRow } from 'src/front-components/components/ApplicationVariableRow';
@@ -69,8 +68,8 @@ export const FirefliesSettings = () => {
 
   return (
     <StyledContainer>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title="Configuration"
           description={
             applicationVariables.length > 0
@@ -94,7 +93,7 @@ export const FirefliesSettings = () => {
             />
           ))}
         </StyledVariablesList>
-      </Section>
+      </Section.Root>
       <FirefliesBackfillSection isApiKeyConfigured={isApiKeyConfigured} />
     </StyledContainer>
   );

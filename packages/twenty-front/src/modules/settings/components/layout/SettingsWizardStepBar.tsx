@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsWizardStepBarProps = {

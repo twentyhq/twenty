@@ -1,5 +1,3 @@
-import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
-import { Tabs } from 'twenty-ui/primitives/navigation';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
@@ -23,6 +21,7 @@ import {
 } from '@/settings/components/SettingsTableListSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -39,7 +38,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import {
+  OverflowingTextWithTooltip,
+  Section,
+  useToast,
+} from 'twenty-ui/components';
 import {
   IconCreditCard,
   IconEyeShare,
@@ -50,10 +53,8 @@ import {
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button, Switch } from 'twenty-ui/primitives/input';
-import {
-  Card,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/primitives/surfaces';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -64,8 +65,6 @@ import {
   type WorkspaceLookupAdminPanelQuery,
 } from '~/generated-admin/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledFeatureFlagName = styled(Text)`
   color: ${themeCssVariables.font.color.primary};

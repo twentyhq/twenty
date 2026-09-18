@@ -553,13 +553,8 @@
                           "ui/primitives/surfaces/alert-dialog",
                           "ui/primitives/surfaces/dialog",
                           "ui/primitives/surfaces/menu",
-                          "ui/primitives/surfaces/popover"
-                        ]
-                      },
-                      {
-                        "group": "Feedback",
-                        "pages": [
-                          "ui/primitives/feedback/toast"
+                          "ui/primitives/surfaces/popover",
+                          "ui/primitives/surfaces/tooltip"
                         ]
                       },
                       {
@@ -580,7 +575,8 @@
                       "ui/components/input/icon-button",
                       "ui/components/section",
                       "ui/components/tab-button",
-                      "ui/components/code-editor"
+                      "ui/components/code-editor",
+                      "ui/components/toast"
                     ]
                   }
                 ]
@@ -7213,6 +7209,10 @@
     {
       "source": "/user-guide/billing/capabilities/billing-and-pricing-faq",
       "destination": "/user-guide/billing/how-tos/billing-faq"
+    },
+    {
+      "source": "/ui/primitives/feedback/toast",
+      "destination": "/ui/components/toast"
     }
   ]
 }

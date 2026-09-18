@@ -1,6 +1,6 @@
-import { isDefined } from 'twenty-shared/utils';
 import { isUndefined } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared/utils';
 
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -19,11 +19,11 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { MenuItemSelect } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
 export type SingleRecordPickerMenuItemsProps = {
   EmptyIcon?: IconComponent;

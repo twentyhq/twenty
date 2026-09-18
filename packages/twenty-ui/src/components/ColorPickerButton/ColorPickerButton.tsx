@@ -1,0 +1,30 @@
+import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
+import { type LightIconButtonProps } from '@ui/components/LightIconButton/types/LightIconButtonProps';
+import {
+  ColorSample,
+  type ColorSampleProps,
+} from '@ui/primitives/data-display/ColorSample/ColorSample';
+
+import styles from './ColorPickerButton.module.scss';
+
+type ColorPickerButtonProps = Pick<ColorSampleProps, 'colorName'> &
+  Pick<LightIconButtonProps, 'onClick'> & {
+    isSelected?: boolean;
+  };
+
+export const ColorPickerButton = ({
+  colorName,
+  isSelected,
+  onClick,
+}: ColorPickerButtonProps) => {
+  return (
+    <div className={styles.wrapper} data-selected={isSelected || undefined}>
+      <LightIconButton
+        size="medium"
+        Icon={() => <ColorSample colorName={colorName} />}
+        aria-label={`Select ${colorName} color`}
+        onClick={onClick}
+      />
+    </div>
+  );
+};

@@ -21,17 +21,16 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { MenuItem, SearchInput, Section } from 'twenty-ui/components';
 import {
   IconArrowUpRight,
   IconChevronRight,
   IconHierarchy,
   IconListDetails,
 } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';

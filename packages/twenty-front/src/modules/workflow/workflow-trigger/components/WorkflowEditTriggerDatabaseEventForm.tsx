@@ -25,8 +25,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { MenuItem } from 'twenty-ui/components';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLabel = styled.span`

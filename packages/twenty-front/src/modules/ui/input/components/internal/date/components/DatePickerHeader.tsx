@@ -2,16 +2,16 @@ import { styled } from '@linaria/react';
 
 import { Select } from '@/ui/input/components/Select';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
+import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =

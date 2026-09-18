@@ -2,10 +2,10 @@ import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
 import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -19,7 +19,6 @@ import { WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE } from '@/workflow/graphql/queri
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowEmailAction } from '@/workflow/types/WorkflowEmailAction';
-import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowSendEmailAttachments } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSendEmailAttachments';
@@ -28,6 +27,7 @@ import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/u
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import {
   ConnectedAccountProvider,
@@ -39,11 +39,10 @@ import {
   getSendableEmailHandles,
   isDefined,
 } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/primitives/feedback';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
+import { Callout, MenuItem } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { isNonEmptyString } from '@sniptt/guards';
 import { Button } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type WorkflowEditActionEmailBaseProps = {

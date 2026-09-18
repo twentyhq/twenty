@@ -1,4 +1,4 @@
-import { type CalloutProps } from 'twenty-ui/feedback';
+import { type CalloutProps } from 'twenty-ui/components';
 
 import {
   SLACK_CONNECTION_HEALTH,

@@ -6,18 +6,15 @@ import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpda
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItemDraggable, MenuItemNavigate } from 'twenty-ui/components';
 import { IconEyeOff, useIcons } from 'twenty-ui/icon';
-import {
-  MenuItemDraggable,
-  MenuItemNavigate,
-} from 'twenty-ui/primitives/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 type RecordTableFieldsDropdownVisibleFieldsContentProps = {

@@ -12,8 +12,8 @@ import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/components';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   const { t } = useLingui();

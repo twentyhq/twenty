@@ -1,7 +1,7 @@
 import { t } from 'twenty-sdk/front-component';
-import { Status } from 'twenty-ui/data-display';
-import { Info } from 'twenty-ui/feedback';
+import { Info } from 'twenty-ui/components';
 import { IconKey } from 'twenty-ui/icon';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 import { SettingsControlLoader } from 'src/front-components/components/SettingsControlLoader';
@@ -82,10 +82,11 @@ export const GranolaConnectionCard = ({
         ) : (
           <Status
             color={STATUS_COLOR_BY_CONNECTION_STATE[connectionState]}
-            text={getStatusText(connectionState)}
-            isLoaderVisible={connectionState === 'CONNECTING'}
+            loading={connectionState === 'CONNECTING'}
             weight="medium"
-          />
+          >
+            {getStatusText(connectionState)}
+          </Status>
         )}
       </SettingsOptionCardContent>
     </StyledSettingsCard>

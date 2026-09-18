@@ -1,19 +1,19 @@
-import { i18n } from '@lingui/core';
 import { Menu } from '@base-ui/react/menu';
-import { CalendarEventIndicator } from './CalendarEventIndicator';
+import { i18n } from '@lingui/core';
 import { IconButton } from '@ui/components/IconButton/IconButton';
+import { MenuItem } from '@ui/components/MenuItem/MenuItem';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { MenuItem } from '@ui/primitives/navigation/MenuItem/MenuItem';
-import styles from './MeetingRow.module.scss';
 import {
+  IconArrowUpRight,
   IconCalendarEvent,
   IconCalendarX,
   IconDotsVertical,
-  IconArrowUpRight,
 } from 'twenty-ui/icon';
 import { type Meeting } from '../../shared/types/Meeting';
 import { type ActionProps } from '../types/ActionProps';
 import { formatTime } from '../utils/formatTime';
+import { CalendarEventIndicator } from './CalendarEventIndicator';
+import styles from './MeetingRow.module.scss';
 
 type MeetingRowProps = Pick<ActionProps, 'command' | 'isPending'> & {
   meeting: Meeting;

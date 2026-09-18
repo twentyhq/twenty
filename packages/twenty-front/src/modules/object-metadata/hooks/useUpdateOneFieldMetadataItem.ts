@@ -14,7 +14,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useUpdateOneFieldMetadataItem = () => {

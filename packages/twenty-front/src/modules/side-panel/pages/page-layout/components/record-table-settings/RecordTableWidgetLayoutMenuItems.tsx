@@ -3,7 +3,7 @@ import { type RecordTableWidgetLayoutPickerOption } from '@/page-layout/widgets/
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { MenuItemSelect } from 'twenty-ui/components';
 
 type RecordTableWidgetLayoutMenuItemsProps = {
   layoutOptions: RecordTableWidgetLayoutPickerOption[];

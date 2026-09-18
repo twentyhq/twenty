@@ -5,10 +5,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { LightIconButton, MenuItem, useToast } from 'twenty-ui/components';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { useToast } from 'twenty-ui/primitives/feedback';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import {
   type PublicDomain,
   DeletePublicDomainDocument,

@@ -1,32 +1,9 @@
-import { styled } from '@linaria/react';
-import { type MouseEvent, useContext, useState } from 'react';
-
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { type MouseEvent, useState } from 'react';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconPencil } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import {
-  StyledHoverableMenuItemBase,
-  StyledMenuItemIconCheck,
-  StyledMenuItemLabel,
-  StyledMenuItemLeftContent,
-} from 'twenty-ui/primitives/navigation';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-const StyledTextContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1 0 0;
-  gap: ${themeCssVariables.spacing[1]};
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-const StyledRightContent = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-`;
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type PageLayoutTabMenuItemSelectAvatarProps = {
   tab: SingleTabProps;
@@ -47,47 +24,37 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
   onEditClick,
   testId,
 }: PageLayoutTabMenuItemSelectAvatarProps) => {
-  const { theme } = useContext(ThemeContext);
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <StyledHoverableMenuItemBase
+    <ListItem
       onClick={onClick}
       disabled={disabled}
       data-testid={testId}
       role="option"
       aria-selected={selected}
       aria-disabled={disabled}
-      isIconDisplayedOnHoverOnly={showEditButton}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      startIcon={<TabAvatar tab={tab} />}
+      selected={selected && !isHovered}
+      indicator="check"
+      actions={
+        isHovered &&
+        showEditButton && (
+          <LightIconButton
+            Icon={IconPencil}
+            size="small"
+            accent="tertiary"
+            onClick={(event) => {
+              event.stopPropagation();
+              onEditClick?.(tab.id);
+            }}
+          />
+        )
+      }
     >
-      <StyledMenuItemLeftContent>
-        <TabAvatar tab={tab} />
-        <StyledTextContainer>
-          <StyledMenuItemLabel>{tab.title}</StyledMenuItemLabel>
-        </StyledTextContainer>
-      </StyledMenuItemLeftContent>
-
-      <StyledRightContent>
-        {selected && !isHovered && (
-          <StyledMenuItemIconCheck size={theme.icon.size.md} />
-        )}
-
-        {isHovered && showEditButton && (
-          <div className="hoverable-buttons">
-            <LightIconButton
-              Icon={IconPencil}
-              size="small"
-              accent="tertiary"
-              onClick={(event) => {
-                event.stopPropagation();
-                onEditClick?.(tab.id);
-              }}
-            />
-          </div>
-        )}
-      </StyledRightContent>
-    </StyledHoverableMenuItemBase>
+      {tab.title}
+    </ListItem>
   );
 };

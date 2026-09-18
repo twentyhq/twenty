@@ -1,5 +1,3 @@
-import { Section } from 'twenty-ui/components';
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -11,9 +9,13 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
+import {
+  MenuItemSwitch,
+  SearchInput,
+  Section,
+  useToast,
+} from 'twenty-ui/components';
 import { IconArchive, IconSettings } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useMutation, useQuery } from '@apollo/client/react';

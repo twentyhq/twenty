@@ -10,8 +10,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/components';
 import { IconCheck } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {

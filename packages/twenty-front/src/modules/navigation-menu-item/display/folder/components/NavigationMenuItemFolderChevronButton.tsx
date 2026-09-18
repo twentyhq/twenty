@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import type React from 'react';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 // Rotating a wrapper around the button keeps the icon component identity

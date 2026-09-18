@@ -5,7 +5,7 @@ import { type RecordGroupAggregateDropdownContextValue } from '@/object-record/r
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useLingui } from '@lingui/react/macro';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { MenuItem } from 'twenty-ui/components';
 
 export const RecordGroupAggregateDropdownMenuContent = () => {
   const { t } = useLingui();

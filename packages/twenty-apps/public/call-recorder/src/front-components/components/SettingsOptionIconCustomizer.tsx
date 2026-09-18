@@ -1,12 +1,7 @@
 import styled from '@emotion/styled';
 import { type IconComponent } from 'twenty-ui/icon';
-import { ICON } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// twenty-front reads these off ThemeContext, but a front component has no
-// ThemeProvider: the context default resolves every value to a var() string,
-// which an SVG size attribute cannot use. Sizes come from the numeric ICON
-// constants and the colour is inherited through currentColor instead.
 const StyledIconCustomizer = styled.div<{ $zoom: number; $rotate: number }>`
   align-items: center;
   color: ${() => themeCssVariables.IllustrationIcon.color.gray};
@@ -28,6 +23,12 @@ export const SettingsOptionIconCustomizer = ({
   rotate = -4,
 }: SettingsOptionIconCustomizerProps) => (
   <StyledIconCustomizer $zoom={zoom} $rotate={rotate}>
-    <Icon size={ICON.size.lg} stroke={ICON.stroke.md} />
+    <Icon
+      style={{
+        width: `calc(${themeCssVariables.icon.size.lg} * 1px)`,
+        height: `calc(${themeCssVariables.icon.size.lg} * 1px)`,
+        strokeWidth: themeCssVariables.icon.stroke.md,
+      }}
+    />
   </StyledIconCustomizer>
 );

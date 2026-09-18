@@ -1,5 +1,4 @@
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
-import { assertUnreachable } from 'twenty-shared/utils';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { type BillingSubscriptionChange } from '@/settings/billing/types/billingSubscriptionChange.type';
@@ -9,7 +8,8 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { assertUnreachable } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
 import {
   CancelSwitchBillingIntervalDocument,
   CancelSwitchBillingPlanDocument,

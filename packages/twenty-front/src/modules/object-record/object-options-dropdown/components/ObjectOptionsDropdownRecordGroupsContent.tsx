@@ -5,8 +5,8 @@ import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdow
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
-import { isRecordGroupingOptionalForViewType } from '@/object-record/record-group/utils/isRecordGroupingOptionalForViewType';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
+import { isRecordGroupingOptionalForViewType } from '@/object-record/record-group/utils/isRecordGroupingOptionalForViewType';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
@@ -26,6 +26,11 @@ import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  MenuItem,
+  MenuItemNavigate,
+  MenuItemSwitch,
+} from 'twenty-ui/components';
+import {
   IconArrowsSort,
   IconChevronLeft,
   IconCircleOff,
@@ -33,11 +38,6 @@ import {
   IconLayoutList,
   IconPlus,
 } from 'twenty-ui/icon';
-import {
-  MenuItem,
-  MenuItemNavigate,
-  MenuItemSwitch,
-} from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { t } = useLingui();

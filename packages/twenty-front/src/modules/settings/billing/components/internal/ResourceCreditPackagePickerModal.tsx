@@ -1,12 +1,12 @@
-import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AnimatedFormattedNumber } from '@/settings/billing/components/internal/AnimatedFormattedNumber';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { type ElementType, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip, Section } from 'twenty-ui/components';
 import {
   IconCoins,
   IconHistory,
@@ -14,10 +14,7 @@ import {
   IconSparkles,
 } from 'twenty-ui/icon';
 import { Button, Slider } from 'twenty-ui/primitives/input';
-import {
-  Dialog,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/primitives/surfaces';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 const PACKAGE_SUMMARY_ROW_HEIGHT = 24;

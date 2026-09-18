@@ -1,5 +1,5 @@
+import { MenuItemSelect } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
 import { type SettingsUnsubscribersFilterOption } from '@/settings/unsubscribers/components/filter-dropdown/types/SettingsUnsubscribersFilterOption';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

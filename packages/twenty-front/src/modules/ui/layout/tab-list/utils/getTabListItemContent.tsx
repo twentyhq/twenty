@@ -1,6 +1,7 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, Pill } from 'twenty-ui/primitives/data-display';
+import { Pill } from 'twenty-ui/components';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 

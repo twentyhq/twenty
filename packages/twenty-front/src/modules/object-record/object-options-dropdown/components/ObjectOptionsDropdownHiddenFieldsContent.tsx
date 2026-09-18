@@ -8,14 +8,15 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ViewFieldsHiddenDropdownSection } from '@/views/components/ViewFieldsHiddenDropdownSection';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/components';
 import { IconChevronLeft, IconSettings } from 'twenty-ui/icon';
-import { MenuItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   const { t } = useLingui();

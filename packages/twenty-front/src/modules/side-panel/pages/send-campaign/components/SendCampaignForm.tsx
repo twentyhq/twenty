@@ -9,8 +9,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { IconClock, IconSend } from 'twenty-ui/icon';
 import { Button, type SelectOption } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { Label } from 'twenty-ui/primitives/typography';
 
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessageCampaign';
@@ -192,7 +192,7 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
     <StyledContainer>
       <StyledContent>
         <StyledSection>
-          <Label>{t`Recipients`}</Label>
+          <StyledDisplayLabel>{t`Recipients`}</StyledDisplayLabel>
           {isDefined(audiencePreview) ? (
             <>
               <StyledRecipientCount>
@@ -221,7 +221,7 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
           )}
         </StyledSection>
         <StyledSection>
-          <Label>{t`List`}</Label>
+          <StyledDisplayLabel>{t`List`}</StyledDisplayLabel>
           {isDefined(list) ? (
             <RecordChip
               record={list}
@@ -232,19 +232,19 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
           )}
         </StyledSection>
         <StyledSection>
-          <Label>{t`From`}</Label>
+          <StyledDisplayLabel>{t`From`}</StyledDisplayLabel>
           <StyledValue $isEmpty={!isNonEmptyString(fromAddress)}>
             {isNonEmptyString(fromAddress) ? fromAddress : t`No sender`}
           </StyledValue>
         </StyledSection>
         <StyledSection>
-          <Label>{t`Subject`}</Label>
+          <StyledDisplayLabel>{t`Subject`}</StyledDisplayLabel>
           <StyledValue $isEmpty={!isNonEmptyString(subject)}>
             {isNonEmptyString(subject) ? subject : t`No subject`}
           </StyledValue>
         </StyledSection>
         <StyledSection>
-          <Label>{t`Delivery`}</Label>
+          <StyledDisplayLabel>{t`Delivery`}</StyledDisplayLabel>
           <StyledDeliveryFields>
             <Select
               dropdownId="send-campaign-delivery-timing"
@@ -289,3 +289,9 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
     </StyledContainer>
   );
 };
+
+const StyledDisplayLabel = styled(Text)`
+  color: var(--t-font-color-light);
+  font-size: 11px;
+  font-weight: var(--t-font-weight-semi-bold);
+`;

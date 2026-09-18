@@ -1,22 +1,22 @@
-import { ApolloProvider } from '@apollo/client/react';
-import { loadDevMessages } from '@apollo/client/dev';
-import { type Decorator } from '@storybook/react-vite';
-import { Provider as JotaiProvider } from 'jotai';
-import { HelmetProvider } from '@dr.pogodin/react-helmet';
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { WorkspaceRouteObjectsProvider } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
+import { loadDevMessages } from '@apollo/client/dev';
+import { ApolloProvider } from '@apollo/client/react';
+import { HelmetProvider } from '@dr.pogodin/react-helmet';
+import { type Decorator } from '@storybook/react-vite';
+import { Provider as JotaiProvider } from 'jotai';
+import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 
-import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
-import { UserContextProvider } from '@/users/components/UserContextProvider';
-import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
+import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { type JSX, useState } from 'react';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
+import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
@@ -25,11 +25,11 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
-import { ToastProvider } from 'twenty-ui/primitives/feedback';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { ToastProvider } from 'twenty-ui/components';
 import { IconsProvider } from 'twenty-ui/icon';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';

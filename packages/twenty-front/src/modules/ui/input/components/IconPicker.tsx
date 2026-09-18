@@ -5,21 +5,21 @@ import { useStore } from 'jotai';
 import React, { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  ColorSample,
+  IconButton,
+  LightIconButton,
   getIconTileColorShades,
-} from 'twenty-ui/primitives/data-display';
+} from 'twenty-ui/components';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
 import {
   type ButtonSize,
   type ButtonVariant,
-  LightIconButton,
 } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
+import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { IconPickerScrollEffect } from '@/ui/input/effect-components/IconPickerScrollEffect';
 import {
   ICON_PICKER_DEFAULT_VISIBLE_COUNT,

@@ -1,11 +1,11 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-  OverflowingTextWithTooltip,
   Tooltip,
 } from 'twenty-ui/primitives/surfaces';
 import { ThemeProvider } from 'twenty-ui/theme-constants';

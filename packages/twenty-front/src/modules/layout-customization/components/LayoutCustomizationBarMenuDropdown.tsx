@@ -1,19 +1,18 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { LightIconButton, MenuItem } from 'twenty-ui/components';
 import { IconDotsVertical, IconReload } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { LAYOUT_CUSTOMIZATION_BAR_DROPDOWN_ID } from '@/layout-customization/constants/LayoutCustomizationBarDropdownId';
 import { RESET_RECORD_PAGE_LAYOUT_MODAL_ID } from '@/layout-customization/constants/ResetRecordPageLayoutModalId';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 
 const StyledInvertedIconButtonWrapper = styled.span`
   align-items: center;

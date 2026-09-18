@@ -1,36 +1,32 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  IconButton,
-  LightButton,
-  MainButton,
-  TabButton,
-} from 'twenty-ui/components';
-import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
-import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
-import {
-  AnimatedButton,
   AnimatedLightIconButton,
-  Button,
-  ButtonGroup,
+  CardPicker,
   ColorPickerButton,
-  ColorSchemeCard,
   ColorSchemePicker,
   FloatingButton,
   FloatingButtonGroup,
   FloatingIconButton,
   FloatingIconButtonGroup,
+  IconButton,
   IconButtonGroup,
-  IconListViewGrip,
-  InsideButton,
+  LightButton,
   LightIconButton,
   LightIconButtonGroup,
+  MainButton,
   RoundedIconButton,
   SearchInput,
-  SegmentedControl,
-  CardPicker,
+  TabButton,
+} from 'twenty-ui/components';
+import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
+import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
+import {
+  Button,
+  ButtonGroup,
   Checkbox,
   Radio,
   RadioGroup,
+  SegmentedControl,
   Slider,
   Switch,
 } from 'twenty-ui/primitives/input';
@@ -42,15 +38,6 @@ import {
 } from '../shared/front-components/component-gallery';
 
 const INPUT_ENTRIES: GalleryEntry[] = [
-  {
-    name: 'AnimatedButton',
-    node: (
-      <AnimatedButton
-        title="Animated"
-        animatedSvg={<svg width={16} height={16} />}
-      />
-    ),
-  },
   {
     name: 'AnimatedLightIconButton',
     node: <AnimatedLightIconButton Icon={IconStar} />,
@@ -92,10 +79,6 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   {
     name: 'ColorPickerButton',
     node: <ColorPickerButton colorName="blue" onClick={() => {}} />,
-  },
-  {
-    name: 'ColorSchemeCard',
-    node: <ColorSchemeCard variant="Light" />,
   },
   {
     name: 'ColorSchemePicker',
@@ -151,14 +134,6 @@ const INPUT_ENTRIES: GalleryEntry[] = [
         iconButtons={[{ Icon: IconTrash, ariaLabel: 'Delete' }]}
       />
     ),
-  },
-  {
-    name: 'IconListViewGrip',
-    node: <IconListViewGrip />,
-  },
-  {
-    name: 'InsideButton',
-    node: <InsideButton Icon={IconPlus} ariaLabel="Add" />,
   },
   {
     name: 'LightButton',

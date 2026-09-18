@@ -1,8 +1,8 @@
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
-import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
 import { aggregateOperationComponentState } from '@/object-record/record-group/states/aggregateOperationComponentState';
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-group/states/availableFieldIdsForAggregateOperationComponentState';
+import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -12,8 +12,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/components';
 import { Icon123, IconCheck, IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 export const RecordGroupAggregateDropdownFieldsContent = () => {
   const {

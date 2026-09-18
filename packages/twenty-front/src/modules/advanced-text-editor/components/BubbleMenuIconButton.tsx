@@ -1,6 +1,6 @@
 import React from 'react';
-import type { IconComponent } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
+import { type IconComponent } from 'twenty-ui/icon';
 
 type BubbleMenuIconButtonProps = {
   className?: string;

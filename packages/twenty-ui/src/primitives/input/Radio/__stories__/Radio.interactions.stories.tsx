@@ -1,10 +1,10 @@
-import { Field as FieldPrimitive } from '@base-ui/react/field';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
+import { Field as FieldPrimitive } from '@base-ui/react/field';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
-import { CardPicker } from '@ui/primitives/input/CardPicker/CardPicker';
+import { CardPicker } from '@ui/components/CardPicker/CardPicker';
 import { Field } from '@ui/primitives/input/Field/Field';
 import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
 import { type RadioGroupProps } from '@ui/primitives/input/RadioGroup/types/RadioGroupProps';

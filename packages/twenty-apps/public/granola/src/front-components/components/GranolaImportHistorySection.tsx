@@ -2,11 +2,10 @@ import styled from '@emotion/styled';
 import { useId, useState } from 'react';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
+import { Section } from 'twenty-ui/components';
 import { IconFileImport } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
 
 import { GRANOLA_BACKFILL_ROUTE_PATH } from 'src/constants/granola-backfill-route-path';
 import {
@@ -74,8 +73,8 @@ export const GranolaImportHistorySection = () => {
   };
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t('Import history')}
         description={t(
           'Bring older notes from the synced folders into Call Recordings. Recordings you deleted in Twenty stay deleted.',
@@ -107,10 +106,11 @@ export const GranolaImportHistorySection = () => {
               <StyledDaysLabel htmlFor={inputId}>{t('days')}</StyledDaysLabel>
               <Button
                 type="submit"
-                title={t('Import')}
-                isLoading={isImporting}
+                loading={isImporting}
                 disabled={isImporting || !isDefined(days)}
-              />
+              >
+                {t('Import')}
+              </Button>
             </SettingsOptionCardContent>
           </StyledSettingsCard>
         </form>
@@ -122,6 +122,6 @@ export const GranolaImportHistorySection = () => {
           </StyledSettingsError>
         )}
       </StyledSettingsSectionStack>
-    </Section>
+    </Section.Root>
   );
 };

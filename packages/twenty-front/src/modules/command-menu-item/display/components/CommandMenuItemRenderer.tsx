@@ -1,11 +1,10 @@
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { AppMenuItem } from '@/applications/components/AppMenuItem';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
 import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
 import { useCommandMenuItemClick } from '@/command-menu-item/hooks/useCommandMenuItemClick';
+import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -14,12 +13,13 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledPreviewWrapper = styled.div`

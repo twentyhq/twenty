@@ -4,8 +4,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { SEARCH_VECTOR_FIELD_NAME } from '@/object-record/constants/SearchVectorFieldName';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 
-import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
 import { canBeSearchable } from '@/settings/data-model/fields/forms/utils/canBeSearchable';
+import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
 
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -21,7 +21,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useState } from 'react';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast, LightIconButton, MenuItem } from 'twenty-ui/components';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import {
@@ -31,8 +31,7 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -1,11 +1,12 @@
-import { t } from '@lingui/core/macro';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { t } from '@lingui/core/macro';
 import React, { useState } from 'react';
+import { MenuItem } from 'twenty-ui/components';
 import {
   IconBookmark,
   IconBookmarkPlus,
@@ -13,7 +14,6 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;

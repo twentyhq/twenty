@@ -7,7 +7,7 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { RESET_PAGE_LAYOUT_TAB_TO_DEFAULT } from '@/page-layout/graphql/mutations/resetPageLayoutTabToDefault';
 import { useRefreshPageLayoutAfterReset } from '@/page-layout/hooks/useRefreshPageLayoutAfterReset';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 export const useResetPageLayoutTabToDefault = (
   pageLayoutIdFromProps: string,

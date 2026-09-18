@@ -9,12 +9,12 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { t } from '@lingui/core/macro';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItemSelectTag } from 'twenty-ui/components';
 import { type TagColor } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItemSelectTag } from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 interface SelectInputProps {

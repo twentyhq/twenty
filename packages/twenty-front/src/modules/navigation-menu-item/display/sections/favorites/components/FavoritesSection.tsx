@@ -2,8 +2,8 @@ import { NavigationMenuItemAddDropdown } from '@/navigation-menu-item/edit/compo
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo } from 'react';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconHeartOff, IconPlus } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 

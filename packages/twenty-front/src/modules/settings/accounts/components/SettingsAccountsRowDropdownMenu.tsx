@@ -8,13 +8,14 @@ import {
 } from 'twenty-shared/types';
 
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
-import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { LightIconButton, MenuItem } from 'twenty-ui/components';
 import {
   IconAt,
   IconCalendarEvent,
@@ -24,8 +25,6 @@ import {
   IconRefresh,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
 

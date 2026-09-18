@@ -1,5 +1,5 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 
 import { type Country } from '@/ui/input/components/internal/types/Country';
@@ -9,10 +9,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import 'react-phone-number-input/style.css';
-import {
-  MenuItem,
-  MenuItemSelectAvatar,
-} from 'twenty-ui/primitives/navigation';
+import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconContainer = styled.div`

@@ -4,12 +4,12 @@ import { action } from 'storybook/actions';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
-  type CatalogStory,
   ComponentDecorator,
+  type CatalogStory,
 } from '@ui/testing';
 
+import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
 import { IconBell, IconEdit, IconSettings, IconTrash } from '@ui/icon';
-import { LightIconButton } from '@ui/primitives/input/LightIconButton/LightIconButton';
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
 import { type ListItemColor } from '@ui/primitives/navigation/ListItem/types/ListItemColor';
 import { type ListItemIndicator } from '@ui/primitives/navigation/ListItem/types/ListItemIndicator';

@@ -8,11 +8,11 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { IconChevronLeft, IconEye, IconEyeOff } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSelectTag } from 'twenty-ui/primitives/navigation';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
+import { MenuItem, MenuItemSelectTag } from 'twenty-ui/components';
+import { IconChevronLeft, IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 type ConfigVariableOptionsDropdownContentProps = {
   selectedCategory: ConfigVariableFilterCategory | null;

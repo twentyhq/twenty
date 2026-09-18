@@ -1,12 +1,11 @@
-import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { formatToHumanReadableDate } from '~/utils/date-utils';
-import { IconButton } from 'twenty-ui/components';
+import { t } from '@lingui/core/macro';
+import { IconButton, OverflowingTextWithTooltip } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 type SettingsAccountsBlocklistTableRowProps = {
   blocklistItem: BlocklistItem;

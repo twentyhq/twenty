@@ -1,6 +1,6 @@
-import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
+import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -11,12 +11,9 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent, useMemo, useState } from 'react';
+import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import {
-  MenuItem,
-  MenuItemMultiSelectTag,
-} from 'twenty-ui/primitives/navigation';
 
 type CallToActionButton = {
   text: string;

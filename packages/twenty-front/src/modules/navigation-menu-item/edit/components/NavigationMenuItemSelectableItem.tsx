@@ -1,10 +1,10 @@
-import { type ReactNode } from 'react';
-import { type IconComponent } from 'twenty-ui/icon';
-import { useLingui } from '@lingui/react/macro';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
+import { MenuItem } from 'twenty-ui/components';
+import { type IconComponent } from 'twenty-ui/icon';
 export type NavigationMenuItemOption = {
   id: string;
   label: string;

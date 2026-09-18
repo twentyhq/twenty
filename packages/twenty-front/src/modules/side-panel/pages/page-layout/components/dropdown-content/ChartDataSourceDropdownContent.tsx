@@ -2,14 +2,14 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
-import { useResetChartDraftFiltersSettings } from '@/side-panel/pages/page-layout/hooks/useResetChartDraftFiltersSettings';
-import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
-import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import {
   StyledPageLayoutDropdownContentContainer,
   StyledPageLayoutDropdownMenuItemsContainer,
 } from '@/side-panel/pages/page-layout/components/dropdown-content/PageLayoutDropdownContentContainer';
+import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { useResetChartDraftFiltersSettings } from '@/side-panel/pages/page-layout/hooks/useResetChartDraftFiltersSettings';
+import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
+import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -22,7 +22,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { MenuItemSelect } from 'twenty-ui/components';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartDataSourceDropdownContent = () => {

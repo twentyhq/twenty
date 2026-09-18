@@ -7,8 +7,8 @@ import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/ge
 import { useTimeZoneAbbreviationForNowInUserTimeZone } from '@/object-record/record-filter/hooks/useTimeZoneAbbreviationForNowInUserTimeZone';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { SelectControl } from '@/ui/input/components/SelectControl';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -21,7 +21,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { type ViewFilterOperand } from 'twenty-shared/types';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { MenuItem } from 'twenty-ui/components';
 
 type AdvancedFilterRecordFilterOperandSelectContentProps = {
   recordFilterId: string;

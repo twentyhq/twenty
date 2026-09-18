@@ -6,8 +6,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
-import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { SelectControl } from '@/ui/input/components/SelectControl';
+import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -20,13 +20,13 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/primitives/input';
 import {
   MenuItem,
   MenuItemSelect,
   MenuItemSelectTag,
-} from 'twenty-ui/primitives/navigation';
+} from 'twenty-ui/components';
+import { type IconComponent } from 'twenty-ui/icon';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 

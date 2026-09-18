@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { MenuItemSwitch } from '@ui/primitives/navigation/MenuItemSwitch/MenuItemSwitch';
+import { MenuItemSwitch } from '@ui/components/MenuItemSwitch/MenuItemSwitch';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 const meta: Meta<typeof MenuItemSwitch> = {

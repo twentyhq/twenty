@@ -12,8 +12,8 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/components';
 import { IconFilter, IconFilterOff, useIcons } from 'twenty-ui/icon';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 export const WidgetActionTimelineFilter = () => {

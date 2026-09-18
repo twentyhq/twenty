@@ -1,12 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
-import { TintedIconTile } from 'twenty-ui/primitives/data-display';
-import { IconCube } from 'twenty-ui/icon';
 import {
   MenuItemSelectAvatar,
   MenuItemSwitch,
-} from 'twenty-ui/primitives/navigation';
+  TintedIconTile,
+} from 'twenty-ui/components';
+import { IconCube } from 'twenty-ui/icon';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';

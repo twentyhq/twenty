@@ -69,7 +69,8 @@
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-sass-dts": "^1.3.31",
     "vite-plugin-svgr": "^4.3.0",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.0",
+    "react-router-dom": "^6.30.6"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -78,7 +79,6 @@
     "@tabler/icons-react": "^3.31.0",
     "clsx": "^2.1.1",
     "react-responsive": "^9.0.2",
-    "react-router-dom": "^6.30.6",
     "type-fest": "^4.10.1",
     "zod": "^4.1.11"
   },
@@ -86,7 +86,8 @@
     "@monaco-editor/react": "^4.7.0",
     "monaco-editor": ">= 0.25.0 < 1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^6.30.6"
   },
   "scripts": {
     "build": "npx vite build"
@@ -151,11 +152,6 @@
       "types": "./dist/primitives/input/index.d.ts",
       "import": "./dist/primitives/input.mjs",
       "require": "./dist/primitives/input.cjs"
-    },
-    "./primitives/json-visualizer": {
-      "types": "./dist/primitives/json-visualizer/index.d.ts",
-      "import": "./dist/primitives/json-visualizer.mjs",
-      "require": "./dist/primitives/json-visualizer.cjs"
     },
     "./primitives/layout": {
       "types": "./dist/primitives/layout/index.d.ts",
@@ -232,9 +228,6 @@
       "primitives/input": [
         "dist/primitives/input/index.d.ts"
       ],
-      "primitives/json-visualizer": [
-        "dist/primitives/json-visualizer/index.d.ts"
-      ],
       "primitives/layout": [
         "dist/primitives/layout/index.d.ts"
       ],
@@ -269,6 +262,9 @@
       "optional": true
     },
     "monaco-editor": {
+      "optional": true
+    },
+    "react-router-dom": {
       "optional": true
     }
   }

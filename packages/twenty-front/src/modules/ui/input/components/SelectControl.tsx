@@ -3,9 +3,12 @@ import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVaria
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag, TintedIconTile } from 'twenty-ui/primitives/data-display';
+import {
+  OverflowingTextWithTooltip,
+  TintedIconTile,
+} from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

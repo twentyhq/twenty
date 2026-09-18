@@ -1,3 +1,4 @@
+import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
 import { getLogicFunctionTriggerLabel } from '@/logic-functions/utils/getLogicFunctionTriggerLabel';
 import { useComputeApplicationContentForLayoutAndLogic } from '@/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic';
 import { useComputeObjectAndFieldsContentForApplication } from '@/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication';
@@ -7,17 +8,15 @@ import { useState } from 'react';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
-import { SearchInput } from 'twenty-ui/primitives/input';
-import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
+import { SearchInput, Section } from 'twenty-ui/components';
 import { type Application } from '~/generated-metadata/graphql';
 import {
   type ApplicationContentRow,
   SettingsApplicationContentSubtable,
 } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
 import { useInstalledTimelineActivityTypes } from '~/pages/settings/applications/hooks/useInstalledTimelineActivityTypes';
-import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
 import { filterSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/filterSettingsApplicationTimelineActivityTypes';
+import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<

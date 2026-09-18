@@ -24,8 +24,8 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/components';
 import { IconBox, type IconComponent } from 'twenty-ui/icon';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectSizeVariant = 'small' | 'default';

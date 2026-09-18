@@ -7,9 +7,14 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
-import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { useContext } from 'react';
+import {
+  type ColorLabels,
+  LightIconButton,
+  MenuItem,
+  MenuItemSelectColor,
+} from 'twenty-ui/components';
 import {
   IconCheck,
   IconDotsVertical,
@@ -17,15 +22,10 @@ import {
   IconTrash,
   IconX,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import {
-  type ColorLabels,
-  MenuItem,
-  MenuItemSelectColor,
-} from 'twenty-ui/primitives/navigation';
-import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 
 const useColorLabels = (): ColorLabels => ({
   gray: t`Gray`,

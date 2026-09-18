@@ -1,6 +1,6 @@
 import { css } from '@linaria/core';
 import React from 'react';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { MenuItem } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const hoveredStyle = css`

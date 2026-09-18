@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Pill } from 'twenty-ui/data-display';
+import { Pill } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLabelRow = styled.div`

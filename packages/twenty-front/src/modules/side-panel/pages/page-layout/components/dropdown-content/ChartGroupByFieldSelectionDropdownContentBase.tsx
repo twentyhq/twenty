@@ -28,8 +28,8 @@ import {
   isDefined,
   isFieldMetadataSupportedInGroupBy,
 } from 'twenty-shared/utils';
+import { MenuItemSelect } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { RelationType } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 

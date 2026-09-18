@@ -1,3 +1,5 @@
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -11,16 +13,10 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  useToast,
-} from 'twenty-ui/primitives/feedback';
-import { Button, LightIconButton } from 'twenty-ui/primitives/input';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
+
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
+import { LightIconButton, useToast } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   EvaluateAgentTurnDocument,
@@ -168,17 +164,15 @@ export const SettingsAgentLogsTab = ({
 
   if (turns.length === 0) {
     return (
-      <AnimatedPlaceholderEmptyContainer>
+      <EmptyState.Root>
         <AnimatedPlaceholder type="emptyTimeline" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`No logs yet`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
+        <EmptyState.Content>
+          <EmptyState.Title>{t`No logs yet`}</EmptyState.Title>
+          <EmptyState.Description>
             {t`Agent interactions will appear here once the agent is used in conversations`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+          </EmptyState.Description>
+        </EmptyState.Content>
+      </EmptyState.Root>
     );
   }
 

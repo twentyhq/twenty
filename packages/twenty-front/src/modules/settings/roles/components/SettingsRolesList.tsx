@@ -12,7 +12,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { Section } from 'twenty-ui/components';
+import { MenuItemSwitch, Section } from 'twenty-ui/components';
 import {
   IconFilter,
   IconKey,
@@ -21,7 +21,6 @@ import {
   IconSearch,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';

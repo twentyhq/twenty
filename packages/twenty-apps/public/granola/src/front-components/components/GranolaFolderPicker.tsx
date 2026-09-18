@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Info } from 'twenty-ui/feedback';
+import { Info } from 'twenty-ui/components';
 
 import { GRANOLA_FOLDER_SELECTION_LIMIT } from 'src/constants/granola-api.constant';
 import { GranolaFolderEmptyState } from 'src/front-components/components/GranolaFolderEmptyState';

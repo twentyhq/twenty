@@ -2,24 +2,24 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isAdvancedRelationFieldMetadataItem } from '@/object-record/utils/isAdvancedRelationFieldMetadataItem';
-import { isFieldWidgetEligibleNestedParentField } from '@/page-layout/widgets/field/utils/isFieldWidgetEligibleNestedParentField';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
-import { useResolveFieldWidgetRelationTableViewIdChange } from '@/page-layout/widgets/record-table/hooks/useResolveFieldWidgetRelationTableViewIdChange';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
-import { getFieldWidgetEligibleNestedFields } from '@/page-layout/widgets/field/utils/getFieldWidgetEligibleNestedFields';
 import {
   getFieldWidgetDefaultDisplayMode,
   isDisplayModeValidForFieldType,
 } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
-import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
-import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { getFieldWidgetEligibleNestedFields } from '@/page-layout/widgets/field/utils/getFieldWidgetEligibleNestedFields';
+import { isFieldWidgetEligibleNestedParentField } from '@/page-layout/widgets/field/utils/isFieldWidgetEligibleNestedParentField';
+import { useResolveFieldWidgetRelationTableViewIdChange } from '@/page-layout/widgets/record-table/hooks/useResolveFieldWidgetRelationTableViewIdChange';
 import { FieldWidgetNestedFieldDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetNestedFieldDropdownContent';
 import {
   StyledPageLayoutDropdownContentContainer,
   StyledPageLayoutDropdownMenuItemsContainer,
 } from '@/side-panel/pages/page-layout/components/dropdown-content/PageLayoutDropdownContentContainer';
+import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
+import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -33,8 +33,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItemSelect } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 

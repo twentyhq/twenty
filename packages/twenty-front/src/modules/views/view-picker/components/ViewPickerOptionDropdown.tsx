@@ -13,7 +13,7 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 as uuidv4 } from 'uuid';
+import { MenuItem } from 'twenty-ui/components';
 import {
   IconHeart,
   IconHeartOff,
@@ -22,7 +22,7 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { v4 as uuidv4 } from 'uuid';
 import {
   PermissionFlagType,
   ViewVisibility,

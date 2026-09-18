@@ -16,8 +16,8 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import {
-  getViewTypeLabel,
   ViewType,
+  getViewTypeLabel,
   viewTypeIconMapping,
 } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
@@ -26,6 +26,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  MenuItem,
+  MenuItemSelect,
+  MenuItemSwitch,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/components';
+import {
   IconBaselineDensitySmall,
   IconCalendar,
   IconCalendarWeek,
@@ -33,12 +39,6 @@ import {
   IconLayoutList,
   IconTable,
 } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import {
-  MenuItem,
-  MenuItemSelect,
-  MenuItemSwitch,
-} from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {

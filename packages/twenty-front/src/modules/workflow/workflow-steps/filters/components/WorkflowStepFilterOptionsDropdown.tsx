@@ -4,11 +4,10 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRemoveStepFilter } from '@/workflow/workflow-steps/filters/hooks/useRemoveStepFilter';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
-import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
+import { IconButton, MenuItem } from 'twenty-ui/components';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowStepFilterOptionsDropdownProps = {
   stepFilterId: string;

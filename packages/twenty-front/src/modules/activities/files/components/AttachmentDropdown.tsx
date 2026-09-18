@@ -4,14 +4,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
+import { LightIconButton, MenuItem } from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconDownload,
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type AttachmentDropdownProps = {
   onDownload: () => void;

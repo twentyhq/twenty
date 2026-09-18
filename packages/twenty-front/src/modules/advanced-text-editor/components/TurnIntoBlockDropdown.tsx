@@ -7,8 +7,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/react';
 import { useContext, useId } from 'react';
+import { MenuItem } from 'twenty-ui/components';
 import { IconPilcrow } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMenuItem = styled.button`

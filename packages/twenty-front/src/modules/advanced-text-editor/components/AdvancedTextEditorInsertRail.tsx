@@ -3,7 +3,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { useRef, useState } from 'react';
 import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
-import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
+import { TIPTAP_NODE_TYPES, isDefined } from 'twenty-shared/utils';
+import { LightIconButton, MenuItem } from 'twenty-ui/components';
 import {
   IconH1,
   IconH2,
@@ -15,8 +16,7 @@ import {
   IconTypography,
   IconVariable,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockInsertionRecipes';

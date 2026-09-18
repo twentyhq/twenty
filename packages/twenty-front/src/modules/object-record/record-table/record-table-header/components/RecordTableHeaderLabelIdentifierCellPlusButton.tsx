@@ -6,9 +6,9 @@ import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/can
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { LightIconButton } from 'twenty-ui/primitives/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledHeaderIcon = styled.div`

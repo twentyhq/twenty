@@ -13,12 +13,12 @@ import {
   describe,
   expect,
   it,
-  type MockInstance,
   vi,
+  type MockInstance,
 } from 'vitest';
 
-import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
-import { isDefined } from '@ui/utilities/utils/isDefined';
+import { ThemeProvider } from '@ui/theme-constants';
+import { isDefined } from '@ui/utilities';
 
 import { type ComponentConformanceCase } from './types/ComponentConformanceCase';
 import { type ComponentConformanceOptions } from './types/ComponentConformanceOptions';

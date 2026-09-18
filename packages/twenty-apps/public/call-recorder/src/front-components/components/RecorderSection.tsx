@@ -1,8 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { useId, useState } from 'react';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
 import { type ThemeColor } from 'twenty-ui/theme';
-import { H2Title } from 'twenty-ui/typography';
 
 import { AdornedHexInput } from 'src/front-components/components/AdornedHexInput';
 import { LabelledSettingsField } from 'src/front-components/components/LabelledSettingsField';
@@ -100,8 +99,8 @@ export const RecorderSection = () => {
   };
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title="Recorder"
         description="How the recorder appears when it joins your meetings."
       />
@@ -171,6 +170,6 @@ export const RecorderSection = () => {
           </StyledDimmable>
         )}
       </StyledSettingsSectionStack>
-    </Section>
+    </Section.Root>
   );
 };

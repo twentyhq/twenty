@@ -1,7 +1,7 @@
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { styled } from '@linaria/react';
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItemMultiSelectAvatar } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

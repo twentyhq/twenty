@@ -11,9 +11,8 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip, Section } from 'twenty-ui/components';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetServerAdminsDocument } from '~/generated-admin/graphql';
 

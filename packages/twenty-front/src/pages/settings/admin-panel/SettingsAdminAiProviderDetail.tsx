@@ -1,4 +1,3 @@
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
@@ -15,6 +14,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -23,7 +23,12 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import {
+  RoundedLink,
+  SearchInput,
+  Section,
+  useToast,
+} from 'twenty-ui/components';
 import {
   type IconComponent,
   IconFlag,
@@ -35,14 +40,11 @@ import {
   IconTrash,
   IconWorld,
 } from 'twenty-ui/icon';
-import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { RoundedLink } from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import {
   type AdminAiModelConfig,
   SetAdminAiModelEnabledDocument,
 } from '~/generated-admin/graphql';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 const REMOVE_PROVIDER_MODAL_ID = 'settings-ai-provider-remove';
 const REMOVE_MODEL_MODAL_ID = 'settings-ai-model-remove';

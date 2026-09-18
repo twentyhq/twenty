@@ -78,7 +78,7 @@ jest.mock('@/object-record/record-card/components/RecordCard', () => ({
   ),
 }));
 jest.mock('twenty-ui/primitives/layout', () => ({
-  AnimatedEaseInOut: ({
+  AnimatedExpandableContainer: ({
     children,
     isOpen,
   }: {

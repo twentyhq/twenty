@@ -8,7 +8,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   BillingPortalSessionDocument,
   EndSubscriptionTrialPeriodDocument,

@@ -2,8 +2,8 @@ import { useNavigateToMoreWidgets } from '@/page-layout/hooks/useNavigateToMoreW
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { FloatingIconButton } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInsertButton = styled(FloatingIconButton)`

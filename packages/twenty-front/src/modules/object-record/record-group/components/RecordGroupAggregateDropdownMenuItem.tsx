@@ -1,5 +1,5 @@
+import { MenuItem } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 export const RecordGroupAggregateDropdownMenuItem = ({
   onContentChange,

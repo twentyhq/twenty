@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { TabButton } from '@ui/components/TabButton/TabButton';
 import {
   IconCheckbox,
   IconChevronDown,
@@ -7,18 +8,17 @@ import {
   IconSettings,
   IconUser,
 } from '@ui/icon';
-import { TabButton } from '@ui/components/TabButton/TabButton';
+import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
+import { Pill } from '@ui/primitives/data-display/internal/Pill/Pill';
+import { Tabs } from '@ui/primitives/navigation/Tabs/Tabs';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   AVATAR_URL_MOCK,
   CatalogDecorator,
-  type CatalogStory,
   ComponentDecorator,
+  type CatalogStory,
 } from '@ui/testing';
 import { type ReactNode } from 'react';
-import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
-import { Tabs } from '@ui/primitives/navigation/Tabs/Tabs';
-import { Pill } from '@ui/primitives/data-display/Pill/Pill';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import styles from './TabButton.stories.module.scss';

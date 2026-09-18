@@ -22,8 +22,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
 
 type RecordDetailMorphRelationSectionDropdownOneToManyProps = {
   dropdownTriggerClickableComponent?: ReactNode;

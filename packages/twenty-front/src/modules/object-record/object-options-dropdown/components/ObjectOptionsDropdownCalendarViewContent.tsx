@@ -1,4 +1,3 @@
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -9,9 +8,10 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { t } from '@lingui/core/macro';
-import { Pill } from 'twenty-ui/primitives/data-display';
+import { MenuItemSelect, Pill } from 'twenty-ui/components';
 import {
   IconCalendarEvent,
   IconCalendarMonth,
@@ -19,7 +19,6 @@ import {
   IconChevronLeft,
   IconTimelineEvent,
 } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 const RECORD_CALENDAR_TIMELINE_VIEW_ID = 'record-calendar-timeline-view';

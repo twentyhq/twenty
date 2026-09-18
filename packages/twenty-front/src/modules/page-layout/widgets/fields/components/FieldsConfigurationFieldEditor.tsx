@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldsConfigurationFieldItem } from '@/page-layout/types/FieldsConfiguration';
+import { MenuItemDraggable } from 'twenty-ui/components';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 
 type FieldsConfigurationFieldEditorProps = {
   field: FieldsConfigurationFieldItem;

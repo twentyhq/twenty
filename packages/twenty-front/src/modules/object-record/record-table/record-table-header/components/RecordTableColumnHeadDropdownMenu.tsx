@@ -12,10 +12,10 @@ import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-t
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { MenuItem } from 'twenty-ui/components';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -23,7 +23,7 @@ import {
   IconEyeOff,
   IconFilter,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   recordField: RecordField;

@@ -3,10 +3,10 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { t } from '@lingui/core/macro';
+import { IconButton, MenuItem } from 'twenty-ui/components';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
-import { MenuItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 type SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps = {
   roleId: string;

@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNumber, isString } from '@sniptt/guards';
 import { Children, isValidElement } from 'react';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconCopy } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

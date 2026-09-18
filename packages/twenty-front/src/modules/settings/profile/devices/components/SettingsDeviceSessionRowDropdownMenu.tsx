@@ -5,10 +5,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { LightIconButton, MenuItem, useToast } from 'twenty-ui/components';
 import { IconDotsVertical, IconLogout } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import {
   CurrentUserSessionsDocument,
   RevokeUserSessionDocument,
