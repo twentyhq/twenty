@@ -4,6 +4,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 
+const enqueueJobsMock = vi.hoisted(() => vi.fn());
+
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  enqueueJobs: enqueueJobsMock,
+}));
+
 const fetchMock = vi.fn();
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
@@ -255,6 +262,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     vi.stubEnv('CALL_RECORDER_USE_WORKSPACE_LOGO', 'false');
+    enqueueJobsMock.mockReset();
     fetchMock.mockReset();
     fetchMock.mockImplementation(
       async (requestUrl: string, requestInit: RequestInit) => {
@@ -503,6 +511,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         },
       }),
     );
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 
   it('replaces a stale visible title with the fallback title when the calendar title becomes unavailable', async () => {
