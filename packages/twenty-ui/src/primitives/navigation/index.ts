@@ -21,7 +21,7 @@ export type { ListItemProps } from './ListItem/types/ListItemProps';
 export type { ListItemState } from './ListItem/types/ListItemState';
 export type { ColorLabels } from './MenuItem/constants/DefaultColorLabels';
 export { DEFAULT_COLOR_LABELS } from './MenuItem/constants/DefaultColorLabels';
-export type { MenuItemIconButton, MenuItemProps } from './MenuItem/MenuItem';
+export type { MenuItemProps } from './MenuItem/MenuItem';
 export {
   MenuItemLeftContent,
   StyledHoverableMenuItemBase,

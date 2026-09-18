@@ -1,3 +1,6 @@
+import { useContext } from 'react';
+
+import { ButtonGroupContext } from '@ui/primitives/input/ButtonGroup/internal/ButtonGroupContext';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -9,6 +12,8 @@ import { type IconButtonProps } from './types/IconButtonProps';
 
 export const IconButton = ({
   children,
+  size = 'md',
+  shape = 'square',
   className,
   tooltip,
   tooltipPlace = 'bottom',
@@ -18,11 +23,16 @@ export const IconButton = ({
   loading,
   ...props
 }: IconButtonProps) => {
+  const buttonGroup = useContext(ButtonGroupContext);
+  const resolvedSize = buttonGroup?.size ?? size;
   const hasTooltip = isNonEmptyString(tooltip);
   const isDisabled = disabled || loading;
   const button = (
     <Button
       {...props}
+      size={size === 'xs' ? 'sm' : size}
+      data-icon-size={resolvedSize}
+      data-shape={shape}
       disabled={disabled}
       loading={loading}
       startIcon={<span className={styles.icon}>{children}</span>}

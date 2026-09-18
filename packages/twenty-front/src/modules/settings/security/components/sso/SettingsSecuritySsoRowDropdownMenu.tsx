@@ -9,7 +9,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
 
@@ -70,11 +70,9 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
       clickableComponent={
-        <LightIconButton
-          Icon={IconDotsVertical}
-          accent="tertiary"
-          aria-label={t`More options`}
-        />
+        <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownComponents={
         <DropdownContent>
