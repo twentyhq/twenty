@@ -18,6 +18,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconApi,
   IconPlus,
@@ -25,9 +26,7 @@ import {
   IconSparkles,
   IconWebhook,
 } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
 
 type TabKey =
@@ -93,6 +92,7 @@ export const SettingsApiWebhooks = () => {
       title={t`MCP & APIs`}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`APIs and webhooks`}
           tabs={tabs}
           componentInstanceId={SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID}
         />
@@ -106,7 +106,7 @@ export const SettingsApiWebhooks = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
+        <Section.Root>
           <SettingsDiscoveryHeroCard
             lightSrc={isMcpTab ? McpCoverLight : PlaygroundCoverLight}
             darkSrc={isMcpTab ? McpCoverDark : PlaygroundCoverDark}
@@ -122,20 +122,20 @@ export const SettingsApiWebhooks = () => {
             ]}
             playButtonAriaLabel={t`Watch API demo`}
           />
-        </Section>
+        </Section.Root>
 
         {activeTab === SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API && (
           <StyledTabContent>
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Documentation`}
                 description={t`Try our REST or GraphQL API playgrounds`}
               />
               <PlaygroundSetupForm />
-            </Section>
+            </Section.Root>
 
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`API Keys`}
                 description={t`Active API keys created by you or your team.`}
               />
@@ -150,7 +150,7 @@ export const SettingsApiWebhooks = () => {
                   >{t`Create API key`}</NavigationButton>
                 </StyledButtonContainer>
               </StyledTableContainer>
-            </Section>
+            </Section.Root>
           </StyledTabContent>
         )}
 
@@ -162,8 +162,8 @@ export const SettingsApiWebhooks = () => {
 
         {activeTab === SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS && (
           <StyledTabContent>
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Webhooks`}
                 description={t`Establish Webhook endpoints for notifications on asynchronous events.`}
               />
@@ -178,7 +178,7 @@ export const SettingsApiWebhooks = () => {
                   >{t`Create webhook`}</NavigationButton>
                 </StyledButtonContainer>
               </StyledTableContainer>
-            </Section>
+            </Section.Root>
           </StyledTabContent>
         )}
       </SettingsPageContainer>

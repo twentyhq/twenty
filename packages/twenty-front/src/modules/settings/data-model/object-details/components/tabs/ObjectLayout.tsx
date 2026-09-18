@@ -2,11 +2,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconAddressBook, IconPencil, IconReload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -19,8 +18,8 @@ import recordPageLayoutCoverDark from '@/settings/data-model/object-details/asse
 import recordPageLayoutCoverLight from '@/settings/data-model/object-details/assets/record-page-layout-cover-light.png';
 import { ObjectOpenRecordInPicker } from '@/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -44,7 +43,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
   const navigateApp = useNavigateApp();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { resetPageLayoutToDefault } = useResetPageLayoutToDefault();
 
   const pageLayout = useAtomFamilySelectorValue(
@@ -83,7 +82,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
   };
 
   const handleResetPageLayout = () => {
-    openModal(RESET_PAGE_LAYOUT_MODAL_ID);
+    openDialog(RESET_PAGE_LAYOUT_MODAL_ID);
   };
 
   const handleConfirmReset = async () => {
@@ -98,8 +97,8 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
 
   return (
     <StyledContentContainer>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Record page`}
           description={t`Customize the workspace record page`}
         />
@@ -127,16 +126,16 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
             />
           }
         />
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Navigation`}
           description={t`Where records of this object open`}
         />
         <ObjectOpenRecordInPicker objectMetadataItem={objectMetadataItem} />
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Reset`}
           description={t`Reset all overrides on this layout to return it to the app default`}
         />
@@ -147,9 +146,9 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
           disabled={!hasLayoutsPermission || !isDefined(pageLayout)}
           variant="outline"
         >{t`Reset to default`}</Button>
-      </Section>
-      <ConfirmationModal
-        modalInstanceId={RESET_PAGE_LAYOUT_MODAL_ID}
+      </Section.Root>
+      <ConfirmationDialog
+        dialogId={RESET_PAGE_LAYOUT_MODAL_ID}
         title={t`Reset to default`}
         subtitle={t`This action cannot be undone.`}
         onConfirmClick={handleConfirmReset}

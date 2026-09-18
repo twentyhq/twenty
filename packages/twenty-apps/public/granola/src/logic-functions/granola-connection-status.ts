@@ -6,7 +6,6 @@ import { GRANOLA_CONNECTION_STATUS_ROUTE_PATH } from 'src/constants/granola-conn
 import { GRANOLA_CONNECTION_STATUS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
-import { currentUserCanManageGranolaOrThrow } from 'src/logic-functions/utils/current-user-can-manage-granola-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
 import { isGranolaApiKeySet } from 'src/logic-functions/utils/is-granola-api-key-set.util';
 
@@ -31,7 +30,6 @@ export const granolaConnectionStatusHandler = async () => {
     }
     throw error;
   }
-  const canManage = await currentUserCanManageGranolaOrThrow();
   try {
     const { webhook_endpoints: endpoints } =
       await client.listWebhookEndpoints();
@@ -43,14 +41,12 @@ export const granolaConnectionStatusHandler = async () => {
       return {
         isConnected: true,
         isApiKeySet: true,
-        canManage,
         needsRegistration: true,
       };
     }
     return {
       isConnected: true,
       isApiKeySet: true,
-      canManage,
       registration: { scopes: endpoint.scopes, isActive: endpoint.enabled },
     };
   } catch (error) {
@@ -58,7 +54,6 @@ export const granolaConnectionStatusHandler = async () => {
       return {
         isConnected: true,
         isApiKeySet: true,
-        canManage,
         needsRegistration: true,
         error: error.message,
       };

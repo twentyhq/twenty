@@ -137,6 +137,15 @@ const renderTipTapNodeToMarkdown = (node: TipTapNode): string => {
       return `${(node.content ?? [])
         .map((item) => renderListItem(item, '- '))
         .join('')}\n`;
+    case TIPTAP_NODE_TYPES.TASK_LIST:
+      return `${(node.content ?? [])
+        .map((item) =>
+          renderListItem(
+            item,
+            item.attrs?.checked === true ? '- [x] ' : '- [ ] ',
+          ),
+        )
+        .join('')}\n`;
     case TIPTAP_NODE_TYPES.ORDERED_LIST: {
       const start =
         typeof node.attrs?.start === 'number' ? node.attrs.start : 1;

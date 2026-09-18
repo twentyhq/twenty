@@ -53,6 +53,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationGaugeService,
     WorkspaceFlatApplicationMapCacheService,
     provideWorkspaceScopedRepository(AgentEntity),
+    provideWorkspaceScopedRepository(ApplicationVariableEntity),
     provideWorkspaceScopedRepository(CommandMenuItemEntity),
   ],
 })

@@ -10,8 +10,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, H3Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
+import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import {
@@ -25,6 +25,10 @@ const StyledTitleContainer = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
   margin-top: ${themeCssVariables.spacing[2]};
+
+  h3 {
+    line-height: inherit;
+  }
 `;
 
 export const SettingsAdminIndicatorHealthStatus = () => {
@@ -76,27 +80,29 @@ export const SettingsAdminIndicatorHealthStatus = () => {
             },
           }}
         >
-          <Section>
+          <Section.Root>
             <StyledTitleContainer>
-              <H3Title title={data?.getIndicatorHealthStatus?.label} />
+              <Heading level={3} size="lg">
+                {data?.getIndicatorHealthStatus?.label}
+              </Heading>
               {data?.getIndicatorHealthStatus?.status && (
                 <SettingsAdminHealthStatusRightContainer
                   status={data?.getIndicatorHealthStatus.status}
                 />
               )}
             </StyledTitleContainer>
-          </Section>
-          <Section>
+          </Section.Root>
+          <Section.Root>
             {data?.getIndicatorHealthStatus?.id !== HealthIndicatorId.worker &&
               data?.getIndicatorHealthStatus?.id !==
                 HealthIndicatorId.connectedAccount && (
-                <H2Title
+                <Section.Header
                   title={t`Status`}
                   description={data?.getIndicatorHealthStatus?.description}
                 />
               )}
             <SettingsAdminIndicatorHealthStatusContent />
-          </Section>
+          </Section.Root>
         </SettingsAdminIndicatorHealthContext.Provider>
       </SettingsPageContainer>
     </SettingsPageLayout>

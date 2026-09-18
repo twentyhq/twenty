@@ -15,9 +15,8 @@ import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/ut
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/components';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { Section } from 'twenty-ui/primitives/layout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { resolveCjsModuleDefaultExport } from '~/utils/resolveCjsModuleDefaultExport';
@@ -144,13 +143,13 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
       >
         <SettingsPageContainer>
           {has2FAMethod ? (
-            <Section>
+            <Section.Root>
               <DeleteTwoFactorAuthentication />
-            </Section>
+            </Section.Root>
           ) : (
-            <Section>
+            <Section.Root>
               <TwoFactorAuthenticationSetupForSettingsEffect />
-              <H2Title
+              <Section.Header
                 title={t`Authenticator app`}
                 description={t`Authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator, etc. generate one-time passwords that are used as a second factor to verify your identity when prompted during sign-in.`}
               />
@@ -176,14 +175,14 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
 
               <StyledDivider />
 
-              <H2Title
+              <Section.Header
                 title={t`Verify the code from the app`}
                 description={t`Copy paste the code below`}
               />
               <StyledOTPContainer>
                 <TwoFactorAuthenticationVerificationForSettings />
               </StyledOTPContainer>
-            </Section>
+            </Section.Root>
           )}
         </SettingsPageContainer>
       </SettingsPageLayout>

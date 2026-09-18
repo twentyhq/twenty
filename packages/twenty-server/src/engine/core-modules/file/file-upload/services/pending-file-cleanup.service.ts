@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, LessThan, Not, Repository } from 'typeorm';
+import { IsNull, LessThan, Like, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -11,6 +11,7 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
   PENDING_FILE_CLEANUP_BATCH_SIZE,
   PENDING_FILE_MAX_AGE_MS,
+  RECORD_EXPORT_FILE_MAX_AGE_MS,
 } from 'src/engine/core-modules/file/file-upload/crons/constants/pending-file-cleanup.constants';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
@@ -30,19 +31,25 @@ export class PendingFileCleanupService {
     private readonly fileStorageService: FileStorageService,
   ) {}
 
-  // Deletes file records stuck in PENDING (direct uploads that were initiated
-  // but never completed) together with any partially uploaded object. Never
-  // promotes to UPLOADED: a file that was never confirmed is referenced by
-  // nothing, the client recovery path is re-uploading under a fresh fileId.
-  async cleanupStalePendingFiles(): Promise<number> {
+  async cleanupStaleFiles(): Promise<number> {
     const staleThreshold = new Date(Date.now() - PENDING_FILE_MAX_AGE_MS);
+    const exportThreshold = new Date(
+      Date.now() - RECORD_EXPORT_FILE_MAX_AGE_MS,
+    );
 
     const staleFiles = await this.fileRepository.find({
-      where: {
-        status: FILE_STATUS.PENDING,
-        createdAt: LessThan(staleThreshold),
-        workspaceId: Not(IsNull()),
-      },
+      where: [
+        {
+          status: FILE_STATUS.PENDING,
+          createdAt: LessThan(staleThreshold),
+          workspaceId: Not(IsNull()),
+        },
+        {
+          path: Like(`${FileFolder.RecordExport}/%`),
+          createdAt: LessThan(exportThreshold),
+          workspaceId: Not(IsNull()),
+        },
+      ],
       take: PENDING_FILE_CLEANUP_BATCH_SIZE,
     });
 
@@ -50,6 +57,20 @@ export class PendingFileCleanupService {
 
     for (const file of staleFiles) {
       try {
+        if (
+          file.path.startsWith(`${FileFolder.RecordExport}/`) &&
+          isDefined(file.workspaceId)
+        ) {
+          await this.fileStorageService.deleteByFileId({
+            fileId: file.id,
+            workspaceId: file.workspaceId,
+            fileFolder: FileFolder.RecordExport,
+          });
+          deletedCount++;
+
+          continue;
+        }
+
         // Claim the row atomically: delete it only while it is still PENDING.
         // If completeFileUpload promoted it to UPLOADED between the fetch above
         // and here, the delete affects no rows and the now-live file (and its
@@ -68,7 +89,7 @@ export class PendingFileCleanupService {
         deletedCount++;
       } catch (error) {
         this.logger.warn(
-          `Failed to clean up stale pending file ${file.id} in workspace ${file.workspaceId}: ${error.message}`,
+          `Failed to clean up stale file ${file.id} in workspace ${file.workspaceId}: ${error.message}`,
         );
       }
     }

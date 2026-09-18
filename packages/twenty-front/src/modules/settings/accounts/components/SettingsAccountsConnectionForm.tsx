@@ -9,8 +9,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsAccountsPasswordController } from '@/settings/accounts/components/SettingsAccountsPasswordController';
 import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { type AccountType } from 'twenty-shared/constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFormContainer = styled.div`
@@ -94,8 +93,8 @@ export const SettingsAccountsConnectionForm = ({
   const handlePortChange = (value: string) => Number(value);
 
   return (
-    <Section>
-      <H2Title title={t`Mail Account`} description={getDescription()} />
+    <Section.Root>
+      <Section.Header title={t`Mail Account`} description={getDescription()} />
       <StyledFormContainer>
         <Controller
           name="name"
@@ -375,6 +374,6 @@ export const SettingsAccountsConnectionForm = ({
           />
         </StyledConnectionSection>
       </StyledFormContainer>
-    </Section>
+    </Section.Root>
   );
 };

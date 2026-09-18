@@ -11,10 +11,9 @@ import {
   buildMcpServerUrl,
   isHttpsUrl,
 } from '@/settings/mcp-and-apis/utils/mcpSetup';
-import { CodeEditor, CoreEditorHeader } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledMcpEditorHeaderTitle = styled.div`
@@ -58,8 +57,8 @@ export const SettingsMcpSetup = () => {
     <StyledMcpSetupContainer>
       {categories.map((category) => (
         <Fragment key={category.title}>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={category.title}
               description={category.description}
             />
@@ -68,15 +67,15 @@ export const SettingsMcpSetup = () => {
                 <SettingsMcpSetupCard key={card.title} card={card} />
               ))}
             </StyledCardsGrid>
-          </Section>
+          </Section.Root>
 
           {category.showManualConfigurationAfter && (
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Manual configuration`}
                 description={t`Access your workspace data from your favorite MCP client like Claude, Codex or Cursor.`}
               />
-              <CoreEditorHeader
+              <CodeEditorHeader
                 leftNodes={[
                   <StyledMcpEditorHeaderTitle key="mcp-editor-header-title">
                     <StyledMcpIcon aria-hidden />
@@ -108,7 +107,7 @@ export const SettingsMcpSetup = () => {
                   wordWrap: 'on',
                 }}
               />
-            </Section>
+            </Section.Root>
           )}
         </Fragment>
       ))}

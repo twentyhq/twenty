@@ -71,6 +71,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "labelSingular": "default flat object metadata label singular",
   "namePlural": "defaultflatObjectMetadataNamePlural",
   "nameSingular": "defaultflatObjectMetadataNameSingular",
+  "navigationMenuItemUniversalIdentifiers": [],
   "objectPermissionUniversalIdentifiers": [],
   "openRecordIn": "USER_CHOICE",
   "overrides": null,

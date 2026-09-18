@@ -13,6 +13,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -32,11 +33,24 @@ export class WorkflowCoreSyncService {
 
   async upsertToCore(
     workspaceId: string,
-    workflows: WorkflowWorkspaceEntity[],
+    workspaceWorkflowIds: string[],
   ): Promise<void> {
-    const liveWorkflows = workflows.filter(
-      (workflow) => !isDefined(workflow.deletedAt),
-    );
+    if (workspaceWorkflowIds.length === 0) {
+      return;
+    }
+
+    const liveWorkflows =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowRepository =
+          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            'workflow',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return workflowRepository.find({
+          where: { id: In(workspaceWorkflowIds) },
+        });
+      }, buildSystemAuthContext(workspaceId));
 
     if (liveWorkflows.length === 0) {
       return;
@@ -109,6 +123,89 @@ export class WorkflowCoreSyncService {
     );
   }
 
+  async reconcileWorkspaceWorkflows(
+    workspaceId: string,
+    workspaceWorkflowIds: string[],
+  ): Promise<void> {
+    const schema = getWorkspaceSchemaName(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.workspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          for (const workspaceWorkflowId of [
+            ...new Set(workspaceWorkflowIds),
+          ].sort()) {
+            const workflows = (await transactionScope.executeRawQuery(
+              `SELECT * FROM "${schema}"."workflow" WHERE id = $1 FOR UPDATE`,
+              [workspaceWorkflowId],
+            )) as Pick<
+              WorkflowWorkspaceEntity,
+              | 'id'
+              | 'name'
+              | 'coreWorkflowId'
+              | 'lastPublishedVersionId'
+              | 'deletedAt'
+            >[];
+            const workflow = workflows[0];
+
+            if (!isDefined(workflow) || isDefined(workflow.deletedAt)) {
+              await transactionScope.executeRawQuery(
+                `DELETE FROM core."workflow" WHERE "workspaceId" = $1 AND "workspaceWorkflowId" = $2`,
+                [workspaceId, workspaceWorkflowId],
+              );
+              continue;
+            }
+
+            const coreWorkflows = (await transactionScope.executeRawQuery(
+              `SELECT id FROM core."workflow" WHERE "workspaceId" = $1 AND "workspaceWorkflowId" = $2 FOR UPDATE`,
+              [workspaceId, workspaceWorkflowId],
+            )) as { id: string }[];
+
+            if (
+              coreWorkflows.length !== 1 ||
+              workflow.coreWorkflowId !== coreWorkflows[0].id
+            ) {
+              throw new Error(
+                `Invalid core mapping for workflow ${workspaceWorkflowId} in workspace ${workspaceId}`,
+              );
+            }
+
+            const coreWorkflowId = coreWorkflows[0].id;
+            let coreWorkflowVersionId: string | null = null;
+
+            if (isNonEmptyString(workflow.lastPublishedVersionId)) {
+              const versions = (await transactionScope.executeRawQuery(
+                `SELECT id FROM core."workflowVersion" WHERE "workspaceId" = $1 AND "workspaceWorkflowVersionId" = $2 AND "coreWorkflowId" = $3`,
+                [workspaceId, workflow.lastPublishedVersionId, coreWorkflowId],
+              )) as { id: string }[];
+
+              if (versions.length !== 1) {
+                throw new Error(
+                  `Invalid published core version mapping for workflow ${workspaceWorkflowId} in workspace ${workspaceId}`,
+                );
+              }
+
+              coreWorkflowVersionId = versions[0].id;
+            }
+
+            await transactionScope.executeRawQuery(
+              `UPDATE core."workflow" SET "name" = $3, "lastPublishedVersionId" = $4, "lastPublishedCoreWorkflowVersionId" = $5, "updatedAt" = now() WHERE id = $1 AND "workspaceId" = $2`,
+              [
+                coreWorkflowId,
+                workspaceId,
+                workflow.name ?? null,
+                isNonEmptyString(workflow.lastPublishedVersionId)
+                  ? workflow.lastPublishedVersionId
+                  : null,
+                coreWorkflowVersionId,
+              ],
+            );
+          }
+        },
+      );
+    }, buildSystemAuthContext(workspaceId));
+  }
+
   private async resolveCoreVersionIdByWorkspaceVersionId(
     workspaceId: string,
     workflows: WorkflowWorkspaceEntity[],
@@ -178,6 +275,32 @@ export class WorkflowCoreSyncService {
     await this.coreWorkflowRepository.delete(workspaceId, {
       id: In(coreWorkflowIds),
     });
+  }
+
+  async findCoreWorkflowById(
+    workspaceId: string,
+    coreWorkflowId: string,
+  ): Promise<WorkflowEntity | null> {
+    return this.coreWorkflowRepository.findOne(workspaceId, {
+      where: { id: coreWorkflowId },
+    });
+  }
+
+  async findCoreWorkflowByIdOrWorkspaceWorkflowId(
+    workspaceId: string,
+    workflowId: string,
+  ): Promise<WorkflowEntity | null> {
+    const workflows = await this.coreWorkflowRepository.find(workspaceId, {
+      where: [{ id: workflowId }, { workspaceWorkflowId: workflowId }],
+    });
+
+    if (workflows.length > 1) {
+      throw new Error(
+        `Ambiguous core workflow mapping for ${workflowId} in workspace ${workspaceId}`,
+      );
+    }
+
+    return workflows[0] ?? null;
   }
 
   private async writeBackCoreWorkflowIds(

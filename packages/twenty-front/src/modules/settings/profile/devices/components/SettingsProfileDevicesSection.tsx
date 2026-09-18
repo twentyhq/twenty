@@ -8,12 +8,11 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsDeviceSessionRowRightComponent } from '@/settings/profile/devices/components/SettingsDeviceSessionRowRightComponent';
 import { parseUserAgentDescription } from '@/settings/profile/devices/utils/parseUserAgentDescription';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconDeviceDesktop, IconLogout } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import {
   CurrentUserSessionsDocument,
   type CurrentUserSessionsQuery,
@@ -100,8 +99,8 @@ export const SettingsProfileDevicesSection = () => {
     <>
       <ToastOnQueryErrorEffect error={error} />
       {(loading || isNonEmptyArray(sessions)) && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Devices`}
             description={t`Devices with an active session on your account`}
           />
@@ -126,7 +125,7 @@ export const SettingsProfileDevicesSection = () => {
               </StyledButtonContainer>
             )}
           </StyledContainer>
-        </Section>
+        </Section.Root>
       )}
     </>
   );

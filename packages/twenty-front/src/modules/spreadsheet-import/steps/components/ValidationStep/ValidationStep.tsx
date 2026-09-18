@@ -1,3 +1,4 @@
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
@@ -21,7 +22,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
@@ -288,7 +288,14 @@ export const ValidationStep = ({
 
   return (
     <>
-      <ModalContent noPadding>
+      <Dialog.Body
+        style={{
+          display: 'flex',
+          flex: '1 1 0%',
+          flexDirection: 'column',
+          padding: 0,
+        }}
+      >
         <StyledContentWrapper>
           {filterByErrors && tableData.length === 0 ? (
             <StyledNoRowsWithErrorsContainer>
@@ -337,7 +344,7 @@ export const ValidationStep = ({
             </StyledButtonContainer>
           </StyledToolbar>
         </StyledContentWrapper>
-      </ModalContent>
+      </Dialog.Body>
       <StepNavigationButton
         onContinue={onContinue}
         onBack={onBack}

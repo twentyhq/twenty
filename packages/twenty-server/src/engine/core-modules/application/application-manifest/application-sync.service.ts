@@ -257,12 +257,11 @@ export class ApplicationSyncService {
       ).toString('utf-8'),
     ) as PackageJson;
 
-    const application = await this.applicationService.findOneApplicationOrThrow(
-      {
+    const application =
+      await this.applicationService.findOneApplicationWithRelationsOrThrow({
         universalIdentifier: manifest.application.universalIdentifier,
         workspaceId,
-      },
-    );
+      });
 
     const resolvedRegistrationId =
       applicationRegistrationId ?? application.applicationRegistrationId;
@@ -351,9 +350,11 @@ export class ApplicationSyncService {
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook?: boolean;
   }): Promise<WorkspaceMigration> {
-    const application = await this.applicationService.findOneApplicationOrThrow(
-      { universalIdentifier: applicationUniversalIdentifier, workspaceId },
-    );
+    const application =
+      await this.applicationService.findOneApplicationWithRelationsOrThrow({
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId,
+      });
 
     if (!application.canBeUninstalled) {
       throw new ApplicationException(

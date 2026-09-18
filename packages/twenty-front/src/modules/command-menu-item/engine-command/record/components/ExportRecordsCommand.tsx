@@ -1,3 +1,7 @@
+import { RecordExportConnectionEffect } from '@/record-export/components/RecordExportConnectionEffect';
+import { useRecordIndexAsyncExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexAsyncExportRecords';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
@@ -43,6 +47,28 @@ const ExportIndexRecordsContent = ({
   return <HeadlessEngineCommandWrapperEffect execute={download} />;
 };
 
+const ExportAsyncIndexRecordsContent = ({
+  objectMetadataItem,
+  recordIndexId,
+  onProgress,
+}: {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  recordIndexId: string;
+  onProgress: (progress: number) => void;
+}) => {
+  const { download, cancel } = useRecordIndexAsyncExportRecords({
+    objectMetadataItem,
+    recordIndexId,
+    onProgress,
+  });
+  return (
+    <>
+      <RecordExportConnectionEffect cancel={cancel} />
+      <HeadlessEngineCommandWrapperEffect execute={download} />
+    </>
+  );
+};
+
 const ExportShowRecordContent = ({
   objectMetadataItem,
   recordId,
@@ -61,6 +87,9 @@ const ExportShowRecordContent = ({
 };
 
 export const ExportRecordsCommand = () => {
+  const isAsyncCsvExportEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
+  );
   const { objectMetadataItem, recordIndexId, selectedRecords } =
     useHeadlessCommandContextApi();
 
@@ -99,11 +128,19 @@ export const ExportRecordsCommand = () => {
     <ViewComponentInstanceContext.Provider
       value={{ instanceId: recordIndexId }}
     >
-      <ExportIndexRecordsContent
-        objectMetadataItem={objectMetadataItem}
-        recordIndexId={recordIndexId}
-        setCommandMenuItemProgress={setCommandMenuItemProgress}
-      />
+      {isAsyncCsvExportEnabled ? (
+        <ExportAsyncIndexRecordsContent
+          objectMetadataItem={objectMetadataItem}
+          recordIndexId={recordIndexId}
+          onProgress={setCommandMenuItemProgress}
+        />
+      ) : (
+        <ExportIndexRecordsContent
+          objectMetadataItem={objectMetadataItem}
+          recordIndexId={recordIndexId}
+          setCommandMenuItemProgress={setCommandMenuItemProgress}
+        />
+      )}
     </ViewComponentInstanceContext.Provider>
   );
 };

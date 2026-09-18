@@ -8,8 +8,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsAccounts = () => {
   const { t } = useLingui();
@@ -32,15 +31,15 @@ export const SettingsAccounts = () => {
           <SettingsSectionSkeletonLoader />
         ) : (
           <>
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Connected accounts`}
                 description={t`Manage your internet accounts.`}
               />
               <SettingsAccountsConnectedAccountsListCard
                 accounts={allAccounts}
               />
-            </Section>
+            </Section.Root>
             <SettingsAccountsBlocklistSection />
             <SettingsAccountsSettingsSection />
           </>
