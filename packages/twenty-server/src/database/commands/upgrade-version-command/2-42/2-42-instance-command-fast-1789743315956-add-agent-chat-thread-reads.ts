@@ -38,21 +38,21 @@ export class AddAgentChatThreadReadsFastInstanceCommand
 
     await queryRunner.query(
       `ALTER TABLE "core"."agentChatThreadRead"
-       ADD CONSTRAINT "FK_agent_chat_thread_read_workspace"
+       ADD CONSTRAINT "FK_6b566bb4e0a58c34a355bbdedf5"
        FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
 
     await queryRunner.query(
       `ALTER TABLE "core"."agentChatThreadRead"
-       ADD CONSTRAINT "FK_agent_chat_thread_read_thread"
+       ADD CONSTRAINT "FK_9b6f82801bcab52e6bd48f31bd6"
        FOREIGN KEY ("threadId") REFERENCES "core"."agentChatThread"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
 
     await queryRunner.query(
       `ALTER TABLE "core"."agentChatThreadRead"
-       ADD CONSTRAINT "FK_agent_chat_thread_read_user_workspace"
+       ADD CONSTRAINT "FK_957ba31ca1a57c168adb79bf594"
        FOREIGN KEY ("userWorkspaceId") REFERENCES "core"."userWorkspace"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
