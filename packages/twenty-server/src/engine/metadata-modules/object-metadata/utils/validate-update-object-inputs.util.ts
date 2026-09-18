@@ -1,5 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { validateSync, type ValidationError } from 'class-validator';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
@@ -10,11 +11,11 @@ import {
 const formatValidationErrors = (errors: ValidationError[]): string =>
   errors
     .flatMap((error) => {
-      if (error.constraints) {
+      if (isDefined(error.constraints)) {
         return Object.values(error.constraints);
       }
 
-      if (error.children) {
+      if (isNonEmptyArray(error.children)) {
         return formatValidationErrors(error.children);
       }
 
