@@ -228,7 +228,10 @@ export const SidePanelCommandMenuItemEditPage = () => {
                           gripMode="onHover"
                           isIconDisplayedOnHoverOnly={false}
                           iconButtons={
-                            <ButtonGroup attached={false}>
+                            <ButtonGroup
+                              attached={false}
+                              aria-label={t`Menu item actions`}
+                            >
                               <CommandMenuItemOptionsDropdown
                                 itemId={item.id}
                                 shortLabel={item.shortLabel}
