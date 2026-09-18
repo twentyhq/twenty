@@ -9,11 +9,16 @@
 
 export { IconButton } from './IconButton/IconButton';
 export type { IconButtonProps } from './IconButton/types/IconButtonProps';
+export type { IconButtonSize } from './IconButton/types/IconButtonSize';
 export { LightButton } from './LightButton/LightButton';
 export type { LightButtonProps } from './LightButton/types/LightButtonProps';
+export { LightIconButton } from './LightIconButton/LightIconButton';
+export type { LightIconButtonProps } from './LightIconButton/types/LightIconButtonProps';
 export { MainButton } from './MainButton/MainButton';
 export { Section } from './Section/Section';
 export type { SectionHeaderProps } from './Section/types/SectionHeaderProps';
 export type { SectionRootProps } from './Section/types/SectionRootProps';
+export { SettingsRow } from './SettingsRow/SettingsRow';
+export type { SettingsRowProps } from './SettingsRow/types/SettingsRowProps';
 export { TabButton } from './TabButton/TabButton';
 export type { TabButtonProps } from './TabButton/types/TabButtonProps';

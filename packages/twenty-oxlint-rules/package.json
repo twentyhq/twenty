@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@oxlint/plugins": "^1.51.0"
+    "@oxlint/plugins": "^1.51.0",
+    "twenty-shared": "workspace:*"
   }
 }

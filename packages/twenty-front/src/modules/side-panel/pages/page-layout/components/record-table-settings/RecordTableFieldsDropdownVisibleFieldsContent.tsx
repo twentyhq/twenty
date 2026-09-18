@@ -1,3 +1,4 @@
+import { LightIconButton } from 'twenty-ui/components';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -14,10 +15,7 @@ import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/D
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconEyeOff, useIcons } from 'twenty-ui/icon';
-import {
-  MenuItemDraggable,
-  MenuItemNavigate,
-} from 'twenty-ui/primitives/navigation';
+import { MenuItemDraggable, ListItem } from 'twenty-ui/primitives/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 type RecordTableFieldsDropdownVisibleFieldsContentProps = {
@@ -133,15 +131,16 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                       itemComponent={
                         <MenuItemDraggable
                           LeftIcon={getIcon(fieldMetadataItem.icon)}
-                          iconButtons={[
-                            {
-                              Icon: IconEyeOff,
-                              onClick: () =>
-                                handleHideField(
-                                  recordField.fieldMetadataItemId,
-                                ),
-                            },
-                          ]}
+                          iconButtons={
+                            <LightIconButton
+                              aria-label={t`Hide field`}
+                              onClick={() =>
+                                handleHideField(recordField.fieldMetadataItemId)
+                              }
+                            >
+                              <IconEyeOff />
+                            </LightIconButton>
+                          }
                           text={fieldMetadataItem.label}
                           gripMode="always"
                         />
@@ -156,11 +155,12 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>
-        <MenuItemNavigate
+        <ListItem
           onClick={onShowHiddenFields}
-          LeftIcon={IconEyeOff}
-          text={t`Hidden Fields`}
-        />
+          startIcon={<IconEyeOff />}
+          render={<button type="button" />}
+          hasSubmenu
+        >{t`Hidden Fields`}</ListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

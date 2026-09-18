@@ -1,21 +1,14 @@
+import { t } from '@lingui/core/macro';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { type Placement } from '@floating-ui/react';
-import {
-  type FunctionComponent,
-  type MouseEvent,
-  type ReactElement,
-  type ReactNode,
-  useContext,
-} from 'react';
+import { type MouseEvent, type ReactNode, useContext } from 'react';
 import {
   IconChevronRight,
   type IconComponent,
   IconDotsVertical,
 } from 'twenty-ui/icon';
-import {
-  LightIconButton,
-  type LightIconButtonProps,
-} from 'twenty-ui/primitives/input';
+import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   type MenuItemAccent,
   MenuItemLeftContent,
@@ -23,13 +16,6 @@ import {
   StyledMenuItemLeftContent,
 } from 'twenty-ui/primitives/navigation';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-
-export type MenuItemIconButton = {
-  Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;
-  Icon: IconComponent;
-  accent?: LightIconButtonProps['accent'];
-  onClick?: (event: MouseEvent<any>) => void;
-};
 
 export type MenuItemWithOptionDropdownProps = {
   accent?: MenuItemAccent;
@@ -95,10 +81,12 @@ export const MenuItemWithOptionDropdown = ({
         <Dropdown
           clickableComponent={
             <LightIconButton
-              Icon={RightIcon ?? IconDotsVertical}
-              size="small"
-              accent="tertiary"
-            />
+              size="sm"
+              emphasis="subtle"
+              aria-label={t`More options`}
+            >
+              {isDefined(RightIcon) ? <RightIcon /> : <IconDotsVertical />}
+            </LightIconButton>
           }
           dropdownPlacement={dropdownPlacement}
           dropdownComponents={dropdownContent}

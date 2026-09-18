@@ -25,6 +25,7 @@ import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import {
   IconBaselineDensitySmall,
   IconCalendar,
@@ -34,11 +35,7 @@ import {
   IconTable,
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import {
-  MenuItem,
-  MenuItemSelect,
-  MenuItemSwitch,
-} from 'twenty-ui/primitives/navigation';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
@@ -307,9 +304,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     );
                   }}
                 >
-                  <MenuItemSwitch
+                  <SettingsRow
                     focused={selectedItemId === 'Compact view'}
-                    LeftIcon={IconBaselineDensitySmall}
+                    startIcon={<IconBaselineDensitySmall />}
                     onCheckedChange={() =>
                       setAndPersistIsCompactModeActive(
                         !isCompactModeActive,
@@ -317,9 +314,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                       )
                     }
                     checked={isCompactModeActive}
-                    text={t`Compact view`}
-                    size="sm"
-                  />
+                  >{t`Compact view`}</SettingsRow>
                 </SelectableListItem>
               )}
           </DropdownMenuItemsContainer>

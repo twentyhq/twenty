@@ -1,3 +1,4 @@
+import { useRecordBoardQueryIdentifier } from '@/object-record/record-board/hooks/useRecordBoardQueryIdentifier';
 import { useTriggerRecordBoardFetchMore } from '@/object-record/record-board/hooks/useTriggerRecordBoardFetchMore';
 import { useTriggerRecordBoardInitialQuery } from '@/object-record/record-board/hooks/useTriggerRecordBoardInitialQuery';
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
@@ -8,11 +9,8 @@ import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record
 import { recordBoardHasColumnsToFetchMoreComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardHasColumnsToFetchMoreComponentSelector';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 
 import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
-import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -23,8 +21,6 @@ import { useEffect } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const RecordBoardQueryEffect = () => {
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
-
   const isDraggingRecord = useAtomComponentStateValue(
     isDraggingRecordComponentState,
   );
@@ -44,14 +40,7 @@ export const RecordBoardQueryEffect = () => {
     recordBoardCurrentGroupByQueryOffsetComponentState,
   );
 
-  const { combinedFilters, orderBy } =
-    useRecordIndexGroupCommonQueryVariables();
-
-  const queryIdentifier = getQueryIdentifier({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    filter: combinedFilters,
-    orderBy,
-  });
+  const queryIdentifier = useRecordBoardQueryIdentifier();
 
   const queryIdentifierHasChanged =
     queryIdentifier !== lastRecordBoardQueryIdentifier;

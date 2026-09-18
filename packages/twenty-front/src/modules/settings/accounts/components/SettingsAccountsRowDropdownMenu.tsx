@@ -24,7 +24,7 @@ import {
   IconRefresh,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
@@ -75,11 +75,9 @@ export const SettingsAccountsRowDropdownMenu = ({
         dropdownId={dropdownId}
         dropdownPlacement="right-start"
         clickableComponent={
-          <LightIconButton
-            Icon={IconDotsVertical}
-            accent="tertiary"
-            aria-label={t`More options`}
-          />
+          <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+            <IconDotsVertical />
+          </LightIconButton>
         }
         dropdownComponents={
           <DropdownContent>
