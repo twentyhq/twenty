@@ -21,7 +21,10 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { CallWebhookJobsJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook-jobs.job';
 import { WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
+import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/call-database-event-trigger-jobs.job';
+import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-logic-functions-triggered-by-event-name';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
@@ -38,6 +41,7 @@ export class EntityEventsToDbListener {
     private readonly triggerQueueService: MessageQueueService,
     private readonly objectRecordEventPublisher: ObjectRecordEventPublisher,
     private readonly timelineActivityRoutingPlanService: TimelineActivityRoutingPlanService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
@@ -99,24 +103,11 @@ export class EntityEventsToDbListener {
       },
     };
 
-    const promises = [
+    const promises: Promise<unknown>[] = [
       this.objectRecordEventPublisher.publish(batchEvent),
-      this.webhookQueueService.add<WorkspaceEventBatchForWebhook<T>>(
-        CallWebhookJobsJob.name,
-        batchEventForWebhook,
-        {
-          retryLimit: 3,
-        },
-      ),
+      this.enqueueWebhookJobsIfAnyWebhookMatches(batchEventForWebhook),
+      this.enqueueDatabaseEventTriggerJobsIfAnyLogicFunctionMatches(batchEvent),
     ];
-
-    promises.push(
-      this.triggerQueueService.add<WorkspaceEventBatch<T>>(
-        CallDatabaseEventTriggerJobsJob.name,
-        batchEvent,
-        { retryLimit: 3 },
-      ),
-    );
 
     if (shouldCreateTimelineActivity) {
       promises.push(
@@ -154,6 +145,56 @@ export class EntityEventsToDbListener {
       CreateEventLogFromInternalEvent.name,
       batchEvent,
       { retryLimit: 1 },
+    );
+  }
+
+  private async enqueueWebhookJobsIfAnyWebhookMatches<
+    T extends ObjectRecordEvent,
+  >(batchEventForWebhook: WorkspaceEventBatchForWebhook<T>) {
+    const hasMatchingWebhook = await this.workspaceCacheService
+      .getOrRecompute(batchEventForWebhook.workspaceId, ['flatWebhookMaps'])
+      .then(
+        ({ flatWebhookMaps }) =>
+          findWebhooksMatchingEventName({
+            flatWebhookMaps,
+            eventName: batchEventForWebhook.name,
+          }).length > 0,
+      )
+      .catch(() => true);
+
+    if (!hasMatchingWebhook) {
+      return;
+    }
+
+    await this.webhookQueueService.add<WorkspaceEventBatchForWebhook<T>>(
+      CallWebhookJobsJob.name,
+      batchEventForWebhook,
+      { retryLimit: 3 },
+    );
+  }
+
+  private async enqueueDatabaseEventTriggerJobsIfAnyLogicFunctionMatches<
+    T extends ObjectRecordEvent,
+  >(batchEvent: WorkspaceEventBatch<T>) {
+    const hasMatchingLogicFunction = await this.workspaceCacheService
+      .getOrRecompute(batchEvent.workspaceId, ['flatLogicFunctionMaps'])
+      .then(
+        ({ flatLogicFunctionMaps }) =>
+          findLogicFunctionsTriggeredByEventName({
+            flatLogicFunctionMaps,
+            eventName: batchEvent.name,
+          }).length > 0,
+      )
+      .catch(() => true);
+
+    if (!hasMatchingLogicFunction) {
+      return;
+    }
+
+    await this.triggerQueueService.add<WorkspaceEventBatch<T>>(
+      CallDatabaseEventTriggerJobsJob.name,
+      batchEvent,
+      { retryLimit: 3 },
     );
   }
 }

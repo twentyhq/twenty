@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 
 import {
   decodeCursor,
@@ -10,13 +10,22 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { type CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
+import { type CoreWorkflowWithCurrentVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-with-current-version.dto';
 import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
   type CoreWorkflowsArgs,
 } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-filter-predicate.util';
+import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
 import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import {
+  WorkflowVersionEntity,
+  WorkflowVersionStatus,
+} from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 type CoreWorkflowRow = {
   createdAt: Date;
@@ -24,6 +33,7 @@ type CoreWorkflowRow = {
   cursorSortValue: string | null;
   name: string | null;
   lastPublishedVersionId: string | null;
+  lastPublishedCoreWorkflowVersionId: string | null;
   applicationId: string | null;
   workspaceWorkflowId: string | null;
   updatedAt: Date;
@@ -62,7 +72,7 @@ const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."createdAt", c."updatedAt"`;
 
 const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
          c.name,
-         c."lastPublishedVersionId",
+         c."lastPublishedVersionId", c."lastPublishedCoreWorkflowVersionId",
          c."applicationId",
          c."createdAt",
          c."updatedAt",
@@ -79,6 +89,7 @@ const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
     hasDeactivatedVersion: row.hasDeactivatedVersion,
   }),
   lastPublishedVersionId: row.lastPublishedVersionId,
+  lastPublishedCoreWorkflowVersionId: row.lastPublishedCoreWorkflowVersionId,
   applicationId: row.applicationId,
   workspaceWorkflowId: row.workspaceWorkflowId,
   createdAt: row.createdAt.toISOString(),
@@ -95,7 +106,161 @@ export class CoreWorkflowListService {
   constructor(
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
+    @InjectWorkspaceScopedRepository(WorkflowEntity)
+    private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
+    @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
+    private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
   ) {}
+
+  async findManyWithCurrentVersions({
+    workspaceId,
+    coreWorkflowIds,
+  }: {
+    workspaceId: string;
+    coreWorkflowIds: string[];
+  }): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
+    const [coreWorkflows, coreWorkflowVersions] = await Promise.all([
+      this.coreWorkflowRepository.find(workspaceId, {
+        where: { id: In(coreWorkflowIds) },
+      }),
+      this.coreWorkflowVersionRepository.find(workspaceId, {
+        where: { coreWorkflowId: In(coreWorkflowIds) },
+        select: {
+          id: true,
+          coreWorkflowId: true,
+          status: true,
+          workspaceWorkflowVersionId: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        order: { createdAt: 'ASC', id: 'ASC' },
+      }),
+    ]);
+
+    const workflowById = new Map(
+      coreWorkflows.map((workflow) => [workflow.id, workflow]),
+    );
+
+    const versionsByWorkflowId = new Map<string, WorkflowVersionEntity[]>();
+
+    for (const version of coreWorkflowVersions) {
+      if (!isDefined(version.coreWorkflowId)) {
+        continue;
+      }
+
+      const versions = versionsByWorkflowId.get(version.coreWorkflowId) ?? [];
+
+      versions.push(version);
+      versionsByWorkflowId.set(version.coreWorkflowId, versions);
+    }
+
+    const currentVersionIdByWorkflowId = new Map<string, string>();
+
+    for (const [
+      coreWorkflowId,
+      versionsInCreationOrder,
+    ] of versionsByWorkflowId) {
+      const versions = [...versionsInCreationOrder].reverse();
+      const currentVersion =
+        versions.find(
+          (version) => version.status === WorkflowVersionStatus.DRAFT,
+        ) ??
+        versions.find(
+          (version) => version.status === WorkflowVersionStatus.ACTIVE,
+        ) ??
+        versions[0];
+
+      if (isDefined(currentVersion)) {
+        currentVersionIdByWorkflowId.set(coreWorkflowId, currentVersion.id);
+      }
+    }
+
+    const currentVersionIds = [...currentVersionIdByWorkflowId.values()];
+    const currentVersionContents =
+      currentVersionIds.length === 0
+        ? []
+        : await this.coreWorkflowVersionRepository.find(workspaceId, {
+            where: { id: In(currentVersionIds) },
+            select: { id: true, triggers: true, steps: true },
+          });
+    const currentVersionContentById = new Map(
+      currentVersionContents.map((version) => [version.id, version]),
+    );
+
+    return coreWorkflowIds.flatMap((coreWorkflowId) => {
+      const workflow = workflowById.get(coreWorkflowId);
+
+      if (!isDefined(workflow)) {
+        return [];
+      }
+
+      const versionsInCreationOrder =
+        versionsByWorkflowId.get(coreWorkflowId) ?? [];
+
+      const versions = versionsInCreationOrder
+        .map((version, index) => ({
+          id: version.id,
+          coreWorkflowId: version.coreWorkflowId,
+          label: buildCoreWorkflowVersionLabel(index + 1),
+          status: version.status,
+          workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
+          workspaceWorkflowId: workflow.workspaceWorkflowId,
+          trigger: null,
+          steps: null,
+          createdAt: version.createdAt.toISOString(),
+          updatedAt: version.updatedAt.toISOString(),
+        }))
+        .reverse();
+
+      const currentVersionId = currentVersionIdByWorkflowId.get(coreWorkflowId);
+      const currentVersionMetadata = versions.find(
+        (version) => version.id === currentVersionId,
+      );
+
+      if (!isDefined(currentVersionMetadata)) {
+        return [];
+      }
+
+      const currentVersionContent = currentVersionContentById.get(
+        currentVersionMetadata.id,
+      );
+      const currentVersion = {
+        ...currentVersionMetadata,
+        trigger: currentVersionContent?.triggers?.[0] ?? null,
+        steps: currentVersionContent?.steps ?? null,
+      };
+
+      return [
+        {
+          workflow: {
+            id: workflow.id,
+            name: workflow.name,
+            statuses: computeCoreWorkflowStatuses({
+              hasDraftVersion: versions.some(
+                (version) => version.status === WorkflowVersionStatus.DRAFT,
+              ),
+              hasActiveVersion: versions.some(
+                (version) => version.status === WorkflowVersionStatus.ACTIVE,
+              ),
+              hasDeactivatedVersion: versions.some(
+                (version) =>
+                  version.status === WorkflowVersionStatus.DEACTIVATED,
+              ),
+            }),
+            lastPublishedVersionId: workflow.lastPublishedVersionId,
+            lastPublishedCoreWorkflowVersionId:
+              workflow.lastPublishedCoreWorkflowVersionId,
+            applicationId: workflow.applicationId,
+            workspaceWorkflowId: workflow.workspaceWorkflowId,
+            createdAt: workflow.createdAt.toISOString(),
+            updatedAt: workflow.updatedAt.toISOString(),
+          },
+          versions,
+          currentVersion,
+        },
+      ];
+    });
+  }
 
   async findManyByWorkspaceId(
     workspaceId: string,

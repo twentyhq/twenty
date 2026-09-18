@@ -2,10 +2,6 @@ import { clsx } from 'clsx';
 import { type ComponentProps, type MouseEvent } from 'react';
 
 import { type IconComponent } from '@ui/icon';
-import {
-  type LightIconButtonAccent,
-  type LightIconButtonSize,
-} from '@ui/primitives/input/LightIconButton/LightIconButton';
 import { useTheme } from '@ui/theme-constants';
 
 import styles from './AnimatedLightIconButton.module.scss';
@@ -15,8 +11,8 @@ export type AnimatedLightIconButtonProps = {
   testId?: string;
   Icon?: IconComponent;
   title?: string;
-  size?: LightIconButtonSize;
-  accent?: LightIconButtonAccent;
+  size?: 'small' | 'medium';
+  accent?: 'secondary' | 'tertiary';
   active?: boolean;
   disabled?: boolean;
   focus?: boolean;

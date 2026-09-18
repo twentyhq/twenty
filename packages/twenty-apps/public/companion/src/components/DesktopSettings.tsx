@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { useFrontComponentId, useTranslate } from 'twenty-sdk/front-component';
+import { useTranslate } from 'twenty-sdk/front-component';
 import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/APPLICATION_UNIVERSAL_IDENTIFIER';
 
 type ApplicationVariable = {
   key: string;
@@ -13,7 +15,6 @@ type ApplicationVariable = {
 
 export const DesktopSettings = () => {
   const { t } = useTranslate();
-  const frontComponentId = useFrontComponentId();
   const [applicationId, setApplicationId] = useState<string>();
   const [variables, setVariables] = useState<ApplicationVariable[]>([]);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
@@ -39,17 +40,10 @@ export const DesktopSettings = () => {
     const load = async () => {
       try {
         const client = new MetadataApiClient();
-        const component = await client.query({
-          frontComponent: {
-            __args: { id: frontComponentId },
-            applicationId: true,
-          },
-        });
-        const id = component.frontComponent?.applicationId;
-        if (!id) throw new Error('Settings application not found');
         const result = await client.query({
           findOneApplication: {
-            __args: { id },
+            __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+            id: true,
             applicationVariables: {
               key: true,
               value: true,
@@ -60,6 +54,8 @@ export const DesktopSettings = () => {
           },
         });
         if (cancelled) return;
+        const id = result.findOneApplication?.id;
+        if (!id) throw new Error('Settings application not found');
         setVariables(
           (result.findOneApplication?.applicationVariables ?? []).filter(
             (variable) => !variable.isDeprecated && !variable.isSecret,
@@ -74,7 +70,7 @@ export const DesktopSettings = () => {
     return () => {
       cancelled = true;
     };
-  }, [frontComponentId]);
+  }, []);
 
   const save = async () => {
     if (!applicationId) return;

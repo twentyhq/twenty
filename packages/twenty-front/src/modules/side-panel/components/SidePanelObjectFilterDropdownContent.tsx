@@ -1,13 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
+import { SettingsRow } from 'twenty-ui/components';
 import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { IconCube } from 'twenty-ui/icon';
-import {
-  MenuItemSelectAvatar,
-  MenuItemSwitch,
-} from 'twenty-ui/primitives/navigation';
-
+import { MenuItemSelectAvatar } from 'twenty-ui/primitives/navigation';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/side-panel/components/SidePanelObjectFilterDropdown';
@@ -130,15 +127,13 @@ export const SidePanelObjectFilterDropdownContent = ({
       </SelectableList>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <MenuItemSwitch
-          LeftIcon={IconCube}
+        <SettingsRow
+          startIcon={<IconCube />}
           onCheckedChange={() =>
             setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
           }
           checked={sidePanelShowHiddenObjects}
-          text={t`Show hidden objects`}
-          size="sm"
-        />
+        >{t`Show hidden objects`}</SettingsRow>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

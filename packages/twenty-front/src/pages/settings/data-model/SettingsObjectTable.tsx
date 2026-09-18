@@ -30,9 +30,9 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
 import { SearchInput } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -176,25 +176,21 @@ export const SettingsObjectTable = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <MenuItemSwitch
-                        LeftIcon={IconArchive}
+                      <SettingsRow
+                        startIcon={<IconArchive />}
                         onCheckedChange={() =>
                           setShowDeactivated(!showDeactivated)
                         }
                         checked={showDeactivated}
-                        text={t`Deactivated`}
-                        size="sm"
-                      />
+                      >{t`Deactivated`}</SettingsRow>
                       {isAdvancedModeEnabled && (
-                        <MenuItemSwitch
-                          LeftIcon={IconSettings}
+                        <SettingsRow
+                          startIcon={<IconSettings />}
                           onCheckedChange={() =>
                             setShowSystemObjects(!showSystemObjects)
                           }
                           checked={showSystemObjects}
-                          text={t`System objects`}
-                          size="sm"
-                        />
+                        >{t`System objects`}</SettingsRow>
                       )}
                     </DropdownMenuItemsContainer>
                   </DropdownContent>

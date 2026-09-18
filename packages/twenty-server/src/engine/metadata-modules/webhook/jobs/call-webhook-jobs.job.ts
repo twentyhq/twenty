@@ -15,7 +15,7 @@ import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-we
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
-import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-operations-to-match.util';
+import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { EVERYONE_ROW_ACCESS_POLICY_SUBJECT } from 'src/engine/core-modules/record-share/constants/everyone-row-access-policy-subject.constant';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
@@ -45,26 +45,16 @@ export class CallWebhookJobsJob {
     // Also change the openApi schema for webhooks
     // packages/twenty-server/src/engine/core-modules/open-api/utils/computeWebhooks.utils.ts
 
-    const [nameSingular, operation] = workspaceEventBatch.name.split('.');
-
-    const operationsToMatch = computeWebhookOperationsToMatch({
-      nameSingular,
-      operation,
-    });
-
     const { flatWebhookMaps, flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(
         workspaceEventBatch.workspaceId,
         ['flatWebhookMaps', 'flatObjectMetadataMaps'],
       );
 
-    const webhooks = Object.values(flatWebhookMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter((webhook) =>
-        operationsToMatch.some((operationToMatch) =>
-          webhook.operations.includes(operationToMatch),
-        ),
-      );
+    const webhooks = findWebhooksMatchingEventName({
+      flatWebhookMaps,
+      eventName: workspaceEventBatch.name,
+    });
 
     if (webhooks.length === 0) {
       return;

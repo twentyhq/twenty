@@ -59,8 +59,11 @@ export const TriggerWorkflowVersionEngineCommand = () => {
 
     if (!isNonEmptyArray(payloads)) {
       await runWorkflowVersion({
-        workflowId: mountedCommandState.workflowId,
-        workflowVersionId: mountedCommandState.workflowVersionId,
+        workflowId:
+          mountedCommandState.coreWorkflowId ?? mountedCommandState.workflowId,
+        workflowVersionId:
+          mountedCommandState.coreWorkflowVersionId ??
+          mountedCommandState.workflowVersionId,
       });
 
       return;
@@ -68,8 +71,11 @@ export const TriggerWorkflowVersionEngineCommand = () => {
 
     for (const payload of payloads) {
       await runWorkflowVersion({
-        workflowId: mountedCommandState.workflowId,
-        workflowVersionId: mountedCommandState.workflowVersionId,
+        workflowId:
+          mountedCommandState.coreWorkflowId ?? mountedCommandState.workflowId,
+        workflowVersionId:
+          mountedCommandState.coreWorkflowVersionId ??
+          mountedCommandState.workflowVersionId,
         payload,
       });
     }

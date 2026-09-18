@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import { LightIconButton } from 'twenty-ui/components';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
@@ -111,18 +113,20 @@ export const ViewFieldsVisibleDropdownSection = () => {
                         <MenuItemDraggable
                           key={recordField.fieldMetadataItemId}
                           LeftIcon={getIcon(fieldMetadataItem.icon)}
-                          iconButtons={[
-                            {
-                              Icon: IconEyeOff,
-                              onClick: () => {
+                          iconButtons={
+                            <LightIconButton
+                              aria-label={t`Hide field`}
+                              onClick={() => {
                                 handleChangeFieldVisibility({
                                   fieldMetadataId:
                                     recordField.fieldMetadataItemId,
                                   isVisible: false,
                                 });
-                              },
-                            },
-                          ]}
+                              }}
+                            >
+                              <IconEyeOff />
+                            </LightIconButton>
+                          }
                           text={fieldMetadataItem.label}
                           gripMode="always"
                         />

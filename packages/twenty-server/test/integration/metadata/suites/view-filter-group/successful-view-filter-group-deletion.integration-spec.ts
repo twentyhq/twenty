@@ -53,7 +53,7 @@ describe('View Filter Group deletion should succeed', () => {
     }
   });
 
-  it('should soft delete a view filter group', async () => {
+  it('should delete a view filter group', async () => {
     const { data: createData } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
@@ -71,9 +71,11 @@ describe('View Filter Group deletion should succeed', () => {
 
     expect(deleteData.deleteViewFilterGroup).toBe(true);
 
-    await destroyOneViewFilterGroup({
-      expectToFail: false,
+    const { errors: destroyErrors } = await destroyOneViewFilterGroup({
+      expectToFail: true,
       id: createdViewFilterGroupId,
     });
+
+    expect(destroyErrors).toBeDefined();
   });
 });
