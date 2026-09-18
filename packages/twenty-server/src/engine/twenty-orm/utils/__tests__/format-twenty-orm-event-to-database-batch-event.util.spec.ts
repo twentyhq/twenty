@@ -6,7 +6,6 @@ import {
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -86,9 +85,10 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
 
   const mockWorkspaceId = 'workspace-id';
   const mockAuthContext = {
+    type: 'user',
     user: { id: 'user-id' },
     workspaceMemberId: 'workspace-member-id',
-  } as any;
+  } as const;
 
   describe('UPDATED action', () => {
     it('should throw TwentyOrmException when no matching before entity is found in array of beforeEntities', () => {
@@ -338,9 +338,10 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
 
   describe('author', () => {
     const apiKeyAuthContext = {
+      type: 'apiKey',
       apiKey: { id: 'api-key-id' },
       application: { id: 'application-id' },
-    } as RawAuthContext;
+    } as const;
 
     it.each([
       [DatabaseEventAction.CREATED, { recordsAfter: [{ id: 'record-1' }] }],

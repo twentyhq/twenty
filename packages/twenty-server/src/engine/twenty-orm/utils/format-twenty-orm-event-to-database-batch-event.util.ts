@@ -16,7 +16,6 @@ import {
 import type { ObjectLiteral } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import {
   computeUpdatedFieldsFromDiff,
   objectRecordChangedValues,
@@ -29,7 +28,10 @@ import {
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type InheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
-import { buildObjectRecordEventAuthor } from 'src/engine/twenty-orm/utils/build-object-record-event-author.util';
+import {
+  buildObjectRecordEventAuthor,
+  type ObjectRecordEventAuthorContext,
+} from 'src/engine/twenty-orm/utils/build-object-record-event-author.util';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <
@@ -48,7 +50,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   objectMetadataItem: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   workspaceId: string;
-  authContext?: RawAuthContext;
+  authContext?: ObjectRecordEventAuthorContext;
   recordsAfter?: T[];
   recordsBefore?: T[];
   inheritedReadabilityChildRecordsByRecordId?: Map<
