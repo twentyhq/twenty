@@ -1,10 +1,11 @@
-import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common';
 
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
+import { ApplicationRegistrationClaimStateCookieService } from 'src/engine/core-modules/application/application-registration/services/application-registration-claim-state-cookie.service';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
@@ -24,6 +25,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 export class ApplicationRegistrationClaimController {
   constructor(
     private readonly applicationRegistrationClaimService: ApplicationRegistrationClaimService,
+    private readonly claimStateCookieService: ApplicationRegistrationClaimStateCookieService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly guardRedirectService: GuardRedirectService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -35,9 +37,16 @@ export class ApplicationRegistrationClaimController {
     @Query('code') code: string | undefined,
     @Query('state') state: string | undefined,
     @Query('error') oauthError: string | undefined,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
     let workspace: WorkspaceEntity | null = null;
+
+    const stateNonce =
+      this.claimStateCookieService.extractNonceFromRequest(req);
+
+    // One claim per authorization url, whatever its outcome.
+    this.claimStateCookieService.clearNonceCookie(res);
 
     try {
       const statePayload =
@@ -60,6 +69,7 @@ export class ApplicationRegistrationClaimController {
       await this.applicationRegistrationClaimService.completeGithubClaim({
         statePayload,
         code,
+        stateNonce,
       });
 
       if (workspace === null) {

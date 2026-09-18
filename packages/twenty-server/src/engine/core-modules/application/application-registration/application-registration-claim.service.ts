@@ -1,8 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import crypto from 'crypto';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import axios from 'axios';
+import { type Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 import { z } from 'zod';
@@ -13,6 +16,11 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationClaimStateCookieService } from 'src/engine/core-modules/application/application-registration/services/application-registration-claim-state-cookie.service';
+import {
+  claimStateNonceMatches,
+  hashClaimStateNonce,
+} from 'src/engine/core-modules/application/application-registration/utils/hash-claim-state-nonce.util';
 import { type AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { isValidNpmVersionSpec } from 'src/engine/core-modules/application/application-package/utils/is-valid-npm-version-spec.util';
@@ -23,6 +31,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const GITHUB_CLAIM_STATE_EXPIRES_IN = '15m';
+const GITHUB_CLAIM_STATE_TTL_MS = 15 * 60 * 1000;
 
 const attestationsResponseSchema = z.object({
   attestations: z.array(
@@ -73,12 +82,14 @@ export class ApplicationRegistrationClaimService {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly claimStateCookieService: ApplicationRegistrationClaimStateCookieService,
   ) {}
 
   async buildGithubAuthorizationUrl(params: {
     applicationRegistrationId: string;
     workspaceId: string;
     userId: string | null;
+    response: Response;
   }): Promise<string> {
     const registration =
       await this.applicationRegistrationService.findOneByIdGlobal(
@@ -96,17 +107,26 @@ export class ApplicationRegistrationClaimService {
       );
     }
 
+    const nonce = crypto.randomBytes(32).toString('hex');
+
     const statePayload: ApplicationRegistrationGithubClaimStateJwtPayload = {
       sub: registration.id,
       type: JwtTokenTypeEnum.APPLICATION_REGISTRATION_GITHUB_CLAIM_STATE,
       applicationRegistrationId: registration.id,
       workspaceId: params.workspaceId,
       userId: params.userId,
+      nonceHash: hashClaimStateNonce(nonce),
     };
 
     const state = await this.jwtWrapperService.signAsyncOrThrow(statePayload, {
       expiresIn: GITHUB_CLAIM_STATE_EXPIRES_IN,
     });
+
+    this.claimStateCookieService.attachNonceToResponse(
+      params.response,
+      nonce,
+      GITHUB_CLAIM_STATE_TTL_MS,
+    );
 
     const authorizationUrl = new URL(
       'https://github.com/login/oauth/authorize',
@@ -149,7 +169,10 @@ export class ApplicationRegistrationClaimService {
   async completeGithubClaim(params: {
     statePayload: ApplicationRegistrationGithubClaimStateJwtPayload;
     code: string;
+    stateNonce: string | undefined;
   }): Promise<ApplicationRegistrationEntity> {
+    this.assertStateNonceMatches(params.statePayload, params.stateNonce);
+
     const registration =
       await this.applicationRegistrationService.findOneByIdGlobal(
         params.statePayload.applicationRegistrationId,
@@ -200,6 +223,26 @@ export class ApplicationRegistrationClaimService {
         workspaceDisplayName: ownerWorkspace?.displayName ?? null,
       },
     ];
+  }
+
+  // The callback is public and its state travels in a url, so anyone can
+  // forward a state they minted to someone else and have that person's GitHub
+  // identity complete the claim into the forwarder's workspace. The nonce only
+  // ever reaches the browser that started the flow, as a cookie.
+  private assertStateNonceMatches(
+    statePayload: ApplicationRegistrationGithubClaimStateJwtPayload,
+    stateNonce: string | undefined,
+  ): void {
+    if (
+      !isNonEmptyString(stateNonce) ||
+      !isNonEmptyString(statePayload.nonceHash) ||
+      !claimStateNonceMatches(stateNonce, statePayload.nonceHash)
+    ) {
+      throw new ApplicationRegistrationException(
+        'Claim state does not match the browser that started the claim',
+        ApplicationRegistrationExceptionCode.CLAIM_STATE_MISMATCH,
+      );
+    }
   }
 
   private assertClaimable(registration: ApplicationRegistrationEntity): string {
