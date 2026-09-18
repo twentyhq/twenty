@@ -11,7 +11,7 @@ import {
   useIcons,
 } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxPlanToolCallEditor } from '@/inbox/components/InboxPlanToolCallEditor';
@@ -166,30 +166,33 @@ export const InboxPlanToolCallRow = ({
         )}
         <StyledChevron isExpanded={isExpanded}>
           <LightIconButton
-            Icon={IconChevronDown}
-            accent="secondary"
+            emphasis="standard"
             aria-label={isExpanded ? t`Collapse` : t`Expand`}
             onClick={onToggleExpanded}
-          />
+          >
+            <IconChevronDown />
+          </LightIconButton>
         </StyledChevron>
         {canRun && (
           <LightIconButton
-            Icon={IconPlayerPlay}
-            accent="secondary"
+            emphasis="standard"
             aria-label={isFailed ? t`Try this step again` : t`Do this step`}
             title={isFailed ? t`Try this step again` : t`Do this step`}
             disabled={isBusy}
             onClick={() => void onRun()}
-          />
+          >
+            <IconPlayerPlay />
+          </LightIconButton>
         )}
         {!hasSucceeded && (
           <LightIconButton
-            Icon={isRejected ? IconRepeat : IconX}
-            accent="secondary"
+            emphasis="standard"
             aria-label={isRejected ? t`Keep this step` : t`Skip this step`}
             title={isRejected ? t`Keep this step` : t`Skip this step`}
             onClick={() => void onToggleRejected(!isRejected)}
-          />
+          >
+            {isRejected ? <IconRepeat /> : <IconX />}
+          </LightIconButton>
         )}
       </StyledHeader>
       {isFailed && !isExpanded && (

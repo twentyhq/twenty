@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { IconSquareKey, IconTrash } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
 
@@ -115,10 +115,12 @@ export const SettingsObjectIndexTable = ({
                 <StyledActionCell>
                   {item.isCustom && !isReadOnly && (
                     <LightIconButton
-                      Icon={IconTrash}
-                      accent="tertiary"
+                      emphasis="subtle"
                       onClick={() => onDeleteIndex(item)}
-                    />
+                      aria-label={t`Delete index`}
+                    >
+                      <IconTrash />
+                    </LightIconButton>
                   )}
                 </StyledActionCell>
               </TableRow>

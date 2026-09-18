@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo } from 'react';
 import { IconHeartOff, IconPlus } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -85,15 +85,17 @@ export const FavoritesSection = () => {
   const makeRightOptions = useCallback(
     (item: NavigationMenuItem) => (
       <LightIconButton
-        Icon={IconHeartOff}
         onClick={(event) => {
           event.stopPropagation();
           deleteManyNavigationMenuItems([item.id]);
         }}
-        accent="tertiary"
-      />
+        emphasis="subtle"
+        aria-label={t`Remove from favorites`}
+      >
+        <IconHeartOff />
+      </LightIconButton>
     ),
-    [deleteManyNavigationMenuItems],
+    [deleteManyNavigationMenuItems, t],
   );
 
   if (topLevelItems.length === 0) {
@@ -111,7 +113,9 @@ export const FavoritesSection = () => {
           section="favorite"
           onOpen={openNavigationSection}
         >
-          <LightIconButton Icon={IconPlus} accent="tertiary" />
+          <LightIconButton emphasis="subtle" aria-label={t`Add`}>
+            <IconPlus />
+          </LightIconButton>
         </NavigationMenuItemAddDropdown>
       }
     >

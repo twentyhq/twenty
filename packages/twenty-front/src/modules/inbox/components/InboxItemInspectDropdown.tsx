@@ -39,7 +39,7 @@ export const InboxItemInspectDropdown = ({
       clickableComponent={
         <InboxTooltipIconButton
           Icon={IconCode}
-          accent="tertiary"
+          emphasis="subtle"
           label={t`Inspect item`}
         />
       }

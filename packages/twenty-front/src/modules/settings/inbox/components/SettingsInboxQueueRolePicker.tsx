@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, IconX, useIcons } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -94,13 +95,14 @@ export const SettingsInboxQueueRolePicker = ({
                 <RoleIcon size={16} />
                 <StyledLabel>{role.label}</StyledLabel>
                 <LightIconButton
-                  Icon={IconX}
-                  accent="tertiary"
+                  emphasis="subtle"
                   aria-label={t`Remove ${role.label}`}
                   onClick={() =>
                     onChange(selectedRoleIds.filter((id) => id !== role.id))
                   }
-                />
+                >
+                  <IconX />
+                </LightIconButton>
               </StyledRow>
             );
           })}

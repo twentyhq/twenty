@@ -21,7 +21,7 @@ export type { ListItemProps } from './ListItem/types/ListItemProps';
 export type { ListItemState } from './ListItem/types/ListItemState';
 export type { ColorLabels } from './MenuItem/constants/DefaultColorLabels';
 export { DEFAULT_COLOR_LABELS } from './MenuItem/constants/DefaultColorLabels';
-export type { MenuItemIconButton, MenuItemProps } from './MenuItem/MenuItem';
+export type { MenuItemProps } from './MenuItem/MenuItem';
 export {
   MenuItemLeftContent,
   StyledHoverableMenuItemBase,
@@ -41,8 +41,6 @@ export { MenuItemHotKeys } from './MenuItemHotKeys/MenuItemHotKeys';
 export { MenuItemMultiSelect } from './MenuItemMultiSelect/MenuItemMultiSelect';
 export { MenuItemMultiSelectAvatar } from './MenuItemMultiSelectAvatar/MenuItemMultiSelectAvatar';
 export { MenuItemMultiSelectTag } from './MenuItemMultiSelectTag/MenuItemMultiSelectTag';
-export type { MenuItemNavigateProps } from './MenuItemNavigate/MenuItemNavigate';
-export { MenuItemNavigate } from './MenuItemNavigate/MenuItemNavigate';
 export {
   StyledMenuItemSelect,
   MenuItemSelect,
@@ -52,8 +50,6 @@ export { MenuItemSelectColor } from './MenuItemSelectColor/MenuItemSelectColor';
 export { MenuItemSelectTag } from './MenuItemSelectTag/MenuItemSelectTag';
 export type { MenuItemSuggestionProps } from './MenuItemSuggestion/MenuItemSuggestion';
 export { MenuItemSuggestion } from './MenuItemSuggestion/MenuItemSuggestion';
-export type { MenuItemSwitchProps } from './MenuItemSwitch/MenuItemSwitch';
-export { MenuItemSwitch } from './MenuItemSwitch/MenuItemSwitch';
 export { MenuPicker } from './MenuPicker/MenuPicker';
 export type { MenuPickerProps } from './MenuPicker/types/MenuPickerProps';
 export { NavigationBar } from './NavigationBar/NavigationBar';

@@ -1,4 +1,5 @@
 declare const classNames: {
+  readonly closeButton: 'closeButton';
   readonly container: 'container';
   readonly containerInfo: 'containerInfo';
   readonly containerWarning: 'containerWarning';
