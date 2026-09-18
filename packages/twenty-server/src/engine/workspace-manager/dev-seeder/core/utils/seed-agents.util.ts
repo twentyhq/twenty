@@ -17,6 +17,7 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { AgentChatThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-status.enum';
 import { AgentChatChannelMemberRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-member-role.enum';
 import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
 
@@ -138,14 +139,23 @@ const seedChatThreads = async ({
       .into(`${schemaName}.${agentChatThreadTableName}`)
       .orIgnore()
       .values(
+        // One thread per inbox state, so a fresh workspace shows what the
+        // Open, Snoozed and Done tabs are for without anyone having to
+        // produce the states by hand.
         [
           {
             id: AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_IMPORT_THREAD,
             title: 'Prepare a company import',
+            status: AgentChatThreadStatus.SNOOZED,
+            snoozedUntil: addDaysToDate(now, 1),
+            assigneeUserWorkspaceId: null,
           },
           {
             id: AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_FOLLOW_UP_THREAD,
             title: 'Plan customer follow-ups',
+            status: AgentChatThreadStatus.DONE,
+            snoozedUntil: null,
+            assigneeUserWorkspaceId: userWorkspaceId,
           },
         ].map((thread) => ({
           ...thread,
@@ -183,6 +193,14 @@ const seedChatThreads = async ({
   });
 
   return { threadId, ownerUserWorkspaceId: userWorkspaceId };
+};
+
+const addDaysToDate = (date: Date, days: number): Date => {
+  const result = new Date(date);
+
+  result.setDate(result.getDate() + days);
+
+  return result;
 };
 
 type SeedRunThreadsArgs = {
@@ -598,6 +616,7 @@ const seedChatThreadParticipants = async ({
       'userWorkspaceId',
       'role',
       'createdAt',
+      'lastMentionedAt',
     ])
     .orIgnore()
     .values(
@@ -605,6 +624,13 @@ const seedChatThreadParticipants = async ({
         ...participant,
         workspaceId,
         createdAt: now,
+        // The first member of a shared thread is seeded as having been named
+        // in it, so the Inbox shows a thread that reached someone by mention
+        // next to the ones they own.
+        lastMentionedAt:
+          participant.role === AgentChatThreadParticipantRole.MEMBER
+            ? now
+            : null,
       })),
     )
     .execute();
