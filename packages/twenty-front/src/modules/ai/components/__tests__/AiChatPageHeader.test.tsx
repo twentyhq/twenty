@@ -9,7 +9,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';

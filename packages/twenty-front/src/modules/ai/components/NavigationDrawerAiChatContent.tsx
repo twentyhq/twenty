@@ -1,7 +1,6 @@
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -13,14 +12,11 @@ import { NavigationDrawerAiChatInboxSection } from '@/ai/components/NavigationDr
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatChannels } from '@/ai/hooks/useChatChannels';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -68,10 +64,6 @@ export const NavigationDrawerAiChatContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { handleThreadClick } = useAiChatThreadClick({
-    resetNavigationStack: true,
-  });
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
   });
