@@ -30,12 +30,6 @@ export const useDiscardCoreWorkflowDraft = () => {
     });
 
     closeSidePanelMenu();
-    apolloCoreClient.cache.evict({
-      id: apolloCoreClient.cache.identify({
-        __typename: 'CoreWorkflowVersionDTO',
-        id: coreWorkflowVersionId,
-      }),
-    });
 
     if (searchParams.get('version') === coreWorkflowVersionId) {
       const nextSearchParams = new URLSearchParams(searchParams);

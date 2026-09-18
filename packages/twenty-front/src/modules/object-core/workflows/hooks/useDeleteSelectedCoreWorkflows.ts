@@ -93,21 +93,10 @@ export const useDeleteSelectedCoreWorkflows = () => {
 
     setCoreWorkflowsSelection(EMPTY_CORE_WORKFLOWS_SELECTION);
 
-    const deletedCoreWorkflowIds = deletedCoreWorkflows.map(
-      (deletedCoreWorkflow) => deletedCoreWorkflow.id,
-    );
     const deletedWorkspaceWorkflowIds = deletedCoreWorkflows.map(
       (deletedCoreWorkflow) => deletedCoreWorkflow.workspaceWorkflowId,
     );
 
-    for (const coreWorkflowId of deletedCoreWorkflowIds) {
-      apolloCoreClient.cache.evict({
-        id: apolloCoreClient.cache.identify({
-          __typename: 'CoreWorkflowDTO',
-          id: coreWorkflowId,
-        }),
-      });
-    }
     await invalidateCoreWorkflowVersions(apolloCoreClient);
 
     removeNavigationMenuItemsByTargetRecordIds(deletedWorkspaceWorkflowIds);
