@@ -35,7 +35,7 @@ describe('documentation prop types', () => {
         },
         required: false,
       },
-      '"sm" | "md"',
+      '"md" | "sm"',
     ],
     [
       {
@@ -77,7 +77,7 @@ describe('documentation prop types', () => {
         },
         required: true,
       },
-      '2 | "auto" | 1',
+      '"auto" | 1 | 2',
     ],
   ])('normalizes %j to %j', (input, expected) => {
     expect(normalizeDocumentationPropType(input)).toBe(expected);

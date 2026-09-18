@@ -14,9 +14,11 @@ export const normalizeDocumentationPropType = ({
     const hasOnlyNumericValues = values.every((value) =>
       Number.isFinite(Number(value)),
     );
-    const orderedValues = hasOnlyNumericValues
-      ? values.sort((left, right) => Number(left) - Number(right))
-      : values;
+    const orderedValues = values.sort((left, right) =>
+      hasOnlyNumericValues
+        ? Number(left) - Number(right)
+        : left.localeCompare(right, 'en'),
+    );
 
     return orderedValues.join(' | ');
   }
