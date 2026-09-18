@@ -7,7 +7,7 @@ import {
   useSettingsSubdomain,
 } from '@/settings/domains/hooks/useSettingsSubdomain';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -86,8 +86,8 @@ export const SettingsSubdomain = () => {
           </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
-      <ConfirmationModal
-        modalInstanceId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
         title={t`Change subdomain?`}
         subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
         onConfirmClick={handleConfirm}

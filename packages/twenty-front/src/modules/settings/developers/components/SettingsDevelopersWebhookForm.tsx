@@ -8,8 +8,8 @@ import { type WebhookFormMode } from '@/settings/developers/constants/WebhookFor
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -39,7 +39,7 @@ export const SettingsDevelopersWebhookForm = ({
 }: SettingsDevelopersWebhookFormProps) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const {
     formConfig,
     loading,
@@ -208,7 +208,7 @@ export const SettingsDevelopersWebhookForm = ({
               />
               <Button
                 startIcon={<IconTrash />}
-                onClick={() => openModal(DELETE_WEBHOOK_MODAL_ID)}
+                onClick={() => openDialog(DELETE_WEBHOOK_MODAL_ID)}
                 variant="outline"
                 color="danger"
               >{t`Delete`}</Button>
@@ -217,10 +217,10 @@ export const SettingsDevelopersWebhookForm = ({
         </SettingsPageContainer>
       </SettingsPageLayout>
       {!isCreationMode && (
-        <ConfirmationModal
+        <ConfirmationDialog
           confirmationPlaceholder={t`yes`}
           confirmationValue={t`yes`}
-          modalInstanceId={DELETE_WEBHOOK_MODAL_ID}
+          dialogId={DELETE_WEBHOOK_MODAL_ID}
           title={t`Delete webhook`}
           subtitle={
             <Trans>

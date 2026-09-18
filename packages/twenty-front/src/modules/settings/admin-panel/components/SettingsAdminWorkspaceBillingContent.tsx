@@ -25,7 +25,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsAdminWorkspaceCreditGrantModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal';
 import { SettingsAdminWorkspaceCreditGrantsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable';
 import { formatSubscriptionItemValue } from '@/settings/admin-panel/utils/formatSubscriptionItemValue';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
@@ -130,7 +130,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
 }: SettingsAdminWorkspaceBillingContentProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const apolloAdminClient = useApolloAdminClient();
 
   const { data, loading } = useQuery<WorkspaceBillingAdminPanelQuery>(
@@ -407,7 +407,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
       <SettingsAdminWorkspaceCreditGrantsTable
         workspaceId={workspaceId}
         creditGrants={creditGrants}
-        onGrantCreditsClick={() => openModal(GRANT_CREDITS_MODAL_ID)}
+        onGrantCreditsClick={() => openDialog(GRANT_CREDITS_MODAL_ID)}
       />
 
       <SettingsAdminWorkspaceCreditGrantModal

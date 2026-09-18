@@ -2,7 +2,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsAdminRevokeSigningKeyConfirmationModal } from '@/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal';
 import { useRevokeSigningKey } from '@/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -54,7 +54,7 @@ const getStatusTag = (
 
 export const SettingsAdminSigningKeysTable = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { copyToClipboard } = useCopyToClipboard();
   const [selectedSigningKey, setSelectedSigningKey] =
     useState<SelectedSigningKey | null>(null);
@@ -70,7 +70,7 @@ export const SettingsAdminSigningKeysTable = () => {
 
   const handleRevokeClick = (signingKey: SelectedSigningKey) => {
     setSelectedSigningKey(signingKey);
-    openModal(REVOKE_MODAL_ID);
+    openDialog(REVOKE_MODAL_ID);
   };
 
   const handleConfirmRevoke = async () => {

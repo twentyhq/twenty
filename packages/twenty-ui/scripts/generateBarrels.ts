@@ -13,6 +13,12 @@ const PACKAGE_JSON_FILENAME = 'package.json';
 const NX_PROJECT_CONFIGURATION_FILENAME = 'project.json';
 const PACKAGE_PATH = path.resolve('packages/twenty-ui');
 const SRC_PATH = path.resolve(`${PACKAGE_PATH}/src`);
+const STANDALONE_MODULES = [
+  'assets',
+  'components/code-editor',
+  'styles',
+  'testing',
+];
 const PACKAGE_JSON_PATH = path.join(PACKAGE_PATH, PACKAGE_JSON_FILENAME);
 const NX_PROJECT_CONFIGURATION_PATH = path.join(
   PACKAGE_PATH,
@@ -145,9 +151,11 @@ const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
             .join('\n');
         })
         .join('\n');
-      const childModuleExports = childModuleDirectories.map(
-        (directory) => `export * from './${path.basename(directory)}';`,
-      );
+      const childModuleExports = childModuleDirectories
+        .filter(
+          (directory) => !STANDALONE_MODULES.includes(getModuleName(directory)),
+        )
+        .map((directory) => `export * from './${path.basename(directory)}';`);
       const content = [fileExports, ...childModuleExports]
         .filter((entry) => entry !== '')
         .join('\n');
@@ -507,13 +515,12 @@ const retrieveExportsByBarrel = (barrelDirectories: string[]) => {
   });
 };
 
-const ROOT_BARREL_EXCLUDED_MODULES = ['assets', 'styles', 'testing'];
 const INDIVIDUAL_ENTRY_FILENAME = 'individual-entry';
 
 const getRootBarrelModuleNames = (moduleDirectories: string[]) =>
   moduleDirectories
     .map(getModuleName)
-    .filter((moduleName) => !ROOT_BARREL_EXCLUDED_MODULES.includes(moduleName));
+    .filter((moduleName) => !STANDALONE_MODULES.includes(moduleName));
 
 const generateRootBarrel = (
   moduleDirectories: string[],
@@ -542,8 +549,13 @@ const generateIndividualEntry = (
 const main = () => {
   const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
   const barrelDirectories = [
-    ...moduleDirectories,
-    ...getSubDirectoryPaths(path.join(SRC_PATH, 'primitives')),
+    ...new Set([
+      ...moduleDirectories,
+      ...getSubDirectoryPaths(path.join(SRC_PATH, 'primitives')),
+      ...STANDALONE_MODULES.map((moduleName) =>
+        path.join(SRC_PATH, moduleName),
+      ),
+    ]),
   ].sort((first, second) => first.localeCompare(second));
   const exportsByBarrel = retrieveExportsByBarrel(barrelDirectories);
   const moduleIndexFiles = generateModuleIndexFiles(exportsByBarrel);
