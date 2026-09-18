@@ -23,7 +23,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSwitch } from 'twenty-ui/components';
+import { SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -216,13 +216,11 @@ export const SettingsObjectRelationsTable = ({
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <MenuItemSwitch
-                  LeftIcon={IconArchive}
+                <SettingsRow
+                  startIcon={<IconArchive />}
                   onCheckedChange={() => setShowInactive(!showInactive)}
                   checked={showInactive}
-                  text={t`Inactive`}
-                  size="sm"
-                />
+                >{t`Inactive`}</SettingsRow>
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }

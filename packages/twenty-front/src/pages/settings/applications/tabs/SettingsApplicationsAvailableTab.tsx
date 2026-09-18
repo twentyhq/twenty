@@ -7,9 +7,9 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
 import {
   InlineBanner,
-  MenuItemSwitch,
   SearchInput,
   Section,
+  SettingsRow,
 } from 'twenty-ui/components';
 import { IconSparkles } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -108,13 +108,11 @@ export const SettingsApplicationsAvailableTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemSwitch
-                      LeftIcon={IconSparkles}
+                    <SettingsRow
+                      startIcon={<IconSparkles />}
                       onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
                       checked={showVettedOnly}
-                      text={t`Vetted only`}
-                      size="sm"
-                    />
+                    >{t`Vetted only`}</SettingsRow>
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }

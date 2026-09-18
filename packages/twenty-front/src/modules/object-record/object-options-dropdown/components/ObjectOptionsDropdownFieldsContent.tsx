@@ -10,8 +10,8 @@ import { ViewFieldsVisibleDropdownSection } from '@/views/components/ViewFieldsV
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { MenuItemNavigate } from 'twenty-ui/components';
 import { IconChevronLeft, IconEyeOff } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownFieldsContent = () => {
   const { t } = useLingui();
@@ -45,11 +45,12 @@ export const ObjectOptionsDropdownFieldsContent = () => {
           <ViewFieldsVisibleDropdownSection />
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
-            <MenuItemNavigate
+            <ListItem
               onClick={() => onContentChange('hiddenFields')}
-              LeftIcon={IconEyeOff}
-              text={t`Hidden Fields`}
-            />
+              startIcon={<IconEyeOff />}
+              render={<button type="button" />}
+              hasSubmenu
+            >{t`Hidden Fields`}</ListItem>
           </DropdownMenuItemsContainer>
         </>
       )}

@@ -28,8 +28,8 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   MenuItem,
   MenuItemSelect,
-  MenuItemSwitch,
   OverflowingTextWithTooltip,
+  SettingsRow,
 } from 'twenty-ui/components';
 import {
   IconBaselineDensitySmall,
@@ -307,9 +307,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     );
                   }}
                 >
-                  <MenuItemSwitch
+                  <SettingsRow
                     focused={selectedItemId === 'Compact view'}
-                    LeftIcon={IconBaselineDensitySmall}
+                    startIcon={<IconBaselineDensitySmall />}
                     onCheckedChange={() =>
                       setAndPersistIsCompactModeActive(
                         !isCompactModeActive,
@@ -317,9 +317,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                       )
                     }
                     checked={isCompactModeActive}
-                    text={t`Compact view`}
-                    size="sm"
-                  />
+                  >{t`Compact view`}</SettingsRow>
                 </SelectableListItem>
               )}
           </DropdownMenuItemsContainer>

@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
+import { SettingsRow } from 'twenty-ui/components';
 
-import { MenuItemSwitch } from 'twenty-ui/components';
 import { IconAlertTriangle, IconMessage, IconSparkles } from 'twenty-ui/icon';
 
 import { type AdminChatsFilterState } from '@/settings/admin-panel/chats/types/AdminChatsFilterState';
@@ -29,8 +29,8 @@ export const SettingsAdminChatsFilterDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItemSwitch
-              LeftIcon={IconSparkles}
+            <SettingsRow
+              startIcon={<IconSparkles />}
               onCheckedChange={() =>
                 onFiltersChange({
                   ...filters,
@@ -38,11 +38,9 @@ export const SettingsAdminChatsFilterDropdown = ({
                 })
               }
               checked={filters.onboardingOnly}
-              text={t`Onboarding only`}
-              size="sm"
-            />
-            <MenuItemSwitch
-              LeftIcon={IconAlertTriangle}
+            >{t`Onboarding only`}</SettingsRow>
+            <SettingsRow
+              startIcon={<IconAlertTriangle />}
               onCheckedChange={() =>
                 onFiltersChange({
                   ...filters,
@@ -50,11 +48,9 @@ export const SettingsAdminChatsFilterDropdown = ({
                 })
               }
               checked={filters.hasErrorOnly}
-              text={t`Has error`}
-              size="sm"
-            />
-            <MenuItemSwitch
-              LeftIcon={IconMessage}
+            >{t`Has error`}</SettingsRow>
+            <SettingsRow
+              startIcon={<IconMessage />}
               onCheckedChange={() =>
                 onFiltersChange({
                   ...filters,
@@ -62,9 +58,7 @@ export const SettingsAdminChatsFilterDropdown = ({
                 })
               }
               checked={filters.userNeverEngagedOnly}
-              text={t`No user reply`}
-              size="sm"
-            />
+            >{t`No user reply`}</SettingsRow>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

@@ -59,33 +59,33 @@ export const ListItem = ({
             <ListItemCheckboxIndicator checked={selected} disabled={disabled} />
           )}
           {isRenderableSlot(startIcon) && (
-            <div className={styles.startIcon}>{startIcon}</div>
+            <span className={styles.startIcon}>{startIcon}</span>
           )}
-          <div className={styles.label}>
-            <div className={styles.text}>{children}</div>
+          <span className={styles.label}>
+            <span className={styles.text}>{children}</span>
             {hasDescription && descriptionPlacement === 'inline' && (
-              <div
+              <span
                 className={clsx(styles.description, styles.inlineDescription)}
               >
                 {description}
-              </div>
+              </span>
             )}
-          </div>
+          </span>
           {hasDescription && descriptionPlacement === 'end' && (
-            <div className={clsx(styles.description, styles.endDescription)}>
+            <span className={clsx(styles.description, styles.endDescription)}>
               {description}
-            </div>
+            </span>
           )}
           {isRenderableSlot(actions) && (
-            <div className={styles.actions}>{actions}</div>
+            <span className={styles.actions}>{actions}</span>
           )}
           {isNonEmptyArray(hotkeys) && (
-            <div className={styles.hotkeys}>
+            <span className={styles.hotkeys}>
               <MenuItemHotKeys hotKeys={hotkeys} />
-            </div>
+            </span>
           )}
           {isRenderableSlot(endIcon) && (
-            <div className={styles.endIcon}>{endIcon}</div>
+            <span className={styles.endIcon}>{endIcon}</span>
           )}
           {indicator === 'check' && selected && (
             <IconCheck className={styles.checkIndicator} aria-hidden />

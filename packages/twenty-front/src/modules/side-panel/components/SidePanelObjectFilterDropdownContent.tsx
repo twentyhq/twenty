@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
 import {
   MenuItemSelectAvatar,
-  MenuItemSwitch,
+  SettingsRow,
   TintedIconTile,
 } from 'twenty-ui/components';
 import { IconCube } from 'twenty-ui/icon';
@@ -130,15 +130,13 @@ export const SidePanelObjectFilterDropdownContent = ({
       </SelectableList>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <MenuItemSwitch
-          LeftIcon={IconCube}
+        <SettingsRow
+          startIcon={<IconCube />}
           onCheckedChange={() =>
             setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
           }
           checked={sidePanelShowHiddenObjects}
-          text={t`Show hidden objects`}
-          size="sm"
-        />
+        >{t`Show hidden objects`}</SettingsRow>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

@@ -1,18 +1,17 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { Table } from '@/ui/layout/table/components/Table';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { MenuItemSwitch, Section } from 'twenty-ui/components';
+import { Section, SettingsRow } from 'twenty-ui/components';
 import {
   IconFilter,
   IconKey,
@@ -108,20 +107,16 @@ export const SettingsRolesList = () => {
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <MenuItemSwitch
-                  LeftIcon={IconLego}
+                <SettingsRow
+                  startIcon={<IconLego />}
                   onCheckedChange={() => setShowAgentRoles(!showAgentRoles)}
                   checked={showAgentRoles}
-                  text={t`Agent roles`}
-                  size="sm"
-                />
-                <MenuItemSwitch
-                  LeftIcon={IconKey}
+                >{t`Agent roles`}</SettingsRow>
+                <SettingsRow
+                  startIcon={<IconKey />}
                   onCheckedChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
                   checked={showApiKeyRoles}
-                  text={t`API key roles`}
-                  size="sm"
-                />
+                >{t`API key roles`}</SettingsRow>
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }

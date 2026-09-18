@@ -278,6 +278,8 @@ const computePackageJsonFilesAndExportsConfig = (
     files: [
       'dist',
       'LICENSE',
+      'CHANGELOG.md',
+      'docs/module-ownership-migration.md',
       '!dist/individual',
       '!dist/individual/**',
       '!dist/**/*.map',

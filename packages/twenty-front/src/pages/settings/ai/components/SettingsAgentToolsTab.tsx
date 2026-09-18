@@ -1,12 +1,11 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
-
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSwitch, SearchInput, Section } from 'twenty-ui/components';
+import { SearchInput, Section, SettingsRow } from 'twenty-ui/components';
 import { IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
@@ -92,27 +91,21 @@ export const SettingsAgentToolsTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemSwitch
-                      LeftIcon={IconTool}
+                    <SettingsRow
+                      startIcon={<IconTool />}
                       onCheckedChange={setShowCustomTools}
                       checked={showCustomTools}
-                      text={t`Custom`}
-                      size="sm"
-                    />
-                    <MenuItemSwitch
-                      LeftIcon={IconLock}
+                    >{t`Custom`}</SettingsRow>
+                    <SettingsRow
+                      startIcon={<IconLock />}
                       onCheckedChange={setShowManagedTools}
                       checked={showManagedTools}
-                      text={t`Managed`}
-                      size="sm"
-                    />
-                    <MenuItemSwitch
-                      LeftIcon={IconPuzzle}
+                    >{t`Managed`}</SettingsRow>
+                    <SettingsRow
+                      startIcon={<IconPuzzle />}
                       onCheckedChange={setShowStandardTools}
                       checked={showStandardTools}
-                      text={t`Standard`}
-                      size="sm"
-                    />
+                    >{t`Standard`}</SettingsRow>
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }

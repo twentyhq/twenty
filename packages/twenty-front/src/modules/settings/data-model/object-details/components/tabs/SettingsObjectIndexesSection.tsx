@@ -1,11 +1,10 @@
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
-
 import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -18,7 +17,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { MenuItemSwitch, SearchInput, useToast } from 'twenty-ui/components';
+import { SearchInput, SettingsRow, useToast } from 'twenty-ui/components';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -174,15 +173,13 @@ export const SettingsObjectIndexesSection = ({
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <MenuItemSwitch
-                    LeftIcon={IconEyeOff}
+                  <SettingsRow
+                    startIcon={<IconEyeOff />}
                     onCheckedChange={() =>
                       setHideSystemIndexes(!hideSystemIndexes)
                     }
                     checked={hideSystemIndexes}
-                    text={t`Hide system indexes`}
-                    size="sm"
-                  />
+                  >{t`Hide system indexes`}</SettingsRow>
                 </DropdownMenuItemsContainer>
               </DropdownContent>
             }

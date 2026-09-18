@@ -1,6 +1,6 @@
 # Breaking module ownership migration
 
-This change removes the previous exports immediately. Release it as a breaking package change and migrate applications together with the library. The package now exposes 41 primitives and 47 shared React components, including the optional code editor.
+This change removes the previous exports immediately. Release it as a breaking package change and migrate applications together with the library. The package now exposes 41 primitives and 46 shared React components, including the optional code editor.
 
 ## Choosing a module
 
@@ -19,7 +19,7 @@ Foundational controls keep their `twenty-ui/primitives/<family>` imports. Import
 
 ### Shared components
 
-`CodeEditor`, `CodeEditorHeader`, `IconButton`, `LightButton`, `MainButton`, `Section`, `TabButton`, `AvatarGroup`, `CommandBlock`, `NotificationCounter`, `Pill`, `TintedIconTile`, `Callout`, `Info`, `InlineBanner`, `Toast`, `ToastProvider`, `Toaster`, `AnimatedLightIconButton`, `CardPicker`, `ColorPickerButton`, `ColorSchemePicker`, `FloatingButton`, `FloatingButtonGroup`, `FloatingIconButton`, `FloatingIconButtonGroup`, `LightIconButton`, `SearchInput`, `JsonTree`, `AnimatedIconCrossfade`, `MenuItem`, `MenuItemAvatar`, `MenuItemDraggable`, `MenuItemMultiSelect`, `MenuItemMultiSelectAvatar`, `MenuItemMultiSelectTag`, `MenuItemNavigate`, `MenuItemSelect`, `MenuItemSelectAvatar`, `MenuItemSelectColor`, `MenuItemSelectTag`, `MenuItemSuggestion`, `MenuItemSwitch`, `MenuPicker`, `NavigationBar`, `RoundedLink`, `OverflowingTextWithTooltip`.
+`CodeEditor`, `CodeEditorHeader`, `IconButton`, `LightButton`, `MainButton`, `Section`, `SettingsRow`, `TabButton`, `AvatarGroup`, `CommandBlock`, `NotificationCounter`, `Pill`, `TintedIconTile`, `Callout`, `Info`, `InlineBanner`, `Toast`, `ToastProvider`, `Toaster`, `AnimatedLightIconButton`, `CardPicker`, `ColorPickerButton`, `ColorSchemePicker`, `FloatingButton`, `FloatingButtonGroup`, `FloatingIconButton`, `FloatingIconButtonGroup`, `LightIconButton`, `SearchInput`, `JsonTree`, `AnimatedIconCrossfade`, `MenuItem`, `MenuItemAvatar`, `MenuItemDraggable`, `MenuItemMultiSelect`, `MenuItemMultiSelectAvatar`, `MenuItemMultiSelectTag`, `MenuItemSelect`, `MenuItemSelectAvatar`, `MenuItemSelectColor`, `MenuItemSelectTag`, `MenuItemSuggestion`, `MenuPicker`, `NavigationBar`, `RoundedLink`, `OverflowingTextWithTooltip`.
 
 ## Interface changes
 

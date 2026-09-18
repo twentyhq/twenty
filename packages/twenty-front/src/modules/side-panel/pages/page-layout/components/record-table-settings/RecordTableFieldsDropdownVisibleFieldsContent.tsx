@@ -1,4 +1,3 @@
-import { LightIconButton } from 'twenty-ui/components';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -14,8 +13,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemDraggable, MenuItemNavigate } from 'twenty-ui/components';
+import { LightIconButton, MenuItemDraggable } from 'twenty-ui/components';
 import { IconEyeOff, useIcons } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 type RecordTableFieldsDropdownVisibleFieldsContentProps = {
@@ -155,11 +155,12 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>
-        <MenuItemNavigate
+        <ListItem
           onClick={onShowHiddenFields}
-          LeftIcon={IconEyeOff}
-          text={t`Hidden Fields`}
-        />
+          startIcon={<IconEyeOff />}
+          render={<button type="button" />}
+          hasSubmenu
+        >{t`Hidden Fields`}</ListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );
