@@ -54,6 +54,62 @@ const buildResolver = () => {
 const deleteQueued = (resolver: AgentChatResolver, userWorkspaceId: string) =>
   resolver.deleteQueuedChatMessage(MESSAGE_ID, userWorkspaceId, WORKSPACE);
 
+describe('AgentChatResolver.stopAgentChatStream', () => {
+  const buildStreamResolver = () => {
+    const threadRepository = {
+      findOne: jest
+        .fn()
+        .mockImplementation((_workspaceId, { where }) =>
+          Promise.resolve(
+            where.some(
+              (clause: Record<string, unknown>) =>
+                clause.userWorkspaceId === WORKER_ID ||
+                clause.assigneeUserWorkspaceId === WORKER_ID,
+            )
+              ? { id: THREAD_ID, activeStreamId: 'stream-id' }
+              : null,
+          ),
+        ),
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+
+    const redis = { publish: jest.fn().mockResolvedValue(1) };
+
+    const resolver = Object.create(
+      AgentChatResolver.prototype,
+    ) as AgentChatResolver;
+
+    Object.assign(resolver, {
+      threadRepository,
+      redisClientService: { getClient: () => redis },
+    });
+
+    return { resolver, threadRepository, redis };
+  };
+
+  it('lets somebody working the thread stop the stream', async () => {
+    const { resolver, threadRepository, redis } = buildStreamResolver();
+
+    await expect(
+      resolver.stopAgentChatStream(THREAD_ID, WORKER_ID, WORKSPACE),
+    ).resolves.toBe(true);
+    expect(redis.publish).toHaveBeenCalled();
+    expect(threadRepository.update).toHaveBeenCalled();
+  });
+
+  // Sending is gated the same way, so a reader who cannot start a stream is
+  // never left with one they cannot stop.
+  it('leaves the stream alone for a reader who has not joined', async () => {
+    const { resolver, threadRepository, redis } = buildStreamResolver();
+
+    await expect(
+      resolver.stopAgentChatStream(THREAD_ID, PUBLIC_READER_ID, WORKSPACE),
+    ).resolves.toBe(true);
+    expect(redis.publish).not.toHaveBeenCalled();
+    expect(threadRepository.update).not.toHaveBeenCalled();
+  });
+});
+
 describe('AgentChatResolver.deleteQueuedChatMessage', () => {
   it('lets somebody working the thread drop a queued message', async () => {
     const { resolver, agentChatService, eventPublisherService } =

@@ -4,6 +4,7 @@ import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSet
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { styled } from '@linaria/react';
 import { type DragEvent, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DropZone } from '@/activities/files/components/DropZone';
@@ -11,11 +12,13 @@ import { AgentChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOp
 import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { useCanWorkAiChatThread } from '@/ai/hooks/useCanWorkAiChatThread';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
+import { AiChatJoinChannelBanner } from '@/ai/components/AiChatJoinChannelBanner';
 import { AiChatQueuedMessages } from '@/ai/components/AiChatQueuedMessages';
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
 
@@ -42,6 +45,11 @@ export const AiChatTab = () => {
     draftKey === threadIdCreatedFromDraft
       ? AGENT_CHAT_NEW_THREAD_DRAFT_KEY
       : draftKey;
+
+  // The server keeps writing in a public channel for the people who joined it,
+  // so a reader passing by is offered the way in rather than a composer whose
+  // send would be refused.
+  const canWorkThread = useCanWorkAiChatThread(currentAiChatThread ?? '');
 
   const { uploadFiles } = useAiChatFileUpload();
 
@@ -83,8 +91,14 @@ export const AiChatTab = () => {
           value={isWorkspaceSetupChat ? <WorkspaceSetupChatPreamble /> : null}
         >
           <AiChatTabMessageList />
-          <AiChatQueuedMessages />
-          <AiChatEditorSection key={editorSectionKey} />
+          {isDefined(currentAiChatThread) && !canWorkThread ? (
+            <AiChatJoinChannelBanner threadId={currentAiChatThread} />
+          ) : (
+            <>
+              <AiChatQueuedMessages />
+              <AiChatEditorSection key={editorSectionKey} />
+            </>
+          )}
         </AiChatMessageListPreambleContext.Provider>
       )}
     </StyledContainer>

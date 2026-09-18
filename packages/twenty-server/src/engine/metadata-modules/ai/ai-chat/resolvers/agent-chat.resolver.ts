@@ -41,7 +41,6 @@ import { type AgentChatThreadLastMessageSummary } from 'src/engine/metadata-modu
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
-import { buildThreadAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-access-where.util';
 import { buildThreadWorkerWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-worker-where.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
@@ -267,14 +266,17 @@ export class AgentChatResolver {
       spenders: { userWorkspaceId },
     });
 
+    // A public channel is readable by the whole workspace, but talking in one
+    // is joining the conversation, so writing takes the worker gate the same
+    // way status and assignment do. Joining the channel is one click.
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
+      where: buildThreadWorkerWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!isDefined(thread)) {
       throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
+        'Join this channel to work on its chats',
+        AiExceptionCode.THREAD_NOT_JOINED,
       );
     }
 
@@ -433,14 +435,16 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
+    // Answering is writing into the conversation, so it takes the same gate as
+    // sending.
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
+      where: buildThreadWorkerWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!isDefined(thread)) {
       throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
+        'Join this channel to work on its chats',
+        AiExceptionCode.THREAD_NOT_JOINED,
       );
     }
 
@@ -507,7 +511,7 @@ export class AgentChatResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     const thread = await this.threadRepository.findOne(workspaceId, {
-      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
+      where: buildThreadWorkerWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
@@ -634,7 +638,7 @@ export class AgentChatResolver {
     workspaceId: string,
   ): Promise<void> {
     const thread = await this.threadRepository.findOne(workspaceId, {
-      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
+      where: buildThreadWorkerWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
