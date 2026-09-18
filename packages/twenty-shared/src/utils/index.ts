@@ -282,6 +282,7 @@ export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './
 export { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';
 export { typedObjectEntries } from './typed-object-entries';
 export { isMetadataGqlOperationSignature } from './typeguard/isMetadataGqlOperationSignature';
+export { isNonEmptyString } from './typeguard/isNonEmptyString';
 export { isPlainObject } from './typeguard/isPlainObject';
 export { isRecordGqlOperationSignature } from './typeguard/isRecordGqlOperationSignature';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';

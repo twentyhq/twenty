@@ -6,4 +6,7 @@ import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
 // builder fills it in by inferring from the handler source code when omitted.
 export type ToolTriggerSettings = {
   inputSchema?: InputJsonSchema;
+  // Universal identifier of a front component that renders this tool's calls
+  // in the AI chat. Resolved to a front component id when descriptors are built.
+  frontComponentUniversalIdentifier?: string;
 };

@@ -3155,6 +3155,8 @@ type ToolIndexEntry {
   category: String!
   objectName: String
   icon: String
+  widgetName: String
+  frontComponentId: String
   inputSchema: JSON
 }
 

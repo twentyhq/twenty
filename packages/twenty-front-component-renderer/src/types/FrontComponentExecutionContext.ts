@@ -1,4 +1,5 @@
 import { type AppLocale } from 'twenty-shared/translations';
+import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 
 export type FrontComponentExecutionContext = {
   frontComponentId: string;
@@ -13,4 +14,6 @@ export type FrontComponentExecutionContext = {
   /** Resolved color scheme of the host UI ('System' is already resolved) */
   colorScheme: 'light' | 'dark';
   locale?: AppLocale;
+  /** Set when the component renders an AI chat tool call */
+  toolCall?: FrontComponentToolCall;
 };
