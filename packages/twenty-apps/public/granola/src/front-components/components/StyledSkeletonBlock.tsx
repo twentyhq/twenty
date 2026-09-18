@@ -9,7 +9,6 @@ const shimmer = keyframes`
   }
 `;
 
-// Mirrors the react-loading-skeleton theme twenty-front uses, which a front component cannot import.
 export const StyledSkeletonBlock = styled.div<{
   $width?: number;
   $height: number;

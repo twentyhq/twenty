@@ -20,7 +20,6 @@ const StyledRow = styled.div`
   height: 28px;
 `;
 
-// Sits where the checkbox box sits inside its 5px button padding.
 const StyledCheckboxSkeleton = styled(StyledSkeletonBlock)`
   margin: 5px;
 `;

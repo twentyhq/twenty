@@ -58,7 +58,6 @@ export const GranolaFolderPicker = ({
   });
   const [isLocked, setIsLocked] = useState(false);
 
-  // After a failed save the server is the only truth, so the picker locks until it is reloaded.
   const loadFolderList = async ({
     isSelectionStale,
   }: {

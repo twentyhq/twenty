@@ -92,7 +92,6 @@ export const GranolaSettings = () => {
     setState({ step: 'ready', status });
   };
 
-  // Status and flags are set in one tick so the key form and the card never swap for a frame.
   const finishConnectionSetup = ({
     status,
     hasRegistrationFailed,

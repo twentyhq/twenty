@@ -29,7 +29,6 @@ const StyledOptionRow = styled.div<{ $isClickable: boolean }>`
     `}
 `;
 
-// Mirrors twenty-front's SettingsRadioSettingsCard: descriptions wrap, unlike the option card rows.
 const StyledOptionTitle = styled.div`
   color: ${() => themeCssVariables.font.color.primary};
   font-weight: ${() => themeCssVariables.font.weight.medium};
@@ -48,7 +47,6 @@ const StyledRadioContainer = styled.span`
   margin-left: auto;
 `;
 
-// Sits where the radio control sits inside its 3px button padding.
 const StyledRadioLoaderContainer = styled.span`
   display: flex;
   padding: 3px;
