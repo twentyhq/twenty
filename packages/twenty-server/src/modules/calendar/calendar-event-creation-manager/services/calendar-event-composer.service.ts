@@ -12,6 +12,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { getMissingCreateEventScopes } from 'src/modules/calendar/calendar-event-creation-manager/utils/get-missing-create-event-scopes.util';
 import { isCalendarCreationSupportedProvider } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-calendar-creation-supported-provider.util';
 import { isValidTimeZone } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-valid-time-zone.util';
+import { selectDefaultCalendarChannel } from 'src/modules/calendar/calendar-event-creation-manager/utils/select-default-calendar-channel.util';
 import { type CalendarEventComposerResult } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-composer-result.type';
 import { type CalendarEventToCreate } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-to-create.type';
 import { type ComposeCalendarEventParams } from 'src/modules/calendar/calendar-event-creation-manager/types/compose-calendar-event-params.type';
@@ -43,6 +44,7 @@ export class CalendarEventComposerService {
   async composeCalendarEvent(
     params: ComposeCalendarEventParams,
     workspaceId: string,
+    userWorkspaceId?: string,
   ): Promise<CalendarEventComposerResult> {
     const normalizedInput = this.normalizeAndValidateInput(params);
 
@@ -53,6 +55,7 @@ export class CalendarEventComposerService {
     const resolution = await this.resolveCalendarAccount(
       params.connectedAccountId,
       workspaceId,
+      userWorkspaceId,
     );
 
     if ('error' in resolution) {
@@ -97,7 +100,9 @@ export class CalendarEventComposerService {
       return { error: datesError };
     }
 
-    const timeZone = params.timeZone ?? 'UTC';
+    const timeZone = isNonEmptyString(params.timeZone)
+      ? params.timeZone
+      : 'UTC';
 
     if (!isValidTimeZone(timeZone)) {
       return { error: `timeZone '${timeZone}' is not a valid IANA time zone` };
@@ -189,6 +194,7 @@ export class CalendarEventComposerService {
   private async resolveCalendarAccount(
     connectedAccountId: string | undefined,
     workspaceId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ResolvedCalendarAccount> {
     // A blank id (the workflow node's default) falls back to the default account.
     if (isNonEmptyString(connectedAccountId)) {
@@ -226,13 +232,14 @@ export class CalendarEventComposerService {
       return { connectedAccount, calendarChannel };
     }
 
-    return this.resolveDefaultCalendarAccount(workspaceId);
+    return this.resolveDefaultCalendarAccount(workspaceId, userWorkspaceId);
   }
 
   // Only sync-enabled channels are eligible: a created event is reconciled by the
   // provider sync, which skips channels whose sync is disabled.
   private async resolveDefaultCalendarAccount(
     workspaceId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ResolvedCalendarAccount> {
     const calendarChannels = await this.calendarChannelRepository.find({
       where: { workspaceId, isSyncEnabled: true },
@@ -240,17 +247,15 @@ export class CalendarEventComposerService {
       order: { createdAt: 'ASC' },
     });
 
-    const calendarChannel = calendarChannels.find(
-      (channel) =>
-        isDefined(channel.connectedAccount) &&
-        !isDefined(channel.connectedAccount.archivedAt) &&
-        isCalendarCreationSupportedProvider(channel.connectedAccount.provider),
-    );
+    const calendarChannel = selectDefaultCalendarChannel({
+      calendarChannels,
+      userWorkspaceId,
+    });
 
     if (!isDefined(calendarChannel)) {
       return {
         error:
-          'No Google, Microsoft or CalDAV account with calendar sync is connected in this workspace',
+          'No Google, Microsoft or CalDAV account with calendar sync and permission to create events is available in this workspace',
       };
     }
 

@@ -33,7 +33,8 @@ export type WorkflowValidationIssueCode =
   | 'VARIABLE_MISSING_OUTPUT_SCHEMA'
   | 'VARIABLE_PATH_NOT_FOUND'
   | 'AI_AGENT_MISSING_AGENT'
-  | 'AI_AGENT_MISSING_OUTPUT_VARIABLE';
+  | 'AI_AGENT_MISSING_OUTPUT_VARIABLE'
+  | 'CONNECTED_ACCOUNT_UNUSABLE';
 
 export type WorkflowValidationIssue = {
   severity: WorkflowValidationSeverity;
