@@ -698,7 +698,13 @@ const InvoicePreview = () => {
     return <p>Generating the invoice...</p>;
   }
 
-  return <a href={String(toolCall.output?.invoiceUrl)}>Open the invoice</a>;
+  const { invoiceUrl } = toolCall.output ?? {};
+
+  return typeof invoiceUrl === 'string' ? (
+    <a href={invoiceUrl}>Open the invoice</a>
+  ) : (
+    <p>The invoice could not be generated.</p>
+  );
 };
 
 export default defineFrontComponent({
@@ -709,6 +715,8 @@ export default defineFrontComponent({
 ```
 
 The component mounts as soon as the agent has finished streaming its arguments, so it owns the whole call, not just the result. `toolCall.status` walks through `input-available`, the approval states when the tool needs one, and then `output-available`, `output-denied` or `output-error`; `input` is what the agent proposed, `output` what your handler returned. Render each state you care about, since the step row is no longer there to cover them.
+
+Both `input` and `output` are typed `Record<string, unknown>`, so narrow each field before you use it rather than casting. That matters most for anything you hand to the DOM: a value you drop into an `href` without checking it is a string is a link the tool's output controls.
 
 <Note>
 If the identifier matches no front component in the app, the chat falls back to the default step row. Front components in the AI chat run under the same [role your app declares](/developers/extend/apps/config/roles), so a widget can only read and write what the app itself is allowed to.
