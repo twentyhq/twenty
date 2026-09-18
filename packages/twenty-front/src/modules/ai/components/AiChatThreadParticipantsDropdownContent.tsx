@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconLogout, IconX } from 'twenty-ui/icon';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/primitives/navigation';
 
@@ -89,20 +90,18 @@ export const AiChatThreadParticipantsDropdownContent = ({
               text={fullName}
               contextualText={isOwnerRow ? t`Owner` : undefined}
               iconButtons={
-                canRemove
-                  ? [
-                      {
-                        Icon: isCurrentUserRow ? IconLogout : IconX,
-                        ariaLabel: isCurrentUserRow
-                          ? t`Leave thread`
-                          : t`Remove ${fullName}`,
-                        onClick: () =>
-                          removeChatThreadParticipant(
-                            participant.userWorkspaceId,
-                          ),
-                      },
-                    ]
-                  : undefined
+                canRemove ? (
+                  <LightIconButton
+                    aria-label={
+                      isCurrentUserRow ? t`Leave thread` : t`Remove ${fullName}`
+                    }
+                    onClick={() =>
+                      removeChatThreadParticipant(participant.userWorkspaceId)
+                    }
+                  >
+                    {isCurrentUserRow ? <IconLogout /> : <IconX />}
+                  </LightIconButton>
+                ) : undefined
               }
             />
           );

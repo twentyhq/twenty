@@ -8,7 +8,7 @@ import {
   IconTrash,
   IconUsers,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { AiChatChannelMembersDropdownContent } from '@/ai/components/AiChatChannelMembersDropdownContent';
@@ -191,12 +191,9 @@ export const AiChatChannelMenu = ({
       dropdownPlacement="bottom-end"
       onClose={goToRoot}
       clickableComponent={
-        <LightIconButton
-          aria-label={t`Channel actions`}
-          Icon={IconDotsVertical}
-          accent="tertiary"
-          size="small"
-        />
+        <LightIconButton aria-label={t`Channel actions`} size="sm">
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownComponents={renderPage()}
     />

@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconChevronLeft, IconLogout, IconX } from 'twenty-ui/icon';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/primitives/navigation';
 
@@ -106,26 +107,28 @@ export const AiChatChannelMembersDropdownContent = ({
               text={fullName}
               contextualText={isAdminRow ? t`Admin` : undefined}
               iconButtons={
-                canRemove
-                  ? [
-                      {
-                        Icon: isCurrentUserRow ? IconLogout : IconX,
-                        ariaLabel: isCurrentUserRow
-                          ? t`Leave channel`
-                          : t`Remove ${fullName}`,
-                        onClick: () =>
-                          isCurrentUserRow && isDefined(currentUserWorkspaceId)
-                            ? leaveChatChannel({
-                                channelId,
-                                userWorkspaceId: currentUserWorkspaceId,
-                              })
-                            : removeChatChannelMember({
-                                channelId,
-                                userWorkspaceId: member.userWorkspaceId,
-                              }),
-                      },
-                    ]
-                  : undefined
+                canRemove ? (
+                  <LightIconButton
+                    aria-label={
+                      isCurrentUserRow
+                        ? t`Leave channel`
+                        : t`Remove ${fullName}`
+                    }
+                    onClick={() =>
+                      isCurrentUserRow && isDefined(currentUserWorkspaceId)
+                        ? leaveChatChannel({
+                            channelId,
+                            userWorkspaceId: currentUserWorkspaceId,
+                          })
+                        : removeChatChannelMember({
+                            channelId,
+                            userWorkspaceId: member.userWorkspaceId,
+                          })
+                    }
+                  >
+                    {isCurrentUserRow ? <IconLogout /> : <IconX />}
+                  </LightIconButton>
+                ) : undefined
               }
             />
           );

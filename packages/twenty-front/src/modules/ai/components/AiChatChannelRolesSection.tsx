@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconLock, IconX, useIcons } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 
@@ -60,19 +61,19 @@ export const AiChatChannelRolesSection = ({
                 LeftIcon={getRoleIcon(role?.icon)}
                 text={label}
                 iconButtons={
-                  isAdmin
-                    ? [
-                        {
-                          Icon: IconX,
-                          ariaLabel: t`Remove ${label}`,
-                          onClick: () =>
-                            removeChatChannelRole({
-                              channelId,
-                              roleId: channelRole.roleId,
-                            }),
-                        },
-                      ]
-                    : undefined
+                  isAdmin ? (
+                    <LightIconButton
+                      aria-label={t`Remove ${label}`}
+                      onClick={() =>
+                        removeChatChannelRole({
+                          channelId,
+                          roleId: channelRole.roleId,
+                        })
+                      }
+                    >
+                      <IconX />
+                    </LightIconButton>
+                  ) : undefined
                 }
               />
             );
