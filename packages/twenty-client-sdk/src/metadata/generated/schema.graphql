@@ -1593,7 +1593,6 @@ enum UsageResourceType {
   LOGIC_FUNCTION
   EMAIL
   WEBHOOK
-  RECORD
 }
 
 enum UsageOperationType {
@@ -1608,7 +1607,6 @@ enum UsageOperationType {
   API_REQUEST
   WEBHOOK_CALL
   STORAGE_FILE
-  RECORD_WRITE
   SUBSCRIPTION
 }
 
@@ -3159,6 +3157,8 @@ type ToolIndexEntry {
   category: String!
   objectName: String
   icon: String
+  widgetName: String
+  frontComponentId: String
   inputSchema: JSON
 }
 
@@ -3962,7 +3962,7 @@ type Mutation {
   revokeUserSession(userSessionId: UUID!): Boolean!
   revokeAllOtherUserSessions: Int!
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
+  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent!

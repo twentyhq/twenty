@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 
 import { RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS } from 'src/logic-functions/constants/recall-api-max-in-process-retry-wait-ms';
 import { RECALL_API_MAX_ATTEMPTS } from 'src/logic-functions/constants/recall-api-max-attempts';
+import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recall-api-not-found-status';
 import { type RecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { parseRecallRetryAfterMs } from 'src/logic-functions/recall-api/parse-recall-retry-after.util';
 import {
@@ -105,7 +106,7 @@ const performRecallBotApiRequestAttempt = async <TData>({
     };
   }
 
-  if (allowNotFound && response.status === 404) {
+  if (allowNotFound && response.status === RECALL_API_NOT_FOUND_STATUS) {
     return {
       isRetryable: false,
       result: {

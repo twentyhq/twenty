@@ -1,15 +1,21 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { ARTIFACTS_IMPORT_CLAIM_FIELD_BY_SCOPE } from 'src/logic-functions/constants/artifacts-import-claim-field-by-scope';
+import { CALL_RECORDING_FOR_ARTIFACTS_IMPORT_SELECTION } from 'src/logic-functions/constants/call-recording-for-artifacts-import-selection';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { parseCallRecordingForArtifactsImportNode } from 'src/logic-functions/data/parse-call-recording-for-artifacts-import-node.util';
 import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
+import { type CallRecordingForArtifactsImport } from 'src/logic-functions/types/call-recording-for-artifacts-import.type';
+
+// The executor Lambda runs with this hard timeout regardless of the function's
+// timeoutSeconds, which only bounds how long the server waits for the invoke.
+const LOGIC_FUNCTION_LAMBDA_HARD_TIMEOUT_MS = 15 * 60 * 1000;
 
 // Crash safety net: a lease older than this is reclaimable so a worker that died
-// mid-import never blocks the recording forever. Normal runs release explicitly.
-const ARTIFACTS_IMPORT_CLAIM_TTL_MS = 10 * 60 * 1000;
-
-const CLAIM_FIELD_BY_SCOPE = {
-  transcript: 'transcriptImportClaimedAt',
-  media: 'artifactsImportClaimedAt',
-} as const;
+// mid-import never blocks the recording forever. It must outlive the Lambda so
+// a second job never uploads on top of one that is still running.
+const ARTIFACTS_IMPORT_CLAIM_TTL_MS =
+  LOGIC_FUNCTION_LAMBDA_HARD_TIMEOUT_MS + 60 * 1000;
 
 export const claimCallRecordingArtifactsImport = async (
   client: CoreApiClient,
@@ -22,8 +28,8 @@ export const claimCallRecordingArtifactsImport = async (
     scope: CallRecordingArtifactImportScope;
     now: Date;
   },
-): Promise<boolean> => {
-  const claimField = CLAIM_FIELD_BY_SCOPE[scope];
+): Promise<CallRecordingForArtifactsImport | undefined> => {
+  const claimField = ARTIFACTS_IMPORT_CLAIM_FIELD_BY_SCOPE[scope];
   const staleBefore = new Date(
     now.getTime() - ARTIFACTS_IMPORT_CLAIM_TTL_MS,
   ).toISOString();
@@ -33,6 +39,7 @@ export const claimCallRecordingArtifactsImport = async (
       __args: {
         filter: {
           id: { eq: callRecordingId },
+          status: { eq: CallRecordingStatus.PROCESSING },
           or: [
             { [claimField]: { is: 'NULL' } },
             { [claimField]: { lte: staleBefore } },
@@ -40,11 +47,13 @@ export const claimCallRecordingArtifactsImport = async (
         },
         data: { [claimField]: now.toISOString() },
       },
-      id: true,
+      ...CALL_RECORDING_FOR_ARTIFACTS_IMPORT_SELECTION,
     },
   });
 
-  return (result.updateCallRecordings ?? []).length > 0;
+  return parseCallRecordingForArtifactsImportNode(
+    result.updateCallRecordings?.[0],
+  );
 };
 
 export const releaseCallRecordingArtifactsImportClaim = async (
@@ -52,16 +61,21 @@ export const releaseCallRecordingArtifactsImportClaim = async (
   {
     callRecordingId,
     scope,
+    claimedAt,
   }: {
     callRecordingId: string;
     scope: CallRecordingArtifactImportScope;
+    claimedAt: string;
   },
 ): Promise<void> => {
   await client.mutation({
     updateCallRecordings: {
       __args: {
-        filter: { id: { eq: callRecordingId } },
-        data: { [CLAIM_FIELD_BY_SCOPE[scope]]: null },
+        filter: {
+          id: { eq: callRecordingId },
+          [ARTIFACTS_IMPORT_CLAIM_FIELD_BY_SCOPE[scope]]: { eq: claimedAt },
+        },
+        data: { [ARTIFACTS_IMPORT_CLAIM_FIELD_BY_SCOPE[scope]]: null },
       },
       id: true,
     },

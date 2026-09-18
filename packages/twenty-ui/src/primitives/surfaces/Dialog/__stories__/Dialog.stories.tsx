@@ -49,6 +49,11 @@ export const Default: Story = {
 export const Documentation: Story = {
   ...Default,
   args: { defaultOpen: false },
+  play: undefined,
+};
+
+export const DocumentationInteractions: Story = {
+  ...Documentation,
   play: async ({ canvasElement }) => {
     const trigger = within(canvasElement).getByRole('button', {
       name: 'Edit account',

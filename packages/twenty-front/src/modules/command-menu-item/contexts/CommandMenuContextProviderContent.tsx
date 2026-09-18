@@ -11,6 +11,7 @@ import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
+import { getCommandMenuContextApiForContainerType } from '@/command-menu-item/utils/getCommandMenuContextApiForContainerType';
 import { mergeGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/mergeGlobalRecordCreationCommandMenuItems';
 import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import {
@@ -56,6 +57,15 @@ export const CommandMenuContextProviderContent = ({
       ? currentPageLayoutId
       : pageLayoutIdFromContext;
 
+  const commandMenuContextApiForAvailability = useMemo(
+    () =>
+      getCommandMenuContextApiForContainerType({
+        commandMenuContextApi,
+        containerType,
+      }),
+    [commandMenuContextApi, containerType],
+  );
+
   const filteredCommandMenuItems = useMemo(() => {
     const currentObjectMetadataItemId =
       commandMenuContextApi.objectMetadataItem.id;
@@ -81,11 +91,14 @@ export const CommandMenuContextProviderContent = ({
       .filter((item) =>
         evaluateConditionalAvailabilityExpression(
           item.conditionalAvailabilityExpression,
-          commandMenuContextApi,
+          commandMenuContextApiForAvailability,
         ),
       )
       .map((item) =>
-        resolveCommandMenuItemPinning(item, commandMenuContextApi),
+        resolveCommandMenuItemPinning(
+          item,
+          commandMenuContextApiForAvailability,
+        ),
       );
 
     return mergeGlobalRecordCreationCommandMenuItems({
@@ -95,6 +108,7 @@ export const CommandMenuContextProviderContent = ({
     });
   }, [
     commandMenuContextApi,
+    commandMenuContextApiForAvailability,
     globalRecordCreationCommandMenuItems,
     shouldDisplayGlobalRecordCreationCommands,
     commandMenuItems,

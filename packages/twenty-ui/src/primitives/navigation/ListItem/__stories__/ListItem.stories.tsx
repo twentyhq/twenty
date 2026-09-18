@@ -9,7 +9,7 @@ import {
 } from '@ui/testing';
 
 import { IconBell, IconEdit, IconSettings, IconTrash } from '@ui/icon';
-import { LightIconButton } from '@ui/primitives/input/LightIconButton/LightIconButton';
+import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
 import { type ListItemColor } from '@ui/primitives/navigation/ListItem/types/ListItemColor';
 import { type ListItemIndicator } from '@ui/primitives/navigation/ListItem/types/ListItemIndicator';
@@ -29,16 +29,12 @@ const START_ICON = <IconBell />;
 
 const ACTIONS = (
   <>
-    <LightIconButton
-      Icon={IconEdit}
-      aria-label="Edit"
-      onClick={action('Edit')}
-    />
-    <LightIconButton
-      Icon={IconTrash}
-      aria-label="Delete"
-      onClick={action('Delete')}
-    />
+    <LightIconButton aria-label="Edit" onClick={action('Edit')}>
+      <IconEdit />
+    </LightIconButton>
+    <LightIconButton aria-label="Delete" onClick={action('Delete')}>
+      <IconTrash />
+    </LightIconButton>
   </>
 );
 

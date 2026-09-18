@@ -5,7 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { IconPlus, IconTool } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -116,20 +116,24 @@ export const WorkspaceSection = () => {
                 onOpen={openNavigationSection}
               >
                 <LightIconButton
-                  Icon={IconPlus}
-                  accent="tertiary"
-                  size="small"
-                />
+                  emphasis="subtle"
+                  size="sm"
+                  aria-label={t`Add`}
+                >
+                  <IconPlus />
+                </LightIconButton>
               </NavigationMenuItemAddDropdown>
             ) : (
               hasLayoutsPermission && (
                 <div onMouseEnter={preloadNavigationMenuItemDndKit}>
                   <LightIconButton
-                    Icon={IconTool}
-                    accent="tertiary"
-                    size="small"
+                    emphasis="subtle"
+                    size="sm"
                     onClick={handleEditClick}
-                  />
+                    aria-label={t`Edit navigation`}
+                  >
+                    <IconTool />
+                  </LightIconButton>
                 </div>
               )
             )}

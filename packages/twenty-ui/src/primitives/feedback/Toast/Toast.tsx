@@ -10,7 +10,6 @@ import {
   IconX,
 } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { LightIconButton } from '@ui/primitives/input/LightIconButton/LightIconButton';
 import { HorizontalSeparator } from '@ui/primitives/layout/HorizontalSeparator/HorizontalSeparator';
 import { useTheme } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -103,10 +102,13 @@ export const Toast = ({
                 </Button>
               )}
               {isDefined(onClose) && (
-                <LightIconButton
+                <Button
                   title={closeLabel}
                   aria-label={closeLabel}
-                  Icon={IconX}
+                  startIcon={<IconX />}
+                  className={styles.closeButton}
+                  variant="ghost"
+                  size="sm"
                   onClick={onClose}
                 />
               )}

@@ -11,7 +11,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowMerge } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 
 export const RecordDetailDuplicatesSection = ({
   objectRecordId,
@@ -51,10 +51,12 @@ export const RecordDetailDuplicatesSection = ({
           rightAdornment={
             <LightIconButton
               className="displayOnHover"
-              Icon={IconArrowMerge}
-              accent="tertiary"
+              emphasis="subtle"
               onClick={openMergeRecordsPageInSidePanel}
-            />
+              aria-label={t`Merge duplicates`}
+            >
+              <IconArrowMerge />
+            </LightIconButton>
           }
         >
           <RecordDetailRecordsListContainer>

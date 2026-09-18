@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/StyledBubbleMenuContainer';
 import { BubbleMenuIconButton } from '@/advanced-text-editor/components/BubbleMenuIconButton';
 import { EditLinkPopover } from '@/advanced-text-editor/components/EditLinkPopover';
@@ -26,36 +27,42 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
   const menuActions = [
     {
       Icon: IconBold,
+      label: t`Bold`,
       extensionName: 'bold',
       onClick: () => editor.chain().focus().toggleBold().run(),
       isActive: state.isBold,
     },
     {
       Icon: IconItalic,
+      label: t`Italic`,
       extensionName: 'italic',
       onClick: () => editor.chain().focus().toggleItalic().run(),
       isActive: state.isItalic,
     },
     {
       Icon: IconUnderline,
+      label: t`Underline`,
       extensionName: 'underline',
       onClick: () => editor.chain().focus().toggleUnderline().run(),
       isActive: state.isUnderline,
     },
     {
       Icon: IconStrikethrough,
+      label: t`Strikethrough`,
       extensionName: 'strike',
       onClick: () => editor.chain().focus().toggleStrike().run(),
       isActive: state.isStrike,
     },
     {
       Icon: IconList,
+      label: t`Bullet list`,
       extensionName: 'bulletList',
       onClick: () => editor.chain().focus().wrapInList('bulletList').run(),
       isActive: state.isBulletList,
     },
     {
       Icon: IconListNumbers,
+      label: t`Numbered list`,
       extensionName: 'orderedList',
       onClick: () => editor.chain().focus().wrapInList('orderedList').run(),
       isActive: state.isOrderedList,
@@ -86,10 +93,11 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
         {hasEditorExtension(editor, 'heading') && (
           <TurnIntoBlockDropdown editor={editor} />
         )}
-        {menuActions.map(({ Icon, onClick, isActive }) => {
+        {menuActions.map(({ label, Icon, onClick, isActive }) => {
           return (
             <BubbleMenuIconButton
               key={Icon.name || Icon.displayName || 'unknown'}
+              label={label}
               Icon={Icon}
               onClick={onClick}
               isActive={isActive}

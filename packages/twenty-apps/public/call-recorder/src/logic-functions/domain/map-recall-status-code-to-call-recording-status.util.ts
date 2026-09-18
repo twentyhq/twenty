@@ -25,9 +25,11 @@ export const mapRecallStatusCodeToCallRecordingStatus = ({
     case 'in_call_recording':
       return CallRecordingStatus.RECORDING;
     // 'done' stays PROCESSING: COMPLETED is set only after all artifacts are imported.
+    // 'media_expired' follows 'done' once Recall deletes the media; the import settles what was captured.
     case 'call_ended':
     case 'analysis_done':
     case 'done':
+    case 'media_expired':
       return CallRecordingStatus.PROCESSING;
     case 'fatal':
     case 'analysis_failed':
