@@ -37,6 +37,8 @@ describe('chargeCompletedCallRecording', () => {
       endedAt: '2026-06-10T09:30:00.000Z',
     });
 
+    expect(chargeCreditsMock).toHaveBeenCalledTimes(1);
+
     const [{ operation }] = chargeCreditsMock.mock.calls[0];
 
     expect(applicationConfig.config.billing?.operations?.[operation]).toEqual({
