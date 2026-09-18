@@ -21,6 +21,7 @@ import { type WebhookJobData } from 'src/engine/metadata-modules/webhook/types/w
 
 type WebhookResponse = {
   workspaceId: string;
+  respondedAt: Date;
   properties: TrackEventProperties<typeof WEBHOOK_RESPONSE_EVENT>;
 };
 
@@ -62,11 +63,12 @@ export class CallWebhookJob {
     webhookResponses: WebhookResponse[],
   ): Promise<void> {
     await this.eventLogEmitterService.dispatch(
-      webhookResponses.map(({ workspaceId, properties }) =>
+      webhookResponses.map(({ workspaceId, respondedAt, properties }) =>
         buildWorkspaceEventEnvelope(
           computeEventContextFields({ workspaceId }),
           WEBHOOK_RESPONSE_EVENT,
           properties,
+          respondedAt,
         ),
       ),
     );
@@ -125,6 +127,7 @@ export class CallWebhookJob {
 
       return {
         workspaceId: data.workspaceId,
+        respondedAt: new Date(),
         properties: {
           status: response.status,
           success,
@@ -139,6 +142,7 @@ export class CallWebhookJob {
 
       return {
         workspaceId: data.workspaceId,
+        respondedAt: new Date(),
         properties: {
           success: false,
           ...commonPayload,
