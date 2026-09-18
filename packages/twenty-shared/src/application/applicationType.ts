@@ -39,7 +39,9 @@ export type ApplicationManifest = SyncableEntityOptions & {
   /**
    * @deprecated Declare the tab on the front component itself with
    * `defineSettingsFrontComponent()`, which sets `settingsTab` on its
-   * `frontComponents` manifest entry. This property is ignored.
+   * `frontComponents` manifest entry. This property is only read from a
+   * manifest built before that option existed, where it gives the component
+   * it points at the default tab.
    */
   settingsFrontComponent?: SettingsFrontComponentApplicationManifest;
   frontComponentSharedDependencies?: FrontComponentSharedDependenciesManifest;

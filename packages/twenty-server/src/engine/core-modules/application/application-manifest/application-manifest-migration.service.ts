@@ -9,6 +9,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
+import { applyLegacySettingsFrontComponentTab } from 'src/engine/core-modules/application/application-manifest/utils/apply-legacy-settings-front-component-tab.util';
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
@@ -170,7 +171,7 @@ export class ApplicationManifestMigrationService {
   }
 
   async syncMetadataFromManifest({
-    manifest,
+    manifest: rawManifest,
     workspaceId,
     ownerFlatApplication,
     dryRun = false,
@@ -185,6 +186,8 @@ export class ApplicationManifestMigrationService {
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
   }> {
+    const manifest = applyLegacySettingsFrontComponentTab(rawManifest);
+
     const now = new Date().toISOString();
 
     const recomputeStart = performance.now();

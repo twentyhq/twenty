@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isReservedFrontComponentSettingsTabLabel } from 'twenty-shared/application';
+import {
+  isReservedFrontComponentSettingsTabLabel,
+  takesDefaultFrontComponentSettingsTab,
+} from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,12 +17,17 @@ import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 @Injectable()
 export class FlatFrontComponentValidatorService {
   public validateFlatFrontComponentCreation({
     flatEntityToValidate: flatFrontComponent,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatFrontComponentMaps: optimisticFlatFrontComponentMaps,
+    },
+    remainingFlatEntityMapsToValidate,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.frontComponent
   >): FailedFlatEntityValidation<'frontComponent', 'create'> {
@@ -72,6 +80,16 @@ export class FlatFrontComponentValidatorService {
 
     validationResult.errors.push(
       ...this.getSettingsTabValidationErrors(flatFrontComponent.settingsTab),
+      ...this.getDefaultSettingsTabCollisionErrors({
+        applicationUniversalIdentifier:
+          flatFrontComponent.applicationUniversalIdentifier,
+        settingsTab: flatFrontComponent.settingsTab,
+        universalIdentifier: flatFrontComponent.universalIdentifier,
+        flatFrontComponentMapsToSearch: [
+          optimisticFlatFrontComponentMaps,
+          remainingFlatEntityMapsToValidate,
+        ],
+      }),
     );
 
     return validationResult;
@@ -118,6 +136,7 @@ export class FlatFrontComponentValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFrontComponentMaps: optimisticFlatFrontComponentMaps,
     },
+    finalFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.frontComponent
   >): FailedFlatEntityValidation<'frontComponent', 'update'> {
@@ -177,6 +196,13 @@ export class FlatFrontComponentValidatorService {
     if (isDefined(flatEntityUpdate.settingsTab)) {
       validationResult.errors.push(
         ...this.getSettingsTabValidationErrors(flatEntityUpdate.settingsTab),
+        ...this.getDefaultSettingsTabCollisionErrors({
+          applicationUniversalIdentifier:
+            fromFlatFrontComponent.applicationUniversalIdentifier,
+          settingsTab: flatEntityUpdate.settingsTab,
+          universalIdentifier,
+          flatFrontComponentMapsToSearch: [finalFlatEntityMaps],
+        }),
       );
     }
 
@@ -220,5 +246,53 @@ export class FlatFrontComponentValidatorService {
     }
 
     return errors;
+  }
+
+  // Two components taking the default tab would render as identically labelled
+  // tabs on the same position. The SDK build rejects it, so this only catches a
+  // manifest synced without going through it.
+  private getDefaultSettingsTabCollisionErrors({
+    applicationUniversalIdentifier,
+    settingsTab,
+    universalIdentifier,
+    flatFrontComponentMapsToSearch,
+  }: {
+    applicationUniversalIdentifier: string;
+    settingsTab: FlatFrontComponent['settingsTab'];
+    universalIdentifier: string;
+    flatFrontComponentMapsToSearch: MetadataUniversalFlatEntityMaps<
+      typeof ALL_METADATA_NAME.frontComponent
+    >[];
+  }) {
+    if (!takesDefaultFrontComponentSettingsTab(settingsTab)) {
+      return [];
+    }
+
+    const collidesWithDefaultSettingsTab = flatFrontComponentMapsToSearch
+      .flatMap((flatFrontComponentMaps) =>
+        Object.values(flatFrontComponentMaps.byUniversalIdentifier),
+      )
+      .some(
+        (otherFlatFrontComponent) =>
+          isDefined(otherFlatFrontComponent) &&
+          otherFlatFrontComponent.universalIdentifier !== universalIdentifier &&
+          otherFlatFrontComponent.applicationUniversalIdentifier ===
+            applicationUniversalIdentifier &&
+          takesDefaultFrontComponentSettingsTab(
+            otherFlatFrontComponent.settingsTab,
+          ),
+      );
+
+    if (!collidesWithDefaultSettingsTab) {
+      return [];
+    }
+
+    return [
+      {
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Only one settings front component can take the default settings tab`,
+        userFriendlyMessage: msg`Only one settings front component can take the default settings tab`,
+      },
+    ];
   }
 }

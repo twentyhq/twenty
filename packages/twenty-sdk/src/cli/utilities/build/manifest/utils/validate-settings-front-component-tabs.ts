@@ -1,4 +1,7 @@
-import { type FrontComponentManifest } from 'twenty-shared/application';
+import {
+  type FrontComponentManifest,
+  takesDefaultFrontComponentSettingsTab,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 export const validateSettingsFrontComponentTabs = ({
@@ -18,7 +21,7 @@ export const validateSettingsFrontComponentTabs = ({
   }
 
   return settingsFrontComponents
-    .filter(({ settingsTab }) => Object.keys(settingsTab ?? {}).length === 0)
+    .filter(({ settingsTab }) => takesDefaultFrontComponentSettingsTab(settingsTab))
     .map(
       ({ name, sourceComponentPath }) =>
         `Settings front component "${name ?? sourceComponentPath}" must declare a tab when the application declares several settings front components`,

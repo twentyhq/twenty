@@ -215,6 +215,7 @@ export {
   isReservedFrontComponentSettingsTabLabel,
 } from './utils/isReservedFrontComponentSettingsTabLabel';
 export { sortFrontComponentSettingsTabs } from './utils/sortFrontComponentSettingsTabs';
+export { takesDefaultFrontComponentSettingsTab } from './utils/takesDefaultFrontComponentSettingsTab';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,
