@@ -124,8 +124,25 @@ export class AgentChatThreadReadService {
       return [];
     }
 
+    // Answering for a thread the caller cannot open would say whether it
+    // exists and has been written in, so the list is narrowed to what they
+    // can read before anything is counted.
+    const readableThreads = await this.threadRepository.find(workspaceId, {
+      where: buildThreadAccessWhere({
+        id: In(threadIds),
+        userWorkspaceId,
+      }),
+      select: { id: true },
+    });
+
+    const readableThreadIds = readableThreads.map((thread) => thread.id);
+
+    if (readableThreadIds.length === 0) {
+      return [];
+    }
+
     const reads = await this.readRepository.find(workspaceId, {
-      where: { threadId: In(threadIds), userWorkspaceId },
+      where: { threadId: In(readableThreadIds), userWorkspaceId },
     });
 
     const lastReadAtByThreadId = new Map(
@@ -133,7 +150,7 @@ export class AgentChatThreadReadService {
     );
 
     const lastMessages = await this.messageRepository.find(workspaceId, {
-      where: { threadId: In(threadIds), isHidden: false },
+      where: { threadId: In(readableThreadIds), isHidden: false },
       select: { id: true, threadId: true, createdAt: true },
       order: { createdAt: 'DESC' },
     });
@@ -146,7 +163,7 @@ export class AgentChatThreadReadService {
       }
     }
 
-    return threadIds.filter((threadId) => {
+    return readableThreadIds.filter((threadId) => {
       const lastMessageAt = lastMessageAtByThreadId.get(threadId);
 
       if (!isDefined(lastMessageAt)) {

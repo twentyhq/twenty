@@ -12,7 +12,9 @@ import { AiChatChannelPageHeader } from '@/ai/components/AiChatChannelPageHeader
 import { AiChatChannelThreadList } from '@/ai/components/AiChatChannelThreadList';
 import { AiChatChannelThreadPane } from '@/ai/components/AiChatChannelThreadPane';
 import { AiChatChannelTabs } from '@/ai/components/AiChatChannelTabs';
+import { AiChatMarkThreadReadEffect } from '@/ai/components/AiChatMarkThreadReadEffect';
 import { AiChatSelectFirstThreadEffect } from '@/ai/components/AiChatSelectFirstThreadEffect';
+import { AiChatUnreadThreadsEffect } from '@/ai/components/AiChatUnreadThreadsEffect';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { AI_CHAT_CHANNEL_TABS_INSTANCE_ID } from '@/ai/constants/AiChatChannelTabsInstanceId';
@@ -139,6 +141,10 @@ export const AiChatChannelPage = () => {
           isThreadSelected={isDefined(threadId)}
         />
       )}
+      <AiChatUnreadThreadsEffect
+        threadIds={threadsByTab[agentChatChannelTab].map((thread) => thread.id)}
+      />
+      <AiChatMarkThreadReadEffect threadId={threadId ?? null} />
       <CollapseNavigationDrawerWhileSidePanelOpenEffect />
       {/* Thread rows on this page use the side panel action surface. */}
       <AiChatThreadDeleteConfirmationModal

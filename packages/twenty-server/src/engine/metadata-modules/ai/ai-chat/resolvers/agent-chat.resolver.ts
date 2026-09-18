@@ -153,6 +153,21 @@ export class AgentChatResolver {
     });
   }
 
+  // One call for a whole list: the alternative is a cursor per thread, which
+  // is a query per row on every inbox render.
+  @Query(() => [UUIDScalarType])
+  async unreadChatThreadIds(
+    @Args('threadIds', { type: () => [UUIDScalarType] }) threadIds: string[],
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    return this.agentChatThreadReadService.getUnreadThreadIds({
+      threadIds,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
   @Mutation(() => AgentChatThreadReadDTO)
   async markChatThreadRead(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,

@@ -41,6 +41,16 @@ const buildService = ({
             : null,
         ),
       ),
+    find: jest
+      .fn()
+      .mockImplementation((_workspaceId, { where }) =>
+        Promise.resolve(
+          Array.isArray(where) &&
+            where.some((clause) => readers.includes(clause.userWorkspaceId))
+            ? [{ id: THREAD_ID }]
+            : [],
+        ),
+      ),
     update: jest.fn().mockResolvedValue({ affected: 1 }),
   };
 
@@ -204,6 +214,25 @@ describe('AgentChatThreadReadService', () => {
       const { service, readRepository } = buildService();
 
       expect(await unreadFor(service, [])).toEqual([]);
+      expect(readRepository.find).not.toHaveBeenCalled();
+    });
+
+    // Answering for a thread the caller cannot open would say whether it
+    // exists and has been written in.
+    it('says nothing about a thread the caller cannot open', async () => {
+      const { service, readRepository, messageRepository } = buildService({
+        readers: [],
+      });
+
+      messageRepository.find.mockResolvedValue([
+        {
+          id: LAST_MESSAGE_ID,
+          threadId: THREAD_ID,
+          createdAt: new Date('2026-01-02T00:00:00Z'),
+        },
+      ]);
+
+      expect(await unreadFor(service, [THREAD_ID])).toEqual([]);
       expect(readRepository.find).not.toHaveBeenCalled();
     });
   });
