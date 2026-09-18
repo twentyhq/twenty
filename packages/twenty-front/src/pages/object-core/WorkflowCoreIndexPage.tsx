@@ -16,6 +16,7 @@ import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/ho
 import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
 import { getDeletedRecordIdsFromOperation } from '@/object-core/utils/getDeletedRecordIdsFromOperation';
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
+import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
@@ -79,6 +80,8 @@ export const WorkflowCoreIndexPage = () => {
     selectRows,
     forgetDeletedWorkspaceWorkflows,
   } = useCoreWorkflowsSelection({ coreWorkflows });
+
+  useListenToCoreWorkflowEvents();
 
   useListenToObjectRecordOperationBrowserEvent({
     objectMetadataItemId: objectMetadataItem.id,

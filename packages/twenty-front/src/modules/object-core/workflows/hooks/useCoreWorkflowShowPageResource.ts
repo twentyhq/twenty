@@ -23,5 +23,11 @@ export const useCoreWorkflowShowPageResource = ({
     [data?.coreWorkflow],
   );
 
-  return { record, loading, error, refetch };
+  return {
+    record,
+    coreWorkflowId: data?.coreWorkflow?.id,
+    loading,
+    error,
+    refetch,
+  };
 };
