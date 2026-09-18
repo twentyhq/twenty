@@ -114,7 +114,11 @@ export const MenuItem = ({
       />
 
       <StyledMenuItemRightContent>
-        {iconButtons && <div className="hoverable-buttons">{iconButtons}</div>}
+        {iconButtons && (
+          <StyledMenuItemRightContent className="hoverable-buttons">
+            {iconButtons}
+          </StyledMenuItemRightContent>
+        )}
         {hotKeys && <MenuItemHotKeys hotKeys={hotKeys} />}
         {RightIcon && (
           <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
