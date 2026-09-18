@@ -333,6 +333,7 @@ export const SettingsAdminWorkspaceDetail = () => {
         ]}
         secondaryBar={
           <SettingsTabBar
+            aria-label={t`Workspace details`}
             tabs={tabs}
             behaveAsLinks={false}
             componentInstanceId={WORKSPACE_DETAIL_TABS_ID}

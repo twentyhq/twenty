@@ -120,6 +120,7 @@ type PageLayoutTabListProps = Omit<TabListProps, 'tabs'> & {
 };
 
 export const PageLayoutTabList = ({
+  'aria-label': ariaLabel,
   tabs,
   loading,
   behaveAsLinks,
@@ -441,6 +442,7 @@ export const PageLayoutTabList = ({
           centerTabs={centerTabs}
         >
           <PageLayoutTabListVisibleTabs
+            aria-label={ariaLabel}
             visibleTabs={tabsWithIcons}
             visibleTabCount={
               shouldScrollTabs ? tabsWithIcons.length : visibleTabCount

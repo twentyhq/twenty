@@ -159,6 +159,7 @@ const PageLayoutTabListPlayground = ({
         <PageLayoutWidgetDndProvider>
           <StyledTabListContainer isInIdentifierBar={isInIdentifierBar}>
             <PageLayoutTabList
+              aria-label="Dashboard sections"
               tabs={sortedTabs}
               componentInstanceId="page-layout-tab-list-story"
               behaveAsLinks={false}

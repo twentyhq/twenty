@@ -207,6 +207,7 @@ export const PageLayoutTabsRenderer = () => {
 
   const tabList = shouldRenderTabList && (
     <PageLayoutTabList
+      aria-label={currentPageLayout.name}
       className="page-layout-tab-list-print-hidden"
       presentation={
         shouldRenderRecordIdentifierBar ? 'identifier-bar' : 'standalone'

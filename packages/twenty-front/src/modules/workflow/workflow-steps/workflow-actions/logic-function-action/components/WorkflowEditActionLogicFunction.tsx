@@ -285,6 +285,7 @@ export const WorkflowEditActionLogicFunction = ({
       {!isThirdPartyApp && (
         <StyledTabListContainer>
           <TabList
+            aria-label={t`Function step`}
             tabs={tabs}
             behaveAsLinks={false}
             componentInstanceId={

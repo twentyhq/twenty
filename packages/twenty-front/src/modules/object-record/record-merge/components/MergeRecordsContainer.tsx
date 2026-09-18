@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
@@ -69,6 +70,7 @@ export const MergeRecordsContainer = ({
           <TabListRoot componentInstanceId={instanceId}>
             <StyledTabListContainer>
               <TabList
+                aria-label={t`Merge records`}
                 tabs={tabs}
                 behaveAsLinks={false}
                 componentInstanceId={instanceId}

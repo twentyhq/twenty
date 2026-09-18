@@ -346,6 +346,7 @@ const ThinkingToolStepRow = ({
                 <StyledToolDetailsContent>
                   <StyledToolTabListContainer>
                     <TabList
+                      aria-label={t`Tool details: ${displayMessage}`}
                       tabs={toolTabs}
                       behaveAsLinks={false}
                       componentInstanceId={toolTabListComponentInstanceId}

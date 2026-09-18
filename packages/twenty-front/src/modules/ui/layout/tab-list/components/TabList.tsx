@@ -65,6 +65,7 @@ const StyledRightContainer = styled.div`
 `;
 
 export const TabList = ({
+  'aria-label': ariaLabel,
   tabs,
   loading,
   behaveAsLinks = true,
@@ -200,6 +201,7 @@ export const TabList = ({
           <StyledNodeDimension onDimensionChange={onContainerWidthChange}>
             <StyledInnerContainer $centerTabs={centerTabs && !shouldScrollTabs}>
               <TabListRow
+                aria-label={ariaLabel}
                 ref={tabRowRef}
                 behaveAsLinks={behaveAsLinks}
                 isScrollable={shouldScrollTabs}

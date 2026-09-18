@@ -134,6 +134,7 @@ export const WorkflowEditActionHttpRequest = ({
     >
       <StyledTabListContainer>
         <TabList
+          aria-label={t`HTTP request`}
           tabs={tabs}
           behaveAsLinks={false}
           componentInstanceId={WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID}

@@ -179,6 +179,7 @@ const renderTabList = ({
             value={{ instanceId: PAGE_LAYOUT_ID }}
           >
             <PageLayoutTabList
+              aria-label="Record sections"
               tabs={TABS}
               componentInstanceId={TAB_LIST_ID}
               pageLayoutType={pageLayoutType}

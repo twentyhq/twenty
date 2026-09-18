@@ -392,6 +392,7 @@ export const WorkflowEditActionCode = ({
         <LogicFunctionTestInputInitEffect logicFunctionId={logicFunctionId} />
         <StyledTabListContainer>
           <TabList
+            aria-label={t`Code step`}
             tabs={tabs}
             behaveAsLinks={false}
             componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}

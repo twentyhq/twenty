@@ -139,6 +139,7 @@ export const SettingsCustomizeVideoModal = ({
               {hasMultipleTabs ? (
                 <StyledTabsContainer>
                   <TabList
+                    aria-label={t`Video tutorials`}
                     tabs={tabs}
                     behaveAsLinks={false}
                     componentInstanceId={tabsInstanceId}

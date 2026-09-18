@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, type Ref } from 'react';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 
@@ -20,6 +19,7 @@ const StyledContainer = styled.div<{ isScrollable: boolean }>`
 `;
 
 type TabListRowProps = {
+  'aria-label': string;
   behaveAsLinks: boolean;
   children: ReactNode;
   isScrollable: boolean;
@@ -27,13 +27,12 @@ type TabListRowProps = {
 };
 
 export const TabListRow = ({
+  'aria-label': ariaLabel,
   behaveAsLinks,
   children,
   isScrollable,
   ref,
 }: TabListRowProps) => {
-  const { t } = useLingui();
-
   if (behaveAsLinks) {
     return (
       <StyledContainer ref={ref} isScrollable={isScrollable}>
@@ -45,7 +44,7 @@ export const TabListRow = ({
   return (
     <Tabs.List
       ref={ref}
-      aria-label={t`Tabs`}
+      aria-label={ariaLabel}
       activateOnFocus={false}
       render={<StyledContainer isScrollable={isScrollable} />}
     >

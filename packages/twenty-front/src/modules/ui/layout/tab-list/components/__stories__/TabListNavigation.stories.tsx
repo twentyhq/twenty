@@ -32,6 +32,7 @@ const TabGroup = ({
     <section aria-label={instanceId}>
       <TabListRoot componentInstanceId={instanceId} enabled={!links}>
         <TabList
+          aria-label={`${instanceId} sections`}
           componentInstanceId={instanceId}
           behaveAsLinks={links}
           tabs={tabIds.map((id) => ({
@@ -195,6 +196,12 @@ export const IndependentTabGroups: Story = {
     const firstActivity = await first.findByRole('tab', { name: 'activity' });
     const secondActivity = second.getByRole('tab', { name: 'activity' });
 
+    expect(
+      canvas.getByRole('tablist', { name: 'first sections' }),
+    ).toBeVisible();
+    expect(
+      canvas.getByRole('tablist', { name: 'second sections' }),
+    ).toBeVisible();
     expect(firstActivity.id).not.toBe(secondActivity.id);
     await userEvent.click(firstActivity);
     expect(first.getByRole('tabpanel', { name: 'activity' })).toBeVisible();

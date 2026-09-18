@@ -57,6 +57,7 @@ const meta: Meta<typeof TabList> = {
   title: 'UI/Layout/TabList/TabList',
   component: TabList,
   args: {
+    'aria-label': 'Record sections',
     tabs: tabs,
     componentInstanceId: 'tab-list',
   },
@@ -82,6 +83,7 @@ export const Default: Story = {
         enabled={args.behaveAsLinks === false}
       >
         <TabList
+          aria-label={args['aria-label']}
           tabs={args.tabs}
           componentInstanceId={args.componentInstanceId}
           loading={args.loading}

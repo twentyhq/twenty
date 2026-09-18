@@ -12,6 +12,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 
 type PageLayoutTabListVisibleTabsProps = {
+  'aria-label': string;
   visibleTabs: SingleTabProps[];
   visibleTabCount: number;
   activeTabId: string | null;
@@ -36,6 +37,7 @@ const StyledLeadingDropTarget = styled.div`
 `;
 
 export const PageLayoutTabListVisibleTabs = ({
+  'aria-label': ariaLabel,
   visibleTabs,
   visibleTabCount,
   activeTabId,
@@ -61,6 +63,7 @@ export const PageLayoutTabListVisibleTabs = ({
 
     return (
       <TabListRow
+        aria-label={ariaLabel}
         ref={tabRowRef}
         behaveAsLinks={false}
         isScrollable={isScrollable}
@@ -103,6 +106,7 @@ export const PageLayoutTabListVisibleTabs = ({
 
   return (
     <TabListRow
+      aria-label={ariaLabel}
       ref={tabRowRef}
       behaveAsLinks={behaveAsLinks}
       isScrollable={isScrollable}

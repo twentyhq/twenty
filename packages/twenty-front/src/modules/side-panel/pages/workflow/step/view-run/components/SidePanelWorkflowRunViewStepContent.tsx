@@ -148,6 +148,7 @@ export const SidePanelWorkflowRunViewStepContent = () => {
           >
             <StyledTabListContainer>
               <TabList
+                aria-label={t`Workflow step results`}
                 tabs={tabs}
                 behaveAsLinks={false}
                 componentInstanceId={sidePanelPageComponentInstance.instanceId}
