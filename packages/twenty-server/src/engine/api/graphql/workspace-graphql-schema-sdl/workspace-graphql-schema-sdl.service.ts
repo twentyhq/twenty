@@ -5,6 +5,7 @@ import { printSchema } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
+import { appendCoreWorkflowAppOperationsToSdl } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/utils/append-core-workflow-app-operations-to-sdl.util';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { WorkspaceGraphQLSchemaGenerator } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -148,7 +149,9 @@ export class WorkspaceGraphqlSchemaSDLService {
           });
 
     return {
-      sdl,
+      sdl: isDefined(applicationId)
+        ? appendCoreWorkflowAppOperationsToSdl(sdl)
+        : sdl,
       usedScalarNames,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

@@ -156,6 +156,36 @@ const MANUAL_TRIGGER = {
   position: { x: 0, y: 0 },
 };
 
+const APP_SCHEMA_INTROSPECTION = `
+  query AppSchema {
+    __schema {
+      queryType {
+        fields {
+          name
+        }
+      }
+      mutationType {
+        fields {
+          name
+        }
+      }
+    }
+  }
+`;
+
+const CORE_WORKFLOW_SEEDING_QUERY_FIELDS = [
+  'coreWorkflows',
+  'coreWorkflowVersionsByCoreWorkflowId',
+];
+
+const CORE_WORKFLOW_SEEDING_MUTATION_FIELDS = [
+  'createCoreWorkflow',
+  'createCoreWorkflowVersionStep',
+  'updateCoreWorkflowVersionStep',
+  'updateCoreWorkflowVersionTrigger',
+  'activateCoreWorkflowVersion',
+];
+
 describe('core workflow API with application credentials (integration)', () => {
   let authorizedApplication: InstalledTestApplication;
   let deniedApplication: InstalledTestApplication;
@@ -388,5 +418,60 @@ describe('core workflow API with application credentials (integration)', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.data?.createCoreWorkflow).toBeFalsy();
+  });
+
+  it('should expose the core workflow operations the app SDK client seeds with', async () => {
+    const response = await graphqlAs(
+      authorizedApplication.accessToken,
+      APP_SCHEMA_INTROSPECTION,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const queryFieldNames = (
+      response.body.data?.__schema?.queryType?.fields ?? []
+    ).map((field: { name: string }) => field.name);
+    const mutationFieldNames = (
+      response.body.data?.__schema?.mutationType?.fields ?? []
+    ).map((field: { name: string }) => field.name);
+
+    for (const fieldName of CORE_WORKFLOW_SEEDING_QUERY_FIELDS) {
+      expect(queryFieldNames).toContain(fieldName);
+    }
+
+    for (const fieldName of CORE_WORKFLOW_SEEDING_MUTATION_FIELDS) {
+      expect(mutationFieldNames).toContain(fieldName);
+    }
+  });
+
+  it('should let the application read back a workflow it just created', async () => {
+    const workflowName = `Seeded enrichment workflow ${crypto.randomUUID()}`;
+
+    const createResponse = await graphqlAs(
+      authorizedApplication.accessToken,
+      CREATE_CORE_WORKFLOW,
+      { input: { name: workflowName } },
+    );
+
+    expect(createResponse.body.errors).toBeUndefined();
+
+    const createdCoreWorkflowId =
+      createResponse.body.data?.createCoreWorkflow?.id;
+
+    expect(createdCoreWorkflowId).toBeDefined();
+
+    coreWorkflowIdsToDelete.push(createdCoreWorkflowId);
+
+    const readResponse = await graphqlAs(
+      authorizedApplication.accessToken,
+      CORE_WORKFLOW_BY_ID,
+      { coreWorkflowId: createdCoreWorkflowId },
+    );
+
+    expect(readResponse.body.errors).toBeUndefined();
+    expect(readResponse.body.data?.coreWorkflowById?.id).toBe(
+      createdCoreWorkflowId,
+    );
+    expect(readResponse.body.data?.coreWorkflowById?.name).toBe(workflowName);
   });
 });
