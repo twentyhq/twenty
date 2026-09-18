@@ -968,6 +968,7 @@ __metadata:
   dependencies:
     "@types/node": "npm:^24.7.2"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
+    jose: "npm:^6.2.12"
     msw: "npm:^2.12.14"
     oxlint: "npm:^0.16.0"
     twenty-client-sdk: "npm:^2.37.0"
@@ -2095,6 +2096,13 @@ __metadata:
   version: 1.3.0
   resolution: "iterall@npm:1.3.0"
   checksum: 10c0/40de624e5fe937c4c0e511981b91caea9ff2142bfc0316cccc8506eaa03aa253820cc17c5bc5f0a98706c7268a373e5ebee9af9a0c8a359730cf7c05938b57b5
+  languageName: node
+  linkType: hard
+
+"jose@npm:^6.2.12":
+  version: 6.2.12
+  resolution: "jose@npm:6.2.12"
+  checksum: 10c0/e8582b946fabcae228819982dda4849908c353e9cb098f02f773635aa0d2f4917f17484c7441b8d526e564013b4cf96951455c94f81d0a39ee765bad44ce293d
   languageName: node
   linkType: hard
 
