@@ -1483,6 +1483,13 @@ export type CreatePageLayoutWidgetInput = {
   type: WidgetType;
 };
 
+export type CreateRecordExportInput = {
+  fieldMetadataIds: Array<Scalars['UUID']['input']>;
+  filter?: InputMaybe<Scalars['JSON']['input']>;
+  objectMetadataId: Scalars['UUID']['input'];
+  orderBy?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type CreateRoleInput = {
   canAccessAllTools?: InputMaybe<Scalars['Boolean']['input']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2045,6 +2052,7 @@ export type FeatureFlag = {
 
 export enum FeatureFlagKey {
   IS_APP_CLAIMING_ENABLED = 'IS_APP_CLAIMING_ENABLED',
+  IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_INITIAL_OBJECT_VIEW_ENABLED = 'IS_INITIAL_OBJECT_VIEW_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
@@ -2224,6 +2232,7 @@ export enum FileFolder {
   FilesField = 'FilesField',
   GeneratedSdkClient = 'GeneratedSdkClient',
   PublicAsset = 'PublicAsset',
+  RecordExport = 'RecordExport',
   Source = 'Source',
   Workflow = 'Workflow'
 }
@@ -5612,6 +5621,24 @@ export type RatioAggregateConfig = {
   optionValue: Scalars['String']['output'];
 };
 
+export type RecordExport = {
+  __typename?: 'RecordExport';
+  downloadUrl?: Maybe<Scalars['String']['output']>;
+  errorMessage?: Maybe<Scalars['String']['output']>;
+  filename: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  processedRecordCount: Scalars['Int']['output'];
+  status: RecordExportStatus;
+  totalRecordCount?: Maybe<Scalars['Int']['output']>;
+};
+
+export enum RecordExportStatus {
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  PROCESSING = 'PROCESSING',
+  QUEUED = 'QUEUED'
+}
+
 export type RecordIdentifier = {
   __typename?: 'RecordIdentifier';
   id: Scalars['UUID']['output'];
@@ -6016,6 +6043,7 @@ export type SubdomainAvailabilityDto = {
 export type Subscription = {
   __typename?: 'Subscription';
   eventLogsLive?: Maybe<Array<EventLogRecord>>;
+  exportRecords: RecordExport;
   logicFunctionLogs: LogicFunctionLogs;
   onAgentChatEvent: AgentChatEvent;
   onEventSubscription?: Maybe<EventSubscription>;
@@ -6024,6 +6052,11 @@ export type Subscription = {
 
 export type SubscriptionEventLogsLiveArgs = {
   table: EventLogTable;
+};
+
+
+export type SubscriptionExportRecordsArgs = {
+  input: CreateRecordExportInput;
 };
 
 

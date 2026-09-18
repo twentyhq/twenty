@@ -23,6 +23,7 @@ import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/bi
 import { AppBillingModule } from 'src/engine/core-modules/billing/app-billing/app-billing.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
+import { RecordExportModule } from 'src/engine/core-modules/record-export/record-export.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
@@ -91,6 +92,7 @@ import { FileModule } from './file/file.module';
 @Module({
   imports: [
     EnvironmentModule,
+    RecordExportModule,
     TwentyConfigModule.forRoot(),
     HealthModule,
     AuthModule,

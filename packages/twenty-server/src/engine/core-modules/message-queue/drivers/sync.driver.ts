@@ -20,7 +20,7 @@ import { type MessageQueue } from 'src/engine/core-modules/message-queue/message
 export class SyncDriver implements MessageQueueDriver {
   private readonly logger = new Logger(SyncDriver.name);
   private workersMap: {
-    [queueName: string]: (job: MessageQueueJob) => Promise<void> | void;
+    [queueName: string]: (job: MessageQueueJob) => Promise<unknown> | unknown;
   } = {};
 
   private readonly jobs = new Map<
@@ -100,7 +100,7 @@ export class SyncDriver implements MessageQueueDriver {
 
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
-    handler: (job: MessageQueueJob<T>) => Promise<void> | void,
+    handler: (job: MessageQueueJob<T>) => Promise<unknown> | unknown,
   ): void {
     this.logger.log(`Registering handler for queue: ${queueName}`);
     this.workersMap[queueName] = handler;
@@ -131,7 +131,7 @@ export class SyncDriver implements MessageQueueDriver {
         details.progress = progress;
       };
       try {
-        await worker(job);
+        details.result = await worker(job);
         details.state = 'completed';
       } catch (error) {
         details.state = 'failed';
