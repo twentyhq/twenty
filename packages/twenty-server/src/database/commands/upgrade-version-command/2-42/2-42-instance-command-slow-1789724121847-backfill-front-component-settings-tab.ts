@@ -5,7 +5,7 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-@RegisteredInstanceCommand('2.42.0', 1789656830374, { type: 'slow' })
+@RegisteredInstanceCommand('2.42.0', 1789724121847, { type: 'slow' })
 export class BackfillFrontComponentSettingsTabSlowInstanceCommand
   implements SlowInstanceCommand
 {
