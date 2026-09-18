@@ -72,6 +72,14 @@ describe('getRecallBotAutomaticLeave', () => {
     });
   });
 
+  it('caps a single recording at four hours', () => {
+    const automaticLeave = getRecallBotAutomaticLeave(
+      AUTOMATIC_LEAVE_ARGUMENTS,
+    );
+
+    expect(automaticLeave.in_call_recording_timeout).toBe(14_400);
+  });
+
   it('still emits the existing everyone_left_timeout when its env var is set', () => {
     process.env.CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS = '2';
 
