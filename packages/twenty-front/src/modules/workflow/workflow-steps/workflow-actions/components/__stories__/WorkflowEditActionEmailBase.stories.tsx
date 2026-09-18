@@ -16,6 +16,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 
 const MOCK_CONNECTED_ACCOUNT_ID = '20202020-9ac0-4390-9a1a-ab4d2c4e1bb7';
+const TEAMMATE_CONNECTED_ACCOUNT_ID = '20202020-4d6e-4b1c-8f2a-3c5e7a9b1d20';
 
 const mockedConnectedAccounts = [
   {
@@ -217,6 +218,18 @@ const meta: Meta<typeof WorkflowEditActionEmailBase> = {
             },
           });
         }),
+        graphql.query('WorkflowStepConnectedAccountHandle', () => {
+          return HttpResponse.json({
+            data: {
+              workflowStepConnectedAccountHandle: {
+                id: TEAMMATE_CONNECTED_ACCOUNT_ID,
+                handle: 'phil@apple.dev',
+                provider: 'google',
+                handleAliases: [],
+              },
+            },
+          });
+        }),
       ],
     },
   },
@@ -273,6 +286,30 @@ export const Configured: Story = {
 
     const subjectInput = await canvas.findByText('Welcome to Twenty!');
     expect(subjectInput).toBeVisible();
+  },
+};
+
+export const TeammateSender: Story = {
+  args: {
+    action: {
+      ...CONFIGURED_SEND_EMAIL_ACTION,
+      settings: {
+        ...CONFIGURED_SEND_EMAIL_ACTION.settings,
+        input: {
+          ...CONFIGURED_SEND_EMAIL_ACTION.settings.input,
+          connectedAccountId: TEAMMATE_CONNECTED_ACCOUNT_ID,
+        },
+      },
+    },
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('phil@apple.dev')).toBeVisible();
+    expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
   },
 };
 

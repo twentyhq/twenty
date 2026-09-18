@@ -1,27 +1,22 @@
-import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { isCalendarCreationEnabledForAccount } from '@/activities/calendar/utils/isCalendarCreationEnabledForAccount';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { FormBooleanFieldSwitchInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldSwitchInput';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
-import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE } from '@/workflow/graphql/queries/workflowStepConnectedAccountHandle';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowCreateCalendarEventAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useCalendarEventForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useCalendarEventForm';
+import { useWorkflowStepConnectedAccounts } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowStepConnectedAccounts';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -57,9 +52,6 @@ export const WorkflowEditActionCreateCalendarEvent = ({
 
   const navigate = useNavigateSettings();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const apolloCoreClient = useApolloCoreClient();
-  const { accounts: myAccounts, loading: myAccountsLoading } =
-    useMyConnectedAccounts();
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
@@ -67,42 +59,18 @@ export const WorkflowEditActionCreateCalendarEvent = ({
   );
   const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
 
-  const selectedAccount = myAccounts.find(
-    (account) => account.id === formData.connectedAccountId,
-  );
-
-  const { data: otherAccountData, loading: otherAccountLoading } = useQuery<{
-    workflowStepConnectedAccountHandle: Pick<
-      ConnectedAccount,
-      'id' | 'handle'
-    > | null;
-  }>(WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE, {
-    client: apolloCoreClient,
-    variables: { connectedAccountId: formData.connectedAccountId },
-    skip:
-      !isNonEmptyString(formData.connectedAccountId) ||
-      isDefined(selectedAccount),
+  const {
+    accounts,
+    myConfiguredAccount: selectedAccount,
+    loading,
+  } = useWorkflowStepConnectedAccounts({
+    connectedAccountId: formData.connectedAccountId,
+    isSelectableAccount: isCalendarCreationEnabledForAccount,
   });
 
-  const configuredAccount =
-    selectedAccount ??
-    otherAccountData?.workflowStepConnectedAccountHandle ??
-    null;
-
-  const calendarCreationAccounts = myAccounts.filter(
-    isCalendarCreationEnabledForAccount,
+  const connectedAccountOptions: SelectOption<string>[] = accounts.map(
+    (account) => ({ label: account.handle, value: account.id }),
   );
-
-  const isConfiguredAccountListed =
-    !isDefined(configuredAccount) ||
-    calendarCreationAccounts.some(
-      (account) => account.id === configuredAccount.id,
-    );
-
-  const connectedAccountOptions: SelectOption<string>[] = [
-    ...calendarCreationAccounts,
-    ...(isConfiguredAccountListed ? [] : [configuredAccount]),
-  ].map((account) => ({ label: account.handle, value: account.id }));
 
   const missingScopes =
     isDefined(selectedAccount) &&
@@ -130,7 +98,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
     };
   }, [saveAction]);
 
-  if (myAccountsLoading || otherAccountLoading) {
+  if (loading) {
     return null;
   }
 
