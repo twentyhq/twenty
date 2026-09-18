@@ -101,7 +101,12 @@ const StyledTabContentDisplay = styled.div<{ isActiveTab: boolean }>`
 `;
 
 const StyledTabPanel = styled.div`
-  height: 100%;
+  align-items: start;
+  min-height: 100%;
+
+  &:not([hidden]) {
+    display: grid;
+  }
 `;
 
 const StyledScrollWrapperContainer = styled.div`
