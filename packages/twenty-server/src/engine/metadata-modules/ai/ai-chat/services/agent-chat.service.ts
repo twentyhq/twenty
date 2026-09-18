@@ -1499,7 +1499,11 @@ export class AgentChatService {
       );
     }
 
-    await this.getThreadById({ threadId, userWorkspaceId, workspaceId });
+    await this.assertUserWorkspaceWorksThread({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
 
     await this.threadRepository.update(
       workspaceId,
@@ -1752,6 +1756,31 @@ export class AgentChatService {
   }
 
   async unarchiveThread({
+    threadId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<AgentChatThreadEntity> {
+    await this.assertUserWorkspaceWorksThread({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    return this.restoreArchivedThread({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  // Writing into an archived thread brings it back, and whoever may write has
+  // already been checked by the path that is about to write. Going through the
+  // worker gate again would refuse a reply the same call is about to accept.
+  async restoreArchivedThread({
     threadId,
     userWorkspaceId,
     workspaceId,
