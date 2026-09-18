@@ -58,7 +58,7 @@
     gap: var(--t-spacing-0_5);
   }
 
-  & > :focus-within {
+  & > :where(*):focus-within {
     z-index: 1;
   }
 }
