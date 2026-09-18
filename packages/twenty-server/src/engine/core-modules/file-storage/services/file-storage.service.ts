@@ -3,10 +3,16 @@ import { Injectable } from '@nestjs/common';
 import { isString } from '@sniptt/guards';
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
+import { v4 } from 'uuid';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsWhere, Like, type QueryRunner } from 'typeorm';
+import {
+  type FindOptionsWhere,
+  Like,
+  type QueryRunner,
+  type UpdateResult,
+} from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
@@ -18,6 +24,8 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
 import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
+import { buildReleasedStockByApplication } from 'src/engine/core-modules/file-storage/utils/build-released-stock-by-application.util';
+import { buildStockDelta } from 'src/engine/core-modules/file-storage/utils/build-stock-delta.util';
 import { prepareFileForStorageOrThrow } from 'src/engine/core-modules/file-storage/utils/prepare-file-for-storage-or-throw.util';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/validate-folder-path.util';
@@ -26,8 +34,6 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { buildReleasedStockByApplication } from 'src/engine/core-modules/file-storage/utils/build-released-stock-by-application.util';
-import { buildStockDelta } from 'src/engine/core-modules/file-storage/utils/build-stock-delta.util';
 import { STOCK_METERS } from 'src/engine/core-modules/usage-limit/constants/usage-meters.constant';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
@@ -525,6 +531,40 @@ export class FileStorageService {
     return file;
   }
 
+  async markFileUploaded({
+    workspaceId,
+    applicationId,
+    fileId,
+    chargedSize,
+    size,
+    mimeType,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    fileId: string;
+    chargedSize: number;
+    size: number;
+    mimeType: string;
+  }): Promise<UpdateResult> {
+    const updateResult = await this.fileRepository.update(
+      workspaceId,
+      { id: fileId },
+      { status: FILE_STATUS.UPLOADED, mimeType, size },
+    );
+
+    if (updateResult.affected === 0 || size === chargedSize) {
+      return updateResult;
+    }
+
+    await this.applyStorageStockDelta({
+      workspaceId,
+      applicationId,
+      delta: { bytes: size - chargedSize, quantity: 0 },
+    });
+
+    return updateResult;
+  }
+
   async writeFileStream(
     params: ResourceIdentifier & {
       stream: Readable;
@@ -810,7 +850,7 @@ export class FileStorageService {
     fileId: string;
     size: number;
     mimeType: string;
-    settings: FileSettings;
+    settings: FileSettings | null;
   }): Promise<FileEntity> {
     const { filePath } = this.validateAndBuildFileStoragePathOrThrow(to);
     const delta = { bytes: size, quantity: 1 };
@@ -840,6 +880,45 @@ export class FileStorageService {
     });
 
     return file;
+  }
+
+  async copyFileByPath({
+    from,
+    to,
+  }: {
+    from: ResourceIdentifier;
+    to: ResourceIdentifier;
+  }): Promise<FileEntity> {
+    const { filePath } = this.validateAndBuildFileStoragePathOrThrow(from);
+
+    const [sourceApplicationId, destinationApplicationId] = await Promise.all([
+      this.resolveApplicationIdOrThrow(from),
+      this.resolveApplicationIdOrThrow(to),
+    ]);
+
+    const sourceFile = await this.findFileByPath({
+      fileRepository: this.fileRepository,
+      workspaceId: from.workspaceId,
+      filePath,
+      applicationId: sourceApplicationId,
+    });
+
+    if (!isDefined(sourceFile)) {
+      throw new FileStorageException(
+        `File not found at path "${filePath}"`,
+        FileStorageExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    return this.copyFile({
+      from,
+      to,
+      applicationId: destinationApplicationId,
+      fileId: v4(),
+      mimeType: sourceFile.mimeType,
+      size: sourceFile.size,
+      settings: sourceFile.settings,
+    });
   }
 
   async copy({
