@@ -3396,6 +3396,8 @@ type AgentChatThread {
   snoozedUntil: DateTime
   assigneeUserWorkspaceId: UUID
   mentionedUserWorkspaceIds: [UUID!]!
+  assistantLastReadAt: DateTime
+  assistantLastReadMessageId: UUID
   deletedAt: DateTime
   lastMessageAt: DateTime
   lastMessagePreview: String
@@ -3433,6 +3435,14 @@ type AgentChatThreadParticipant {
 enum AgentChatThreadParticipantRole {
   OWNER
   MEMBER
+}
+
+type AgentChatThreadRead {
+  id: ID!
+  threadId: UUID!
+  userWorkspaceId: UUID!
+  lastReadAt: DateTime!
+  lastReadMessageId: UUID
 }
 
 type AiSystemPromptSection {
@@ -3836,6 +3846,8 @@ type Query {
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatThreadParticipants(threadId: UUID!): [AgentChatThreadParticipant!]!
+  chatThreadReads(threadId: UUID!): [AgentChatThreadRead!]!
+  unreadChatThreadIds(threadIds: [UUID!]!): [UUID!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAiSystemPromptPreview: AiSystemPromptPreview!
   chatChannels: [AgentChatChannel!]!
@@ -4168,6 +4180,7 @@ type Mutation {
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
+  markChatThreadRead(threadId: UUID!): AgentChatThreadRead!
   addChatThreadParticipant(threadId: UUID!, userWorkspaceId: UUID!): AgentChatThreadParticipant!
   removeChatThreadParticipant(threadId: UUID!, userWorkspaceId: UUID!): Boolean!
   createChatThread(channelId: UUID): AgentChatThread!

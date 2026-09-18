@@ -2997,6 +2997,8 @@ export interface AgentChatThread {
     snoozedUntil?: Scalars['DateTime']
     assigneeUserWorkspaceId?: Scalars['UUID']
     mentionedUserWorkspaceIds: Scalars['UUID'][]
+    assistantLastReadAt?: Scalars['DateTime']
+    assistantLastReadMessageId?: Scalars['UUID']
     deletedAt?: Scalars['DateTime']
     lastMessageAt?: Scalars['DateTime']
     lastMessagePreview?: Scalars['String']
@@ -3031,6 +3033,15 @@ export interface AgentChatThreadParticipant {
 }
 
 export type AgentChatThreadParticipantRole = 'OWNER' | 'MEMBER'
+
+export interface AgentChatThreadRead {
+    id: Scalars['ID']
+    threadId: Scalars['UUID']
+    userWorkspaceId: Scalars['UUID']
+    lastReadAt: Scalars['DateTime']
+    lastReadMessageId?: Scalars['UUID']
+    __typename: 'AgentChatThreadRead'
+}
 
 export interface AiSystemPromptSection {
     title: Scalars['String']
@@ -3367,6 +3378,8 @@ export interface Query {
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
     chatThreadParticipants: AgentChatThreadParticipant[]
+    chatThreadReads: AgentChatThreadRead[]
+    unreadChatThreadIds: Scalars['UUID'][]
     chatStreamCatchupChunks: ChatStreamCatchupChunks
     getAiSystemPromptPreview: AiSystemPromptPreview
     chatChannels: AgentChatChannel[]
@@ -3588,6 +3601,7 @@ export interface Mutation {
     enqueueJob: EnqueueJobResult
     enqueueJobs: EnqueueJobsResult
     reportAppConnectionAuthFailure: Scalars['Boolean']
+    markChatThreadRead: AgentChatThreadRead
     addChatThreadParticipant: AgentChatThreadParticipant
     removeChatThreadParticipant: Scalars['Boolean']
     createChatThread: AgentChatThread
@@ -6821,6 +6835,8 @@ export interface AgentChatThreadGenqlSelection{
     snoozedUntil?: boolean | number
     assigneeUserWorkspaceId?: boolean | number
     mentionedUserWorkspaceIds?: boolean | number
+    assistantLastReadAt?: boolean | number
+    assistantLastReadMessageId?: boolean | number
     deletedAt?: boolean | number
     lastMessageAt?: boolean | number
     lastMessagePreview?: boolean | number
@@ -6851,6 +6867,16 @@ export interface AgentChatThreadParticipantGenqlSelection{
     userWorkspaceId?: boolean | number
     role?: boolean | number
     createdAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatThreadReadGenqlSelection{
+    id?: boolean | number
+    threadId?: boolean | number
+    userWorkspaceId?: boolean | number
+    lastReadAt?: boolean | number
+    lastReadMessageId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7203,6 +7229,8 @@ export interface QueryGenqlSelection{
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     chatThreadParticipants?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    chatThreadReads?: (AgentChatThreadReadGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    unreadChatThreadIds?: { __args: {threadIds: Scalars['UUID'][]} }
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
     chatChannels?: AgentChatChannelGenqlSelection
@@ -7461,6 +7489,7 @@ export interface MutationGenqlSelection{
     enqueueJob?: (EnqueueJobResultGenqlSelection & { __args: {input: EnqueueJobInput} })
     enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
     reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
+    markChatThreadRead?: (AgentChatThreadReadGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     addChatThreadParticipant?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID'], userWorkspaceId: Scalars['UUID']} })
     removeChatThreadParticipant?: { __args: {threadId: Scalars['UUID'], userWorkspaceId: Scalars['UUID']} }
     createChatThread?: (AgentChatThreadGenqlSelection & { __args?: {channelId?: (Scalars['UUID'] | null)} })
@@ -10244,6 +10273,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isAgentChatThreadParticipant = (obj?: { __typename?: any } | null): obj is AgentChatThreadParticipant => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThreadParticipant"')
       return AgentChatThreadParticipant_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatThreadRead_possibleTypes: string[] = ['AgentChatThreadRead']
+    export const isAgentChatThreadRead = (obj?: { __typename?: any } | null): obj is AgentChatThreadRead => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThreadRead"')
+      return AgentChatThreadRead_possibleTypes.includes(obj.__typename)
     }
     
 
