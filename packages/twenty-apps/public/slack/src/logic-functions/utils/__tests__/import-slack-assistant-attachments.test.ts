@@ -50,7 +50,11 @@ describe('importSlackAssistantAttachments', () => {
         botToken: 'xoxb-token',
         deadlineAtMs: Date.now() + 60_000,
       }),
-    ).toEqual({ attachments: [], attachedFileNames: [], attachedSourceFiles: [] });
+    ).toEqual({
+      attachments: [],
+      attachedFileNames: [],
+      attachedSourceFiles: [],
+    });
   });
 
   it('should attach nothing when the Slack connection has no token', async () => {
@@ -61,7 +65,11 @@ describe('importSlackAssistantAttachments', () => {
         botToken: undefined,
         deadlineAtMs: Date.now() + 60_000,
       }),
-    ).toEqual({ attachments: [], attachedFileNames: [], attachedSourceFiles: [] });
+    ).toEqual({
+      attachments: [],
+      attachedFileNames: [],
+      attachedSourceFiles: [],
+    });
 
     expect(downloadSlackFile).not.toHaveBeenCalled();
   });
@@ -79,7 +87,11 @@ describe('importSlackAssistantAttachments', () => {
       { ...PNG_FILE, name: 'notes.txt', mimetype: 'text/plain' },
     ]);
 
-    expect(result).toEqual({ attachments: [], attachedFileNames: [], attachedSourceFiles: [] });
+    expect(result).toEqual({
+      attachments: [],
+      attachedFileNames: [],
+      attachedSourceFiles: [],
+    });
     expect(downloadSlackFile).not.toHaveBeenCalled();
   });
 
@@ -153,7 +165,11 @@ describe('importSlackAssistantAttachments', () => {
       deadlineAtMs: Date.now() - 1,
     });
 
-    expect(result).toEqual({ attachments: [], attachedFileNames: [], attachedSourceFiles: [] });
+    expect(result).toEqual({
+      attachments: [],
+      attachedFileNames: [],
+      attachedSourceFiles: [],
+    });
     expect(downloadSlackFile).not.toHaveBeenCalled();
   });
 

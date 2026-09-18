@@ -56,10 +56,12 @@ export const importSlackAssistantAttachments = async ({
   }
 
   const resolvedFiles = await Promise.all(
-    files.map(async (file): Promise<ResolvedSlackFile> => ({
-      resolved: await resolveSlackFileDetails({ client, file }),
-      sourceFile: file,
-    })),
+    files.map(
+      async (file): Promise<ResolvedSlackFile> => ({
+        resolved: await resolveSlackFileDetails({ client, file }),
+        sourceFile: file,
+      }),
+    ),
   );
   const candidates = resolvedFiles.filter(isResolvedAttachmentCandidate);
 
@@ -67,7 +69,11 @@ export const importSlackAssistantAttachments = async ({
     return NO_ATTACHMENTS;
   }
 
-  const metadataClient = new MetadataApiClient();
+  // the PUT carries its own timeout, but the surrounding GraphQL calls only
+  // stop on the client's signal, and an unbounded one eats the agent's budget
+  const metadataClient = new MetadataApiClient({
+    signal: AbortSignal.timeout(Math.max(deadlineAtMs - Date.now(), 1)),
+  });
   const imported: ImportedSlackAttachments = {
     attachments: [],
     attachedFileNames: [],
