@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { MenuItem, MenuItemAvatar } from 'twenty-ui/components';
+import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useWorkspaceMemberSearch } from 'src/front-components/hooks/use-workspace-member-search';
@@ -117,10 +117,10 @@ export const InlineWorkspaceMemberPickerPanel = ({
             <div key={member.id} role="option" aria-selected={false}>
               <MenuItemAvatar
                 avatar={{
-                  shape: 'circle',
+                  type: 'rounded',
                   size: 'md',
-                  name: getMemberDisplayName(member),
-                  colorSeed: member.id,
+                  placeholder: getMemberDisplayName(member),
+                  placeholderColorSeed: member.id,
                 }}
                 text={getMemberDisplayName(member)}
                 contextualText={member.userEmail ?? undefined}

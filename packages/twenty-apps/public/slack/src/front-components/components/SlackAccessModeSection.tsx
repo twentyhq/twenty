@@ -2,11 +2,12 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
-import { Section } from 'twenty-ui/components';
 import { IconLock } from 'twenty-ui/icon';
-import { Card } from 'twenty-ui/primitives/surfaces';
+import { Section } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 
 import { Toggle } from 'src/front-components/components/Toggle';
 import { useSlackAccessMode } from 'src/front-components/hooks/use-slack-access-mode';
@@ -135,8 +136,8 @@ export const SlackAccessModeSection = ({
   const description = getDescription({ hasAccessModeError, isRestricted });
 
   return (
-    <Section.Root>
-      <Section.Header
+    <Section>
+      <H2Title
         title="Access"
         description="Choose who the assistant answers in Slack."
       />
@@ -165,6 +166,6 @@ export const SlackAccessModeSection = ({
           </StyledToggleContainer>
         </StyledCardContent>
       </Card>
-    </Section.Root>
+    </Section>
   );
 };

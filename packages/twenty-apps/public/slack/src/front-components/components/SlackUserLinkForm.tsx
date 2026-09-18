@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Section } from 'twenty-ui/components';
-import { Button } from 'twenty-ui/primitives/input';
+import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 
 import { ResolvedSlackUserField } from 'src/front-components/components/ResolvedSlackUserField';
 import { SlackConnectUserIdFields } from 'src/front-components/components/SlackConnectUserIdFields';
@@ -131,8 +132,8 @@ export const SlackUserLinkForm = ({
   };
 
   return (
-    <Section.Root>
-      <Section.Header
+    <Section>
+      <H2Title
         title="Link a Slack user"
         description="Pick a workspace member and the Slack account whose messages should act with that member's permissions. A link whose Slack email matches the member activates immediately; other in-workspace links ask the Slack user to approve first."
       />
@@ -195,12 +196,11 @@ export const SlackUserLinkForm = ({
               <StyledDisclosure>
                 <Button
                   type="button"
-                  size="sm"
-                  variant="ghost"
+                  title="Guest or Slack Connect user? Link by Slack ID instead"
+                  size="small"
+                  variant="tertiary"
                   onClick={() => setIsConnectUser(true)}
-                >
-                  {'Guest or Slack Connect user? Link by Slack ID instead'}
-                </Button>
+                />
               </StyledDisclosure>
             )}
             {isResolving ? (
@@ -236,15 +236,14 @@ export const SlackUserLinkForm = ({
         <StyledActions>
           <Button
             type="button"
-            variant="solid"
-            color="accent"
+            title={isSubmitting ? 'Saving…' : 'Save link'}
+            variant="primary"
+            accent="blue"
             disabled={!canSubmit}
             onClick={handleSubmit}
-          >
-            {isSubmitting ? 'Saving…' : 'Save link'}
-          </Button>
+          />
         </StyledActions>
       </StyledForm>
-    </Section.Root>
+    </Section>
   );
 };

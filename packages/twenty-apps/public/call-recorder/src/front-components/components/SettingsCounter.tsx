@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
-import { IconButton } from 'twenty-ui/components';
 import { IconMinus, IconPlus } from 'twenty-ui/icon';
+import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
@@ -110,12 +110,12 @@ export const SettingsCounter = ({
     <StyledCounterContainer $showButtons={showButtons}>
       {showButtons && (
         <IconButton
-          size="sm"
-          children={<IconMinus />}
-          variant="outline"
+          size="small"
+          Icon={IconMinus}
+          variant="secondary"
           onClick={handleDecrementCounter}
           disabled={disabled}
-          aria-label="Decrease"
+          ariaLabel="Decrease"
         />
       )}
       <StyledTextInputContainer>
@@ -134,12 +134,12 @@ export const SettingsCounter = ({
       </StyledTextInputContainer>
       {showButtons && (
         <IconButton
-          size="sm"
-          children={<IconPlus />}
-          variant="outline"
+          size="small"
+          Icon={IconPlus}
+          variant="secondary"
           onClick={handleIncrementCounter}
           disabled={disabled}
-          aria-label="Increase"
+          ariaLabel="Increase"
         />
       )}
     </StyledCounterContainer>

@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 
 import { Separator } from 'src/front-components/components/Separator';
 import {

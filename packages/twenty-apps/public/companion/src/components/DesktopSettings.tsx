@@ -1,8 +1,8 @@
-import { Section } from 'twenty-ui/components';
 import { useEffect, useState } from 'react';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { useTranslate } from 'twenty-sdk/front-component';
-import { Button } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/input';
+import { H2Title } from 'twenty-ui/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/APPLICATION_UNIVERSAL_IDENTIFIER';
@@ -118,7 +118,7 @@ export const DesktopSettings = () => {
         gap: themeCssVariables.spacing[4],
       }}
     >
-      <Section.Header
+      <H2Title
         title={t('Twenty for macOS')}
         description={t(
           'Record meetings on your computer and find transcripts and summaries in this workspace.',

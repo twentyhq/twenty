@@ -3,9 +3,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
-import { Avatar } from 'twenty-ui/primitives/data-display';
-import { Button } from 'twenty-ui/primitives/input';
+import { Avatar } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InlineWorkspaceMemberPicker } from 'src/front-components/components/InlineWorkspaceMemberPicker';
@@ -98,9 +98,9 @@ export const UnlinkedSlackUserRow = ({
       <SlackTableCell>
         <StyledIdentity>
           <Avatar
-            name={displayedName}
-            colorSeed={slackUser.slackUserId}
-            shape="circle"
+            placeholder={displayedName}
+            placeholderColorSeed={slackUser.slackUserId}
+            type="rounded"
             size="md"
           />
           <StyledName>
@@ -125,14 +125,13 @@ export const UnlinkedSlackUserRow = ({
           <StyledLinkControls>
             <Button
               type="button"
-              size="sm"
-              variant="outline"
-              color="accent"
+              title={isSubmitting ? 'Linking…' : 'Link'}
+              size="small"
+              variant="secondary"
+              accent="blue"
               disabled={!isDefined(selectedMember) || isSubmitting}
               onClick={handleLink}
-            >
-              {isSubmitting ? 'Linking…' : 'Link'}
-            </Button>
+            />
           </StyledLinkControls>
         </StyledMemberCell>
       </SlackTableCell>

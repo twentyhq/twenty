@@ -1,4 +1,4 @@
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/layout';
 
 import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
 import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
@@ -27,7 +27,7 @@ export const SchedulingSection = ({
   };
 
   return (
-    <Section.Root>
+    <Section>
       <StyledSettingsCard>
         <SettingsOptionCardContentToggle
           Icon={CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ROW.Icon}
@@ -37,6 +37,6 @@ export const SchedulingSection = ({
           onChange={handleChange}
         />
       </StyledSettingsCard>
-    </Section.Root>
+    </Section>
   );
 };

@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { defineSettingsFrontComponent } from 'twenty-sdk/define';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
-import { MainButton, Section } from 'twenty-ui/components';
+import { MainButton } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import 'twenty-ui/style.css';
 
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -28,9 +30,7 @@ const LastContactSettings = () => {
         },
       });
       enqueueSnackbar({
-        message: t(
-          'Backfill requested. Records will update in the background.',
-        ),
+        message: t('Backfill requested. Records will update in the background.'),
         variant: 'success',
       });
     } catch {
@@ -44,8 +44,8 @@ const LastContactSettings = () => {
   };
 
   return (
-    <Section.Root>
-      <Section.Header
+    <Section>
+      <H2Title
         title={t('Backfill last contact')}
         description={t(
           'Recompute last-contact fields for people, companies, and opportunities from synced emails and meetings.',
@@ -58,14 +58,13 @@ const LastContactSettings = () => {
       >
         {t('Trigger backfill')}
       </MainButton>
-    </Section.Root>
+    </Section>
   );
 };
 
 export default defineSettingsFrontComponent({
   universalIdentifier: 'fc7e3633-efd9-4d58-a642-39b9b86096d3',
   name: 'last-contact-settings',
-  description:
-    'Backfill last-contact fields from existing emails and meetings.',
+  description: 'Backfill last-contact fields from existing emails and meetings.',
   component: LastContactSettings,
 });
