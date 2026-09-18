@@ -284,7 +284,7 @@ export class LogicFunctionResolver {
       workspaceId: workspace.id,
     });
 
-    return wrapAsyncIteratorWithLifecycle(iterator, {
+    return wrapAsyncIteratorWithLifecycle(() => iterator, {
       onHeartbeat: async () => {
         await this.eventLogLiveService.markWatched(
           workspace.id,

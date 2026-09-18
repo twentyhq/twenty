@@ -1,3 +1,4 @@
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -54,6 +55,7 @@ const MAX_EXECUTED_STEPS_COUNT = 20;
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
   constructor(
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly usageRecorderService: UsageRecorderService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
@@ -118,6 +120,19 @@ export class WorkflowExecutorWorkspaceService {
       });
 
       return;
+    }
+
+    const workflow = isDefined(workflowRun.coreWorkflowId)
+      ? await this.workflowCoreSyncService.findCoreWorkflowById(
+          workspaceId,
+          workflowRun.coreWorkflowId,
+        )
+      : null;
+
+    if (!isDefined(workflow)) {
+      throw new Error(
+        `Workflow run ${workflowRun.id} has no core workflow identity for billing`,
+      );
     }
 
     let actionOutput: WorkflowActionOutput;
@@ -203,7 +218,9 @@ export class WorkflowExecutorWorkspaceService {
       !actionOutput.shouldFailSafely &&
       !actionOutput.shouldSkipStepExecution
     ) {
-      await this.sendWorkflowNodeRunEvent(workspaceId, workflowRun.workflowId);
+      const billingWorkflowId = workflow.workspaceWorkflowId ?? workflow.id;
+
+      await this.sendWorkflowNodeRunEvent(workspaceId, billingWorkflowId);
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({

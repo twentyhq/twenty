@@ -154,7 +154,11 @@ export const SettingsLogicFunctionDetail = () => {
         }
         links={breadcrumbLinks}
         secondaryBar={
-          <SettingsTabBar tabs={tabs} componentInstanceId={instanceId} />
+          <SettingsTabBar
+            aria-label={t`Function details`}
+            tabs={tabs}
+            componentInstanceId={instanceId}
+          />
         }
       >
         <SettingsPageContainer>

@@ -264,7 +264,7 @@ export const SelectAndFormatText: Story = {
     await expect(jotaiStore.get(EDITING_WIDGET_ATOM)).toBe('other-widget');
     await userEvent.click(bold);
     await waitFor(() =>
-      expect(canvas.getByText('instructions').closest('strong')).not.toBeNull(),
+      expect(canvas.getByText(/instructions/).closest('strong')).not.toBeNull(),
     );
     await expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
     await expect(await canvas.findByRole('textbox')).toBe(editor);

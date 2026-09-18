@@ -169,6 +169,7 @@ export class CoreWorkflowMutationWorkspaceService {
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId: initialDraft.id,
+      expectedVersion: initialDraft,
       trigger,
       steps,
     });
@@ -237,16 +238,16 @@ export class CoreWorkflowMutationWorkspaceService {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
-          await transactionScope.executeRawQuery(
-            `UPDATE core."workflow" SET "name" = $1, "updatedAt" = now() WHERE "id" = $2 AND "workspaceId" = $3`,
-            [name, coreWorkflowId, workspaceId],
-          );
-
           await transactionScope
             .getRepository<WorkflowWorkspaceEntity>('workflow', {
               shouldBypassPermissionChecks: true,
             })
             .update({ id: workspaceWorkflowId }, { name });
+
+          await transactionScope.executeRawQuery(
+            `UPDATE core."workflow" SET "name" = $1, "updatedAt" = now() WHERE "id" = $2 AND "workspaceId" = $3`,
+            [name, coreWorkflowId, workspaceId],
+          );
         },
       );
     }, buildSystemAuthContext(workspaceId));
