@@ -18,7 +18,10 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import {
+  type FlatIndexFieldMetadata,
+  type FlatIndexMetadata,
+} from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -74,7 +77,7 @@ const buildArgs = (targetLegs: TargetLegSpecification[]) => {
 
     fieldIdsByHolder[leg.holderNameSingular].push(fieldId);
     flatFieldMetadatas.push(
-      getFlatFieldMetadataMock({
+      getFlatFieldMetadataMock<FieldMetadataType.MORPH_RELATION>({
         id: fieldId,
         universalIdentifier: `uid-${fieldId}`,
         objectMetadataId: `object-${leg.holderNameSingular}`,
@@ -90,7 +93,7 @@ const buildArgs = (targetLegs: TargetLegSpecification[]) => {
         },
         applicationUniversalIdentifier:
           leg.applicationUniversalIdentifier ?? CUSTOM_APP_UID,
-      } as Parameters<typeof getFlatFieldMetadataMock>[0]),
+      }),
     );
 
     if (leg.indexedAtPosition === undefined) {
@@ -109,15 +112,18 @@ const buildArgs = (targetLegs: TargetLegSpecification[]) => {
         objectMetadataUniversalIdentifier:
           STANDARD_OBJECTS[leg.holderNameSingular].universalIdentifier,
         applicationUniversalIdentifier: CUSTOM_APP_UID,
-        flatIndexFieldMetadatas: indexFieldIds.map((indexFieldId, order) => ({
-          id: `index-field-${fieldId}-${order}`,
-          indexMetadataId: `index-${fieldId}`,
-          fieldMetadataId: indexFieldId,
-          order,
-          subFieldName: null,
-          createdAt: '2024-01-01T00:00:00.000Z',
-          updatedAt: '2024-01-01T00:00:00.000Z',
-        })) as FlatIndexMetadata['flatIndexFieldMetadatas'],
+        flatIndexFieldMetadatas: indexFieldIds.map(
+          (indexFieldId, order): FlatIndexFieldMetadata => ({
+            id: `index-field-${fieldId}-${order}`,
+            indexMetadataId: `index-${fieldId}`,
+            fieldMetadataId: indexFieldId,
+            order,
+            subFieldName: null,
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+            workspaceId: 'workspace-id',
+          }),
+        ),
       }),
     );
   }

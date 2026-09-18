@@ -1,4 +1,5 @@
 import { Command } from 'nest-commander';
+import { type DataSource, type QueryRunner } from 'typeorm';
 import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
   STANDARD_OBJECTS,
@@ -130,6 +131,13 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
       await queryRunner.connect();
       isQueryRunnerConnected = true;
 
+      await this.dropInvalidIndexes({
+        dataSource,
+        queryRunner,
+        workspaceId,
+        indexesToCreate,
+      });
+
       for (const { missingIndex, schemaName, tableName } of indexesToCreate) {
         await this.workspaceSchemaManagerService.indexManager.createIndex({
           queryRunner,
@@ -204,5 +212,52 @@ export class BackfillMissingSystemRelationIndexesCommand extends ProvisionedWork
     this.logger.log(
       `Backfilled ${missingIndexes.length} system relation index(es) for workspace ${workspaceId}`,
     );
+  }
+
+  private async dropInvalidIndexes({
+    dataSource,
+    queryRunner,
+    workspaceId,
+    indexesToCreate,
+  }: {
+    dataSource: DataSource;
+    queryRunner: QueryRunner;
+    workspaceId: string;
+    indexesToCreate: {
+      missingIndex: MissingSystemRelationIndex;
+      schemaName: string;
+    }[];
+  }): Promise<void> {
+    const indexNamesBySchemaName = new Map<string, string[]>();
+
+    for (const { missingIndex, schemaName } of indexesToCreate) {
+      indexNamesBySchemaName.set(schemaName, [
+        ...(indexNamesBySchemaName.get(schemaName) ?? []),
+        missingIndex.universalFlatIndexMetadata.name,
+      ]);
+    }
+
+    for (const [schemaName, indexNames] of indexNamesBySchemaName) {
+      const invalidIndexes = await dataSource.query<{ name: string }[]>(
+        `SELECT c.relname AS name
+         FROM pg_index i
+         JOIN pg_class c ON c.oid = i.indexrelid
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+         WHERE n.nspname = $1 AND c.relname = ANY($2) AND NOT i.indisvalid`,
+        [schemaName, indexNames],
+      );
+
+      for (const { name } of invalidIndexes) {
+        await this.workspaceSchemaManagerService.indexManager.dropIndex({
+          queryRunner,
+          schemaName,
+          indexName: name,
+        });
+
+        this.logger.warn(
+          `Dropped invalid index ${name} left by an interrupted build in workspace ${workspaceId}, recreating it`,
+        );
+      }
+    }
   }
 }
