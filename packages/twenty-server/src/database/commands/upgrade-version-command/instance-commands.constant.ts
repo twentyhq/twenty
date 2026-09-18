@@ -194,11 +194,11 @@ import { AddWorkspaceWorkflowVersionIdToWorkflowVersionFastInstanceCommand } fro
 import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789373200000-add-readability-parent-fields-to-object-metadata';
 import { AddAppMessageChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789395506192-add-app-message-channel-type';
 import { AddAppMessageChannelUniqueHandleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789418882171-add-app-message-channel-unique-handle';
-import { AddAgentChatThreadParticipantsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789653152702-add-agent-chat-thread-participants';
-import { BackfillAgentChatThreadParticipantsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1789653152703-backfill-agent-chat-thread-participants';
-import { AddAgentChatChannelsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789653152704-add-agent-chat-channels';
-import { AddAgentChatChannelRolesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789658820136-add-agent-chat-channel-roles';
-import { AddAgentChatThreadWorkflowRunFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789661780921-add-agent-chat-thread-workflow-run';
+import { AddAgentChatThreadParticipantsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789717346443-add-agent-chat-thread-participants';
+import { BackfillAgentChatThreadParticipantsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1789717346444-backfill-agent-chat-thread-participants';
+import { AddAgentChatChannelsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789717346445-add-agent-chat-channels';
+import { AddAgentChatChannelRolesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789717346446-add-agent-chat-channel-roles';
+import { AddAgentChatThreadWorkflowRunFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789717346447-add-agent-chat-thread-workflow-run';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
