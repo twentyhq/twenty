@@ -7,8 +7,5 @@ export type ApplicationRegistrationGithubClaimStateJwtPayload =
     applicationRegistrationId: string;
     workspaceId: string;
     userId: string | null;
-    // sha256 of the nonce stored in the claim-state cookie of the browser that
-    // started the flow: the state alone is not proof of anything, since the
-    // whole authorization url can be forwarded to someone else.
     nonceHash: string;
   };

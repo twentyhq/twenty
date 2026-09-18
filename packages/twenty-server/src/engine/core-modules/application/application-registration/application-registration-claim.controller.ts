@@ -45,7 +45,6 @@ export class ApplicationRegistrationClaimController {
     const stateNonce =
       this.claimStateCookieService.extractNonceFromRequest(req);
 
-    // One claim per authorization url, whatever its outcome.
     this.claimStateCookieService.clearNonceCookie(res);
 
     try {

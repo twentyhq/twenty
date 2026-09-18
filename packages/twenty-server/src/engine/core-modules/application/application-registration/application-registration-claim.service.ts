@@ -225,10 +225,6 @@ export class ApplicationRegistrationClaimService {
     ];
   }
 
-  // The callback is public and its state travels in a url, so anyone can
-  // forward a state they minted to someone else and have that person's GitHub
-  // identity complete the claim into the forwarder's workspace. The nonce only
-  // ever reaches the browser that started the flow, as a cookie.
   private assertStateNonceMatches(
     statePayload: ApplicationRegistrationGithubClaimStateJwtPayload,
     stateNonce: string | undefined,

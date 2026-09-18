@@ -47,9 +47,6 @@ export class ApplicationRegistrationClaimStateCookieService {
       return secureNonce;
     }
 
-    // The plain name is only read on deployments that cannot set a __Host-
-    // cookie at all (plain http). Accepting it on an https deployment would
-    // let a sibling subdomain plant the nonce the claim is bound to.
     if (this.isSecureDeployment()) {
       return undefined;
     }
@@ -83,8 +80,6 @@ export class ApplicationRegistrationClaimStateCookieService {
     return {
       httpOnly: true,
       secure: this.isSecureDeployment(),
-      // Lax so GitHub's top-level redirect back to the callback still carries
-      // the cookie, while cross-site POSTs never do.
       sameSite: this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE'),
       path: '/',
     };
@@ -94,7 +89,6 @@ export class ApplicationRegistrationClaimStateCookieService {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
     const sameSite = this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE');
 
-    // SameSite=None is rejected by browsers without Secure, so it forces it.
     return isHttpsUrl(serverUrl) || sameSite === 'none';
   }
 }
