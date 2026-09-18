@@ -35,6 +35,7 @@ import { AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-ch
 import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
 import { AgentChatThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-status.enum';
 import { buildThreadAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-access-where.util';
+import { buildThreadWorkerWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-worker-where.util';
 import { isForeignKeyViolation } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-foreign-key-violation.util';
 import {
   AiException,
@@ -1498,9 +1499,10 @@ export class AgentChatService {
     return updated;
   }
 
-  // Anyone who can read a thread can move it through the inbox: a shared inbox
-  // is worked by whoever picks it up, so this is deliberately not owner-only
-  // the way renaming and deleting are.
+  // Anyone working a thread can move it through the inbox: a shared inbox is
+  // worked by whoever picks it up, so this is deliberately not owner-only the
+  // way renaming and deleting are. Reading is not enough, or a passer-by on a
+  // public channel could clear that team's inbox for them.
   async setThreadStatus({
     threadId,
     status,
@@ -1515,6 +1517,12 @@ export class AgentChatService {
     workspaceId: string;
   }): Promise<AgentChatThreadEntity> {
     const thread = await this.getThreadById({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    await this.assertUserWorkspaceWorksThread({
       threadId,
       userWorkspaceId,
       workspaceId,
@@ -1572,6 +1580,12 @@ export class AgentChatService {
       workspaceId,
     });
 
+    await this.assertUserWorkspaceWorksThread({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+
     // Assigning to someone who cannot open the thread would hide work on a
     // list they can never clear, so the assignee is resolved through the same
     // read check the assigner went through.
@@ -1594,6 +1608,59 @@ export class AgentChatService {
     await this.broadcastThreadUpdated(thread, ['assigneeUserWorkspaceId']);
 
     return thread;
+  }
+
+  private async assertUserWorkspaceWorksThread({
+    threadId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: buildThreadWorkerWhere({ id: threadId, userWorkspaceId }),
+    });
+
+    if (!isDefined(thread)) {
+      throw new AiException(
+        'Join this channel to work on its chats',
+        AiExceptionCode.THREAD_NOT_JOINED,
+      );
+    }
+  }
+
+  // The assistant answering is a reply too. A thread put away while its stream
+  // was still running would otherwise keep the new answer in Done, where
+  // nobody goes looking. There is no reader to resolve here, since the stream
+  // job runs for the thread rather than for a person, so the thread is read
+  // directly instead of through an access check.
+  async reopenThreadOnAssistantMessage({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
+
+    if (!isDefined(thread)) {
+      return;
+    }
+
+    const wasReopened = await this.reopenThreadOnNewMessage({
+      thread,
+      workspaceId,
+    });
+
+    if (!wasReopened) {
+      return;
+    }
+
+    await this.broadcastThreadUpdated(thread, ['status', 'snoozedUntil']);
   }
 
   // A reply is the one thing that overrides someone having put a thread away:

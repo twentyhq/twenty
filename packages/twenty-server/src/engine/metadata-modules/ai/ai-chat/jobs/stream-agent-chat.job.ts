@@ -874,6 +874,11 @@ export class StreamAgentChatJob {
       });
     }
 
+    await this.agentChatService.reopenThreadOnAssistantMessage({
+      threadId,
+      workspaceId,
+    });
+
     const totalsUpdate = await this.threadRepository.update(
       workspaceId,
       { id: threadId, activeStreamId: streamId },

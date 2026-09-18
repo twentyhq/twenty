@@ -13,6 +13,7 @@ export enum AiExceptionCode {
   THREAD_NOT_FOUND = 'THREAD_NOT_FOUND',
   THREAD_PARTICIPANT_NOT_FOUND = 'THREAD_PARTICIPANT_NOT_FOUND',
   THREAD_ACTION_NOT_ALLOWED = 'THREAD_ACTION_NOT_ALLOWED',
+  THREAD_NOT_JOINED = 'THREAD_NOT_JOINED',
   CHANNEL_NOT_FOUND = 'CHANNEL_NOT_FOUND',
   CHANNEL_MEMBER_NOT_FOUND = 'CHANNEL_MEMBER_NOT_FOUND',
   CHANNEL_ROLE_NOT_FOUND = 'CHANNEL_ROLE_NOT_FOUND',
@@ -55,6 +56,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This person is not part of the chat thread.`;
     case AiExceptionCode.THREAD_ACTION_NOT_ALLOWED:
       return msg`Only the owner of the chat thread can do this.`;
+    case AiExceptionCode.THREAD_NOT_JOINED:
+      return msg`Join this channel to work on its chats.`;
     case AiExceptionCode.CHANNEL_NOT_FOUND:
       return msg`Channel not found.`;
     case AiExceptionCode.CHANNEL_MEMBER_NOT_FOUND:

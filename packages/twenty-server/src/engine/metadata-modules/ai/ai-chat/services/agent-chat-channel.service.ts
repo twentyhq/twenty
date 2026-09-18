@@ -778,6 +778,18 @@ export class AgentChatChannelService {
       workspaceId,
     });
 
+    // A run conversation is the agent's own trace for that run, tool calls and
+    // approval questions included, and it is opened as a thread of one person
+    // on purpose. Moving it into a channel would publish the trace and hand
+    // the approval to everyone reading, so the run's initiator cannot do it
+    // either.
+    if (isDefined(thread.workflowRunId)) {
+      throw new AiException(
+        'A workflow run conversation cannot be moved into a channel',
+        AiExceptionCode.THREAD_ACTION_NOT_ALLOWED,
+      );
+    }
+
     if (isDefined(channelId)) {
       await this.getAccessibleChannelById({
         channelId,

@@ -345,6 +345,31 @@ describe('AgentChatChannelService', () => {
     );
   });
 
+  it('refuses to move a workflow run conversation into a channel', async () => {
+    const { service, threadRepository, agentChatService } = buildService();
+
+    agentChatService.getThreadById.mockResolvedValue({
+      id: 'thread-id',
+      workspaceId: WORKSPACE_ID,
+      channelId: null,
+      userWorkspaceId: ADMIN_ID,
+      workflowRunId: 'workflow-run-id',
+    });
+
+    await expect(
+      service.setThreadChannel({
+        threadId: 'thread-id',
+        channelId: CHANNEL_ID,
+        userWorkspaceId: ADMIN_ID,
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).rejects.toMatchObject({
+      code: AiExceptionCode.THREAD_ACTION_NOT_ALLOWED,
+    });
+
+    expect(threadRepository.update).not.toHaveBeenCalled();
+  });
+
   it('resolves the readers of every thread in a channel with batched lookups on delete', async () => {
     const { service, threadRepository, agentChatService } = buildService({
       visibility: AgentChatChannelVisibility.PRIVATE,

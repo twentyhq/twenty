@@ -15,6 +15,7 @@ import {
   AI_CHAT_THREAD_ITEM_MENU_PAGE,
   type AiChatThreadItemMenuPage,
 } from '@/ai/constants/AiChatThreadItemMenuPage';
+import { useAiChatThreadById } from '@/ai/hooks/useAiChatThreadById';
 import { useIsCurrentUserAiChatThreadOwner } from '@/ai/hooks/useIsCurrentUserAiChatThreadOwner';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { aiChatThreadPendingDeleteFamilyState } from '@/ai/states/aiChatThreadPendingDeleteFamilyState';
@@ -56,9 +57,14 @@ export const AiChatThreadItemMenu = ({
   );
   const { isOwner, isKnown: isOwnershipKnown } =
     useIsCurrentUserAiChatThreadOwner(threadId);
+  const thread = useAiChatThreadById(threadId);
   // Archive, delete and move are owner-only on the server; hide them once we
   // know the reader is a member rather than showing actions that will fail.
   const showOwnerActions = !isOwnershipKnown || isOwner;
+  // A run conversation is the agent's trace for that run and the server
+  // refuses to move it into a channel, so the reader is not offered it.
+  const canMoveToChannel =
+    showOwnerActions && !isDefined(thread?.workflowRunId);
   const goToRoot = () => setPage(AI_CHAT_THREAD_ITEM_MENU_PAGE.ROOT);
   const setAiChatThreadPendingDelete = useSetAtomFamilyState(
     aiChatThreadPendingDeleteFamilyState,
@@ -108,7 +114,7 @@ export const AiChatThreadItemMenu = ({
                 LeftIcon={IconPencil}
                 onClick={handleRename}
               />
-              {showOwnerActions && (
+              {canMoveToChannel && (
                 <MenuItem
                   text={
                     isDefined(channelId)

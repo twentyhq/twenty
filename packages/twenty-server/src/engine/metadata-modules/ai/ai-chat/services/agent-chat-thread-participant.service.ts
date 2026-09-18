@@ -13,6 +13,7 @@ import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai
 import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { buildThreadAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-access-where.util';
 import { isUniqueViolation } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation.util';
 import { sanitizeModelDisplayName } from 'src/engine/metadata-modules/ai/ai-chat/utils/sanitize-model-display-name.util';
 import {
@@ -42,9 +43,12 @@ export class AgentChatThreadParticipantService {
     private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
-  // A mention is what hands a shared thread to somebody in particular, so the
-  // mentioned person joins the conversation and the time is kept: a later
-  // mention brings the thread back even after they have cleared it.
+  // A mention is what puts a shared thread in somebody's own list, so the time
+  // is kept: a later mention brings the thread back even after they have
+  // cleared it. It names people who can already open the thread and nobody
+  // else — naming someone is not how a thread is handed out, or any reader
+  // could quietly widen a private channel or a run conversation past the
+  // owner-only gate on addParticipant.
   async recordMentionsFromMessage({
     threadId,
     text,
@@ -70,7 +74,7 @@ export class AgentChatThreadParticipantService {
       return [];
     }
 
-    const mentionedUserWorkspaceIds = (
+    const resolvedUserWorkspaceIds = (
       await Promise.all(
         mentionedWorkspaceMemberIds.map((workspaceMemberId) =>
           this.resolveUserWorkspaceIdForWorkspaceMember({
@@ -80,6 +84,24 @@ export class AgentChatThreadParticipantService {
         ),
       )
     ).filter(isDefined);
+
+    if (resolvedUserWorkspaceIds.length === 0) {
+      return [];
+    }
+
+    const readability = await Promise.all(
+      resolvedUserWorkspaceIds.map((userWorkspaceId) =>
+        this.canUserWorkspaceReadThread({
+          threadId,
+          userWorkspaceId,
+          workspaceId,
+        }),
+      ),
+    );
+
+    const mentionedUserWorkspaceIds = resolvedUserWorkspaceIds.filter(
+      (_userWorkspaceId, index) => readability[index],
+    );
 
     if (mentionedUserWorkspaceIds.length === 0) {
       return [];
@@ -99,6 +121,22 @@ export class AgentChatThreadParticipantService {
     );
 
     return mentionedUserWorkspaceIds;
+  }
+
+  private async canUserWorkspaceReadThread({
+    threadId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
+    });
+
+    return isDefined(thread);
   }
 
   private async resolveUserWorkspaceIdForWorkspaceMember({

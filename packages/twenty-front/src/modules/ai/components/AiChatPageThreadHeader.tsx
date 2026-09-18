@@ -12,6 +12,7 @@ import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AiChatThreadAssigneeDropdown } from '@/ai/components/AiChatThreadAssigneeDropdown';
 import { AiChatThreadParticipants } from '@/ai/components/AiChatThreadParticipants';
 import { AiChatThreadSnoozeDropdown } from '@/ai/components/AiChatThreadSnoozeDropdown';
+import { useCanWorkAiChatThread } from '@/ai/hooks/useCanWorkAiChatThread';
 import { AGENT_CHAT_THREAD_INBOX_STATE } from '@/ai/constants/AgentChatThreadInboxState';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { getAgentChatThreadInboxState } from '@/ai/utils/getAgentChatThreadInboxState';
@@ -68,6 +69,7 @@ export const AiChatPageThreadHeader = ({
   const { markChatThreadDone, reopenChatThread } = useChatThreadInboxActions();
   const inboxState = getAgentChatThreadInboxState(thread);
   const isDone = inboxState === AGENT_CHAT_THREAD_INBOX_STATE.DONE;
+  const canWorkThread = useCanWorkAiChatThread(thread.id);
   const currentAiChatThreadTitle = useAtomComponentFamilyStateValue(
     currentAiChatThreadTitleComponentFamilyState,
     { threadId: thread.id },
@@ -133,18 +135,24 @@ export const AiChatPageThreadHeader = ({
       <AiChatThreadWorkflowRunChip workflowRunId={thread.workflowRunId} />
       <StyledActions>
         <AiChatThreadParticipants threadId={thread.id} />
-        <AiChatThreadAssigneeDropdown threadId={thread.id} />
-        {!isDone && <AiChatThreadSnoozeDropdown threadId={thread.id} />}
-        <IconButton
-          size="sm"
-          variant="outline"
-          aria-label={isDone ? t`Reopen chat` : t`Mark chat done`}
-          onClick={() =>
-            isDone ? reopenChatThread(thread.id) : markChatThreadDone(thread.id)
-          }
-        >
-          {isDone ? <IconArrowBackUp /> : <IconCheck />}
-        </IconButton>
+        {canWorkThread && (
+          <>
+            <AiChatThreadAssigneeDropdown threadId={thread.id} />
+            {!isDone && <AiChatThreadSnoozeDropdown threadId={thread.id} />}
+            <IconButton
+              size="sm"
+              variant="outline"
+              aria-label={isDone ? t`Reopen chat` : t`Mark chat done`}
+              onClick={() =>
+                isDone
+                  ? reopenChatThread(thread.id)
+                  : markChatThreadDone(thread.id)
+              }
+            >
+              {isDone ? <IconArrowBackUp /> : <IconCheck />}
+            </IconButton>
+          </>
+        )}
         <AiChatThreadItemMenu
           threadId={thread.id}
           threadTitle={displayTitle}

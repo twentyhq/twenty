@@ -73,6 +73,12 @@ export const useChatChannels = () => {
   const getChannelRoles = (channelId: string) =>
     channelRoles.filter((channelRole) => channelRole.channelId === channelId);
 
+  // Joining or holding a role is what makes the channel yours to work, as
+  // opposed to a public one you merely read.
+  const isCurrentUserChannelWorker = (channelId: string) =>
+    isCurrentUserChannelMember(channelId) ||
+    channelIdsReadThroughRole.has(channelId);
+
   const isCurrentUserChannelAdmin = (channelId: string) =>
     currentUserMembershipByChannelId.get(channelId)?.role ===
     AgentChatChannelMemberRole.ADMIN;
@@ -91,6 +97,7 @@ export const useChatChannels = () => {
     getChannelRoles,
     isCurrentUserChannelAdmin,
     isCurrentUserChannelMember,
+    isCurrentUserChannelWorker,
     findChannelById,
   };
 };

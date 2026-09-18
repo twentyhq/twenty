@@ -43,6 +43,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED:
       case AiExceptionCode.RUN_AGENT_NOT_ALLOWED:
       case AiExceptionCode.THREAD_ACTION_NOT_ALLOWED:
+      case AiExceptionCode.THREAD_NOT_JOINED:
       case AiExceptionCode.CHANNEL_ACTION_NOT_ALLOWED:
         throw new ForbiddenError(error);
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
