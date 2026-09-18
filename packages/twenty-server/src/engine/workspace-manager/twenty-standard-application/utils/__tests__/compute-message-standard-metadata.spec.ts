@@ -115,6 +115,17 @@ describe('Message standard record page build', () => {
     );
   });
 
+  // without it the body renders as one clamped line, which is what made the
+  // record page look empty of content
+  it('displays the message text over multiple rows', () => {
+    const textField =
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.message.fields.text.universalIdentifier
+      ];
+
+    expect(textField?.settings).toMatchObject({ displayedMaxRows: 99 });
+  });
+
   it('groups the message record page fields into General and System', () => {
     const generalGroup =
       allFlatEntityMaps.flatViewFieldGroupMaps.byUniversalIdentifier[
