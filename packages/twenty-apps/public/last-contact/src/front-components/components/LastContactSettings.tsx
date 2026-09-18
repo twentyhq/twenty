@@ -7,7 +7,7 @@ import { isUndefined } from '@sniptt/guards';
 import { enqueueSnackbar, useColorScheme } from 'twenty-sdk/front-component';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { MainButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
@@ -80,13 +80,11 @@ export const LastContactSettings = () => {
             description="Recompute every record from your synced emails and meetings."
           />
           <StyledActionRow>
-            <Button
-              title="Run backfill"
+            <MainButton
+              title={isRequestingBackfill ? 'Starting…' : 'Run backfill'}
               Icon={IconRefresh}
               variant="primary"
-              accent="blue"
               disabled={isRequestingBackfill || isRunInFlight}
-              isLoading={isRequestingBackfill}
               onClick={handleBackfillClick}
             />
             {!isUndefined(progressMessage) && (
