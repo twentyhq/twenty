@@ -247,7 +247,7 @@ export const GranolaSettings = () => {
         </GranolaConnectionSection>
         {showsLiveSyncSections && (
           <>
-            <GranolaFolderSection registration={status?.registration} />
+            <GranolaFolderSection />
             <GranolaImportHistorySection />
           </>
         )}

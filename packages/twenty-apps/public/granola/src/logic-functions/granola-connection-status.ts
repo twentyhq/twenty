@@ -1,12 +1,10 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { kv, RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
+import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { GRANOLA_CONNECTION_STATUS_ROUTE_PATH } from 'src/constants/granola-connection-status-route-path';
-import { GRANOLA_PENDING_FOLDER_SELECTION_KEY } from 'src/constants/granola.constant';
 import { GRANOLA_CONNECTION_STATUS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
-import { type GranolaPendingFolderSelection } from 'src/logic-functions/types/granola-pending-folder-selection.type';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
 import { isGranolaApiKeySet } from 'src/logic-functions/utils/is-granola-api-key-set.util';
@@ -36,30 +34,20 @@ export const granolaConnectionStatusHandler = async () => {
     const { webhook_endpoints: endpoints } =
       await client.listWebhookEndpoints();
     const registration = await findGranolaRegistrationForCurrentKey();
-    const endpoint = isDefined(registration)
-      ? endpoints.find(
-          (candidate) => candidate.id === registration.webhookEndpointId,
-        )
-      : undefined;
-    if (!isDefined(registration) || !isDefined(endpoint)) {
+    const endpoint = endpoints.find(
+      (candidate) => candidate.id === registration?.webhookEndpointId,
+    );
+    if (!isDefined(endpoint)) {
       return {
         isConnected: true,
         isApiKeySet: true,
         needsRegistration: true,
       };
     }
-    const pendingSelection = await kv.get<GranolaPendingFolderSelection>(
-      GRANOLA_PENDING_FOLDER_SELECTION_KEY,
-    );
     return {
       isConnected: true,
       isApiKeySet: true,
-      registration: {
-        scopes: endpoint.scopes,
-        isActive: endpoint.enabled,
-        folderIds: registration.folderIds,
-        pendingFolderIds: pendingSelection?.folderIds,
-      },
+      registration: { scopes: endpoint.scopes, isActive: endpoint.enabled },
     };
   } catch (error) {
     if (error instanceof GranolaApiError) {

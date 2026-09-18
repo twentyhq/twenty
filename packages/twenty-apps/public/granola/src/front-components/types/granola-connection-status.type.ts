@@ -12,8 +12,6 @@ export const GRANOLA_CONNECTION_STATUS_SCHEMA = z.object({
     .object({
       scopes: z.array(GRANOLA_WEBHOOK_SCOPE_SCHEMA),
       isActive: z.boolean(),
-      folderIds: z.array(z.string()).default([]),
-      pendingFolderIds: z.array(z.string()).optional(),
     })
     .optional(),
 });

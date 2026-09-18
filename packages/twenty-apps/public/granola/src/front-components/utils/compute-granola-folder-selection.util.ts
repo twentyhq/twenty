@@ -1,15 +1,12 @@
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type GranolaFolderSelection } from 'src/front-components/types/granola-folder-selection.type';
-import { type GranolaFoldersResult } from 'src/front-components/types/granola-folders-result.type';
+import { type GranolaStoredFolderSelection } from 'src/front-components/types/granola-stored-folder-selection.type';
 
 export const computeGranolaFolderSelection = ({
   selectedFolderIds,
   pendingFolderIds,
-}: Pick<
-  GranolaFoldersResult,
-  'selectedFolderIds' | 'pendingFolderIds'
->): GranolaFolderSelection => {
+}: GranolaStoredFolderSelection): GranolaFolderSelection => {
   const storedFolderIds = pendingFolderIds ?? selectedFolderIds;
 
   return {
