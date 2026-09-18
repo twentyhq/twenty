@@ -1053,8 +1053,24 @@ export class AgentChatChannelService {
       return;
     }
 
+    // The channel was readable by the whole workspace and now is not, so the
+    // readers it loses are everyone outside the new set. Telling the whole
+    // workspace it was deleted would take it from the readers who keep it and
+    // hand it back a moment later.
     if (!isDefined(recipientsBefore)) {
-      await this.broadcastChannel('deleted', channel, undefined);
+      const workspaceUserWorkspaceIds =
+        await this.agentChatService.getWorkspaceUserWorkspaceIds(
+          channel.workspaceId,
+        );
+      const keptRecipients = new Set(recipientsAfter);
+      const losingRecipients = workspaceUserWorkspaceIds.filter(
+        (userWorkspaceId) => !keptRecipients.has(userWorkspaceId),
+      );
+
+      if (losingRecipients.length > 0) {
+        await this.broadcastChannel('deleted', channel, losingRecipients);
+      }
+
       await this.broadcastChannel('created', channel, recipientsAfter);
 
       return;

@@ -312,7 +312,7 @@ export class AgentChatService {
     ];
   }
 
-  private async getWorkspaceUserWorkspaceIds(
+  async getWorkspaceUserWorkspaceIds(
     workspaceId: string,
   ): Promise<string[]> {
     const userWorkspaces = await this.userWorkspaceRepository.find(
