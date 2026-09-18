@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { COMPANY_NODE_MOCK } from 'src/logic-functions/__mocks__/company-node.mock';
 import { extractCompanyMatchParams } from 'src/logic-functions/utils/extract-company-match-params';
@@ -6,6 +6,31 @@ import { extractCompanyMatchParams } from 'src/logic-functions/utils/extract-com
 const INPUT = { records: [] };
 
 describe('extractCompanyMatchParams', () => {
+  beforeEach(() => {
+    vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', undefined);
+    vi.stubEnv('PDL_COMPANY_MIN_LIKELIHOOD', undefined);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it.each([
+    { name: 'a PDL ID', node: { ...COMPANY_NODE_MOCK, pdlId: 'pdl-c' } },
+    { name: 'a domain', node: COMPANY_NODE_MOCK },
+    {
+      name: 'a name only',
+      node: { ...COMPANY_NODE_MOCK, domainName: null, name: 'Acme' },
+    },
+  ])('uses the company default when matching by $name', ({ node }) => {
+    vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', '7');
+    vi.stubEnv('PDL_COMPANY_MIN_LIKELIHOOD', '8');
+
+    expect(
+      extractCompanyMatchParams({ node, input: INPUT }),
+    ).toMatchObject({ minLikelihood: 8 });
+  });
+
   it('prefers an existing pdlId with the strong-identifier likelihood', () => {
     expect(
       extractCompanyMatchParams({
@@ -67,6 +92,8 @@ describe('extractCompanyMatchParams', () => {
   });
 
   it('honors an explicit minLikelihood from the input', () => {
+    vi.stubEnv('PDL_COMPANY_MIN_LIKELIHOOD', '8');
+
     expect(
       extractCompanyMatchParams({
         node: { ...COMPANY_NODE_MOCK, name: 'Acme' },
