@@ -49,12 +49,12 @@ export class ApplicationService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    @InjectWorkspaceScopedRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
-    @InjectRepository(FrontComponentEntity)
-    private readonly frontComponentRepository: Repository<FrontComponentEntity>,
+    @InjectWorkspaceScopedRepository(FrontComponentEntity)
+    private readonly frontComponentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
     @InjectWorkspaceScopedRepository(CommandMenuItemEntity)
     private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
     @InjectRepository(ObjectMetadataEntity)
@@ -210,14 +210,14 @@ export class ApplicationService {
       objects,
       applicationVariables,
     ] = await Promise.all([
-      this.logicFunctionRepository.find({
-        where: { applicationId: application.id, workspaceId },
+      this.logicFunctionRepository.find(workspaceId, {
+        where: { applicationId: application.id },
       }),
       this.agentRepository.find(workspaceId, {
         where: { applicationId: application.id },
       }),
-      this.frontComponentRepository.find({
-        where: { applicationId: application.id, workspaceId },
+      this.frontComponentRepository.find(workspaceId, {
+        where: { applicationId: application.id },
       }),
       this.commandMenuItemRepository.find(workspaceId, {
         where: { applicationId: application.id },
