@@ -2,7 +2,7 @@ import { CoreWorkflowShowToolbar } from '@/object-core/workflows/components/Core
 import { useCoreWorkflowShowActions } from '@/object-core/workflows/hooks/useCoreWorkflowShowActions';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -116,28 +116,6 @@ const CoreWorkflowShowContent = ({
   const currentVersion = getWorkflowCurrentVersion(
     versions.coreWorkflowVersions,
   );
-  const [previousCurrentVersionId, setPreviousCurrentVersionId] = useState(
-    currentVersion?.id,
-  );
-
-  useEffect(() => {
-    const shouldFollowNewDraft =
-      currentVersion?.status === 'DRAFT' &&
-      isDefined(requestedVersionId) &&
-      requestedVersionId === previousCurrentVersionId &&
-      requestedVersionId !== currentVersion.id;
-
-    setPreviousCurrentVersionId(currentVersion?.id);
-
-    if (shouldFollowNewDraft) {
-      setSearchParams({}, { replace: true });
-    }
-  }, [
-    currentVersion,
-    previousCurrentVersionId,
-    requestedVersionId,
-    setSearchParams,
-  ]);
   const selectedVersion = isDefined(requestedVersionId)
     ? versions.coreWorkflowVersions.find(({ id }) => id === requestedVersionId)
     : currentVersion;
