@@ -620,22 +620,9 @@ export class CoreWorkflowMutationWorkspaceService {
         { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
       );
 
-    await this.coreWorkflowMigrationWriteService.run({
-      workspaceId,
-      failureMessage:
-        'Multiple validation errors occurred while discarding workflow draft',
-      operations: {
-        workflowVersion: {
-          flatEntityToCreate: [],
-          flatEntityToDelete: [
-            findFlatEntityByIdInFlatEntityMapsOrThrow({
-              flatEntityId: coreVersion.id,
-              flatEntityMaps: flatWorkflowVersionMaps,
-            }),
-          ],
-          flatEntityToUpdate: [],
-        },
-      },
+    const flatCoreVersionToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: coreVersion.id,
+      flatEntityMaps: flatWorkflowVersionMaps,
     });
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -654,6 +641,19 @@ export class CoreWorkflowMutationWorkspaceService {
         },
       );
     }, buildSystemAuthContext(workspaceId));
+
+    await this.coreWorkflowMigrationWriteService.run({
+      workspaceId,
+      failureMessage:
+        'Multiple validation errors occurred while discarding workflow draft',
+      operations: {
+        workflowVersion: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: [flatCoreVersionToDelete],
+          flatEntityToUpdate: [],
+        },
+      },
+    });
 
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
       workspaceId,

@@ -241,10 +241,33 @@ export class CoreWorkflowLifecycleWorkspaceService {
       WorkflowVersionStatus
     >([[coreWorkflowVersion.id, WorkflowVersionStatus.ACTIVE]]);
 
+    const statusToRestoreByCoreWorkflowVersionId = new Map<
+      string,
+      WorkflowVersionStatus
+    >([
+      [
+        coreWorkflowVersion.id,
+        this.toWorkspaceVersionStatus(coreWorkflowVersion.status),
+      ],
+    ]);
+
     if (shouldArchivePreviousVersion) {
       statusByCoreWorkflowVersionId.set(
         previousPublishedCoreVersionId,
         WorkflowVersionStatus.ARCHIVED,
+      );
+
+      const previousCoreVersion =
+        await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+          where: { id: previousPublishedCoreVersionId },
+          select: { id: true, status: true },
+        });
+
+      statusToRestoreByCoreWorkflowVersionId.set(
+        previousPublishedCoreVersionId,
+        isDefined(previousCoreVersion)
+          ? this.toWorkspaceVersionStatus(previousCoreVersion.status)
+          : WorkflowVersionStatus.DEACTIVATED,
       );
     }
 
@@ -301,17 +324,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     } catch (error) {
       await this.revertCoreVersionStatusesAfterFailure({
         workspaceId,
-        statusByCoreWorkflowVersionId: new Map([
-          [
-            coreWorkflowVersion.id,
-            this.toWorkspaceVersionStatus(coreWorkflowVersion.status),
-          ],
-          ...(shouldArchivePreviousVersion
-            ? ([
-                [previousPublishedCoreVersionId, WorkflowVersionStatus.ACTIVE],
-              ] as [string, WorkflowVersionStatus][])
-            : []),
-        ]),
+        statusByCoreWorkflowVersionId: statusToRestoreByCoreWorkflowVersionId,
         coreWorkflowUpdate: shouldMovePublishedPointers
           ? {
               coreWorkflowId: coreWorkflow.id,

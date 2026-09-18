@@ -13,10 +13,15 @@ import {
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import {
+  CoreWorkflowMetadataException,
+  CoreWorkflowMetadataExceptionCode,
+} from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { CoreWorkflowMigrationWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-migration-write.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatWorkflowVersionMaps } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version-maps.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -146,6 +151,7 @@ export class WorkflowVersionCoreSyncService {
         flatWorkflowVersionsToUpdate.push({
           ...existingFlatWorkflowVersion,
           ...flatWorkflowVersion,
+          universalIdentifier: existingFlatWorkflowVersion.universalIdentifier,
           createdAt: existingFlatWorkflowVersion.createdAt,
         });
       } else {
@@ -216,6 +222,56 @@ export class WorkflowVersionCoreSyncService {
     await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
 
+  private async resolveFlatVersionsOrThrow({
+    workspaceId,
+    coreWorkflowVersionIds,
+    flatWorkflowVersionMaps,
+  }: {
+    workspaceId: string;
+    coreWorkflowVersionIds: string[];
+    flatWorkflowVersionMaps: FlatWorkflowVersionMaps;
+  }): Promise<FlatWorkflowVersion[]> {
+    const resolve = (maps: FlatWorkflowVersionMaps) =>
+      coreWorkflowVersionIds.map((coreWorkflowVersionId) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: coreWorkflowVersionId,
+          flatEntityMaps: maps,
+        }),
+      );
+
+    let resolved = resolve(flatWorkflowVersionMaps);
+
+    // A miss means the cache is behind the table, and skipping the delete would
+    // leave an orphan core row that still broadcasts and still reads, so refresh
+    // once before giving up.
+    if (resolved.some((flatVersion) => !isDefined(flatVersion))) {
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatWorkflowVersionMaps'],
+      });
+
+      const { flatWorkflowVersionMaps: recomputedMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
+        );
+
+      resolved = resolve(recomputedMaps);
+    }
+
+    const stillMissingIds = coreWorkflowVersionIds.filter(
+      (_, index) => !isDefined(resolved[index]),
+    );
+
+    if (stillMissingIds.length > 0) {
+      throw new CoreWorkflowMetadataException(
+        `Core workflow versions ${stillMissingIds.join(', ')} not found while deleting`,
+        CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_NOT_FOUND,
+      );
+    }
+
+    return resolved.filter(isDefined);
+  }
+
   private async deleteCoreVersionsThroughMigration(
     workspaceId: string,
     coreWorkflowVersionIds: string[],
@@ -229,18 +285,11 @@ export class WorkflowVersionCoreSyncService {
         { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
       );
 
-    const flatWorkflowVersionsToDelete = coreWorkflowVersionIds
-      .map((coreWorkflowVersionId) =>
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: coreWorkflowVersionId,
-          flatEntityMaps: flatWorkflowVersionMaps,
-        }),
-      )
-      .filter(isDefined);
-
-    if (flatWorkflowVersionsToDelete.length === 0) {
-      return;
-    }
+    const flatWorkflowVersionsToDelete = await this.resolveFlatVersionsOrThrow({
+      workspaceId,
+      coreWorkflowVersionIds,
+      flatWorkflowVersionMaps,
+    });
 
     await this.coreWorkflowMigrationWriteService.run({
       workspaceId,

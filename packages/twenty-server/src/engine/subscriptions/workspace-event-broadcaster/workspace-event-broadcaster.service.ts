@@ -51,7 +51,12 @@ export class WorkspaceEventBroadcaster {
                 event.requiredPermissionFlag,
               );
 
+            // A stream carrying an application or api key is narrower than its
+            // user: the read guard intersects the user role with the application
+            // role, which this fan-out cannot evaluate, so it must not deliver.
             if (
+              isDefined(streamData.authContext.applicationId) ||
+              isDefined(streamData.authContext.apiKeyId) ||
               !isDefined(streamUserWorkspaceId) ||
               !allowedUserWorkspaceIds?.has(streamUserWorkspaceId)
             ) {

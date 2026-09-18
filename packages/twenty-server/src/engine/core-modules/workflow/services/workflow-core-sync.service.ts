@@ -9,6 +9,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import {
+  CoreWorkflowMetadataException,
+  CoreWorkflowMetadataExceptionCode,
+} from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
 import { CoreWorkflowMigrationWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-migration-write.service';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -146,6 +150,8 @@ export class WorkflowCoreSyncService {
         flatWorkflowsToUpdate.push({
           ...existingFlatWorkflow,
           ...flatWorkflow,
+          universalIdentifier: existingFlatWorkflow.universalIdentifier,
+          createdAt: existingFlatWorkflow.createdAt,
         });
       } else {
         flatWorkflowsToCreate.push(flatWorkflow);
@@ -242,18 +248,27 @@ export class WorkflowCoreSyncService {
         { workspaceId, flatMapsKeys: ['flatWorkflowMaps'] },
       );
 
-    const flatWorkflowsToDelete = coreWorkflowIds
-      .map((coreWorkflowId) =>
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: coreWorkflowId,
-          flatEntityMaps: flatWorkflowMaps,
-        }),
-      )
-      .filter(isDefined);
+    const resolvedFlatWorkflows = coreWorkflowIds.map((coreWorkflowId) =>
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: coreWorkflowId,
+        flatEntityMaps: flatWorkflowMaps,
+      }),
+    );
 
-    if (flatWorkflowsToDelete.length === 0) {
-      return;
+    const missingCoreWorkflowIds = coreWorkflowIds.filter(
+      (_, index) => !isDefined(resolvedFlatWorkflows[index]),
+    );
+
+    // Skipping unresolved ids would leave orphan core rows that still read and
+    // still broadcast, so a cache miss has to fail rather than pass silently.
+    if (missingCoreWorkflowIds.length > 0) {
+      throw new CoreWorkflowMetadataException(
+        `Core workflows ${missingCoreWorkflowIds.join(', ')} not found while deleting`,
+        CoreWorkflowMetadataExceptionCode.WORKFLOW_NOT_FOUND,
+      );
     }
+
+    const flatWorkflowsToDelete = resolvedFlatWorkflows.filter(isDefined);
 
     await this.coreWorkflowMigrationWriteService.run({
       workspaceId,

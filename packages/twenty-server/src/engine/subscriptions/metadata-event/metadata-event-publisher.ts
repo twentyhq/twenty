@@ -7,7 +7,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
-import { REQUIRED_PERMISSION_FLAG_BY_BROADCAST_ENTITY_NAME } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
+import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 @Injectable()
@@ -40,10 +40,9 @@ export class MetadataEventPublisher {
           recipientUserWorkspaceIds: isNonEmptyString(ownerUserWorkspaceId)
             ? [ownerUserWorkspaceId]
             : undefined,
-          requiredPermissionFlag:
-            REQUIRED_PERMISSION_FLAG_BY_BROADCAST_ENTITY_NAME[
-              event.metadataName
-            ],
+          requiredPermissionFlag: getRequiredPermissionFlagForBroadcastEntityName(
+            event.metadataName,
+          ),
         };
       }),
     });
