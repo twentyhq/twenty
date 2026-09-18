@@ -24,11 +24,7 @@ export const InboxTooltipIconButton = ({
     sideOffset={5}
   >
     <span>
-      <LightIconButton
-        emphasis={emphasis}
-        aria-label={label}
-        onClick={onClick}
-      >
+      <LightIconButton emphasis={emphasis} aria-label={label} onClick={onClick}>
         <Icon />
       </LightIconButton>
     </span>
