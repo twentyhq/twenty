@@ -53,7 +53,7 @@ const PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
   FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
 ];
 
-@RegisteredWorkspaceCommand('2.42.0', 1789652804002)
+@RegisteredWorkspaceCommand('2.42.0', 1789663454001)
 @Command({
   name: 'upgrade:2-42:sync-message-record-page',
   description:
