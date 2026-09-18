@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.42.0', 1789652804002)
+@RegisteredInstanceCommand('2.42.0', 1789719131000)
 export class AddWorkflowExecutionCompatibilityFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('DROP INDEX IF EXISTS "core"."IDX_WORKFLOW_VERSION_WORKSPACE_WORKFLOW_VERSION_ID"');

@@ -9,7 +9,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredWorkspaceCommand('2.42.0', 1789652804003)
+@RegisteredWorkspaceCommand('2.42.0', 1789719131001)
 @Command({
   name: 'upgrade:2-42:backfill-workflow-execution-core-ids',
   description:
