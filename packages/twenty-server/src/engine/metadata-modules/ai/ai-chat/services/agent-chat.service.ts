@@ -518,7 +518,7 @@ export class AgentChatService {
     // it, so in between a thread that predates the upgrade has no owner row.
     // The owner row is written from this column and can be neither removed nor
     // handed over, so the column answers the same question. Without this, the
-    // creator of an older thread could read it but not rename, move or delete
+    // creator of an older thread could read it but not move, archive or delete
     // it until the backfill caught up.
     const isCreator = await this.threadRepository.existsBy(workspaceId, {
       id: threadId,
@@ -1551,6 +1551,11 @@ export class AgentChatService {
     }
   }
 
+  // Renaming is open to whoever works the thread, not to its owner alone: a
+  // shared thread is named by the people in it, the way anyone in a group
+  // conversation can retitle it. What it is not open to is a reader — a public
+  // channel is readable by the whole workspace, and a passer-by retitling
+  // somebody else's conversation is the thing the worker gate keeps out.
   async updateThreadTitle({
     threadId,
     userWorkspaceId,
@@ -1596,8 +1601,9 @@ export class AgentChatService {
 
   // Anyone working a thread can move it through the inbox: a shared inbox is
   // worked by whoever picks it up, so this is deliberately not owner-only the
-  // way renaming and deleting are. Reading is not enough, or a passer-by on a
-  // public channel could clear that team's inbox for them.
+  // way archiving, deleting and moving between channels are. Reading is not
+  // enough, or a passer-by on a public channel could clear that team's inbox
+  // for them.
   async setThreadStatus({
     threadId,
     status,
