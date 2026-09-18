@@ -941,7 +941,23 @@ export class AgentChatChannelService {
       await this.getReaderUserWorkspaceIds(channel.id, workspaceId),
     );
 
-    if (channel.visibility === AgentChatChannelVisibility.PRIVATE) {
+    // Holding a role on the channel is read access already, and it does not
+    // move when a member row is added, so it is what says whether this person
+    // is gaining the channel or merely joining one they could already read.
+    // The recipient lists cannot answer that: they are read after the insert,
+    // so they name the new member either way.
+    const couldAlreadyReadChannel =
+      channel.visibility === AgentChatChannelVisibility.PRIVATE &&
+      (await this.isChannelRoleHolder({
+        channelId: channel.id,
+        userWorkspaceId,
+        workspaceId,
+      }));
+
+    if (
+      channel.visibility === AgentChatChannelVisibility.PRIVATE &&
+      !couldAlreadyReadChannel
+    ) {
       await this.broadcastChannel('created', channel, [userWorkspaceId]);
     }
 
@@ -958,10 +974,12 @@ export class AgentChatChannelService {
         recipients: threadRecipients,
         participantUserWorkspaceIds,
       } of threads) {
-        // A new member who already reads the thread as a participant keeps
-        // it rather than being told about it a second time.
+        // A new member who already read the thread — as a participant, or
+        // through a role on the channel — keeps it rather than being told
+        // about it a second time.
         const wasAlreadyReader =
-          participantUserWorkspaceIds.includes(userWorkspaceId);
+          participantUserWorkspaceIds.includes(userWorkspaceId) ||
+          couldAlreadyReadChannel;
 
         await this.agentChatService.broadcastThreadAccessChange({
           thread,
