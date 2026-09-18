@@ -1,7 +1,7 @@
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
-import { floatingIconButtonTest } from '@/__stories__/twenty-ui-gallery/utils/floatingIconButtonTest';
+import { iconButtonFloatingTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonFloatingTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { type Meta } from '@storybook/react-vite';
@@ -463,14 +463,14 @@ export const ChipControlsPreact: Story = createGalleryStory({
   play: chipControlsTest,
 });
 
-export const FloatingIconButtonReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-floating-icon-button',
+export const IconButtonFloatingReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-icon-button-floating',
   runtime: 'react',
-  play: floatingIconButtonTest,
+  play: iconButtonFloatingTest,
 });
 
-export const FloatingIconButtonPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-floating-icon-button',
+export const IconButtonFloatingPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-icon-button-floating',
   runtime: 'preact',
-  play: floatingIconButtonTest,
+  play: iconButtonFloatingTest,
 });

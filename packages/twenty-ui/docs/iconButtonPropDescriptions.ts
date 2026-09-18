@@ -5,6 +5,9 @@ export const ICON_BUTTON_PROP_DESCRIPTIONS = {
   ...BUTTON_PROP_DESCRIPTIONS,
   size: 'Button size: `xs` (20px), `sm` (24px), or `md` (32px).',
   shape: 'Square or round icon control.',
+  floating:
+    'Adds a floating surface, backdrop blur, and a shadow by default. Does not change the size or position.',
+  elevated: 'Adds a shadow. Defaults to the value of `floating`.',
   children: 'Icon content. Decorative and hidden from assistive technology.',
   tooltip: 'Text displayed when hovering or focusing the button.',
   tooltipPlace: 'Preferred placement of the tooltip relative to the button.',

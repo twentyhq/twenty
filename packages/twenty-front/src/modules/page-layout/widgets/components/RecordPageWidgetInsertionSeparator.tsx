@@ -4,7 +4,7 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const INSERT_BUTTON_CLASS_NAME = css`
@@ -73,7 +73,8 @@ export const RecordPageWidgetInsertionSeparator = ({
 
   return (
     <StyledSeparator>
-      <FloatingIconButton
+      <IconButton
+        floating
         className={INSERT_BUTTON_CLASS_NAME}
         aria-label={t`Add widget above ${widget.title}`}
         size="sm"
@@ -85,7 +86,7 @@ export const RecordPageWidgetInsertionSeparator = ({
         }
       >
         <IconPlus />
-      </FloatingIconButton>
+      </IconButton>
     </StyledSeparator>
   );
 };

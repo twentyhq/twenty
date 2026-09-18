@@ -14,7 +14,7 @@ import { t } from '@lingui/core/macro';
 import { Suspense, lazy, useContext, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const ActivityRichTextEditor = lazy(() =>
@@ -132,7 +132,8 @@ export const RichTextFieldInput = () => {
         </Suspense>
       </StyledEditorScroll>
       <StyledCollapseButton>
-        <FloatingIconButton
+        <IconButton
+          floating
           size="sm"
           onClick={() => {
             onEscape?.({ skipPersist: true });
@@ -141,7 +142,7 @@ export const RichTextFieldInput = () => {
           aria-label={t`Open in side panel`}
         >
           <IconLayoutSidebarLeftCollapse />
-        </FloatingIconButton>
+        </IconButton>
       </StyledCollapseButton>
     </StyledContainer>
   );
