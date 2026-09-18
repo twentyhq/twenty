@@ -12,7 +12,9 @@ import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupB
 import { AGENT_CHAT_THREAD_GROUP_BY_LABELS } from '@/ai/constants/AgentChatThreadGroupByLabels';
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER } from '@/ai/constants/AgentChatThreadLastActivityFilter';
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS } from '@/ai/constants/AgentChatThreadLastActivityFilterLabels';
+import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE } from '@/ai/constants/AiChatThreadFilterDropdownPage';
+import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { type AiChatThreadFilterDropdownPage } from '@/ai/types/AiChatThreadFilterDropdownPage';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
@@ -26,15 +28,21 @@ import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type AiChatThreadFilterDropdownRootMenuProps = {
   dropdownId: string;
+  surface: AiChatThreadActionsSurface;
   onSelectPage: (page: AiChatThreadFilterDropdownPage) => void;
 };
 
 export const AiChatThreadFilterDropdownRootMenu = ({
   dropdownId,
+  surface,
   onSelectPage,
 }: AiChatThreadFilterDropdownRootMenuProps) => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
+  // The drawer lists the direct messages flat, so grouping them is not on
+  // offer there; it still applies to the threads of a channel page.
+  const isGroupingOffered =
+    surface !== AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER;
 
   const [agentChatThreadFilterStatus, setAgentChatThreadFilterStatus] =
     useAtomState(agentChatThreadFilterStatusState);
@@ -48,13 +56,18 @@ export const AiChatThreadFilterDropdownRootMenu = ({
 
   const isAtDefaults =
     agentChatThreadFilterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE &&
-    agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE &&
+    (!isGroupingOffered ||
+      agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE) &&
     agentChatThreadLastActivityFilter ===
       AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER.ALL;
 
   const handleClearFilters = () => {
     setAgentChatThreadFilterStatus(AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE);
-    setAgentChatThreadGroupBy(AGENT_CHAT_THREAD_GROUP_BY.DATE);
+
+    if (isGroupingOffered) {
+      setAgentChatThreadGroupBy(AGENT_CHAT_THREAD_GROUP_BY.DATE);
+    }
+
     setAgentChatThreadLastActivityFilter(
       AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER.ALL,
     );
@@ -76,18 +89,20 @@ export const AiChatThreadFilterDropdownRootMenu = ({
             onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.STATUS)
           }
         />
-        <MenuItem
-          LeftIcon={IconLayoutList}
-          text={t`Group by`}
-          contextualText={t(
-            AGENT_CHAT_THREAD_GROUP_BY_LABELS[agentChatThreadGroupBy],
-          )}
-          contextualTextPosition="right"
-          hasSubMenu
-          onClick={() =>
-            onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.GROUP_BY)
-          }
-        />
+        {isGroupingOffered && (
+          <MenuItem
+            LeftIcon={IconLayoutList}
+            text={t`Group by`}
+            contextualText={t(
+              AGENT_CHAT_THREAD_GROUP_BY_LABELS[agentChatThreadGroupBy],
+            )}
+            contextualTextPosition="right"
+            hasSubMenu
+            onClick={() =>
+              onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.GROUP_BY)
+            }
+          />
+        )}
         <MenuItem
           LeftIcon={IconClock}
           text={t`Last activity`}

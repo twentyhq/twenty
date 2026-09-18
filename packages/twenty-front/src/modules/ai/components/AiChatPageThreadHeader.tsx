@@ -2,8 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { IconArchive, IconArchiveOff, IconDotsVertical } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -14,9 +13,9 @@ import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AiChatThreadParticipants } from '@/ai/components/AiChatThreadParticipants';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { useChatThreadArchiveActions } from '@/ai/hooks/useChatThreadArchiveActions';
+import { useIsCurrentUserAiChatThreadOwner } from '@/ai/hooks/useIsCurrentUserAiChatThreadOwner';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
@@ -64,9 +63,13 @@ export const AiChatPageThreadHeader = ({
   thread,
 }: AiChatPageThreadHeaderProps) => {
   const { t } = useLingui();
-  const { switchToNewChat } = useSwitchToNewAiChat({
-    channelId: thread.channelId,
-  });
+  const { archiveChatThread, unarchiveChatThread } =
+    useChatThreadArchiveActions();
+  const { isOwner, isKnown: isOwnershipKnown } =
+    useIsCurrentUserAiChatThreadOwner(thread.id);
+  // Archiving is owner-only on the server, so a member is not offered it.
+  const showOwnerActions = !isOwnershipKnown || isOwner;
+  const isArchived = isDefined(thread.deletedAt);
   const currentAiChatThreadTitle = useAtomComponentFamilyStateValue(
     currentAiChatThreadTitleComponentFamilyState,
     { threadId: thread.id },
@@ -81,12 +84,6 @@ export const AiChatPageThreadHeader = ({
     commitRename,
   } = useAiChatThreadRename({ ...thread, title });
   const displayTitle = title || t`New chat`;
-  const agentChatMessages = useAtomComponentFamilyStateValue(
-    agentChatMessagesComponentFamilyState,
-    { threadId: thread.id },
-  );
-  const hasConversation =
-    agentChatMessages.length > 0 || isDefined(thread.lastMessageAt);
 
   return (
     <>
@@ -138,20 +135,25 @@ export const AiChatPageThreadHeader = ({
       <AiChatThreadWorkflowRunChip workflowRunId={thread.workflowRunId} />
       <StyledActions>
         <AiChatThreadParticipants threadId={thread.id} />
-        {hasConversation && (
-          <Button
-            startIcon={<IconPlus />}
+        {showOwnerActions && (
+          <IconButton
             size="sm"
-            onClick={() => switchToNewChat()}
-            variant="solid"
-            color="accent"
-          >{t`New chat`}</Button>
+            variant="outline"
+            aria-label={isArchived ? t`Unarchive chat` : t`Archive chat`}
+            onClick={() =>
+              isArchived
+                ? unarchiveChatThread(thread.id)
+                : archiveChatThread(thread.id)
+            }
+          >
+            {isArchived ? <IconArchiveOff /> : <IconArchive />}
+          </IconButton>
         )}
         <AiChatThreadItemMenu
           threadId={thread.id}
           threadTitle={displayTitle}
           channelId={thread.channelId}
-          isArchived={isDefined(thread.deletedAt)}
+          isArchived={isArchived}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.PAGE_HEADER}
           onRenameRequested={startRename}
           clickableComponent={

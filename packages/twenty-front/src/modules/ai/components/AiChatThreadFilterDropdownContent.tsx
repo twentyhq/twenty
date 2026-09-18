@@ -3,11 +3,13 @@ import { AiChatThreadFilterDropdownLastActivityMenu } from '@/ai/components/AiCh
 import { AiChatThreadFilterDropdownRootMenu } from '@/ai/components/AiChatThreadFilterDropdownRootMenu';
 import { AiChatThreadFilterDropdownStatusMenu } from '@/ai/components/AiChatThreadFilterDropdownStatusMenu';
 import { AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE } from '@/ai/constants/AiChatThreadFilterDropdownPage';
+import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { type AiChatThreadFilterDropdownPage } from '@/ai/types/AiChatThreadFilterDropdownPage';
 
 type AiChatThreadFilterDropdownContentProps = {
   page: AiChatThreadFilterDropdownPage;
   dropdownId: string;
+  surface: AiChatThreadActionsSurface;
   onSelectPage: (page: AiChatThreadFilterDropdownPage) => void;
   onBack: () => void;
 };
@@ -15,6 +17,7 @@ type AiChatThreadFilterDropdownContentProps = {
 export const AiChatThreadFilterDropdownContent = ({
   page,
   dropdownId,
+  surface,
   onSelectPage,
   onBack,
 }: AiChatThreadFilterDropdownContentProps) => {
@@ -30,6 +33,7 @@ export const AiChatThreadFilterDropdownContent = ({
       return (
         <AiChatThreadFilterDropdownRootMenu
           dropdownId={dropdownId}
+          surface={surface}
           onSelectPage={onSelectPage}
         />
       );

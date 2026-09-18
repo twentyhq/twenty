@@ -2,6 +2,7 @@ import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNa
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatChannelDeleteConfirmationModal } from '@/ai/components/AiChatChannelDeleteConfirmationModal';
@@ -11,15 +12,14 @@ import { NavigationDrawerAiChatChannelItem } from '@/ai/components/NavigationDra
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
-import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatChannels } from '@/ai/hooks/useChatChannels';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
+import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
@@ -52,13 +52,17 @@ const StyledEmptyState = styled.div`
   justify-content: center;
 `;
 
+const StyledNewChatItem = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledFetchMoreTrigger = styled.div`
   height: 1px;
   min-height: 1px;
   width: 100%;
 `;
 
-const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
+const AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID = 'AiChatDirectMessages';
 const AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
 
 export const NavigationDrawerAiChatContent = () => {
@@ -69,8 +73,9 @@ export const NavigationDrawerAiChatContent = () => {
   const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
   });
-  const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
-
+  const { switchToNewChat } = useSwitchToNewAiChat({
+    shouldOpenInFullPage: true,
+  });
   const {
     threads: allThreads,
     hasNextPage,
@@ -78,9 +83,13 @@ export const NavigationDrawerAiChatContent = () => {
     fetchMoreRef,
   } = useChatThreads();
   const { joinedChannels, browsableChannels } = useChatChannels();
-  // Channel threads live on their channel page; the drawer only lists the
-  // channels themselves and the threads outside any channel.
-  const threads = allThreads.filter((thread) => !isDefined(thread.channelId));
+  // Channel threads live on their channel page and a workflow run's
+  // conversation is reached from the run, so the drawer lists the channels
+  // themselves and, beside them, only the chats a person holds directly.
+  const threads = allThreads.filter(
+    (thread) =>
+      !isDefined(thread.channelId) && !isDefined(thread.workflowRunId),
+  );
   const hasChannelsSection =
     joinedChannels.length > 0 || browsableChannels.length > 0;
 
@@ -92,20 +101,16 @@ export const NavigationDrawerAiChatContent = () => {
     );
   }
 
-  const isGroupedByDate =
-    agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
-  const dateGroups = isGroupedByDate ? groupThreadsByDate(threads) : [];
-  const shouldRenderDateGroups = isGroupedByDate && dateGroups.length > 0;
-
-  const filterDropdown = (
-    <AiChatThreadFilterDropdown
-      surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-    />
-  );
-
   return (
     <StyledContainer>
       <StyledThreadList>
+        <StyledNewChatItem>
+          <NavigationDrawerItem
+            Icon={IconPlus}
+            label={t`New chat`}
+            onClick={() => switchToNewChat()}
+          />
+        </StyledNewChatItem>
         {hasChannelsSection && (
           <StyledSectionsContainer>
             <CollapsibleNavigationDrawerSection
@@ -123,42 +128,21 @@ export const NavigationDrawerAiChatContent = () => {
             </CollapsibleNavigationDrawerSection>
           </StyledSectionsContainer>
         )}
-        {shouldRenderDateGroups ? (
-          <StyledSectionsContainer>
-            {dateGroups.map((dateGroup, index) => (
-              <NavigationDrawerAiChatThreadSection
-                key={dateGroup.id}
-                sectionId={`AiChatDateGroup:${dateGroup.id}`}
-                title={dateGroup.title}
-                threads={dateGroup.threads}
-                currentThreadId={currentAiChatThread}
-                onThreadClick={handleThreadClick}
-                rightIcon={
-                  index === 0 ? (
-                    <>
-                      {!hasChannelsSection && <AiChatChannelsMenu />}
-                      {filterDropdown}
-                    </>
-                  ) : undefined
-                }
+        <NavigationDrawerAiChatThreadSection
+          sectionId={AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID}
+          title={t`Direct messages`}
+          threads={threads}
+          currentThreadId={currentAiChatThread}
+          onThreadClick={handleThreadClick}
+          rightIcon={
+            <>
+              {!hasChannelsSection && <AiChatChannelsMenu />}
+              <AiChatThreadFilterDropdown
+                surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
               />
-            ))}
-          </StyledSectionsContainer>
-        ) : (
-          <NavigationDrawerAiChatThreadSection
-            sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
-            title={t`Recents`}
-            threads={threads}
-            currentThreadId={currentAiChatThread}
-            onThreadClick={handleThreadClick}
-            rightIcon={
-              <>
-                {!hasChannelsSection && <AiChatChannelsMenu />}
-                {filterDropdown}
-              </>
-            }
-          />
-        )}
+            </>
+          }
+        />
         {allThreads.length === 0 && isExpanded ? (
           <StyledEmptyState>{t`No chat`}</StyledEmptyState>
         ) : null}

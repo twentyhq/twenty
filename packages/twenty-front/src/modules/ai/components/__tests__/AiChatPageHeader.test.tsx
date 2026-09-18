@@ -10,7 +10,6 @@ import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -114,16 +113,32 @@ describe('AiChatPageHeader', () => {
     },
   );
 
-  it('starts a new chat from the current conversation', async () => {
+  it('archives the current conversation from the header', async () => {
     const user = userEvent.setup();
     render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     expect(screen.getByText('Best leads')).toBeVisible();
-    await user.click(screen.getByRole('button', { name: /^New chat/ }));
-    expect(switchToNewChat).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole('button', { name: 'Archive chat' }));
+    expect(archiveChatThread).toHaveBeenCalledWith(THREAD.id);
     expect(
       screen.queryByRole('button', { name: 'Collapse to side panel' }),
     ).toBeNull();
+  });
+
+  it('unarchives the current conversation from the header', async () => {
+    const user = userEvent.setup();
+
+    setThreads([{ ...THREAD, deletedAt: '2026-09-07T00:00:00Z' }]);
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+    await user.click(screen.getByRole('button', { name: 'Unarchive chat' }));
+    expect(unarchiveChatThread).toHaveBeenCalledWith(THREAD.id);
+  });
+
+  it('leaves starting a new chat to the navigation drawer', () => {
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+    expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
   });
 
   it('links a workflow run conversation back to its run', async () => {
@@ -160,70 +175,11 @@ describe('AiChatPageHeader', () => {
     expect(screen.getByRole('button', { name: 'Chat actions' })).toBeVisible();
   });
 
-  it.each([0, 100])(
-    'keeps New chat hidden without messages regardless of token usage (%s)',
-    (conversationSize) => {
-      setThreads([{ ...THREAD, lastMessageAt: null, conversationSize }]);
-      render(<AiChatPageHeader />, { wrapper: Wrapper });
-
-      expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
-    },
-  );
-
-  it('shows New chat as soon as messages load without a last-message timestamp', () => {
-    setThreads([{ ...THREAD, lastMessageAt: null }]);
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD.id);
-    render(<AiChatPageHeader />, { wrapper: Wrapper });
-
-    expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
-
-    act(() => {
-      jotaiStore.set(
-        agentChatMessagesComponentFamilyState.atomFamily({
-          instanceId: 'ai-chat-header-test',
-          familyKey: { threadId: THREAD.id },
-        }),
-        [{ id: 'message-1', role: 'user', parts: [] }],
-      );
-    });
-
-    expect(screen.getByRole('button', { name: /^New chat/ })).toBeVisible();
-  });
-
-  it('checks the header thread for messages while a different conversation is displayed', () => {
-    setThreads([{ ...THREAD, lastMessageAt: null }]);
-    jotaiStore.set(agentChatDisplayedThreadState.atom, 'previous-thread');
-    jotaiStore.set(
-      agentChatMessagesComponentFamilyState.atomFamily({
-        instanceId: 'ai-chat-header-test',
-        familyKey: { threadId: 'previous-thread' },
-      }),
-      [{ id: 'previous-message', role: 'user', parts: [] }],
-    );
-    render(<AiChatPageHeader />, { wrapper: Wrapper });
-
-    expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
-
-    act(() => {
-      jotaiStore.set(
-        agentChatMessagesComponentFamilyState.atomFamily({
-          instanceId: 'ai-chat-header-test',
-          familyKey: { threadId: THREAD.id },
-        }),
-        [{ id: 'current-message', role: 'user', parts: [] }],
-      );
-    });
-
-    expect(screen.getByRole('button', { name: /^New chat/ })).toBeVisible();
-  });
-
   it('offers the standard conversation actions', async () => {
     const user = userEvent.setup();
     render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     expect(screen.getByText('Best leads')).toBeVisible();
-    await user.click(screen.getByRole('button', { name: /^New chat/ }));
-    expect(switchToNewChat).toHaveBeenCalledTimes(1);
     await user.click(screen.getByRole('button', { name: 'Chat actions' }));
     expect(screen.getByText('Rename')).toBeVisible();
     expect(screen.getByText('Archive')).toBeVisible();
@@ -362,12 +318,12 @@ describe('AiChatPageHeader', () => {
     await user.click(screen.getByText('Rename'));
     await user.clear(screen.getByRole('textbox'));
     await user.type(screen.getByRole('textbox'), 'Qualified leads');
-    await user.click(screen.getByRole('button', { name: /^New chat/ }));
+    await user.click(screen.getByRole('button', { name: 'Archive chat' }));
 
     expect(renameChatThread).toHaveBeenCalledTimes(1);
     expect(renameChatThread).toHaveBeenCalledWith(THREAD.id, 'Qualified leads');
     expect(screen.queryByRole('textbox')).toBeNull();
-    expect(switchToNewChat).toHaveBeenCalledTimes(1);
+    expect(archiveChatThread).toHaveBeenCalledWith(THREAD.id);
   });
 
   it('discards the draft on Escape without saving', async () => {
