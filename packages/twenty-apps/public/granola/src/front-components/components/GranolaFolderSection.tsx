@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Info, Section } from 'twenty-ui/components';
+import { Info } from 'twenty-ui/feedback';
+import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/typography';
 
 import { GranolaFolderPicker } from 'src/front-components/components/GranolaFolderPicker';
 import { GranolaFolderPolicyRadioCard } from 'src/front-components/components/GranolaFolderPolicyRadioCard';
@@ -34,9 +36,9 @@ export const GranolaFolderSection = () => {
   };
 
   return (
-    <Section.Root>
+    <Section>
       <OnMountEffect onMount={loadStoredSelection} />
-      <Section.Header
+      <H2Title
         title={t('Folders')}
         description={t(
           'Choose which Granola folders feed live sync and history imports.',
@@ -58,6 +60,6 @@ export const GranolaFolderSection = () => {
           />
         )}
       </StyledSettingsSectionStack>
-    </Section.Root>
+    </Section>
   );
 };

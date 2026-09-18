@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/typography';
 
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS } from 'src/constants/call-recorder-transcript-provider-options';
 import { LabelledSettingsField } from 'src/front-components/components/LabelledSettingsField';
@@ -74,8 +75,8 @@ export const TranscriptionSection = () => {
   };
 
   return (
-    <Section.Root>
-      <Section.Header
+    <Section>
+      <H2Title
         title="Transcription"
         description="What happens to a recording once the call ends."
       />
@@ -118,6 +119,6 @@ export const TranscriptionSection = () => {
           </LabelledSettingsField>
         </StyledDimmable>
       </StyledSettingsSectionStack>
-    </Section.Root>
+    </Section>
   );
 };

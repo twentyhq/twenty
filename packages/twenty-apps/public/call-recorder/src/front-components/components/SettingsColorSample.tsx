@@ -1,8 +1,5 @@
 import styled from '@emotion/styled';
-import {
-  ColorSample,
-  type ColorSampleProps,
-} from 'twenty-ui/primitives/data-display';
+import { ColorSample, type ColorSampleProps } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsColorSampleProps = Omit<ColorSampleProps, 'variant'>;

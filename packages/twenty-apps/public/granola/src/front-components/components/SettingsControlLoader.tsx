@@ -1,4 +1,4 @@
-import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
+import { CircularProgressBar } from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const CONTROL_LOADER_SIZE_PIXELS = 16;

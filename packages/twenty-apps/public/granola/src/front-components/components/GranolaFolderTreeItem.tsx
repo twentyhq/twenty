@@ -7,6 +7,7 @@ import {
   IconFolder,
   IconFolderRoot,
 } from 'twenty-ui/icon';
+import { ICON } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Checkbox } from 'src/front-components/components/Checkbox';
@@ -157,13 +158,7 @@ export const GranolaFolderTreeItem = ({
           />
         )}
         <StyledFolderContent>
-          <FolderIcon
-            style={{
-              width: `calc(${themeCssVariables.icon.size.md} * 1px)`,
-              height: `calc(${themeCssVariables.icon.size.md} * 1px)`,
-              strokeWidth: themeCssVariables.icon.stroke.sm,
-            }}
-          />
+          <FolderIcon size={ICON.size.md} stroke={ICON.stroke.sm} />
           <StyledFolderName $disabled={isUnavailable} title={folder.name}>
             {folder.name}
           </StyledFolderName>
@@ -184,19 +179,9 @@ export const GranolaFolderTreeItem = ({
                   }}
                 >
                   {isExpanded ? (
-                    <IconChevronUp
-                      style={{
-                        width: `calc(${themeCssVariables.icon.size.md} * 1px)`,
-                        height: `calc(${themeCssVariables.icon.size.md} * 1px)`,
-                      }}
-                    />
+                    <IconChevronUp size={ICON.size.md} />
                   ) : (
-                    <IconChevronDown
-                      style={{
-                        width: `calc(${themeCssVariables.icon.size.md} * 1px)`,
-                        height: `calc(${themeCssVariables.icon.size.md} * 1px)`,
-                      }}
-                    />
+                    <IconChevronDown size={ICON.size.md} />
                   )}
                 </StyledExpandButton>
               </>

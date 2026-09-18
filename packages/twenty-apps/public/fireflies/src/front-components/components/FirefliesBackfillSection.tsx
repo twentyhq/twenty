@@ -2,8 +2,9 @@ import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
-import { Section } from 'twenty-ui/components';
-import { Button } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FIREFLIES_BACKFILL_MAX_WINDOW_DAYS } from 'src/constants/fireflies-backfill-max-window-days.constant';
@@ -68,8 +69,8 @@ export const FirefliesBackfillSection = ({
   };
 
   return (
-    <Section.Root>
-      <Section.Header
+    <Section>
+      <H2Title
         title="Import call history"
         description="Imports past Fireflies calls as call recordings. Already-imported calls are skipped."
       />
@@ -101,6 +102,6 @@ export const FirefliesBackfillSection = ({
           {FIREFLIES_BACKFILL_MAX_WINDOW_DAYS}.
         </StyledHint>
       )}
-    </Section.Root>
+    </Section>
   );
 };

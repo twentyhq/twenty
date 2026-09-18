@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Label } from 'twenty-ui/typography';
 
 import { Checkbox } from 'src/front-components/components/Checkbox';
 import { GranolaFolderTreeItem } from 'src/front-components/components/GranolaFolderTreeItem';
@@ -110,13 +110,13 @@ export const GranolaFolderTree = ({
         />
       </StyledSearchInputContainer>
       <StyledLabelContainer>
-        <StyledDisplayLabel>{t('Folders')}</StyledDisplayLabel>
-        <StyledDisplayLabel>
+        <Label>{t('Folders')}</Label>
+        <Label>
           {selectedFolderIds.length}/{selectionLimit}
-        </StyledDisplayLabel>
+        </Label>
       </StyledLabelContainer>
       <StyledSectionHeader>
-        <StyledDisplayLabel>{t('Toggle all folders')}</StyledDisplayLabel>
+        <Label>{t('Toggle all folders')}</Label>
         <Checkbox
           checked={isEveryFolderSelected}
           indeterminate={!isEveryFolderSelected && selectedFolderIds.length > 0}
@@ -147,9 +147,3 @@ export const GranolaFolderTree = ({
     </StyledContainer>
   );
 };
-
-const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
-`;

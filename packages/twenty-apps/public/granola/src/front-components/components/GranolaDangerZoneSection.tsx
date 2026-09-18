@@ -1,7 +1,8 @@
 import { openCommandConfirmationModal, t } from 'twenty-sdk/front-component';
-import { Section } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/typography';
 
 type GranolaDangerZoneSectionProps = {
   isDisabled: boolean;
@@ -30,20 +31,19 @@ export const GranolaDangerZoneSection = ({
   };
 
   return (
-    <Section.Root>
-      <Section.Header
+    <Section>
+      <H2Title
         title={t('Danger zone')}
         description={t('Remove the API key and stop syncing notes')}
       />
       <Button
-        startIcon={<IconTrash />}
-        variant="outline"
-        color="danger"
+        Icon={IconTrash}
+        title={t('Disconnect')}
+        variant="secondary"
+        accent="danger"
         disabled={isDisabled}
         onClick={handleDisconnectClick}
-      >
-        {t('Disconnect')}
-      </Button>
-    </Section.Root>
+      />
+    </Section>
   );
 };
