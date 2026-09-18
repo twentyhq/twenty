@@ -2389,7 +2389,7 @@
       },
       {
         "name": "actionsVisibility",
-        "type": "\"hover\" | \"always\"",
+        "type": "\"always\" | \"hover\"",
         "required": false,
         "defaultValue": "hover",
         "description": "When trailing actions are visible: on hover and focus, or always."

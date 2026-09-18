@@ -1,7 +1,7 @@
 import { Menu } from '@base-ui/react/menu';
 import { i18n } from '@lingui/core';
-import { IconButton } from '@ui/components/IconButton/IconButton';
-import { MenuItem } from '@ui/components/MenuItem/MenuItem';
+import { IconButton } from '@ui/components/input/IconButton/IconButton';
+import { MenuItem } from '@ui/components/navigation/MenuItem/MenuItem';
 import { Button } from '@ui/primitives/input/Button/Button';
 import {
   IconArrowUpRight,

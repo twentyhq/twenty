@@ -7,7 +7,7 @@ import {
   IconTimelineEvent,
   IconTrash,
 } from '@ui/icon';
-import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
+import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
 import { ComponentDecorator } from '@ui/testing';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';

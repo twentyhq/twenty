@@ -21,28 +21,28 @@ import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 export const DOCUMENTED_COMPONENTS = [
   {
     name: 'LightIconButton',
-    source: 'components/LightIconButton/LightIconButton.tsx',
+    source: 'components/input/LightIconButton/LightIconButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'input/light-icon-button',
     propDescriptions: LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS,
   },
   {
     name: 'IconButton',
-    source: 'components/IconButton/IconButton.tsx',
+    source: 'components/input/IconButton/IconButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'input/icon-button',
     propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
   },
   {
     name: 'MainButton',
-    source: 'components/MainButton/MainButton.tsx',
+    source: 'components/input/MainButton/MainButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'input/main-button',
     propDescriptions: BUTTON_PROP_DESCRIPTIONS,
   },
   {
     name: 'LightButton',
-    source: 'components/LightButton/LightButton.tsx',
+    source: 'components/input/LightButton/LightButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'input/light-button',
     propDescriptions: LIGHT_BUTTON_PROP_DESCRIPTIONS,
@@ -181,7 +181,7 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'Toast',
-    source: 'components/Toast/Toast.tsx',
+    source: 'components/feedback/Toast/Toast.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'feedback/toast',
   },
@@ -228,14 +228,14 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'SettingsRow',
-    source: 'components/SettingsRow/SettingsRow.tsx',
+    source: 'components/input/SettingsRow/SettingsRow.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'components/settings-row',
     propDescriptions: SETTINGS_ROW_PROP_DESCRIPTIONS,
   },
   {
     name: 'Section',
-    source: 'components/Section/Section.tsx',
+    source: 'components/layout/Section/Section.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'components/section',
     partPropDescriptions: {
@@ -259,7 +259,7 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'TabButton',
-    source: 'components/TabButton/TabButton.tsx',
+    source: 'components/navigation/TabButton/TabButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'components/tab-button',
     propDescriptions: {

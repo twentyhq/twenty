@@ -9,7 +9,7 @@ import {
   type CatalogStory,
 } from '@ui/testing';
 
-import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
+import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
 import { IconBell, IconEdit, IconSettings, IconTrash } from '@ui/icon';
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
 import { type ListItemColor } from '@ui/primitives/navigation/ListItem/types/ListItemColor';
