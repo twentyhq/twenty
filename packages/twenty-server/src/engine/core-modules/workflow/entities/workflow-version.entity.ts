@@ -27,6 +27,10 @@ export enum WorkflowVersionStatus {
   upgradeCommandName: CREATE_WORKFLOW_VERSION_CORE_TABLE_UPGRADE_COMMAND_NAME,
 })
 @Index('IDX_WORKFLOW_VERSION_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_WORKFLOW_VERSION_WORKSPACE_ID_CORE_WORKFLOW_ID', [
+  'workspaceId',
+  'coreWorkflowId',
+])
 @Index(
   'IDX_WORKFLOW_VERSION_ONE_ACTIVE_PER_WORKFLOW',
   ['workspaceId', 'workflowId'],

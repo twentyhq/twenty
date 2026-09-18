@@ -160,6 +160,7 @@ export const WorkflowCoreIndexPage = () => {
                 getItemKey={(workflow) => workflow.id}
                 getItemLink={getCoreWorkflowLink}
                 initialSort={CORE_WORKFLOWS_INITIAL_SORT}
+                onSort={() => selectRows([])}
                 selection={{
                   selectedRowIds,
                   onToggleRow: toggleRow,

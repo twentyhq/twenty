@@ -1,6 +1,8 @@
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { t } from '@lingui/core/macro';
 
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useCoreWorkflowsWithCurrentVersions';
 import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useWorkflowsWithCurrentVersions';
@@ -29,13 +31,25 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   const workflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
     isCore ? [] : selectedWorkflowRecordIds,
   );
-  const coreWorkflowsWithCurrentVersions = useCoreWorkflowsWithCurrentVersions(
+  const {
+    workflows: coreWorkflowsWithCurrentVersions,
+    loading: areCoreWorkflowsLoading,
+    error: coreWorkflowsError,
+  } = useCoreWorkflowsWithCurrentVersions(
     isCore ? selectedWorkflowRecordIds : [],
   );
 
   const workflows = isCore
     ? coreWorkflowsWithCurrentVersions
     : workflowsWithCurrentVersions;
+
+  if (
+    isCore &&
+    areCoreWorkflowsLoading &&
+    coreWorkflowsWithCurrentVersions.length === 0
+  ) {
+    return null;
+  }
 
   const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
     (record) => {
@@ -59,16 +73,22 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   );
 
   return (
-    <CommandMenuContextProviderContent
-      displayType={displayType}
-      containerType={containerType}
-      commandMenuContextApi={{
-        ...commandMenuContextApi,
-        selectedRecords: enrichedSelectedRecords,
-      }}
-      isInPreviewMode={isInPreviewMode}
-    >
-      {children}
-    </CommandMenuContextProviderContent>
+    <>
+      <ToastOnQueryErrorEffect
+        error={isCore ? coreWorkflowsError : undefined}
+        message={t`Could not load workflow actions`}
+      />
+      <CommandMenuContextProviderContent
+        displayType={displayType}
+        containerType={containerType}
+        commandMenuContextApi={{
+          ...commandMenuContextApi,
+          selectedRecords: enrichedSelectedRecords,
+        }}
+        isInPreviewMode={isInPreviewMode}
+      >
+        {children}
+      </CommandMenuContextProviderContent>
+    </>
   );
 };

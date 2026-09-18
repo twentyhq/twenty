@@ -27,6 +27,7 @@ type CoreObjectTableProps<TItem> = {
   getItemLink?: (item: TItem) => string | undefined;
   initialSort?: TableMetadata<TItem>['initialSort'];
   selection?: CoreObjectTableSelection<TItem>;
+  onSort?: () => void;
 };
 
 const isSortableColumn = <TItem,>(
@@ -42,6 +43,7 @@ export const CoreObjectTable = <TItem,>({
   getItemLink,
   initialSort,
   selection,
+  onSort,
 }: CoreObjectTableProps<TItem>) => {
   const { t } = useLingui();
 
@@ -91,6 +93,7 @@ export const CoreObjectTable = <TItem,>({
               align={column.align}
               initialSort={initialSort}
               Icon={column.FieldIcon}
+              onSort={onSort}
             />
           ) : (
             <TableHeader key={column.fieldName} align={column.align}>

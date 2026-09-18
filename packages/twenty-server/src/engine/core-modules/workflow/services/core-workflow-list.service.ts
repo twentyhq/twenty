@@ -125,6 +125,14 @@ export class CoreWorkflowListService {
       }),
       this.coreWorkflowVersionRepository.find(workspaceId, {
         where: { coreWorkflowId: In(coreWorkflowIds) },
+        select: {
+          id: true,
+          coreWorkflowId: true,
+          status: true,
+          workspaceWorkflowVersionId: true,
+          createdAt: true,
+          updatedAt: true,
+        },
         order: { createdAt: 'ASC', id: 'ASC' },
       }),
     ]);
@@ -133,32 +141,26 @@ export class CoreWorkflowListService {
       coreWorkflows.map((workflow) => [workflow.id, workflow]),
     );
 
-    return coreWorkflowIds.flatMap((coreWorkflowId) => {
-      const workflow = workflowById.get(coreWorkflowId);
+    const versionsByWorkflowId = new Map<string, WorkflowVersionEntity[]>();
 
-      if (!isDefined(workflow)) {
-        return [];
+    for (const version of coreWorkflowVersions) {
+      if (!isDefined(version.coreWorkflowId)) {
+        continue;
       }
 
-      const versionsInCreationOrder = coreWorkflowVersions.filter(
-        (version) => version.coreWorkflowId === coreWorkflowId,
-      );
+      const versions = versionsByWorkflowId.get(version.coreWorkflowId) ?? [];
 
-      const versions = versionsInCreationOrder
-        .map((version, index) => ({
-          id: version.id,
-          coreWorkflowId: version.coreWorkflowId,
-          label: buildCoreWorkflowVersionLabel(index + 1),
-          status: version.status,
-          workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
-          workspaceWorkflowId: workflow.workspaceWorkflowId,
-          trigger: version.triggers?.[0] ?? null,
-          steps: version.steps ?? null,
-          createdAt: version.createdAt.toISOString(),
-          updatedAt: version.updatedAt.toISOString(),
-        }))
-        .reverse();
+      versions.push(version);
+      versionsByWorkflowId.set(version.coreWorkflowId, versions);
+    }
 
+    const currentVersionIdByWorkflowId = new Map<string, string>();
+
+    for (const [
+      coreWorkflowId,
+      versionsInCreationOrder,
+    ] of versionsByWorkflowId) {
+      const versions = [...versionsInCreationOrder].reverse();
       const currentVersion =
         versions.find(
           (version) => version.status === WorkflowVersionStatus.DRAFT,
@@ -168,9 +170,65 @@ export class CoreWorkflowListService {
         ) ??
         versions[0];
 
-      if (!isDefined(currentVersion)) {
+      if (isDefined(currentVersion)) {
+        currentVersionIdByWorkflowId.set(coreWorkflowId, currentVersion.id);
+      }
+    }
+
+    const currentVersionIds = [...currentVersionIdByWorkflowId.values()];
+    const currentVersionContents =
+      currentVersionIds.length === 0
+        ? []
+        : await this.coreWorkflowVersionRepository.find(workspaceId, {
+            where: { id: In(currentVersionIds) },
+            select: { id: true, triggers: true, steps: true },
+          });
+    const currentVersionContentById = new Map(
+      currentVersionContents.map((version) => [version.id, version]),
+    );
+
+    return coreWorkflowIds.flatMap((coreWorkflowId) => {
+      const workflow = workflowById.get(coreWorkflowId);
+
+      if (!isDefined(workflow)) {
         return [];
       }
+
+      const versionsInCreationOrder =
+        versionsByWorkflowId.get(coreWorkflowId) ?? [];
+
+      const versions = versionsInCreationOrder
+        .map((version, index) => ({
+          id: version.id,
+          coreWorkflowId: version.coreWorkflowId,
+          label: buildCoreWorkflowVersionLabel(index + 1),
+          status: version.status,
+          workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
+          workspaceWorkflowId: workflow.workspaceWorkflowId,
+          trigger: null,
+          steps: null,
+          createdAt: version.createdAt.toISOString(),
+          updatedAt: version.updatedAt.toISOString(),
+        }))
+        .reverse();
+
+      const currentVersionId = currentVersionIdByWorkflowId.get(coreWorkflowId);
+      const currentVersionMetadata = versions.find(
+        (version) => version.id === currentVersionId,
+      );
+
+      if (!isDefined(currentVersionMetadata)) {
+        return [];
+      }
+
+      const currentVersionContent = currentVersionContentById.get(
+        currentVersionMetadata.id,
+      );
+      const currentVersion = {
+        ...currentVersionMetadata,
+        trigger: currentVersionContent?.triggers?.[0] ?? null,
+        steps: currentVersionContent?.steps ?? null,
+      };
 
       return [
         {

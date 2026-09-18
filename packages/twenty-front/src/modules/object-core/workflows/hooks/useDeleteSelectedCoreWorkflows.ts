@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/common/hooks/useRemoveNavigationMenuItemByTargetRecordId';
@@ -93,11 +93,11 @@ export const useDeleteSelectedCoreWorkflows = () => {
 
     setCoreWorkflowsSelection(EMPTY_CORE_WORKFLOWS_SELECTION);
 
-    const deletedWorkspaceWorkflowIds = deletedCoreWorkflows.map(
-      (deletedCoreWorkflow) => deletedCoreWorkflow.workspaceWorkflowId,
-    );
+    const deletedWorkspaceWorkflowIds = deletedCoreWorkflows
+      .map((deletedCoreWorkflow) => deletedCoreWorkflow.workspaceWorkflowId)
+      .filter(isDefined);
 
-    await invalidateCoreWorkflowVersions(apolloCoreClient);
+    void invalidateCoreWorkflowVersions(apolloCoreClient).catch(logError);
 
     removeNavigationMenuItemsByTargetRecordIds(deletedWorkspaceWorkflowIds);
 

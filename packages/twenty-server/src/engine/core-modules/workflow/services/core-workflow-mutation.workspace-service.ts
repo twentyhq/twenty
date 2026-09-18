@@ -420,20 +420,16 @@ export class CoreWorkflowMutationWorkspaceService {
       },
     );
 
-    const deletedCoreWorkflows = coreWorkflowsToDelete
-      .map(({ id, workspaceWorkflowId }) =>
-        isDefined(workspaceWorkflowId)
-          ? { id, workspaceWorkflowId }
-          : undefined,
-      )
-      .filter(isDefined);
+    const deletedCoreWorkflows = coreWorkflowsToDelete.map(
+      ({ id, workspaceWorkflowId }) => ({ id, workspaceWorkflowId }),
+    );
 
     const mirrorWorkflowIds = await this.findMirrorWorkflowIdsToDelete({
       workspaceId,
       coreWorkflowIds,
-      knownMirrorWorkflowIds: deletedCoreWorkflows.map(
-        ({ workspaceWorkflowId }) => workspaceWorkflowId,
-      ),
+      knownMirrorWorkflowIds: deletedCoreWorkflows
+        .map(({ workspaceWorkflowId }) => workspaceWorkflowId)
+        .filter(isDefined),
     });
 
     if (mirrorWorkflowIds.length > 0) {

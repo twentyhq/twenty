@@ -290,7 +290,7 @@ export type DeleteWorkflowVersionStepInput = {
 export type DeletedCoreWorkflowDto = {
   __typename?: 'DeletedCoreWorkflowDTO';
   id: Scalars['UUID']['output'];
-  workspaceWorkflowId: Scalars['UUID']['output'];
+  workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type DiscardCoreWorkflowDraftInput = {
@@ -1257,7 +1257,7 @@ export type DeleteCoreWorkflowsMutationVariables = Exact<{
 }>;
 
 
-export type DeleteCoreWorkflowsMutation = { __typename?: 'Mutation', deleteCoreWorkflows: Array<{ __typename?: 'DeletedCoreWorkflowDTO', id: any, workspaceWorkflowId: any }> };
+export type DeleteCoreWorkflowsMutation = { __typename?: 'Mutation', deleteCoreWorkflows: Array<{ __typename?: 'DeletedCoreWorkflowDTO', id: any, workspaceWorkflowId?: any | null }> };
 
 export type DiscardCoreWorkflowDraftMutationVariables = Exact<{
   input: DiscardCoreWorkflowDraftInput;
