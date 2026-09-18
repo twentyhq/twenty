@@ -1,3 +1,9 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import {
+  DeactivateCoreWorkflowVersionDocument,
+  type DeactivateWorkflowVersionMutation,
+  type DeactivateWorkflowVersionMutationVariables,
+} from '~/generated/graphql';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useMutation } from '@apollo/client/react';
 
@@ -17,13 +23,13 @@ import {
   type WorkflowVersion,
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type DeactivateWorkflowVersionMutation,
-  type DeactivateWorkflowVersionMutationVariables,
-} from '~/generated/graphql';
 
 export const useDeactivateWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();
+  const isCore = useIsWorkflowCoreEnabled();
+  const [mutateCore] = useMutation(DeactivateCoreWorkflowVersionDocument, {
+    client: apolloCoreClient,
+  });
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { objectMetadataItems } = useObjectMetadataItems();
   const [mutate] = useMutation<
@@ -49,6 +55,14 @@ export const useDeactivateWorkflowVersion = () => {
   }: {
     workflowVersionId: string;
   }) => {
+    if (isCore) {
+      await mutateCore({
+        variables: { coreWorkflowVersionId: workflowVersionId },
+      });
+      await invalidateCoreWorkflowVersions(apolloCoreClient);
+      return;
+    }
+
     await mutate({
       variables: {
         workflowVersionId,

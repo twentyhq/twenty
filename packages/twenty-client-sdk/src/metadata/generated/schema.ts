@@ -104,6 +104,7 @@ export interface FrontComponent {
 export interface CommandMenuItem {
     id: Scalars['UUID']
     workflowVersionId?: Scalars['UUID']
+    coreWorkflowVersionId?: Scalars['UUID']
     frontComponentId?: Scalars['UUID']
     frontComponent?: FrontComponent
     engineComponentKey: EngineComponentKey
@@ -3712,6 +3713,7 @@ export interface FrontComponentGenqlSelection{
 export interface CommandMenuItemGenqlSelection{
     id?: boolean | number
     workflowVersionId?: boolean | number
+    coreWorkflowVersionId?: boolean | number
     frontComponentId?: boolean | number
     frontComponent?: FrontComponentGenqlSelection
     engineComponentKey?: boolean | number
