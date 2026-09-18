@@ -395,6 +395,9 @@ export class AgentAsyncExecutorService {
         await this.runAgentAttachmentService.buildModelMessagesOrThrow({
           messages,
           workspaceId,
+          modalities: this.aiModelRegistryService.getModelConfig(
+            registeredModel.modelId,
+          )?.modalities,
         });
 
       const textResponse = await generateText({
