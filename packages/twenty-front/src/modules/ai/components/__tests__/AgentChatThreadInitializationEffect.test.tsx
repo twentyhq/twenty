@@ -1,8 +1,10 @@
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
-import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
+import {
+  type AgentChatThread,
+  AgentChatThreadStatus,
+} from '~/generated-metadata/graphql';
 import { act, render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 

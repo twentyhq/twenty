@@ -17,13 +17,17 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
-import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
+import {
+  type AgentChatThread,
+  AgentChatThreadStatus,
+} from '~/generated-metadata/graphql';
 
 const switchToNewChat = jest.fn();
 const renameChatThread = jest.fn();
-const archiveChatThread = jest.fn();
-const unarchiveChatThread = jest.fn();
+const markChatThreadDone = jest.fn();
+const reopenChatThread = jest.fn();
+const snoozeChatThread = jest.fn();
+const assignChatThread = jest.fn();
 const deleteChatThread = jest.fn();
 
 const mockNavigate = jest.fn();
@@ -39,10 +43,12 @@ jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
 jest.mock('@/ai/hooks/useRenameChatThread', () => ({
   useRenameChatThread: () => ({ renameChatThread }),
 }));
-jest.mock('@/ai/hooks/useChatThreadArchiveActions', () => ({
-  useChatThreadArchiveActions: () => ({
-    archiveChatThread,
-    unarchiveChatThread,
+jest.mock('@/ai/hooks/useChatThreadInboxActions', () => ({
+  useChatThreadInboxActions: () => ({
+    markChatThreadDone,
+    reopenChatThread,
+    snoozeChatThread,
+    assignChatThread,
   }),
 }));
 jest.mock('@/ai/hooks/useDeleteChatThread', () => ({
@@ -115,26 +121,43 @@ describe('AiChatPageHeader', () => {
     },
   );
 
-  it('archives the current conversation from the header', async () => {
+  it('marks the current conversation done from the header', async () => {
     const user = userEvent.setup();
     render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     expect(screen.getByText('Best leads')).toBeVisible();
-    await user.click(screen.getByRole('button', { name: 'Archive chat' }));
-    expect(archiveChatThread).toHaveBeenCalledWith(THREAD.id);
+    await user.click(screen.getByRole('button', { name: 'Mark chat done' }));
+    expect(markChatThreadDone).toHaveBeenCalledWith(THREAD.id);
     expect(
       screen.queryByRole('button', { name: 'Collapse to side panel' }),
     ).toBeNull();
   });
 
-  it('unarchives the current conversation from the header', async () => {
+  it('reopens a conversation that was marked done', async () => {
     const user = userEvent.setup();
 
-    setThreads([{ ...THREAD, deletedAt: '2026-09-07T00:00:00Z' }]);
+    setThreads([{ ...THREAD, status: AgentChatThreadStatus.DONE }]);
     render(<AiChatPageHeader />, { wrapper: Wrapper });
 
-    await user.click(screen.getByRole('button', { name: 'Unarchive chat' }));
-    expect(unarchiveChatThread).toHaveBeenCalledWith(THREAD.id);
+    await user.click(screen.getByRole('button', { name: 'Reopen chat' }));
+    expect(reopenChatThread).toHaveBeenCalledWith(THREAD.id);
+  });
+
+  it('offers no snooze once a conversation is done', () => {
+    setThreads([{ ...THREAD, status: AgentChatThreadStatus.DONE }]);
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+    expect(screen.queryByRole('button', { name: 'Snooze chat' })).toBeNull();
+  });
+
+  it('snoozes the current conversation until a chosen time', async () => {
+    const user = userEvent.setup();
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+    await user.click(screen.getByRole('button', { name: 'Snooze chat' }));
+    await user.click(screen.getByText('Tomorrow morning'));
+
+    expect(snoozeChatThread).toHaveBeenCalledWith(THREAD.id, expect.any(Date));
   });
 
   it('leaves starting a new chat to the navigation drawer', () => {
@@ -184,7 +207,6 @@ describe('AiChatPageHeader', () => {
     expect(screen.getByText('Best leads')).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Chat actions' }));
     expect(screen.getByText('Rename')).toBeVisible();
-    expect(screen.getByText('Archive')).toBeVisible();
     expect(screen.getByText('Delete')).toBeVisible();
   });
 
@@ -222,20 +244,15 @@ describe('AiChatPageHeader', () => {
     expect(screen.queryByText('Generated title')).toBeNull();
   });
 
-  it('offers archive and unarchive even when the current chat is filtered out of the sidebar', async () => {
+  it('leaves archiving out of the menu now that done replaces it', async () => {
     const user = userEvent.setup();
     render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     await user.click(screen.getByRole('button', { name: 'Chat actions' }));
-    await user.click(screen.getByText('Archive'));
-    expect(archiveChatThread).toHaveBeenCalledWith(THREAD.id);
 
-    act(() => setThreads([{ ...THREAD, deletedAt: '2026-09-07T00:00:00Z' }]));
-
-    expect(screen.getByText('Best leads')).toBeVisible();
-    await user.click(screen.getByRole('button', { name: 'Chat actions' }));
-    await user.click(screen.getByText('Unarchive'));
-    expect(unarchiveChatThread).toHaveBeenCalledWith(THREAD.id);
+    expect(screen.queryByText('Archive')).toBeNull();
+    expect(screen.queryByText('Unarchive')).toBeNull();
+    expect(screen.getByText('Delete')).toBeVisible();
   });
 
   it('opens the rename editor when clicking the title', async () => {
@@ -320,12 +337,12 @@ describe('AiChatPageHeader', () => {
     await user.click(screen.getByText('Rename'));
     await user.clear(screen.getByRole('textbox'));
     await user.type(screen.getByRole('textbox'), 'Qualified leads');
-    await user.click(screen.getByRole('button', { name: 'Archive chat' }));
+    await user.click(screen.getByRole('button', { name: 'Mark chat done' }));
 
     expect(renameChatThread).toHaveBeenCalledTimes(1);
     expect(renameChatThread).toHaveBeenCalledWith(THREAD.id, 'Qualified leads');
     expect(screen.queryByRole('textbox')).toBeNull();
-    expect(archiveChatThread).toHaveBeenCalledWith(THREAD.id);
+    expect(markChatThreadDone).toHaveBeenCalledWith(THREAD.id);
   });
 
   it('discards the draft on Escape without saving', async () => {

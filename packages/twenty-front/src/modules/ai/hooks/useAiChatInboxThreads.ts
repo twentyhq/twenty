@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_THREAD_INBOX_STATE_ORDER } from '@/ai/constants/AgentChatThreadInboxStateLabels';
+import { AGENT_CHAT_THREAD_INBOX_STATE_ORDER } from '@/ai/constants/AgentChatThreadInboxStateOrder';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
 import { getAgentChatThreadInboxState } from '@/ai/utils/getAgentChatThreadInboxState';

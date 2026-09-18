@@ -3,11 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
 import { AGENT_CHAT_THREAD_INBOX_STATE } from '@/ai/constants/AgentChatThreadInboxState';
-import {
-  AGENT_CHAT_THREAD_INBOX_STATE_ICONS,
-  AGENT_CHAT_THREAD_INBOX_STATE_LABELS,
-  AGENT_CHAT_THREAD_INBOX_STATE_ORDER,
-} from '@/ai/constants/AgentChatThreadInboxStateLabels';
+import { AGENT_CHAT_THREAD_INBOX_STATE_ICONS } from '@/ai/constants/AgentChatThreadInboxStateIcons';
+import { AGENT_CHAT_THREAD_INBOX_STATE_LABELS } from '@/ai/constants/AgentChatThreadInboxStateLabels';
+import { AGENT_CHAT_THREAD_INBOX_STATE_ORDER } from '@/ai/constants/AgentChatThreadInboxStateOrder';
 import { useAiChatInboxThreads } from '@/ai/hooks/useAiChatInboxThreads';
 import { agentChatInboxStateTabState } from '@/ai/states/agentChatInboxStateTabState';
 import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
@@ -23,13 +21,15 @@ export const NavigationDrawerAiChatInboxSection = () => {
   const { t } = useLingui();
   const location = useLocation();
   const navigateApp = useNavigateApp();
-  const [inboxState, setInboxState] = useAtomState(agentChatInboxStateTabState);
+  const [agentChatInboxStateTab, setAgentChatInboxStateTab] = useAtomState(
+    agentChatInboxStateTabState,
+  );
   const { threadsByInboxState } = useAiChatInboxThreads();
 
   const isOnInboxPage = isAiChatInboxPath(location.pathname);
 
   const openInboxState = (nextInboxState: AgentChatThreadInboxState) => {
-    setInboxState(nextInboxState);
+    setAgentChatInboxStateTab(nextInboxState);
     navigateApp(AppPath.AiChatInbox, { threadId: null });
   };
 
@@ -50,7 +50,7 @@ export const NavigationDrawerAiChatInboxSection = () => {
             key={state}
             Icon={AGENT_CHAT_THREAD_INBOX_STATE_ICONS[state]}
             label={t(AGENT_CHAT_THREAD_INBOX_STATE_LABELS[state])}
-            active={isOnInboxPage && inboxState === state}
+            active={isOnInboxPage && agentChatInboxStateTab === state}
             secondaryLabel={showCount ? String(count) : undefined}
             onClick={() => openInboxState(state)}
           />

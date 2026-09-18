@@ -20,8 +20,10 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 import { useMutation } from '@apollo/client/react';
-import { CreateChatThreadDocument } from '~/generated-metadata/graphql';
-import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
+import {
+  CreateChatThreadDocument,
+  AgentChatThreadStatus,
+} from '~/generated-metadata/graphql';
 
 export const useCreateAgentChatThread = () => {
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);

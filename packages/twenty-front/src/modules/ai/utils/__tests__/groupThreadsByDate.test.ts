@@ -1,5 +1,7 @@
-import { type AgentChatThread } from '~/generated-metadata/graphql';
-import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
+import {
+  type AgentChatThread,
+  AgentChatThreadStatus,
+} from '~/generated-metadata/graphql';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 
 describe('groupThreadsByDate', () => {

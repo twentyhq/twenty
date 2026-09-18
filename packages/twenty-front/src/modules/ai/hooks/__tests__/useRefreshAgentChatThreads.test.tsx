@@ -5,8 +5,10 @@ import { type ReactNode } from 'react';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { clearMetadataStoreStorage } from '@/metadata-store/storage/metadataStoreStorage';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
-import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
+import {
+  type AgentChatThread,
+  AgentChatThreadStatus,
+} from '~/generated-metadata/graphql';
 
 const queryMock = jest.fn();
 

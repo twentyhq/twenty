@@ -9,8 +9,10 @@ import { StepStatus } from 'twenty-shared/workflow';
 
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { WorkflowRunStepConversation } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepConversation';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
-import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
+import {
+  type AgentChatThread,
+  AgentChatThreadStatus,
+} from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 
 i18n.load({ [SOURCE_LOCALE]: messages });

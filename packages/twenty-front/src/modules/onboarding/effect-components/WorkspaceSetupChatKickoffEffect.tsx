@@ -21,8 +21,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import {
   StartWorkspaceSetupChatDocument,
   WorkspaceSetupChatOutcome,
+  AgentChatThreadStatus,
 } from '~/generated-metadata/graphql';
-import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
 
 export const WorkspaceSetupChatKickoffEffect = () => {
   const [startWorkspaceSetupChatMutation] = useMutation(

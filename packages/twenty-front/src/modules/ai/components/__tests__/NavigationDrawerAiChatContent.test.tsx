@@ -11,7 +11,11 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import {
+  type AgentChatThread,
+  AgentChatThreadStatus,
+} from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
@@ -51,10 +55,12 @@ jest.mock('@/ai/components/AiChatChannelDeleteConfirmationModal', () => ({
 jest.mock('@/ai/hooks/useRenameChatThread', () => ({
   useRenameChatThread: () => ({ renameChatThread: jest.fn() }),
 }));
-jest.mock('@/ai/hooks/useChatThreadArchiveActions', () => ({
-  useChatThreadArchiveActions: () => ({
-    archiveChatThread: jest.fn(),
-    unarchiveChatThread: jest.fn(),
+jest.mock('@/ai/hooks/useChatThreadInboxActions', () => ({
+  useChatThreadInboxActions: () => ({
+    markChatThreadDone: jest.fn(),
+    reopenChatThread: jest.fn(),
+    snoozeChatThread: jest.fn(),
+    assignChatThread: jest.fn(),
   }),
 }));
 jest.mock('@/ai/hooks/useDeleteChatThread', () => ({
@@ -80,6 +86,9 @@ const buildThread = (
     createdAt: '2026-09-01T00:00:00.000Z',
     updatedAt: '2026-09-01T00:00:00.000Z',
     lastMessageAt: '2026-09-01T00:00:00.000Z',
+    status: AgentChatThreadStatus.OPEN,
+    snoozedUntil: null,
+    assigneeUserWorkspaceId: null,
     ...overrides,
   }) as AgentChatThread;
 
@@ -100,39 +109,37 @@ describe('NavigationDrawerAiChatContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
+    jotaiStore.set(currentWorkspaceMemberState.atom, {
+      userWorkspaceId: 'uw-tim',
+    } as never);
   });
 
-  it('lists the chats held directly under one undated section', () => {
+  it('opens on the inbox states rather than a flat list of chats', () => {
     threads = [
-      buildThread('t1', 'Yesterday chat', {
-        lastMessageAt: '2026-09-01T00:00:00.000Z',
-      }),
-      buildThread('t2', 'Older chat', {
-        lastMessageAt: '2025-01-01T00:00:00.000Z',
-      }),
+      buildThread('t1', 'Yesterday chat'),
+      buildThread('t2', 'Older chat'),
     ];
 
     renderContent();
 
-    expect(screen.getByText('Direct messages')).toBeVisible();
-    expect(screen.getByText('Yesterday chat')).toBeVisible();
-    expect(screen.getByText('Older chat')).toBeVisible();
+    expect(screen.getByText('Inbox')).toBeVisible();
+    expect(screen.getByText('Open')).toBeVisible();
+    expect(screen.getByText('Snoozed')).toBeVisible();
+    expect(screen.getByText('Done')).toBeVisible();
+    expect(screen.queryByText('Direct messages')).toBeNull();
     expect(screen.queryByText('Today')).toBeNull();
-    expect(screen.queryByText('Yesterday')).toBeNull();
-    expect(screen.queryByText('Recents')).toBeNull();
   });
 
-  it('leaves out the threads that belong to a channel or to a workflow run', () => {
+  it('counts only what is waiting, leaving done without a running total', () => {
     threads = [
-      buildThread('t1', 'My own chat'),
-      buildThread('t2', 'Channel chat', { channelId: 'channel-1' }),
-      buildThread('t3', 'Run chat', { workflowRunId: 'run-1' }),
+      buildThread('t1', 'Waiting on me'),
+      buildThread('t2', 'Also waiting'),
+      buildThread('t3', 'Finished', { status: AgentChatThreadStatus.DONE }),
     ];
 
     renderContent();
 
-    expect(screen.getByText('My own chat')).toBeVisible();
-    expect(screen.queryByText('Channel chat')).toBeNull();
-    expect(screen.queryByText('Run chat')).toBeNull();
+    expect(screen.getByText('· 2')).toBeVisible();
+    expect(screen.queryByText('· 1')).toBeNull();
   });
 });

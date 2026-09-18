@@ -11,7 +11,7 @@ import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPane } from '@/ai/components/AiChatInboxThreadPane';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatThreadInboxStateTabs } from '@/ai/components/AiChatThreadInboxStateTabs';
-import { AGENT_CHAT_THREAD_INBOX_STATE_ORDER } from '@/ai/constants/AgentChatThreadInboxStateLabels';
+import { AGENT_CHAT_THREAD_INBOX_STATE_ORDER } from '@/ai/constants/AgentChatThreadInboxStateOrder';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { AI_CHAT_INBOX_TABS_INSTANCE_ID } from '@/ai/constants/AiChatInboxTabsInstanceId';
 import { useAiChatInboxThreads } from '@/ai/hooks/useAiChatInboxThreads';
@@ -67,7 +67,9 @@ export const AiChatInboxPage = () => {
   const { threadId } = useParams();
   const isMobile = useIsMobile();
   const navigateApp = useNavigateApp();
-  const [inboxState, setInboxState] = useAtomState(agentChatInboxStateTabState);
+  const [agentChatInboxStateTab, setAgentChatInboxStateTab] = useAtomState(
+    agentChatInboxStateTabState,
+  );
   const { threadsByInboxState } = useAiChatInboxThreads();
 
   const countByInboxState = AGENT_CHAT_THREAD_INBOX_STATE_ORDER.reduce(
@@ -82,8 +84,7 @@ export const AiChatInboxPage = () => {
   const isChatVisible = !isMobile || isDefined(threadId);
   const isListVisible = !isMobile || !isChatVisible;
 
-  const backToList = () =>
-    navigateApp(AppPath.AiChatInbox, { threadId: null });
+  const backToList = () => navigateApp(AppPath.AiChatInbox, { threadId: null });
 
   return (
     <StyledPanel>
@@ -93,10 +94,10 @@ export const AiChatInboxPage = () => {
           <AiChatThreadInboxStateTabs
             componentInstanceId={AI_CHAT_INBOX_TABS_INSTANCE_ID}
             countByInboxState={countByInboxState}
-            onChangeInboxState={setInboxState}
+            onChangeInboxState={setAgentChatInboxStateTab}
           />
           <StyledListBody>
-            <AiChatInboxThreadList inboxState={inboxState} />
+            <AiChatInboxThreadList inboxState={agentChatInboxStateTab} />
           </StyledListBody>
         </StyledListPane>
       )}

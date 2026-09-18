@@ -14,8 +14,8 @@ import { AiChatChannelThreadPane } from '@/ai/components/AiChatChannelThreadPane
 import { AiChatThreadInboxStateTabs } from '@/ai/components/AiChatThreadInboxStateTabs';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
-import { AGENT_CHAT_THREAD_INBOX_STATE_ORDER } from '@/ai/constants/AgentChatThreadInboxStateLabels';
-import { AI_CHAT_CHANNEL_TABS_INSTANCE_ID } from '@/ai/constants/AiChatInboxTabsInstanceId';
+import { AGENT_CHAT_THREAD_INBOX_STATE_ORDER } from '@/ai/constants/AgentChatThreadInboxStateOrder';
+import { AI_CHAT_CHANNEL_TABS_INSTANCE_ID } from '@/ai/constants/AiChatChannelTabsInstanceId';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useChatChannels } from '@/ai/hooks/useChatChannels';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
@@ -72,9 +72,8 @@ export const AiChatChannelPage = () => {
   const navigateApp = useNavigateApp();
   const { findChannelById, loading } = useChatChannels();
   const channel = findChannelById(channelId);
-  const [inboxState, setInboxState] = useAtomState(
-    agentChatChannelInboxStateTabState,
-  );
+  const [agentChatChannelInboxStateTab, setAgentChatChannelInboxStateTab] =
+    useAtomState(agentChatChannelInboxStateTabState);
   const { threads } = useChatThreads();
   // On a phone the list and the chat take turns; a new chat has no thread in
   // the URL yet, so the page remembers that the chat was asked for.
@@ -129,12 +128,12 @@ export const AiChatChannelPage = () => {
           <AiChatThreadInboxStateTabs
             componentInstanceId={AI_CHAT_CHANNEL_TABS_INSTANCE_ID}
             countByInboxState={countByInboxState}
-            onChangeInboxState={setInboxState}
+            onChangeInboxState={setAgentChatChannelInboxStateTab}
           />
           <StyledListBody>
             <AiChatChannelThreadList
               channelId={channel.id}
-              inboxState={inboxState}
+              inboxState={agentChatChannelInboxStateTab}
             />
           </StyledListBody>
         </StyledListPane>

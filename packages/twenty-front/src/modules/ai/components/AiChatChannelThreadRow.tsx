@@ -236,7 +236,6 @@ export const AiChatChannelThreadRow = ({
           threadId={thread.id}
           threadTitle={displayTitle}
           channelId={thread.channelId}
-          isArchived={isArchived}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
           onRenameRequested={startRename}
         />

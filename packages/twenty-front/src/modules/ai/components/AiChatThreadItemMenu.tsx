@@ -2,8 +2,6 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconArchive,
-  IconArchiveOff,
   IconDotsVertical,
   IconFolderSymlink,
   IconPencil,
@@ -19,7 +17,6 @@ import {
 } from '@/ai/constants/AiChatThreadItemMenuPage';
 import { useIsCurrentUserAiChatThreadOwner } from '@/ai/hooks/useIsCurrentUserAiChatThreadOwner';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
-import { useChatThreadArchiveActions } from '@/ai/hooks/useChatThreadArchiveActions';
 import { aiChatThreadPendingDeleteFamilyState } from '@/ai/states/aiChatThreadPendingDeleteFamilyState';
 import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
@@ -34,7 +31,6 @@ type AiChatThreadItemMenuProps = {
   threadId: string;
   threadTitle: string;
   channelId?: string | null;
-  isArchived: boolean;
   surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
   clickableComponent?: ReactNode;
@@ -44,7 +40,6 @@ export const AiChatThreadItemMenu = ({
   threadId,
   threadTitle,
   channelId = null,
-  isArchived,
   surface,
   onRenameRequested,
   clickableComponent,
@@ -65,8 +60,6 @@ export const AiChatThreadItemMenu = ({
   // know the reader is a member rather than showing actions that will fail.
   const showOwnerActions = !isOwnershipKnown || isOwner;
   const goToRoot = () => setPage(AI_CHAT_THREAD_ITEM_MENU_PAGE.ROOT);
-  const { archiveChatThread, unarchiveChatThread } =
-    useChatThreadArchiveActions();
   const setAiChatThreadPendingDelete = useSetAtomFamilyState(
     aiChatThreadPendingDeleteFamilyState,
     surface,
@@ -76,16 +69,6 @@ export const AiChatThreadItemMenu = ({
     event.stopPropagation();
     closeDropdown(dropdownId);
     onRenameRequested();
-  };
-
-  const handleArchive = async (event: React.MouseEvent) => {
-    event.stopPropagation();
-    closeDropdown(dropdownId);
-    if (isArchived) {
-      await unarchiveChatThread(threadId);
-    } else {
-      await archiveChatThread(threadId);
-    }
   };
 
   const handleDelete = (event: React.MouseEvent) => {
@@ -138,13 +121,6 @@ export const AiChatThreadItemMenu = ({
                     event.stopPropagation();
                     setPage(AI_CHAT_THREAD_ITEM_MENU_PAGE.MOVE_TO_CHANNEL);
                   }}
-                />
-              )}
-              {showOwnerActions && (
-                <MenuItem
-                  text={isArchived ? t`Unarchive` : t`Archive`}
-                  LeftIcon={isArchived ? IconArchiveOff : IconArchive}
-                  onClick={handleArchive}
                 />
               )}
               {showOwnerActions && (

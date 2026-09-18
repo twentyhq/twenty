@@ -20,8 +20,8 @@ import {
   AgentChatChannelMemberRole,
   AgentChatChannelVisibility,
   type AgentChatThread,
+  AgentChatThreadStatus,
 } from '~/generated-metadata/graphql';
-import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 import { AiChatChannelPage } from '~/pages/ai-chat/AiChatChannelPage';
 

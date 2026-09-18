@@ -6,11 +6,7 @@ export const SET_CHAT_THREAD_STATUS = gql`
     $status: AgentChatThreadStatus!
     $snoozedUntil: DateTime
   ) {
-    setChatThreadStatus(
-      id: $id
-      status: $status
-      snoozedUntil: $snoozedUntil
-    ) {
+    setChatThreadStatus(id: $id, status: $status, snoozedUntil: $snoozedUntil) {
       id
       status
       snoozedUntil

@@ -2,11 +2,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import {
-  AGENT_CHAT_THREAD_INBOX_STATE_ICONS,
-  AGENT_CHAT_THREAD_INBOX_STATE_LABELS,
-  AGENT_CHAT_THREAD_INBOX_STATE_ORDER,
-} from '@/ai/constants/AgentChatThreadInboxStateLabels';
+import { AGENT_CHAT_THREAD_INBOX_STATE_ICONS } from '@/ai/constants/AgentChatThreadInboxStateIcons';
+import { AGENT_CHAT_THREAD_INBOX_STATE_LABELS } from '@/ai/constants/AgentChatThreadInboxStateLabels';
+import { AGENT_CHAT_THREAD_INBOX_STATE_ORDER } from '@/ai/constants/AgentChatThreadInboxStateOrder';
 import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 

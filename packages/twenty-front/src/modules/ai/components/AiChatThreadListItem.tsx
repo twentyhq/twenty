@@ -156,7 +156,6 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
         <AiChatThreadItemMenu
           threadId={thread.id}
           threadTitle={displayTitle}
-          isArchived={isArchived}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
           onRenameRequested={startRename}
         />
