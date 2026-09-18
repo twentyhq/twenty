@@ -62,7 +62,6 @@ const pickRootType = ({
 const buildSlice = async (): Promise<string> => {
   const applicationContext = await NestFactory.createApplicationContext(
     GraphQLSchemaBuilderModule,
-    { logger: false },
   );
 
   try {

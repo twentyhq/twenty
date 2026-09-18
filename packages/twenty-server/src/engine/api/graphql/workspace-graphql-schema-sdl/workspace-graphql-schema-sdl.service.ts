@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { printSchema } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
-import { appendCoreWorkflowAppOperationsToSdl } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/utils/append-core-workflow-app-operations-to-sdl.util';
+import { CORE_WORKFLOW_APP_OPERATIONS_SDL_APPENDER } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/core-workflow-app-operations-sdl.constants';
+import { type CoreWorkflowAppOperationsSdlAppender } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/types/core-workflow-app-operations-sdl-appender.type';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { WorkspaceGraphQLSchemaGenerator } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -39,6 +40,8 @@ export class WorkspaceGraphqlSchemaSDLService {
     private readonly workspaceGraphQLSchemaGenerator: WorkspaceGraphQLSchemaGenerator,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    @Inject(CORE_WORKFLOW_APP_OPERATIONS_SDL_APPENDER)
+    private readonly appendCoreWorkflowAppOperationsToSdl: CoreWorkflowAppOperationsSdlAppender,
   ) {}
 
   async getOrComputeSchemaSDL(
@@ -150,7 +153,7 @@ export class WorkspaceGraphqlSchemaSDLService {
 
     return {
       sdl: isDefined(applicationId)
-        ? await appendCoreWorkflowAppOperationsToSdl(sdl)
+        ? await this.appendCoreWorkflowAppOperationsToSdl(sdl)
         : sdl,
       usedScalarNames,
       flatObjectMetadataMaps,
