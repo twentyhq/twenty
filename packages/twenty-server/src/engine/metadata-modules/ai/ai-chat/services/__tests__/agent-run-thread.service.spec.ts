@@ -55,15 +55,20 @@ const buildService = () => {
       }),
     ),
     broadcastThreadChanged: jest.fn().mockResolvedValue(undefined),
-    resolvePendingQuestion: jest
-      .fn()
-      .mockResolvedValue({ turnId: 'turn-id', rollback: {} }),
+    resolvePendingQuestion: jest.fn().mockResolvedValue({
+      turnId: 'turn-id',
+      rollback: { partId: 'part-id', previousOutput: {} },
+    }),
+    restorePendingQuestion: jest.fn().mockResolvedValue(undefined),
   };
   const eventPublisherService = {
     publish: jest.fn().mockResolvedValue(undefined),
   };
   const workflowRunWorkspaceService = {
     updateWorkflowRunStepInfo: jest.fn().mockResolvedValue(undefined),
+    getWorkflowRun: jest
+      .fn()
+      .mockResolvedValue({ id: 'workflow-run-id', status: 'RUNNING' }),
   };
   const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
 
@@ -209,8 +214,8 @@ describe('AgentRunThreadService', () => {
     expect(callOrder).toEqual(['addMessage', 'releaseClaim']);
   });
 
-  it('releases the claim even when writing the answer fails, so the thread is not left held', async () => {
-    const { service, agentChatService, threadRepository } = buildService();
+  it('puts the question back when writing the answer fails, so the run is not left half-answered', async () => {
+    const { service, agentChatService, messageQueueService } = buildService();
 
     agentChatService.addMessage.mockRejectedValue(new Error('write failed'));
 
@@ -223,11 +228,53 @@ describe('AgentRunThreadService', () => {
       }),
     ).rejects.toThrow('write failed');
 
-    expect(threadRepository.update).toHaveBeenCalledWith(
-      WORKSPACE_ID,
-      expect.objectContaining({ id: THREAD_ID }),
-      { activeStreamId: null },
+    expect(agentChatService.restorePendingQuestion).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadId: THREAD_ID,
+        messageId: 'question-message-id',
+        workspaceId: WORKSPACE_ID,
+        rollback: { partId: 'part-id', previousOutput: {} },
+      }),
     );
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
+
+  it('puts the question back when the run cannot be re-queued', async () => {
+    const { service, agentChatService, messageQueueService } = buildService();
+
+    messageQueueService.add.mockRejectedValue(new Error('queue is down'));
+
+    await expect(
+      service.answerRunQuestion({
+        thread: buildThread() as never,
+        messageId: 'question-message-id',
+        answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+        userWorkspaceId: OWNER_ID,
+      }),
+    ).rejects.toThrow('queue is down');
+
+    expect(agentChatService.restorePendingQuestion).toHaveBeenCalled();
+  });
+
+  it('refuses an answer once the run is no longer waiting for one', async () => {
+    const { service, agentChatService, workflowRunWorkspaceService } =
+      buildService();
+
+    workflowRunWorkspaceService.getWorkflowRun.mockResolvedValue({
+      id: 'workflow-run-id',
+      status: 'COMPLETED',
+    });
+
+    await expect(
+      service.answerRunQuestion({
+        thread: buildThread() as never,
+        messageId: 'question-message-id',
+        answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+        userWorkspaceId: OWNER_ID,
+      }),
+    ).rejects.toThrow('no longer waiting for an answer');
+
+    expect(agentChatService.resolvePendingQuestion).not.toHaveBeenCalled();
   });
 
   it('answers the question, records the answer and re-queues the step', async () => {

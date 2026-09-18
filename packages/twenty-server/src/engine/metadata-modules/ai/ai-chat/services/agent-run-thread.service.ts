@@ -46,6 +46,7 @@ import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/cons
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type AgentRunReference = {
@@ -297,7 +298,12 @@ export class AgentRunThreadService {
 
     const claimStreamId = `workflow-run-answer:${randomUUID()}`;
 
-    await this.agentChatService.resolvePendingQuestion({
+    await this.assertWorkflowRunIsRunning({
+      workflowRunId: thread.workflowRunId,
+      workspaceId: thread.workspaceId,
+    });
+
+    const { rollback } = await this.agentChatService.resolvePendingQuestion({
       threadId: thread.id,
       messageId,
       answers,
@@ -305,12 +311,13 @@ export class AgentRunThreadService {
       workspaceId: thread.workspaceId,
     });
 
-    // The claim is a chat stream slot and the workflow job does the
-    // continuation, so it could be released as soon as the question is marked
-    // answered. It is held until the answer is written instead: releasing it
-    // first leaves the thread with no pending question and no claim, which is
-    // exactly the state a second answer adopts, and two answers would then
-    // overwrite each other and post twice.
+    // Past this point the question already reads as answered, so every failure
+    // has to put it back: a question that reads answered on a run nothing ever
+    // resumes is the one state nobody can get out of. The claim is held until
+    // the run is on its way for the same reason — a thread with no pending
+    // question and no claim is exactly what a second answer adopts as an
+    // orphan, and the two would overwrite each other and post twice. Both
+    // exits below release it.
     let answerMessage;
 
     try {
@@ -325,40 +332,73 @@ export class AgentRunThreadService {
         workspaceId: thread.workspaceId,
         authorUserWorkspaceId: userWorkspaceId,
       });
-    } finally {
-      await this.threadRepository
-        .update(
-          thread.workspaceId,
-          { id: thread.id, activeStreamId: claimStreamId },
-          { activeStreamId: null },
-        )
-        .catch(() => {});
+
+      await this.eventPublisherService.publish({
+        threadId: thread.id,
+        workspaceId: thread.workspaceId,
+        event: { type: 'question-answered' },
+      });
+
+      await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+        stepId: thread.workflowStepId,
+        stepInfo: { status: StepStatus.NOT_STARTED },
+        workflowRunId: thread.workflowRunId,
+        workspaceId: thread.workspaceId,
+      });
+
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RUN_WORKFLOW_JOB_NAME,
+        {
+          workspaceId: thread.workspaceId,
+          workflowRunId: thread.workflowRunId,
+          stepIdsToRetry: [thread.workflowStepId],
+        },
+        buildRunWorkflowJobOptions(thread.workflowRunId),
+      );
+    } catch (error) {
+      await this.agentChatService.restorePendingQuestion({
+        threadId: thread.id,
+        messageId,
+        streamId: claimStreamId,
+        workspaceId: thread.workspaceId,
+        rollback,
+      });
+
+      throw error;
     }
 
-    await this.eventPublisherService.publish({
-      threadId: thread.id,
-      workspaceId: thread.workspaceId,
-      event: { type: 'question-answered' },
-    });
-
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-      stepId: thread.workflowStepId,
-      stepInfo: { status: StepStatus.NOT_STARTED },
-      workflowRunId: thread.workflowRunId,
-      workspaceId: thread.workspaceId,
-    });
-
-    await this.messageQueueService.add<RunWorkflowJobData>(
-      RUN_WORKFLOW_JOB_NAME,
-      {
-        workspaceId: thread.workspaceId,
-        workflowRunId: thread.workflowRunId,
-        stepIdsToRetry: [thread.workflowStepId],
-      },
-      buildRunWorkflowJobOptions(thread.workflowRunId),
-    );
+    await this.threadRepository
+      .update(
+        thread.workspaceId,
+        { id: thread.id, activeStreamId: claimStreamId },
+        { activeStreamId: null },
+      )
+      .catch(() => {});
 
     return { messageId: answerMessage.id };
+  }
+
+  // A run that has already finished, failed or been stopped has nothing left to
+  // resume, and RunWorkflowJob drops the retry silently, so the answer would
+  // read as accepted while the question stays open forever.
+  private async assertWorkflowRunIsRunning({
+    workflowRunId,
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const workflowRun = await this.workflowRunWorkspaceService.getWorkflowRun({
+      workflowRunId,
+      workspaceId,
+    });
+
+    if (workflowRun?.status !== WorkflowRunStatus.RUNNING) {
+      throw new AiException(
+        'This workflow run is no longer waiting for an answer',
+        AiExceptionCode.QUESTION_NOT_PENDING,
+      );
+    }
   }
 
   private async findUserWorkspaceIdOfWorkspaceMember({
