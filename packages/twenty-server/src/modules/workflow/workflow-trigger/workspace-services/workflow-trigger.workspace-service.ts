@@ -555,11 +555,20 @@ export class WorkflowTriggerWorkspaceService {
 
     const label = getWorkflowCommandMenuItemLabel(workflow);
 
+    const coreWorkflowVersionId =
+      mirroredCoreWorkflowVersionId ?? workflowVersion.coreWorkflowVersionId;
+
     const existingCommandMenuItem =
-      await this.commandMenuItemService.findByWorkflowVersionId(
+      (isDefined(coreWorkflowVersionId)
+        ? await this.commandMenuItemService.findByCoreWorkflowVersionId(
+            coreWorkflowVersionId,
+            workspaceId,
+          )
+        : null) ??
+      (await this.commandMenuItemService.findByWorkflowVersionId(
         workflowVersion.id,
         workspaceId,
-      );
+      ));
 
     if (existingCommandMenuItem) {
       await this.commandMenuItemService.update(
@@ -578,10 +587,7 @@ export class WorkflowTriggerWorkspaceService {
       await this.commandMenuItemService.create(
         {
           workflowVersionId: workflowVersion.id,
-          coreWorkflowVersionId:
-            mirroredCoreWorkflowVersionId ??
-            workflowVersion.coreWorkflowVersionId ??
-            undefined,
+          coreWorkflowVersionId: coreWorkflowVersionId ?? undefined,
           engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
           label,
           shortLabel: label,
@@ -606,10 +612,16 @@ export class WorkflowTriggerWorkspaceService {
     }
 
     const existingCommandMenuItem =
-      await this.commandMenuItemService.findByWorkflowVersionId(
+      (isDefined(workflowVersion.coreWorkflowVersionId)
+        ? await this.commandMenuItemService.findByCoreWorkflowVersionId(
+            workflowVersion.coreWorkflowVersionId,
+            workspaceId,
+          )
+        : null) ??
+      (await this.commandMenuItemService.findByWorkflowVersionId(
         workflowVersion.id,
         workspaceId,
-      );
+      ));
 
     if (existingCommandMenuItem) {
       await this.commandMenuItemService.delete(

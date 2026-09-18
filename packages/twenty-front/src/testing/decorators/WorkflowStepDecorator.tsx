@@ -11,15 +11,20 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { type Decorator } from '@storybook/react-vite';
 import { useAtomValue, useStore } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ToastProvider } from 'twenty-ui/primitives/feedback';
 import {
   mockedWorkflow,
   mockedWorkflowNodeId,
   mockedWorkflowVersion,
 } from '~/testing/mock-data/workflow';
 
-export const WorkflowStepDecorator: Decorator = (Story) => {
+type WorkflowStepDecoratorContentProps = { children: ReactNode };
+
+const WorkflowStepDecoratorContent = ({
+  children,
+}: WorkflowStepDecoratorContentProps) => {
   const workflowVisualizerComponentInstanceId = 'workflow-visualizer-test-id';
 
   const workflowVersion = mockedWorkflowVersion as WorkflowVersion;
@@ -103,8 +108,16 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
           instanceId: workflowVisualizerComponentInstanceId,
         }}
       >
-        {ready && isDefined(workflowVersionId) && <Story />}
+        {ready && isDefined(workflowVersionId) && children}
       </WorkflowVisualizerComponentInstanceContext.Provider>
     </SidePanelPageComponentInstanceContext.Provider>
   );
 };
+
+export const WorkflowStepDecorator: Decorator = (Story) => (
+  <ToastProvider>
+    <WorkflowStepDecoratorContent>
+      <Story />
+    </WorkflowStepDecoratorContent>
+  </ToastProvider>
+);

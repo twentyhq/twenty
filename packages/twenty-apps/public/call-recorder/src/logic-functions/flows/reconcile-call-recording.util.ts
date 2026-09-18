@@ -36,8 +36,9 @@ export const reconcileCallRecording = async ({
 
   if (reconcilableStatus === CallRecordingStatus.PROCESSING) {
     await enqueueCallRecordingArtifactsImport({
-      callRecordingId,
+      callRecordingIds: [callRecordingId],
       scopes: CALL_RECORDING_ARTIFACT_IMPORT_SCOPES,
+      trigger: 'recovery',
     });
 
     return;
@@ -84,8 +85,9 @@ export const reconcileCallRecording = async ({
     data.status === CallRecordingStatus.PROCESSING
   ) {
     await enqueueCallRecordingArtifactsImport({
-      callRecordingId,
+      callRecordingIds: [callRecordingId],
       scopes: CALL_RECORDING_ARTIFACT_IMPORT_SCOPES,
+      trigger: 'recovery',
     });
   }
 };

@@ -7,6 +7,8 @@ import {
 } from 'src/constants/universal-identifiers';
 import { CALL_RECORDER_MAX_MEDIA_FILE_SIZE_BYTES } from 'src/logic-functions/constants/call-recorder-max-media-file-size-bytes';
 import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recall-api-not-found-status';
+import { VIDEO_IMPORT_WORK_BUDGET_MS } from 'src/logic-functions/constants/artifact-import-work-budget-ms';
+import { VIDEO_IMPORT_FAILED_FAILURE_REASON } from 'src/logic-functions/constants/video-import-failed-failure-reason';
 import {
   AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
   VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
@@ -15,11 +17,15 @@ import {
   AUDIO_IMPORT_EXPIRED_FAILURE_REASON,
   VIDEO_IMPORT_EXPIRED_FAILURE_REASON,
 } from 'src/logic-functions/constants/media-import-expired-failure-reasons';
+import { appendCallRecorderFailureReasons } from 'src/logic-functions/domain/append-call-recorder-failure-reasons.util';
+import { parseUnrecoverableMediaMarkers } from 'src/logic-functions/domain/parse-unrecoverable-media-markers.util';
 import { putMediaDownloadBodyToUploadTarget } from 'src/logic-functions/flows/put-media-download-body-to-upload-target.util';
 import { extractRecallMediaArtifacts } from 'src/logic-functions/recall-api/extract-recall-media-artifacts.util';
 import { getRecallRecording } from 'src/logic-functions/recall-api/get-recall-recording.util';
 import { type CallRecordingMediaFile } from 'src/logic-functions/types/call-recording-media-file.type';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
+import { buildAbortSignalWithTimeout } from 'src/logic-functions/utils/build-abort-signal-with-timeout.util';
+import { fetchWithTimeout } from 'src/logic-functions/utils/fetch-with-timeout.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 type CallRecordingMediaUpdateFields = Pick<
@@ -31,7 +37,7 @@ type ImportCallRecordingMediaResult = {
   updateData: CallRecordingMediaUpdateFields;
   hasRetryableFailure: boolean;
   // Recall answers 404 for a recording whose media retention has elapsed.
-  isRecordingGone?: true;
+  isRecordingGone: boolean;
 };
 
 type ImportMediaArtifactResult =
@@ -49,7 +55,7 @@ type MediaUploadTarget = {
   contentType: string;
 };
 
-const MEDIA_DOWNLOAD_TIMEOUT_MS = 120_000;
+const MEDIA_TRANSFER_TIMEOUT_MS = 120_000;
 const MEDIA_FILE_FOLDER = 'FilesField';
 
 const MEDIA_ARTIFACT_DESCRIPTORS = [
@@ -60,6 +66,7 @@ const MEDIA_ARTIFACT_DESCRIPTORS = [
       CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER,
     tooLargeFailureReason: VIDEO_FILE_TOO_LARGE_FAILURE_REASON,
     expiredFailureReason: VIDEO_IMPORT_EXPIRED_FAILURE_REASON,
+    timeoutMs: VIDEO_IMPORT_WORK_BUDGET_MS,
   },
   {
     field: 'audio',
@@ -68,6 +75,7 @@ const MEDIA_ARTIFACT_DESCRIPTORS = [
       CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER,
     tooLargeFailureReason: AUDIO_FILE_TOO_LARGE_FAILURE_REASON,
     expiredFailureReason: AUDIO_IMPORT_EXPIRED_FAILURE_REASON,
+    timeoutMs: MEDIA_TRANSFER_TIMEOUT_MS,
   },
 ] as const;
 
@@ -76,17 +84,36 @@ export const importCallRecordingMedia = async ({
   externalRecordingId,
   hasAudio,
   hasVideo,
+  callRecorderFailureReason,
+  saveProgress,
+  signal,
 }: {
   callRecordingId: string;
   externalRecordingId: string;
   hasAudio: boolean;
   hasVideo: boolean;
+  callRecorderFailureReason?: string;
+  saveProgress: (data: CallRecordingMediaUpdateFields) => Promise<void>;
+  signal?: AbortSignal;
 }): Promise<ImportCallRecordingMediaResult> => {
-  if (hasAudio && hasVideo) {
-    return { updateData: {}, hasRetryableFailure: false };
+  const { isAudioUnrecoverable, isVideoUnrecoverable } =
+    parseUnrecoverableMediaMarkers(callRecorderFailureReason);
+
+  if (
+    (hasAudio || isAudioUnrecoverable) &&
+    (hasVideo || isVideoUnrecoverable)
+  ) {
+    return {
+      updateData: {},
+      hasRetryableFailure: false,
+      isRecordingGone: false,
+    };
   }
 
-  const recordingResult = await getRecallRecording({ externalRecordingId });
+  const recordingResult = await getRecallRecording({
+    externalRecordingId,
+    signal,
+  });
 
   if (!recordingResult.ok) {
     console.warn(
@@ -101,17 +128,40 @@ export const importCallRecordingMedia = async ({
       };
     }
 
-    return { updateData: {}, hasRetryableFailure: true };
+    return {
+      updateData: {},
+      hasRetryableFailure: true,
+      isRecordingGone: false,
+    };
   }
 
   const mediaArtifacts = extractRecallMediaArtifacts(recordingResult.recording);
-  const metadataClient = new MetadataApiClient();
+  const metadataClient = new MetadataApiClient({
+    fetch: fetchWithTimeout,
+    signal,
+  });
   const updateFields: CallRecordingMediaUpdateFields = {};
   const unrecoverableFailureReasons: string[] = [];
+  const recordUnrecoverableFailure = async (failureReason: string) => {
+    unrecoverableFailureReasons.push(failureReason);
+    updateFields.callRecorderFailureReason = appendCallRecorderFailureReasons({
+      callRecorderFailureReason,
+      failureReasons: unrecoverableFailureReasons,
+    });
+    await saveProgress({
+      callRecorderFailureReason: updateFields.callRecorderFailureReason,
+    });
+  };
   const failedMediaArtifactFields: string[] = [];
   const artifactStateByField = {
-    video: { alreadyImported: hasVideo, artifact: mediaArtifacts.video },
-    audio: { alreadyImported: hasAudio, artifact: mediaArtifacts.audio },
+    video: {
+      alreadyImported: hasVideo || isVideoUnrecoverable,
+      artifact: mediaArtifacts.video,
+    },
+    audio: {
+      alreadyImported: hasAudio || isAudioUnrecoverable,
+      artifact: mediaArtifacts.audio,
+    },
   };
 
   for (const descriptor of MEDIA_ARTIFACT_DESCRIPTORS) {
@@ -123,7 +173,7 @@ export const importCallRecordingMedia = async ({
     }
 
     if (artifact.statusCode === 'deleted') {
-      unrecoverableFailureReasons.push(descriptor.expiredFailureReason);
+      await recordUnrecoverableFailure(descriptor.expiredFailureReason);
 
       continue;
     }
@@ -142,29 +192,32 @@ export const importCallRecordingMedia = async ({
       fieldMetadataUniversalIdentifier:
         descriptor.fieldMetadataUniversalIdentifier,
       maxMediaFileSizeBytes: CALL_RECORDER_MAX_MEDIA_FILE_SIZE_BYTES,
+      timeoutMs: descriptor.timeoutMs,
+      signal,
     });
 
     if (importResult.outcome === 'imported') {
+      await saveProgress({ [descriptor.field]: importResult.files });
       updateFields[descriptor.field] = importResult.files;
     }
 
     if (importResult.outcome === 'too-large') {
-      unrecoverableFailureReasons.push(descriptor.tooLargeFailureReason);
+      await recordUnrecoverableFailure(descriptor.tooLargeFailureReason);
     }
 
     if (importResult.outcome === 'failed') {
-      failedMediaArtifactFields.push(descriptor.field);
+      if (descriptor.field === 'video') {
+        await recordUnrecoverableFailure(VIDEO_IMPORT_FAILED_FAILURE_REASON);
+      } else {
+        failedMediaArtifactFields.push(descriptor.field);
+      }
     }
-  }
-
-  if (unrecoverableFailureReasons.length > 0) {
-    updateFields.callRecorderFailureReason =
-      unrecoverableFailureReasons.join(',');
   }
 
   return {
     updateData: updateFields,
     hasRetryableFailure: isNonEmptyArray(failedMediaArtifactFields),
+    isRecordingGone: false,
   };
 };
 
@@ -175,6 +228,8 @@ const importMediaArtifact = async ({
   fileName,
   fieldMetadataUniversalIdentifier,
   maxMediaFileSizeBytes,
+  timeoutMs,
+  signal,
 }: {
   callRecordingId: string;
   metadataClient: InstanceType<typeof MetadataApiClient>;
@@ -182,13 +237,21 @@ const importMediaArtifact = async ({
   fileName: string;
   fieldMetadataUniversalIdentifier: string;
   maxMediaFileSizeBytes: number;
+  timeoutMs: number;
+  signal?: AbortSignal;
 }): Promise<ImportMediaArtifactResult> => {
+  const transferSignal = buildAbortSignalWithTimeout({
+    timeoutMs,
+    signal,
+  });
+
   try {
     const download = await openMediaDownload({
       callRecordingId,
       fileName,
       url,
       maxMediaFileSizeBytes,
+      signal: transferSignal,
     });
 
     if (download.outcome === 'too-large') {
@@ -206,6 +269,7 @@ const importMediaArtifact = async ({
       fieldMetadataUniversalIdentifier,
       body: download.body,
       sizeBytes: download.sizeBytes,
+      signal: transferSignal,
     });
 
     return {
@@ -226,14 +290,16 @@ const openMediaDownload = async ({
   fileName,
   url,
   maxMediaFileSizeBytes,
+  signal,
 }: {
   callRecordingId: string;
   fileName: string;
   url: string;
   maxMediaFileSizeBytes: number;
+  signal: AbortSignal;
 }): Promise<OpenMediaDownloadResult> => {
   const response = await fetch(url, {
-    signal: AbortSignal.timeout(MEDIA_DOWNLOAD_TIMEOUT_MS),
+    signal,
   });
   const contentLengthBytes = parseContentLengthBytes(
     response.headers.get('content-length'),
@@ -291,6 +357,7 @@ const uploadMediaStreamToStorage = async ({
   fieldMetadataUniversalIdentifier,
   body,
   sizeBytes,
+  signal,
 }: {
   callRecordingId: string;
   metadataClient: InstanceType<typeof MetadataApiClient>;
@@ -298,6 +365,7 @@ const uploadMediaStreamToStorage = async ({
   fieldMetadataUniversalIdentifier: string;
   body: ReadableStream<Uint8Array>;
   sizeBytes: number;
+  signal: AbortSignal;
 }): Promise<string> => {
   const uploadTarget = await createFileUploadTarget({
     metadataClient,
@@ -323,6 +391,7 @@ const uploadMediaStreamToStorage = async ({
     mediaDownloadBody: body,
     sizeBytes,
     uploadTarget,
+    signal,
   });
 
   return completeFileUpload({ metadataClient, fileId: uploadTarget.fileId });

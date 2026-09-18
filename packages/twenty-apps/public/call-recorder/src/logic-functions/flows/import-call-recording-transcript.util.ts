@@ -30,6 +30,7 @@ export const importCallRecordingTranscript = async ({
   requestedAt,
   transcript,
   isMediaExpired,
+  signal,
 }: {
   callRecordingId: string;
   currentStatus: string | undefined;
@@ -37,6 +38,7 @@ export const importCallRecordingTranscript = async ({
   requestedAt: string;
   transcript: unknown;
   isMediaExpired: boolean;
+  signal?: AbortSignal;
 }): Promise<ImportCallRecordingTranscriptResult> => {
   const existingTranscriptMarker = parseTranscriptMarker(transcript);
 
@@ -60,7 +62,10 @@ export const importCallRecordingTranscript = async ({
       : buildEmptyTranscriptArtifactResult();
   }
 
-  const listResult = await listRecallTranscripts({ externalRecordingId });
+  const listResult = await listRecallTranscripts({
+    externalRecordingId,
+    signal,
+  });
 
   if (!listResult.ok) {
     console.warn(
@@ -112,6 +117,7 @@ export const importCallRecordingTranscript = async ({
 
     const createResult = await createAsyncRecallTranscript({
       externalRecordingId,
+      signal,
     });
 
     if (!createResult.ok) {
@@ -119,13 +125,12 @@ export const importCallRecordingTranscript = async ({
         `[call-recorder] failed to request transcript for Recall recording ${externalRecordingId}: ${createResult.errorMessage}`,
       );
 
-      // A lost response may still have created the transcript, and the next
-      // run lists transcripts before requesting a new one.
-      if (isNull(createResult.status)) {
-        return buildEmptyTranscriptArtifactResult();
-      }
-
-      if (isRetryableRecallApiStatus(createResult.status)) {
+      // The idempotency key makes a retried create safe, so a lost response
+      // is retried now instead of waiting for the next run.
+      if (
+        isNull(createResult.status) ||
+        isRetryableRecallApiStatus(createResult.status)
+      ) {
         return buildEmptyTranscriptArtifactResult({
           hasRetryableFailure: true,
         });
@@ -191,6 +196,7 @@ export const importCallRecordingTranscript = async ({
 
   const downloadResult = await downloadTranscript({
     transcriptId: transcriptIdToDownload,
+    signal,
   });
 
   if (downloadResult.outcome === 'filled') {

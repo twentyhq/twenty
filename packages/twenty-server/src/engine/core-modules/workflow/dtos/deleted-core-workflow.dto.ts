@@ -7,6 +7,6 @@ export class DeletedCoreWorkflowDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
-  @Field(() => UUIDScalarType)
-  workspaceWorkflowId: string;
+  @Field(() => UUIDScalarType, { nullable: true })
+  workspaceWorkflowId: string | null;
 }

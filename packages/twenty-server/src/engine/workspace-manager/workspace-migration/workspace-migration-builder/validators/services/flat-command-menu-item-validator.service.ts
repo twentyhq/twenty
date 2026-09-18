@@ -53,6 +53,7 @@ export class FlatCommandMenuItemValidatorService {
     this.validateEngineComponentKeyCoherence({
       engineComponentKey: flatCommandMenuItem.engineComponentKey,
       workflowVersionId: flatCommandMenuItem.workflowVersionId,
+      coreWorkflowVersionId: flatCommandMenuItem.coreWorkflowVersionId,
       frontComponentUniversalIdentifier:
         flatCommandMenuItem.frontComponentUniversalIdentifier,
       payload: flatCommandMenuItem.payload,
@@ -179,6 +180,7 @@ export class FlatCommandMenuItemValidatorService {
     this.validateEngineComponentKeyCoherence({
       engineComponentKey,
       workflowVersionId: fromFlatCommandMenuItem.workflowVersionId,
+      coreWorkflowVersionId: fromFlatCommandMenuItem.coreWorkflowVersionId,
       frontComponentUniversalIdentifier:
         fromFlatCommandMenuItem.frontComponentUniversalIdentifier,
       payload,
@@ -231,6 +233,7 @@ export class FlatCommandMenuItemValidatorService {
   private validateEngineComponentKeyCoherence({
     engineComponentKey,
     workflowVersionId,
+    coreWorkflowVersionId,
     frontComponentUniversalIdentifier,
     payload,
     navigationTargetObjectMetadataUniversalIdentifier,
@@ -238,6 +241,7 @@ export class FlatCommandMenuItemValidatorService {
   }: {
     engineComponentKey: EngineComponentKey | null;
     workflowVersionId: string | null;
+    coreWorkflowVersionId: string | null;
     frontComponentUniversalIdentifier: string | null;
     payload: PathCommandMenuItemPayload | null;
     navigationTargetObjectMetadataUniversalIdentifier: string | null;
@@ -252,7 +256,10 @@ export class FlatCommandMenuItemValidatorService {
 
     switch (engineComponentKey) {
       case EngineComponentKey.TRIGGER_WORKFLOW_VERSION: {
-        if (!isNonEmptyString(workflowVersionId)) {
+        if (
+          !isNonEmptyString(workflowVersionId) &&
+          !isNonEmptyString(coreWorkflowVersionId)
+        ) {
           validationResult.errors.push({
             code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
             message: t`workflowVersionId is required when engineComponentKey is TRIGGER_WORKFLOW_VERSION`,
@@ -279,7 +286,10 @@ export class FlatCommandMenuItemValidatorService {
           });
         }
 
-        if (isNonEmptyString(workflowVersionId)) {
+        if (
+          isNonEmptyString(workflowVersionId) ||
+          isNonEmptyString(coreWorkflowVersionId)
+        ) {
           validationResult.errors.push({
             code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
             message: t`workflowVersionId must not be set when engineComponentKey is FRONT_COMPONENT_RENDERER`,
@@ -296,7 +306,10 @@ export class FlatCommandMenuItemValidatorService {
           validationResult,
         });
 
-        if (isNonEmptyString(workflowVersionId)) {
+        if (
+          isNonEmptyString(workflowVersionId) ||
+          isNonEmptyString(coreWorkflowVersionId)
+        ) {
           validationResult.errors.push({
             code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
             message: t`workflowVersionId must not be set for engine component key ${engineComponentKey}`,
@@ -315,7 +328,10 @@ export class FlatCommandMenuItemValidatorService {
         break;
       }
       default: {
-        if (isNonEmptyString(workflowVersionId)) {
+        if (
+          isNonEmptyString(workflowVersionId) ||
+          isNonEmptyString(coreWorkflowVersionId)
+        ) {
           validationResult.errors.push({
             code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
             message: t`workflowVersionId must not be set for engine component key ${engineComponentKey}`,

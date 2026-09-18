@@ -2,5 +2,6 @@ import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types
 
 export const CALL_RECORDING_ARTIFACT_IMPORT_SCOPES = [
   'transcript',
-  'media',
+  'audio',
+  'video',
 ] satisfies CallRecordingArtifactImportScope[];

@@ -1,6 +1,9 @@
 import { randomUUID } from 'crypto';
 
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { getJobs } from 'twenty-sdk/logic-function';
 import {
   afterEach,
   beforeAll,
@@ -11,11 +14,17 @@ import {
   vi,
 } from 'vitest';
 
-import { STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  APPLICATION_UNIVERSAL_IDENTIFIER,
+  STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+import { type CallRecorderPreference } from 'src/constants/call-recorder-preference';
 import { reconcileStaleBotStateHandler } from 'src/logic-functions/reconcile-stale-bot-state';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
+import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/enqueue-call-recording-artifacts-import.util';
+import { saveCallRecordingImportProgress } from 'src/logic-functions/data/save-call-recording-import-progress.util';
 import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
 import { handleCallRecordingArtifactsImportJob } from 'src/logic-functions/flows/handle-call-recording-artifacts-import-job.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
@@ -31,15 +40,15 @@ import reconcileCalendarEventLogicFunction from 'src/logic-functions/reconcile-c
 // Call Recorder end-to-end behavior against a live Twenty server.
 //
 // The app is installed on the test server by the vitest global setup, and all
-// reads and writes go through the real API into the test database. Only the
-// externals are mocked:
+// reads and writes go through the real API into the test database. Lifecycle
+// scenarios control delivery order with fakes for:
 //   - the Recall API (a fetch interceptor that replays the same bot for a
 //     repeated Idempotency-Key, like the real API),
 //   - the trigger transports: webhook deliveries invoke the webhook logic
 //     function handler directly, and cron / database-event triggers invoke
-//     the flows they dispatch.
+//     the flows they dispatch, including queued artifact imports.
 //
-// Every scenario then asserts the resulting CallRecording rows in the DB.
+// Queue scenarios bypass those fakes and use the installed app's real worker.
 //
 // The suite issues a few hundred API requests; if the test server runs with
 // the default API_RATE_LIMITING_LONG_LIMIT of 100 requests per minute,
@@ -85,7 +94,7 @@ type CalendarEventFixture = {
   iCalUid: string;
   isCanceled: boolean;
   isFullDay: boolean;
-  callRecorderPreference: string | null;
+  callRecorderPreference: CallRecorderPreference | null;
   conferenceLink: {
     primaryLinkLabel: string;
     primaryLinkUrl: string;
@@ -208,6 +217,7 @@ class FakeRecallApi {
   deletedBotIds: string[] = [];
   listRequestCount = 0;
   artifactImportRequests: object[] = [];
+  activeArtifactJobIds = new Set<string>();
   recoveryRequests: object[] = [];
   hasExpiredMedia = false;
   failNextDelete = false;
@@ -302,6 +312,24 @@ class FakeRecallApi {
   handle(requestUrl: string, requestInit?: any): Response | undefined {
     const method: string = requestInit?.method ?? 'GET';
 
+    if (
+      requestUrl === `${process.env.TWENTY_API_URL}/metadata` &&
+      String(requestInit?.body ?? '').includes('getJobs')
+    ) {
+      const sentBody: { variables?: Record<string, string[]> } = JSON.parse(
+        requestInit?.body ?? '{}',
+      );
+      const requestedJobIds = Object.values(sentBody.variables ?? {}).flat();
+
+      return jsonResponse(200, {
+        data: {
+          getJobs: [...this.activeArtifactJobIds]
+            .filter((jobId) => requestedJobIds.includes(jobId))
+            .map((jobId) => ({ jobId, state: 'ACTIVE' })),
+        },
+      });
+    }
+
     // Capture the artifact-import enqueue instead of letting the job run.
     if (
       requestUrl === `${process.env.TWENTY_API_URL}/metadata` &&
@@ -311,15 +339,18 @@ class FakeRecallApi {
       const [input] = Object.values(sentBody.variables ?? {}) as {
         logicFunctionUniversalIdentifier: string;
         payloads: object[];
+        jobs?: { jobId: string; payload: object }[];
       }[];
+      const payloads =
+        input?.jobs?.map(({ payload }) => payload) ?? input?.payloads ?? [];
 
       if (
         input?.logicFunctionUniversalIdentifier ===
         STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
       ) {
-        this.recoveryRequests.push(...(input.payloads ?? []));
+        this.recoveryRequests.push(...payloads);
       } else {
-        this.artifactImportRequests.push(...(input?.payloads ?? []));
+        this.artifactImportRequests.push(...payloads);
       }
 
       return jsonResponse(200, {
@@ -328,7 +359,8 @@ class FakeRecallApi {
             enqueued: true,
             logicFunctionUniversalIdentifier:
               input?.logicFunctionUniversalIdentifier ?? '',
-            enqueuedJobsCount: input?.payloads?.length ?? 0,
+            enqueuedJobsCount: payloads.length,
+            jobIds: input?.jobs?.map(({ jobId }) => jobId) ?? [],
           },
         },
       });
@@ -641,6 +673,7 @@ describe('call recorder app lifecycle (integration)', () => {
   // Built before the fetch interceptor is installed so the shared client's
   // Twenty API traffic always uses the real fetch.
   let client: CoreApiClient;
+  let applicationAccessToken: string;
   let workspaceId: string;
   let availableCalendarEventFixtures: CalendarEventFixture[];
   let nextCalendarEventFixtureIndex = 0;
@@ -662,6 +695,28 @@ describe('call recorder app lifecycle (integration)', () => {
     workspaceId = readWorkspaceIdFromApiKey();
     availableCalendarEventFixtures =
       await discoverVisibleCalendarEventFixtures();
+
+    const metadataClient = new MetadataApiClient();
+    const { findManyApplications } = await metadataClient.query({
+      findManyApplications: { id: true, universalIdentifier: true },
+    });
+    const application = findManyApplications.find(
+      ({ universalIdentifier }) =>
+        universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
+    if (isUndefined(application)) {
+      throw new Error('Call recorder is not installed');
+    }
+
+    const { generateApplicationToken } = await metadataClient.mutation({
+      generateApplicationToken: {
+        __args: { applicationId: application.id },
+        applicationAccessToken: { token: true },
+      },
+    });
+    applicationAccessToken =
+      generateApplicationToken.applicationAccessToken.token;
   });
 
   beforeEach(() => {
@@ -903,16 +958,20 @@ describe('call recorder app lifecycle (integration)', () => {
   }> => {
     const calendarEventId = await createCalendarEvent();
 
-    await reconcileCallRecorderForCalendarEventIds({
+    const [reconciliation] = await reconcileCallRecorderForCalendarEventIds({
       client,
       calendarEventIds: [calendarEventId],
     });
 
-    const callRecording = (
-      await findCallRecordings({ calendarEventId: { in: [calendarEventId] } })
-    )[0];
+    if (reconciliation.action === 'FAILED' || !reconciliation.callRecordingId) {
+      throw new Error(
+        `Recording fixture failed: ${JSON.stringify(reconciliation)}`,
+      );
+    }
 
-    expect(callRecording).toBeDefined();
+    const callRecording = await fetchCallRecording(
+      reconciliation.callRecordingId,
+    );
     expect(callRecording.externalBotId).toBeTruthy();
 
     return {
@@ -1083,7 +1142,7 @@ describe('call recorder app lifecycle (integration)', () => {
         'recall-recording-1',
       );
       expect(processedCallRecording.endedAt).toBeTruthy();
-      expect(recall.artifactImportRequests).toHaveLength(2);
+      expect(recall.artifactImportRequests).toHaveLength(3);
     });
 
     it('queues another artifact import when the transcript finishes later', async () => {
@@ -1102,8 +1161,8 @@ describe('call recorder app lifecycle (integration)', () => {
         buildTranscriptDoneWebhook({ botId, metadata }),
       );
 
-      expect(recall.artifactImportRequests).toHaveLength(3);
-      expect(recall.artifactImportRequests[2]).toMatchObject({
+      expect(recall.artifactImportRequests).toHaveLength(4);
+      expect(recall.artifactImportRequests[3]).toMatchObject({
         callRecordingId,
       });
     });
@@ -1351,6 +1410,72 @@ describe('call recorder app lifecycle (integration)', () => {
     });
   });
 
+  describe('artifact import queue', () => {
+    beforeEach(() => {
+      vi.unstubAllGlobals();
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+    });
+
+    const waitForCompletedJob = async (jobId: string) => {
+      await expect
+        .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+        .toMatchObject([{ jobId, state: 'COMPLETED' }]);
+
+      return getJobs([jobId]);
+    };
+
+    it.each([
+      { scope: 'transcript', trigger: 'transcript-ready', suffix: 'ready' },
+      { scope: 'video', trigger: 'recovery', suffix: 'recovery-2026-06-10' },
+      { scope: 'audio', trigger: 'expired', suffix: 'expired' },
+    ] as const)(
+      'deduplicates $scope imports and allows a later $trigger job',
+      async ({ scope, trigger, suffix }) => {
+        // A missing recording lets the real worker finish without contacting Recall.
+        const callRecordingId = randomUUID();
+        const request = {
+          callRecordingIds: [callRecordingId],
+          scopes: [scope],
+          requestedAt: '2026-06-10T03:30:00.000Z',
+        };
+        const jobId = `call-recorder-${callRecordingId}-${scope}`;
+
+        await enqueueCallRecordingArtifactsImport(request);
+        const originalJob = await waitForCompletedJob(jobId);
+        await enqueueCallRecordingArtifactsImport(request);
+        expect(await getJobs([jobId])).toEqual(originalJob);
+
+        await enqueueCallRecordingArtifactsImport({ ...request, trigger });
+        const laterJobId = `${jobId}-${suffix}`;
+        const laterJob = await waitForCompletedJob(laterJobId);
+        await enqueueCallRecordingArtifactsImport({ ...request, trigger });
+        expect(await getJobs([laterJobId])).toEqual(laterJob);
+      },
+    );
+
+    it.each([
+      { scope: 'video', attemptsMade: 1 },
+      { scope: 'audio', attemptsMade: 3 },
+    ] as const)(
+      'stops failed $scope executions after $attemptsMade attempts',
+      async ({ scope, attemptsMade }) => {
+        // Invalid UUID input makes the real database read fail before any Recall request.
+        const callRecordingId = `invalid-${randomUUID()}`;
+        const jobId = `call-recorder-${callRecordingId}-${scope}`;
+
+        await enqueueCallRecordingArtifactsImport({
+          callRecordingIds: [callRecordingId],
+          scopes: [scope],
+        });
+
+        // The worker completes the job when the application's retry budget is exhausted.
+        await expect
+          .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+          .toMatchObject([{ jobId, state: 'COMPLETED', attemptsMade }]);
+      },
+    );
+  });
+
   describe('settling recordings whose Recall media expired', () => {
     const recordingStartedAt = () => hoursAgo(1);
 
@@ -1394,8 +1519,8 @@ describe('call recorder app lifecycle (integration)', () => {
       callRecording: Awaited<ReturnType<typeof fetchCallRecording>>,
     ) => {
       expect(callRecording.status).toBe('FAILED');
-      expect(callRecording.callRecorderFailureReason).toBe(
-        'video_import_expired,audio_import_expired',
+      expect(callRecording.callRecorderFailureReason.split(',').sort()).toEqual(
+        ['audio_import_expired', 'video_import_expired'],
       );
       expect(callRecording.transcript).toEqual({
         recallTranscriptId: null,
@@ -1403,6 +1528,93 @@ describe('call recorder app lifecycle (integration)', () => {
         subCode: 'transcript_expired',
       });
     };
+
+    it('preserves independent failure outcomes when audio and video save concurrently', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      await deliverRecordingDone({ botId, metadata });
+
+      await Promise.all(
+        ['audio_file_too_large', 'video_import_failed'].map(
+          (callRecorderFailureReason) =>
+            saveCallRecordingImportProgress(client, {
+              callRecordingId,
+              externalBotId: botId,
+              data: { callRecorderFailureReason },
+            }),
+        ),
+      );
+
+      await saveCallRecordingImportProgress(client, {
+        callRecordingId,
+        externalBotId: botId,
+        data: { video: [{ fileId: randomUUID(), label: 'late-video.mp4' }] },
+      });
+
+      expect(
+        (await fetchCallRecording(callRecordingId)).callRecorderFailureReason
+          .split(',')
+          .sort(),
+      ).toEqual(['audio_file_too_large', 'video_import_failed']);
+      expect((await fetchCallRecording(callRecordingId)).video ?? []).toEqual(
+        [],
+      );
+    });
+
+    it('replaces a pending transcript and ignores late pending or failed results', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      await deliverRecordingDone({ botId, metadata });
+      const pending = { status: 'PENDING', recallTranscriptId: 'transcript-1' };
+      const transcript = { utterances: [{ text: 'Ready transcript' }] };
+      for (const data of [
+        { transcript: pending },
+        { transcript },
+        { transcript: pending },
+        {
+          transcript: { status: 'FAILED' },
+          callRecorderFailureReason: 'transcript_failed',
+        },
+      ]) {
+        await saveCallRecordingImportProgress(client, {
+          callRecordingId,
+          externalBotId: botId,
+          data,
+        });
+      }
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+      expect(callRecording.transcript).toEqual(transcript);
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
+    });
+
+    it.each([
+      { status: 'COMPLETED' },
+      { externalBotId: 'replacement-bot' },
+    ] as const)(
+      'ignores late import progress after the recording changes: %j',
+      async (data) => {
+        const { callRecordingId, botId, metadata } =
+          await scheduleRecordingThroughCalendarReconciliation();
+        await deliverRecordingDone({ botId, metadata });
+        await client.mutation({
+          updateCallRecording: {
+            __args: { id: callRecordingId, data },
+            id: true,
+          },
+        });
+
+        await saveCallRecordingImportProgress(client, {
+          callRecordingId,
+          externalBotId: botId,
+          data: { transcript: { status: 'FAILED' } },
+        });
+
+        expect(
+          (await fetchCallRecording(callRecordingId)).transcript,
+        ).toBeNull();
+      },
+    );
 
     it('fails a processing recording whose media expired before any artifact was imported', async () => {
       const { calendarEventId, callRecordingId, botId, metadata } =
@@ -1428,38 +1640,52 @@ describe('call recorder app lifecycle (integration)', () => {
       expectFailedWithExpiredArtifacts(callRecording);
     });
 
-    it('defers media settlement while an artifact import holds its claim', async () => {
-      const { calendarEventId, callRecordingId, botId, metadata } =
-        await scheduleRecordingThroughCalendarReconciliation();
-      const { startedAt, completedAt } = await deliverRecordingDone({
-        botId,
-        metadata,
-      });
+    it.each(
+      (['audio', 'video'] as const).flatMap((scope) =>
+        (['recovery', 'expired'] as const).flatMap((trigger) =>
+          ['', '-expired', '-recovery-2026-06-10', '-recovery-2026-06-09'].map(
+            (suffix) => ({ scope, trigger, suffix }),
+          ),
+        ),
+      ),
+    )(
+      'leaves the active $scope$suffix import to the queue on $trigger while settling the other expired artifacts',
+      async ({ scope, trigger, suffix }) => {
+        const { calendarEventId, callRecordingId, botId, metadata } =
+          await scheduleRecordingThroughCalendarReconciliation();
+        const { startedAt, completedAt } = await deliverRecordingDone({
+          botId,
+          metadata,
+        });
 
-      await expireMediaAndAgeMeeting({
-        calendarEventId,
-        botId,
-        startedAt,
-        completedAt,
-      });
-      await client.mutation({
-        updateCallRecording: {
-          __args: {
-            id: callRecordingId,
-            data: { artifactsImportClaimedAt: new Date().toISOString() },
-          },
-          id: true,
-        },
-      });
+        await expireMediaAndAgeMeeting({
+          calendarEventId,
+          botId,
+          startedAt,
+          completedAt,
+        });
+        recall.artifactImportRequests = [];
+        recall.activeArtifactJobIds.add(
+          `call-recorder-${callRecordingId}-${scope}${suffix}`,
+        );
 
-      await runStaleStateCron();
+        await enqueueCallRecordingArtifactsImport({
+          callRecordingIds: [callRecordingId],
+          scopes: ['transcript', 'audio', 'video'],
+          trigger,
+          requestedAt: '2026-06-10T00:05:00.000Z',
+        });
+        await runQueuedArtifactImports();
 
-      const callRecording = await fetchCallRecording(callRecordingId);
+        const callRecording = await fetchCallRecording(callRecordingId);
 
-      expect(callRecording.status).toBe('PROCESSING');
-      expect(callRecording.callRecorderFailureReason).toBeFalsy();
-      expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
-    });
+        expect(callRecording.status).toBe('PROCESSING');
+        expect(callRecording.callRecorderFailureReason).toBe(
+          `${scope === 'audio' ? 'video' : 'audio'}_import_expired`,
+        );
+        expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
+      },
+    );
 
     it('completes a processing recording with imported media once Recall expires the rest', async () => {
       const { calendarEventId, callRecordingId, botId, metadata } =
@@ -1470,6 +1696,15 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       await runQueuedArtifactImports();
+      const imported = await fetchCallRecording(callRecordingId);
+      await saveCallRecordingImportProgress(client, {
+        callRecordingId,
+        externalBotId: botId,
+        data: {
+          video: [{ fileId: randomUUID(), label: 'late-video.mp4' }],
+          callRecorderFailureReason: 'video_import_failed',
+        },
+      });
       await expireMediaAndAgeMeeting({
         calendarEventId,
         botId,
@@ -1484,6 +1719,9 @@ describe('call recorder app lifecycle (integration)', () => {
       const callRecording = await fetchCallRecording(callRecordingId);
 
       expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.video).toMatchObject([
+        { fileId: imported.video[0].fileId },
+      ]);
       expect(callRecording.callRecorderFailureReason).toBeFalsy();
       expect(callRecording.transcript).toEqual({
         recallTranscriptId: 'recall-transcript-1',
@@ -1492,7 +1730,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
     });
 
-    it('completes a processing recording with only audio and records the expired video', async () => {
+    it('keeps audio and never retries a saved video failure, including during repair', async () => {
       const { calendarEventId, callRecordingId, botId, metadata } =
         await scheduleRecordingThroughCalendarReconciliation();
 
@@ -1503,9 +1741,15 @@ describe('call recorder app lifecycle (integration)', () => {
         metadata,
       });
 
-      await expect(runQueuedArtifactImports()).rejects.toMatchObject({
-        name: 'RetryableLogicFunctionError',
-      });
+      await runQueuedArtifactImports();
+      recall.failVideoDownload = false;
+      await runStaleStateCron();
+
+      const repaired = await fetchCallRecording(callRecordingId);
+      expect(repaired.audio).toHaveLength(1);
+      expect(repaired.video ?? []).toHaveLength(0);
+      expect(repaired.callRecorderFailureReason).toBe('video_import_failed');
+
       await expireMediaAndAgeMeeting({
         calendarEventId,
         botId,
@@ -1519,9 +1763,57 @@ describe('call recorder app lifecycle (integration)', () => {
 
       expect(callRecording.status).toBe('COMPLETED');
       expect(callRecording.callRecorderFailureReason).toBe(
-        'video_import_expired',
+        'video_import_failed',
       );
       expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
+    });
+
+    it('saves and settles a video timeout even after its work signal has aborted', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      await deliverRecordingDone({ botId, metadata });
+      await saveCallRecordingImportProgress(client, {
+        callRecordingId,
+        externalBotId: botId,
+        data: { transcript: { status: 'EMPTY', recallTranscriptId: null } },
+      });
+
+      const controller = new AbortController();
+      const originalTimeout = AbortSignal.timeout.bind(AbortSignal);
+      const timeout = vi
+        .spyOn(AbortSignal, 'timeout')
+        .mockImplementation((milliseconds) =>
+          milliseconds === 14 * 60 * 1000
+            ? controller.signal
+            : originalTimeout(milliseconds),
+        );
+      const originalFetch = globalThis.fetch;
+      vi.stubGlobal(
+        'fetch',
+        (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+          if (String(input).endsWith('/media/video.mp4')) {
+            controller.abort(
+              new DOMException('Video deadline elapsed', 'TimeoutError'),
+            );
+            return Promise.reject(controller.signal.reason);
+          }
+
+          return originalFetch(input, init);
+        },
+      );
+
+      try {
+        await runQueuedArtifactImports();
+      } finally {
+        timeout.mockRestore();
+      }
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.audio).toHaveLength(1);
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'video_import_failed',
+      );
     });
 
     it('fails a recording whose media was too large to store and whose transcript never arrived', async () => {
@@ -1539,7 +1831,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       expect(
         (await fetchCallRecording(callRecordingId)).callRecorderFailureReason,
-      ).toBe('video_file_too_large,audio_file_too_large');
+      ).toBe('audio_file_too_large,video_file_too_large');
 
       await expireMediaAndAgeMeeting({
         calendarEventId,
@@ -1554,7 +1846,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       expect(callRecording.status).toBe('FAILED');
       expect(callRecording.callRecorderFailureReason).toBe(
-        'video_file_too_large,audio_file_too_large',
+        'audio_file_too_large,video_file_too_large',
       );
       expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
     });
@@ -1580,7 +1872,7 @@ describe('call recorder app lifecycle (integration)', () => {
         }),
       );
 
-      expect(recall.artifactImportRequests).toHaveLength(4);
+      expect(recall.artifactImportRequests).toHaveLength(6);
 
       await runQueuedArtifactImports();
 
@@ -1606,7 +1898,7 @@ describe('call recorder app lifecycle (integration)', () => {
         buildRecordingDeletedWebhook({ botId, metadata }),
       );
 
-      expect(recall.artifactImportRequests).toHaveLength(4);
+      expect(recall.artifactImportRequests).toHaveLength(6);
 
       await runQueuedArtifactImports();
 
