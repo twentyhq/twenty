@@ -1,2 +1,2 @@
 export const ADD_AGENT_CHAT_THREAD_WORKFLOW_RUN_UPGRADE_COMMAND_NAME =
-  '2.42.0_AddAgentChatThreadWorkflowRunFastInstanceCommand_1789717346447';
+  '2.42.0_AddAgentChatThreadWorkflowRunFastInstanceCommand_1789728234976';

@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useStore } from 'jotai';
+import { useEffect } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
 
+import { hasFoldedNavigationDrawerForSidePanelState } from '@/navigation/states/hasFoldedNavigationDrawerForSidePanelState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 // Rendered by a page that already splits the main window in two. A side panel
@@ -12,15 +13,12 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 // left. A drawer the reader opens again while the panel is still there stays
 // open: the fold is a courtesy, not a rule to enforce against them.
 export const CollapseNavigationDrawerWhileSidePanelOpenEffect = () => {
+  const store = useStore();
   const isMobile = useIsMobile();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useAtomState(isNavigationDrawerExpandedState);
-  // Only a drawer this component folded is one it may unfold again.
-  const hasFoldedDrawerRef = useRef(false);
-  const setIsNavigationDrawerExpandedRef = useRef(setIsNavigationDrawerExpanded);
-
-  setIsNavigationDrawerExpandedRef.current = setIsNavigationDrawerExpanded;
+  const isNavigationDrawerExpanded = useAtomStateValue(
+    isNavigationDrawerExpandedState,
+  );
 
   useEffect(() => {
     // On a phone the drawer is an overlay the reader opens deliberately and
@@ -29,36 +27,36 @@ export const CollapseNavigationDrawerWhileSidePanelOpenEffect = () => {
       return;
     }
 
+    // Only a drawer this page folded is one it may unfold again.
+    const hasFoldedNavigationDrawer = store.get(
+      hasFoldedNavigationDrawerForSidePanelState.atom,
+    );
+
     if (
       isSidePanelOpened &&
       isNavigationDrawerExpanded &&
-      !hasFoldedDrawerRef.current
+      !hasFoldedNavigationDrawer
     ) {
-      hasFoldedDrawerRef.current = true;
-      setIsNavigationDrawerExpanded(false);
+      store.set(hasFoldedNavigationDrawerForSidePanelState.atom, true);
+      store.set(isNavigationDrawerExpandedState.atom, false);
 
       return;
     }
 
-    if (!isSidePanelOpened && hasFoldedDrawerRef.current) {
-      hasFoldedDrawerRef.current = false;
-      setIsNavigationDrawerExpanded(true);
+    if (!isSidePanelOpened && hasFoldedNavigationDrawer) {
+      store.set(hasFoldedNavigationDrawerForSidePanelState.atom, false);
+      store.set(isNavigationDrawerExpandedState.atom, true);
     }
-  }, [
-    isMobile,
-    isSidePanelOpened,
-    isNavigationDrawerExpanded,
-    setIsNavigationDrawerExpanded,
-  ]);
+  }, [isMobile, isSidePanelOpened, isNavigationDrawerExpanded, store]);
 
   useEffect(
     () => () => {
-      if (hasFoldedDrawerRef.current) {
-        hasFoldedDrawerRef.current = false;
-        setIsNavigationDrawerExpandedRef.current(true);
+      if (store.get(hasFoldedNavigationDrawerForSidePanelState.atom)) {
+        store.set(hasFoldedNavigationDrawerForSidePanelState.atom, false);
+        store.set(isNavigationDrawerExpandedState.atom, true);
       }
     },
-    [],
+    [store],
   );
 
   return null;

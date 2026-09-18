@@ -1,4 +1,3 @@
-import { getRecordExportUpdateOrThrow } from '@/record-export/utils/getRecordExportUpdateOrThrow';
 import { t } from '@lingui/core/macro';
 import { print } from 'graphql';
 import { createClient } from 'graphql-sse';
@@ -60,12 +59,14 @@ export const createRecordExportConnection = () => {
               return;
             }
             try {
-              const update = getRecordExportUpdateOrThrow(recordExport);
-              onProgress?.(update.progress);
-              if (isDefined(update.download)) {
+              if (isDefined(recordExport.errorMessage)) {
+                throw new Error(recordExport.errorMessage);
+              }
+              onProgress?.(recordExport.progress);
+              if (isDefined(recordExport.downloadUrl)) {
                 const link = document.createElement('a');
-                link.href = update.download.url;
-                link.download = update.download.filename;
+                link.href = recordExport.downloadUrl;
+                link.download = recordExport.filename;
                 document.body.appendChild(link);
                 link.click();
                 link.remove();

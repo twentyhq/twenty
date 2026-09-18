@@ -43,6 +43,7 @@ export const AiChatThreadInboxStateTabs = ({
   return (
     <StyledContainer>
       <TabList
+        aria-label={t`Filter chats by state`}
         tabs={tabs}
         behaveAsLinks={false}
         componentInstanceId={componentInstanceId}

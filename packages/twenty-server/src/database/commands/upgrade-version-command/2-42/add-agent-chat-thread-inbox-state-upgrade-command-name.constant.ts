@@ -1,2 +1,2 @@
 export const ADD_AGENT_CHAT_THREAD_INBOX_STATE_UPGRADE_COMMAND_NAME =
-  '2.42.0_AddAgentChatThreadInboxStateFastInstanceCommand_1789723890000';
+  '2.42.0_AddAgentChatThreadInboxStateFastInstanceCommand_1789728234977';

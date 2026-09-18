@@ -5,6 +5,8 @@ export type RecordExport = {
   workspaceId: string;
   userWorkspaceId: string;
   workspaceMemberId: string;
+  requestTokenHash: string;
+  permissionsHash: string;
   parameters: RecordExportParameters;
   filename: string;
   createdAt: number;
@@ -15,12 +17,3 @@ export type RecordExportProgress = {
   totalRecordCount: number | null;
   errorMessage?: string;
 };
-
-export type RecordExportResult = RecordExportProgress & {
-  fileId: string;
-};
-
-export type RecordExportDownload = RecordExport &
-  RecordExportResult & {
-    expiresAt: number;
-  };

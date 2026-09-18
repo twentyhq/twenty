@@ -5,7 +5,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 const mockGetJobs = jest.fn();
 const mockGetJob = jest.fn();
-const mockGetJobState = jest.fn();
 const mockAdd = jest.fn();
 const mockAddBulk = jest.fn();
 
@@ -13,7 +12,6 @@ jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
     getJobs: mockGetJobs,
     getJob: mockGetJob,
-    getJobState: mockGetJobState,
     add: mockAdd,
     addBulk: mockAddBulk,
   })),
@@ -46,26 +44,6 @@ describe('BullMQDriver deduplication', () => {
         id: job.opts.jobId ?? `auto-${index}`,
       })),
     );
-  });
-
-  it('includes the result when a job finishes during a snapshot read', async () => {
-    const job = {
-      id: 'export',
-      data: {},
-      returnvalue: null as { fileId: string } | null,
-      opts: {},
-      getState: mockGetJobState,
-    };
-    mockGetJob.mockImplementation(async () => ({ ...job }));
-    mockGetJobState.mockImplementation(async () => {
-      job.returnvalue = { fileId: 'completed-file' };
-      return 'completed';
-    });
-    const jobs = await driver.getJobs(MessageQueue.workspaceQueue, ['export']);
-    expect(jobs.export).toMatchObject({
-      state: 'completed',
-      result: { fileId: 'completed-file' },
-    });
   });
 
   describe('add', () => {
@@ -192,7 +170,6 @@ describe('BullMQDriver progress', () => {
       };
       const updateProgress = jest.spyOn(job, 'updateProgress');
       mockGetJob.mockResolvedValue(job);
-      mockGetJobState.mockResolvedValue('active');
       driver.work(MessageQueue.workspaceQueue, async (queueJob) => {
         await queueJob.updateProgress(progress);
       });

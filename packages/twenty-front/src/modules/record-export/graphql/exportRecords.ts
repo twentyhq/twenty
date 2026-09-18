@@ -5,9 +5,7 @@ export const EXPORT_RECORDS = gql`
     exportRecords(input: $input) {
       id
       filename
-      status
-      processedRecordCount
-      totalRecordCount
+      progress
       errorMessage
       downloadUrl
     }

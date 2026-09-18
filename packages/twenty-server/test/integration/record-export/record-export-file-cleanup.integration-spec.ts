@@ -40,7 +40,7 @@ describe('export file cleanup (integration)', () => {
       applicationUniversalIdentifier:
         TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       fileFolder,
-      resourcePath: `${v4()}/${id}.csv`,
+      resourcePath: `${id}.csv`,
     };
     await storage.createPendingFile({
       ...resource,
@@ -175,9 +175,9 @@ describe('export file cleanup (integration)', () => {
     );
     await exports.cancel({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      id: file.resource.resourcePath.split('/')[0],
+      id: file.id,
     });
-    expect(await storage.checkFileExists(file.resource)).toBe(false);
+    expect(await storage.checkFileExists(file.resource)).toBe(true);
     expect(
       await globalThis.testDataSource.query(
         'SELECT id FROM core.file WHERE id = $1',
