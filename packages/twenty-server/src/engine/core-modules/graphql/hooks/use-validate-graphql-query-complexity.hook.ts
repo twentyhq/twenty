@@ -6,9 +6,12 @@ import {
   type SelectionNode,
   Kind,
 } from 'graphql';
+import { type ServerResponse } from 'http';
+
 import { type Plugin } from 'graphql-yoga';
 import { isDefined } from 'twenty-shared/utils';
 
+import { REQUEST_RESOLVERS_HEADER } from 'src/engine/constants/request-attribution-headers.constant';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 type FragmentMetadata = {
@@ -35,7 +38,7 @@ export const useValidateGraphqlQueryComplexity = ({
   maximumAllowedNestedFields?: number;
   checkDuplicateRootResolvers?: boolean;
 }): Plugin => ({
-  onParse: () => {
+  onParse: ({ context }) => {
     return ({ result }) => {
       if (!result || !('kind' in result) || result.kind !== Kind.DOCUMENT) {
         return;
@@ -49,6 +52,10 @@ export const useValidateGraphqlQueryComplexity = ({
         fragmentMap,
         checkDuplicateRootResolvers,
       );
+
+      // Set before the threshold checks below throw: a query rejected for
+      // asking too much is exactly the one worth attributing afterwards.
+      exposeRootResolvers(context, analysis.rootResolverNames);
 
       if (
         isDefined(maximumAllowedNestedFields) &&
@@ -85,6 +92,46 @@ export const useValidateGraphqlQueryComplexity = ({
     };
   },
 });
+
+const MAX_EXPOSED_ROOT_RESOLVERS_LENGTH = 512;
+
+const exposeRootResolvers = (
+  context: unknown,
+  rootResolverNames: string[],
+): void => {
+  const response = (context as { res?: ServerResponse } | undefined)?.res;
+
+  if (!isDefined(response) || rootResolverNames.length === 0) {
+    return;
+  }
+
+  response.setHeader(
+    REQUEST_RESOLVERS_HEADER,
+    truncateResolverNames(rootResolverNames),
+  );
+};
+
+const truncateResolverNames = (rootResolverNames: string[]): string => {
+  const joined = rootResolverNames.join(',');
+
+  if (joined.length <= MAX_EXPOSED_ROOT_RESOLVERS_LENGTH) {
+    return joined;
+  }
+
+  const kept: string[] = [];
+  let length = 0;
+
+  for (const name of rootResolverNames) {
+    if (length + name.length + 1 > MAX_EXPOSED_ROOT_RESOLVERS_LENGTH) {
+      break;
+    }
+
+    kept.push(name);
+    length += name.length + 1;
+  }
+
+  return `${kept.join(',')},+${rootResolverNames.length - kept.length}`;
+};
 
 const buildFragmentMap = (
   document: DocumentNode,

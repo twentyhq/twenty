@@ -41,6 +41,50 @@ describe('useValidateGraphqlQueryComplexity', () => {
     }
   };
 
+  const captureResolversHeader = (
+    query: string,
+    options: Parameters<typeof useValidateGraphqlQueryComplexity>[0] = {},
+  ): { header: string | undefined; error: Error | null } => {
+    const plugin = useValidateGraphqlQueryComplexity(options);
+
+    if (!isDefined(plugin.onParse)) {
+      throw new Error('onParse hook not found');
+    }
+
+    const headers: Record<string, string> = {};
+    const res = {
+      setHeader: (key: string, value: string) => {
+        headers[key] = value;
+      },
+    };
+
+    const onParseResult = plugin.onParse({
+      context: { res },
+      params: { source: query },
+      parseFn: parse,
+      setParseFn: () => {},
+      setParsedDocument: () => {},
+      extendContext: () => {},
+    } as any);
+
+    if (typeof onParseResult !== 'function') {
+      return { header: undefined, error: null };
+    }
+
+    let error: Error | null = null;
+
+    try {
+      onParseResult({
+        result: parse(query),
+        replaceParseResult: () => {},
+      } as any);
+    } catch (thrown) {
+      error = thrown as Error;
+    }
+
+    return { header: headers['X-Twenty-Resolvers'], error };
+  };
+
   describe('maximumAllowedFields', () => {
     it('should pass when fields count is within limit', () => {
       const query = `
@@ -337,6 +381,90 @@ describe('useValidateGraphqlQueryComplexity', () => {
       expect(error).not.toBeNull();
       expect(error?.message).toContain('Duplicate root resolver');
       expect(error?.message).toContain('user');
+    });
+  });
+  describe('X-Twenty-Resolvers header', () => {
+    it('should expose every root resolver of the operation', () => {
+      const { header } = captureResolversHeader(`
+        mutation {
+          createOneCompany {
+            id
+          }
+          deleteManyPeople {
+            id
+          }
+        }
+      `);
+
+      expect(header).toBe('createOneCompany,deleteManyPeople');
+    });
+
+    it('should not depend on the client supplied operation name', () => {
+      const { header } = captureResolversHeader(`
+        mutation LooksHarmless {
+          deleteManyPeople {
+            id
+          }
+        }
+      `);
+
+      expect(header).toBe('deleteManyPeople');
+    });
+
+    it('should expose resolvers of a query rejected for complexity', () => {
+      const { header, error } = captureResolversHeader(
+        `
+          query {
+            userOne {
+              id
+            }
+            userTwo {
+              id
+            }
+          }
+        `,
+        { maximumAllowedRootResolvers: 1 },
+      );
+
+      expect(error).not.toBeNull();
+      expect(header).toBe('userOne,userTwo');
+    });
+
+    it('should truncate a long resolver list with a remainder count', () => {
+      const resolvers = Array.from(
+        { length: 40 },
+        (_unused, index) => `findManyVeryLongObjectName${index}`,
+      );
+      const { header } = captureResolversHeader(`
+        query {
+          ${resolvers.map((name) => `${name} { id }`).join('\n')}
+        }
+      `);
+
+      expect(header).toMatch(/,\+\d+$/);
+      expect(header?.length).toBeLessThanOrEqual(520);
+    });
+
+    it('should not set the header when the context carries no response', () => {
+      const plugin = useValidateGraphqlQueryComplexity({});
+
+      expect(() => {
+        const onParseResult = plugin.onParse?.({
+          context: {},
+          params: { source: '{ user { id } }' },
+          parseFn: parse,
+          setParseFn: () => {},
+          setParsedDocument: () => {},
+          extendContext: () => {},
+        } as any);
+
+        if (typeof onParseResult === 'function') {
+          onParseResult({
+            result: parse('{ user { id } }'),
+            replaceParseResult: () => {},
+          } as any);
+        }
+      }).not.toThrow();
     });
   });
 });
