@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconFrame, IconSquare } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
@@ -127,24 +127,28 @@ export const EmailBoxSidesInput = ({
         )}
         <StyledUnitChip>px</StyledUnitChip>
         <LightIconButton
-          Icon={IconSquare}
-          size="small"
-          accent={isPerSide ? 'tertiary' : 'secondary'}
+          size="sm"
+          emphasis={isPerSide ? 'subtle' : 'standard'}
           title={t`Same value on every side`}
           aria-pressed={!isPerSide}
           onClick={() => {
             setIsPerSide(false);
             commitAllSides(toDisplayAmount(sides.top));
           }}
-        />
+          aria-label={t`Same value on every side`}
+        >
+          <IconSquare />
+        </LightIconButton>
         <LightIconButton
-          Icon={IconFrame}
-          size="small"
-          accent={isPerSide ? 'secondary' : 'tertiary'}
+          size="sm"
+          emphasis={isPerSide ? 'standard' : 'subtle'}
           title={t`Edit each side`}
           aria-pressed={isPerSide}
           onClick={() => setIsPerSide(true)}
-        />
+          aria-label={t`Edit each side`}
+        >
+          <IconFrame />
+        </LightIconButton>
       </StyledRow>
     </div>
   );

@@ -10,22 +10,28 @@ vi.mock('twenty-client-sdk/metadata', () => ({
   },
 }));
 
-import { resolveCallRecorderApplicationId } from 'src/front-components/utils/resolve-call-recorder-application-id.util';
-
 describe('resolveCallRecorderApplicationId', () => {
   beforeEach(() => {
+    vi.resetModules();
     metadataQuery.mockReset();
   });
 
+  const importResolver = async () => {
+    const module =
+      await import('src/front-components/utils/resolve-call-recorder-application-id.util');
+
+    return module.resolveCallRecorderApplicationId;
+  };
+
   it('shares one application lookup across concurrent saves', async () => {
     metadataQuery.mockResolvedValue({
-      frontComponent: { applicationId: 'application-id' },
+      findOneApplication: { id: 'application-id' },
     });
 
-    const firstResolution =
-      resolveCallRecorderApplicationId('front-component-id');
-    const secondResolution =
-      resolveCallRecorderApplicationId('front-component-id');
+    const resolveCallRecorderApplicationId = await importResolver();
+
+    const firstResolution = resolveCallRecorderApplicationId();
+    const secondResolution = resolveCallRecorderApplicationId();
 
     await expect(firstResolution).resolves.toBe('application-id');
     await expect(secondResolution).resolves.toBe('application-id');
@@ -34,17 +40,17 @@ describe('resolveCallRecorderApplicationId', () => {
 
   it('retries the lookup after a failed resolution', async () => {
     metadataQuery
-      .mockResolvedValueOnce({ frontComponent: null })
-      .mockResolvedValueOnce({
-        frontComponent: { applicationId: 'application-id' },
-      });
+      .mockResolvedValueOnce({ findOneApplication: null })
+      .mockResolvedValueOnce({ findOneApplication: { id: 'application-id' } });
 
-    await expect(
-      resolveCallRecorderApplicationId('retry-front-component-id'),
-    ).rejects.toThrow('Could not resolve the call recorder application.');
-    await expect(
-      resolveCallRecorderApplicationId('retry-front-component-id'),
-    ).resolves.toBe('application-id');
+    const resolveCallRecorderApplicationId = await importResolver();
+
+    await expect(resolveCallRecorderApplicationId()).rejects.toThrow(
+      'Could not resolve the call recorder application.',
+    );
+    await expect(resolveCallRecorderApplicationId()).resolves.toBe(
+      'application-id',
+    );
 
     expect(metadataQuery).toHaveBeenCalledTimes(2);
   });

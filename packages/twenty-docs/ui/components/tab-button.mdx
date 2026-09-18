@@ -1,0 +1,71 @@
+---
+title: TabButton
+description: Present route links and actions alongside tabs with consistent styling.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TabButtonReference from '/snippets/ui/generated/components/tab-button.mdx';
+
+Use `TabButton` for navigation links and actions such as adding a tab or opening an overflow menu. It shares the appearance of [Tabs](/ui/primitives/navigation/tabs) and uses [Button](/ui/primitives/input/button) for interaction.
+
+<StoryEmbed
+  storyId="ui-components-tabbutton--default"
+  title="TabButton example"
+  height={180}
+/>
+
+## State ownership
+
+Your application supplies `active` from its current route or menu state. This prop highlights the control without changing its role or introducing selection state. Use `Tabs.Root`, `Tabs.List`, `Tabs.Tab`, and `Tabs.Panel` to switch between related content panels, with controlled or uncontrolled selection.
+
+## Navigation
+
+Set `href` to render a link. Supply `aria-current="page"` on the current destination.
+
+```tsx
+import { TabButton } from 'twenty-ui/components';
+import { IconCreditCard } from 'twenty-ui/icon';
+
+export const BillingLink = () => (
+  <TabButton
+    href="/billing"
+    active
+    aria-current="page"
+    startIcon={<IconCreditCard />}
+  >
+    Billing
+  </TabButton>
+);
+```
+
+For client-side routing, pass the resolved destination as `href` and your router link through `render`. Keep route state and history options on the router link. Custom wrappers must forward props and the ref to the anchor. Disabled links retain their link role and block activation.
+
+## Actions
+
+Without `href`, the control renders a native button with `type="button"`. Native attributes, refs, styles, class names, and event handlers pass through.
+
+```tsx
+import { useState } from 'react';
+import { TabButton } from 'twenty-ui/components';
+import { IconPlus } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const AddTabAction = () => {
+  const [count, setCount] = useState(1);
+
+  return (
+    <>
+      <TabButton startIcon={<IconPlus />} onClick={() => setCount(count + 1)}>
+        New Tab
+      </TabButton>
+      <Text role="status">Tabs: {count}</Text>
+    </>
+  );
+};
+```
+
+Use `startIcon`, `endIcon`, and `badge` for supporting content. An avatar passed to an icon slot is decorative when the text names the destination. The `size` prop controls content padding with `sm` and `md` values.
+
+## Props
+
+<TabButtonReference />

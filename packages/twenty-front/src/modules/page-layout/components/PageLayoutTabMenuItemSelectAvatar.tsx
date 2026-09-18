@@ -1,10 +1,11 @@
+import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { type MouseEvent, useContext, useState } from 'react';
 
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { IconPencil } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   StyledHoverableMenuItemBase,
   StyledMenuItemIconCheck,
@@ -77,14 +78,16 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
         {isHovered && showEditButton && (
           <div className="hoverable-buttons">
             <LightIconButton
-              Icon={IconPencil}
-              size="small"
-              accent="tertiary"
+              size="sm"
+              emphasis="subtle"
               onClick={(event) => {
                 event.stopPropagation();
                 onEditClick?.(tab.id);
               }}
-            />
+              aria-label={t`Edit tab icon`}
+            >
+              <IconPencil />
+            </LightIconButton>
           </div>
         )}
       </StyledRightContent>

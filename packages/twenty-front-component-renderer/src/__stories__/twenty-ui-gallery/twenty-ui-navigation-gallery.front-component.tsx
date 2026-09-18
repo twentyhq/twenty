@@ -13,13 +13,11 @@ import {
   MenuItemMultiSelect,
   MenuItemMultiSelectAvatar,
   MenuItemMultiSelectTag,
-  MenuItemNavigate,
   MenuItemSelect,
   MenuItemSelectAvatar,
   MenuItemSelectColor,
   MenuItemSelectTag,
   MenuItemSuggestion,
-  MenuItemSwitch,
   MenuPicker,
   NavigationBar,
   NavigationBarItem,
@@ -32,6 +30,7 @@ import {
   StyledMenuItemLeftContent,
   StyledMenuItemSelect,
   UndecoratedLink,
+  ListItem,
 } from 'twenty-ui/primitives/navigation';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
@@ -134,13 +133,16 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'MenuItemNavigate',
+    name: 'ListItem navigation',
     node: (
-      <MenuItemNavigate
-        text="Navigate"
-        LeftIcon={IconUser}
+      <ListItem
+        startIcon={<IconUser />}
         onClick={() => {}}
-      />
+        render={<button type="button" />}
+        hasSubmenu
+      >
+        Navigate
+      </ListItem>
     ),
   },
   {
@@ -181,12 +183,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'MenuItemSuggestion',
     node: <MenuItemSuggestion text="Suggestion" onClick={() => {}} />,
-  },
-  {
-    name: 'MenuItemSwitch',
-    node: (
-      <MenuItemSwitch text="Switch" checked={true} onCheckedChange={() => {}} />
-    ),
   },
   {
     name: 'MenuPicker',

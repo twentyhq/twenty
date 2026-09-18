@@ -233,6 +233,7 @@
     "ts-node": "10.9.1",
     "twenty-client-sdk": "workspace:*",
     "twenty-emails": "workspace:*",
+    "twenty-oxlint-rules": "workspace:*",
     "twenty-shared": "workspace:*"
   },
   "engines": {

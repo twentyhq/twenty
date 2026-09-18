@@ -42,6 +42,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildWorkflowRunTriggerContext } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-trigger-context.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
@@ -63,6 +64,7 @@ export class CoreWorkflowVersionMutationResolver {
   constructor(
     private readonly coreWorkflowVersionMutationWorkspaceService: CoreWorkflowVersionMutationWorkspaceService,
     private readonly coreWorkflowLifecycleWorkspaceService: CoreWorkflowLifecycleWorkspaceService,
+    private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -136,12 +138,12 @@ export class CoreWorkflowVersionMutationResolver {
     const { payload: triggerPayload, createdBy } =
       buildWorkflowRunTriggerContext({ workspaceMember, payload });
 
-    return this.coreWorkflowLifecycleWorkspaceService.runCoreWorkflowVersion({
+    return this.coreWorkflowRunnerService.run({
       workspaceId,
       coreWorkflowVersionId,
       workflowRunId: workflowRunId ?? undefined,
       payload: triggerPayload,
-      createdBy,
+      source: createdBy,
     });
   }
 

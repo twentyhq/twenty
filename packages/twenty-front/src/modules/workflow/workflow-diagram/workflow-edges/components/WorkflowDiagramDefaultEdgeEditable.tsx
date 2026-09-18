@@ -1,3 +1,4 @@
+import { LightIconButton } from 'twenty-ui/components';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBaseEdge';
 import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup';
@@ -135,25 +136,26 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
               })
             }
           >
-            <WorkflowDiagramEdgeButtonGroup
-              iconButtons={[
-                {
-                  Icon: IconPlus,
-                  ariaLabel: t`Insert action`,
-                  onClick: handleNodeButtonClick,
-                },
-                ...(deletable === false
-                  ? []
-                  : [
-                      {
-                        Icon: IconTrash,
-                        ariaLabel: t`Delete connection`,
-                        onClick: handleDeleteBranch,
-                      },
-                    ]),
-              ]}
-              selected={nodeCreationStarted}
-            />
+            <WorkflowDiagramEdgeButtonGroup selected={nodeCreationStarted}>
+              <LightIconButton
+                size="xs"
+                emphasis="subtle"
+                aria-label={t`Insert action`}
+                onClick={handleNodeButtonClick}
+              >
+                <IconPlus />
+              </LightIconButton>
+              {deletable !== false && (
+                <LightIconButton
+                  size="xs"
+                  emphasis="subtle"
+                  aria-label={t`Delete connection`}
+                  onClick={handleDeleteBranch}
+                >
+                  <IconTrash />
+                </LightIconButton>
+              )}
+            </WorkflowDiagramEdgeButtonGroup>
           </WorkflowDiagramEdgeV2VisibilityContainer>
         </WorkflowDiagramEdgeV2Container>
       </EdgeLabelRenderer>

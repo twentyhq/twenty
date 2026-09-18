@@ -1,5 +1,11 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { IconButton, LightButton, MainButton } from 'twenty-ui/components';
+import {
+  IconButton,
+  LightButton,
+  LightIconButton,
+  MainButton,
+  TabButton,
+} from 'twenty-ui/components';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
@@ -14,17 +20,9 @@ import {
   FloatingButtonGroup,
   FloatingIconButton,
   FloatingIconButtonGroup,
-  IconButtonGroup,
   IconListViewGrip,
-  InsideButton,
-  LightIconButton,
-  LightIconButtonGroup,
-  RoundedIconButton,
   SearchInput,
   SegmentedControl,
-  StyledTabContainer,
-  TabButton,
-  TabContent,
   CardPicker,
   Checkbox,
   Radio,
@@ -143,11 +141,13 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'IconButtonGroup',
+    name: 'ButtonGroup (framed)',
     node: (
-      <IconButtonGroup
-        iconButtons={[{ Icon: IconTrash, ariaLabel: 'Delete' }]}
-      />
+      <ButtonGroup framed attached={false} aria-label="Record actions">
+        <LightIconButton size="xs" aria-label="Delete" emphasis="subtle">
+          <IconTrash />
+        </LightIconButton>
+      </ButtonGroup>
     ),
   },
   {
@@ -155,23 +155,15 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     node: <IconListViewGrip />,
   },
   {
-    name: 'InsideButton',
-    node: <InsideButton Icon={IconPlus} ariaLabel="Add" />,
-  },
-  {
     name: 'LightButton',
     node: <LightButton>{'Light'}</LightButton>,
   },
   {
     name: 'LightIconButton',
-    node: <LightIconButton Icon={IconStar} aria-label="Star" />,
-  },
-  {
-    name: 'LightIconButtonGroup',
     node: (
-      <LightIconButtonGroup
-        iconButtons={[{ Icon: IconStar, ariaLabel: 'Star', onClick: () => {} }]}
-      />
+      <LightIconButton aria-label="Star">
+        <IconStar />
+      </LightIconButton>
     ),
   },
   {
@@ -194,10 +186,6 @@ const INPUT_ENTRIES: GalleryEntry[] = [
         <Radio value="b">B</Radio>
       </RadioGroup>
     ),
-  },
-  {
-    name: 'RoundedIconButton',
-    node: <RoundedIconButton Icon={IconPlus} aria-label="Add" />,
   },
   {
     name: 'SearchInput',
@@ -231,20 +219,8 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'StyledTabContainer',
-    node: (
-      <StyledTabContainer>
-        <TabButton id="t1" title="Tab" />
-      </StyledTabContainer>
-    ),
-  },
-  {
     name: 'TabButton',
-    node: <TabButton id="tab1" title="Tab" />,
-  },
-  {
-    name: 'TabContent',
-    node: <TabContent id="tc1" title="Content" />,
+    node: <TabButton>Tab</TabButton>,
   },
   {
     name: 'Switch',

@@ -204,6 +204,7 @@ export const SettingsWorkspaceMember = () => {
           ]}
           secondaryBar={
             <SettingsTabBar
+              aria-label={t`Member details`}
               tabs={[
                 {
                   id: SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS,

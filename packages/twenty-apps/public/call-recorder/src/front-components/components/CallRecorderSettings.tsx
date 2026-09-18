@@ -2,10 +2,7 @@ import 'twenty-ui/style.css';
 
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import {
-  useColorScheme,
-  useFrontComponentId,
-} from 'twenty-sdk/front-component';
+import { useColorScheme } from 'twenty-sdk/front-component';
 import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
 import {
   ThemeContext,
@@ -36,7 +33,6 @@ const StyledPausedNotice = styled.div`
 
 export const CallRecorderSettings = () => {
   const colorScheme = useColorScheme();
-  const frontComponentId = useFrontComponentId();
   const [isSchedulingEnabled, setIsSchedulingEnabled] = useState(
     () =>
       getApplicationVariableValue(
@@ -58,15 +54,14 @@ export const CallRecorderSettings = () => {
     >
       <StyledContainer>
         <SchedulingSection
-          frontComponentId={frontComponentId}
           isEnabled={isSchedulingEnabled}
           onEnabledChange={setIsSchedulingEnabled}
         />
         {isSchedulingEnabled ? (
           <>
-            <RecorderSection frontComponentId={frontComponentId} />
-            <InCallSection frontComponentId={frontComponentId} />
-            <TranscriptionSection frontComponentId={frontComponentId} />
+            <RecorderSection />
+            <InCallSection />
+            <TranscriptionSection />
           </>
         ) : (
           <StyledPausedNotice>

@@ -1483,6 +1483,13 @@ export type CreatePageLayoutWidgetInput = {
   type: WidgetType;
 };
 
+export type CreateRecordExportInput = {
+  fieldMetadataIds: Array<Scalars['UUID']['input']>;
+  filter?: InputMaybe<Scalars['JSON']['input']>;
+  objectMetadataId: Scalars['UUID']['input'];
+  orderBy?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type CreateRoleInput = {
   canAccessAllTools?: InputMaybe<Scalars['Boolean']['input']>;
   canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2045,6 +2052,7 @@ export type FeatureFlag = {
 
 export enum FeatureFlagKey {
   IS_APP_CLAIMING_ENABLED = 'IS_APP_CLAIMING_ENABLED',
+  IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_INITIAL_OBJECT_VIEW_ENABLED = 'IS_INITIAL_OBJECT_VIEW_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
@@ -2224,6 +2232,7 @@ export enum FileFolder {
   FilesField = 'FilesField',
   GeneratedSdkClient = 'GeneratedSdkClient',
   PublicAsset = 'PublicAsset',
+  RecordExport = 'RecordExport',
   Source = 'Source',
   Workflow = 'Workflow'
 }
@@ -4248,7 +4257,7 @@ export type MutationUpdateOneAgentArgs = {
 
 
 export type MutationUpdateOneApplicationVariableArgs = {
-  applicationId: Scalars['UUID']['input'];
+  applicationId?: InputMaybe<Scalars['UUID']['input']>;
   key: Scalars['String']['input'];
   value: Scalars['String']['input'];
 };
@@ -5612,6 +5621,15 @@ export type RatioAggregateConfig = {
   optionValue: Scalars['String']['output'];
 };
 
+export type RecordExport = {
+  __typename?: 'RecordExport';
+  downloadUrl?: Maybe<Scalars['String']['output']>;
+  errorMessage?: Maybe<Scalars['String']['output']>;
+  filename: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  progress: Scalars['Int']['output'];
+};
+
 export type RecordIdentifier = {
   __typename?: 'RecordIdentifier';
   id: Scalars['UUID']['output'];
@@ -6016,6 +6034,7 @@ export type SubdomainAvailabilityDto = {
 export type Subscription = {
   __typename?: 'Subscription';
   eventLogsLive?: Maybe<Array<EventLogRecord>>;
+  exportRecords: RecordExport;
   logicFunctionLogs: LogicFunctionLogs;
   onAgentChatEvent: AgentChatEvent;
   onEventSubscription?: Maybe<EventSubscription>;
@@ -6024,6 +6043,11 @@ export type Subscription = {
 
 export type SubscriptionEventLogsLiveArgs = {
   table: EventLogTable;
+};
+
+
+export type SubscriptionExportRecordsArgs = {
+  input: CreateRecordExportInput;
 };
 
 
@@ -6116,11 +6140,13 @@ export type ToolIndexEntry = {
   __typename?: 'ToolIndexEntry';
   category: Scalars['String']['output'];
   description: Scalars['String']['output'];
+  frontComponentId?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   inputSchema?: Maybe<Scalars['JSON']['output']>;
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
   objectName?: Maybe<Scalars['String']['output']>;
+  widgetName?: Maybe<Scalars['String']['output']>;
 };
 
 export type TransientToken = {
@@ -7789,7 +7815,7 @@ export type GetChatThreadsQuery = { __typename?: 'Query', chatThreads: Array<{ _
 export type GetToolIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetToolIndexQuery = { __typename?: 'Query', getToolIndex: Array<{ __typename?: 'ToolIndexEntry', name: string, label: string, description: string, category: string, objectName?: string | null, icon?: string | null }> };
+export type GetToolIndexQuery = { __typename?: 'Query', getToolIndex: Array<{ __typename?: 'ToolIndexEntry', name: string, label: string, description: string, category: string, objectName?: string | null, icon?: string | null, widgetName?: string | null, frontComponentId?: string | null }> };
 
 export type GetToolInputSchemaQueryVariables = Exact<{
   toolName: Scalars['String']['input'];
@@ -8925,6 +8951,13 @@ export type PieChartDataQueryVariables = Exact<{
 
 
 export type PieChartDataQuery = { __typename?: 'Query', pieChartData: { __typename?: 'PieChartData', showLegend: boolean, showDataLabels: boolean, showCenterMetric: boolean, hasTooManyGroups: boolean, formattedToRawLookup: any, data: Array<{ __typename?: 'PieChartDataItem', key: string, value: number }> } };
+
+export type ExportRecordsSubscriptionVariables = Exact<{
+  input: CreateRecordExportInput;
+}>;
+
+
+export type ExportRecordsSubscription = { __typename?: 'Subscription', exportRecords: { __typename?: 'RecordExport', id: string, filename: string, progress: number, errorMessage?: string | null, downloadUrl?: string | null } };
 
 export type CreateEmailGroupChannelMutationVariables = Exact<{
   input: CreateEmailGroupChannelInput;
@@ -10120,7 +10153,7 @@ export const GetAgentTurnsDocument = {"kind":"Document","definitions":[{"kind":"
 export const GetAiChatUsageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAiChatUsage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aiChatUsage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"limitValue"}},{"kind":"Field","name":{"kind":"Name","value":"consumedValue"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}}]}}]}}]} as unknown as DocumentNode<GetAiChatUsageQuery, GetAiChatUsageQueryVariables>;
 export const GetChatMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetChatMessages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chatMessages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"turnId"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"parts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"messageId"}},{"kind":"Field","name":{"kind":"Name","value":"orderIndex"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"textContent"}},{"kind":"Field","name":{"kind":"Name","value":"reasoningContent"}},{"kind":"Field","name":{"kind":"Name","value":"toolName"}},{"kind":"Field","name":{"kind":"Name","value":"toolCallId"}},{"kind":"Field","name":{"kind":"Name","value":"toolInput"}},{"kind":"Field","name":{"kind":"Name","value":"toolOutput"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"providerExecuted"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}},{"kind":"Field","name":{"kind":"Name","value":"errorDetails"}},{"kind":"Field","name":{"kind":"Name","value":"sourceUrlSourceId"}},{"kind":"Field","name":{"kind":"Name","value":"sourceUrlUrl"}},{"kind":"Field","name":{"kind":"Name","value":"sourceUrlTitle"}},{"kind":"Field","name":{"kind":"Name","value":"sourceDocumentSourceId"}},{"kind":"Field","name":{"kind":"Name","value":"sourceDocumentMediaType"}},{"kind":"Field","name":{"kind":"Name","value":"sourceDocumentTitle"}},{"kind":"Field","name":{"kind":"Name","value":"sourceDocumentFilename"}},{"kind":"Field","name":{"kind":"Name","value":"fileMediaType"}},{"kind":"Field","name":{"kind":"Name","value":"fileFilename"}},{"kind":"Field","name":{"kind":"Name","value":"fileUrl"}},{"kind":"Field","name":{"kind":"Name","value":"fileId"}},{"kind":"Field","name":{"kind":"Name","value":"providerMetadata"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"chatStreamCatchupChunks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chunks"}},{"kind":"Field","name":{"kind":"Name","value":"maxSeq"}},{"kind":"Field","name":{"kind":"Name","value":"error"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<GetChatMessagesQuery, GetChatMessagesQueryVariables>;
 export const GetChatThreadsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetChatThreads"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chatThreads"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"totalCacheReadTokens"}},{"kind":"Field","name":{"kind":"Name","value":"totalInputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"totalOutputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"contextWindowTokens"}},{"kind":"Field","name":{"kind":"Name","value":"conversationSize"}},{"kind":"Field","name":{"kind":"Name","value":"totalInputCredits"}},{"kind":"Field","name":{"kind":"Name","value":"totalOutputCredits"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetChatThreadsQuery, GetChatThreadsQueryVariables>;
-export const GetToolIndexDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetToolIndex"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getToolIndex"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"objectName"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]}}]} as unknown as DocumentNode<GetToolIndexQuery, GetToolIndexQueryVariables>;
+export const GetToolIndexDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetToolIndex"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getToolIndex"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"objectName"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"widgetName"}},{"kind":"Field","name":{"kind":"Name","value":"frontComponentId"}}]}}]}}]} as unknown as DocumentNode<GetToolIndexQuery, GetToolIndexQueryVariables>;
 export const GetToolInputSchemaDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetToolInputSchema"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"toolName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getToolInputSchema"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"toolName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"toolName"}}}]}]}}]} as unknown as DocumentNode<GetToolInputSchemaQuery, GetToolInputSchemaQueryVariables>;
 export const OnAgentChatEventDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"OnAgentChatEvent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"onAgentChatEvent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"event"}}]}}]}}]} as unknown as DocumentNode<OnAgentChatEventSubscription, OnAgentChatEventSubscriptionVariables>;
 export const TrackAnalyticsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TrackAnalytics"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AnalyticsType"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"event"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"properties"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"trackAnalytics"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}},{"kind":"Argument","name":{"kind":"Name","value":"event"},"value":{"kind":"Variable","name":{"kind":"Name","value":"event"}}},{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"Argument","name":{"kind":"Name","value":"properties"},"value":{"kind":"Variable","name":{"kind":"Name","value":"properties"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}}]}}]}}]} as unknown as DocumentNode<TrackAnalyticsMutation, TrackAnalyticsMutationVariables>;
@@ -10229,6 +10262,7 @@ export const CallRecordingIdForCalendarEventDocument = {"kind":"Document","defin
 export const BarChartDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"BarChartData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BarChartDataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"barChartData"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"indexBy"}},{"kind":"Field","name":{"kind":"Name","value":"keys"}},{"kind":"Field","name":{"kind":"Name","value":"series"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"Field","name":{"kind":"Name","value":"xAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"yAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"showDataLabels"}},{"kind":"Field","name":{"kind":"Name","value":"layout"}},{"kind":"Field","name":{"kind":"Name","value":"groupMode"}},{"kind":"Field","name":{"kind":"Name","value":"hasTooManyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"formattedToRawLookup"}}]}}]}}]} as unknown as DocumentNode<BarChartDataQuery, BarChartDataQueryVariables>;
 export const LineChartDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LineChartData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LineChartDataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lineChartData"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"xAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"yAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"showDataLabels"}},{"kind":"Field","name":{"kind":"Name","value":"hasTooManyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"formattedToRawLookup"}}]}}]}}]} as unknown as DocumentNode<LineChartDataQuery, LineChartDataQueryVariables>;
 export const PieChartDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PieChartData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PieChartDataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pieChartData"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"showDataLabels"}},{"kind":"Field","name":{"kind":"Name","value":"showCenterMetric"}},{"kind":"Field","name":{"kind":"Name","value":"hasTooManyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"formattedToRawLookup"}}]}}]}}]} as unknown as DocumentNode<PieChartDataQuery, PieChartDataQueryVariables>;
+export const ExportRecordsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"ExportRecords"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateRecordExportInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exportRecords"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"progress"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}},{"kind":"Field","name":{"kind":"Name","value":"downloadUrl"}}]}}]}}]} as unknown as DocumentNode<ExportRecordsSubscription, ExportRecordsSubscriptionVariables>;
 export const CreateEmailGroupChannelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateEmailGroupChannel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateEmailGroupChannelInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createEmailGroupChannel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messageChannel"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"isSyncEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"excludeGroupEmails"}},{"kind":"Field","name":{"kind":"Name","value":"contactAutoCreationPolicy"}}]}},{"kind":"Field","name":{"kind":"Name","value":"forwardingAddress"}}]}}]}}]} as unknown as DocumentNode<CreateEmailGroupChannelMutation, CreateEmailGroupChannelMutationVariables>;
 export const DeleteConnectedAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteConnectedAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteConnectedAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteConnectedAccountMutation, DeleteConnectedAccountMutationVariables>;
 export const DeleteEmailGroupChannelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteEmailGroupChannel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteEmailGroupChannel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteEmailGroupChannelMutation, DeleteEmailGroupChannelMutationVariables>;

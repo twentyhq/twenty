@@ -12,6 +12,7 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useCallback, useContext, useMemo } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
+import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -27,6 +28,7 @@ type FrontComponentRendererProps = {
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
   timelineActivityId?: string;
+  toolCall?: FrontComponentToolCall;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
 };
@@ -40,6 +42,7 @@ type FrontComponentRendererContentProps = {
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
   timelineActivityId?: string;
+  toolCall?: FrontComponentToolCall;
   loadingFallback?: ReactNode;
 };
 
@@ -48,6 +51,7 @@ export const FrontComponentRenderer = ({
   commandMenuItemId,
   selectedRecordIds,
   timelineActivityId,
+  toolCall,
   loadingFallback,
   unavailableFallback,
 }: FrontComponentRendererProps) => {
@@ -74,6 +78,7 @@ export const FrontComponentRenderer = ({
           commandMenuItemId={commandMenuItemId}
           selectedRecordIds={selectedRecordIds}
           timelineActivityId={timelineActivityId}
+          toolCall={toolCall}
           loadingFallback={loadingFallback}
         />
       )}
@@ -86,6 +91,7 @@ const FrontComponentRendererContent = ({
   commandMenuItemId,
   selectedRecordIds,
   timelineActivityId,
+  toolCall,
   loadingFallback,
 }: FrontComponentRendererContentProps) => {
   const { colorScheme } = useContext(ThemeContext);
@@ -109,6 +115,7 @@ const FrontComponentRendererContent = ({
     commandMenuItemId,
     selectedRecordIds,
     timelineActivityId,
+    toolCall,
     colorScheme,
   });
 
