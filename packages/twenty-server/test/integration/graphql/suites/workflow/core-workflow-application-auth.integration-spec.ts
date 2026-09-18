@@ -2,18 +2,24 @@ import crypto from 'crypto';
 
 import bcrypt from 'bcrypt';
 import request from 'supertest';
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
+import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
+const APPLE_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
+
 const baseUrl = `http://localhost:${APP_PORT}`;
 
 type InstalledTestApplication = {
-  registrationId: string;
+  applicationUniversalIdentifier: string;
   applicationId: string;
-  roleId: string;
   accessToken: string;
 };
 
@@ -23,96 +29,89 @@ const graphqlAs = (token: string, query: string, variables?: object) =>
     .set('Authorization', `Bearer ${token}`)
     .send({ query, variables });
 
-const installApplication = async ({
-  workspaceId,
+// Installs a real application, then issues it a client-credentials token: that
+// grant carries no user, which is how an install hook or a cron reaches the API.
+const installApplicationWithoutUser = async ({
   name,
-  canUpdateAllSettings,
+  grantsWorkflowsPermission,
 }: {
-  workspaceId: string;
   name: string;
-  canUpdateAllSettings: boolean;
+  grantsWorkflowsPermission: boolean;
 }): Promise<InstalledTestApplication> => {
-  const registrationId = crypto.randomUUID();
-  const applicationId = crypto.randomUUID();
-  const roleId = crypto.randomUUID();
-  const clientId = crypto.randomUUID();
+  const applicationUniversalIdentifier = crypto.randomUUID();
+  const roleUniversalIdentifier = crypto.randomUUID();
+
+  await setupApplicationForSync({
+    applicationUniversalIdentifier,
+    name,
+    description: name,
+    sourcePath: name,
+  });
+
+  await syncApplication({
+    manifest: buildBaseManifest({
+      appId: applicationUniversalIdentifier,
+      roleId: roleUniversalIdentifier,
+      overrides: {
+        roles: [
+          {
+            universalIdentifier: roleUniversalIdentifier,
+            label: `${name} role`,
+            description: 'Role used by the workflow application auth suite',
+            canUpdateAllSettings: false,
+            canReadAllObjectRecords: true,
+            canUpdateAllObjectRecords: true,
+            permissionFlagUniversalIdentifiers: grantsWorkflowsPermission
+              ? [SystemPermissionFlag.WORKFLOWS]
+              : [],
+          },
+        ],
+      },
+    }),
+  });
+
+  const [{ id: applicationId, applicationRegistrationId }] =
+    await global.testDataSource.query(
+      `SELECT id, "applicationRegistrationId" FROM core."application"
+       WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+      [applicationUniversalIdentifier, SEED_APPLE_WORKSPACE_ID],
+    );
+
   const clientSecret = crypto.randomBytes(32).toString('hex');
 
   await global.testDataSource.query(
-    `INSERT INTO core."applicationRegistration"
-      (id, "universalIdentifier", name, "oAuthClientId", "oAuthClientSecretHash", "oAuthRedirectUris", "oAuthScopes", "workspaceId")
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+    `UPDATE core."applicationRegistration"
+     SET "oAuthClientSecretHash" = $1, "oAuthScopes" = $2
+     WHERE id = $3`,
     [
-      registrationId,
-      crypto.randomUUID(),
-      name,
-      clientId,
       await bcrypt.hash(clientSecret, 10),
-      ['https://example.com/callback'],
       ['read', 'write'],
-      workspaceId,
+      applicationRegistrationId,
     ],
   );
 
-  await global.testDataSource.query(
-    `INSERT INTO core."application"
-      (id, "universalIdentifier", name, "workspaceId", "applicationRegistrationId", "sourceType", "sourcePath", "canBeUninstalled")
-     VALUES ($1, $2, $3, $4, $5, 'local', '', true)`,
-    [applicationId, crypto.randomUUID(), name, workspaceId, registrationId],
+  const [{ oAuthClientId }] = await global.testDataSource.query(
+    `SELECT "oAuthClientId" FROM core."applicationRegistration" WHERE id = $1`,
+    [applicationRegistrationId],
   );
 
-  await global.testDataSource.query(
-    `INSERT INTO core."role"
-      (id, "universalIdentifier", "applicationId", "workspaceId", label, "canUpdateAllSettings", "canReadAllObjectRecords", "canUpdateAllObjectRecords")
-     VALUES ($1, $2, $3, $4, $5, $6, true, true)`,
-    [
-      roleId,
-      crypto.randomUUID(),
-      applicationId,
-      workspaceId,
-      `${name} role`,
-      canUpdateAllSettings,
-    ],
-  );
+  const tokenResponse = await request(baseUrl).post('/oauth/token').send({
+    grant_type: 'client_credentials',
+    client_id: oAuthClientId,
+    client_secret: clientSecret,
+  });
 
-  await global.testDataSource.query(
-    `UPDATE core."application" SET "defaultRoleId" = $1 WHERE id = $2`,
-    [roleId, applicationId],
-  );
-
-  const tokenResponse = await request(baseUrl)
-    .post('/oauth/token')
-    .send({
-      grant_type: 'client_credentials',
-      client_id: clientId,
-      client_secret: clientSecret,
-    })
-    .expect(200);
+  if (tokenResponse.status !== 200) {
+    throw new Error(
+      `client_credentials grant failed (${tokenResponse.status}): ${JSON.stringify(tokenResponse.body)}`,
+    );
+  }
 
   return {
-    registrationId,
+    applicationUniversalIdentifier,
     applicationId,
-    roleId,
     accessToken: tokenResponse.body.access_token as string,
   };
-};
-
-const cleanupApplication = async (application: InstalledTestApplication) => {
-  await global.testDataSource.query(
-    `UPDATE core."application" SET "defaultRoleId" = NULL WHERE id = $1`,
-    [application.applicationId],
-  );
-  await global.testDataSource.query(`DELETE FROM core."role" WHERE id = $1`, [
-    application.roleId,
-  ]);
-  await global.testDataSource.query(
-    `DELETE FROM core."application" WHERE id = $1`,
-    [application.applicationId],
-  );
-  await global.testDataSource.query(
-    `DELETE FROM core."applicationRegistration" WHERE id = $1`,
-    [application.registrationId],
-  );
 };
 
 const CREATE_CORE_WORKFLOW = `
@@ -161,27 +160,18 @@ const MANUAL_TRIGGER = {
 describe('core workflow API with application credentials (integration)', () => {
   let authorizedApplication: InstalledTestApplication;
   let deniedApplication: InstalledTestApplication;
-  let otherWorkspaceApplication: InstalledTestApplication;
 
   const coreWorkflowIdsToDelete: string[] = [];
 
   beforeAll(async () => {
-    authorizedApplication = await installApplication({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      name: `Authorized workflow app ${crypto.randomUUID()}`,
-      canUpdateAllSettings: true,
+    authorizedApplication = await installApplicationWithoutUser({
+      name: `Authorized workflow app ${crypto.randomUUID().slice(0, 8)}`,
+      grantsWorkflowsPermission: true,
     });
 
-    deniedApplication = await installApplication({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      name: `Denied workflow app ${crypto.randomUUID()}`,
-      canUpdateAllSettings: false,
-    });
-
-    otherWorkspaceApplication = await installApplication({
-      workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
-      name: `Cross workspace app ${crypto.randomUUID()}`,
-      canUpdateAllSettings: true,
+    deniedApplication = await installApplicationWithoutUser({
+      name: `Denied workflow app ${crypto.randomUUID().slice(0, 8)}`,
+      grantsWorkflowsPermission: false,
     });
   });
 
@@ -200,9 +190,14 @@ describe('core workflow API with application credentials (integration)', () => {
       );
     }
 
-    await cleanupApplication(authorizedApplication);
-    await cleanupApplication(deniedApplication);
-    await cleanupApplication(otherWorkspaceApplication);
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier:
+        authorizedApplication.applicationUniversalIdentifier,
+    });
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier:
+        deniedApplication.applicationUniversalIdentifier,
+    });
   });
 
   it('should let an application without a human user create and configure a workflow', async () => {
@@ -260,14 +255,14 @@ describe('core workflow API with application credentials (integration)', () => {
 
     coreWorkflowIdsToDelete.push(coreWorkflowId);
 
-    const rows = await global.testDataSource.query(
+    const [mirror] = await global.testDataSource.query(
       `SELECT "createdBySource", "createdByWorkspaceMemberId"
-       FROM "workspace_1wgvd1injqtife6y4rvfbu3h5"."workflow" WHERE id = $1`,
+       FROM "${APPLE_WORKSPACE_SCHEMA}"."workflow" WHERE id = $1`,
       [workspaceWorkflowId],
     );
 
-    expect(rows[0].createdBySource).toBe('APPLICATION');
-    expect(rows[0].createdByWorkspaceMemberId).toBeNull();
+    expect(mirror.createdBySource).toBe('APPLICATION');
+    expect(mirror.createdByWorkspaceMemberId).toBeNull();
   });
 
   it('should deny an application whose role does not grant the workflows permission', async () => {
@@ -277,30 +272,45 @@ describe('core workflow API with application credentials (integration)', () => {
       { input: { name: `Denied workflow ${crypto.randomUUID()}` } },
     );
 
-    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     expect(response.body.data?.createCoreWorkflow).toBeFalsy();
   });
 
-  it('should not expose a workflow of another workspace to an application installed elsewhere', async () => {
-    const createResponse = await graphqlAs(
-      authorizedApplication.accessToken,
-      CREATE_CORE_WORKFLOW,
-      { input: { name: `Isolated workflow ${crypto.randomUUID()}` } },
+  it('should not expose a core workflow that belongs to another workspace', async () => {
+    const otherWorkspaceCoreWorkflowId = crypto.randomUUID();
+
+    const [{ id: otherWorkspaceApplicationId }] =
+      await global.testDataSource.query(
+        `SELECT id FROM core."application" WHERE "workspaceId" = $1 LIMIT 1`,
+        [SEED_YCOMBINATOR_WORKSPACE_ID],
+      );
+
+    await global.testDataSource.query(
+      `INSERT INTO core."workflow" (id, "workspaceId", name, "universalIdentifier", "applicationId")
+       VALUES ($1, $2, 'Other workspace workflow', $3, $4)`,
+      [
+        otherWorkspaceCoreWorkflowId,
+        SEED_YCOMBINATOR_WORKSPACE_ID,
+        crypto.randomUUID(),
+        otherWorkspaceApplicationId,
+      ],
     );
 
-    expect(createResponse.body.errors).toBeUndefined();
+    try {
+      const response = await graphqlAs(
+        authorizedApplication.accessToken,
+        CORE_WORKFLOW_BY_ID,
+        { coreWorkflowId: otherWorkspaceCoreWorkflowId },
+      );
 
-    const coreWorkflowId = createResponse.body.data.createCoreWorkflow.id;
-
-    coreWorkflowIdsToDelete.push(coreWorkflowId);
-
-    const crossWorkspaceResponse = await graphqlAs(
-      otherWorkspaceApplication.accessToken,
-      CORE_WORKFLOW_BY_ID,
-      { coreWorkflowId },
-    );
-
-    expect(crossWorkspaceResponse.body.data?.coreWorkflowById).toBeNull();
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data?.coreWorkflowById).toBeNull();
+    } finally {
+      await global.testDataSource.query(
+        `DELETE FROM core."workflow" WHERE id = $1`,
+        [otherWorkspaceCoreWorkflowId],
+      );
+    }
   });
 
   it('should keep refusing an unauthenticated request', async () => {

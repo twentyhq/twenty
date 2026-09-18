@@ -40,15 +40,8 @@ const callWorkflowTool = async <TResult>(
 
   expect(raw).toBeDefined();
 
-  const payload = JSON.parse(raw as string) as {
-    success?: boolean;
-    result?: TResult;
-    error?: string;
-  };
-
-  // execute_tool wraps a static tool's own payload under `result`; the workflow
-  // tools return their payload directly when they are not wrapped.
-  return (payload.result ?? payload) as TResult;
+  // execute_tool returns the tool's own payload, unwrapped.
+  return JSON.parse(raw as string) as TResult;
 };
 
 const TRIGGER_ID = 'trigger';
@@ -208,14 +201,18 @@ describe('workflow MCP tools on core identities (integration)', () => {
         id: string;
         type: string;
         nextStepIds?: string[];
+        settings?: { input?: { initialLoopStepIds?: string[] } };
       }[];
 
       const iteratorStep = steps.find((step) => step.id === iteratorStepId);
       const loopBodyStep = steps.find((step) => step.id === loopBodyStepId);
 
-      expect(iteratorStep?.nextStepIds).toEqual(
-        expect.arrayContaining([loopBodyStepId, afterLoopStepId]),
-      );
+      // The loop body hangs off initialLoopStepIds; nextStepIds carries what
+      // runs once the loop is done.
+      expect(iteratorStep?.settings?.input?.initialLoopStepIds).toEqual([
+        loopBodyStepId,
+      ]);
+      expect(iteratorStep?.nextStepIds).toEqual([afterLoopStepId]);
       expect(loopBodyStep?.nextStepIds).toEqual([iteratorStepId]);
     });
 
@@ -265,8 +262,9 @@ describe('workflow MCP tools on core identities (integration)', () => {
         step: { ...stepToUpdate, name: renamedStepName },
       });
 
-      const updatedCoreVersion =
-        await readCoreVersionRow(coreWorkflowVersionId);
+      const updatedCoreVersion = await readCoreVersionRow(
+        coreWorkflowVersionId,
+      );
       const mirrorVersion = await readWorkspaceVersionRow(
         updatedCoreVersion.workspaceWorkflowVersionId as string,
       );
@@ -311,8 +309,9 @@ describe('workflow MCP tools on core identities (integration)', () => {
         coreWorkflowVersionId,
       });
 
-      const activatedCoreVersion =
-        await readCoreVersionRow(coreWorkflowVersionId);
+      const activatedCoreVersion = await readCoreVersionRow(
+        coreWorkflowVersionId,
+      );
 
       expect(activatedCoreVersion.status).toBe('ACTIVE');
     });
@@ -325,9 +324,7 @@ describe('workflow MCP tools on core identities (integration)', () => {
 
       expect(runs.success).toBe(true);
       expect(
-        runs.workflowRuns.every(
-          (run) => run.coreWorkflowId === coreWorkflowId,
-        ),
+        runs.workflowRuns.every((run) => run.coreWorkflowId === coreWorkflowId),
       ).toBe(true);
     });
   });

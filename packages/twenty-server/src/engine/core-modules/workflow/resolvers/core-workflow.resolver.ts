@@ -27,12 +27,10 @@ import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/servic
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { CoreWorkflowActorWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-actor.workspace-service';
-import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { isDefined } from 'twenty-shared/utils';
@@ -86,7 +84,6 @@ export class CoreWorkflowResolver {
     @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
-    @AuthApiKey() apiKey: FlatApiKey | undefined,
     @Args('input')
     {
       coreWorkflowIdToDuplicate,
@@ -100,7 +97,6 @@ export class CoreWorkflowResolver {
           workspaceId,
           userId: user?.id,
           application,
-          apiKey,
         }),
       coreWorkflowIdToDuplicate,
       coreWorkflowVersionIdToCopy,
@@ -113,7 +109,6 @@ export class CoreWorkflowResolver {
     @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
-    @AuthApiKey() apiKey: FlatApiKey | undefined,
     @Args('input') input: CreateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO> {
     return this.coreWorkflowMutationWorkspaceService.createWorkflow({
@@ -123,7 +118,6 @@ export class CoreWorkflowResolver {
           workspaceId,
           userId: user?.id,
           application,
-          apiKey,
         }),
       name: input.name,
     });

@@ -4,10 +4,8 @@ import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/build-created-by-from-api-key.util';
 import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
-import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -21,7 +19,6 @@ export type CoreWorkflowActorPrincipal = {
   workspaceId: string;
   userId?: string;
   application?: FlatApplication;
-  apiKey?: FlatApiKey;
 };
 
 @Injectable()
@@ -32,7 +29,6 @@ export class CoreWorkflowActorWorkspaceService {
     workspaceId,
     userId,
     application,
-    apiKey,
   }: CoreWorkflowActorPrincipal): Promise<ActorMetadata> {
     if (isDefined(userId)) {
       const workspaceMember = await this.findWorkspaceMemberByUserId({
@@ -53,10 +49,6 @@ export class CoreWorkflowActorWorkspaceService {
 
     if (isDefined(application)) {
       return buildCreatedByFromApplication({ application });
-    }
-
-    if (isDefined(apiKey)) {
-      return buildCreatedByFromApiKey({ apiKey });
     }
 
     throw new WorkflowQueryValidationException(

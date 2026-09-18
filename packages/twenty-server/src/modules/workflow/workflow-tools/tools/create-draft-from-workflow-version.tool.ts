@@ -32,8 +32,7 @@ export const createCreateDraftFromWorkflowVersionTool = (
           {
             workspaceId: context.workspaceId,
             coreWorkflowId: parameters.coreWorkflowId,
-            coreWorkflowVersionIdToCopy:
-              parameters.coreWorkflowVersionIdToCopy,
+            coreWorkflowVersionIdToCopy: parameters.coreWorkflowVersionIdToCopy,
           },
         );
 

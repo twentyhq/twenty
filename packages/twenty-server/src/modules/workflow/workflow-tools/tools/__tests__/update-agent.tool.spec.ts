@@ -112,7 +112,9 @@ describe('createUpdateAgentTool', () => {
     expect(
       coreWorkflowVersionListService.findDraftCoreWorkflowVersions,
     ).not.toHaveBeenCalled();
-    expect(coreWorkflowVersionMutationService.updateStep).not.toHaveBeenCalled();
+    expect(
+      coreWorkflowVersionMutationService.updateStep,
+    ).not.toHaveBeenCalled();
   });
 
   it('should skip steps referencing a different agent', async () => {
@@ -130,7 +132,9 @@ describe('createUpdateAgentTool', () => {
       responseFormat: { type: 'text' },
     } as never);
 
-    expect(coreWorkflowVersionMutationService.updateStep).not.toHaveBeenCalled();
+    expect(
+      coreWorkflowVersionMutationService.updateStep,
+    ).not.toHaveBeenCalled();
   });
 
   it('should still report agent update success when the resync fails', async () => {
