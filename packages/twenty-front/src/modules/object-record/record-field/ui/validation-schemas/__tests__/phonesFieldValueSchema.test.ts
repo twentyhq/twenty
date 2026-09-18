@@ -68,6 +68,16 @@ describe('phonesFieldValueSchema', () => {
     expect(result.data?.additionalPhones).toBeNull();
   });
 
+  it('should accept a value with no additionalPhones key at all', () => {
+    const result = phonesFieldValueSchema.safeParse({
+      primaryPhoneNumber: '123456789',
+      primaryPhoneCountryCode: 'US',
+      primaryPhoneCallingCode: '+1',
+    });
+
+    expect(result.success).toBe(true);
+  });
+
   it('should still reject a missing primary phone number', () => {
     const result = phonesFieldValueSchema.safeParse({
       primaryPhoneCountryCode: 'US',

@@ -21,6 +21,6 @@ export const phonesFieldValueSchema = z.object({
           countryCode: z.string(),
         }),
       )
-      .nullable(),
+      .nullish(),
   ),
 }) satisfies z.ZodType<FieldPhonesValue>;
