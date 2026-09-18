@@ -9,7 +9,12 @@ import { StyledSettingsSectionStack } from 'src/front-components/components/Styl
 import { type GranolaConnectionStatus } from 'src/front-components/types/granola-connection-status.type';
 
 type GranolaFolderSectionProps = {
-  registration: GranolaConnectionStatus['registration'];
+  registration:
+    | Pick<
+        NonNullable<GranolaConnectionStatus['registration']>,
+        'folderIds' | 'pendingFolderIds'
+      >
+    | undefined;
 };
 
 export const GranolaFolderSection = ({

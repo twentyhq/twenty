@@ -181,6 +181,10 @@ export const GranolaFolderPicker = ({
     );
   };
 
+  const showsFolderListError =
+    folderList.step === 'FAILED' &&
+    (isLocked || selection.policy === 'SELECTED_FOLDERS');
+
   return (
     <>
       <OnMountEffect onMount={loadFolderListIfSelected} />
@@ -189,15 +193,14 @@ export const GranolaFolderPicker = ({
         selectedFoldersContent={getSelectedFoldersContent()}
         onChange={handlePolicyChange}
       />
-      {folderList.step === 'FAILED' &&
-        (isLocked || selection.policy === 'SELECTED_FOLDERS') && (
-          <Info
-            accent="danger"
-            text={t('Could not load your Granola folders.')}
-            buttonTitle={t('Retry')}
-            onClick={() => loadFolderList({ isSelectionStale: isLocked })}
-          />
-        )}
+      {showsFolderListError && (
+        <Info
+          accent="danger"
+          text={t('Could not load your Granola folders.')}
+          buttonTitle={t('Retry')}
+          onClick={() => loadFolderList({ isSelectionStale: isLocked })}
+        />
+      )}
       {!isLocked && selection.hasInaccessibleSelection && (
         <Info
           accent="danger"
