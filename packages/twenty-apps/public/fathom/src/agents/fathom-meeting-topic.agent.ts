@@ -10,6 +10,7 @@ export default defineAgent({
   icon: 'IconLego',
   description:
     'Generates a short topic from a Fathom summary to distinguish impromptu recordings.',
+  modelId: 'google/gemini-2.5-flash-lite',
   prompt: [
     'Write a short topic phrase from the supplied meeting summary. It will be',
     'appended in parentheses to the original Fathom meeting title.',
