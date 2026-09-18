@@ -6134,6 +6134,12 @@ export default {
             "icon": [
                 1
             ],
+            "widgetName": [
+                1
+            ],
+            "frontComponentId": [
+                1
+            ],
             "inputSchema": [
                 9
             ],
@@ -8845,8 +8851,7 @@ export default {
                         "String!"
                     ],
                     "applicationId": [
-                        3,
-                        "UUID!"
+                        3
                     ]
                 }
             ],

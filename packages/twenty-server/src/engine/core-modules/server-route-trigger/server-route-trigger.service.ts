@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { Request } from 'express';
 import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import {
   LogicFunctionExecutionException,
@@ -36,6 +34,8 @@ import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const QUEUED_TARGET_RETRY_LIMIT = 3;
 
@@ -44,8 +44,8 @@ export class ServerRouteTriggerService {
   private readonly logger = new Logger(ServerRouteTriggerService.name);
 
   constructor(
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    @InjectWorkspaceScopedRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -205,18 +205,20 @@ export class ServerRouteTriggerService {
     workspaceId: string;
     applicationRegistrationId?: string;
   }): Promise<LogicFunctionEntity> {
-    const logicFunction = await this.logicFunctionRepository.findOne({
-      where: {
-        universalIdentifier: logicFunctionUniversalIdentifier,
-        workspaceId,
+    const logicFunction = await this.logicFunctionRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          universalIdentifier: logicFunctionUniversalIdentifier,
+          ...(isDefined(applicationRegistrationId)
+            ? { application: { applicationRegistrationId } }
+            : {}),
+        },
         ...(isDefined(applicationRegistrationId)
-          ? { application: { applicationRegistrationId } }
+          ? { relations: { application: true } }
           : {}),
       },
-      ...(isDefined(applicationRegistrationId)
-        ? { relations: { application: true } }
-        : {}),
-    });
+    );
 
     if (!isDefined(logicFunction)) {
       throw new ServerRouteTriggerException(

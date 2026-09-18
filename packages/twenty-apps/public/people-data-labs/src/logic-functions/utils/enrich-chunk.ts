@@ -1,16 +1,21 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { PDL_ACCESS_ERROR_MESSAGE } from 'src/constants/pdl-access-error-message';
+import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
 import { buildErrorResult } from 'src/logic-functions/utils/build-error-result';
 import { buildMatchedResult } from 'src/logic-functions/utils/build-matched-result';
 import { buildNotFoundResult } from 'src/logic-functions/utils/build-not-found-result';
 import { buildSkippedResult } from 'src/logic-functions/utils/build-skipped-result';
 import { chargeMatchedEnrichments } from 'src/logic-functions/utils/charge-matched-enrichments';
 import { INTERNAL_BOOKKEEPING_FIELDS } from 'src/logic-functions/utils/internal-field-names';
+import { isPdlAccountErrorOutcome } from 'src/logic-functions/utils/is-pdl-account-error-outcome';
 import { nowIso } from 'src/logic-functions/utils/now-iso';
 import { resolveUpdateFieldsMode } from 'src/logic-functions/utils/resolve-update-fields-mode';
+import { toPdlOutcomeErrorMessage } from 'src/logic-functions/utils/to-pdl-outcome-error-message';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
 import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 import { type CompanyIdByMatchKeyCache } from 'src/types/company-id-by-match-key-cache';
+import { type EnrichChunkResult } from 'src/types/enrich-chunk-result';
 import { type EnrichResult } from 'src/types/enrich-result';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 import { isDefined } from 'src/utils/is-defined';
@@ -185,7 +190,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   adapter: BatchEnrichmentAdapter<TNode, TData, TParams>;
   resultById: Map<string, EnrichResult>;
   companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
-}): Promise<void> => {
+}): Promise<EnrichChunkResult> => {
   const { shouldPersist, overrideExistingValues } = resolveUpdateFieldsMode(
     input.updateFields,
   );
@@ -202,7 +207,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
       );
     }
 
-    return;
+    return {};
   }
 
   const nodeByRecordId = new Map(
@@ -240,7 +245,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
   }
 
   if (recordsToEnrich.length === 0) {
-    return;
+    return {};
   }
 
   const enrichedAt = nowIso();
@@ -252,7 +257,10 @@ export const enrichChunk = async <TNode, TData, TParams>({
       recordsToEnrich.map((recordToEnrich) => recordToEnrich.params),
     );
   } catch (enrichBatchError) {
-    const enrichBatchErrorMessage = toErrorMessage(enrichBatchError);
+    const isPdlConfigError = enrichBatchError instanceof PdlConfigError;
+    const enrichBatchErrorMessage = isPdlConfigError
+      ? PDL_ACCESS_ERROR_MESSAGE
+      : toErrorMessage(enrichBatchError);
     for (const recordToEnrich of recordsToEnrich) {
       resultById.set(
         recordToEnrich.recordId,
@@ -273,7 +281,9 @@ export const enrichChunk = async <TNode, TData, TParams>({
       });
     }
 
-    return;
+    return isPdlConfigError
+      ? { pdlAccessErrorMessage: enrichBatchErrorMessage }
+      : {};
   }
 
   await chargeMatchedEnrichments({
@@ -292,12 +302,12 @@ export const enrichChunk = async <TNode, TData, TParams>({
     const enrichmentOutcome = pdlEnrichmentOutcomes[index];
 
     if (!isDefined(enrichmentOutcome) || enrichmentOutcome.outcome === 'error') {
-      const enrichmentErrorMessage = isDefined(enrichmentOutcome)
-        ? enrichmentOutcome.message
-        : 'People Data Labs returned no response for this record.';
       resultById.set(
         recordId,
-        buildErrorResult({ recordId, error: enrichmentErrorMessage }),
+        buildErrorResult({
+          recordId,
+          error: toPdlOutcomeErrorMessage(enrichmentOutcome),
+        }),
       );
       recordIdsToMarkAsError.push(recordId);
       continue;
@@ -358,4 +368,14 @@ export const enrichChunk = async <TNode, TData, TParams>({
       enrichedAt,
     });
   }
+
+  const hasOnlyPdlAccountErrorOutcomes =
+    pdlEnrichmentOutcomes.length > 0 &&
+    pdlEnrichmentOutcomes.every(isPdlAccountErrorOutcome);
+
+  return {
+    pdlAccessErrorMessage: hasOnlyPdlAccountErrorOutcomes
+      ? PDL_ACCESS_ERROR_MESSAGE
+      : undefined,
+  };
 };

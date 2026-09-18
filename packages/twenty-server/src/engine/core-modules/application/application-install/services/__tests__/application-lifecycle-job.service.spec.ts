@@ -18,7 +18,7 @@ const BROADCAST_TO = { workspaceId: WORKSPACE_ID };
 
 describe('ApplicationLifecycleJobService', () => {
   const applicationService = {
-    findOneApplicationOrThrow: jest.fn().mockResolvedValue({}),
+    findOneApplicationWithRelationsOrThrow: jest.fn().mockResolvedValue({}),
   } as unknown as ApplicationService;
   const marketplaceQueryService = {
     findRegistrationByUniversalIdentifier: jest
@@ -124,9 +124,9 @@ describe('ApplicationLifecycleJobService', () => {
       const result = await service.triggerUninstallApplicationJob(target);
 
       expect(result).toEqual({ jobId: UNINSTALL_JOB_ID });
-      expect(applicationService.findOneApplicationOrThrow).toHaveBeenCalledWith(
-        target,
-      );
+      expect(
+        applicationService.findOneApplicationWithRelationsOrThrow,
+      ).toHaveBeenCalledWith(target);
       expect(workspaceQueueService.add).toHaveBeenCalledWith(
         TriggerUninstallApplicationJob.name,
         target,
@@ -149,7 +149,7 @@ describe('ApplicationLifecycleJobService', () => {
 
     it('does not queue anything when the application is not installed', async () => {
       jest
-        .spyOn(applicationService, 'findOneApplicationOrThrow')
+        .spyOn(applicationService, 'findOneApplicationWithRelationsOrThrow')
         .mockRejectedValueOnce(new Error('Application not found'));
 
       await expect(

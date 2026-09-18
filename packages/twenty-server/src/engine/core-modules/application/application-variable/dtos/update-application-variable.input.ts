@@ -11,6 +11,7 @@ export class UpdateApplicationVariableEntityInput {
   @Field(() => String, { nullable: false })
   value: PlaintextString;
 
-  @Field(() => UUIDScalarType, { nullable: false })
-  applicationId: string;
+  // Inferred from the token for an application caller; required for a session
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId?: string;
 }

@@ -36,9 +36,10 @@ export class AppOAuthRefreshAccessTokenService {
       );
     }
 
-    const { provider, clientId, clientSecret } = await this.resolveProvider(
-      connectedAccount.connectionProviderId,
-    );
+    const { provider, clientId, clientSecret } = await this.resolveProvider({
+      connectionProviderId: connectedAccount.connectionProviderId,
+      workspaceId: connectedAccount.workspaceId,
+    });
 
     try {
       const tokenResponse = await exchangeRefreshTokenForToken({
@@ -77,12 +78,18 @@ export class AppOAuthRefreshAccessTokenService {
     }
   }
 
-  private async resolveProvider(connectionProviderId: string) {
+  private async resolveProvider({
+    connectionProviderId,
+    workspaceId,
+  }: {
+    connectionProviderId: string;
+    workspaceId: string;
+  }) {
     try {
-      const provider =
-        await this.connectionProviderService.findOneByIdOrThrow(
-          connectionProviderId,
-        );
+      const provider = await this.connectionProviderService.findOneByIdOrThrow({
+        id: connectionProviderId,
+        workspaceId,
+      });
 
       assertOAuthProvider(provider);
 

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetButtonIcon';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 
@@ -39,6 +40,7 @@ export const RecordTableCellEditButton = () => {
         {
           onClick: handleMainButtonClick,
           Icon: mainButtonIcon,
+          ariaLabel: isFirstColumn ? t`Open record` : t`Edit field`,
         },
       ]}
     />

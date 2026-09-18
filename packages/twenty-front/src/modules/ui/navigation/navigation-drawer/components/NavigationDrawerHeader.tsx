@@ -3,7 +3,7 @@ import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
@@ -88,12 +88,13 @@ export const NavigationDrawerHeader = () => {
   const searchButton = !isMobile && (
     <StyledSearchButtonContainer isExpanded={isExpanded}>
       <LightIconButton
-        Icon={IconSearch}
-        accent="secondary"
-        size="small"
+        emphasis="standard"
+        size="sm"
         onClick={openRecordsSearchPage}
         aria-label={t`Search`}
-      />
+      >
+        <IconSearch />
+      </LightIconButton>
     </StyledSearchButtonContainer>
   );
 

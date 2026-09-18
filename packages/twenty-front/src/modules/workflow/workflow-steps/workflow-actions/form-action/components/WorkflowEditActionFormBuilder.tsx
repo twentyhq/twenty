@@ -2,7 +2,8 @@ import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputCon
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
-import { InputLabel, LightIconButton } from 'twenty-ui/primitives/input';
+import { InputLabel } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
@@ -299,10 +300,9 @@ export const WorkflowEditActionFormBuilder = ({
                         {showButtons && (
                           <StyledGripButtonContainer>
                             <DragDropItemSortableHandle>
-                              <LightIconButton
-                                Icon={IconGripVertical}
-                                aria-label={t`Reorder field`}
-                              />
+                              <LightIconButton aria-label={t`Reorder field`}>
+                                <IconGripVertical />
+                              </LightIconButton>
                             </DragDropItemSortableHandle>
                           </StyledGripButtonContainer>
                         )}
@@ -348,7 +348,6 @@ export const WorkflowEditActionFormBuilder = ({
                         {showButtons && (
                           <StyledTrashButtonContainer>
                             <LightIconButton
-                              Icon={IconTrash}
                               aria-label={t`Delete field`}
                               onClick={() => {
                                 const updatedFormData = formData.filter(
@@ -366,7 +365,9 @@ export const WorkflowEditActionFormBuilder = ({
                                   },
                                 });
                               }}
-                            />
+                            >
+                              <IconTrash />
+                            </LightIconButton>
                           </StyledTrashButtonContainer>
                         )}
 

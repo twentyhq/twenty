@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { LightButton, MainButton } from 'twenty-ui/components';
+import {
+  IconButton,
+  LightIconButton,
+  LightButton,
+  MainButton,
+} from 'twenty-ui/components';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+import { MenuItem, MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 import 'twenty-ui/style.css';
@@ -36,6 +42,62 @@ const ButtonControls = () => {
         <Button onClick={handleClick}>First action</Button>
         <Button onClick={handleClick}>Second action</Button>
       </ButtonGroup>
+      <ButtonGroup framed attached={false} aria-label="Icon actions">
+        <LightIconButton size="xs" aria-label="Add item" onClick={handleClick}>
+          <IconPlus />
+        </LightIconButton>
+        <span>
+          <LightIconButton
+            size="xs"
+            aria-label="Unavailable item"
+            disabled
+            onClick={handleClick}
+          >
+            <IconPlus />
+          </LightIconButton>
+        </span>
+      </ButtonGroup>
+      <IconButton
+        aria-label="Send"
+        shape="round"
+        size="xs"
+        variant="solid"
+        color="accent"
+      >
+        <IconPlus />
+      </IconButton>
+      <MenuItem
+        text="Record"
+        isIconDisplayedOnHoverOnly={false}
+        iconButtons={
+          <ButtonGroup attached={false}>
+            <LightIconButton aria-label="Add to record" onClick={handleClick}>
+              <IconPlus />
+            </LightIconButton>
+            <span>
+              <LightIconButton
+                aria-label="Unavailable record button"
+                disabled
+                onClick={handleClick}
+              >
+                <IconPlus />
+              </LightIconButton>
+            </span>
+          </ButtonGroup>
+        }
+      />
+      <MenuItemDraggable
+        text="Draggable record"
+        isIconDisplayedOnHoverOnly={false}
+        iconButtons={
+          <LightIconButton
+            aria-label="Add to draggable record"
+            onClick={handleClick}
+          >
+            <IconPlus />
+          </LightIconButton>
+        }
+      />
       <output aria-label="Activations">{activations}</output>
     </ThemeProvider>
   );
