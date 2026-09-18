@@ -7,6 +7,8 @@
  *                              |___/
  */
 
+export { FloatingIconButton } from './FloatingIconButton/FloatingIconButton';
+export type { FloatingIconButtonProps } from './FloatingIconButton/types/FloatingIconButtonProps';
 export { IconButton } from './IconButton/IconButton';
 export type { IconButtonProps } from './IconButton/types/IconButtonProps';
 export type { IconButtonSize } from './IconButton/types/IconButtonSize';

@@ -579,6 +579,7 @@
                       "ui/components/input/light-button",
                       "ui/components/input/icon-button",
                       "ui/components/input/light-icon-button",
+                      "ui/components/input/floating-icon-button",
                       "ui/components/section",
                       "ui/components/settings-row",
                       "ui/components/tab-button",

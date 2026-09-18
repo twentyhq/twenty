@@ -1,4 +1,5 @@
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
+import { FLOATING_ICON_BUTTON_PROP_DESCRIPTIONS } from './floatingIconButtonPropDescriptions';
 import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
@@ -265,5 +266,13 @@ export const DOCUMENTED_COMPONENTS = [
       badge: 'Content following the label and trailing icon, such as a count.',
       size: 'Padding of the tab content: sm or md.',
     },
+  },
+  {
+    name: 'FloatingIconButton',
+    source: 'components/FloatingIconButton/FloatingIconButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'input/floating-icon-button',
+    propDescriptions: FLOATING_ICON_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: { size: "'sm'", elevated: 'true', blur: 'true' },
   },
 ] as const;
