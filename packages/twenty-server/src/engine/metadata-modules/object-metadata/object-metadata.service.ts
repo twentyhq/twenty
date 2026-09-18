@@ -54,8 +54,8 @@ export class ObjectMetadataService {
     private readonly applicationService: ApplicationService,
   ) {}
 
-  // One migration for the whole batch: updateOneObject per item would validate,
-  // build and run a migration each time, and refetch the flat entity maps with it.
+  // One migration for the whole batch: one update per item would validate, build
+  // and run a migration each time, and refetch the flat entity maps with it.
   async updateManyObjects({
     updateObjectInputs,
     workspaceId,
@@ -273,6 +273,7 @@ export class ObjectMetadataService {
 
     return updatedFlatObjectMetadatas;
   }
+
   async updateOneObject({
     updateObjectInput,
     workspaceId,
@@ -282,7 +283,7 @@ export class ObjectMetadataService {
     updateObjectInput: UpdateOneObjectInput;
     ownerFlatApplication?: FlatApplication;
   }): Promise<FlatObjectMetadata> {
-    const [updatedFlatObjectMetadata] = await this.updateObjectsInOneMigration({
+    const [updatedFlatObjectMetadata] = await this.updateManyObjects({
       updateObjectInputs: [updateObjectInput],
       workspaceId,
       ownerFlatApplication,

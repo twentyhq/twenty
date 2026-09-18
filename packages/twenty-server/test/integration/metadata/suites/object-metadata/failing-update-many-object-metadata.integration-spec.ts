@@ -141,28 +141,68 @@ describe('Bulk object metadata update should fail', () => {
     expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
+  // The guards above refuse a batch before any conversion runs. This one passes
+  // them and the payload validators, and only fails once the migration is being
+  // built: desynchronising a synced object's labels from its names is caught
+  // there, so it covers the objects earlier in the batch rolling back too.
   it('and leaves every object in the batch untouched', async () => {
-    await updateManyObjectsMetadata({
-      expectToFail: true,
-      input: {
-        inputs: [
-          { id: companyObjectMetadataId, update: { color: 'red' } },
-          { id: companyObjectMetadataId, update: { color: 'blue' } },
-        ],
-      },
-    });
-
-    const { objects } = await findManyObjectMetadata({
+    const suffix = Date.now().toString().slice(-8);
+    const { data } = await createOneObjectMetadata({
       expectToFail: false,
-      input: { filter: {}, paging: { first: 100 } },
-      gqlFields: `
-        id
-        color
-      `,
+      input: {
+        nameSingular: `bulkAtomicGuard${suffix}`,
+        namePlural: `bulkAtomicGuards${suffix}`,
+        labelSingular: `Bulk Atomic Guard ${suffix}`,
+        labelPlural: `Bulk Atomic Guards ${suffix}`,
+        isLabelSyncedWithName: true,
+      },
+      gqlFields: 'id',
     });
+    const syncedObjectMetadataId = data.createOneObject.id;
 
-    expect(
-      objects.find((object) => object.id === companyObjectMetadataId)?.color,
-    ).toBe(companyColor);
+    try {
+      const { errors } = await updateManyObjectsMetadata({
+        expectToFail: true,
+        input: {
+          inputs: [
+            { id: companyObjectMetadataId, update: { color: 'red' } },
+            {
+              id: syncedObjectMetadataId,
+              update: { labelSingular: `Desynced Label ${suffix}` },
+            },
+          ],
+        },
+      });
+
+      // Not snapshotted: a migration validation payload carries the whole
+      // failed entity, so it changes with the suffix this object is named after.
+      const [firstError] = errors;
+
+      expect(errors).toHaveLength(1);
+      expect(firstError.extensions.code).toBe('METADATA_VALIDATION_FAILED');
+
+      const { objects } = await findManyObjectMetadata({
+        expectToFail: false,
+        input: { filter: {}, paging: { first: 100 } },
+        gqlFields: `
+          id
+          color
+          labelSingular
+        `,
+      });
+
+      expect(
+        objects.find((object) => object.id === companyObjectMetadataId)?.color,
+      ).toBe(companyColor);
+      expect(
+        objects.find((object) => object.id === syncedObjectMetadataId)
+          ?.labelSingular,
+      ).toBe(`Bulk Atomic Guard ${suffix}`);
+    } finally {
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: syncedObjectMetadataId },
+      });
+    }
   });
 });

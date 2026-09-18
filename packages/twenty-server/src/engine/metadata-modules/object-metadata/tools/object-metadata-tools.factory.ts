@@ -387,7 +387,7 @@ export class ObjectMetadataToolsFactory {
       },
       update_many_object_metadata: {
         description:
-          'Update multiple objects at once. Batch version of update_object_metadata. Applies the whole batch in one migration, so a rename (nameSingular or namePlural) cannot share a batch with another object: send each rename as its own call.',
+          'Update multiple objects at once. Batch version of update_object_metadata. Applies the whole batch in one migration, so a rename (nameSingular or namePlural) or a labelIdentifierFieldMetadataId change cannot share a batch with another object: send each of those as its own call.',
         inputSchema: UpdateManyObjectMetadataInputSchema,
         execute: async (parameters: {
           objects: Array<{
