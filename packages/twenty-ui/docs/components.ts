@@ -123,6 +123,12 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/navigation/Tabs/Tabs.tsx',
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/tabs',
+    partPropDescriptions: {
+      Tab: {
+        endIcon: 'Decorative content after the label and before the badge.',
+        highlighted: 'Emphasizes the tab content without changing selection.',
+      },
+    },
   },
   {
     name: 'Dialog',
@@ -230,5 +236,18 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/code-editor',
     slug: 'components/code-editor-header',
     propDescriptions: CODE_EDITOR_HEADER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'TabButton',
+    source: 'components/TabButton/TabButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/tab-button',
+    propDescriptions: {
+      ...BUTTON_PROP_DESCRIPTIONS,
+      active:
+        'Highlights the current destination or an action associated with the active tab. Does not change the control role.',
+      badge: 'Content following the label and trailing icon, such as a count.',
+      size: 'Padding of the tab content: sm or md.',
+    },
   },
 ] as const;

@@ -1,3 +1,6 @@
+import { t } from '@lingui/core/macro';
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
+import { Tabs } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { useRef } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -6,7 +9,6 @@ import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { useMergeRecordsContainerTabs } from '@/object-record/record-merge/hooks/useMergeRecordsContainerTabs';
@@ -65,33 +67,37 @@ export const MergeRecordsContainer = ({
     <SidePanelProvider value={{ isInSidePanel: true }}>
       <ShowPageContainer>
         <StyledShowPageRightContainer>
-          <TabListComponentInstanceContext.Provider
-            value={{ instanceId: instanceId }}
-          >
+          <TabListRoot componentInstanceId={instanceId}>
             <StyledTabListContainer>
               <TabList
+                aria-label={t`Merge records`}
                 tabs={tabs}
                 behaveAsLinks={false}
                 componentInstanceId={instanceId}
               />
             </StyledTabListContainer>
-          </TabListComponentInstanceContext.Provider>
-          <MergeRecordsContentScrollResetEffect
-            activeTabId={activeTabId}
-            contentContainerRef={contentContainerRef}
-          />
-          <StyledContentContainer ref={contentContainerRef}>
-            {activeTabId === MergeRecordsTabId.MERGE_PREVIEW && (
-              <MergePreviewTab objectNameSingular={objectNameSingular} />
-            )}
-            {activeTabId === MergeRecordsTabId.SETTINGS && <MergeSettingsTab />}
-            {selectedRecords.some((record) => record.id === activeTabId) && (
-              <MergeRecordTab
-                objectNameSingular={objectNameSingular}
-                recordId={activeTabId || ''}
-              />
-            )}
-          </StyledContentContainer>
+            <MergeRecordsContentScrollResetEffect
+              activeTabId={activeTabId}
+              contentContainerRef={contentContainerRef}
+            />
+            <Tabs.Panel
+              value={activeTabId ?? ''}
+              render={<StyledContentContainer ref={contentContainerRef} />}
+            >
+              {activeTabId === MergeRecordsTabId.MERGE_PREVIEW && (
+                <MergePreviewTab objectNameSingular={objectNameSingular} />
+              )}
+              {activeTabId === MergeRecordsTabId.SETTINGS && (
+                <MergeSettingsTab />
+              )}
+              {selectedRecords.some((record) => record.id === activeTabId) && (
+                <MergeRecordTab
+                  objectNameSingular={objectNameSingular}
+                  recordId={activeTabId || ''}
+                />
+              )}
+            </Tabs.Panel>
+          </TabListRoot>
           <MergeRecordsFooter objectNameSingular={objectNameSingular} />
         </StyledShowPageRightContainer>
       </ShowPageContainer>

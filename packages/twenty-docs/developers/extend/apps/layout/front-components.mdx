@@ -448,6 +448,43 @@ Secret variables (`isSecret: true`) are **not** exposed to front components. The
 
 `getApplicationVariable` always returns a **string** (or `undefined`), regardless of the variable's declared `type`. The string is serialized consistently by type (booleans as `"true"` / `"false"`, numbers as decimal strings, arrays / objects as JSON), the same format used for logic-function `process.env` — parse it yourself (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). See [Variable types](/developers/extend/apps/config/application#variable-types).
 
+### Reading and updating variables at runtime
+
+`getApplicationVariable` returns the values injected when the component loaded, so a value written afterwards only shows up on the next load. To read the stored values, or to write one (what a [custom settings component](#custom-settings-component) does when it saves what the user typed), go through `MetadataApiClient`:
+
+```tsx src/front-components/app-settings.tsx
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER = '39783023-bcac-41e3-b0d2-ff1944d8465d';
+
+const readApplicationVariables = async () => {
+  const { findOneApplication } = await new MetadataApiClient().query({
+    findOneApplication: {
+      __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+      applicationVariables: { key: true, value: true, isSecret: true },
+    },
+  });
+
+  return findOneApplication?.applicationVariables ?? [];
+};
+
+const saveRecipientName = async (recipientName: string) => {
+  await new MetadataApiClient().mutation({
+    updateOneApplicationVariable: {
+      __args: { key: 'DEFAULT_RECIPIENT_NAME', value: recipientName },
+    },
+  });
+};
+```
+
+Notes:
+- Your component's token is bound to your own application. `updateOneApplicationVariable` targets it, so `applicationId` is optional and naming another application is refused. Reading the `applicationVariables` of another application is refused the same way, and an application belonging to another workspace reads as not found.
+- The key must be one your app declares in [`defineApplication()`](/developers/extend/apps/config/application). Writing a key that is not declared is a not found.
+- Secret variables read back masked, never as the stored value. Writing them works normally.
+- Reading a variable's `value`, and writing it, need the `APPLICATIONS` settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.APPLICATIONS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles).
+
+### System variables
+
 The following system variables are always available via `process.env`:
 
 | Variable | Description |

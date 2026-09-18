@@ -229,6 +229,7 @@ export { uncapitalize } from './strings/uncapitalize';
 export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFromDisplayName';
 export type { CanvasTheme } from './tiptap/canvas-theme';
 export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
+export { convertTipTapBlocksToMarkdown } from './tiptap/convert-tiptap-blocks-to-markdown';
 export type { EmailDocumentMarkType } from './tiptap/email-document-mark-catalog';
 export {
   EMAIL_DOCUMENT_MARK_CATALOG,

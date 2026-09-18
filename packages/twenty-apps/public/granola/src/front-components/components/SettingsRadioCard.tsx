@@ -1,30 +1,43 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Fragment, useId } from 'react';
+import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Radio } from 'src/front-components/components/Radio';
 import { Separator } from 'src/front-components/components/Separator';
-import {
-  StyledSettingsCardDescription,
-  StyledSettingsCardTextContainer,
-  StyledSettingsCardTitle,
-} from 'src/front-components/components/SettingsCardContentBase';
+import { StyledSettingsCardTextContainer } from 'src/front-components/components/SettingsCardContentBase';
+import { SettingsControlLoader } from 'src/front-components/components/SettingsControlLoader';
 import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 
-const StyledOptionRow = styled.div<{ $disabled: boolean }>`
+const StyledOptionRow = styled.div<{ $isClickable: boolean }>`
   align-items: center;
   background-color: ${() => themeCssVariables.background.secondary};
-  cursor: ${({ $disabled }) => ($disabled ? 'default' : 'pointer')};
   display: flex;
   gap: ${() => themeCssVariables.spacing[4]};
   padding: ${() => themeCssVariables.spacing[4]};
-  pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
 
-  &:hover {
-    background: ${() => themeCssVariables.background.transparent.lighter};
-  }
+  ${({ $isClickable }) =>
+    $isClickable &&
+    css`
+      cursor: pointer;
+
+      &:hover {
+        background: ${themeCssVariables.background.transparent.lighter};
+      }
+    `}
+`;
+
+const StyledOptionTitle = styled.div`
+  color: ${() => themeCssVariables.font.color.primary};
+  font-weight: ${() => themeCssVariables.font.weight.medium};
+  margin-bottom: ${() => themeCssVariables.spacing[2]};
+`;
+
+const StyledOptionDescription = styled.div`
+  color: ${() => themeCssVariables.font.color.tertiary};
+  font-size: ${() => themeCssVariables.font.size.sm};
 `;
 
 const StyledRadioContainer = styled.span`
@@ -32,6 +45,11 @@ const StyledRadioContainer = styled.span`
   display: flex;
   flex-shrink: 0;
   margin-left: auto;
+`;
+
+const StyledRadioLoaderContainer = styled.span`
+  display: flex;
+  padding: 3px;
 `;
 
 const StyledExpandedContent = styled.div`
@@ -50,21 +68,24 @@ export type SettingsRadioCardOption<TValue extends string> = {
 
 type SettingsRadioCardProps<TValue extends string> = {
   options: SettingsRadioCardOption<TValue>[];
-  value: TValue;
-  disabled?: boolean;
+  value: TValue | undefined;
   onChange: (value: TValue) => void;
 };
 
 export const SettingsRadioCard = <TValue extends string>({
   options,
   value,
-  disabled = false,
   onChange,
 }: SettingsRadioCardProps<TValue>) => {
   const groupId = useId();
+  const isValueKnown = isDefined(value);
 
   return (
-    <StyledSettingsCard role="radiogroup">
+    <StyledSettingsCard
+      role="radiogroup"
+      aria-busy={!isValueKnown}
+      aria-label={isValueKnown ? undefined : t('Loading')}
+    >
       {options.map((option, index) => {
         const isSelected = option.value === value;
         const titleId = `${groupId}-${index}-title`;
@@ -73,26 +94,31 @@ export const SettingsRadioCard = <TValue extends string>({
         return (
           <Fragment key={option.value}>
             <StyledOptionRow
-              $disabled={disabled}
-              onClick={() => onChange(option.value)}
+              $isClickable={isValueKnown}
+              onClick={isValueKnown ? () => onChange(option.value) : undefined}
             >
               {option.cardMedia}
               <StyledSettingsCardTextContainer>
-                <StyledSettingsCardTitle id={titleId}>
+                <StyledOptionTitle id={titleId}>
                   {option.title}
-                </StyledSettingsCardTitle>
-                <StyledSettingsCardDescription id={descriptionId}>
-                  <OverflowingTextWithTooltip text={option.description} />
-                </StyledSettingsCardDescription>
+                </StyledOptionTitle>
+                <StyledOptionDescription id={descriptionId}>
+                  {option.description}
+                </StyledOptionDescription>
               </StyledSettingsCardTextContainer>
               <StyledRadioContainer>
-                <Radio
-                  checked={isSelected}
-                  disabled={disabled}
-                  aria-labelledby={titleId}
-                  aria-describedby={descriptionId}
-                  onSelect={() => onChange(option.value)}
-                />
+                {isValueKnown ? (
+                  <Radio
+                    checked={isSelected}
+                    aria-labelledby={titleId}
+                    aria-describedby={descriptionId}
+                    onSelect={() => onChange(option.value)}
+                  />
+                ) : (
+                  <StyledRadioLoaderContainer>
+                    <SettingsControlLoader />
+                  </StyledRadioLoaderContainer>
+                )}
               </StyledRadioContainer>
             </StyledOptionRow>
             {isSelected && isDefined(option.expandedContent) && (
