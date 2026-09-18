@@ -28,7 +28,6 @@ import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-wo
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
-import { CoreWorkflowWithCurrentVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-with-current-version-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -59,7 +58,6 @@ export class CoreWorkflowResolver {
     private readonly coreWorkflowListService: CoreWorkflowListService,
     private readonly coreWorkflowMutationWorkspaceService: CoreWorkflowMutationWorkspaceService,
     private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
-    private readonly coreWorkflowWithCurrentVersionListService: CoreWorkflowWithCurrentVersionListService,
   ) {}
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
@@ -168,7 +166,7 @@ export class CoreWorkflowResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input') { coreWorkflowIds }: CoreWorkflowsWithCurrentVersionsInput,
   ): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
-    return this.coreWorkflowWithCurrentVersionListService.findMany({
+    return this.coreWorkflowListService.findManyWithCurrentVersions({
       workspaceId,
       coreWorkflowIds,
     });
