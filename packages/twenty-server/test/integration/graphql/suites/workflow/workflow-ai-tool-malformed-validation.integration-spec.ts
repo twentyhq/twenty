@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
-import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
 const baseUrl = `http://localhost:${APP_PORT}`;
 
@@ -73,18 +72,23 @@ const createCompleteWorkflow = (
 type ToolPayload = {
   success: boolean;
   error?: string;
-  result?: { workflowId?: string };
+  result?: { coreWorkflowId?: string };
 };
 
 const parsePayload = (result: McpToolCallResult): ToolPayload =>
   JSON.parse(result.content?.[0]?.text ?? '{}') as ToolPayload;
 
 describe('Workflow AI tool validation (e2e)', () => {
-  const createdWorkflowIds: string[] = [];
+  const createdCoreWorkflowIds: string[] = [];
 
   afterAll(async () => {
-    if (createdWorkflowIds.length > 0) {
-      await deleteRecordsByIds('workflow', createdWorkflowIds);
+    // Deleting through the tool removes the core definition and its rollback
+    // mirror; dropping the workspace row alone would leave the core row behind.
+    for (const coreWorkflowId of createdCoreWorkflowIds) {
+      await callMcpTool('execute_tool', {
+        toolName: 'delete_workflow',
+        arguments: { coreWorkflowId },
+      });
     }
   });
 
@@ -109,10 +113,10 @@ describe('Workflow AI tool validation (e2e)', () => {
     const payload = parsePayload(result);
 
     expect(payload.success).toBe(true);
-    expect(payload.result?.workflowId).toBeDefined();
+    expect(payload.result?.coreWorkflowId).toBeDefined();
 
-    if (payload.result?.workflowId) {
-      createdWorkflowIds.push(payload.result.workflowId);
+    if (payload.result?.coreWorkflowId) {
+      createdCoreWorkflowIds.push(payload.result.coreWorkflowId);
     }
   });
 
@@ -122,10 +126,10 @@ describe('Workflow AI tool validation (e2e)', () => {
     const payload = parsePayload(result);
 
     expect(payload.success).toBe(true);
-    expect(payload.result?.workflowId).toBeDefined();
+    expect(payload.result?.coreWorkflowId).toBeDefined();
 
-    if (payload.result?.workflowId) {
-      createdWorkflowIds.push(payload.result.workflowId);
+    if (payload.result?.coreWorkflowId) {
+      createdCoreWorkflowIds.push(payload.result.coreWorkflowId);
     }
   });
 });
