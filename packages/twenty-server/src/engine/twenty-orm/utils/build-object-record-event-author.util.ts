@@ -11,8 +11,6 @@ export type ObjectRecordEventAuthorContext = Pick<
   workspaceMemberId?: string;
   apiKey?: { id: string } | null;
   application?: { id: string } | null;
-  // An agent running as a workspace member carries the initiating app here,
-  // leaving `application` unset.
   viaApplication?: { id: string } | null;
 };
 
