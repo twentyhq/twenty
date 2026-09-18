@@ -6,6 +6,7 @@ import { type Plugin } from 'graphql-yoga';
 import { isNull } from '@sniptt/guards';
 import { type DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
 import { classifyTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/classify-top-level-fields.util';
+import { exposeExecutedRootResolvers } from 'src/engine/api/graphql/utils/expose-executed-root-resolvers.util';
 import { findOperationDefinition } from 'src/engine/api/graphql/direct-execution/utils/find-operation-definition.util';
 import { isSubscriptionOperation } from 'src/engine/api/graphql/direct-execution/utils/is-subscription-operation.util';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -36,6 +37,14 @@ export function useDirectExecution(
       } catch {
         return;
       }
+
+      // Set here rather than in the parsing hooks: this plugin ends the
+      // response for workspace-only requests, so those never reach them.
+      exposeExecutedRootResolvers({
+        response: req.res,
+        document,
+        operationName,
+      });
 
       const operationDefinition = findOperationDefinition(
         document,

@@ -4,7 +4,6 @@ import {
   type FieldNode,
   type FragmentDefinitionNode,
   type SelectionNode,
-  getOperationAST,
   Kind,
 } from 'graphql';
 import { type ServerResponse } from 'http';
@@ -13,7 +12,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type Plugin } from 'graphql-yoga';
 import { isDefined } from 'twenty-shared/utils';
 
-import { REQUEST_RESOLVERS_HEADER } from 'src/engine/constants/request-attribution-headers.constant';
+import { exposeExecutedRootResolvers } from 'src/engine/api/graphql/utils/expose-executed-root-resolvers.util';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 type FragmentMetadata = {
@@ -57,7 +56,11 @@ export const useValidateGraphqlQueryComplexity = ({
 
       // Set before the threshold checks below throw: a query rejected for
       // asking too much is exactly the one worth attributing afterwards.
-      exposeRootResolvers(context, document, fragmentMap);
+      exposeExecutedRootResolvers({
+        response: extractResponse(context),
+        document,
+        operationName: extractOperationName(context),
+      });
 
       if (
         isDefined(maximumAllowedNestedFields) &&
@@ -95,43 +98,8 @@ export const useValidateGraphqlQueryComplexity = ({
   },
 });
 
-const MAX_EXPOSED_ROOT_RESOLVERS_LENGTH = 512;
-
-const exposeRootResolvers = (
-  context: unknown,
-  document: DocumentNode,
-  fragmentMap: Map<string, FragmentDefinitionNode>,
-): void => {
-  const response = (context as { res?: ServerResponse } | undefined)?.res;
-
-  if (!isDefined(response)) {
-    return;
-  }
-
-  // A document may hold several named operations while only the one selected
-  // by operationName executes. Attributing the whole document would report
-  // resolvers that never ran, so only the executed operation is exposed.
-  const operation = getOperationAST(document, extractOperationName(context));
-
-  if (!isDefined(operation)) {
-    return;
-  }
-
-  const rootResolverNames = analyzeSelectionSet(
-    operation.selectionSet.selections,
-    fragmentMap,
-    0,
-  ).rootFieldNames;
-
-  if (rootResolverNames.length === 0) {
-    return;
-  }
-
-  response.setHeader(
-    REQUEST_RESOLVERS_HEADER,
-    truncateResolverNames(rootResolverNames),
-  );
-};
+const extractResponse = (context: unknown): ServerResponse | undefined =>
+  (context as { res?: ServerResponse } | undefined)?.res;
 
 const extractOperationName = (context: unknown): string | undefined => {
   const typedContext = context as
@@ -150,28 +118,6 @@ const extractOperationName = (context: unknown): string | undefined => {
   const fromBody = typedContext?.req?.body?.operationName;
 
   return isNonEmptyString(fromBody) ? fromBody : undefined;
-};
-
-const truncateResolverNames = (rootResolverNames: string[]): string => {
-  const joined = rootResolverNames.join(',');
-
-  if (joined.length <= MAX_EXPOSED_ROOT_RESOLVERS_LENGTH) {
-    return joined;
-  }
-
-  const kept: string[] = [];
-  let length = 0;
-
-  for (const name of rootResolverNames) {
-    if (length + name.length + 1 > MAX_EXPOSED_ROOT_RESOLVERS_LENGTH) {
-      break;
-    }
-
-    kept.push(name);
-    length += name.length + 1;
-  }
-
-  return `${kept.join(',')},+${rootResolverNames.length - kept.length}`;
 };
 
 const buildFragmentMap = (
