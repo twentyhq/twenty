@@ -149,19 +149,26 @@ export class AgentChatThreadReadService {
       reads.map((read) => [read.threadId, read.lastReadAt]),
     );
 
-    const lastMessages = await this.messageRepository.find(workspaceId, {
-      where: { threadId: In(readableThreadIds), isHidden: false },
-      select: { id: true, threadId: true, createdAt: true },
-      order: { createdAt: 'DESC' },
-    });
+    // One row per thread rather than every message of every thread: the list
+    // only needs each thread's newest timestamp, and a workspace with long
+    // conversations would otherwise read all of them into memory to find it.
+    const lastMessageRows = await this.messageRepository
+      .createQueryBuilder('message')
+      .distinctOn(['message.threadId'])
+      .select('message.threadId', 'threadId')
+      .addSelect('message.createdAt', 'createdAt')
+      .where('message.threadId IN (:...threadIds)', {
+        threadIds: readableThreadIds,
+      })
+      .andWhere('message.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('message.isHidden = false')
+      .orderBy('message.threadId')
+      .addOrderBy('message.createdAt', 'DESC')
+      .getRawMany<{ threadId: string; createdAt: Date }>();
 
-    const lastMessageAtByThreadId = new Map<string, Date>();
-
-    for (const message of lastMessages) {
-      if (!lastMessageAtByThreadId.has(message.threadId)) {
-        lastMessageAtByThreadId.set(message.threadId, message.createdAt);
-      }
-    }
+    const lastMessageAtByThreadId = new Map(
+      lastMessageRows.map((row) => [row.threadId, row.createdAt]),
+    );
 
     return readableThreadIds.filter((threadId) => {
       const lastMessageAt = lastMessageAtByThreadId.get(threadId);

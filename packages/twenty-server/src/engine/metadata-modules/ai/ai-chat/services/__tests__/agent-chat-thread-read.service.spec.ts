@@ -54,9 +54,30 @@ const buildService = ({
     update: jest.fn().mockResolvedValue({ affected: 1 }),
   };
 
+  // getUnreadThreadIds reads one row per thread through a DISTINCT ON query
+  // builder rather than loading every message, so the builder is stubbed as a
+  // chain ending in getRawMany.
+  const lastMessageRows: { threadId: string; createdAt: Date }[] = [];
+
+  const queryBuilder: Record<string, jest.Mock> = {};
+
+  for (const method of [
+    'distinctOn',
+    'select',
+    'addSelect',
+    'where',
+    'andWhere',
+    'orderBy',
+    'addOrderBy',
+  ]) {
+    queryBuilder[method] = jest.fn(() => queryBuilder);
+  }
+
+  queryBuilder.getRawMany = jest.fn(() => Promise.resolve(lastMessageRows));
+
   const messageRepository = {
     findOne: jest.fn().mockResolvedValue({ id: LAST_MESSAGE_ID }),
-    find: jest.fn().mockResolvedValue([]),
+    createQueryBuilder: jest.fn(() => queryBuilder),
   };
 
   const service = new AgentChatThreadReadService(
@@ -65,7 +86,13 @@ const buildService = ({
     messageRepository as never,
   );
 
-  return { service, readRepository, threadRepository, messageRepository };
+  return {
+    service,
+    readRepository,
+    threadRepository,
+    messageRepository,
+    lastMessageRows,
+  };
 };
 
 const markRead = (
@@ -157,49 +184,40 @@ describe('AgentChatThreadReadService', () => {
       });
 
     it('counts a thread whose last message landed after the cursor', async () => {
-      const { service, readRepository, messageRepository } = buildService();
+      const { service, readRepository, lastMessageRows } = buildService();
 
       readRepository.find.mockResolvedValue([
         { threadId: THREAD_ID, lastReadAt: new Date('2026-01-01T00:00:00Z') },
       ]);
-      messageRepository.find.mockResolvedValue([
-        {
-          id: LAST_MESSAGE_ID,
-          threadId: THREAD_ID,
-          createdAt: new Date('2026-01-02T00:00:00Z'),
-        },
-      ]);
+      lastMessageRows.push({
+        threadId: THREAD_ID,
+        createdAt: new Date('2026-01-02T00:00:00Z'),
+      });
 
       expect(await unreadFor(service, [THREAD_ID])).toEqual([THREAD_ID]);
     });
 
     it('leaves a thread read when the cursor is past its last message', async () => {
-      const { service, readRepository, messageRepository } = buildService();
+      const { service, readRepository, lastMessageRows } = buildService();
 
       readRepository.find.mockResolvedValue([
         { threadId: THREAD_ID, lastReadAt: new Date('2026-01-03T00:00:00Z') },
       ]);
-      messageRepository.find.mockResolvedValue([
-        {
-          id: LAST_MESSAGE_ID,
-          threadId: THREAD_ID,
-          createdAt: new Date('2026-01-02T00:00:00Z'),
-        },
-      ]);
+      lastMessageRows.push({
+        threadId: THREAD_ID,
+        createdAt: new Date('2026-01-02T00:00:00Z'),
+      });
 
       expect(await unreadFor(service, [THREAD_ID])).toEqual([]);
     });
 
     it('counts a thread nobody has opened yet', async () => {
-      const { service, messageRepository } = buildService();
+      const { service, lastMessageRows } = buildService();
 
-      messageRepository.find.mockResolvedValue([
-        {
-          id: LAST_MESSAGE_ID,
-          threadId: THREAD_ID,
-          createdAt: new Date('2026-01-02T00:00:00Z'),
-        },
-      ]);
+      lastMessageRows.push({
+        threadId: THREAD_ID,
+        createdAt: new Date('2026-01-02T00:00:00Z'),
+      });
 
       expect(await unreadFor(service, [THREAD_ID])).toEqual([THREAD_ID]);
     });
@@ -220,17 +238,14 @@ describe('AgentChatThreadReadService', () => {
     // Answering for a thread the caller cannot open would say whether it
     // exists and has been written in.
     it('says nothing about a thread the caller cannot open', async () => {
-      const { service, readRepository, messageRepository } = buildService({
+      const { service, readRepository, lastMessageRows } = buildService({
         readers: [],
       });
 
-      messageRepository.find.mockResolvedValue([
-        {
-          id: LAST_MESSAGE_ID,
-          threadId: THREAD_ID,
-          createdAt: new Date('2026-01-02T00:00:00Z'),
-        },
-      ]);
+      lastMessageRows.push({
+        threadId: THREAD_ID,
+        createdAt: new Date('2026-01-02T00:00:00Z'),
+      });
 
       expect(await unreadFor(service, [THREAD_ID])).toEqual([]);
       expect(readRepository.find).not.toHaveBeenCalled();

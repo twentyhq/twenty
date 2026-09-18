@@ -751,8 +751,10 @@ export class AgentChatService {
     return summaryByThreadId.get(threadId) ?? EMPTY_LAST_MESSAGE_SUMMARY;
   }
 
-  // The latest visible message of each thread with its first text part, in
-  // one query, so thread lists can show who said what last.
+  // The latest visible message of each thread that has a text part, with that
+  // part, in one query, so thread lists can show who said what last. Role,
+  // author and time all come from the message being previewed, so a row never
+  // attributes one message's text to another's sender.
   async getLastMessageSummaryByThreadId({
     threadIds,
     workspaceId,
@@ -772,7 +774,11 @@ export class AgentChatService {
       .addSelect('message.authorUserWorkspaceId', 'authorUserWorkspaceId')
       .addSelect('message.createdAt', 'createdAt')
       .addSelect('part.textContent', 'textContent')
-      .leftJoin(
+      // An inner join, so the row picked is the newest message that has
+      // something to show. An assistant turn that only ran tools persists a
+      // message with no text part, and a left join would let that empty
+      // message win the DISTINCT ON and blank the preview.
+      .innerJoin(
         'message.parts',
         'part',
         "part.type = 'text' AND part.textContent IS NOT NULL",
