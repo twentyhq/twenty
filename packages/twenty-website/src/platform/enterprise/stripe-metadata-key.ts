@@ -12,4 +12,7 @@ export const STRIPE_METADATA_KEY = {
   // Card fingerprint of the payment method that consumed a trial. Stripe
   // derives it, so unlike TRIAL_SERVER_ID the buyer cannot choose it.
   TRIAL_CARD_FINGERPRINT: 'trialCardFingerprint',
+  // Set when this card already had a trial elsewhere. Nothing acts on it: it
+  // exists so a human can search Stripe for repeats and decide.
+  PRIOR_TRIAL_SUBSCRIPTION_ID: 'priorTrialSubscriptionId',
 } as const;

@@ -7,7 +7,7 @@ type SubscriptionSearcher = {
   subscriptions: Pick<Stripe['subscriptions'], 'search'>;
 };
 
-export async function hasPriorTrialForCard({
+export async function findPriorTrialForCard({
   stripe,
   cardFingerprint,
   excludedSubscriptionId,
@@ -15,29 +15,29 @@ export async function hasPriorTrialForCard({
   stripe: SubscriptionSearcher;
   cardFingerprint: unknown;
   excludedSubscriptionId: string;
-}): Promise<boolean> {
+}): Promise<string | undefined> {
   if (!isSearchableMetadataValue(cardFingerprint)) {
-    return false;
+    return undefined;
   }
 
   try {
-    // The subscription being enforced carries the same fingerprint once it has
-    // been stamped, and a webhook retry arriving after the search index catches
-    // up would otherwise see it and end its own trial.
+    // The subscription being recorded carries the same fingerprint once it has
+    // been stamped, so a webhook retry arriving after the search index catches
+    // up would otherwise report the subscription against itself.
     const result = await stripe.subscriptions.search({
       query: `metadata['${STRIPE_METADATA_KEY.TRIAL_CARD_FINGERPRINT}']:'${cardFingerprint}'`,
       limit: 2,
     });
 
-    return result.data.some(
+    return result.data.find(
       (subscription) => subscription.id !== excludedSubscriptionId,
-    );
+    )?.id;
   } catch (error: unknown) {
     console.error(
-      '[enterprise-stripe-webhook] prior-trial lookup failed, keeping the trial',
+      '[enterprise-stripe-webhook] prior-trial lookup failed, recording nothing',
       error,
     );
 
-    return false;
+    return undefined;
   }
 }

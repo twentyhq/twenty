@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 
 import {
-  enforceTrialEligibility,
   getEnterpriseConfigError,
   getStripeClient,
+  recordTrialCard,
 } from '@/platform/enterprise';
 
 export const dynamic = 'force-dynamic';
@@ -57,21 +57,21 @@ export async function POST(request: Request) {
   }
 
   try {
-    const outcome = await enforceTrialEligibility({ stripe, subscriptionId });
+    const outcome = await recordTrialCard({ stripe, subscriptionId });
 
     console.info(
-      `[enterprise-stripe-webhook] ${subscriptionId} trial eligibility: ${outcome}`,
+      `[enterprise-stripe-webhook] ${subscriptionId} trial card: ${outcome}`,
     );
   } catch (error: unknown) {
     // A 500 makes Stripe redeliver, which is what we want for a transient
-    // failure: the subscription is still trialing and can be judged later.
+    // failure: nothing was recorded, so the retry loses nothing.
     console.error(
-      `[enterprise-stripe-webhook] trial enforcement failed for ${subscriptionId}`,
+      `[enterprise-stripe-webhook] trial card recording failed for ${subscriptionId}`,
       error,
     );
 
     return NextResponse.json(
-      { error: 'Trial enforcement failed' },
+      { error: 'Trial card recording failed' },
       { status: 500 },
     );
   }

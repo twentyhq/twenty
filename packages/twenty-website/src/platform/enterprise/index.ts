@@ -45,13 +45,13 @@ export { evaluateValidityTokenEmissionRateLimit } from './evaluate-validity-toke
 export { normalizeServerId } from './normalize-server-id';
 export { isSearchableMetadataValue } from './is-searchable-metadata-value';
 export { hasPriorSubscriptionForServer } from './has-prior-subscription-for-server';
-export { hasPriorTrialForCard } from './has-prior-trial-for-card';
+export { findPriorTrialForCard } from './find-prior-trial-for-card';
 export { extractCardFingerprint } from './extract-card-fingerprint';
-export { enforceTrialEligibility } from './enforce-trial-eligibility';
+export { recordTrialCard } from './record-trial-card';
 export {
-  TRIAL_ELIGIBILITY_OUTCOME,
-  type TrialEligibilityOutcome,
-} from './trial-eligibility-outcome';
+  TRIAL_CARD_RECORD_OUTCOME,
+  type TrialCardRecordOutcome,
+} from './trial-card-record-outcome';
 export {
   resolveTrialPeriodDays,
   type ResolveTrialPeriodDaysInput,

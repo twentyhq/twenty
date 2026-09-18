@@ -1,7 +1,8 @@
-import { enforceTrialEligibility } from './enforce-trial-eligibility';
-import { TRIAL_ELIGIBILITY_OUTCOME } from './trial-eligibility-outcome';
+import { recordTrialCard } from './record-trial-card';
+import { TRIAL_CARD_RECORD_OUTCOME } from './trial-card-record-outcome';
 
 const SUBSCRIPTION_ID = 'sub_new';
+const PRIOR_SUBSCRIPTION_ID = 'sub_previous';
 const FINGERPRINT = 'Xt5EWLLDS7FJjR1c';
 
 const stripeWith = ({
@@ -30,16 +31,17 @@ const trialingSubscription = (metadata: Record<string, string> = {}) => ({
   default_payment_method: { card: { fingerprint: FINGERPRINT } },
 });
 
-describe('enforceTrialEligibility', () => {
-  it('ends the trial when the card already consumed one', async () => {
+describe('recordTrialCard', () => {
+  it('flags a card that already trialed elsewhere, without touching the trial', async () => {
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
     const { stripe, update, search } = stripeWith({
       subscription: trialingSubscription(),
-      searchResults: [{ id: 'sub_previous' }],
+      searchResults: [{ id: PRIOR_SUBSCRIPTION_ID }],
     });
 
     await expect(
-      enforceTrialEligibility({ stripe, subscriptionId: SUBSCRIPTION_ID }),
-    ).resolves.toBe(TRIAL_ELIGIBILITY_OUTCOME.TRIAL_ENDED);
+      recordTrialCard({ stripe, subscriptionId: SUBSCRIPTION_ID }),
+    ).resolves.toBe(TRIAL_CARD_RECORD_OUTCOME.REPEAT_FLAGGED);
 
     expect(search).toHaveBeenCalledTimes(1);
     expect(search).toHaveBeenCalledWith({
@@ -48,19 +50,33 @@ describe('enforceTrialEligibility', () => {
     });
     expect(update).toHaveBeenCalledTimes(1);
     expect(update).toHaveBeenCalledWith(SUBSCRIPTION_ID, {
-      metadata: { trialCardFingerprint: FINGERPRINT },
-      trial_end: 'now',
+      metadata: {
+        trialCardFingerprint: FINGERPRINT,
+        priorTrialSubscriptionId: PRIOR_SUBSCRIPTION_ID,
+      },
     });
   });
 
-  it('keeps the trial and stamps the card when it is the first one', async () => {
+  it('never ends a trial the customer was shown', async () => {
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const { stripe, update } = stripeWith({
+      subscription: trialingSubscription(),
+      searchResults: [{ id: PRIOR_SUBSCRIPTION_ID }],
+    });
+
+    await recordTrialCard({ stripe, subscriptionId: SUBSCRIPTION_ID });
+
+    expect(update.mock.calls[0][1]).not.toHaveProperty('trial_end');
+  });
+
+  it('records a first-time card without flagging it', async () => {
     const { stripe, update } = stripeWith({
       subscription: trialingSubscription(),
     });
 
     await expect(
-      enforceTrialEligibility({ stripe, subscriptionId: SUBSCRIPTION_ID }),
-    ).resolves.toBe(TRIAL_ELIGIBILITY_OUTCOME.TRIAL_KEPT);
+      recordTrialCard({ stripe, subscriptionId: SUBSCRIPTION_ID }),
+    ).resolves.toBe(TRIAL_CARD_RECORD_OUTCOME.FIRST_TRIAL_FOR_CARD);
 
     expect(update).toHaveBeenCalledTimes(1);
     expect(update).toHaveBeenCalledWith(SUBSCRIPTION_ID, {
@@ -68,15 +84,15 @@ describe('enforceTrialEligibility', () => {
     });
   });
 
-  it('does not end its own trial when the search returns only itself', async () => {
+  it('does not flag itself when the search returns only this subscription', async () => {
     const { stripe, update } = stripeWith({
       subscription: trialingSubscription(),
       searchResults: [{ id: SUBSCRIPTION_ID }],
     });
 
     await expect(
-      enforceTrialEligibility({ stripe, subscriptionId: SUBSCRIPTION_ID }),
-    ).resolves.toBe(TRIAL_ELIGIBILITY_OUTCOME.TRIAL_KEPT);
+      recordTrialCard({ stripe, subscriptionId: SUBSCRIPTION_ID }),
+    ).resolves.toBe(TRIAL_CARD_RECORD_OUTCOME.FIRST_TRIAL_FOR_CARD);
 
     expect(update).toHaveBeenCalledWith(SUBSCRIPTION_ID, {
       metadata: { trialCardFingerprint: FINGERPRINT },
@@ -88,12 +104,12 @@ describe('enforceTrialEligibility', () => {
       subscription: trialingSubscription({
         trialCardFingerprint: FINGERPRINT,
       }),
-      searchResults: [{ id: 'sub_previous' }],
+      searchResults: [{ id: PRIOR_SUBSCRIPTION_ID }],
     });
 
     await expect(
-      enforceTrialEligibility({ stripe, subscriptionId: SUBSCRIPTION_ID }),
-    ).resolves.toBe(TRIAL_ELIGIBILITY_OUTCOME.ALREADY_ENFORCED);
+      recordTrialCard({ stripe, subscriptionId: SUBSCRIPTION_ID }),
+    ).resolves.toBe(TRIAL_CARD_RECORD_OUTCOME.ALREADY_RECORDED);
 
     expect(search).not.toHaveBeenCalled();
     expect(update).not.toHaveBeenCalled();
@@ -105,8 +121,8 @@ describe('enforceTrialEligibility', () => {
     });
 
     await expect(
-      enforceTrialEligibility({ stripe, subscriptionId: SUBSCRIPTION_ID }),
-    ).resolves.toBe(TRIAL_ELIGIBILITY_OUTCOME.NOT_TRIALING);
+      recordTrialCard({ stripe, subscriptionId: SUBSCRIPTION_ID }),
+    ).resolves.toBe(TRIAL_CARD_RECORD_OUTCOME.NOT_TRIALING);
 
     expect(search).not.toHaveBeenCalled();
     expect(update).not.toHaveBeenCalled();
@@ -118,7 +134,7 @@ describe('enforceTrialEligibility', () => {
     [{ card: null }, 'a non-card payment method'],
     [{ card: { fingerprint: null } }, 'a card without a fingerprint'],
     [{ card: { fingerprint: "' OR 1:'1" } }, 'an unsearchable fingerprint'],
-  ])('cannot enforce with %s (%s)', async (defaultPaymentMethod, _label) => {
+  ])('records nothing for %s (%s)', async (defaultPaymentMethod, _label) => {
     const { stripe, search, update } = stripeWith({
       subscription: {
         ...trialingSubscription(),
@@ -127,14 +143,14 @@ describe('enforceTrialEligibility', () => {
     });
 
     await expect(
-      enforceTrialEligibility({ stripe, subscriptionId: SUBSCRIPTION_ID }),
-    ).resolves.toBe(TRIAL_ELIGIBILITY_OUTCOME.CARD_UNKNOWN);
+      recordTrialCard({ stripe, subscriptionId: SUBSCRIPTION_ID }),
+    ).resolves.toBe(TRIAL_CARD_RECORD_OUTCOME.CARD_UNKNOWN);
 
     expect(search).not.toHaveBeenCalled();
     expect(update).not.toHaveBeenCalled();
   });
 
-  it('keeps the trial when the prior-trial lookup fails', async () => {
+  it('still stamps the card when the prior-trial lookup fails', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
     const { stripe, search, update } = stripeWith({
       subscription: trialingSubscription(),
@@ -142,8 +158,8 @@ describe('enforceTrialEligibility', () => {
     search.mockRejectedValue(new Error('stripe is down'));
 
     await expect(
-      enforceTrialEligibility({ stripe, subscriptionId: SUBSCRIPTION_ID }),
-    ).resolves.toBe(TRIAL_ELIGIBILITY_OUTCOME.TRIAL_KEPT);
+      recordTrialCard({ stripe, subscriptionId: SUBSCRIPTION_ID }),
+    ).resolves.toBe(TRIAL_CARD_RECORD_OUTCOME.FIRST_TRIAL_FOR_CARD);
 
     expect(search).toHaveBeenCalledTimes(1);
     expect(update).toHaveBeenCalledWith(SUBSCRIPTION_ID, {

@@ -7,13 +7,12 @@ const ORIGINAL_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const SUBSCRIPTION_ID = 'sub_new';
 
 const constructEventAsync = jest.fn();
-const enforceTrialEligibility = jest.fn();
+const recordTrialCard = jest.fn();
 
 jest.mock('@/platform/enterprise', () => ({
   ...jest.requireActual('@/platform/enterprise'),
   getStripeClient: () => ({ webhooks: { constructEventAsync } }),
-  enforceTrialEligibility: (...args: unknown[]) =>
-    enforceTrialEligibility(...args),
+  recordTrialCard: (...args: unknown[]) => recordTrialCard(...args),
 }));
 
 const buildRequest = ({
@@ -49,7 +48,7 @@ describe('POST /api/enterprise/stripe-webhook', () => {
     jest.spyOn(console, 'info').mockImplementation(() => {});
     process.env.STRIPE_SECRET_KEY = 'sk_test';
     process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test';
-    enforceTrialEligibility.mockResolvedValue('trial-kept');
+    recordTrialCard.mockResolvedValue('first-trial-for-card');
   });
 
   afterAll(() => {
@@ -57,15 +56,15 @@ describe('POST /api/enterprise/stripe-webhook', () => {
     process.env.STRIPE_WEBHOOK_SECRET = ORIGINAL_WEBHOOK_SECRET;
   });
 
-  it('enforces trial eligibility on a signed checkout completion', async () => {
+  it('records the trial card on a signed checkout completion', async () => {
     constructEventAsync.mockResolvedValue(checkoutCompleted(SUBSCRIPTION_ID));
     const { POST } = await loadRoute();
 
     const response = await POST(buildRequest());
 
     expect(response.status).toBe(200);
-    expect(enforceTrialEligibility).toHaveBeenCalledTimes(1);
-    expect(enforceTrialEligibility).toHaveBeenCalledWith(
+    expect(recordTrialCard).toHaveBeenCalledTimes(1);
+    expect(recordTrialCard).toHaveBeenCalledWith(
       expect.objectContaining({ subscriptionId: SUBSCRIPTION_ID }),
     );
   });
@@ -78,7 +77,7 @@ describe('POST /api/enterprise/stripe-webhook', () => {
 
     await POST(buildRequest());
 
-    expect(enforceTrialEligibility).toHaveBeenCalledWith(
+    expect(recordTrialCard).toHaveBeenCalledWith(
       expect.objectContaining({ subscriptionId: SUBSCRIPTION_ID }),
     );
   });
@@ -90,7 +89,7 @@ describe('POST /api/enterprise/stripe-webhook', () => {
 
     expect(response.status).toBe(400);
     expect(constructEventAsync).not.toHaveBeenCalled();
-    expect(enforceTrialEligibility).not.toHaveBeenCalled();
+    expect(recordTrialCard).not.toHaveBeenCalled();
   });
 
   it('rejects a forged signature', async () => {
@@ -101,7 +100,7 @@ describe('POST /api/enterprise/stripe-webhook', () => {
     const response = await POST(buildRequest({ signature: 't=1,v1=forged' }));
 
     expect(response.status).toBe(400);
-    expect(enforceTrialEligibility).not.toHaveBeenCalled();
+    expect(recordTrialCard).not.toHaveBeenCalled();
   });
 
   it('acknowledges an event it does not act on', async () => {
@@ -111,7 +110,7 @@ describe('POST /api/enterprise/stripe-webhook', () => {
     const response = await POST(buildRequest());
 
     expect(response.status).toBe(200);
-    expect(enforceTrialEligibility).not.toHaveBeenCalled();
+    expect(recordTrialCard).not.toHaveBeenCalled();
   });
 
   it('acknowledges a checkout that created no subscription', async () => {
@@ -121,13 +120,13 @@ describe('POST /api/enterprise/stripe-webhook', () => {
     const response = await POST(buildRequest());
 
     expect(response.status).toBe(200);
-    expect(enforceTrialEligibility).not.toHaveBeenCalled();
+    expect(recordTrialCard).not.toHaveBeenCalled();
   });
 
-  it('asks Stripe to redeliver when enforcement fails', async () => {
+  it('asks Stripe to redeliver when recording fails', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
     constructEventAsync.mockResolvedValue(checkoutCompleted(SUBSCRIPTION_ID));
-    enforceTrialEligibility.mockRejectedValue(new Error('stripe is down'));
+    recordTrialCard.mockRejectedValue(new Error('stripe is down'));
     const { POST } = await loadRoute();
 
     const response = await POST(buildRequest());
