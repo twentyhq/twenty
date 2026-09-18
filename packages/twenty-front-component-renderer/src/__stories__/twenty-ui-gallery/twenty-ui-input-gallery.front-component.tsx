@@ -1,9 +1,10 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   IconButton,
-  LightIconButton,
   LightButton,
+  LightIconButton,
   MainButton,
+  TabButton,
 } from 'twenty-ui/components';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
@@ -22,9 +23,6 @@ import {
   IconListViewGrip,
   SearchInput,
   SegmentedControl,
-  StyledTabContainer,
-  TabButton,
-  TabContent,
   CardPicker,
   Checkbox,
   Radio,
@@ -221,20 +219,8 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'StyledTabContainer',
-    node: (
-      <StyledTabContainer>
-        <TabButton id="t1" title="Tab" />
-      </StyledTabContainer>
-    ),
-  },
-  {
     name: 'TabButton',
-    node: <TabButton id="tab1" title="Tab" />,
-  },
-  {
-    name: 'TabContent',
-    node: <TabContent id="tc1" title="Content" />,
+    node: <TabButton>Tab</TabButton>,
   },
   {
     name: 'Switch',
