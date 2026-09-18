@@ -13,7 +13,7 @@ import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai
 import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import { buildThreadAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-access-where.util';
+import { buildThreadWorkerWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-worker-where.util';
 import { isUniqueViolation } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation.util';
 import { sanitizeModelDisplayName } from 'src/engine/metadata-modules/ai/ai-chat/utils/sanitize-model-display-name.util';
 import {
@@ -45,10 +45,10 @@ export class AgentChatThreadParticipantService {
 
   // A mention is what puts a shared thread in somebody's own list, so the time
   // is kept: a later mention brings the thread back even after they have
-  // cleared it. It names people who can already open the thread and nobody
-  // else — naming someone is not how a thread is handed out, or any reader
-  // could quietly widen a private channel or a run conversation past the
-  // owner-only gate on addParticipant.
+  // cleared it. It is a ping, not an invite — it names people who already work
+  // the thread and nobody else, so naming someone can neither hand out a
+  // thread they could not open nor widen who may write in one, both of which
+  // are the owner's to give.
   async recordMentionsFromMessage({
     threadId,
     text,
@@ -91,7 +91,7 @@ export class AgentChatThreadParticipantService {
 
     const readability = await Promise.all(
       resolvedUserWorkspaceIds.map((userWorkspaceId) =>
-        this.canUserWorkspaceReadThread({
+        this.canUserWorkspaceWorkThread({
           threadId,
           userWorkspaceId,
           workspaceId,
@@ -123,7 +123,13 @@ export class AgentChatThreadParticipantService {
     return mentionedUserWorkspaceIds;
   }
 
-  private async canUserWorkspaceReadThread({
+  // The worker predicate, not the reader one. A mention writes a participant
+  // row, and that row is itself a clause in the worker predicate, so gating on
+  // read would let anyone who may send hand send, status, assignment and
+  // renaming to any workspace member through a public channel — past the
+  // owner-only gate on addParticipant. Somebody who already works the thread
+  // gains nothing from the row but the time on it.
+  private async canUserWorkspaceWorkThread({
     threadId,
     userWorkspaceId,
     workspaceId,
@@ -133,7 +139,7 @@ export class AgentChatThreadParticipantService {
     workspaceId: string;
   }): Promise<boolean> {
     const thread = await this.threadRepository.findOne(workspaceId, {
-      where: buildThreadAccessWhere({ id: threadId, userWorkspaceId }),
+      where: buildThreadWorkerWhere({ id: threadId, userWorkspaceId }),
     });
 
     return isDefined(thread);

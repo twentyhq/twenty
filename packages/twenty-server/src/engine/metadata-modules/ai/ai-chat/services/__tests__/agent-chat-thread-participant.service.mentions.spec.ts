@@ -4,10 +4,10 @@ import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/a
 
 const WORKSPACE_ID = 'workspace-id';
 const THREAD_ID = 'thread-id';
-const READER_MEMBER_ID = '11111111-1111-4111-8111-111111111111';
-const OUTSIDER_MEMBER_ID = '22222222-2222-4222-8222-222222222222';
-const READER_USER_WORKSPACE_ID = 'reader-user-workspace-id';
-const OUTSIDER_USER_WORKSPACE_ID = 'outsider-user-workspace-id';
+const WORKER_MEMBER_ID = '11111111-1111-4111-8111-111111111111';
+const PUBLIC_READER_MEMBER_ID = '22222222-2222-4222-8222-222222222222';
+const WORKER_USER_WORKSPACE_ID = 'reader-user-workspace-id';
+const PUBLIC_READER_USER_WORKSPACE_ID = 'outsider-user-workspace-id';
 
 const mention = (workspaceMemberId: string, displayName: string) =>
   `[[record:workspaceMember:${workspaceMemberId}:${displayName}]]`;
@@ -18,21 +18,21 @@ const uniqueViolation = () =>
     message: 'duplicate key value violates unique constraint',
   } as unknown as Error);
 
-const buildService = ({ readers = [READER_USER_WORKSPACE_ID] } = {}) => {
+const buildService = ({ workers = [WORKER_USER_WORKSPACE_ID] } = {}) => {
   const participantRepository = {
     findOne: jest.fn().mockResolvedValue(null),
     update: jest.fn().mockResolvedValue({ affected: 0 }),
     insertAndReturnOne: jest.fn().mockResolvedValue({ id: 'participant-id' }),
   };
 
-  // The access predicate is a set of OR-ed clauses; a reader is whoever one of
-  // them names, which here is whoever is in the readers list.
+  // The worker predicate is a set of OR-ed clauses; a worker is whoever one of
+  // them names, which here is whoever is in the workers list.
   const threadRepository = {
     findOne: jest.fn().mockImplementation((_workspaceId, { where }) => {
       const userWorkspaceId = where[0]?.userWorkspaceId;
 
       return Promise.resolve(
-        readers.includes(userWorkspaceId) ? { id: THREAD_ID } : null,
+        workers.includes(userWorkspaceId) ? { id: THREAD_ID } : null,
       );
     }),
   };
@@ -52,9 +52,9 @@ const buildService = ({ readers = [READER_USER_WORKSPACE_ID] } = {}) => {
       .mockImplementation(({ userId }: { userId: string }) =>
         Promise.resolve({
           id:
-            userId === `user-${READER_MEMBER_ID}`
-              ? READER_USER_WORKSPACE_ID
-              : OUTSIDER_USER_WORKSPACE_ID,
+            userId === `user-${WORKER_MEMBER_ID}`
+              ? WORKER_USER_WORKSPACE_ID
+              : PUBLIC_READER_USER_WORKSPACE_ID,
         }),
       ),
   };
@@ -77,26 +77,26 @@ describe('AgentChatThreadParticipantService mentions', () => {
 
     const mentioned = await service.recordMentionsFromMessage({
       threadId: THREAD_ID,
-      text: `Can you take this, ${mention(READER_MEMBER_ID, 'Ada Lovelace')}?`,
+      text: `Can you take this, ${mention(WORKER_MEMBER_ID, 'Ada Lovelace')}?`,
       workspaceId: WORKSPACE_ID,
     });
 
-    expect(mentioned).toEqual([READER_USER_WORKSPACE_ID]);
+    expect(mentioned).toEqual([WORKER_USER_WORKSPACE_ID]);
     expect(participantRepository.insertAndReturnOne).toHaveBeenCalledWith(
       WORKSPACE_ID,
       expect.objectContaining({
         threadId: THREAD_ID,
-        userWorkspaceId: READER_USER_WORKSPACE_ID,
+        userWorkspaceId: WORKER_USER_WORKSPACE_ID,
       }),
     );
   });
 
-  it('does not hand the thread to somebody who cannot open it', async () => {
+  it('does not hand the thread to somebody who only reads it', async () => {
     const { service, participantRepository } = buildService();
 
     const mentioned = await service.recordMentionsFromMessage({
       threadId: THREAD_ID,
-      text: `Looping in ${mention(OUTSIDER_MEMBER_ID, 'Grace Hopper')}`,
+      text: `Looping in ${mention(PUBLIC_READER_MEMBER_ID, 'Grace Hopper')}`,
       workspaceId: WORKSPACE_ID,
     });
 
@@ -104,16 +104,16 @@ describe('AgentChatThreadParticipantService mentions', () => {
     expect(participantRepository.insertAndReturnOne).not.toHaveBeenCalled();
   });
 
-  it('keeps the readers when a message names a reader and an outsider together', async () => {
+  it('keeps the workers when a message names a worker and a reader together', async () => {
     const { service } = buildService();
 
     const mentioned = await service.recordMentionsFromMessage({
       threadId: THREAD_ID,
-      text: `${mention(READER_MEMBER_ID, 'Ada')} and ${mention(OUTSIDER_MEMBER_ID, 'Grace')}`,
+      text: `${mention(WORKER_MEMBER_ID, 'Ada')} and ${mention(PUBLIC_READER_MEMBER_ID, 'Grace')}`,
       workspaceId: WORKSPACE_ID,
     });
 
-    expect(mentioned).toEqual([READER_USER_WORKSPACE_ID]);
+    expect(mentioned).toEqual([WORKER_USER_WORKSPACE_ID]);
   });
 
   it('only freshens the mention time for somebody already in the thread', async () => {
@@ -123,13 +123,13 @@ describe('AgentChatThreadParticipantService mentions', () => {
 
     await service.recordMentionsFromMessage({
       threadId: THREAD_ID,
-      text: mention(READER_MEMBER_ID, 'Ada'),
+      text: mention(WORKER_MEMBER_ID, 'Ada'),
       workspaceId: WORKSPACE_ID,
     });
 
     expect(participantRepository.update).toHaveBeenCalledWith(
       WORKSPACE_ID,
-      { threadId: THREAD_ID, userWorkspaceId: READER_USER_WORKSPACE_ID },
+      { threadId: THREAD_ID, userWorkspaceId: WORKER_USER_WORKSPACE_ID },
       expect.objectContaining({ lastMentionedAt: expect.any(Date) }),
     );
     expect(participantRepository.insertAndReturnOne).not.toHaveBeenCalled();
@@ -144,14 +144,14 @@ describe('AgentChatThreadParticipantService mentions', () => {
 
     await service.recordMentionsFromMessage({
       threadId: THREAD_ID,
-      text: mention(READER_MEMBER_ID, 'Ada'),
+      text: mention(WORKER_MEMBER_ID, 'Ada'),
       workspaceId: WORKSPACE_ID,
     });
 
     expect(participantRepository.update).toHaveBeenCalledTimes(2);
     expect(participantRepository.update).toHaveBeenLastCalledWith(
       WORKSPACE_ID,
-      { threadId: THREAD_ID, userWorkspaceId: READER_USER_WORKSPACE_ID },
+      { threadId: THREAD_ID, userWorkspaceId: WORKER_USER_WORKSPACE_ID },
       expect.objectContaining({ lastMentionedAt: expect.any(Date) }),
     );
   });
@@ -166,7 +166,7 @@ describe('AgentChatThreadParticipantService mentions', () => {
     await expect(
       service.recordMentionsFromMessage({
         threadId: THREAD_ID,
-        text: mention(READER_MEMBER_ID, 'Ada'),
+        text: mention(WORKER_MEMBER_ID, 'Ada'),
         workspaceId: WORKSPACE_ID,
       }),
     ).rejects.toThrow('connection terminated');
@@ -183,5 +183,30 @@ describe('AgentChatThreadParticipantService mentions', () => {
       }),
     ).toEqual([]);
     expect(threadRepository.findOne).not.toHaveBeenCalled();
+  });
+
+  // A participant row is itself a clause in the worker predicate, so the row a
+  // mention writes must not be handed to somebody the public-channel clause
+  // alone lets in: the reader predicate would, the worker predicate does not.
+  it('asks the worker predicate, which has no public-channel clause', async () => {
+    const { service, threadRepository } = buildService();
+
+    await service.recordMentionsFromMessage({
+      threadId: THREAD_ID,
+      text: mention(WORKER_MEMBER_ID, 'Ada'),
+      workspaceId: WORKSPACE_ID,
+    });
+
+    const [, { where }] = threadRepository.findOne.mock.calls[0];
+
+    expect(
+      where.some(
+        (clause: Record<string, unknown>) =>
+          'assigneeUserWorkspaceId' in clause,
+      ),
+    ).toBe(true);
+    expect(
+      where.some((clause: Record<string, unknown>) => 'visibility' in clause),
+    ).toBe(false);
   });
 });
