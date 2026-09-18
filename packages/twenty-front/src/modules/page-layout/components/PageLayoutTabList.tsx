@@ -427,7 +427,7 @@ export const PageLayoutTabList = ({
           addButtonMeasurement={
             addTabStrategy ? (
               <StyledAddButton>
-                <TabButton startIcon={<IconPlus />} children={t`New Tab`} />
+                <TabButton startIcon={<IconPlus />}>{t`New Tab`}</TabButton>
               </StyledAddButton>
             ) : undefined
           }
@@ -499,9 +499,10 @@ export const PageLayoutTabList = ({
             <StyledAddButton>
               <TabButton
                 startIcon={<IconPlus />}
-                children={t`New Tab`}
                 onClick={() => addTabStrategy.onCreate()}
-              />
+              >
+                {t`New Tab`}
+              </TabButton>
             </StyledAddButton>
           )}
           {addTabStrategy?.mode === 'dropdown' && (
@@ -509,7 +510,7 @@ export const PageLayoutTabList = ({
               <Dropdown
                 dropdownId={addTabDropdownId}
                 clickableComponent={
-                  <TabButton startIcon={<IconPlus />} children={t`New Tab`} />
+                  <TabButton startIcon={<IconPlus />}>{t`New Tab`}</TabButton>
                 }
                 dropdownComponents={
                   <PageLayoutTabListNewTabDropdownContent
