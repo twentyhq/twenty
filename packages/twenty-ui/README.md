@@ -10,6 +10,10 @@ Read the [twenty-ui documentation](https://docs.twenty.com/ui/getting-started) f
 
 > **Alpha:** `twenty-ui` is still in alpha. Its version number follows the Twenty SDK release cycle. APIs and component behavior may change between releases.
 
+## Upgrading
+
+The next release changes public module ownership and removes exports without a deprecation window. Read the [breaking release notes](./CHANGELOG.md#unreleased) and [migration guide](./docs/module-ownership-migration.md) before upgrading.
+
 # Installation
 
 For a standalone React application, install the library and its peer dependencies. React 19 is required.
