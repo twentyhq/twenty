@@ -9,7 +9,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconRefresh, IconTag } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSwitch } from 'twenty-ui/primitives/navigation';
+import { Switch } from 'twenty-ui/primitives/input';
+import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type CommandMenuItemOptionsDropdownProps = Pick<
@@ -62,14 +63,19 @@ export const CommandMenuItemOptionsDropdown = ({
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
           <DropdownMenuItemsContainer>
-            <MenuItemSwitch
-              LeftIcon={IconTag}
-              text={t`Hide label`}
-              checked={isLabelHidden || hasNoShortLabel}
-              onCheckedChange={handleHiddenLabelChange}
-              size="sm"
+            <ListItem
+              startIcon={<IconTag />}
               disabled={hasNoShortLabel}
-            />
+              render={<label />}
+              endIcon={
+                <Switch
+                  checked={isLabelHidden || hasNoShortLabel}
+                  onCheckedChange={handleHiddenLabelChange}
+                  size="sm"
+                  disabled={hasNoShortLabel}
+                />
+              }
+            >{t`Hide label`}</ListItem>
             <MenuItem
               LeftIcon={IconRefresh}
               onClick={handleResetToDefault}

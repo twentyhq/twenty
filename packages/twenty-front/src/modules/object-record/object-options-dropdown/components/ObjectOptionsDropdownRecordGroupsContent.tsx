@@ -33,11 +33,8 @@ import {
   IconLayoutList,
   IconPlus,
 } from 'twenty-ui/icon';
-import {
-  MenuItem,
-  MenuItemNavigate,
-  MenuItemSwitch,
-} from 'twenty-ui/primitives/navigation';
+import { Switch } from 'twenty-ui/primitives/input';
+import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { t } = useLingui();
@@ -173,14 +170,18 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             itemId="HideEmptyGroups"
             onEnter={() => handleHideEmptyRecordGroupChange()}
           >
-            <MenuItemSwitch
+            <ListItem
               focused={selectedItemId === 'HideEmptyGroups'}
-              LeftIcon={IconCircleOff}
-              onCheckedChange={handleHideEmptyRecordGroupChange}
-              checked={shouldHideEmptyGroups}
-              text={t`Hide empty groups`}
-              size="sm"
-            />
+              startIcon={<IconCircleOff />}
+              render={<label />}
+              endIcon={
+                <Switch
+                  onCheckedChange={handleHideEmptyRecordGroupChange}
+                  checked={shouldHideEmptyGroups}
+                  size="sm"
+                />
+              }
+            >{t`Hide empty groups`}</ListItem>
           </SelectableListItem>
         </SelectableList>
       </DropdownMenuItemsContainer>
@@ -222,11 +223,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 itemId="HiddenGroups"
                 onEnter={() => onContentChange('hiddenRecordGroups')}
               >
-                <MenuItemNavigate
+                <ListItem
                   onClick={() => onContentChange('hiddenRecordGroups')}
-                  LeftIcon={IconEyeOff}
-                  text={`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}
-                />
+                  startIcon={<IconEyeOff />}
+                  render={<button type="button" />}
+                  hasSubmenu
+                >{`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}</ListItem>
               </SelectableListItem>
             </SelectableList>
           </DropdownMenuItemsContainer>

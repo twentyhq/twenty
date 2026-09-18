@@ -20,8 +20,8 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
-import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
+import { Button, SearchInput, Switch } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
@@ -175,15 +175,19 @@ export const SettingsObjectIndexesSection = ({
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <MenuItemSwitch
-                    LeftIcon={IconEyeOff}
-                    onCheckedChange={() =>
-                      setHideSystemIndexes(!hideSystemIndexes)
+                  <ListItem
+                    startIcon={<IconEyeOff />}
+                    render={<label />}
+                    endIcon={
+                      <Switch
+                        onCheckedChange={() =>
+                          setHideSystemIndexes(!hideSystemIndexes)
+                        }
+                        checked={hideSystemIndexes}
+                        size="sm"
+                      />
                     }
-                    checked={hideSystemIndexes}
-                    text={t`Hide system indexes`}
-                    size="sm"
-                  />
+                  >{t`Hide system indexes`}</ListItem>
                 </DropdownMenuItemsContainer>
               </DropdownContent>
             }

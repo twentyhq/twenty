@@ -1,3 +1,4 @@
+import { Switch } from 'twenty-ui/primitives/input';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { IconHome, IconUser } from 'twenty-ui/icon';
 import {
@@ -13,13 +14,11 @@ import {
   MenuItemMultiSelect,
   MenuItemMultiSelectAvatar,
   MenuItemMultiSelectTag,
-  MenuItemNavigate,
   MenuItemSelect,
   MenuItemSelectAvatar,
   MenuItemSelectColor,
   MenuItemSelectTag,
   MenuItemSuggestion,
-  MenuItemSwitch,
   MenuPicker,
   NavigationBar,
   NavigationBarItem,
@@ -32,6 +31,7 @@ import {
   StyledMenuItemLeftContent,
   StyledMenuItemSelect,
   UndecoratedLink,
+  ListItem,
 } from 'twenty-ui/primitives/navigation';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
@@ -134,13 +134,16 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'MenuItemNavigate',
+    name: 'ListItem navigation',
     node: (
-      <MenuItemNavigate
-        text="Navigate"
-        LeftIcon={IconUser}
+      <ListItem
+        startIcon={<IconUser />}
         onClick={() => {}}
-      />
+        render={<button type="button" />}
+        hasSubmenu
+      >
+        Navigate
+      </ListItem>
     ),
   },
   {
@@ -183,9 +186,20 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     node: <MenuItemSuggestion text="Suggestion" onClick={() => {}} />,
   },
   {
-    name: 'MenuItemSwitch',
+    name: 'ListItem switch',
     node: (
-      <MenuItemSwitch text="Switch" checked={true} onCheckedChange={() => {}} />
+      <ListItem
+        render={<label />}
+        endIcon={
+          <Switch
+            aria-label="Switch"
+            checked={true}
+            onCheckedChange={() => {}}
+          />
+        }
+      >
+        Switch
+      </ListItem>
     ),
   },
   {

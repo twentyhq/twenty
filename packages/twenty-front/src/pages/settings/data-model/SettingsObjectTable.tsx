@@ -31,8 +31,8 @@ import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
+import { SearchInput, Switch } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -176,25 +176,33 @@ export const SettingsObjectTable = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <MenuItemSwitch
-                        LeftIcon={IconArchive}
-                        onCheckedChange={() =>
-                          setShowDeactivated(!showDeactivated)
+                      <ListItem
+                        startIcon={<IconArchive />}
+                        render={<label />}
+                        endIcon={
+                          <Switch
+                            onCheckedChange={() =>
+                              setShowDeactivated(!showDeactivated)
+                            }
+                            checked={showDeactivated}
+                            size="sm"
+                          />
                         }
-                        checked={showDeactivated}
-                        text={t`Deactivated`}
-                        size="sm"
-                      />
+                      >{t`Deactivated`}</ListItem>
                       {isAdvancedModeEnabled && (
-                        <MenuItemSwitch
-                          LeftIcon={IconSettings}
-                          onCheckedChange={() =>
-                            setShowSystemObjects(!showSystemObjects)
+                        <ListItem
+                          startIcon={<IconSettings />}
+                          render={<label />}
+                          endIcon={
+                            <Switch
+                              onCheckedChange={() =>
+                                setShowSystemObjects(!showSystemObjects)
+                              }
+                              checked={showSystemObjects}
+                              size="sm"
+                            />
                           }
-                          checked={showSystemObjects}
-                          text={t`System objects`}
-                          size="sm"
-                        />
+                        >{t`System objects`}</ListItem>
                       )}
                     </DropdownMenuItemsContainer>
                   </DropdownContent>

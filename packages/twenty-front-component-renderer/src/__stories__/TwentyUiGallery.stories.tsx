@@ -1,3 +1,5 @@
+import { listItemSwitchRowTest } from '@/__stories__/twenty-ui-gallery/utils/listItemSwitchRowTest';
+import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { type Meta } from '@storybook/react-vite';
@@ -11,7 +13,6 @@ import {
   createCheckboxTest,
   createFieldControlsTest,
   createRadioGroupPreactTest,
-  listItemTest,
   sliderTest,
   toastTest,
 } from '@/__stories__/twenty-ui-gallery/utils/componentInteractionTests';
@@ -230,6 +231,18 @@ export const ListItemPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-list-item',
   runtime: 'preact',
   play: listItemTest,
+});
+
+export const ListItemSwitchRowReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-list-item',
+  runtime: 'react',
+  play: listItemSwitchRowTest,
+});
+
+export const ListItemSwitchRowPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-list-item',
+  runtime: 'preact',
+  play: listItemSwitchRowTest,
 });
 
 export const TabsReact: Story = createGalleryStory({

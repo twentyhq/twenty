@@ -8,8 +8,8 @@ import { type ReactNode, useState } from 'react';
 import { Section } from 'twenty-ui/components';
 import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { IconSparkles } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
+import { SearchInput, Switch } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
@@ -106,13 +106,19 @@ export const SettingsApplicationsAvailableTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemSwitch
-                      LeftIcon={IconSparkles}
-                      onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
-                      checked={showVettedOnly}
-                      text={t`Vetted only`}
-                      size="sm"
-                    />
+                    <ListItem
+                      startIcon={<IconSparkles />}
+                      render={<label />}
+                      endIcon={
+                        <Switch
+                          onCheckedChange={() =>
+                            setShowVettedOnly(!showVettedOnly)
+                          }
+                          checked={showVettedOnly}
+                          size="sm"
+                        />
+                      }
+                    >{t`Vetted only`}</ListItem>
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }

@@ -20,8 +20,8 @@ import {
   IconPlus,
   IconSearch,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
+import { Button, Switch } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -109,20 +109,30 @@ export const SettingsRolesList = () => {
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <MenuItemSwitch
-                  LeftIcon={IconLego}
-                  onCheckedChange={() => setShowAgentRoles(!showAgentRoles)}
-                  checked={showAgentRoles}
-                  text={t`Agent roles`}
-                  size="sm"
-                />
-                <MenuItemSwitch
-                  LeftIcon={IconKey}
-                  onCheckedChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
-                  checked={showApiKeyRoles}
-                  text={t`API key roles`}
-                  size="sm"
-                />
+                <ListItem
+                  startIcon={<IconLego />}
+                  render={<label />}
+                  endIcon={
+                    <Switch
+                      onCheckedChange={() => setShowAgentRoles(!showAgentRoles)}
+                      checked={showAgentRoles}
+                      size="sm"
+                    />
+                  }
+                >{t`Agent roles`}</ListItem>
+                <ListItem
+                  startIcon={<IconKey />}
+                  render={<label />}
+                  endIcon={
+                    <Switch
+                      onCheckedChange={() =>
+                        setShowApiKeyRoles(!showApiKeyRoles)
+                      }
+                      checked={showApiKeyRoles}
+                      size="sm"
+                    />
+                  }
+                >{t`API key roles`}</ListItem>
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }

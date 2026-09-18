@@ -2,7 +2,8 @@ import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 
 import { IconAlertTriangle, IconMessage, IconSparkles } from 'twenty-ui/icon';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
+import { Switch } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { type AdminChatsFilterState } from '@/settings/admin-panel/chats/types/AdminChatsFilterState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -29,42 +30,54 @@ export const SettingsAdminChatsFilterDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItemSwitch
-              LeftIcon={IconSparkles}
-              onCheckedChange={() =>
-                onFiltersChange({
-                  ...filters,
-                  onboardingOnly: !filters.onboardingOnly,
-                })
+            <ListItem
+              startIcon={<IconSparkles />}
+              render={<label />}
+              endIcon={
+                <Switch
+                  onCheckedChange={() =>
+                    onFiltersChange({
+                      ...filters,
+                      onboardingOnly: !filters.onboardingOnly,
+                    })
+                  }
+                  checked={filters.onboardingOnly}
+                  size="sm"
+                />
               }
-              checked={filters.onboardingOnly}
-              text={t`Onboarding only`}
-              size="sm"
-            />
-            <MenuItemSwitch
-              LeftIcon={IconAlertTriangle}
-              onCheckedChange={() =>
-                onFiltersChange({
-                  ...filters,
-                  hasErrorOnly: !filters.hasErrorOnly,
-                })
+            >{t`Onboarding only`}</ListItem>
+            <ListItem
+              startIcon={<IconAlertTriangle />}
+              render={<label />}
+              endIcon={
+                <Switch
+                  onCheckedChange={() =>
+                    onFiltersChange({
+                      ...filters,
+                      hasErrorOnly: !filters.hasErrorOnly,
+                    })
+                  }
+                  checked={filters.hasErrorOnly}
+                  size="sm"
+                />
               }
-              checked={filters.hasErrorOnly}
-              text={t`Has error`}
-              size="sm"
-            />
-            <MenuItemSwitch
-              LeftIcon={IconMessage}
-              onCheckedChange={() =>
-                onFiltersChange({
-                  ...filters,
-                  userNeverEngagedOnly: !filters.userNeverEngagedOnly,
-                })
+            >{t`Has error`}</ListItem>
+            <ListItem
+              startIcon={<IconMessage />}
+              render={<label />}
+              endIcon={
+                <Switch
+                  onCheckedChange={() =>
+                    onFiltersChange({
+                      ...filters,
+                      userNeverEngagedOnly: !filters.userNeverEngagedOnly,
+                    })
+                  }
+                  checked={filters.userNeverEngagedOnly}
+                  size="sm"
+                />
               }
-              checked={filters.userNeverEngagedOnly}
-              text={t`No user reply`}
-              size="sm"
-            />
+            >{t`No user reply`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

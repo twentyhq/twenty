@@ -12,8 +12,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { IconArchive, IconSettings } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
+import { SearchInput, Switch } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -139,21 +139,29 @@ export const SettingsAgentSkillsTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemSwitch
-                      LeftIcon={IconArchive}
-                      onCheckedChange={setShowDeactivated}
-                      checked={showDeactivated}
-                      text={t`Deactivated`}
-                      size="sm"
-                    />
+                    <ListItem
+                      startIcon={<IconArchive />}
+                      render={<label />}
+                      endIcon={
+                        <Switch
+                          onCheckedChange={setShowDeactivated}
+                          checked={showDeactivated}
+                          size="sm"
+                        />
+                      }
+                    >{t`Deactivated`}</ListItem>
                     {isAdvancedModeEnabled && (
-                      <MenuItemSwitch
-                        LeftIcon={IconSettings}
-                        onCheckedChange={setShowSystemSkills}
-                        checked={showSystemSkills}
-                        text={t`System skills`}
-                        size="sm"
-                      />
+                      <ListItem
+                        startIcon={<IconSettings />}
+                        render={<label />}
+                        endIcon={
+                          <Switch
+                            onCheckedChange={setShowSystemSkills}
+                            checked={showSystemSkills}
+                            size="sm"
+                          />
+                        }
+                      >{t`System skills`}</ListItem>
                     )}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

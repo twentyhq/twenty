@@ -15,6 +15,8 @@ import { type ListItemColor } from '@ui/primitives/navigation/ListItem/types/Lis
 import { type ListItemIndicator } from '@ui/primitives/navigation/ListItem/types/ListItemIndicator';
 import { type ListItemProps } from '@ui/primitives/navigation/ListItem/types/ListItemProps';
 
+import { ListItemSwitchExample } from './ListItemSwitchExample';
+
 const meta: Meta<typeof ListItem> = {
   title: 'UI/Navigation/ListItem',
   component: ListItem,
@@ -186,4 +188,10 @@ export const CatalogDark: CatalogStory<Story, typeof ListItem> = {
   ...Catalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
+};
+
+export const WithSwitch: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 240 } },
+  render: () => <ListItemSwitchExample />,
 };

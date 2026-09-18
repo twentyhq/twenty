@@ -1,47 +1,52 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { MenuItemSwitch } from '@ui/primitives/navigation/MenuItemSwitch/MenuItemSwitch';
-import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
+import { ListItemSwitchExample } from '@ui/primitives/navigation/ListItem/__stories__/ListItemSwitchExample';
+import { ComponentDecorator } from '@ui/testing';
 
-const meta: Meta<typeof MenuItemSwitch> = {
+const meta: Meta<typeof ListItemSwitchExample> = {
   title: 'UI/Input/Switch/Integrations',
-  component: MenuItemSwitch,
-  parameters: { container: { width: 300 }, a11y: A11Y_DEFER_COLOR_CONTRAST },
+  component: ListItemSwitchExample,
+  parameters: { container: { width: 300 } },
 };
 
 export default meta;
-type Story = StoryObj<typeof MenuItemSwitch>;
+type Story = StoryObj<typeof ListItemSwitchExample>;
 
-type MenuSwitchProps = { onCheckedChange?: (checked: boolean) => void };
-
-const MenuSwitch = ({ onCheckedChange }: MenuSwitchProps) => {
-  const [checked, setChecked] = useState(false);
-  return (
-    <MenuItemSwitch
-      text="Notifications"
-      checked={checked}
-      onCheckedChange={(nextChecked) => {
-        setChecked(nextChecked);
-        onCheckedChange?.(nextChecked);
-      }}
-    />
-  );
-};
-
-export const MenuItem: Story = {
+export const SettingsRow: Story = {
   decorators: [ComponentDecorator],
   args: { onCheckedChange: fn() },
-  render: (args) => <MenuSwitch {...args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const control = canvas.getByRole('switch', { name: 'Notifications' });
+
     await userEvent.click(control);
     await expect(control).toBeChecked();
     await expect(args.onCheckedChange).toHaveBeenCalledTimes(1);
+
     await userEvent.click(canvas.getByText('Notifications'));
     await expect(control).not.toBeChecked();
     await expect(args.onCheckedChange).toHaveBeenCalledTimes(2);
+
+    control.focus();
+    await userEvent.keyboard(' ');
+    await expect(control).toBeChecked();
+    await expect(args.onCheckedChange).toHaveBeenCalledTimes(3);
+  },
+};
+
+export const DisabledSettingsRow: Story = {
+  decorators: [ComponentDecorator],
+  args: { disabled: true, onCheckedChange: fn() },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const control = canvas.getByRole('switch', { name: 'Notifications' });
+
+    await userEvent.click(canvas.getByText('Notifications'));
+    await userEvent.click(control);
+
+    await expect(control).not.toBeChecked();
+    await expect(control).toHaveAttribute('aria-disabled', 'true');
+    await expect(args.onCheckedChange).not.toHaveBeenCalled();
   },
 };

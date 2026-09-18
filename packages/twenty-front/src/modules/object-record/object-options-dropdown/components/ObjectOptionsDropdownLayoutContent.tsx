@@ -34,10 +34,11 @@ import {
   IconTable,
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { Switch } from 'twenty-ui/primitives/input';
 import {
   MenuItem,
   MenuItemSelect,
-  MenuItemSwitch,
+  ListItem,
 } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
@@ -307,19 +308,23 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     );
                   }}
                 >
-                  <MenuItemSwitch
+                  <ListItem
                     focused={selectedItemId === 'Compact view'}
-                    LeftIcon={IconBaselineDensitySmall}
-                    onCheckedChange={() =>
-                      setAndPersistIsCompactModeActive(
-                        !isCompactModeActive,
-                        currentView,
-                      )
+                    startIcon={<IconBaselineDensitySmall />}
+                    render={<label />}
+                    endIcon={
+                      <Switch
+                        onCheckedChange={() =>
+                          setAndPersistIsCompactModeActive(
+                            !isCompactModeActive,
+                            currentView,
+                          )
+                        }
+                        checked={isCompactModeActive}
+                        size="sm"
+                      />
                     }
-                    checked={isCompactModeActive}
-                    text={t`Compact view`}
-                    size="sm"
-                  />
+                  >{t`Compact view`}</ListItem>
                 </SelectableListItem>
               )}
           </DropdownMenuItemsContainer>

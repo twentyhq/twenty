@@ -3,9 +3,10 @@ import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
 import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { IconCube } from 'twenty-ui/icon';
+import { Switch } from 'twenty-ui/primitives/input';
 import {
   MenuItemSelectAvatar,
-  MenuItemSwitch,
+  ListItem,
 } from 'twenty-ui/primitives/navigation';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
@@ -130,15 +131,19 @@ export const SidePanelObjectFilterDropdownContent = ({
       </SelectableList>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <MenuItemSwitch
-          LeftIcon={IconCube}
-          onCheckedChange={() =>
-            setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
+        <ListItem
+          startIcon={<IconCube />}
+          render={<label />}
+          endIcon={
+            <Switch
+              onCheckedChange={() =>
+                setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
+              }
+              checked={sidePanelShowHiddenObjects}
+              size="sm"
+            />
           }
-          checked={sidePanelShowHiddenObjects}
-          text={t`Show hidden objects`}
-          size="sm"
-        />
+        >{t`Show hidden objects`}</ListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );
