@@ -71,8 +71,13 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
         return null;
       }
 
-      const creditBalanceMicro =
-        await this.billingCreditGrantService.getActiveCreditsMicro(workspaceId);
+      const [creditBalanceMicro, earliestExpiry] = await Promise.all([
+        this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
+        this.billingCreditGrantService.findEarliestExpiryBefore({
+          workspaceId,
+          boundary: subscription.currentPeriodEnd,
+        }),
+      ]);
 
       return {
         periodStart: subscription.currentPeriodStart,
@@ -80,6 +85,7 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
         allowanceMicro:
           this.billingUsageService.getResourceUsageCap(subscription) +
           creditBalanceMicro,
+        validUntil: earliestExpiry ?? subscription.currentPeriodEnd,
       };
     } catch (error) {
       this.logger.error(

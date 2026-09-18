@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type EntityManager, IsNull, LessThan, MoreThan } from 'typeorm';
+import { And, type EntityManager, IsNull, LessThan, MoreThan } from 'typeorm';
 
 import {
   BillingException,
@@ -162,6 +162,25 @@ export class BillingCreditGrantService {
       ],
       order: { createdAt: 'ASC' },
     });
+  }
+
+  async findEarliestExpiryBefore({
+    workspaceId,
+    boundary,
+  }: {
+    workspaceId: string;
+    boundary: Date;
+  }): Promise<Date | null> {
+    const [row] = await this.billingCreditGrantRepository.find(workspaceId, {
+      where: {
+        revokedAt: IsNull(),
+        expiresAt: And(MoreThan(new Date()), LessThan(boundary)),
+      },
+      order: { expiresAt: 'ASC' },
+      take: 1,
+    });
+
+    return row?.expiresAt ?? null;
   }
 
   // The previous transition pulled every grant it closed back to the instant

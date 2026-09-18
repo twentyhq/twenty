@@ -808,13 +808,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     counter: AllowanceQuotaCounter | undefined;
     now: number;
   }): Promise<{ key: string; value: number; ttl: number }[]> {
-    if (!isDefined(counter)) {
-      return [];
-    }
-
-    const ttl = counter.periodEnd.getTime() - now;
-
-    if (ttl <= 0) {
+    if (!isDefined(counter) || counter.periodEnd.getTime() <= now) {
       return [];
     }
 
@@ -825,6 +819,14 @@ export class UsageLimitQuotaService implements OnModuleInit {
       !isDefined(allowance) ||
       allowance.periodStart.getTime() !== counter.periodStart.getTime()
     ) {
+      return [];
+    }
+
+    const ttl =
+      Math.min(counter.periodEnd.getTime(), allowance.validUntil.getTime()) -
+      now;
+
+    if (ttl <= 0) {
       return [];
     }
 
