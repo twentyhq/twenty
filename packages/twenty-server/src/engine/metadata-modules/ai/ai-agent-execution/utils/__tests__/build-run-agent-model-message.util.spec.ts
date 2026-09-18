@@ -151,9 +151,9 @@ describe('buildRunAgentModelMessageOrThrow', () => {
     });
   });
 
-  // A model config without modalities claims no file support at all, so every
-  // attachment degrades to text instead of risking a provider rejection. The
-  // agent still runs, and the text says which file was left out and why.
+  // Absent modalities are read as "declares no file support" rather than
+  // "unknown, pass through", so an undeclared model cannot reach the provider
+  // with a file it may reject.
   it('degrades every attachment when the model declares no modalities', () => {
     expect(
       buildRunAgentModelMessageOrThrow({
