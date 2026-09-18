@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { CoreWorkflowEventModule } from 'src/engine/core-modules/workflow/core-workflow-event.module';
 import { CoreWorkflowMigrationWriteModule } from 'src/engine/core-modules/workflow/core-workflow-migration-write.module';
 import { FlatWorkflowModule } from 'src/engine/metadata-modules/flat-workflow/flat-workflow.module';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
@@ -14,7 +13,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   imports: [
     TypeOrmModule.forFeature([WorkflowEntity, WorkspaceEntity]),
     WorkspaceCacheModule,
-    CoreWorkflowEventModule,
     CoreWorkflowMigrationWriteModule,
     FlatWorkflowModule,
   ],
@@ -22,6 +20,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkflowCoreSyncService,
     provideWorkspaceScopedRepository(WorkflowEntity),
   ],
-  exports: [TypeOrmModule, WorkflowCoreSyncService, CoreWorkflowEventModule],
+  exports: [TypeOrmModule, WorkflowCoreSyncService],
 })
 export class WorkflowCoreModule {}
