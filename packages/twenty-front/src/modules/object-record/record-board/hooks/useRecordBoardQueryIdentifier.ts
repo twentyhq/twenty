@@ -11,11 +11,11 @@ export const useRecordBoardQueryIdentifier = () => {
   // Newly shown fields are only fetched when this identifier changes
   const fetchedFieldNames = Object.keys(recordGqlFields).sort().join(',');
 
-  return (
-    getQueryIdentifier({
-      objectNameSingular: objectMetadataItem.nameSingular,
-      filter: combinedFilters,
-      orderBy,
-    }) + fetchedFieldNames
-  );
+  const baseQueryIdentifier = getQueryIdentifier({
+    objectNameSingular: objectMetadataItem.nameSingular,
+    filter: combinedFilters,
+    orderBy,
+  });
+
+  return `${baseQueryIdentifier}|fields:${fetchedFieldNames}`;
 };
