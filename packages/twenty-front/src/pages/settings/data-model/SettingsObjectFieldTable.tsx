@@ -25,9 +25,9 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useEffect, useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconCircleDashed, IconSettings } from 'twenty-ui/icon';
-import { SearchInput, Switch } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SearchInput } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMostlyEmptyFieldMetadataIds } from '@/settings/data-model/object-details/hooks/useMostlyEmptyFieldMetadataIds';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
@@ -183,47 +183,29 @@ export const SettingsObjectFieldTable = ({
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <ListItem
+                    <SettingsRow
                       startIcon={<IconArchive />}
-                      render={<label />}
-                      endIcon={
-                        <Switch
-                          onCheckedChange={() => setShowInactive(!showInactive)}
-                          checked={showInactive}
-                          size="sm"
-                        />
-                      }
-                    >{t`Inactive`}</ListItem>
+                      onCheckedChange={() => setShowInactive(!showInactive)}
+                      checked={showInactive}
+                    >{t`Inactive`}</SettingsRow>
                     {(mostlyEmptyFieldMetadataIds.size > 0 ||
                       showOnlyMostlyEmpty) && (
-                      <ListItem
+                      <SettingsRow
                         startIcon={<IconCircleDashed />}
-                        render={<label />}
-                        endIcon={
-                          <Switch
-                            onCheckedChange={() =>
-                              setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty)
-                            }
-                            checked={showOnlyMostlyEmpty}
-                            size="sm"
-                          />
+                        onCheckedChange={() =>
+                          setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty)
                         }
-                      >{t`Mostly empty`}</ListItem>
+                        checked={showOnlyMostlyEmpty}
+                      >{t`Mostly empty`}</SettingsRow>
                     )}
                     {isAdvancedModeEnabled && (
-                      <ListItem
+                      <SettingsRow
                         startIcon={<IconSettings />}
-                        render={<label />}
-                        endIcon={
-                          <Switch
-                            onCheckedChange={() =>
-                              setShowSystemFields(!showSystemFields)
-                            }
-                            checked={showSystemFields}
-                            size="sm"
-                          />
+                        onCheckedChange={() =>
+                          setShowSystemFields(!showSystemFields)
                         }
-                      >{t`System fields`}</ListItem>
+                        checked={showSystemFields}
+                      >{t`System fields`}</SettingsRow>
                     )}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

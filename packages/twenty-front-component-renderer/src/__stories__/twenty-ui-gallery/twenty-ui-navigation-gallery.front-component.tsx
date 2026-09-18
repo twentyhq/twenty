@@ -1,4 +1,3 @@
-import { Switch } from 'twenty-ui/primitives/input';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { IconHome, IconUser } from 'twenty-ui/icon';
 import {
@@ -184,23 +183,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'MenuItemSuggestion',
     node: <MenuItemSuggestion text="Suggestion" onClick={() => {}} />,
-  },
-  {
-    name: 'ListItem switch',
-    node: (
-      <ListItem
-        render={<label />}
-        endIcon={
-          <Switch
-            aria-label="Switch"
-            checked={true}
-            onCheckedChange={() => {}}
-          />
-        }
-      >
-        Switch
-      </ListItem>
-    ),
   },
   {
     name: 'MenuPicker',

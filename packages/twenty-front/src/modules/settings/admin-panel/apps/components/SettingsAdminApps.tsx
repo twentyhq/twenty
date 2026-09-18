@@ -21,7 +21,7 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { SettingsRow, Section } from 'twenty-ui/components';
 import {
   IconChevronRight,
   IconDotsVertical,
@@ -30,8 +30,7 @@ import {
 } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { useToast } from 'twenty-ui/primitives/feedback';
-import { Button, SearchInput, Switch } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Button, SearchInput } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebounce } from 'use-debounce';
 import {
@@ -218,95 +217,59 @@ export const SettingsAdminApps = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <ListItem
+                    <SettingsRow
                       startIcon={<IconPinned />}
-                      render={<label />}
-                      endIcon={
-                        <Switch
-                          onCheckedChange={() =>
-                            setShowPreInstalledOnly(!showPreInstalledOnly)
-                          }
-                          checked={showPreInstalledOnly}
-                          size="sm"
-                        />
+                      onCheckedChange={() =>
+                        setShowPreInstalledOnly(!showPreInstalledOnly)
                       }
-                    >{t`Pre-installed only`}</ListItem>
+                      checked={showPreInstalledOnly}
+                    >{t`Pre-installed only`}</SettingsRow>
                     <DropdownMenuSectionLabel label={t`Source`} />
                     {SOURCE_TYPE_FILTER_OPTIONS.map(({ sourceType, label }) => (
-                      <ListItem
+                      <SettingsRow
                         key={sourceType}
-                        render={<label />}
-                        endIcon={
-                          <Switch
-                            onCheckedChange={() =>
-                              toggleSourceTypeFilter(sourceType)
-                            }
-                            checked={sourceTypeFilters.includes(sourceType)}
-                            size="sm"
-                          />
+                        onCheckedChange={() =>
+                          toggleSourceTypeFilter(sourceType)
                         }
+                        checked={sourceTypeFilters.includes(sourceType)}
                       >
                         {label}
-                      </ListItem>
+                      </SettingsRow>
                     ))}
                     <DropdownMenuSectionLabel label={t`Listed`} />
-                    <ListItem
-                      render={<label />}
-                      endIcon={
-                        <Switch
-                          onCheckedChange={() =>
-                            setIsListedFilter(
-                              isListedFilter === true ? undefined : true,
-                            )
-                          }
-                          checked={isListedFilter === true}
-                          size="sm"
-                        />
+                    <SettingsRow
+                      onCheckedChange={() =>
+                        setIsListedFilter(
+                          isListedFilter === true ? undefined : true,
+                        )
                       }
-                    >{t`Listed`}</ListItem>
-                    <ListItem
-                      render={<label />}
-                      endIcon={
-                        <Switch
-                          onCheckedChange={() =>
-                            setIsListedFilter(
-                              isListedFilter === false ? undefined : false,
-                            )
-                          }
-                          checked={isListedFilter === false}
-                          size="sm"
-                        />
+                      checked={isListedFilter === true}
+                    >{t`Listed`}</SettingsRow>
+                    <SettingsRow
+                      onCheckedChange={() =>
+                        setIsListedFilter(
+                          isListedFilter === false ? undefined : false,
+                        )
                       }
-                    >{t`Not listed`}</ListItem>
+                      checked={isListedFilter === false}
+                    >{t`Not listed`}</SettingsRow>
                     <DropdownMenuSectionLabel label={t`Configured`} />
-                    <ListItem
-                      render={<label />}
-                      endIcon={
-                        <Switch
-                          onCheckedChange={() =>
-                            setIsConfiguredFilter(
-                              isConfiguredFilter === true ? undefined : true,
-                            )
-                          }
-                          checked={isConfiguredFilter === true}
-                          size="sm"
-                        />
+                    <SettingsRow
+                      onCheckedChange={() =>
+                        setIsConfiguredFilter(
+                          isConfiguredFilter === true ? undefined : true,
+                        )
                       }
-                    >{t`Configured`}</ListItem>
-                    <ListItem
-                      render={<label />}
-                      endIcon={
-                        <Switch
-                          onCheckedChange={() =>
-                            setIsConfiguredFilter(
-                              isConfiguredFilter === false ? undefined : false,
-                            )
-                          }
-                          checked={isConfiguredFilter === false}
-                          size="sm"
-                        />
+                      checked={isConfiguredFilter === true}
+                    >{t`Configured`}</SettingsRow>
+                    <SettingsRow
+                      onCheckedChange={() =>
+                        setIsConfiguredFilter(
+                          isConfiguredFilter === false ? undefined : false,
+                        )
                       }
-                    >{t`Not configured`}</ListItem>
+                      checked={isConfiguredFilter === false}
+                    >{t`Not configured`}</SettingsRow>
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }

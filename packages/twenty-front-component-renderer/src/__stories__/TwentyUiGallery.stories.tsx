@@ -1,4 +1,4 @@
-import { listItemSwitchRowTest } from '@/__stories__/twenty-ui-gallery/utils/listItemSwitchRowTest';
+import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
@@ -233,16 +233,16 @@ export const ListItemPreact: Story = createGalleryStory({
   play: listItemTest,
 });
 
-export const ListItemSwitchRowReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-list-item',
+export const SettingsRowReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-settings-row',
   runtime: 'react',
-  play: listItemSwitchRowTest,
+  play: settingsRowTest,
 });
 
-export const ListItemSwitchRowPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-list-item',
+export const SettingsRowPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-settings-row',
   runtime: 'preact',
-  play: listItemSwitchRowTest,
+  play: settingsRowTest,
 });
 
 export const TabsReact: Story = createGalleryStory({

@@ -22,12 +22,6 @@ export const listItemTest: TwentyUiGalleryPlayFunction = async ({
   );
   await userEvent.click(canvas.getByText('Disabled preference'));
   expect(canvas.getByRole('status')).toHaveTextContent('Digest: disabled');
-  await userEvent.click(canvas.getByText('Disabled notifications'));
-  await userEvent.click(
-    canvas.getByRole('switch', { name: 'Disabled notifications' }),
-  );
-  expect(canvas.getByText('Notifications: disabled; Changes: 0')).toBeVisible();
-
   const hiddenFields = canvas.getByRole('button', { name: 'Hidden fields' });
   await userEvent.click(hiddenFields);
   await waitFor(() => expect(canvas.getByText('Fields: open')).toBeVisible());

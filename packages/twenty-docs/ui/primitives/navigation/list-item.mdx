@@ -62,36 +62,7 @@ The default element is a `div`. Use `render` to give an interactive row appropri
 
 ## Settings row
 
-Render the row as a label and place a [Switch](/ui/primitives/input/switch) in `endIcon` to keep it visible. The label names the switch and makes the whole row clickable. Keep the change handler on the switch so each interaction updates the value once.
-
-<StoryEmbed
-  storyId="ui-navigation-listitem--with-switch"
-  title="Settings row example"
-  height={240}
-/>
-
-```tsx
-import { useState } from 'react';
-import { Switch } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-
-export const NotificationSetting = () => {
-  const [enabled, setEnabled] = useState(false);
-
-  return (
-    <ListItem
-      render={<label />}
-      endIcon={
-        <Switch checked={enabled} onCheckedChange={setEnabled} size="sm" />
-      }
-    >
-      Notifications
-    </ListItem>
-  );
-};
-```
-
-For a disabled setting, pass `disabled` to both `ListItem` and `Switch`. Avoid adding other interactive controls to the label.
+Use [SettingsRow](/ui/components/settings-row) for a labeled switch row. It composes `ListItem` and `Switch`, manages their accessible association, and applies disabled behavior to both.
 
 ## Selection indicator
 

@@ -1,15 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { SettingsRow, Section } from 'twenty-ui/components';
 import { IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
-import { SearchInput, Switch } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SearchInput } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
 import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSettingsAgentToolsTable';
@@ -94,39 +92,21 @@ export const SettingsAgentToolsTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <ListItem
+                    <SettingsRow
                       startIcon={<IconTool />}
-                      render={<label />}
-                      endIcon={
-                        <Switch
-                          onCheckedChange={setShowCustomTools}
-                          checked={showCustomTools}
-                          size="sm"
-                        />
-                      }
-                    >{t`Custom`}</ListItem>
-                    <ListItem
+                      onCheckedChange={setShowCustomTools}
+                      checked={showCustomTools}
+                    >{t`Custom`}</SettingsRow>
+                    <SettingsRow
                       startIcon={<IconLock />}
-                      render={<label />}
-                      endIcon={
-                        <Switch
-                          onCheckedChange={setShowManagedTools}
-                          checked={showManagedTools}
-                          size="sm"
-                        />
-                      }
-                    >{t`Managed`}</ListItem>
-                    <ListItem
+                      onCheckedChange={setShowManagedTools}
+                      checked={showManagedTools}
+                    >{t`Managed`}</SettingsRow>
+                    <SettingsRow
                       startIcon={<IconPuzzle />}
-                      render={<label />}
-                      endIcon={
-                        <Switch
-                          onCheckedChange={setShowStandardTools}
-                          checked={showStandardTools}
-                          size="sm"
-                        />
-                      }
-                    >{t`Standard`}</ListItem>
+                      onCheckedChange={setShowStandardTools}
+                      checked={showStandardTools}
+                    >{t`Standard`}</SettingsRow>
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }

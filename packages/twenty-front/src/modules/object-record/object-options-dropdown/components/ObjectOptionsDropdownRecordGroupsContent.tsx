@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
@@ -25,6 +24,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import {
   IconArrowsSort,
   IconChevronLeft,
@@ -33,7 +33,6 @@ import {
   IconLayoutList,
   IconPlus,
 } from 'twenty-ui/icon';
-import { Switch } from 'twenty-ui/primitives/input';
 import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
@@ -170,18 +169,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             itemId="HideEmptyGroups"
             onEnter={() => handleHideEmptyRecordGroupChange()}
           >
-            <ListItem
+            <SettingsRow
               focused={selectedItemId === 'HideEmptyGroups'}
               startIcon={<IconCircleOff />}
-              render={<label />}
-              endIcon={
-                <Switch
-                  onCheckedChange={handleHideEmptyRecordGroupChange}
-                  checked={shouldHideEmptyGroups}
-                  size="sm"
-                />
-              }
-            >{t`Hide empty groups`}</ListItem>
+              onCheckedChange={handleHideEmptyRecordGroupChange}
+              checked={shouldHideEmptyGroups}
+            >{t`Hide empty groups`}</SettingsRow>
           </SelectableListItem>
         </SelectableList>
       </DropdownMenuItemsContainer>

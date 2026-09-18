@@ -1,19 +1,18 @@
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
+import { SettingsRow, type SettingsRowProps } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { Switch, type SwitchProps } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type CommandMenuItemSwitchProps = {
   id: string;
   LeftIcon?: IconComponent;
   text: string;
   checked: boolean;
-  onCheckedChange?: SwitchProps['onCheckedChange'];
-  size?: SwitchProps['size'];
+  onCheckedChange?: SettingsRowProps['onCheckedChange'];
+  size?: SettingsRowProps['size'];
   disabled?: boolean;
   className?: string;
 };
@@ -48,8 +47,7 @@ export const CommandMenuItemSwitch = ({
   );
 
   return (
-    <ListItem
-      render={<label />}
+    <SettingsRow
       className={className}
       focused={isSelectedItemId}
       disabled={disabled}
@@ -60,16 +58,11 @@ export const CommandMenuItemSwitch = ({
           </StyledIconContainer>
         )
       }
-      endIcon={
-        <Switch
-          checked={checked}
-          onCheckedChange={onCheckedChange}
-          size={size}
-          disabled={disabled}
-        />
-      }
+      checked={checked}
+      onCheckedChange={onCheckedChange}
+      size={size}
     >
       {text}
-    </ListItem>
+    </SettingsRow>
   );
 };

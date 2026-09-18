@@ -15,5 +15,7 @@ export { MainButton } from './MainButton/MainButton';
 export { Section } from './Section/Section';
 export type { SectionHeaderProps } from './Section/types/SectionHeaderProps';
 export type { SectionRootProps } from './Section/types/SectionRootProps';
+export { SettingsRow } from './SettingsRow/SettingsRow';
+export type { SettingsRowProps } from './SettingsRow/types/SettingsRowProps';
 export { TabButton } from './TabButton/TabButton';
 export type { TabButtonProps } from './TabButton/types/TabButtonProps';

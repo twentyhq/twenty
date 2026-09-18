@@ -30,9 +30,9 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
-import { SearchInput, Switch } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SearchInput } from 'twenty-ui/primitives/input';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -176,33 +176,21 @@ export const SettingsObjectTable = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <ListItem
+                      <SettingsRow
                         startIcon={<IconArchive />}
-                        render={<label />}
-                        endIcon={
-                          <Switch
-                            onCheckedChange={() =>
-                              setShowDeactivated(!showDeactivated)
-                            }
-                            checked={showDeactivated}
-                            size="sm"
-                          />
+                        onCheckedChange={() =>
+                          setShowDeactivated(!showDeactivated)
                         }
-                      >{t`Deactivated`}</ListItem>
+                        checked={showDeactivated}
+                      >{t`Deactivated`}</SettingsRow>
                       {isAdvancedModeEnabled && (
-                        <ListItem
+                        <SettingsRow
                           startIcon={<IconSettings />}
-                          render={<label />}
-                          endIcon={
-                            <Switch
-                              onCheckedChange={() =>
-                                setShowSystemObjects(!showSystemObjects)
-                              }
-                              checked={showSystemObjects}
-                              size="sm"
-                            />
+                          onCheckedChange={() =>
+                            setShowSystemObjects(!showSystemObjects)
                           }
-                        >{t`System objects`}</ListItem>
+                          checked={showSystemObjects}
+                        >{t`System objects`}</SettingsRow>
                       )}
                     </DropdownMenuItemsContainer>
                   </DropdownContent>

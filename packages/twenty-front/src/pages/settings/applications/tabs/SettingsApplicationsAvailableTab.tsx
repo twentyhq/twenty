@@ -5,11 +5,10 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-import { Section } from 'twenty-ui/components';
+import { SettingsRow, Section } from 'twenty-ui/components';
 import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { IconSparkles } from 'twenty-ui/icon';
-import { SearchInput, Switch } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SearchInput } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
@@ -106,19 +105,11 @@ export const SettingsApplicationsAvailableTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <ListItem
+                    <SettingsRow
                       startIcon={<IconSparkles />}
-                      render={<label />}
-                      endIcon={
-                        <Switch
-                          onCheckedChange={() =>
-                            setShowVettedOnly(!showVettedOnly)
-                          }
-                          checked={showVettedOnly}
-                          size="sm"
-                        />
-                      }
-                    >{t`Vetted only`}</ListItem>
+                      onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
+                      checked={showVettedOnly}
+                    >{t`Vetted only`}</SettingsRow>
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }

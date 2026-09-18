@@ -25,6 +25,7 @@ import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import {
   IconBaselineDensitySmall,
   IconCalendar,
@@ -34,12 +35,7 @@ import {
   IconTable,
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { Switch } from 'twenty-ui/primitives/input';
-import {
-  MenuItem,
-  MenuItemSelect,
-  ListItem,
-} from 'twenty-ui/primitives/navigation';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
@@ -308,23 +304,17 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     );
                   }}
                 >
-                  <ListItem
+                  <SettingsRow
                     focused={selectedItemId === 'Compact view'}
                     startIcon={<IconBaselineDensitySmall />}
-                    render={<label />}
-                    endIcon={
-                      <Switch
-                        onCheckedChange={() =>
-                          setAndPersistIsCompactModeActive(
-                            !isCompactModeActive,
-                            currentView,
-                          )
-                        }
-                        checked={isCompactModeActive}
-                        size="sm"
-                      />
+                    onCheckedChange={() =>
+                      setAndPersistIsCompactModeActive(
+                        !isCompactModeActive,
+                        currentView,
+                      )
                     }
-                  >{t`Compact view`}</ListItem>
+                    checked={isCompactModeActive}
+                  >{t`Compact view`}</SettingsRow>
                 </SelectableListItem>
               )}
           </DropdownMenuItemsContainer>
