@@ -40,8 +40,6 @@ export const buildRunAgentModelMessageOrThrow = ({
       );
     }
 
-    // A media type the model cannot read is degraded to text rather than
-    // handed to the provider, which would reject the whole call.
     if (!supportedMediaTypes.has(resolvedAttachment.mediaType)) {
       const filename = isNonEmptyString(attachment.filename)
         ? attachment.filename

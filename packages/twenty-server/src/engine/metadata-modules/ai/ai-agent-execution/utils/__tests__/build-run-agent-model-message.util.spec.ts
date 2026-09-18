@@ -151,9 +151,6 @@ describe('buildRunAgentModelMessageOrThrow', () => {
     });
   });
 
-  // Absent modalities are read as "declares no file support" rather than
-  // "unknown, pass through", so an undeclared model cannot reach the provider
-  // with a file it may reject.
   it('degrades every attachment when the model declares no modalities', () => {
     expect(
       buildRunAgentModelMessageOrThrow({
