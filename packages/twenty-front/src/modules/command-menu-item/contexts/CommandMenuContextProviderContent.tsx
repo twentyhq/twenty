@@ -1,3 +1,5 @@
+import { useGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems';
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import {
   CommandMenuContext,
   type CommandMenuContextType,
@@ -9,6 +11,8 @@ import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
+import { mergeGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/mergeGlobalRecordCreationCommandMenuItems';
+import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import {
   currentPageLayoutIdState,
   PageLayoutIdContext,
@@ -17,6 +21,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useContext, useMemo } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 type CommandMenuContextProviderContentProps = {
   displayType: CommandMenuContextType['displayType'];
@@ -34,6 +39,15 @@ export const CommandMenuContextProviderContent = ({
   isInPreviewMode,
 }: CommandMenuContextProviderContentProps) => {
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
+  const {
+    hasGlobalRecordCreationCommandTemplate,
+    globalRecordCreationCommandMenuItems,
+  } = useGlobalRecordCreationCommandMenuItems(commandMenuItems);
+  const shouldDisplayGlobalRecordCreationCommands =
+    containerType === CommandMenuItemContainerType.CommandMenuList &&
+    hasGlobalRecordCreationCommandTemplate;
+  const isLayoutCustomizationAllowedOnCurrentPage =
+    useIsLayoutCustomizationAllowedOnCurrentPage();
   const commandMenuItemsDraft = useAtomStateValue(commandMenuItemsDraftState);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
   const pageLayoutIdFromContext = useContext(PageLayoutIdContext);
@@ -51,7 +65,13 @@ export const CommandMenuContextProviderContent = ({
       ? (commandMenuItemsDraft ?? commandMenuItems)
       : commandMenuItems;
 
-    return commandMenuItemsToDisplay
+    const contextCommandMenuItems = commandMenuItemsToDisplay
+      .filter(
+        (item) =>
+          item.engineComponentKey !==
+            EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
+          isLayoutCustomizationAllowedOnCurrentPage,
+      )
       .filter(
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
       )
@@ -64,16 +84,24 @@ export const CommandMenuContextProviderContent = ({
           commandMenuContextApi,
         ),
       )
-      .map((item) => resolveCommandMenuItemPinning(item, commandMenuContextApi))
-      .sort(
-        (firstItem, secondItem) => firstItem.position - secondItem.position,
+      .map((item) =>
+        resolveCommandMenuItemPinning(item, commandMenuContextApi),
       );
+
+    return mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: contextCommandMenuItems,
+      globalRecordCreationCommandMenuItems,
+      shouldDisplayGlobalRecordCreationCommands,
+    });
   }, [
     commandMenuContextApi,
+    globalRecordCreationCommandMenuItems,
+    shouldDisplayGlobalRecordCreationCommands,
     commandMenuItems,
     commandMenuItemsDraft,
     effectivePageLayoutId,
     isInPreviewMode,
+    isLayoutCustomizationAllowedOnCurrentPage,
   ]);
 
   return (

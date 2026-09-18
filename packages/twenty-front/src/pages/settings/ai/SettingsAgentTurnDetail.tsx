@@ -14,9 +14,8 @@ import { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type AgentMessage,
@@ -141,8 +140,8 @@ export const SettingsAgentTurnDetail = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Messages`}
             description={new Date(turn.createdAt).toLocaleString('en-US', {
               dateStyle: 'medium',
@@ -188,10 +187,10 @@ export const SettingsAgentTurnDetail = () => {
           ) : (
             <div>{t`No messages found for this turn`}</div>
           )}
-        </Section>
+        </Section.Root>
 
-        <Section>
-          <H2Title title={t`Evaluations`} />
+        <Section.Root>
+          <Section.Header title={t`Evaluations`} />
           {turn.evaluations.length > 0 ? (
             <StyledTableContainer>
               <Table>
@@ -227,8 +226,7 @@ export const SettingsAgentTurnDetail = () => {
                       <TableCell gap={themeCssVariables.spacing[2]}>
                         <Status
                           color={getScoreColor(evaluation.score)}
-                          text={`${evaluation.score}`}
-                        />
+                        >{`${evaluation.score}`}</Status>
                       </TableCell>
                       <TableCell
                         overflow="hidden"
@@ -244,7 +242,7 @@ export const SettingsAgentTurnDetail = () => {
           ) : (
             <div>{t`No evaluations yet for this turn`}</div>
           )}
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

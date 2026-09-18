@@ -3,15 +3,10 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
-import {
-  Avatar,
-  Chip,
-  ChipAccent,
-  ChipSize,
-  ChipVariant,
-} from 'twenty-ui/data-display';
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { IconBuildingSkyscraper, IconPlus } from 'twenty-ui/icon';
-import { Checkbox } from 'twenty-ui/input';
+
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 const PREVIEW_ROW_HEIGHT = 32;
@@ -74,23 +69,24 @@ export const OnboardingImportPreviewCompanies = () => {
         <StyledRow key={company.id}>
           <Checkbox checked={false} hoverable />
           <Chip
-            label={company.name}
-            size={ChipSize.Small}
-            variant={ChipVariant.Transparent}
-            accent={ChipAccent.TextPrimary}
-            clickable={false}
-            leftComponent={
+            size="sm"
+            variant="ghost"
+            color="primary"
+            startElement={
               <Avatar
-                type="squared"
+                shape="square"
                 size="md"
-                placeholder={company.name}
-                placeholderColorSeed={company.id}
-                avatarUrl={getAbsoluteImageUrl(
+                name={company.name}
+                colorSeed={company.id}
+                src={getAbsoluteImageUrl(
                   getLogoUrlFromDomainName(company.domainName),
                 )}
               />
             }
-          />
+            style={{ paddingInlineStart: 0 }}
+          >
+            {company.name}
+          </Chip>
         </StyledRow>
       ))}
     </StyledColumn>

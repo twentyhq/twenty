@@ -1,42 +1,35 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useDebouncedCallback } from 'use-debounce';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { Separator } from '@/settings/components/Separator';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
-import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsRoleDefaultRole } from '@/settings/roles/components/SettingsRolesDefaultRole';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
-import { SettingsSsoIdentitiesProvidersListCard } from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCard';
 import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SettingsSecurityEditableProfileFields } from '@/settings/security/components/SettingsSecurityEditableProfileFields';
+import { SettingsSsoIdentitiesProvidersListCard } from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCard';
 import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
 import { ImpersonationSwitch } from '@/settings/workspace/components/ImpersonationSwitch';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import {
-  IconClockHour8,
-  IconHistory,
-  IconMail,
-  IconTrash,
-} from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { Section } from 'twenty-ui/components';
+import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useDebouncedCallback } from 'use-debounce';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
+
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -55,7 +48,7 @@ const StyledSectionContainer = styled.div`
 
 export const SettingsSecuritySettings = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
@@ -78,9 +71,7 @@ export const SettingsSecuritySettings = () => {
         },
       });
     } catch (err) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error: err }));
     }
   }, 500);
 
@@ -94,9 +85,7 @@ export const SettingsSecuritySettings = () => {
         },
       });
     } catch (err) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error: err }));
     }
   }, 500);
 
@@ -115,33 +104,6 @@ export const SettingsSecuritySettings = () => {
     });
 
     saveTrashRetention(value);
-  };
-
-  const handleSyncInternalEmailsChange = (value: boolean) => {
-    if (!currentWorkspace) {
-      return;
-    }
-
-    if (value === currentWorkspace.isInternalMessagesImportEnabled) {
-      return;
-    }
-
-    setCurrentWorkspace({
-      ...currentWorkspace,
-      isInternalMessagesImportEnabled: value,
-    });
-
-    updateWorkspace({
-      variables: {
-        input: {
-          isInternalMessagesImportEnabled: value,
-        },
-      },
-    }).catch((err) => {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
-    });
   };
 
   const handleEventLogRetentionDaysChange = (value: number) => {
@@ -186,57 +148,57 @@ export const SettingsSecuritySettings = () => {
       <SettingsRolesQueryEffect />
       <StyledMainContent>
         <StyledSectionContainer>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`SSO`}
               description={t`Configure an SSO connection`}
               adornment={<OrganizationAdornment />}
             />
             <SettingsSsoIdentitiesProvidersListCard />
-          </Section>
+          </Section.Root>
         </StyledSectionContainer>
 
-        <Section>
+        <Section.Root>
           <StyledContainer>
-            <H2Title
+            <Section.Header
               title={t`Authentication`}
               description={t`Customize your workspace security`}
             />
             <SettingsSecurityAuthProvidersOptionsList />
           </StyledContainer>
-        </Section>
-        <Section>
+        </Section.Root>
+        <Section.Root>
           <StyledContainer>
-            <H2Title
+            <Section.Header
               title={t`Editable Profile Fields`}
               description={t`Choose which profile fields users with the Edit Profile permission can modify`}
             />
             <SettingsSecurityEditableProfileFields />
           </StyledContainer>
-        </Section>
+        </Section.Root>
         <SettingsRoleDefaultRole roles={roles} />
         {shouldShowBypassSection && (
-          <Section>
+          <Section.Root>
             <StyledContainer>
-              <H2Title
+              <Section.Header
                 title={t`SSO Bypass`}
                 description={t`Configure fallback login methods for users with SSO bypass permissions`}
               />
               <SettingsSecurityAuthBypassOptionsList />
             </StyledContainer>
-          </Section>
+          </Section.Root>
         )}
         {isMultiWorkspaceEnabled && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Support`}
               description={t`Manage support access settings`}
             />
             <ImpersonationSwitch />
-          </Section>
+          </Section.Root>
         )}
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Audit Logs`}
             description={t`Configure how long audit logs are retained`}
             adornment={<OrganizationAdornment />}
@@ -264,14 +226,17 @@ export const SettingsSecuritySettings = () => {
             </Card>
           ) : (
             <SettingsEnterpriseFeatureGateCard
-              title={t`Enterprise feature`}
-              description={t`Upgrade to Enterprise to access audit logs.`}
+              title={t`Organization feature`}
+              description={t`Upgrade to Organization to access audit logs.`}
               buttonTitle={t`Activate`}
             />
           )}
-        </Section>
-        <Section>
-          <H2Title title={t`Other`} description={t`Other security settings`} />
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
+            title={t`Other`}
+            description={t`Other security settings`}
+          />
           <Card rounded>
             <SettingsOptionCardContentCounter
               Icon={IconTrash}
@@ -282,19 +247,8 @@ export const SettingsSecuritySettings = () => {
               minValue={0}
               showButtons={false}
             />
-            <Separator />
-            <SettingsOptionCardContentSwitch
-              Icon={IconMail}
-              title={t`Sync Internal Emails`}
-              description={t`Include emails where all participants share the same domain.`}
-              checked={
-                currentWorkspace?.isInternalMessagesImportEnabled ?? false
-              }
-              onChange={handleSyncInternalEmailsChange}
-              advancedMode
-            />
           </Card>
-        </Section>
+        </Section.Root>
       </StyledMainContent>
     </>
   );

@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     const priceId = getEnterprisePriceId(billingInterval);
     const websiteUrl = process.env.NEXT_PUBLIC_WEBSITE_URL;
     const defaultSuccessUrl = websiteUrl
-      ? `${websiteUrl}/enterprise/activate?session_id={CHECKOUT_SESSION_ID}`
+      ? `${websiteUrl}/organization/activate?session_id={CHECKOUT_SESSION_ID}`
       : undefined;
     const successUrl =
       typeof body.successUrl === 'string' ? body.successUrl : defaultSuccessUrl;

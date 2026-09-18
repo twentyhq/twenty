@@ -37,6 +37,7 @@ import { MessageCampaignScheduleService } from 'src/modules/emailing/services/me
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domain/utils/count-delivered-recipients.util';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -47,6 +48,7 @@ import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emai
   EmailGroupAccessGraphqlApiExceptionFilter,
   EmailingDomainGraphqlApiExceptionFilter,
   ThrottlerGraphqlApiExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -64,7 +66,6 @@ export class EmailingSendResolver {
   ) {}
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
   async sendEmailViaEmailingDomain(
     @Args('input') input: SendEmailViaDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -93,7 +94,7 @@ export class EmailingSendResolver {
   }
 
   @Mutation(() => SendMessageCampaignOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async sendMessageCampaign(
     @Args('input') input: SendMessageCampaignInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -121,7 +122,7 @@ export class EmailingSendResolver {
   }
 
   @Mutation(() => CancelMessageCampaignOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async cancelMessageCampaign(
     @Args('input') input: CancelMessageCampaignInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -137,7 +138,7 @@ export class EmailingSendResolver {
   }
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async sendMessageCampaignTest(
     @Args('input') input: SendMessageCampaignTestInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -162,7 +163,7 @@ export class EmailingSendResolver {
   }
 
   @Query(() => CampaignAudiencePreviewDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async previewMessageCampaignAudience(
     @Args('input') input: PreviewMessageCampaignAudienceInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,

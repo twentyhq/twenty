@@ -5,7 +5,7 @@ import { useContext, useState } from 'react';
 import { type DataMessagePart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp, IconCpu } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`

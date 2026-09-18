@@ -13,6 +13,8 @@ export const ACTION_TOOL_IDS = [
   'code_interpreter',
   'navigate_app',
   'save_campaign',
+  'create_file_upload',
+  'complete_file_upload',
 ] as const;
 
 export type ActionToolId = (typeof ACTION_TOOL_IDS)[number];
@@ -44,5 +46,11 @@ export const ACTION_TOOL_LABELS: Record<ActionToolId, ActionToolLabel> = {
   },
   save_campaign: {
     label: i18nLabel(msg`Save Campaign`),
+  },
+  create_file_upload: {
+    label: i18nLabel(msg`Create File Upload`),
+  },
+  complete_file_upload: {
+    label: i18nLabel(msg`Complete File Upload`),
   },
 };

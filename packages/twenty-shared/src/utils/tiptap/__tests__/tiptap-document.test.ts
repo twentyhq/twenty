@@ -120,6 +120,30 @@ describe('TipTap document primitives', () => {
     );
   });
 
+  it('projects skill tags to skill references in Markdown', () => {
+    expect(
+      tipTapDocumentToMarkdown({
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: 'Use ' },
+              {
+                type: 'skillTag',
+                attrs: {
+                  skillId: 'skill-id',
+                  name: 'workflow-building',
+                  label: 'Workflow building',
+                },
+              },
+            ],
+          },
+        ],
+      }),
+    ).toBe('Use [[skill:skill-id:Workflow building]]');
+  });
+
   it('preserves nested list hierarchy in Markdown projections', () => {
     expect(
       tipTapDocumentToMarkdown({

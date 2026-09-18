@@ -6,13 +6,13 @@ import { type UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-res
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
+import { WorkflowVersionQueryValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @WorkspaceQueryHook(`workflowVersion.updateOne`)
 export class WorkflowVersionUpdateOnePreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
-    private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
+    private readonly workflowVersionQueryValidationWorkspaceService: WorkflowVersionQueryValidationWorkspaceService,
   ) {}
 
   async execute(
@@ -24,7 +24,7 @@ export class WorkflowVersionUpdateOnePreQueryHook implements WorkspacePreQueryHo
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.workflowVersionValidationWorkspaceService.validateWorkflowVersionForUpdateOne(
+    await this.workflowVersionQueryValidationWorkspaceService.validateWorkflowVersionForUpdateOne(
       {
         workspaceId: workspace.id,
         payload,

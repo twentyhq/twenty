@@ -9,12 +9,12 @@ import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 
-import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
+import { DIALOG_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/dialog/constants/DialogBackdropClickOutsideId';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
-import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/data-display';
+import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/primitives/data-display';
 
 export const RecordBoardClickOutsideEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
@@ -34,7 +34,7 @@ export const RecordBoardClickOutsideEffect = () => {
     excludedClickOutsideIds: [
       COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID,
       COMMAND_MENU_CLICK_OUTSIDE_ID,
-      MODAL_BACKDROP_CLICK_OUTSIDE_ID,
+      DIALOG_BACKDROP_CLICK_OUTSIDE_ID,
       PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID,
       RECORD_BOARD_CARD_CLICK_OUTSIDE_ID,
       LINK_CHIP_CLICK_OUTSIDE_ID,

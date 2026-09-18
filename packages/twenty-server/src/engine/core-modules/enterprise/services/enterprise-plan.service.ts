@@ -28,7 +28,7 @@ import {
   type EnterpriseKeyPayload,
   type EnterpriseLicenseInfo,
   type EnterpriseValidityPayload,
-} from 'src/engine/core-modules/enterprise/types/enterprise-key-payload.type';
+} from 'src/engine/core-modules/enterprise/types/organization-key-payload.type';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import {
   ConfigVariableException,

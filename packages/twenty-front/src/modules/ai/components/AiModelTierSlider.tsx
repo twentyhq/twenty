@@ -1,23 +1,19 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ChangeEvent, useContext, useId } from 'react';
+import { type ChangeEvent } from 'react';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBolt, IconBrain, IconCoins } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AiModelTierInformationButton } from '@/ai/components/AiModelTierInformationButton';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
-import { formatPercentDelta } from '@/ai/utils/formatPercentDelta';
-import { formatNumber } from '~/utils/format/formatNumber';
 
 const TRACK_HEIGHT_PX = 24;
-const TRACK_INSET_PX = 2;
+const TRACK_INSET_PX = 0;
 const DOT_CENTER_INSET_PX = 18;
 const HANDLE_WIDTH_PX = 12;
 const HANDLE_HEIGHT_PX = 28;
 const LAST_STEP = AI_MODEL_TIERS.length - 1;
-const BALANCED_STEP = AI_MODEL_TIERS.indexOf('balanced');
 
 const StyledContainer = styled.div`
   display: flex;
@@ -40,25 +36,6 @@ const StyledTitle = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`;
-
-const StyledMetrics = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledMetric = styled.span<{ isInherited: boolean }>`
-  align-items: center;
-  color: ${({ isInherited }) =>
-    isInherited
-      ? themeCssVariables.font.color.light
-      : themeCssVariables.font.color.tertiary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: 2px;
 `;
 
 const StyledTrack = styled.div<{ disabled: boolean }>`
@@ -86,10 +63,15 @@ const StyledFill = styled.div`
   left: ${TRACK_INSET_PX}px;
   position: absolute;
   top: ${TRACK_INSET_PX}px;
+  transition: width 180ms cubic-bezier(0.22, 1, 0.36, 1);
   width: calc(
     ${DOT_CENTER_INSET_PX - TRACK_INSET_PX + HANDLE_WIDTH_PX / 2}px +
       var(--slider-step) * (100% - ${2 * DOT_CENTER_INSET_PX}px) / ${LAST_STEP}
   );
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const StyledDots = styled.div`
@@ -104,16 +86,22 @@ const StyledDot = styled.span<{ isReached: boolean }>`
   align-self: center;
   background: ${({ isReached }) =>
     isReached
-      ? themeCssVariables.background.primary
+      ? // oxlint-disable-next-line twenty/no-hardcoded-colors -- Dots must remain translucent white over the blue track in both themes.
+        'rgba(255, 255, 255, 0.386)'
       : themeCssVariables.border.color.strong};
   border-radius: ${themeCssVariables.border.radius.rounded};
   corner-shape: round;
   height: 4px;
+  transition: background-color 180ms ease-out;
   width: 4px;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const StyledHandle = styled.div`
-  background: ${themeCssVariables.background.primary};
+  background: white;
   border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.light};
   corner-shape: round;
@@ -153,55 +141,10 @@ export const AiModelTierSlider = ({
   disabled = false,
 }: AiModelTierSliderProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const tiers = useAiModelTiers();
-  const tooltipId = useId().replace(/:/g, '');
 
   const selectedStep = AI_MODEL_TIERS.indexOf(selectedTier);
   const resolvedTier = tiers[selectedStep];
-  const model = resolvedTier.model;
-
-  // The base model's reading stands in until the sync measures this effort.
-  const isBenchmarkInherited = model?.isBenchmarkInherited ?? false;
-  const inheritedNote = isBenchmarkInherited
-    ? t` Not measured at this effort yet, so this is the base model's reading.`
-    : '';
-
-  // Below Balanced the gain is speed, above it intelligence; cost moves with
-  // both, so each side shows the two figures that explain the trade.
-  const metrics = [
-    ...(selectedStep < BALANCED_STEP
-      ? [
-          {
-            key: 'speed',
-            Icon: IconBolt,
-            deltaPercent: resolvedTier.speedDeltaPercent,
-            description: t`${formatNumber(model?.outputTokensPerSecond ?? 0)} tokens per second`,
-          },
-        ]
-      : []),
-    ...(selectedStep !== BALANCED_STEP
-      ? [
-          {
-            key: 'cost',
-            Icon: IconCoins,
-            deltaPercent: resolvedTier.costDeltaPercent,
-            description: t`cost per task`,
-          },
-        ]
-      : []),
-    ...(selectedStep > BALANCED_STEP
-      ? [
-          {
-            key: 'intelligence',
-            Icon: IconBrain,
-            deltaPercent: resolvedTier.intelligenceDeltaPercent,
-            description: t`intelligence index ${formatNumber(model?.intelligenceIndex ?? 0)}`,
-          },
-        ]
-      : []),
-  ].filter((metric) => isDefined(metric.deltaPercent));
-
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const tier = AI_MODEL_TIERS[Number(event.target.value)];
 
@@ -213,21 +156,8 @@ export const AiModelTierSlider = ({
   return (
     <StyledContainer>
       <StyledHeader>
-        <StyledTitle title={model?.label}>
-          {title ?? resolvedTier.label}
-        </StyledTitle>
-        <StyledMetrics>
-          {metrics.map(({ key, Icon, deltaPercent }) => (
-            <StyledMetric
-              key={key}
-              id={`ai-model-tier-${key}-${tooltipId}`}
-              isInherited={isBenchmarkInherited}
-            >
-              <Icon size={theme.icon.size.md} />
-              {formatPercentDelta(deltaPercent ?? 0)}
-            </StyledMetric>
-          ))}
-        </StyledMetrics>
+        <StyledTitle>{title ?? resolvedTier.label}</StyledTitle>
+        <AiModelTierInformationButton resolvedTier={resolvedTier} />
       </StyledHeader>
       <StyledTrack
         disabled={disabled}
@@ -253,16 +183,6 @@ export const AiModelTierSlider = ({
           aria-valuetext={resolvedTier.label}
         />
       </StyledTrack>
-      {isDefined(model) &&
-        metrics.map(({ key, description }) => (
-          <AppTooltip
-            key={key}
-            anchorSelect={`#ai-model-tier-${key}-${tooltipId}`}
-            title={`${t`${model.label}: ${description}, compared with the Balanced tier.`}${inheritedNote}`}
-            delay={TooltipDelay.shortDelay}
-            place="bottom"
-          />
-        ))}
     </StyledContainer>
   );
 };

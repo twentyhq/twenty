@@ -1,14 +1,15 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceCreditGrantRowDropdownMenu } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu';
 import { CREDIT_GRANT_TYPE_COLORS } from '@/settings/admin-panel/constants/CreditGrantTypeColors';
@@ -20,12 +21,11 @@ import {
   type CollapsedCreditGrant,
 } from '@/settings/admin-panel/utils/collapseCreditGrantChains';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { beautifyExactDate } from '~/utils/date-utils';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { type WorkspaceBillingAdminPanelQuery } from '~/generated-admin/graphql';
+import { beautifyExactDate } from '~/utils/date-utils';
 
 type CreditGrant = NonNullable<
   WorkspaceBillingAdminPanelQuery['workspaceBillingAdminPanel']
@@ -68,9 +68,9 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
 }: SettingsAdminWorkspaceCreditGrantsTableProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const apolloAdminClient = useApolloAdminClient();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const [grantPendingRevocation, setGrantPendingRevocation] =
     useState<CreditGrant | null>(null);
@@ -91,7 +91,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
 
   const handleRevokeClick = (creditGrant: CreditGrant) => {
     setGrantPendingRevocation(creditGrant);
-    openModal(REVOKE_CREDIT_GRANT_MODAL_ID);
+    openDialog(REVOKE_CREDIT_GRANT_MODAL_ID);
   };
 
   const handleRevoke = async (creditGrantId: string) => {
@@ -105,11 +105,9 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
         variables: { workspaceId, creditGrantId },
       });
 
-      enqueueSuccessSnackBar({ message: t`Credit grant revoked.` });
+      enqueueToast({ variant: 'success', children: t`Credit grant revoked.` });
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     } finally {
       setIsRevoking(false);
       setGrantPendingRevocation(null);
@@ -130,10 +128,9 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
           {
             label: t`Type`,
             Cell: ({ item }) => (
-              <Tag
-                color={CREDIT_GRANT_TYPE_COLORS[item.current.type]}
-                text={t(CREDIT_GRANT_TYPE_LABELS[item.current.type])}
-              />
+              <Tag color={CREDIT_GRANT_TYPE_COLORS[item.current.type]}>
+                {t(CREDIT_GRANT_TYPE_LABELS[item.current.type])}
+              </Tag>
             ),
           },
           {
@@ -141,7 +138,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
             Cell: ({ item }) => {
               const status = getStatus(item.current);
 
-              return <Tag color={status.color} text={t(status.label)} />;
+              return <Tag color={status.color}>{t(status.label)}</Tag>;
             },
           },
           {
@@ -184,8 +181,8 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
         onFooterButtonClick={onGrantCreditsClick}
       />
 
-      <ConfirmationModal
-        modalInstanceId={REVOKE_CREDIT_GRANT_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={REVOKE_CREDIT_GRANT_MODAL_ID}
         title={t`Revoke credit grant`}
         subtitle={
           isDefined(grantPendingRevocation)

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { isUndefined } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 
@@ -21,9 +22,8 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { type IconComponent } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
 export type SingleRecordPickerMenuItemsProps = {
   EmptyIcon?: IconComponent;
@@ -48,9 +48,7 @@ export const SingleRecordPickerMenuItems = ({
     );
 
   const selectableListComponentInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(
-      getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId),
-    );
+    getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
@@ -98,6 +96,9 @@ export const SingleRecordPickerMenuItems = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={selectableItemIds}
       focusId={focusId}
+      // The empty option leads the list, so preselecting it would make Enter
+      // detach the relation instead of picking a record.
+      shouldPreselectFirstItem={!isDefined(emptyLabel)}
     >
       {emptyLabel && (
         <SelectableListItem

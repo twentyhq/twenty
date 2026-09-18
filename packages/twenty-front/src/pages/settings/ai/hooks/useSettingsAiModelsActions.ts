@@ -1,3 +1,4 @@
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { type AiModelTier } from 'twenty-shared/ai';
@@ -7,7 +8,6 @@ import {
   currentWorkspaceState,
   type CurrentWorkspace,
 } from '@/auth/states/currentWorkspaceState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import {
   AiModelTier as GraphqlAiModelTier,
@@ -28,7 +28,7 @@ type WorkspaceAiModelSettingsChanges = Partial<
 >;
 
 export const useSettingsAiModelsActions = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -46,7 +46,10 @@ export const useSettingsAiModelsActions = () => {
       await updateWorkspace({ variables: { input: changes } });
     } catch {
       setCurrentWorkspace(previousWorkspace);
-      enqueueErrorSnackBar({ message: t`Failed to update model settings` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to update model settings`,
+      });
     }
   };
 

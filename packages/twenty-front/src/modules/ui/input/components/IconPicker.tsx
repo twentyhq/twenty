@@ -2,24 +2,21 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
-import React, {
-  type ReactNode,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import React, { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ColorSample } from 'twenty-ui/data-display';
+import {
+  ColorSample,
+  getIconTileColorShades,
+} from 'twenty-ui/primitives/data-display';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
 import {
-  IconButton,
-  type IconButtonSize,
-  type IconButtonVariant,
+  type ButtonSize,
+  type ButtonVariant,
   LightIconButton,
-} from 'twenty-ui/input';
+} from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { type ThemeColor } from 'twenty-ui/theme';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
@@ -42,7 +39,6 @@ import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contex
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 export type IconPickerProps = {
@@ -53,13 +49,14 @@ export type IconPickerProps = {
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
-  variant?: IconButtonVariant;
+  variant?: ButtonVariant;
   className?: string;
-  size?: IconButtonSize;
+  size?: ButtonSize;
   clickableComponent?: ReactNode;
   dropdownWidth?: number;
   dropdownOffset?: DropdownOffset;
   maxIconsVisible?: number;
+  iconColor?: ThemeColor;
   iconColorPicker?: {
     selectedColor: ThemeColor;
     onColorChange: (color: ThemeColor) => void;
@@ -241,8 +238,6 @@ const IconPickerIcon = ({
   focusedIconKey,
   color,
 }: IconPickerIconProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     iconKey,
@@ -262,7 +257,11 @@ const IconPickerIcon = ({
             <Icon
               // oxlint-disable-next-line react/jsx-props-no-spreading
               {...iconProps}
-              color={isDefined(color) ? theme.color[color] : iconProps.color}
+              color={
+                isDefined(color)
+                  ? getIconTileColorShades(color).iconColor
+                  : iconProps.color
+              }
             />
           )}
           onClick={onSelect}
@@ -280,14 +279,15 @@ export const IconPicker = ({
   onClickOutside,
   onClose,
   onOpen,
-  variant = 'secondary',
+  variant = 'outline',
   className,
-  size = 'medium',
+  size = 'md',
   clickableComponent,
   dropdownWidth,
   dropdownOffset,
   maxIconsVisible,
   iconColorPicker,
+  iconColor,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
@@ -395,16 +395,16 @@ export const IconPicker = ({
     [matchingSearchIconKeys],
   );
 
-  const { theme } = useContext(ThemeContext);
-
   const BaseIcon = selectedIconKey ? getIcon(selectedIconKey) : IconApps;
 
-  const displayIcon: IconComponent = !isDefined(iconColorPicker)
+  const selectedColor = iconColorPicker?.selectedColor ?? iconColor;
+
+  const DisplayIcon: IconComponent = !isDefined(selectedColor)
     ? BaseIcon
     : (iconProps) => (
         <BaseIcon
           className={iconProps.className}
-          color={theme.color[iconColorPicker.selectedColor]}
+          color={getIconTileColorShades(selectedColor).iconColor}
           size={iconProps.size}
           stroke={iconProps.stroke}
           style={iconProps.style}
@@ -412,9 +412,7 @@ export const IconPicker = ({
       );
 
   const iconColorPickerDropdownId = `${dropdownId}-icon-color-picker`;
-
-  const selectableListInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId('icon-list');
+  const selectableListInstanceId = `${dropdownId}-icon-list`;
 
   const focusedIconKey =
     useAtomComponentStateValue(
@@ -441,12 +439,13 @@ export const IconPicker = ({
         clickableComponent={
           clickableComponent ?? (
             <IconButton
-              ariaLabel={t`Click to select icon ${iconAriaLabel}`}
+              aria-label={t`Click to select icon ${iconAriaLabel}`}
               disabled={disabled}
-              Icon={displayIcon}
               variant={variant}
               size={size}
-            />
+            >
+              <DisplayIcon />
+            </IconButton>
           )
         }
         dropdownComponents={
@@ -486,7 +485,7 @@ export const IconPicker = ({
                           selectedIconKey={selectedIconKey}
                           Icon={getIcon(iconKey)}
                           focusedIconKey={focusedIconKey}
-                          color={iconColorPicker?.selectedColor}
+                          color={selectedColor}
                         />
                       ))}
                     </StyledMenuIconItemsContainer>

@@ -97,7 +97,7 @@ describe('Webhook rate limiting', () => {
 
     await makeAdminPanelAPIRequest({
       query: CREATE_CONFIG_VARIABLE_MUTATION,
-      variables: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: false },
+      variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: ['*'] },
     });
 
     await featureFlagRepository.delete({
@@ -161,7 +161,7 @@ describe('Webhook rate limiting', () => {
     });
     await makeAdminPanelAPIRequest({
       query: DELETE_CONFIG_VARIABLE_MUTATION,
-      variables: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED' },
+      variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS' },
     }).catch(() => {});
 
     await invalidateWorkspaceCaches();

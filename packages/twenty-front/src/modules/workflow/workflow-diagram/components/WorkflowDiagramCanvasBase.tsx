@@ -69,7 +69,7 @@ import React, {
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS } from 'twenty-shared/workflow';
-import { Tag, type TagColor } from 'twenty-ui/data-display';
+import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledResetReactflowStyles = styled.div`
   --xy-node-background-color: none;
@@ -680,7 +680,7 @@ export const WorkflowDiagramCanvasBase = ({
       )}
 
       <StyledStatusTagContainer data-testid={tagContainerTestId}>
-        <Tag color={tagColor} text={tagText} />
+        <Tag color={tagColor}>{tagText}</Tag>
       </StyledStatusTagContainer>
     </StyledResetReactflowStyles>
   );

@@ -1,7 +1,12 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
 import {
+  DEFAULT_SELECT_OPTION_COLOR,
+  TAG_COLORS,
+} from 'twenty-shared/constants';
+import {
   type FieldMetadataDefaultValue,
   FieldMetadataType,
+  PageLayoutWidgetVerticalListHeightBehavior,
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -415,7 +420,11 @@ export const computeMetadataSchemaComponents = (
                 items: {
                   type: 'object',
                   properties: {
-                    color: { type: 'string' },
+                    color: {
+                      type: 'string',
+                      enum: [...TAG_COLORS],
+                      default: DEFAULT_SELECT_OPTION_COLOR,
+                    },
                     label: { type: 'string' },
                     value: {
                       type: 'string',
@@ -1251,6 +1260,13 @@ export const computeMetadataSchemaComponents = (
                 properties: {
                   layoutMode: { type: 'string', enum: ['VERTICAL_LIST'] },
                   index: { type: 'integer', minimum: 0 },
+                  heightBehavior: {
+                    type: 'string',
+                    enum: [
+                      PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT,
+                      PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+                    ],
+                  },
                 },
                 required: ['layoutMode', 'index'],
               },

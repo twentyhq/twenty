@@ -1,0 +1,18 @@
+.button {
+  @include square-button;
+}
+
+.tooltipAnchor {
+  display: inline-flex;
+}
+
+.icon {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+  & > svg {
+    block-size: calc(var(--t-icon-size-md) * 1px);
+    inline-size: calc(var(--t-icon-size-md) * 1px);
+  }
+}

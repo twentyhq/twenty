@@ -1,5 +1,6 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '@/ui/utilities/scroll/hooks/useScrollRestoration';
 import { styled } from '@linaria/react';
@@ -28,6 +29,10 @@ const StyledSettingsPageContainer = styled.div<{
   isInSidePanel?: boolean;
   overflow?: 'auto' | 'visible';
 }>`
+  --settings-page-container-padding-top: ${({ isInSidePanel }) =>
+    isInSidePanel
+      ? themeCssVariables.spacing[4]
+      : themeCssVariables.spacing[6]};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -35,10 +40,12 @@ const StyledSettingsPageContainer = styled.div<{
   margin: 0 auto;
   max-width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
   overflow: ${({ overflow = 'auto' }) => overflow};
-  padding: ${({ isInSidePanel }) =>
-    isInSidePanel
-      ? `${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[8]}`
-      : `${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[8]}`};
+  padding: var(--settings-page-container-padding-top)
+    ${({ isInSidePanel }) =>
+      isInSidePanel
+        ? themeCssVariables.spacing[4]
+        : themeCssVariables.spacing[8]}
+    ${themeCssVariables.spacing[8]};
   padding-bottom: ${themeCssVariables.spacing[20]};
   width: ${({ width, isMobile }) => {
     if (isDefined(width)) {
@@ -63,7 +70,9 @@ export const SettingsPageContainer = ({
   const location = useLocation();
   const settingsPath = getMatchingSettingsPath(location.pathname);
 
-  const componentInstanceId = `scroll-wrapper-settings-page-container-${settingsPath}`;
+  const componentInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    `scroll-wrapper-settings-page-container-${settingsPath}`,
+  );
 
   useScrollRestoration(componentInstanceId);
 

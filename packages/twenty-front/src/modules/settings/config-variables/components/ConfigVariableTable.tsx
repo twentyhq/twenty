@@ -7,7 +7,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { t } from '@lingui/core/macro';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useContext } from 'react';
 
 const StyledTableBodyContainer = styled.div`

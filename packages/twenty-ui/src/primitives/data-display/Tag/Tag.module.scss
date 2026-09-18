@@ -1,0 +1,62 @@
+.tag {
+  @include focus-ring;
+  box-sizing: content-box;
+  align-items: center;
+  background: var(--tw-tag-background);
+  border-radius: var(--t-border-radius-sm-round);
+  corner-shape: round;
+  color: var(--tw-tag-text);
+  display: inline-flex;
+  font-family: inherit;
+  font-size: var(--t-font-size-md);
+  font-weight: var(--t-font-weight-regular);
+  block-size: var(--t-spacing-5);
+  margin: 0;
+  overflow: hidden;
+  padding: 0 var(--t-spacing-2);
+  border: none;
+  gap: var(--t-spacing-1);
+  min-inline-size: 0;
+  text-align: inherit;
+
+  &[data-interactive] {
+    cursor: pointer;
+  }
+  &[data-weight='medium'] {
+    font-weight: var(--t-font-weight-medium);
+  }
+  &[data-variant='outline'] {
+    border: 1px var(--tw-tag-border-style) var(--t-border-color-strong);
+  }
+  &[data-variant='ghost'] {
+    background: transparent;
+  }
+  &[data-variant='solid'] {
+    background: var(--tw-tag-text);
+    color: var(--t-background-primary);
+  }
+  &[data-prevent-shrink] {
+    min-inline-size: fit-content;
+  }
+  &[data-prevent-padding] {
+    padding: 0;
+  }
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+.content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.iconContainer {
+  display: flex;
+  flex-shrink: 0;
+  & > svg {
+    inline-size: calc(var(--t-icon-size-sm) * 1px);
+    block-size: calc(var(--t-icon-size-sm) * 1px);
+    stroke-width: var(--t-icon-stroke-sm);
+  }
+}

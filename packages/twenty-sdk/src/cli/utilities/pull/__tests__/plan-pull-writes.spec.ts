@@ -1,6 +1,9 @@
-import { ManifestEntityKey } from '@/cli/utilities/build/manifest/manifest-extract-config';
+import {
+  ManifestEntityKey,
+  TargetFunction,
+} from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { planPullWrites } from '@/cli/utilities/pull/plan-pull-writes';
-import { type ScannedDefineFile } from '@/cli/utilities/pull/scan-project-define-files';
+import { type ScannedSourceFile } from '@/cli/utilities/pull/scan-project-source-files';
 import {
   type Manifest,
   type NavigationMenuItemManifest,
@@ -46,6 +49,7 @@ const DAILY_OPS_FOLDER_NAVIGATION_ITEM_UID =
 const DOCS_NAVIGATION_ITEM_UID = '1a1a1a1a-1a1a-41a1-81a1-1a1a1a1a1a1a';
 const SECOND_DOCS_NAVIGATION_ITEM_UID = '1b1b1b1b-1b1b-41b1-81b1-1b1b1b1b1b1b';
 const PET_NAVIGATION_ITEM_UID = '1c1c1c1c-1c1c-41c1-81c1-1c1c1c1c1c1c';
+const SUPPORT_ROLE_UID = '1d1d1d1d-1d1d-41d1-81d1-1d1d1d1d1d1d';
 
 const buildObject = ({
   universalIdentifier,
@@ -232,6 +236,7 @@ describe('planPullWrites', () => {
     const plan = planPullWrites({
       manifest: MANIFEST,
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -244,16 +249,18 @@ describe('planPullWrites', () => {
   });
 
   it('should regenerate the application config in the file that already declares one', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application-config.ts',
         entityKey: ManifestEntityKey.Application,
+        targetFunctionName: TargetFunction.DefineApplication,
         universalIdentifier: 'a-placeholder-identifier',
         isReadable: true,
       },
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: null,
       scannedFiles,
@@ -267,22 +274,25 @@ describe('planPullWrites', () => {
   });
 
   it('should leave a file untouched when its entity has not changed since the base', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application.config.ts',
         entityKey: ManifestEntityKey.Application,
+        targetFunctionName: TargetFunction.DefineApplication,
         universalIdentifier: APP_UID,
         isReadable: true,
       },
       {
         relativePath: 'src/objects/pet.object.ts',
         entityKey: ManifestEntityKey.Objects,
+        targetFunctionName: TargetFunction.DefineObject,
         universalIdentifier: PET_UID,
         isReadable: true,
       },
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: MANIFEST,
       scannedFiles,
@@ -293,22 +303,25 @@ describe('planPullWrites', () => {
   });
 
   it('should rewrite only the entity that changed on the server', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application.config.ts',
         entityKey: ManifestEntityKey.Application,
+        targetFunctionName: TargetFunction.DefineApplication,
         universalIdentifier: APP_UID,
         isReadable: true,
       },
       {
         relativePath: 'src/objects/pet.object.ts',
         entityKey: ManifestEntityKey.Objects,
+        targetFunctionName: TargetFunction.DefineObject,
         universalIdentifier: PET_UID,
         isReadable: true,
       },
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: buildManifest([
         buildObject({
           universalIdentifier: PET_UID,
@@ -329,16 +342,18 @@ describe('planPullWrites', () => {
   });
 
   it('should delete the file of an entity the base knew and the workspace no longer has', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/objects/rocket.object.ts',
         entityKey: ManifestEntityKey.Objects,
+        targetFunctionName: TargetFunction.DefineObject,
         universalIdentifier: ROCKET_UID,
         isReadable: true,
       },
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: buildManifest([
         buildObject({
@@ -365,16 +380,18 @@ describe('planPullWrites', () => {
   });
 
   it('should report a local entity that neither the workspace nor the base knows', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/objects/unpushed.object.ts',
         entityKey: ManifestEntityKey.Objects,
+        targetFunctionName: TargetFunction.DefineObject,
         universalIdentifier: 'an-unpushed-identifier',
         isReadable: true,
       },
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: null,
       scannedFiles,
@@ -386,17 +403,42 @@ describe('planPullWrites', () => {
     expect(plan.deletions).toEqual([]);
   });
 
+  it('should not report a local file as local-only when the export reported its entity', () => {
+    const scannedFiles: ScannedSourceFile[] = [
+      {
+        relativePath: 'src/logic-functions/notify-owner.logic-function.ts',
+        entityKey: ManifestEntityKey.LogicFunctions,
+        targetFunctionName: TargetFunction.DefineLogicFunction,
+        universalIdentifier: 'a-logic-function-the-writer-cannot-write',
+        isReadable: true,
+      },
+    ];
+
+    const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set([
+        'a-logic-function-the-writer-cannot-write',
+      ]),
+      manifest: MANIFEST,
+      baseManifest: null,
+      scannedFiles,
+    });
+
+    expect(plan.localOnlyRelativePaths).toEqual([]);
+  });
+
   it('should place a new entity beside existing files of its kind', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'app/data-model/rocket.object.ts',
         entityKey: ManifestEntityKey.Objects,
+        targetFunctionName: TargetFunction.DefineObject,
         universalIdentifier: ROCKET_UID,
         isReadable: true,
       },
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: MANIFEST,
       baseManifest: null,
       scannedFiles,
@@ -442,6 +484,7 @@ describe('planPullWrites', () => {
         ],
       } as unknown as Manifest,
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -460,10 +503,12 @@ describe('planPullWrites', () => {
     const plan = planPullWrites({
       manifest: MANIFEST,
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'src/objects/pet.object.ts',
           entityKey: ManifestEntityKey.Objects,
+          targetFunctionName: TargetFunction.DefineObject,
           universalIdentifier: 'a-different-identifier',
           isReadable: true,
         },
@@ -482,10 +527,12 @@ describe('planPullWrites', () => {
     const plan = planPullWrites({
       manifest: MANIFEST,
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'src/objects/Pet.object.ts',
           entityKey: ManifestEntityKey.Objects,
+          targetFunctionName: TargetFunction.DefineObject,
           universalIdentifier: 'a-different-identifier',
           isReadable: true,
         },
@@ -503,10 +550,12 @@ describe('planPullWrites', () => {
     const plan = planPullWrites({
       manifest: MANIFEST,
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'src/objects/pet.object.ts',
           entityKey: null,
+          targetFunctionName: null,
           universalIdentifier: null,
           isReadable: false,
         },
@@ -531,10 +580,12 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'app/screens/overview.view.ts',
           entityKey: ManifestEntityKey.Views,
+          targetFunctionName: TargetFunction.DefineView,
           universalIdentifier: OVERVIEW_VIEW_UID,
           isReadable: true,
         },
@@ -574,16 +625,19 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'app/screens/overview.view.ts',
           entityKey: ManifestEntityKey.Views,
+          targetFunctionName: TargetFunction.DefineView,
           universalIdentifier: OVERVIEW_VIEW_UID,
           isReadable: true,
         },
         {
           relativePath: 'app/screens/columns/rocket-name.view-field.ts',
           entityKey: ManifestEntityKey.ViewFields,
+          targetFunctionName: TargetFunction.DefineViewField,
           universalIdentifier: ROCKET_NAME_VIEW_FIELD_UID,
           isReadable: true,
         },
@@ -626,6 +680,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -650,6 +705,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -690,6 +746,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -732,6 +789,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -747,34 +805,39 @@ describe('planPullWrites', () => {
   });
 
   it('should leave an unchanged view untouched and regenerate the view whose filter changed on the server', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application.config.ts',
         entityKey: ManifestEntityKey.Application,
+        targetFunctionName: TargetFunction.DefineApplication,
         universalIdentifier: APP_UID,
         isReadable: true,
       },
       {
         relativePath: 'src/objects/pet.object.ts',
         entityKey: ManifestEntityKey.Objects,
+        targetFunctionName: TargetFunction.DefineObject,
         universalIdentifier: PET_UID,
         isReadable: true,
       },
       {
         relativePath: 'src/views/all-pets.view.ts',
         entityKey: ManifestEntityKey.Views,
+        targetFunctionName: TargetFunction.DefineView,
         universalIdentifier: ALL_PETS_VIEW_UID,
         isReadable: true,
       },
       {
         relativePath: 'src/views/healthy-pets.view.ts',
         entityKey: ManifestEntityKey.Views,
+        targetFunctionName: TargetFunction.DefineView,
         universalIdentifier: HEALTHY_PETS_VIEW_UID,
         isReadable: true,
       },
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: buildManifestWithFilteredView('Max'),
       baseManifest: buildManifestWithFilteredView('Rex'),
       scannedFiles,
@@ -804,10 +867,12 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'app/screens/overview.page-layout.ts',
           entityKey: ManifestEntityKey.PageLayouts,
+          targetFunctionName: TargetFunction.DefinePageLayout,
           universalIdentifier: ROCKET_PAGE_LAYOUT_UID,
           isReadable: true,
         },
@@ -837,10 +902,12 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'app/screens/tabs/extra.page-layout-tab.ts',
           entityKey: ManifestEntityKey.PageLayoutTabs,
+          targetFunctionName: TargetFunction.DefinePageLayoutTab,
           universalIdentifier: COMPANY_EXTRA_TAB_UID,
           isReadable: true,
         },
@@ -883,6 +950,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -912,6 +980,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -936,6 +1005,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -951,40 +1021,46 @@ describe('planPullWrites', () => {
   });
 
   it('should leave an unchanged page layout untouched and regenerate the page layout whose widget changed on the server', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application.config.ts',
         entityKey: ManifestEntityKey.Application,
+        targetFunctionName: TargetFunction.DefineApplication,
         universalIdentifier: APP_UID,
         isReadable: true,
       },
       {
         relativePath: 'src/objects/pet.object.ts',
         entityKey: ManifestEntityKey.Objects,
+        targetFunctionName: TargetFunction.DefineObject,
         universalIdentifier: PET_UID,
         isReadable: true,
       },
       {
         relativePath: 'src/objects/rocket.object.ts',
         entityKey: ManifestEntityKey.Objects,
+        targetFunctionName: TargetFunction.DefineObject,
         universalIdentifier: ROCKET_UID,
         isReadable: true,
       },
       {
         relativePath: 'src/page-layouts/board.page-layout.ts',
         entityKey: ManifestEntityKey.PageLayouts,
+        targetFunctionName: TargetFunction.DefinePageLayout,
         universalIdentifier: ROCKET_PAGE_LAYOUT_UID,
         isReadable: true,
       },
       {
         relativePath: 'src/page-layouts/overview.page-layout.ts',
         entityKey: ManifestEntityKey.PageLayouts,
+        targetFunctionName: TargetFunction.DefinePageLayout,
         universalIdentifier: PET_PAGE_LAYOUT_UID,
         isReadable: true,
       },
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: buildManifestWithDocsPageLayout('https://example.com/new'),
       baseManifest: buildManifestWithDocsPageLayout('https://example.com/old'),
       scannedFiles,
@@ -1024,10 +1100,12 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [
         {
           relativePath: 'app/navigation/pet-care.navigation-menu-item.ts',
           entityKey: ManifestEntityKey.NavigationMenuItems,
+          targetFunctionName: TargetFunction.DefineNavigationMenuItem,
           universalIdentifier: PET_CARE_FOLDER_NAVIGATION_ITEM_UID,
           isReadable: true,
         },
@@ -1072,6 +1150,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -1119,6 +1198,7 @@ describe('planPullWrites', () => {
         ],
       },
       baseManifest: null,
+      workspaceUniversalIdentifiers: new Set(),
       scannedFiles: [],
     });
 
@@ -1134,16 +1214,18 @@ describe('planPullWrites', () => {
   });
 
   it('should leave an unchanged navigation menu item untouched and regenerate the item whose link changed on the server', () => {
-    const scannedFiles: ScannedDefineFile[] = [
+    const scannedFiles: ScannedSourceFile[] = [
       {
         relativePath: 'src/application.config.ts',
         entityKey: ManifestEntityKey.Application,
+        targetFunctionName: TargetFunction.DefineApplication,
         universalIdentifier: APP_UID,
         isReadable: true,
       },
       {
         relativePath: 'src/objects/pet.object.ts',
         entityKey: ManifestEntityKey.Objects,
+        targetFunctionName: TargetFunction.DefineObject,
         universalIdentifier: PET_UID,
         isReadable: true,
       },
@@ -1151,18 +1233,21 @@ describe('planPullWrites', () => {
         relativePath:
           'src/navigation-menu-items/pet-care.navigation-menu-item.ts',
         entityKey: ManifestEntityKey.NavigationMenuItems,
+        targetFunctionName: TargetFunction.DefineNavigationMenuItem,
         universalIdentifier: PET_CARE_FOLDER_NAVIGATION_ITEM_UID,
         isReadable: true,
       },
       {
         relativePath: 'src/navigation-menu-items/docs.navigation-menu-item.ts',
         entityKey: ManifestEntityKey.NavigationMenuItems,
+        targetFunctionName: TargetFunction.DefineNavigationMenuItem,
         universalIdentifier: DOCS_NAVIGATION_ITEM_UID,
         isReadable: true,
       },
     ];
 
     const plan = planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
       manifest: buildManifestWithNavigationMenu('https://example.com/new'),
       baseManifest: buildManifestWithNavigationMenu('https://example.com/old'),
       scannedFiles,
@@ -1181,5 +1266,68 @@ describe('planPullWrites', () => {
     expect(plan.writes[0].content).toContain(
       'type: NavigationMenuItemType.LINK,',
     );
+  });
+
+  const planWithDefaultRoleFile = (
+    roleFileTargetFunctionName: TargetFunction,
+  ) => {
+    const manifestWithDefaultRole = {
+      ...MANIFEST,
+      application: {
+        ...MANIFEST.application,
+        defaultRoleUniversalIdentifier: SUPPORT_ROLE_UID,
+      },
+      roles: [{ universalIdentifier: SUPPORT_ROLE_UID, label: 'Support' }],
+    } as unknown as Manifest;
+    const scannedFiles: ScannedSourceFile[] = [
+      {
+        relativePath: 'src/application.config.ts',
+        entityKey: ManifestEntityKey.Application,
+        targetFunctionName: TargetFunction.DefineApplication,
+        universalIdentifier: APP_UID,
+        isReadable: true,
+      },
+      {
+        relativePath: 'src/objects/pet.object.ts',
+        entityKey: ManifestEntityKey.Objects,
+        targetFunctionName: TargetFunction.DefineObject,
+        universalIdentifier: PET_UID,
+        isReadable: true,
+      },
+      {
+        relativePath: 'src/default-role.ts',
+        entityKey: ManifestEntityKey.Roles,
+        targetFunctionName: roleFileTargetFunctionName,
+        universalIdentifier: SUPPORT_ROLE_UID,
+        isReadable: true,
+      },
+    ];
+
+    return planPullWrites({
+      workspaceUniversalIdentifiers: new Set(),
+      manifest: manifestWithDefaultRole,
+      baseManifest: manifestWithDefaultRole,
+      scannedFiles,
+    });
+  };
+
+  it('should regenerate a file whose define function differs from the one pull writes, even when its entity did not change', () => {
+    const plan = planWithDefaultRoleFile(TargetFunction.DefineRole);
+
+    expect(plan.writes.map((write) => write.relativePath)).toEqual([
+      'src/default-role.ts',
+    ]);
+    expect(plan.writes[0].isRegeneration).toBe(true);
+    expect(plan.writes[0].content).toContain(
+      'export default defineApplicationRole({',
+    );
+    expect(plan.unchanged).toHaveLength(2);
+  });
+
+  it('should leave a default role file written with defineApplicationRole untouched when its role did not change', () => {
+    const plan = planWithDefaultRoleFile(TargetFunction.DefineApplicationRole);
+
+    expect(plan.writes).toEqual([]);
+    expect(plan.unchanged).toHaveLength(3);
   });
 });

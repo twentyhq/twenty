@@ -1,3 +1,4 @@
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
@@ -32,11 +33,10 @@ import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/comp
 import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { ModalContent } from 'twenty-ui/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Loader } from 'twenty-ui/feedback';
+import { Loader } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLoaderContainer = styled.div`
@@ -212,9 +212,9 @@ export const SignInUp = () => {
   ) : (
     <StyledBackground>
       {signInUpStep === SignInUpStep.EmailVerification ? (
-        <ModalContent isVerticallyCentered isHorizontallyCentered>
+        <StyledAuthContent>
           <EmailVerificationSent email={searchParams.get('email')} />
-        </ModalContent>
+        </StyledAuthContent>
       ) : (
         <SignInUpStandardContent
           workspacePublicData={workspacePublicData}

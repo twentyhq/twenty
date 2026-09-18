@@ -43,7 +43,7 @@ describe('messageSuppressionResolver (integration)', () => {
 
   beforeAll(async () => {
     await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
       value: true,
       expectToFail: false,
     });
@@ -51,7 +51,7 @@ describe('messageSuppressionResolver (integration)', () => {
 
   afterAll(async () => {
     await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
       value: false,
       expectToFail: false,
     });

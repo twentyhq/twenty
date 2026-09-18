@@ -5,7 +5,8 @@ import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-fil
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { AdvancedFilterChip } from '@/views/advanced-filter-chip/components/AdvancedFilterChip';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { getViewBarAdvancedFilterDropdownId } from '@/views/utils/getViewBarAdvancedFilterDropdownId';
 import { isDefined } from 'twenty-shared/utils';
 
 export const AdvancedFilterDropdownButton = () => {
@@ -15,6 +16,7 @@ export const AdvancedFilterDropdownButton = () => {
 
   const { setAdvancedFilterDropdownStates } =
     useSetAdvancedFilterDropdownStates();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const handleOpenAdvancedFilterDropdown = () => {
     setAdvancedFilterDropdownStates();
@@ -26,7 +28,7 @@ export const AdvancedFilterDropdownButton = () => {
 
   return (
     <Dropdown
-      dropdownId={ViewBarFilterDropdownIds.ADVANCED}
+      dropdownId={getViewBarAdvancedFilterDropdownId(recordIndexId)}
       clickableComponent={<AdvancedFilterChip />}
       dropdownComponents={<AdvancedFilterRootRecordFilterGroup />}
       dropdownOffset={{ y: 8, x: 0 }}

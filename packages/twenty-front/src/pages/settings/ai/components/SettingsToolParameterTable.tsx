@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -8,6 +10,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import {
   IconArrowUpRight,
   IconInfoCircle,
@@ -20,12 +23,9 @@ import {
   IllustrationIconToggle,
 } from 'twenty-ui/icon';
 import {
-  AppTooltip,
+  Tooltip,
   OverflowingTextWithTooltip,
-  TooltipDelay,
-} from 'twenty-ui/surfaces';
-import { Button } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+} from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SchemaProperty = {
@@ -130,6 +130,7 @@ export const SettingsToolParameterTable = ({
                   gridTemplateColumns={PARAMETER_TABLE_GRID}
                 >
                   <TableCell
+                    color={themeCssVariables.font.color.primary}
                     overflow="hidden"
                     textOverflow="ellipsis"
                     whiteSpace="nowrap"
@@ -148,21 +149,20 @@ export const SettingsToolParameterTable = ({
                   <TableCell>
                     {property.description && (
                       <StyledInfoIconContainer>
-                        <IconInfoCircle
-                          id={infoIconId}
-                          size={theme.icon.size.md}
-                          color={theme.font.color.tertiary}
-                          style={{ outline: 'none', cursor: 'pointer' }}
-                        />
-                        <AppTooltip
-                          anchorSelect={`#${infoIconId}`}
-                          title={property.description}
-                          offset={5}
-                          noArrow
-                          place="bottom"
-                          positionStrategy="fixed"
+                        <Tooltip
+                          content={property.description}
+                          sideOffset={5}
+                          side="bottom"
+                          positionMethod="fixed"
                           delay={TooltipDelay.shortDelay}
-                        />
+                        >
+                          <IconInfoCircle
+                            id={infoIconId}
+                            size={theme.icon.size.md}
+                            color={theme.font.color.tertiary}
+                            style={{ outline: 'none', cursor: 'pointer' }}
+                          />
+                        </Tooltip>
                       </StyledInfoIconContainer>
                     )}
                   </TableCell>
@@ -174,14 +174,12 @@ export const SettingsToolParameterTable = ({
       )}
       {functionLink && (
         <StyledFooter>
-          <UndecoratedLink to={functionLink}>
-            <Button
-              Icon={IconArrowUpRight}
-              title={t`See function`}
-              size="small"
-              variant="secondary"
-            />
-          </UndecoratedLink>
+          <NavigationButton
+            to={functionLink}
+            startIcon={<IconArrowUpRight />}
+            size="sm"
+            variant="outline"
+          >{t`See function`}</NavigationButton>
         </StyledFooter>
       )}
     </Table>

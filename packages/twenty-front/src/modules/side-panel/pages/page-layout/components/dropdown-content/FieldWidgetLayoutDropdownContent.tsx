@@ -30,7 +30,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -40,7 +39,7 @@ import {
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
@@ -164,12 +163,9 @@ export const FieldWidgetLayoutDropdownContent = () => {
     DropdownComponentInstanceContext,
   );
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const { updateCurrentWidgetConfig } =

@@ -11,12 +11,13 @@ import { ViewPickerContentCreateMode } from '@/views/view-picker/components/View
 import { ViewPickerContentEditMode } from '@/views/view-picker/components/ViewPickerContentEditMode';
 import { ViewPickerContentEffect } from '@/views/view-picker/components/ViewPickerContentEffect';
 import { ViewPickerListContent } from '@/views/view-picker/components/ViewPickerListContent';
-import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { getViewPickerDropdownId } from '@/views/view-picker/utils/getViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconList, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useContext } from 'react';
 import {
   MOBILE_VIEWPORT,
@@ -61,9 +62,12 @@ export const ViewPickerDropdown = () => {
 
   const { formatNumber } = useNumberFormat();
 
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+  const dropdownId = getViewPickerDropdownId(recordIndexId);
+
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    VIEW_PICKER_DROPDOWN_ID,
+    dropdownId,
   );
 
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
@@ -80,7 +84,7 @@ export const ViewPickerDropdown = () => {
 
   return (
     <Dropdown
-      dropdownId={VIEW_PICKER_DROPDOWN_ID}
+      dropdownId={dropdownId}
       dropdownOffset={{ x: 0, y: 8 }}
       dropdownPlacement="bottom-start"
       onClickOutside={handleClickOutside}

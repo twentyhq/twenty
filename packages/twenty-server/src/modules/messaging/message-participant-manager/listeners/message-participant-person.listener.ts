@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import {
   type ObjectRecordCreateEvent,
   type ObjectRecordDeleteEvent,
@@ -14,6 +13,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { getPersonEmails } from 'src/modules/match-participant/utils/get-person-emails.util';
 import {
   MessageParticipantMatchParticipantJob,
   type MessageParticipantMatchParticipantJobData,
@@ -35,20 +35,19 @@ export class MessageParticipantPersonListener {
   ) {
     const personWithEmails = payload.events.filter(
       (eventPayload) =>
-        isDefined(eventPayload.properties.after.emails?.primaryEmail) ||
-        isDefined(eventPayload.properties.after.emails?.additionalEmails),
+        getPersonEmails(eventPayload.properties.after.emails).length > 0,
     );
+
+    if (personWithEmails.length === 0) {
+      return;
+    }
 
     const personIds = personWithEmails.map(
       (eventPayload) => eventPayload.recordId,
     );
-    const personEmails = personWithEmails
-      .flatMap((eventPayload) => [
-        eventPayload.properties.after.emails.primaryEmail,
-        ...((eventPayload.properties.after.emails?.additionalEmails ??
-          []) as string[]),
-      ])
-      .filter(isDefined);
+    const personEmails = personWithEmails.flatMap((eventPayload) =>
+      getPersonEmails(eventPayload.properties.after.emails),
+    );
 
     await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
       MessageParticipantMatchParticipantJob.name,
@@ -69,23 +68,23 @@ export class MessageParticipantPersonListener {
       ObjectRecordUpdateEvent<PersonWorkspaceEntity>
     >,
   ) {
-    const personWithEmails = payload.events.filter((eventPayload) =>
+    const personWithUpdatedEmails = payload.events.filter((eventPayload) =>
       objectRecordUpdateEventChangedProperties(
         eventPayload.properties.before,
         eventPayload.properties.after,
       ).includes('emails'),
     );
 
-    const personIds = personWithEmails.map(
+    if (personWithUpdatedEmails.length === 0) {
+      return;
+    }
+
+    const personIds = personWithUpdatedEmails.map(
       (eventPayload) => eventPayload.recordId,
     );
-    const personEmails = personWithEmails
-      .flatMap((eventPayload) => [
-        eventPayload.properties.after.emails.primaryEmail,
-        ...((eventPayload.properties.after.emails?.additionalEmails ??
-          []) as string[]),
-      ])
-      .filter(isDefined);
+    const personEmails = personWithUpdatedEmails.flatMap((eventPayload) =>
+      getPersonEmails(eventPayload.properties.after.emails),
+    );
 
     await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
       MessageParticipantMatchParticipantJob.name,
@@ -106,11 +105,13 @@ export class MessageParticipantPersonListener {
       ObjectRecordDeleteEvent<PersonWorkspaceEntity>
     >,
   ) {
-    const personWithEmails = payload.events.filter(
-      (eventPayload) =>
-        isDefined(eventPayload.properties.before.emails?.primaryEmail) ||
-        isDefined(eventPayload.properties.before.emails?.additionalEmails),
+    const personEmails = payload.events.flatMap((eventPayload) =>
+      getPersonEmails(eventPayload.properties.before.emails),
     );
+
+    if (personEmails.length === 0) {
+      return;
+    }
 
     await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
       MessageParticipantMatchParticipantJob.name,
@@ -118,13 +119,7 @@ export class MessageParticipantPersonListener {
         workspaceId: payload.workspaceId,
         participantMatching: {
           personIds: [],
-          personEmails: personWithEmails
-            .flatMap((eventPayload) => [
-              eventPayload.properties.before.emails.primaryEmail,
-              ...((eventPayload.properties.before.emails?.additionalEmails ??
-                []) as string[]),
-            ])
-            .filter(isDefined),
+          personEmails,
           workspaceMemberIds: [],
         },
       },

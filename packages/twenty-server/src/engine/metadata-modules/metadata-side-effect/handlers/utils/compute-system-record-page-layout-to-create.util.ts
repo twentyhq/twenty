@@ -147,6 +147,7 @@ export const computeSystemRecordPageLayoutToCreate = ({
     name: `Default ${objectMetadata.labelSingular} Layout`,
     type: PageLayoutType.RECORD_PAGE,
     objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
+    navigationMenuItemUniversalIdentifiers: [],
     tabUniversalIdentifiers: pageLayoutTabs.map(
       (tab) => tab.universalIdentifier,
     ),

@@ -7,8 +7,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext } from 'react';
 import { IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { IconButton } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
@@ -129,11 +129,13 @@ export const WidgetCardHeader = ({
                 }}
               >
                 <IconButton
+                  aria-label={t`Remove widget`}
                   onClick={onRemove}
-                  Icon={IconTrash}
-                  variant="tertiary"
-                  size="small"
-                />
+                  variant="ghost"
+                  size="sm"
+                >
+                  <IconTrash />
+                </IconButton>
               </StyledIconButtonContainer>
             )}
         </AnimatePresence>

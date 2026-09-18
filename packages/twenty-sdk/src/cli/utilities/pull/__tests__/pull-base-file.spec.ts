@@ -17,6 +17,7 @@ const VIEW_FIELD_UID = '55555555-5555-4555-8555-555555555555';
 const PAGE_LAYOUT_UID = '66666666-6666-4666-8666-666666666666';
 const PAGE_LAYOUT_TAB_UID = '77777777-7777-4777-8777-777777777777';
 const NAVIGATION_MENU_ITEM_UID = '88888888-8888-4888-8888-888888888888';
+const ROLE_UID = '99999999-9999-4999-8999-999999999999';
 
 const MANIFEST = {
   application: {
@@ -275,6 +276,93 @@ describe('pull base file', () => {
           navigationMenuItems: {
             universalIdentifier: NAVIGATION_MENU_ITEM_UID,
           },
+        },
+      }),
+    );
+
+    expect(await readBase()).toBeNull();
+  });
+
+  it('should ignore a base whose page layout widgets are not a list', async () => {
+    await writeRawBaseFile(
+      JSON.stringify({
+        version: 1,
+        applicationUniversalIdentifier: APP_UID,
+        manifest: {
+          ...MANIFEST,
+          pageLayoutWidgets: { universalIdentifier: PAGE_LAYOUT_TAB_UID },
+        },
+      }),
+    );
+
+    expect(await readBase()).toBeNull();
+  });
+
+  it('should ignore a base whose roles are not a list', async () => {
+    await writeRawBaseFile(
+      JSON.stringify({
+        version: 1,
+        applicationUniversalIdentifier: APP_UID,
+        manifest: {
+          ...MANIFEST,
+          roles: { universalIdentifier: ROLE_UID, label: 'Support' },
+        },
+      }),
+    );
+
+    expect(await readBase()).toBeNull();
+  });
+
+  it('should ignore a base whose role object permissions contain an entry that is not an object', async () => {
+    await writeRawBaseFile(
+      JSON.stringify({
+        version: 1,
+        applicationUniversalIdentifier: APP_UID,
+        manifest: {
+          ...MANIFEST,
+          roles: [
+            {
+              universalIdentifier: ROLE_UID,
+              label: 'Support',
+              objectPermissions: [null],
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(await readBase()).toBeNull();
+  });
+
+  it('should ignore a base whose role field permissions are not a list', async () => {
+    await writeRawBaseFile(
+      JSON.stringify({
+        version: 1,
+        applicationUniversalIdentifier: APP_UID,
+        manifest: {
+          ...MANIFEST,
+          roles: [
+            {
+              universalIdentifier: ROLE_UID,
+              label: 'Support',
+              fieldPermissions: { fieldUniversalIdentifier: NAME_FIELD_UID },
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(await readBase()).toBeNull();
+  });
+
+  it('should ignore a base whose permission flags contain an entry without a universal identifier', async () => {
+    await writeRawBaseFile(
+      JSON.stringify({
+        version: 1,
+        applicationUniversalIdentifier: APP_UID,
+        manifest: {
+          ...MANIFEST,
+          permissionFlags: [{ key: 'EXPORT_PETS', label: 'Export pets' }],
         },
       }),
     );

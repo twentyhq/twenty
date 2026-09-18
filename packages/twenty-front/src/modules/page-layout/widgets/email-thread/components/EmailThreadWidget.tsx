@@ -20,6 +20,13 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+} from 'twenty-ui/primitives/feedback';
 
 type EmailThreadWidgetProps = {
   widget: PageLayoutWidget;
@@ -91,12 +98,33 @@ export const EmailThreadWidget = ({
     composerIntent === 'opened' ||
     (composerIntent === null && isDefined(trailingDraft));
 
-  if (threadLoading || !thread || !messages.length) {
+  if (threadLoading) {
     return (
       <StyledWidgetContentContainer>
         <WidgetRelationsHeader />
         <StyledWidgetScrollContainer>
           <EmailLoader loadingText={t`Loading thread`} />
+        </StyledWidgetScrollContainer>
+      </StyledWidgetContentContainer>
+    );
+  }
+
+  if (!isDefined(thread) || !isDefined(lastMessage)) {
+    return (
+      <StyledWidgetContentContainer>
+        <WidgetRelationsHeader />
+        <StyledWidgetScrollContainer>
+          <AnimatedPlaceholderEmptyContainer>
+            <AnimatedPlaceholder type="emptyInbox" />
+            <AnimatedPlaceholderEmptyTextContainer>
+              <AnimatedPlaceholderEmptyTitle>
+                {t`No messages to show`}
+              </AnimatedPlaceholderEmptyTitle>
+              <AnimatedPlaceholderEmptySubTitle>
+                {t`The messages in this thread are missing or incomplete.`}
+              </AnimatedPlaceholderEmptySubTitle>
+            </AnimatedPlaceholderEmptyTextContainer>
+          </AnimatedPlaceholderEmptyContainer>
         </StyledWidgetScrollContainer>
       </StyledWidgetContentContainer>
     );

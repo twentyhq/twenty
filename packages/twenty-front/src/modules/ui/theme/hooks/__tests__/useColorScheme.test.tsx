@@ -1,6 +1,3 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { act, renderHook } from '@testing-library/react';
-import { Provider as JotaiProvider } from 'jotai';
 import {
   currentWorkspaceMemberState,
   type CurrentWorkspaceMember,
@@ -8,18 +5,21 @@ import {
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { act, renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 
 const mockUpdateWorkspaceMemberSettings = jest.fn();
-const mockEnqueueErrorSnackBar = jest.fn();
 
 jest.mock('@apollo/client/react', () => ({
   useMutation: () => [mockUpdateWorkspaceMemberSettings],
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({
-    enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
-  }),
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/primitives/feedback', () => ({
+  ...jest.requireActual('twenty-ui/primitives/feedback'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 const workspaceMember: CurrentWorkspaceMember = {
@@ -77,7 +77,7 @@ describe('useColorScheme', () => {
         },
       },
     });
-    expect(mockEnqueueErrorSnackBar).not.toHaveBeenCalled();
+    expect(mockEnqueueToast).not.toHaveBeenCalled();
   });
 
   it.each([false, true])(
@@ -118,8 +118,9 @@ describe('useColorScheme', () => {
         'System',
       );
       expect(store.get(persistedColorSchemeState.atom)).toBe('Light');
-      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-        apolloError: error,
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'error',
+        children: 'You do not have permission to update this workspace member.',
       });
     },
   );
@@ -179,7 +180,7 @@ describe('useColorScheme', () => {
     },
   );
 
-  it('should use the default error message for a non-error rejection', async () => {
+  it('should forward a non-error rejection to the error toast', async () => {
     mockUpdateWorkspaceMemberSettings.mockRejectedValueOnce(undefined);
     const { result } = renderColorSchemeHook();
 
@@ -188,7 +189,10 @@ describe('useColorScheme', () => {
     });
 
     expect(result.current.colorScheme).toBe('System');
-    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({});
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'An error occurred.',
+    });
   });
 
   it('should not save a theme without a workspace member', async () => {

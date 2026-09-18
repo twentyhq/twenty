@@ -9,14 +9,13 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
+import { Section } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { CommandBlock } from 'twenty-ui/data-display';
+import { CommandBlock } from 'twenty-ui/primitives/data-display';
 import { IconArrowUpRight, IconChevronRight, IconCopy } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button, SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button, SearchInput } from 'twenty-ui/primitives/input';
 import {
   type ApplicationRegistrationListItemFragment,
   FeatureFlagKey,
@@ -86,8 +85,8 @@ export const SettingsApplicationsDeveloperTab = () => {
           t`Commands copied to clipboard`,
         );
       }}
-      ariaLabel={t`Copy commands`}
-      Icon={IconCopy}
+      aria-label={t`Copy commands`}
+      startIcon={<IconCopy />}
     />
   );
 
@@ -100,18 +99,16 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Create an application`}
           description={t`You can either create a private app or share it to others`}
         />
         <CommandBlock commands={createCommands} button={createCopyButton} />
         <StyledButtonContainer>
           <Button
-            Icon={IconArrowUpRight}
-            variant={'secondary'}
-            size={'small'}
-            title={t`Read documentation`}
+            startIcon={<IconArrowUpRight />}
+            size="sm"
             onClick={() =>
               window.open(
                 getDocumentationUrl({
@@ -121,17 +118,18 @@ export const SettingsApplicationsDeveloperTab = () => {
                 '_blank',
               )
             }
-          />
+            variant="outline"
+          >{t`Read documentation`}</Button>
         </StyledButtonContainer>
-      </Section>
+      </Section.Root>
 
       {canClaimApplications && isAppClaimingEnabled && (
         <SettingsClaimApplicationSection />
       )}
 
       {registrations.length > 0 && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`My apps`}
             description={t`Apps you're the developer of`}
           />
@@ -171,7 +169,7 @@ export const SettingsApplicationsDeveloperTab = () => {
               })}
             </StyledTableRowsContainer>
           </Table>
-        </Section>
+        </Section.Root>
       )}
     </>
   );

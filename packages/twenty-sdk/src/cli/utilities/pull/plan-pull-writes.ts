@@ -5,7 +5,7 @@ import {
   type PullEntityKind,
 } from '@/cli/utilities/pull/build-pull-entities';
 import { capFileBaseName } from '@/cli/utilities/pull/pull-file-base-name';
-import { type ScannedDefineFile } from '@/cli/utilities/pull/scan-project-define-files';
+import { type ScannedSourceFile } from '@/cli/utilities/pull/scan-project-source-files';
 import { writeDefineFile } from '@/cli/utilities/pull/write-define-file';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import { dirname, posix } from 'node:path';
@@ -42,11 +42,14 @@ const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   object: ManifestEntityKey.Objects,
   field: ManifestEntityKey.Fields,
   index: ManifestEntityKey.Indexes,
+  permissionFlag: ManifestEntityKey.PermissionFlags,
+  role: ManifestEntityKey.Roles,
   view: ManifestEntityKey.Views,
   viewField: ManifestEntityKey.ViewFields,
   pageLayout: ManifestEntityKey.PageLayouts,
   pageLayoutTab: ManifestEntityKey.PageLayoutTabs,
   navigationMenuItem: ManifestEntityKey.NavigationMenuItems,
+  pageLayoutWidget: ManifestEntityKey.PageLayoutWidgets,
 };
 
 const toPosixPath = (value: string): string => value.split('\\').join('/');
@@ -55,7 +58,7 @@ const findExistingFolderForKind = ({
   scannedFiles,
   entityKey,
 }: {
-  scannedFiles: ScannedDefineFile[];
+  scannedFiles: ScannedSourceFile[];
   entityKey: ManifestEntityKey;
 }): string | null => {
   const folderCounts = new Map<string, number>();
@@ -163,23 +166,18 @@ const reserveRelativePath = ({
   );
 };
 
-const findExistingPath = ({
+const findExistingSourceFile = ({
   entity,
   applicationFile,
-  pathByUniversalIdentifier,
+  scannedFileByUniversalIdentifier,
 }: {
   entity: PullEntity;
-  applicationFile: ScannedDefineFile | undefined;
-  pathByUniversalIdentifier: Map<string, string>;
-}): string | undefined => {
-  if (entity.kind !== 'application') {
-    return pathByUniversalIdentifier.get(entity.universalIdentifier);
-  }
-
-  return isDefined(applicationFile)
-    ? toPosixPath(applicationFile.relativePath)
-    : undefined;
-};
+  applicationFile: ScannedSourceFile | undefined;
+  scannedFileByUniversalIdentifier: Map<string, ScannedSourceFile>;
+}): ScannedSourceFile | undefined =>
+  entity.kind === 'application'
+    ? applicationFile
+    : scannedFileByUniversalIdentifier.get(entity.universalIdentifier);
 
 const buildConfigByUniversalIdentifier = (
   manifest: Manifest | null,
@@ -200,10 +198,12 @@ export const planPullWrites = ({
   manifest,
   baseManifest,
   scannedFiles,
+  workspaceUniversalIdentifiers,
 }: {
   manifest: Manifest;
   baseManifest: Manifest | null;
-  scannedFiles: ScannedDefineFile[];
+  scannedFiles: ScannedSourceFile[];
+  workspaceUniversalIdentifiers: ReadonlySet<string>;
 }): PullWritePlan & {
   skipped: ReturnType<typeof buildPullEntities>['skipped'];
 } => {
@@ -212,16 +212,16 @@ export const planPullWrites = ({
     buildConfigByUniversalIdentifier(baseManifest);
   const fileBaseNameByUniversalIdentifier = resolveFileBaseNames(entities);
 
-  const pathByUniversalIdentifier = new Map<string, string>();
+  const scannedFileByUniversalIdentifier = new Map<string, ScannedSourceFile>();
   const applicationFile = scannedFiles.find(
     (scannedFile) => scannedFile.entityKey === ManifestEntityKey.Application,
   );
 
   for (const scannedFile of scannedFiles) {
     if (isDefined(scannedFile.universalIdentifier)) {
-      pathByUniversalIdentifier.set(
+      scannedFileByUniversalIdentifier.set(
         scannedFile.universalIdentifier,
-        toPosixPath(scannedFile.relativePath),
+        scannedFile,
       );
     }
   }
@@ -236,11 +236,14 @@ export const planPullWrites = ({
   );
 
   for (const entity of entities) {
-    const existingPath = findExistingPath({
+    const existingSourceFile = findExistingSourceFile({
       entity,
       applicationFile,
-      pathByUniversalIdentifier,
+      scannedFileByUniversalIdentifier,
     });
+    const existingPath = isDefined(existingSourceFile)
+      ? toPosixPath(existingSourceFile.relativePath)
+      : undefined;
 
     const folder =
       findExistingFolderForKind({
@@ -268,7 +271,8 @@ export const planPullWrites = ({
     );
 
     if (
-      isDefined(existingPath) &&
+      isDefined(existingSourceFile) &&
+      existingSourceFile.targetFunctionName === entity.definer &&
       isDefined(baseConfig) &&
       baseConfig === JSON.stringify(entity.config)
     ) {
@@ -299,7 +303,12 @@ export const planPullWrites = ({
       continue;
     }
 
-    const relativePath = pathByUniversalIdentifier.get(baseUniversalIdentifier);
+    const scannedFile = scannedFileByUniversalIdentifier.get(
+      baseUniversalIdentifier,
+    );
+    const relativePath = isDefined(scannedFile)
+      ? toPosixPath(scannedFile.relativePath)
+      : undefined;
 
     if (!isDefined(relativePath) || usedRelativePaths.has(relativePath)) {
       continue;
@@ -317,6 +326,7 @@ export const planPullWrites = ({
         isDefined(scannedFile.universalIdentifier) &&
         !exportedUniversalIdentifiers.has(scannedFile.universalIdentifier) &&
         !baseConfigByUniversalIdentifier.has(scannedFile.universalIdentifier) &&
+        !workspaceUniversalIdentifiers.has(scannedFile.universalIdentifier) &&
         !usedRelativePaths.has(toPosixPath(scannedFile.relativePath)),
     )
     .map((scannedFile) => toPosixPath(scannedFile.relativePath));

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { randomUUID } from 'node:crypto';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
@@ -14,8 +16,8 @@ import {
 } from 'twenty-shared/types';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RecordShareService } from 'src/engine/record-share/services/record-share.service';
-import { type RecordShareInput } from 'src/engine/record-share/types/record-share-input.type';
+import { type RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 
@@ -105,10 +107,10 @@ describe('recordShare object', () => {
       recordShares: [recordShareInput],
     });
 
-    const insertedRecordShares = await recordShareService.findByRecord({
+    const insertedRecordShares = await recordShareService.findByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId: personObjectMetadataId,
-      recordId: PERSON_DATA_SEED_IDS.ID_1,
+      recordIds: [PERSON_DATA_SEED_IDS.ID_1],
     });
 
     expect(insertedRecordShares).toHaveLength(1);
@@ -122,10 +124,10 @@ describe('recordShare object', () => {
     });
 
     const recordSharesAfterDuplicateInsert =
-      await recordShareService.findByRecord({
+      await recordShareService.findByRecordIds({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         objectMetadataId: personObjectMetadataId,
-        recordId: PERSON_DATA_SEED_IDS.ID_1,
+        recordIds: [PERSON_DATA_SEED_IDS.ID_1],
       });
 
     expect(recordSharesAfterDuplicateInsert).toHaveLength(1);
@@ -138,10 +140,10 @@ describe('recordShare object', () => {
       sourceId,
     });
 
-    const recordSharesAfterDelete = await recordShareService.findByRecord({
+    const recordSharesAfterDelete = await recordShareService.findByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId: personObjectMetadataId,
-      recordId: PERSON_DATA_SEED_IDS.ID_1,
+      recordIds: [PERSON_DATA_SEED_IDS.ID_1],
     });
 
     expect(recordSharesAfterDelete).toHaveLength(0);

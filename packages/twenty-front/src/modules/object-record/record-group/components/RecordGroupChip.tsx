@@ -6,7 +6,7 @@ import {
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 
 type RecordGroupChipProps = {
   recordGroupDefinition: RecordGroupDefinition;
@@ -38,10 +38,12 @@ export const RecordGroupChip = ({
 
   return (
     <Tag
-      variant={isValueGroup ? 'solid' : 'outline'}
+      variant={isValueGroup ? 'soft' : 'outline'}
+      borderStyle="dashed"
       color={isValueGroup ? recordGroupDefinition.color : 'transparent'}
-      text={recordGroupDefinition.title}
       weight={isValueGroup ? valueTagWeight : 'medium'}
-    />
+    >
+      {recordGroupDefinition.title}
+    </Tag>
   );
 };

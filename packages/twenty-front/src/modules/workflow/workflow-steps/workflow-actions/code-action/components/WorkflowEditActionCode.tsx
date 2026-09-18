@@ -10,10 +10,10 @@ import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-
 
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
-import { InputLabel, CodeEditor } from 'twenty-ui/input';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+import { InputLabel } from 'twenty-ui/primitives/input';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -94,9 +94,7 @@ export const WorkflowEditActionCode = ({
   const fullScreenFocusId = `code-editor-fullscreen-${logicFunctionId}`;
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
-    useWorkspaceSurfaceScopedComponentInstanceId(
-      WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
-    ),
+    WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();

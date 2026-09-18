@@ -42,6 +42,7 @@ export class WorkspaceMutationQueryBuilder {
   private readonly context: MutationQueryBuilderContext;
   private readonly kind: MutationKind;
   private readonly whereClauses: WhereClause[];
+  private readonly includeDeleted: boolean;
   private parameters: Record<string, unknown>;
   private setRecord: Record<string, unknown> = {};
   private returningColumns: string[] = [];
@@ -51,12 +52,14 @@ export class WorkspaceMutationQueryBuilder {
     kind,
     context,
     whereClauses,
+    includeDeleted,
     parameters,
   }: {
     alias: string;
     kind: MutationKind;
     context: MutationQueryBuilderContext;
     whereClauses: WhereClause[];
+    includeDeleted: boolean;
     parameters: Record<string, unknown>;
   }) {
     this.alias = alias;
@@ -64,6 +67,7 @@ export class WorkspaceMutationQueryBuilder {
     this.context = context;
     this.tableShape = context.tableShape;
     this.whereClauses = [...whereClauses];
+    this.includeDeleted = includeDeleted;
     this.parameters = { ...parameters };
   }
 
@@ -121,6 +125,7 @@ export class WorkspaceMutationQueryBuilder {
       kind: this.kind,
       setClauses,
       whereClauses: this.whereClauses,
+      includeDeleted: this.includeDeleted,
       returningColumns: this.returningColumns,
     });
 

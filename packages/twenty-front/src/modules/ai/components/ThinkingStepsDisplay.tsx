@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { JsonTree } from 'twenty-ui/json-visualizer';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { JsonTree } from 'twenty-ui/primitives/json-visualizer';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
@@ -22,6 +22,7 @@ import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

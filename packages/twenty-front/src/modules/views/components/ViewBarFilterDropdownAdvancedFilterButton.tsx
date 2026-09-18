@@ -17,15 +17,16 @@ import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { getViewBarAdvancedFilterDropdownId } from '@/views/utils/getViewBarAdvancedFilterDropdownId';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui/data-display';
+import { Pill } from 'twenty-ui/primitives/data-display';
 import { IconFilter } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
@@ -59,6 +60,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
   const { openDropdown: openAdvancedFilterDropdown } = useOpenDropdown();
 
   const { closeDropdown: closeObjectFilterDropdown } = useCloseDropdown();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -131,9 +133,10 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
       setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
     }
 
-    closeObjectFilterDropdown(ViewBarFilterDropdownIds.MAIN);
+    closeObjectFilterDropdown();
     openAdvancedFilterDropdown({
-      dropdownComponentInstanceIdFromProps: ViewBarFilterDropdownIds.ADVANCED,
+      dropdownComponentInstanceIdFromProps:
+        getViewBarAdvancedFilterDropdownId(recordIndexId),
     });
   };
 

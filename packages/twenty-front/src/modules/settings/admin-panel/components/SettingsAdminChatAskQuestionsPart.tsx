@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
-import { Tag, type TagColor } from 'twenty-ui/data-display';
+import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { IconHelpCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -86,10 +86,9 @@ export const SettingsAdminChatAskQuestionsPart = ({
         <IconHelpCircle size={14} />
         {t`Questions`}
         <StyledStatusTag>
-          <Tag
-            color={getStatusTagColor(result.status)}
-            text={getStatusLabel(result.status)}
-          />
+          <Tag color={getStatusTagColor(result.status)}>
+            {getStatusLabel(result.status)}
+          </Tag>
         </StyledStatusTag>
       </StyledCardHeader>
       {result.questions.map((question, questionIndex) => (

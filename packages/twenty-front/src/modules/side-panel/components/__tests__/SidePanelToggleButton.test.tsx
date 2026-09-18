@@ -3,6 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
@@ -17,21 +18,11 @@ import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
 
-const mockAppTooltip = jest.fn();
 let mockIsMobile = false;
 
 jest.mock('twenty-ui/utilities', () => ({
   useIsMobile: () => mockIsMobile,
   getOsControlSymbol: () => '⌘',
-}));
-
-jest.mock('twenty-ui/surfaces', () => ({
-  ...jest.requireActual('twenty-ui/surfaces'),
-  AppTooltip: (props: { title: string }) => {
-    mockAppTooltip(props);
-
-    return null;
-  },
 }));
 
 const renderSidePanelToggleButton = ({
@@ -78,7 +69,6 @@ const renderSidePanelToggleButton = ({
 
 describe('SidePanelToggleButton', () => {
   beforeEach(() => {
-    mockAppTooltip.mockClear();
     mockIsMobile = false;
   });
 
@@ -219,14 +209,15 @@ describe('SidePanelToggleButton', () => {
     expect(screen.getByTestId('page-header-side-panel-button')).toBeVisible();
   });
 
-  it('shows the command menu keyboard shortcut in the tooltip', () => {
+  it('shows the command menu keyboard shortcut in the tooltip', async () => {
+    const user = userEvent.setup();
     renderSidePanelToggleButton();
 
-    expect(mockAppTooltip).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: 'Command menu | ⌘K',
-      }),
-    );
+    await user.hover(screen.getByTestId('page-header-side-panel-button'));
+
+    expect(
+      await screen.findByRole('tooltip', {}, { timeout: 1500 }),
+    ).toHaveTextContent('Command menu | ⌘K');
   });
 
   it('marks the command menu button as a click-outside exclusion', () => {

@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowsSort, IconTrash } from 'twenty-ui/icon';
-import { Button, type SelectOption } from 'twenty-ui/input';
+import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { Select } from '@/ui/input/components/Select';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidv4 } from 'uuid';
@@ -102,19 +102,21 @@ export const RecordTableSettingsSortsContent = ({
               handleDirectionChange(sort.id, value as ViewSortDirection)
             }
           />
-          <Button onClick={() => handleRemoveSort(sort.id)} Icon={IconTrash} />
+          <Button
+            onClick={() => handleRemoveSort(sort.id)}
+            startIcon={<IconTrash />}
+            aria-label={t`Delete`}
+          />
         </StyledSortItemContainer>
       ))}
       <StyledAddButtonContainer>
         <Button
-          Icon={IconArrowsSort}
-          size="small"
-          variant="secondary"
-          accent="default"
+          startIcon={<IconArrowsSort />}
+          size="sm"
           onClick={handleAddSort}
-          ariaLabel={t`Add sort`}
-          title={t`Add sort`}
-        />
+          aria-label={t`Add sort`}
+          variant="outline"
+        >{t`Add sort`}</Button>
       </StyledAddButtonContainer>
     </>
   );

@@ -48,18 +48,8 @@ export const EXPECTED_MANIFEST: Manifest = {
       title: 'Extra Tab',
       position: 1000,
       icon: 'IconLayout',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
-        {
-          universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000011',
-          title: 'Extra Widget',
-          type: 'FRONT_COMPONENT',
-          configuration: {
-            configurationType: 'FRONT_COMPONENT',
-            frontComponentUniversalIdentifier:
-              '370ae182-743f-4ecb-b625-7ac48e21f0e5',
-          },
-        },
         {
           universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000012',
           title: 'Total Priority',
@@ -70,6 +60,17 @@ export const EXPECTED_MANIFEST: Manifest = {
             aggregateFieldMetadataUniversalIdentifier:
               '7b57bd63-5a4c-46ca-9d52-42c8f02d1df6',
             aggregateOperation: AggregateOperations.SUM,
+          },
+        },
+        {
+          universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000011',
+          title: 'Extra Widget',
+          type: 'FRONT_COMPONENT',
+          heightBehavior: 'TAB_VIEWPORT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              '370ae182-743f-4ecb-b625-7ac48e21f0e5',
           },
         },
       ],
@@ -698,7 +699,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       description: 'Default role for function Twenty client',
       fieldPermissions: [
         {
-          universalIdentifier: 'dbc86ced-bd2c-5874-93f1-1f72c5111991',
+          universalIdentifier: 'd0b74fcb-3993-5ff9-bbd6-d76ea9b6493f',
           canReadFieldValue: false,
           canUpdateFieldValue: false,
           fieldUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
@@ -708,7 +709,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       label: 'Default function role',
       objectPermissions: [
         {
-          universalIdentifier: '99c7c326-04ca-5c8b-ad11-da6c5b819813',
+          universalIdentifier: 'fab82874-880a-556f-93d9-626610bb0770',
           canDestroyObjectRecords: false,
           canReadObjectRecords: true,
           canSoftDeleteObjectRecords: false,
@@ -716,7 +717,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
         },
         {
-          universalIdentifier: 'd92786b1-eedb-50f6-9397-7a6c2591578a',
+          universalIdentifier: '518fbc62-c198-5e31-8df8-c79402aa84b4',
           canDestroyObjectRecords: false,
           canReadObjectRecords: true,
           canSoftDeleteObjectRecords: false,

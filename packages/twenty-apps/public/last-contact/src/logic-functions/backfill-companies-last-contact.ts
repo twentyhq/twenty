@@ -13,6 +13,10 @@ import {
   pickLatestLastContact,
   pickPersonLastContact,
 } from 'src/utils/person-last-contact-aggregation';
+import {
+  type RecordUpsert,
+  upsertRecordsInBatches,
+} from 'src/utils/upsert-records-in-batches';
 
 const handler = async ({ batchId }: BackfillBatchPayload): Promise<object> => {
   const client = new CoreApiClient();
@@ -38,6 +42,8 @@ const handler = async ({ batchId }: BackfillBatchPayload): Promise<object> => {
   const personIds = [...new Set([...peopleByCompanyId.values()].flat())];
   const aggByPersonId = await buildPersonAggregates(client, personIds);
 
+  const upserts: RecordUpsert[] = [];
+
   for (const companyId of companyIds) {
     const lastContact = pickLatestLastContact(
       (peopleByCompanyId.get(companyId) ?? [])
@@ -49,15 +55,10 @@ const handler = async ({ batchId }: BackfillBatchPayload): Promise<object> => {
       continue;
     }
 
-    await executeWithRetry(() =>
-      client.mutation({
-        updateCompany: {
-          __args: { id: companyId, data: buildRelatedUpdateData(lastContact) },
-          id: true,
-        },
-      }),
-    );
+    upserts.push({ id: companyId, ...buildRelatedUpdateData(lastContact) });
   }
+
+  await upsertRecordsInBatches(client, 'createCompanies', upserts);
 
   return { batchId, count: companyIds.length };
 };

@@ -23,7 +23,10 @@ import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/v
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import {
+  FILE_STATUS,
+  type FileStatus,
+} from 'src/engine/core-modules/file/types/file-status.types';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -43,6 +46,27 @@ export class FileStorageService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
+
+  private async resolveFileIdKeepingExistingRow({
+    fileRepository,
+    workspaceId,
+    filePath,
+    applicationId,
+    fileId,
+  }: {
+    fileRepository: WorkspaceScopedRepository<FileEntity>;
+    workspaceId: string;
+    filePath: string;
+    applicationId: string;
+    fileId: string | undefined;
+  }): Promise<string | undefined> {
+    const existingFile = await fileRepository.findOne(workspaceId, {
+      where: { path: filePath, applicationId },
+      withDeleted: true,
+    });
+
+    return existingFile?.id ?? fileId;
+  }
 
   private async resolveApplicationIdOrThrow({
     applicationUniversalIdentifier,
@@ -251,7 +275,13 @@ export class FileStorageService {
       {
         path: filePath,
         applicationId: resolvedApplicationId,
-        id: fileId,
+        id: await this.resolveFileIdKeepingExistingRow({
+          fileRepository,
+          workspaceId,
+          filePath,
+          applicationId: resolvedApplicationId,
+          fileId,
+        }),
         mimeType,
         size:
           typeof persistedSourceFile === 'string'
@@ -302,7 +332,13 @@ export class FileStorageService {
       {
         path: filePath,
         applicationId: resolvedApplicationId,
-        id: fileId,
+        id: await this.resolveFileIdKeepingExistingRow({
+          fileRepository: this.fileRepository,
+          workspaceId,
+          filePath,
+          applicationId: resolvedApplicationId,
+          fileId,
+        }),
         mimeType,
         size,
         settings,
@@ -490,7 +526,10 @@ export class FileStorageService {
   }
 
   async deleteFolder(
-    params: Omit<ResourceIdentifier, 'resourcePath'> & { folderPath: string },
+    params: Omit<ResourceIdentifier, 'resourcePath'> & {
+      folderPath: string;
+      fileStatus?: FileStatus;
+    },
   ): Promise<void> {
     const {
       workspaceId,
@@ -519,6 +558,7 @@ export class FileStorageService {
     await this.fileRepository.delete(workspaceId, {
       path: Like(`${validatedFolderPath}%`),
       applicationId,
+      ...(isDefined(params.fileStatus) ? { status: params.fileStatus } : {}),
     });
   }
 

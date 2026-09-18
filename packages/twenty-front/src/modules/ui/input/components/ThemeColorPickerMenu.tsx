@@ -1,3 +1,9 @@
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -7,7 +13,7 @@ import { useState } from 'react';
 import {
   DEFAULT_COLOR_LABELS,
   MenuItemSelectColor,
-} from 'twenty-ui/navigation';
+} from 'twenty-ui/primitives/navigation';
 import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 type ThemeColorPickerMenuProps = {
@@ -19,6 +25,14 @@ export const ThemeColorPickerMenu = ({
   selectedColor,
   onSelectColor,
 }: ThemeColorPickerMenuProps) => {
+  const dropdownId = useAvailableComponentInstanceIdOrThrow(
+    DropdownComponentInstanceContext,
+  );
+  const selectableListInstanceId = `${dropdownId}-colors`;
+  const selectedItemId = useAtomComponentStateValue(
+    selectedItemIdComponentState,
+    selectableListInstanceId,
+  );
   const [searchValue, setSearchValue] = useState('');
 
   const query = searchValue.trim().toLowerCase();
@@ -39,17 +53,29 @@ export const ThemeColorPickerMenu = ({
         onChange={(event) => setSearchValue(event.target.value)}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {filteredColorNames.map((colorName) => (
-          <MenuItemSelectColor
-            key={colorName}
-            onClick={() => onSelectColor(colorName)}
-            color={colorName}
-            selected={colorName === selectedColor}
-            colorLabels={DEFAULT_COLOR_LABELS}
-          />
-        ))}
-      </DropdownMenuItemsContainer>
+      <SelectableList
+        selectableListInstanceId={selectableListInstanceId}
+        focusId={dropdownId}
+        selectableItemIdArray={filteredColorNames}
+      >
+        <DropdownMenuItemsContainer hasMaxHeight>
+          {filteredColorNames.map((colorName) => (
+            <SelectableListItem
+              key={colorName}
+              itemId={colorName}
+              onEnter={() => onSelectColor(colorName)}
+            >
+              <MenuItemSelectColor
+                focused={selectedItemId === colorName}
+                onClick={() => onSelectColor(colorName)}
+                color={colorName}
+                selected={colorName === selectedColor}
+                colorLabels={DEFAULT_COLOR_LABELS}
+              />
+            </SelectableListItem>
+          ))}
+        </DropdownMenuItemsContainer>
+      </SelectableList>
     </>
   );
 };

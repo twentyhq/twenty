@@ -10,14 +10,13 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { TabButton } from 'twenty-ui/input';
+import { TabButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
@@ -90,12 +89,10 @@ export const TabList = ({
   const navigate = useNavigate();
   const workspaceSurface = useWorkspaceSurface();
   const isMobile = useIsMobile();
-  const scopedComponentInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(componentInstanceId);
 
   const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
-    scopedComponentInstanceId,
+    componentInstanceId,
   );
 
   const activeTabExists = visibleTabs.some((tab) => tab.id === activeTabId);
@@ -125,7 +122,7 @@ export const TabList = ({
     isScrollable: shouldScrollTabs,
   });
 
-  const dropdownId = `tab-overflow-${scopedComponentInstanceId}`;
+  const dropdownId = `tab-overflow-${componentInstanceId}`;
   const { closeDropdown } = useCloseDropdown();
 
   const isActiveTabHidden = useMemo(() => {
@@ -178,7 +175,7 @@ export const TabList = ({
 
   return (
     <TabListComponentInstanceContext.Provider
-      value={{ instanceId: scopedComponentInstanceId }}
+      value={{ instanceId: componentInstanceId }}
     >
       <>
         <TabListFromUrlOptionalEffect tabListIds={tabs.map((tab) => tab.id)} />

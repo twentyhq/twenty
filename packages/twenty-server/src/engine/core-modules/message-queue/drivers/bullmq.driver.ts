@@ -183,7 +183,7 @@ export class BullMQDriver
 
   work<T>(
     queueName: MessageQueue,
-    handler: (job: MessageQueueJob<T>) => Promise<void>,
+    handler: (job: MessageQueueJob<T>) => Promise<unknown> | unknown,
     options?: MessageQueueWorkerOptions,
   ) {
     const workerOptions = {
@@ -230,12 +230,13 @@ export class BullMQDriver
           this.logger.log(
             `Processing job ${job.id} with name ${job.name} on queue ${queueName}${workspaceSuffix}`,
           );
-          await handler({
+          const result = await handler({
             data: job.data,
             id: job.id ?? '',
             name: job.name,
             retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
             updateData: (data) => job.updateData(data),
+            updateProgress: (progress) => job.updateProgress(progress),
             abortSignal,
           });
           const timeEnd = performance.now();
@@ -244,6 +245,7 @@ export class BullMQDriver
           this.logger.log(
             `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix}`,
           );
+          return result;
         }),
       workerOptions,
     );
@@ -534,16 +536,15 @@ export class BullMQDriver
     queueName: MessageQueue,
     jobId: string,
   ): Promise<QueueJobDetails<T> | undefined> {
-    const job = await this.queueMap[queueName].getJob(jobId);
+    const queue = this.queueMap[queueName];
+    const state = await queue.getJobState(jobId);
 
-    if (!isDefined(job)) {
+    // Read completion data after the state so a finished job includes its result.
+    if (state === 'unknown') {
       return undefined;
     }
-
-    const state = await job.getState();
-
-    // BullMQ reports 'unknown' for a job whose record was evicted by retention
-    if (state === 'unknown') {
+    const job = await queue.getJob(jobId);
+    if (!isDefined(job)) {
       return undefined;
     }
 
@@ -567,6 +568,8 @@ export class BullMQDriver
       state,
       attemptsMade: job.attemptsMade,
       failedReason: job.failedReason,
+      progress: job.progress,
+      result: job.returnvalue,
       timestamp: job.timestamp,
       processedOn: job.processedOn,
       finishedOn: job.finishedOn,

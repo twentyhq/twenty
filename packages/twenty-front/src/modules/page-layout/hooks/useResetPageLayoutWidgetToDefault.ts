@@ -7,14 +7,14 @@ import { ResetPageLayoutWidgetToDefaultDocument } from '~/generated-metadata/gra
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshPageLayoutAfterReset } from '@/page-layout/hooks/useRefreshPageLayoutAfterReset';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 export const useResetPageLayoutWidgetToDefault = (
   pageLayoutIdFromProps: string,
 ) => {
   const [resetMutation] = useMutation(ResetPageLayoutWidgetToDefaultDocument);
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { refreshPageLayoutAfterReset } = useRefreshPageLayoutAfterReset(
     pageLayoutIdFromProps,
   );
@@ -31,7 +31,7 @@ export const useResetPageLayoutWidgetToDefault = (
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
+          enqueueToast({ variant: 'error', children: t`An error occurred.` });
         }
       }
     },
@@ -39,7 +39,7 @@ export const useResetPageLayoutWidgetToDefault = (
       resetMutation,
       refreshPageLayoutAfterReset,
       handleMetadataError,
-      enqueueErrorSnackBar,
+      enqueueToast,
     ],
   );
 

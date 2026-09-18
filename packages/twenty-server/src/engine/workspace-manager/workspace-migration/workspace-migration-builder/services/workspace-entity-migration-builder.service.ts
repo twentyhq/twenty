@@ -37,6 +37,7 @@ import { topologicallySortUniversalFlatEntitiesForSelfReferentialFks } from 'src
 import { FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { FailedFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/failed-flat-entity-validate-and-build.type';
 import { SuccessfulFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/successful-flat-entity-validate-and-build.type';
+import { type FlatEntityCreationValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-creation-validation-args.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
@@ -219,6 +220,14 @@ export abstract class WorkspaceEntityMigrationBuilderService<
 
     const creationValidationStart = performance.now();
 
+    const finalFlatEntityMaps: MetadataUniversalFlatEntityMaps<T> = {
+      byUniversalIdentifier: {
+        ...optimisticFlatEntityMapsAndRelatedFlatEntityMaps[flatEntityMapsKey]
+          .byUniversalIdentifier,
+        ...toFlatEntityMaps.byUniversalIdentifier,
+      },
+    };
+
     const remainingFlatEntityMapsToCreate = structuredClone(
       createdFlatEntityMaps,
     );
@@ -253,6 +262,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       );
 
       const validationResult = await this.innerValidateFlatEntityCreation({
+        finalFlatEntityMaps,
         additionalCacheDataMaps,
         flatEntityToValidate: universalFlatEntityToCreate,
         workspaceId,
@@ -320,6 +330,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       }
 
       const validationResult = await this.validateFlatEntityUpdate({
+        finalFlatEntityMaps,
         flatEntityUpdate: flatEntityUpdate.update,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
         workspaceId,
@@ -518,7 +529,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
   }
 
   private async innerValidateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<T>,
+    args: FlatEntityCreationValidationArgs<T>,
   ): Promise<UniversalFlatEntityValidationReturnType<T, 'create'>> {
     const uuidValidationResult = this.validateUniversalIdentifier(args);
     const perTypeExistenceResult =
@@ -560,7 +571,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
   }
 
   protected abstract validateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<T>,
+    args: FlatEntityCreationValidationArgs<T>,
   ):
     | UniversalFlatEntityValidationReturnType<T, 'create'>
     | Promise<UniversalFlatEntityValidationReturnType<T, 'create'>>;

@@ -10,11 +10,13 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
-import { Avatar } from 'twenty-ui/data-display';
-import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import {
+  MenuItem,
+  MenuItemMultiSelectAvatar,
+} from 'twenty-ui/primitives/navigation';
 
 export const MultipleSelectDropdown = ({
   selectableListId,
@@ -41,12 +43,9 @@ export const MultipleSelectDropdown = ({
 
   const { resetSelectedItem } = useSelectableList(selectableListId);
 
-  const scopedSelectableListId =
-    useWorkspaceSurfaceScopedComponentInstanceId(selectableListId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedSelectableListId,
+    selectableListId,
   );
 
   const handleItemSelectChange = (
@@ -112,11 +111,11 @@ export const MultipleSelectDropdown = ({
                 text={item.name}
                 avatar={
                   <Avatar
-                    avatarUrl={getAbsoluteImageUrl(item.avatarUrl)}
-                    placeholderColorSeed={item.id}
-                    placeholder={item.name}
+                    src={getAbsoluteImageUrl(item.avatarUrl)}
+                    colorSeed={item.id}
+                    name={item.name}
                     size="md"
-                    type={item.avatarType}
+                    shape={item.avatarShape}
                   />
                 }
               />

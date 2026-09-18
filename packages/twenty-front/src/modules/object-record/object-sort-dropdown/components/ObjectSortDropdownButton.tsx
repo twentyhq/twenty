@@ -1,6 +1,6 @@
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
+import { getObjectSortDropdownId } from '@/object-record/object-sort-dropdown/utils/getObjectSortDropdownId';
 import { useCloseSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useCloseSortDropdown';
 import { useResetRecordSortDropdownSearchInput } from '@/object-record/object-sort-dropdown/hooks/useResetRecordSortDropdownSearchInput';
 import { useResetSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useResetSortDropdown';
@@ -30,11 +30,10 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { findByProperty } from 'twenty-shared/utils';
 import { IconX, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
@@ -49,6 +48,7 @@ export const ObjectSortDropdownButton = () => {
   const { resetSortDropdown } = useResetSortDropdown();
 
   const { recordIndexId, objectMetadataItem } = useRecordIndexContextOrThrow();
+  const dropdownId = getObjectSortDropdownId(recordIndexId);
 
   const objectSortDropdownSearchInput = useAtomComponentStateValue(
     objectSortDropdownSearchInputComponentState,
@@ -112,7 +112,6 @@ export const ObjectSortDropdownButton = () => {
 
   const handleDropdownOpen = () => {
     resetSortDropdown();
-    setSelectedItemId(selectableItemIdArray[0]);
   };
 
   const { closeSortDropdown } = useCloseSortDropdown();
@@ -143,7 +142,7 @@ export const ObjectSortDropdownButton = () => {
 
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    OBJECT_SORT_DROPDOWN_ID,
+    dropdownId,
   );
 
   const { t } = useLingui();
@@ -153,17 +152,9 @@ export const ObjectSortDropdownButton = () => {
     ...hiddenFieldMetadataItemsSorted.map((item) => item.id),
   ];
 
-  const scopedObjectSortDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(OBJECT_SORT_DROPDOWN_ID);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedObjectSortDropdownId,
-  );
-
-  const setSelectedItemId = useSetAtomComponentState(
-    selectedItemIdComponentState,
-    scopedObjectSortDropdownId,
+    dropdownId,
   );
 
   const shouldShowHiddenFields = hiddenFieldMetadataItemsSorted.length > 0;
@@ -171,7 +162,7 @@ export const ObjectSortDropdownButton = () => {
 
   return (
     <Dropdown
-      dropdownId={OBJECT_SORT_DROPDOWN_ID}
+      dropdownId={dropdownId}
       dropdownOffset={{ y: 8 }}
       onOpen={handleDropdownOpen}
       clickableComponent={
@@ -192,7 +183,7 @@ export const ObjectSortDropdownButton = () => {
             {t`Sort`}
           </DropdownMenuHeader>
           <DropdownMenuInnerSelect
-            dropdownId="record-sort-direction-dropdown"
+            dropdownId={`${dropdownId}-direction`}
             options={[ViewSortDirection.ASC, ViewSortDirection.DESC].map(
               (sortDirection) => ({
                 value: sortDirection,
@@ -224,9 +215,9 @@ export const ObjectSortDropdownButton = () => {
             }
           />
           <SelectableList
-            selectableListInstanceId={OBJECT_SORT_DROPDOWN_ID}
+            selectableListInstanceId={dropdownId}
             selectableItemIdArray={selectableItemIdArray}
-            focusId={OBJECT_SORT_DROPDOWN_ID}
+            focusId={dropdownId}
           >
             {shouldShowVisibleFields && (
               <>

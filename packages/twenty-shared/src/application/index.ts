@@ -45,6 +45,7 @@ export type {
   ApplicationVariables,
 } from './applicationVariablesType';
 export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
+export type { AppMessageChannel } from './appMessageChannelType';
 export type { AssetManifest } from './assetManifestType';
 export type {
   BillableOperationManifest,
@@ -128,6 +129,7 @@ export type {
   JobStatusResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
+export type { FieldManifestOptions } from './fieldManifestOptionsType';
 export type {
   RegularFieldManifest,
   RelationFieldManifest,
@@ -148,6 +150,11 @@ export type {
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
+export type {
+  NormalizedPageLayoutWidgetManifest,
+  NormalizedPageLayoutTabManifest,
+} from './normalizedPageLayoutManifestType';
+export { normalizePageLayoutTabManifest } from './normalizePageLayoutTabManifest';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
@@ -171,6 +178,7 @@ export type {
   RowLevelPermissionPredicateManifest,
   RoleManifest,
 } from './roleManifestType';
+export type { RunAgentMessageAttachment } from './runAgentMessageAttachmentType';
 export type {
   RunAgentMessageRole,
   RunAgentMessage,

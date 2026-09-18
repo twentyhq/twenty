@@ -185,13 +185,25 @@ describe('parseChatReferences', () => {
         displayName: 'Twenty',
       },
     },
+    {
+      name: 'a skill',
+      text: 'Use [[skill:88888888-8888-4888-8888-888888888888:Workflow building]]',
+      reference: {
+        kind: 'skill',
+        fullMatch:
+          '[[skill:88888888-8888-4888-8888-888888888888:Workflow building]]',
+        index: 4,
+        skillId: '88888888-8888-4888-8888-888888888888',
+        displayName: 'Workflow building',
+      },
+    },
   ])('should find $name', ({ text, reference }) => {
     expect(parseChatReferences(text)).toEqual([reference]);
   });
 
   it('should find every kind in a single string', () => {
     const references = parseChatReferences(
-      'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[records:77777777-7777-4777-8777-777777777777:Companies]] uses the [[object:partner:Partners]] schema and groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:person:stage:Stage]] for [[role:55555555-5555-4555-8555-555555555555:Admin]] in [[app:66666666-6666-4666-8666-666666666666:Twenty]]',
+      'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[records:77777777-7777-4777-8777-777777777777:Companies]] uses the [[object:partner:Partners]] schema and groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:person:stage:Stage]] for [[role:55555555-5555-4555-8555-555555555555:Admin]] in [[app:66666666-6666-4666-8666-666666666666:Twenty]] with [[skill:88888888-8888-4888-8888-888888888888:Workflow building]]',
     );
 
     expect(references.map((reference) => reference.kind)).toEqual([
@@ -202,6 +214,7 @@ describe('parseChatReferences', () => {
       'field',
       'role',
       'app',
+      'skill',
     ]);
     expect(references.map((reference) => reference.displayName)).toEqual([
       'Pipeline',
@@ -211,6 +224,7 @@ describe('parseChatReferences', () => {
       'Stage',
       'Admin',
       'Twenty',
+      'Workflow building',
     ]);
   });
 

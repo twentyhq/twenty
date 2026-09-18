@@ -1,6 +1,5 @@
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback } from 'react';
 
 export const getWorkspaceSurfaceScopedComponentInstanceId = ({
   componentInstanceId,
@@ -24,6 +23,12 @@ export const getWorkspaceSurfaceScopedComponentInstanceId = ({
   return `${componentInstanceId}-${surfaceInstanceId}`;
 };
 
+// Only for the place that creates an id for something the same page instance
+// can mount once per workspace surface (a record index, a page layout, a
+// settings tab bar). The id it returns is then passed around and used verbatim:
+// Dropdown, Modal, SelectableList, TabList and ScrollWrapper never rewrite the
+// id they are given, so a reader holding the same id always reads the same
+// state.
 export const useWorkspaceSurfaceScopedComponentInstanceId = (
   componentInstanceId: string,
 ) => {
@@ -34,18 +39,4 @@ export const useWorkspaceSurfaceScopedComponentInstanceId = (
     surfaceType: workspaceSurface.type,
     surfaceInstanceId: workspaceSurface.instanceId,
   });
-};
-
-export const useWorkspaceSurfaceScopedComponentInstanceIdResolver = () => {
-  const workspaceSurface = useWorkspaceSurface();
-
-  return useCallback(
-    (componentInstanceId: string) =>
-      getWorkspaceSurfaceScopedComponentInstanceId({
-        componentInstanceId,
-        surfaceType: workspaceSurface.type,
-        surfaceInstanceId: workspaceSurface.instanceId,
-      }),
-    [workspaceSurface.instanceId, workspaceSurface.type],
-  );
 };

@@ -67,7 +67,7 @@ describe('CalDAV calendar events import without entity tags (integration)', () =
 
   beforeAll(async () => {
     await updateConfigVariable({
-      input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: false },
+      input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: ['*'] },
     });
 
     radicale = await startRadicaleContainer({
@@ -122,7 +122,7 @@ describe('CalDAV calendar events import without entity tags (integration)', () =
 
   afterAll(async () => {
     await updateConfigVariable({
-      input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: true },
+      input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: [] },
     }).catch(() => undefined);
 
     if (isNonEmptyString(connectedAccountId)) {

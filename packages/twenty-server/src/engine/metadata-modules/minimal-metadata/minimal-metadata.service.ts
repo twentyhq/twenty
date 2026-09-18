@@ -5,18 +5,21 @@ import {
   type AllMetadataName,
 } from 'twenty-shared/metadata';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ViewVisibility } from 'twenty-shared/types';
+import { FeatureFlagKey, ViewVisibility } from 'twenty-shared/types';
 import { isDefined, uncapitalize } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { isInitialObjectView } from 'src/engine/metadata-modules/view/utils/is-initial-object-view.util';
 import { type CollectionHashDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/collection-hash.dto';
 import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-metadata.dto';
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
 import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-view.dto';
+import { getWorkspaceCustomApplicationUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/overrides/utils/get-workspace-custom-application-universal-identifier-or-throw.util';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
@@ -35,27 +38,42 @@ const flatMapsKeyToMetadataName = (
 @Injectable()
 export class MinimalMetadataService {
   constructor(
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly i18nService: I18nService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  async getMinimalMetadata(
-    workspaceId: string,
-    userWorkspaceId?: string,
-    locale?: string,
-  ): Promise<MinimalMetadataDTO> {
-    const [{ flatObjectMetadataMaps, flatViewMaps }, cacheHashes] =
-      await Promise.all([
-        this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatViewMaps'],
-        }),
-        this.workspaceCacheService.getCacheHashes(
-          workspaceId,
-          ALL_FLAT_ENTITY_MAPS_PROPERTIES as WorkspaceCacheKeyName[],
-        ),
-      ]);
+  async getMinimalMetadata({
+    workspaceId,
+    workspaceCustomApplicationId,
+    userWorkspaceId,
+    locale,
+  }: {
+    workspaceId: string;
+    workspaceCustomApplicationId: string;
+    userWorkspaceId?: string;
+    locale?: string;
+  }): Promise<MinimalMetadataDTO> {
+    const [
+      { flatObjectMetadataMaps, flatViewMaps, flatApplicationMaps },
+      cacheHashes,
+    ] = await Promise.all([
+      this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+        'flatObjectMetadataMaps',
+        'flatViewMaps',
+      ]),
+      this.workspaceCacheService.getCacheHashes(
+        workspaceId,
+        ALL_FLAT_ENTITY_MAPS_PROPERTIES as WorkspaceCacheKeyName[],
+      ),
+    ]);
+
+    const workspaceCustomApplicationUniversalIdentifier =
+      getWorkspaceCustomApplicationUniversalIdentifierOrThrow({
+        workspaceCustomApplicationId,
+        flatApplicationMaps,
+      });
 
     const collectionHashes: CollectionHashDTO[] = Object.entries(cacheHashes)
       .map(([cacheKey, hash]) => {
@@ -76,7 +94,17 @@ export class MinimalMetadataService {
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((flatObjectMetadata) => flatObjectMetadata.isActive === true)
+      .filter(
+        (flatObjectMetadata) =>
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'objectMetadata',
+            flatEntity: flatObjectMetadata,
+            property: 'isActive',
+            authorContext: {
+              workspaceCustomApplicationUniversalIdentifier,
+            },
+          }) === true,
+      )
       .map((flatObjectMetadata) => {
         const isStandardApp = belongsToTwentyStandardApp(flatObjectMetadata);
 
@@ -85,6 +113,9 @@ export class MinimalMetadataService {
           locale: safeLocale,
           i18nInstance,
           isStandardApp,
+          workspaceCustomApplicationUniversalIdentifier,
+          ownerApplicationUniversalIdentifier:
+            flatObjectMetadata.applicationUniversalIdentifier,
         };
 
         return {
@@ -106,16 +137,26 @@ export class MinimalMetadataService {
             i18nContext,
           }),
           icon: flatObjectMetadata.icon ?? undefined,
-          isActive: flatObjectMetadata.isActive,
+          isActive: true,
           isSystem: flatObjectMetadata.isSystem,
           isRemote: flatObjectMetadata.isRemote,
         };
       });
 
+    const isInitialObjectViewEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+        workspaceId,
+      );
+
     const views: MinimalViewDTO[] = Object.values(
       flatViewMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
+      .filter(
+        (flatView) =>
+          isInitialObjectViewEnabled || !isInitialObjectView(flatView),
+      )
       .filter((flatView) => flatView.workspaceId === workspaceId)
       .filter((flatView) => flatView.deletedAt === null)
       .filter(

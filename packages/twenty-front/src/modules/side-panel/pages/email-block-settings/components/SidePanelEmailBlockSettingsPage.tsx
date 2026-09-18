@@ -7,7 +7,7 @@ import {
   TIPTAP_NODE_TYPES,
 } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { activeEmailEditorState } from '@/activities/emails/states/activeEmailEditorState';

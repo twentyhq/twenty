@@ -13,9 +13,9 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
+} from 'twenty-ui/primitives/feedback';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 const StyledAttachmentsContainer = styled.div`
   display: flex;
@@ -78,11 +78,10 @@ export const FilesCardContent = ({
               <AttachmentUploadTrigger targetableObject={targetRecord}>
                 {({ openFilePicker }) => (
                   <Button
-                    Icon={IconPlus}
-                    title={t`Add file`}
-                    variant="secondary"
+                    startIcon={<IconPlus />}
                     onClick={openFilePicker}
-                  />
+                    variant="outline"
+                  >{t`Add file`}</Button>
                 )}
               </AttachmentUploadTrigger>
             )}

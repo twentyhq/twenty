@@ -15,10 +15,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconRestore } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
 import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
 
 const TRANSLATIONS_ROW_GRID_TEMPLATE_COLUMNS = '112px 1fr 24px';
@@ -107,7 +107,7 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
 
         return (
           <StyledPropertySection key={property}>
-            <H2Title
+            <Section.Header
               title={labelByProperty[property] ?? property}
               description={t`Source: ${canonicalValue}`}
             />
@@ -127,7 +127,9 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
                     key={`${property}:${locale}`}
                     gridAutoColumns={TRANSLATIONS_ROW_GRID_TEMPLATE_COLUMNS}
                   >
-                    <TableCell>{localeLabel}</TableCell>
+                    <TableCell color={themeCssVariables.font.color.primary}>
+                      {localeLabel}
+                    </TableCell>
                     <TableCell>
                       <MetadataTranslationValueCell
                         row={row}

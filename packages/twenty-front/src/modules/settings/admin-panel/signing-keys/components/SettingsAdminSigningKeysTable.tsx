@@ -2,7 +2,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsAdminRevokeSigningKeyConfirmationModal } from '@/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal';
 import { useRevokeSigningKey } from '@/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -12,10 +12,10 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag, type TagColor } from 'twenty-ui/data-display';
+import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { IconCopy } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { Button } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetSigningKeysDocument,
@@ -54,7 +54,7 @@ const getStatusTag = (
 
 export const SettingsAdminSigningKeysTable = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { copyToClipboard } = useCopyToClipboard();
   const [selectedSigningKey, setSelectedSigningKey] =
     useState<SelectedSigningKey | null>(null);
@@ -70,7 +70,7 @@ export const SettingsAdminSigningKeysTable = () => {
 
   const handleRevokeClick = (signingKey: SelectedSigningKey) => {
     setSelectedSigningKey(signingKey);
-    openModal(REVOKE_MODAL_ID);
+    openDialog(REVOKE_MODAL_ID);
   };
 
   const handleConfirmRevoke = async () => {
@@ -112,20 +112,24 @@ export const SettingsAdminSigningKeysTable = () => {
                 key={signingKey.id}
                 gridTemplateColumns={SIGNING_KEYS_GRID_TEMPLATE_COLUMNS}
               >
-                <TableCell overflow="hidden" gap={themeCssVariables.spacing[1]}>
+                <TableCell
+                  color={themeCssVariables.font.color.primary}
+                  overflow="hidden"
+                  gap={themeCssVariables.spacing[1]}
+                >
                   <OverflowingTextWithTooltip
                     text={signingKey.id}
                     tooltipContent={t`Created on ${beautifyExactDateTime(signingKey.createdAt)}`}
                     alwaysShowTooltip
                   />
                   <Button
-                    Icon={IconCopy}
-                    size="small"
-                    variant="tertiary"
-                    ariaLabel={t`Copy key ID`}
+                    startIcon={<IconCopy />}
+                    size="sm"
+                    aria-label={t`Copy key ID`}
                     onClick={() =>
                       copyToClipboard(signingKey.id, t`Key ID copied`)
                     }
+                    variant="ghost"
                   />
                 </TableCell>
                 <TableCell>
@@ -142,17 +146,14 @@ export const SettingsAdminSigningKeysTable = () => {
                   )}
                 </TableCell>
                 <TableCell>
-                  <Tag text={status.text} color={status.color} />
+                  <Tag color={status.color}>{status.text}</Tag>
                 </TableCell>
                 <TableCell align="right">
                   {signingKey.verifyCountInWindow}
                 </TableCell>
                 <TableCell align="right">
                   <Button
-                    title={t`Revoke`}
-                    size="small"
-                    variant="secondary"
-                    accent="danger"
+                    size="sm"
                     disabled={isRevoked || isRevoking}
                     onClick={() =>
                       handleRevokeClick({
@@ -160,7 +161,9 @@ export const SettingsAdminSigningKeysTable = () => {
                         isCurrent: signingKey.isCurrent,
                       })
                     }
-                  />
+                    variant="outline"
+                    color="danger"
+                  >{t`Revoke`}</Button>
                 </TableCell>
               </TableRow>
             );
@@ -175,7 +178,7 @@ export const SettingsAdminSigningKeysTable = () => {
             </TableCell>
             <TableCell>{EM_DASH}</TableCell>
             <TableCell>
-              <Tag text={t`Legacy`} color="gray" />
+              <Tag color="gray">{t`Legacy`}</Tag>
             </TableCell>
             <TableCell align="right">{legacyVerifyCountInWindow}</TableCell>
             <TableCell align="right" />

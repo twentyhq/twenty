@@ -9,12 +9,14 @@ import { WorkspaceWorkflowAutomatedTriggerMapCacheService } from 'src/engine/cor
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
 
 @Module({
   imports: [
     RecordPositionModule,
     TypeOrmModule.forFeature([WorkflowVersionEntity, WorkspaceEntity]),
     WorkspaceCacheModule,
+    WorkflowMetadataReadModule,
   ],
   providers: [
     WorkspaceWorkflowAutomatedTriggerMapCacheService,

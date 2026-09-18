@@ -68,6 +68,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/key-value-store',
   DEVELOPERS_EXTEND_APPS_LOGIC_LOGIC_FUNCTIONS:
     '/developers/extend/apps/logic/logic-functions',
+  DEVELOPERS_EXTEND_APPS_LOGIC_MESSAGING_CHANNELS:
+    '/developers/extend/apps/logic/messaging-channels',
   DEVELOPERS_EXTEND_APPS_LOGIC_OVERVIEW:
     '/developers/extend/apps/logic/overview',
   DEVELOPERS_EXTEND_APPS_LOGIC_SKILLS_AND_AGENTS:
@@ -82,8 +84,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/operations/sync-and-recovery',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_TESTING:
     '/developers/extend/apps/operations/testing',
-  DEVELOPERS_EXTEND_APPS_TRANSLATIONS_OVERVIEW:
-    '/developers/extend/apps/translations/overview',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_TRANSLATIONS:
+    '/developers/extend/apps/operations/translations',
   DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_AI_AGENT:
     '/developers/extend/apps/tutorials/document-generator/ai-agent',
   DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_BUILDING_THE_UI:
@@ -125,6 +127,44 @@ export const DOCUMENTATION_PATHS = {
   GETTING_STARTED_INTRODUCTION: '/getting-started/introduction',
   GETTING_STARTED_KEY_FEATURES: '/getting-started/key-features',
   GETTING_STARTED_QUICKSTART: '/getting-started/quickstart',
+  UI_ACCESSIBILITY: '/ui/accessibility',
+  UI_COMPONENTS_CODE_EDITOR: '/ui/components/code-editor',
+  UI_COMPONENTS_INPUT_ICON_BUTTON: '/ui/components/input/icon-button',
+  UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',
+  UI_COMPONENTS_INPUT_MAIN_BUTTON: '/ui/components/input/main-button',
+  UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
+  UI_COMPONENTS_SECTION: '/ui/components/section',
+  UI_DARK_MODE: '/ui/dark-mode',
+  UI_GETTING_STARTED: '/ui/getting-started',
+  UI_PRIMITIVES_DATA_DISPLAY_AVATAR: '/ui/primitives/data-display/avatar',
+  UI_PRIMITIVES_DATA_DISPLAY_CHIP: '/ui/primitives/data-display/chip',
+  UI_PRIMITIVES_DATA_DISPLAY_STATUS: '/ui/primitives/data-display/status',
+  UI_PRIMITIVES_DATA_DISPLAY_TAG: '/ui/primitives/data-display/tag',
+  UI_PRIMITIVES_FEEDBACK_TOAST: '/ui/primitives/feedback/toast',
+  UI_PRIMITIVES_INPUT_BUTTON: '/ui/primitives/input/button',
+  UI_PRIMITIVES_INPUT_BUTTON_GROUP: '/ui/primitives/input/button-group',
+  UI_PRIMITIVES_INPUT_CHECKBOX: '/ui/primitives/input/checkbox',
+  UI_PRIMITIVES_INPUT_FIELD: '/ui/primitives/input/field',
+  UI_PRIMITIVES_INPUT_INPUT: '/ui/primitives/input/input',
+  UI_PRIMITIVES_INPUT_INPUT_GROUP: '/ui/primitives/input/input-group',
+  UI_PRIMITIVES_INPUT_RADIO: '/ui/primitives/input/radio',
+  UI_PRIMITIVES_INPUT_RADIO_GROUP: '/ui/primitives/input/radio-group',
+  UI_PRIMITIVES_INPUT_SELECT: '/ui/primitives/input/select',
+  UI_PRIMITIVES_INPUT_SLIDER: '/ui/primitives/input/slider',
+  UI_PRIMITIVES_INPUT_SWITCH: '/ui/primitives/input/switch',
+  UI_PRIMITIVES_INPUT_TEXTAREA: '/ui/primitives/input/textarea',
+  UI_PRIMITIVES_NAVIGATION_LIST_ITEM: '/ui/primitives/navigation/list-item',
+  UI_PRIMITIVES_NAVIGATION_TABS: '/ui/primitives/navigation/tabs',
+  UI_PRIMITIVES_OVERVIEW: '/ui/primitives/overview',
+  UI_PRIMITIVES_SURFACES_ALERT_DIALOG: '/ui/primitives/surfaces/alert-dialog',
+  UI_PRIMITIVES_SURFACES_DIALOG: '/ui/primitives/surfaces/dialog',
+  UI_PRIMITIVES_SURFACES_MENU: '/ui/primitives/surfaces/menu',
+  UI_PRIMITIVES_SURFACES_POPOVER: '/ui/primitives/surfaces/popover',
+  UI_PRIMITIVES_TYPOGRAPHY_HEADING: '/ui/primitives/typography/heading',
+  UI_PRIMITIVES_TYPOGRAPHY_TEXT: '/ui/primitives/typography/text',
+  UI_SSR: '/ui/ssr',
+  UI_THEMING: '/ui/theming',
+  UI_TOKENS: '/ui/tokens',
   USER_GUIDE_AI_CAPABILITIES_AI_AGENTS: '/user-guide/ai/capabilities/ai-agents',
   USER_GUIDE_AI_CAPABILITIES_AI_CHATBOT:
     '/user-guide/ai/capabilities/ai-chatbot',

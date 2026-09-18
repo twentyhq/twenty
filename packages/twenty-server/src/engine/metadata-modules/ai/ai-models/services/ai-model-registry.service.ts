@@ -14,7 +14,7 @@ import {
   parseAiModelVariantId,
 } from 'twenty-shared/ai';
 
-import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
+import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-organization-key.constant';
 import { CustomAiProviderAccessService } from 'src/engine/core-modules/enterprise/services/custom-ai-provider-access.service';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
@@ -38,6 +38,7 @@ import { isAutoSelectModelId, isDefined } from 'twenty-shared/utils';
 
 import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
+import { getAiModelTiersByDistance } from 'src/engine/metadata-modules/ai/ai-models/utils/get-ai-model-tiers-by-distance.util';
 import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/utils/get-available-efforts.util';
 import { getPositiveTokenLimitOrDefault } from 'src/engine/metadata-modules/ai/ai-models/utils/get-positive-token-limit-or-default.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
@@ -125,7 +126,7 @@ export class AiModelRegistryService {
     });
 
     this.registerModelsFromProviders(providers);
-    this.registerConfiguredVariants();
+    this.registerSupportedVariants();
   }
 
   private registerModelsFromProviders(providers: AiProvidersConfig): void {
@@ -186,12 +187,12 @@ export class AiModelRegistryService {
     }
   }
 
-  private registerConfiguredVariants(): void {
-    for (const tier of AI_MODEL_TIERS) {
-      for (const variantId of this.preferencesService.getDefaultModelIdsForTier(
-        tier,
-      )) {
-        this.registerVariant(variantId);
+  private registerSupportedVariants(): void {
+    // The client catalog must resolve every selectable effort before a pin is
+    // saved, not only variants that have already been used by the server.
+    for (const modelConfig of Array.from(this.modelConfigCache.values())) {
+      for (const effort of getAvailableEfforts(modelConfig)) {
+        this.registerVariant(`${modelConfig.modelId}@${effort}`);
       }
     }
   }
@@ -428,13 +429,29 @@ export class AiModelRegistryService {
     return undefined;
   }
 
-  // The last resort is any model the admin still allows: a chain that names
-  // only disabled models must not hand a disabled one to the client.
+  // A rung whose chain names nothing available borrows the nearest rung's
+  // chain, so an instance with two models lands on the neighbouring tier
+  // rather than on whatever the catalog happens to list first. The last
+  // resort is any model the admin still allows, a current one before a
+  // deprecated one: a chain that names only disabled models must not hand a
+  // disabled one to the client.
   findDefaultModelForTier(tier: AiModelTier): RegisteredAiModel | undefined {
+    for (const candidateTier of getAiModelTiersByDistance(tier)) {
+      const model = this.getFirstAvailableModelFromList(
+        this.preferencesService.getDefaultModelIdsForTier(candidateTier),
+      );
+
+      if (isDefined(model)) {
+        return model;
+      }
+    }
+
+    const allowedModels = this.getAdminFilteredModels();
+
     return (
-      this.getFirstAvailableModelFromList(
-        this.preferencesService.getDefaultModelIdsForTier(tier),
-      ) ?? this.getAdminFilteredModels()[0]
+      allowedModels.find(
+        (model) => this.getModelConfig(model.modelId)?.isDeprecated !== true,
+      ) ?? allowedModels[0]
     );
   }
 
@@ -619,18 +636,21 @@ export class AiModelRegistryService {
   }> {
     this.ensureFresh();
 
-    return Array.from(this.modelConfigCache.values()).map((modelConfig) => {
-      const registered = this.modelRegistry.get(modelConfig.modelId);
-      const cached = this.providerModelDefCache.get(modelConfig.modelId);
+    // Effort variants share the base model's management and deletion target.
+    return Array.from(this.modelConfigCache.values())
+      .filter((modelConfig) => !isDefined(modelConfig.effort))
+      .map((modelConfig) => {
+        const registered = this.modelRegistry.get(modelConfig.modelId);
+        const cached = this.providerModelDefCache.get(modelConfig.modelId);
 
-      return {
-        modelConfig,
-        isAvailable: !!registered,
-        isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
-        providerName: registered?.providerName ?? cached?.providerName,
-        name: cached?.modelDef.name,
-      };
-    });
+        return {
+          modelConfig,
+          isAvailable: !!registered,
+          isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
+          providerName: registered?.providerName ?? cached?.providerName,
+          name: cached?.modelDef.name,
+        };
+      });
   }
 
   async setModelAdminEnabled(modelId: string, enabled: boolean): Promise<void> {

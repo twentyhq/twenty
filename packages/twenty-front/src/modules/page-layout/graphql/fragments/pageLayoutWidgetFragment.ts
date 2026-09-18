@@ -32,6 +32,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on PageLayoutWidgetVerticalListPosition {
         layoutMode
         index
+        heightBehavior
       }
       ... on PageLayoutWidgetCanvasPosition {
         layoutMode

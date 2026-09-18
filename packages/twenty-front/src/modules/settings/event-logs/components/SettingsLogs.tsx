@@ -23,8 +23,9 @@ import {
   IconPlayerPause,
   IconPlayerPlay,
 } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/input';
-import { Card } from 'twenty-ui/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
@@ -168,22 +169,21 @@ export const SettingsLogs = () => {
       <SettingsOptionCardContentButton
         Icon={IconLock}
         title={t`Upgrade to access audit logs`}
-        description={t`Only application logs are available on your current plan. Other log types require an Enterprise subscription.`}
+        description={t`Only application logs are available on your current plan. Other log types require an Organization subscription.`}
         Button={
           <Button
-            title={t`Upgrade`}
-            variant="primary"
-            accent="blue"
-            size="small"
-            Icon={IconArrowUp}
+            size="sm"
+            startIcon={<IconArrowUp />}
             onClick={() =>
               navigateSettings(
                 isBillingEnabled
                   ? SettingsPath.BillingPlans
-                  : SettingsPath.AdminPanelEnterprise,
+                  : SettingsPath.AdminPanelOrganization,
               )
             }
-          />
+            variant="solid"
+            color="accent"
+          >{t`Upgrade`}</Button>
         }
       />
     </Card>
@@ -247,12 +247,13 @@ export const SettingsLogs = () => {
             </StyledSelectorGrow>
             {canQuery && (
               <IconButton
-                Icon={isPaused ? IconPlayerPlay : IconPlayerPause}
-                variant="secondary"
-                size="medium"
-                ariaLabel={isPaused ? t`Resume` : t`Pause`}
+                variant="outline"
+                size="md"
+                aria-label={isPaused ? t`Resume` : t`Pause`}
                 onClick={() => setIsPaused((previous) => !previous)}
-              />
+              >
+                {isPaused ? <IconPlayerPlay /> : <IconPlayerPause />}
+              </IconButton>
             )}
           </StyledSelectorRow>
           <EventLogFilters

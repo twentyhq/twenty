@@ -5,7 +5,7 @@ import { getPositionWordLabel } from '@/object-record/record-merge/utils/getPosi
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSectionContainer = styled.div`
@@ -38,7 +38,7 @@ export const MergeSettingsTab = () => {
 
   return (
     <StyledSectionContainer>
-      <Section>
+      <Section.Root>
         <Select
           dropdownId="merge-settings-priority-select"
           options={priorityOptions}
@@ -46,7 +46,7 @@ export const MergeSettingsTab = () => {
           onChange={handleSelectionChange}
           label={t`Fields conflicts`}
         />
-      </Section>
+      </Section.Root>
     </StyledSectionContainer>
   );
 };

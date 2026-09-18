@@ -6,8 +6,8 @@ import {
   IconSquareRoundedCheck,
   IconSquareRoundedX,
 } from 'twenty-ui/icon';
-import { CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
-import { AnimatedCircleLoading } from 'twenty-ui/layout';
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
+import { AnimatedCircleLoading } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
 const StyledContainer = styled.div`
@@ -127,7 +127,7 @@ export const WorkflowStepExecutionResult = ({
 
   return (
     <StyledContainer>
-      <CoreEditorHeader
+      <CodeEditorHeader
         leftNodes={[computeLeftNode()]}
         rightNodes={[<LightCopyIconButton copyText={result} />]}
       />

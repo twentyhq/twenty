@@ -5,7 +5,7 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   type AnimatedPlaceholderType,
-} from 'twenty-ui/feedback';
+} from 'twenty-ui/primitives/feedback';
 
 type CallRecordingWidgetEmptyStateDisplayProps = {
   animatedPlaceholderType: AnimatedPlaceholderType;

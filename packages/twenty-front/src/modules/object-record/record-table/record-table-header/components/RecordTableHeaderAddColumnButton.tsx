@@ -95,7 +95,7 @@ export const RecordTableHeaderAddColumnButton = () => {
     !isFirstRowActiveOrFocused ||
     isRecordTableScrolledVertically;
 
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
 
   return (
     <StyledPlusIconHeaderCell
@@ -111,7 +111,7 @@ export const RecordTableHeaderAddColumnButton = () => {
       />
       <StyledDropdownContainer>
         <Dropdown
-          dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
+          dropdownId={`${HIDDEN_TABLE_COLUMN_DROPDOWN_ID}-${recordTableId}`}
           clickableComponent={
             <StyledPlusIconContainer>
               <IconPlus size={theme.icon.size.md} />

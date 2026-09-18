@@ -11,13 +11,13 @@ import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-ca
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { useRecordCalendarSelection } from '@/object-record/record-calendar/states/selectors/useRecordCalendarSelection';
-import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
+import { DIALOG_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/dialog/constants/DialogBackdropClickOutsideId';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useEffect } from 'react';
-import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/data-display';
+import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainerContainer = styled.div`
@@ -50,7 +50,7 @@ export const RecordCalendar = () => {
     excludedClickOutsideIds: [
       COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID,
       COMMAND_MENU_CLICK_OUTSIDE_ID,
-      MODAL_BACKDROP_CLICK_OUTSIDE_ID,
+      DIALOG_BACKDROP_CLICK_OUTSIDE_ID,
       PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID,
       RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID,
       LINK_CHIP_CLICK_OUTSIDE_ID,

@@ -4,10 +4,12 @@ import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import {
+  GRANOLA_PENDING_FOLDER_SELECTION_KEY,
   GRANOLA_PENDING_REGISTRATION_KEY,
   GRANOLA_WEBHOOK_REGISTRATION_KEY,
 } from 'src/constants/granola.constant';
 import { GRANOLA_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/granola-api-key-env-var-name';
+import { type GranolaPendingFolderSelection } from 'src/logic-functions/types/granola-pending-folder-selection.type';
 import { type GranolaWebhookRegistration } from 'src/logic-functions/types/granola-webhook-registration.type';
 import { cleanupPendingGranolaRegistrationOrThrow } from 'src/logic-functions/utils/cleanup-pending-granola-registration-or-throw.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
@@ -30,6 +32,9 @@ export const ensureGranolaWebhookRegistrationOrThrow =
     const apiKeyFingerprint = getGranolaApiKeyFingerprint(apiKey);
     const existing = await kv.get<GranolaWebhookRegistration>(
       GRANOLA_WEBHOOK_REGISTRATION_KEY,
+    );
+    const pendingFolderSelection = await kv.get<GranolaPendingFolderSelection>(
+      GRANOLA_PENDING_FOLDER_SELECTION_KEY,
     );
     const { webhook_endpoints: endpoints } =
       await client.listWebhookEndpoints();
@@ -80,7 +85,7 @@ export const ensureGranolaWebhookRegistrationOrThrow =
       client,
       url,
       preferredScopes: isExistingKeyCurrent ? existing.scopes : undefined,
-      folderIds: existing?.folderIds ?? [],
+      folderIds: pendingFolderSelection?.folderIds ?? existing?.folderIds ?? [],
     });
     const registration: GranolaWebhookRegistration = {
       registrationId,
@@ -89,6 +94,8 @@ export const ensureGranolaWebhookRegistrationOrThrow =
       apiKeyFingerprint,
       scopes: createdEndpoint.scopes,
       folderIds: createdEndpoint.folder_ids,
+      isInitialBackfillEnqueued:
+        isExistingKeyCurrent && existing.isInitialBackfillEnqueued,
     };
     try {
       await kv.set(GRANOLA_WEBHOOK_REGISTRATION_KEY, registration);
@@ -107,6 +114,9 @@ export const ensureGranolaWebhookRegistrationOrThrow =
         );
       }
       throw error;
+    }
+    if (isDefined(pendingFolderSelection)) {
+      await kv.delete(GRANOLA_PENDING_FOLDER_SELECTION_KEY);
     }
     await kv.delete(GRANOLA_PENDING_REGISTRATION_KEY);
     return registration;

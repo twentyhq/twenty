@@ -100,6 +100,81 @@ describe('noteTargets hooks on note actions', () => {
     ).not.toBeNull();
   });
 
+  it('deleteOne note should leave a noteTarget detached earlier at its own deletion time', async () => {
+    const noteId = randomUUID();
+    const detachedNoteTargetId = randomUUID();
+    const attachedNoteTargetId = randomUUID();
+
+    noteIds.push(noteId);
+    noteTargetIds.push(detachedNoteTargetId, attachedNoteTargetId);
+
+    await createOneOperation({
+      objectMetadataSingularName: 'note',
+      gqlFields: NOTE_GQL_FIELDS,
+      input: { id: noteId, title: 'Test Note with a detached target' },
+    });
+
+    await Promise.all([
+      createOneOperation({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        input: { id: detachedNoteTargetId, noteId },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        input: { id: attachedNoteTargetId, noteId },
+      }),
+    ]);
+
+    const detachResponse = await makeGraphqlAPIRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        recordId: detachedNoteTargetId,
+      }),
+    );
+    const detachedAt = detachResponse.body.data.deleteNoteTarget.deletedAt;
+
+    expect(detachedAt).not.toBeNull();
+
+    const deleteResponse = await makeGraphqlAPIRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'note',
+        gqlFields: NOTE_GQL_FIELDS,
+        recordId: noteId,
+      }),
+    );
+
+    expect(deleteResponse.body.data.deleteNote.deletedAt).not.toBeNull();
+
+    const noteTargetsResponse = await makeGraphqlAPIRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'noteTarget',
+        objectMetadataPluralName: 'noteTargets',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        filter: {
+          id: { in: [detachedNoteTargetId, attachedNoteTargetId] },
+          not: { deletedAt: { is: 'NULL' } },
+        },
+      }),
+    );
+    const deletedAtByNoteTargetId = Object.fromEntries(
+      noteTargetsResponse.body.data.noteTargets.edges.map(
+        ({ node }: { node: { id: string; deletedAt: string } }) => [
+          node.id,
+          node.deletedAt,
+        ],
+      ),
+    );
+
+    expect(deletedAtByNoteTargetId[detachedNoteTargetId]).toBe(detachedAt);
+    expect(deletedAtByNoteTargetId[attachedNoteTargetId]).not.toBeNull();
+    expect(
+      new Date(deletedAtByNoteTargetId[attachedNoteTargetId]).getTime(),
+    ).toBeGreaterThan(new Date(detachedAt).getTime());
+  });
+
   it('deleteMany notes should soft delete related noteTargets', async () => {
     const noteId1 = randomUUID();
     const noteId2 = randomUUID();

@@ -2,7 +2,8 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Section } from 'twenty-ui/components';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import {
   IconBox,
   IconCalendarEvent,
@@ -17,8 +18,6 @@ import {
   IconTag,
   IconUsers,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -26,7 +25,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsAdminWorkspaceCreditGrantModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal';
 import { SettingsAdminWorkspaceCreditGrantsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable';
 import { formatSubscriptionItemValue } from '@/settings/admin-panel/utils/formatSubscriptionItemValue';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
@@ -131,7 +130,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
 }: SettingsAdminWorkspaceBillingContentProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const apolloAdminClient = useApolloAdminClient();
 
   const { data, loading } = useQuery<WorkspaceBillingAdminPanelQuery>(
@@ -156,12 +155,12 @@ export const SettingsAdminWorkspaceBillingContent = ({
   if (!billing) {
     return (
       <StyledContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Billing`}
             description={t`No billing data is available for this workspace.`}
           />
-        </Section>
+        </Section.Root>
       </StyledContainer>
     );
   }
@@ -264,10 +263,9 @@ export const SettingsAdminWorkspaceBillingContent = ({
           Icon: IconStatusChange,
           label: t`Status`,
           value: (
-            <Tag
-              color={STATUS_COLORS[subscription.status]}
-              text={STATUS_LABELS[subscription.status]}
-            />
+            <Tag color={STATUS_COLORS[subscription.status]}>
+              {STATUS_LABELS[subscription.status]}
+            </Tag>
           ),
         },
         ...(isDefined(planKey)
@@ -348,7 +346,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
             <StyledItemValue>
               <span>{formatItemValue(item)}</span>
               {isDefined(item.productKey) && (
-                <Tag color="gray" text={item.productKey} />
+                <Tag color="gray">{item.productKey}</Tag>
               )}
             </StyledItemValue>
           ),
@@ -358,8 +356,8 @@ export const SettingsAdminWorkspaceBillingContent = ({
 
   return (
     <StyledContainer>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Customer`}
           description={t`Stripe customer linked to this workspace`}
         />
@@ -368,10 +366,10 @@ export const SettingsAdminWorkspaceBillingContent = ({
           items={customerItems}
           gridAutoColumns="3fr 8fr"
         />
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Usage`}
           description={
             isDefined(usage)
@@ -386,10 +384,10 @@ export const SettingsAdminWorkspaceBillingContent = ({
             gridAutoColumns="3fr 8fr"
           />
         )}
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Subscription`}
           description={
             subscription
@@ -404,12 +402,12 @@ export const SettingsAdminWorkspaceBillingContent = ({
             gridAutoColumns="3fr 8fr"
           />
         )}
-      </Section>
+      </Section.Root>
 
       <SettingsAdminWorkspaceCreditGrantsTable
         workspaceId={workspaceId}
         creditGrants={creditGrants}
-        onGrantCreditsClick={() => openModal(GRANT_CREDITS_MODAL_ID)}
+        onGrantCreditsClick={() => openDialog(GRANT_CREDITS_MODAL_ID)}
       />
 
       <SettingsAdminWorkspaceCreditGrantModal

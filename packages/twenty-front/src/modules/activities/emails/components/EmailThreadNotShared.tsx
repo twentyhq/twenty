@@ -1,8 +1,9 @@
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconLock } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
@@ -40,21 +41,17 @@ export const EmailThreadNotShared = ({
   const isCompact = visibility === MessageChannelVisibility.SUBJECT;
 
   return (
-    <>
+    <Tooltip
+      content={t`Only the subject is shared`}
+      delay={TooltipDelay.mediumDelay}
+      side="bottom"
+      positionMethod="fixed"
+      disabled={!(visibility === MessageChannelVisibility.SUBJECT)}
+    >
       <StyledContainer id={containerId} isCompact={isCompact}>
         <IconLock size={theme.icon.size.sm} />
         {t`Not shared`}
       </StyledContainer>
-      {visibility === MessageChannelVisibility.SUBJECT && (
-        <AppTooltip
-          anchorSelect={`#${containerId}`}
-          title={t`Only the subject is shared`}
-          delay={TooltipDelay.mediumDelay}
-          noArrow
-          place="bottom"
-          positionStrategy="fixed"
-        />
-      )}
-    </>
+    </Tooltip>
   );
 };

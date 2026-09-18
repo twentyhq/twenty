@@ -11,6 +11,8 @@ const languageModel = {
   limit: { context: 128000, output: 8192 },
 };
 
+const VENDORS = ['openai', 'anthropic', 'google', 'xai', 'mistral'];
+
 const payload = (): ModelsDevData => ({
   openai: { id: 'openai', models: { 'gpt-x': languageModel } },
   anthropic: { id: 'anthropic', models: { 'claude-x': languageModel } },
@@ -20,14 +22,16 @@ const payload = (): ModelsDevData => ({
 });
 
 describe('assertPayloadIsUsable', () => {
-  it('accepts a payload carrying models for every native provider', () => {
-    expect(() => assertPayloadIsUsable(payload())).not.toThrow();
+  it('accepts a payload carrying models for every vendor we ship', () => {
+    expect(() =>
+      assertPayloadIsUsable({ data: payload(), vendors: VENDORS }),
+    ).not.toThrow();
   });
 
   it('refuses an empty payload rather than generating an empty catalog', () => {
-    expect(() => assertPayloadIsUsable({} as ModelsDevData)).toThrow(
-      /refusing to overwrite the catalog/,
-    );
+    expect(() =>
+      assertPayloadIsUsable({ data: {} as ModelsDevData, vendors: VENDORS }),
+    ).toThrow(/refusing to overwrite the catalog/);
   });
 
   it('names the providers that came back empty', () => {
@@ -35,7 +39,9 @@ describe('assertPayloadIsUsable', () => {
 
     data.anthropic.models = {};
 
-    expect(() => assertPayloadIsUsable(data)).toThrow(/anthropic/);
+    expect(() => assertPayloadIsUsable({ data, vendors: VENDORS })).toThrow(
+      /anthropic/,
+    );
   });
 });
 
@@ -49,7 +55,7 @@ describe('buildCatalog', () => {
       context_over_200k: { input: 4 },
     };
 
-    const model = buildCatalog(data).openai.models[0];
+    const model = buildCatalog({ data, vendors: VENDORS }).openai.models[0];
 
     // A missing long-context rate is unknown, not free.
     expect(model.longContextCost?.outputCostPerMillionTokens).toBe(6);

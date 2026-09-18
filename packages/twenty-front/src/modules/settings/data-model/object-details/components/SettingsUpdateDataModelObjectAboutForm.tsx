@@ -1,3 +1,6 @@
+import { Button } from 'twenty-ui/primitives/input';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -11,15 +14,17 @@ import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
-import {
-  ConfirmationModal,
-  StyledCenteredButton,
-} from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
-import { parseThemeColor } from 'twenty-ui/utilities';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+
+const StyledCenteredButton = styled(Button)`
+  box-sizing: border-box;
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
 
 type SettingsUpdateDataModelObjectAboutFormProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -58,7 +63,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       namePlural,
       nameSingular,
       ...(isCustomObject
-        ? { color: parseThemeColor(objectMetadataItem.color) }
+        ? { color: getObjectColorWithFallback(objectMetadataItem) }
         : {}),
     },
   });
@@ -83,23 +88,21 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         disableEdition={readonly}
         objectMetadataItem={objectMetadataItem}
       />
-      <ConfirmationModal
-        modalInstanceId={TRANSLATION_INTENT_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={TRANSLATION_INTENT_MODAL_ID}
         title={t`Translate or rename?`}
         subtitle={t`You are editing the ${currentLanguageLabel} translation. Renaming instead changes the source label, for every language.`}
         confirmButtonText={t`Only in ${currentLanguageLabel}`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
         hideCancelButton
         onConfirmClick={saveAsTranslation}
         onClose={cancelPendingSave}
         AdditionalButtons={
           <StyledCenteredButton
-            title={t`Rename for all languages`}
-            variant="secondary"
             fullWidth
-            justify="center"
             onClick={handleRenameForAllLanguages}
-          />
+            variant="outline"
+          >{t`Rename for all languages`}</StyledCenteredButton>
         }
       />
     </FormProvider>

@@ -1,5 +1,5 @@
-import { type LinkType } from '@ui/navigation/SocialLink/LinkType';
-import { SOCIAL_LINK_PROVIDERS } from '@ui/navigation/SocialLink/socialLinkProviders';
+import { type LinkType } from '@ui/primitives/navigation/SocialLink/LinkType';
+import { SOCIAL_LINK_PROVIDERS } from '@ui/primitives/navigation/SocialLink/socialLinkProviders';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 type GetDisplayValueByUrlTypeProps = {

@@ -1,5 +1,5 @@
 import { useAddressFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useAddressFieldDisplay';
-import { TextDisplay } from 'twenty-ui/data-display';
+import { TextDisplay } from 'twenty-ui/primitives/data-display';
 import { formatAddressDisplay } from '~/utils/formatAddressDisplay';
 
 export const AddressFieldDisplay = () => {

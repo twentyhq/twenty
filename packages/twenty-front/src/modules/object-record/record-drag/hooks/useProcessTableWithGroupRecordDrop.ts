@@ -9,14 +9,14 @@ import { originalDragSelectionComponentState } from '@/object-record/record-drag
 import { processGroupDrop } from '@/object-record/record-drag/utils/processGroupDrop';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
-import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
+import { getRecordIndexRemoveSortingModalId } from '@/object-record/record-index/utils/getRecordIndexRemoveSortingModalId';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -30,7 +30,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
 
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const recordIdsByGroupFamilyState = useAtomComponentFamilyStateCallbackState(
     recordIndexRecordIdsByGroupComponentFamilyState,
@@ -95,7 +95,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
       const existingRecordSorts = store.get(currentRecordSorts);
 
       if (existingRecordSorts.length > 0) {
-        openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+        openDialog(getRecordIndexRemoveSortingModalId(recordIndexId));
         return;
       }
 
@@ -120,6 +120,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
     },
     [
       currentRecordSorts,
+      recordIndexId,
       store,
       objectNameSingular,
       objectMetadataItem.fields,
@@ -128,7 +129,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
       selectedRowIds,
       recordIdsByGroupFamilyState,
       recordIndexGroupFieldMetadataItem?.id,
-      openModal,
+      openDialog,
       updateOneRecord,
     ],
   );

@@ -1,12 +1,13 @@
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { StyledHeaderIdentifierLabel } from '@/ui/layout/page/components/StyledHeaderIdentifierLabel';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
-import { AppTooltip } from 'twenty-ui/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
   beautifyExactDateTime,
@@ -42,17 +43,14 @@ export const RecordIdentifierBarCreatedAt = ({
   );
 
   return (
-    <>
+    <Tooltip
+      delay={TooltipDelay.mediumDelay}
+      content={beautifyExactDateTime(recordCreatedAt)}
+      side="left"
+    >
       <StyledCreatedAt id={createdAtElementId}>
         <Trans>Created {beautifiedCreatedAt}</Trans>
       </StyledCreatedAt>
-      <AppTooltip
-        anchorSelect={`#${createdAtElementId}`}
-        title={beautifyExactDateTime(recordCreatedAt)}
-        interactive
-        noArrow
-        place="left"
-      />
-    </>
+    </Tooltip>
   );
 };

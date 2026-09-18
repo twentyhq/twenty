@@ -1,9 +1,9 @@
+import { NavigationMenuItemAddDropdown } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdown';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo } from 'react';
-import { SidePanelPages } from 'twenty-shared/types';
-import { IconHeart, IconHeartOff, IconPlus } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { IconHeartOff, IconPlus } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -11,9 +11,6 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/co
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
-import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
-import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
-import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
 import { NavigationMenuItemDroppableSlot } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemDroppableSlot';
@@ -24,11 +21,9 @@ import { useReadableNavigationMenuItems } from '@/navigation-menu-item/display/h
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { NavigationMenuItemOrphanDropTarget } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemOrphanDropTarget';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
-import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledList = styled.div`
   display: flex;
@@ -51,17 +46,6 @@ export const FavoritesSection = () => {
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
   const { isDragging } = useContext(NavigationMenuItemDragContext);
   const favoritesDropDisabled = useIsDropDisabledForSection(false);
-
-  const { navigateSidePanel } = useNavigateSidePanel();
-  const setNavigationMenuItemEditSection = useSetAtomState(
-    navigationMenuItemEditSectionState,
-  );
-  const setPendingInsertionNavigationMenuItem = useSetAtomState(
-    pendingInsertionNavigationMenuItemState,
-  );
-  const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
-    selectedNavigationMenuItemIdInEditModeState,
-  );
 
   const { t } = useLingui();
 
@@ -98,20 +82,6 @@ export const FavoritesSection = () => {
     [topLevelItems],
   );
 
-  const handleAddFavorite = (event?: React.MouseEvent) => {
-    event?.stopPropagation();
-    openNavigationSection();
-    setNavigationMenuItemEditSection('favorite');
-    setPendingInsertionNavigationMenuItem(null);
-    setSelectedNavigationMenuItemIdInEditMode(null);
-    navigateSidePanel({
-      page: SidePanelPages.NavigationMenuAddItem,
-      pageTitle: t`New favorite`,
-      pageIcon: IconHeart,
-      resetNavigationStack: true,
-    });
-  };
-
   const makeRightOptions = useCallback(
     (item: NavigationMenuItem) => (
       <LightIconButton
@@ -136,11 +106,13 @@ export const FavoritesSection = () => {
       isOpen={isNavigationSectionOpen}
       onToggle={toggleNavigationSection}
       rightIcon={
-        <LightIconButton
-          Icon={IconPlus}
-          onClick={handleAddFavorite}
-          accent="tertiary"
-        />
+        <NavigationMenuItemAddDropdown
+          instanceId="favorites"
+          section="favorite"
+          onOpen={openNavigationSection}
+        >
+          <LightIconButton Icon={IconPlus} accent="tertiary" />
+        </NavigationMenuItemAddDropdown>
       }
     >
       <StyledList>

@@ -3,7 +3,7 @@ import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableLi
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 import { IconBell } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof DraggableList> = {

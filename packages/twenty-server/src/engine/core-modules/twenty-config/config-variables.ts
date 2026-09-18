@@ -96,7 +96,16 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Enable safe mode for outbound requests (prevents private IPs and other security risks). Applies to HTTP workflow actions, webhooks, and IMAP/SMTP/CalDAV connections.',
+      'Hostnames or IP literals on a private network that outbound connections may reach, e.g. an on-premise mail server or identity provider (keycloak, mail.internal, 192.168.1.10). Exact hostname match, no patterns; a full URL is reduced to its hostname. Every other private address is blocked (SSRF protection) for HTTP workflow actions, webhooks, SSO and IMAP/SMTP/CalDAV connections. Set to * to allow all.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: string[] = [];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Deprecated: set OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS to * instead. While this is false every private address is reachable and OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS is ignored.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()

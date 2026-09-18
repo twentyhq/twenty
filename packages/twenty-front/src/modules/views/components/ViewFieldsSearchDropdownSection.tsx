@@ -10,7 +10,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type ViewFieldsSearchDropdownSectionProps = {
   searchInput: string;

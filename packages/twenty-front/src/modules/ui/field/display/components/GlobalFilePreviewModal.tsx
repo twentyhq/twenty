@@ -1,16 +1,16 @@
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type JSX, lazy, Suspense, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DocumentViewer = lazy(() =>
@@ -75,16 +75,16 @@ const StyledLoadingText = styled.div`
 export const GlobalFilePreviewModal = (): JSX.Element | null => {
   const { t } = useLingui();
   const [filePreview, setFilePreview] = useAtomState(filePreviewState);
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
 
   useEffect(() => {
     if (isDefined(filePreview)) {
-      openModal(GLOBAL_FILE_PREVIEW_MODAL_ID);
+      openDialog(GLOBAL_FILE_PREVIEW_MODAL_ID);
     }
-  }, [filePreview, openModal]);
+  }, [filePreview, openDialog]);
 
   const handleClose = () => {
-    closeModal(GLOBAL_FILE_PREVIEW_MODAL_ID);
+    closeDialog(GLOBAL_FILE_PREVIEW_MODAL_ID);
     setFilePreview(null);
   };
 
@@ -98,25 +98,37 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
   }
 
   return (
-    <>
-      {createPortal(
-        <ModalStatefulWrapper
-          modalInstanceId={GLOBAL_FILE_PREVIEW_MODAL_ID}
-          size="large"
-          isClosable
-          onClose={handleClose}
-          renderInDocumentBody
+    <DialogInstance
+      dialogId={GLOBAL_FILE_PREVIEW_MODAL_ID}
+      dismissible
+      onClose={handleClose}
+      renderInDocumentBody
+    >
+      {({ container, backdrop, viewportProps, onKeyDown }) => (
+        <Dialog.Popup
+          aria-label={filePreview.label ?? t`File preview`}
+          {...{ container, backdrop, viewportProps, onKeyDown }}
+          size="lg"
+          style={{ padding: 'var(--t-spacing-4)' }}
         >
           <StyledModalHeader>
             <StyledHeader>
               <StyledModalTitle>{filePreview.label}</StyledModalTitle>
               <StyledButtonContainer>
                 <IconButton
-                  Icon={IconDownload}
+                  aria-label={t`Download file`}
                   onClick={handleDownload}
-                  size="small"
-                />
-                <IconButton Icon={IconX} onClick={handleClose} size="small" />
+                  size="sm"
+                >
+                  <IconDownload />
+                </IconButton>
+                <IconButton
+                  aria-label={t`Close preview`}
+                  onClick={handleClose}
+                  size="sm"
+                >
+                  <IconX />
+                </IconButton>
               </StyledButtonContainer>
             </StyledHeader>
           </StyledModalHeader>
@@ -141,9 +153,8 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
               </Suspense>
             </StyledModalContent>
           </ScrollWrapper>
-        </ModalStatefulWrapper>,
-        document.body,
+        </Dialog.Popup>
       )}
-    </>
+    </DialogInstance>
   );
 };

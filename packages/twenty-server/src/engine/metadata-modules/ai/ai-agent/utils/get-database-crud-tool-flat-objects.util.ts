@@ -1,8 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
+import {
+  type OverridableFlatEntity,
+  resolveEffectiveFlatEntityProperty,
+} from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
-type FlatObjectWithActivityAndIdentifier = {
+type FlatObjectWithActivityAndIdentifier = OverridableFlatEntity & {
   isActive: boolean;
   universalIdentifier: string;
 };
@@ -14,5 +18,12 @@ export const getDatabaseCrudToolFlatObjects = <
 ): T[] => {
   return Object.values(byUniversalIdentifier)
     .filter(isDefined)
-    .filter((obj) => obj.isActive && !isWorkflowRelatedObject(obj));
+    .filter(
+      (obj) =>
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'objectMetadata',
+          flatEntity: obj,
+          property: 'isActive',
+        }) && !isWorkflowRelatedObject(obj),
+    );
 };

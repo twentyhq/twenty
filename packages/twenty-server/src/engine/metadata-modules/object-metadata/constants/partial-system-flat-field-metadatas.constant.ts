@@ -16,9 +16,9 @@ type PartialSystemFlatFieldMetadata<
 const PARTIAL_ID_FIELD = {
   type: FieldMetadataType.UUID,
   name: 'id',
-  label: 'Id',
+  label: 'ID',
   icon: 'Icon123',
-  description: 'Id',
+  description: 'ID',
   isNullable: false,
   isUnique: true,
   isSearchable: false,

@@ -9,7 +9,9 @@ export const parseICalEvents = (
   objectUrl: string,
 ): FetchedCalendarEvent[] => {
   try {
-    const events = Object.values(ical.parseICS(rawData))
+    const normalizedRawData = rawData.replace(/\r\n|\r|\n/g, '\r\n');
+
+    const events = Object.values(ical.parseICS(normalizedRawData))
       .filter(
         (calendarComponent): calendarComponent is ical.VEvent =>
           calendarComponent.type === 'VEVENT',

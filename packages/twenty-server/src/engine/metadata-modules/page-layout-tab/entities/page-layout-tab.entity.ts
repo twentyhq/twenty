@@ -22,6 +22,7 @@ import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entiti
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
 
 export type PageLayoutTabOverrides = {
+  isActive?: boolean;
   title?: string;
   position?: number;
   icon?: string | null;

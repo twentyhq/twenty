@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { t } from '@lingui/core/macro';
-import { MenuPicker } from 'twenty-ui/navigation';
+import { MenuPicker } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const graphTypeOptions = [

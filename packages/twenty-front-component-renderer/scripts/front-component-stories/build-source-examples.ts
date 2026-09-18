@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 
 import { getFrontComponentBuildPlugins } from 'twenty-sdk/front-component-renderer/build';
 
+import twentyUiPackageJson from '../../../twenty-ui/package.json';
+
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const storiesDir = path.resolve(dirname, '../../src/__stories__');
 const exampleSourcesBuiltDir = path.resolve(
@@ -26,9 +28,14 @@ const SOURCE_SCAN_ROOTS = [
 
 const rootNodeModules = path.resolve(dirname, '../../../../node_modules');
 
-const twentyUiIndividualIndex = path.resolve(
+const twentyUiIndividualDir = path.resolve(
   dirname,
-  '../../../twenty-ui/dist/individual/individual-entry.js',
+  '../../../twenty-ui/dist/individual',
+);
+
+const twentyUiIndividualIndex = path.join(
+  twentyUiIndividualDir,
+  'individual-entry.js',
 );
 
 const sdkDefineIndex = path.resolve(
@@ -67,27 +74,17 @@ const twentySharedAliases = Object.fromEntries(
   ]),
 );
 
-const TWENTY_UI_SUBMODULES = [
-  'accessibility',
-  'data-display',
-  'feedback',
-  'icon',
-  'input',
-  'json-visualizer',
-  'layout',
-  'navigation',
-  'surfaces',
-  'theme-constants',
-  'typography',
-  'utilities',
-];
+const twentyUiSubmodules = Object.keys(twentyUiPackageJson.exports)
+  .filter((subpath) => subpath !== '.' && !subpath.endsWith('.css'))
+  .map((subpath) => subpath.slice(2));
 
 const twentyUiAliases = {
+  'twenty-ui/style.css': path.join(twentyUiIndividualDir, 'twenty-ui.css'),
   'twenty-ui': twentyUiIndividualIndex,
   ...Object.fromEntries(
-    TWENTY_UI_SUBMODULES.map((submodule) => [
+    twentyUiSubmodules.map((submodule) => [
       `twenty-ui/${submodule}`,
-      twentyUiIndividualIndex,
+      path.join(twentyUiIndividualDir, submodule, 'index.js'),
     ]),
   ),
 };

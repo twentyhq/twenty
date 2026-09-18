@@ -6,18 +6,17 @@ import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Status, Tag } from 'twenty-ui/data-display';
+import { Section } from 'twenty-ui/components';
+import { Status, Tag } from 'twenty-ui/primitives/data-display';
 import { IconRefresh, IconTrash, IconUsers } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -84,7 +83,7 @@ export const SettingsApplicationConnectionDetail = () => {
   }>();
 
   const navigate = useNavigateSettings();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const { connectionProviders, loading: providersLoading } =
     useFindApplicationConnectionProviders(applicationId);
@@ -141,7 +140,7 @@ export const SettingsApplicationConnectionDetail = () => {
     SettingsPath.ApplicationDetail,
     { applicationId },
     undefined,
-    'settings',
+    'general',
   );
   const detailPath = getSettingsPath(SettingsPath.ApplicationConnectionDetail, {
     applicationId,
@@ -188,7 +187,7 @@ export const SettingsApplicationConnectionDetail = () => {
       { applicationId },
       undefined,
       { replace: true },
-      'settings',
+      'general',
     );
   };
 
@@ -220,21 +219,20 @@ export const SettingsApplicationConnectionDetail = () => {
         value: (
           <Status
             color={connection.visibility === 'workspace' ? 'blue' : 'gray'}
-            text={
-              connection.visibility === 'workspace'
-                ? t`Workspace shared`
-                : t`Just for me`
-            }
-          />
+          >
+            {connection.visibility === 'workspace'
+              ? t`Workspace shared`
+              : t`Just for me`}
+          </Status>
         ),
       },
       {
         key: 'status',
         label: t`Status`,
         value: connection.authFailedAt ? (
-          <Status color="red" text={t`Reconnect needed`} />
+          <Status color="red">{t`Reconnect needed`}</Status>
         ) : (
-          <Status color="green" text={t`Connected`} />
+          <Status color="green">{t`Connected`}</Status>
         ),
       },
       {
@@ -244,7 +242,9 @@ export const SettingsApplicationConnectionDetail = () => {
           scopes.length > 0 ? (
             <StyledScopeList>
               {scopes.map((scope) => (
-                <Tag key={scope} color="gray" text={scope} />
+                <Tag key={scope} color="gray">
+                  {scope}
+                </Tag>
               ))}
             </StyledScopeList>
           ) : (
@@ -314,51 +314,45 @@ export const SettingsApplicationConnectionDetail = () => {
         {isLoading ? (
           <SettingsSectionSkeletonLoader />
         ) : connection === undefined || provider === undefined ? (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Connection not found`}
               description={t`This connection does not exist or is not available for this application.`}
             />
-          </Section>
+          </Section.Root>
         ) : (
           <>
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={connectionLabel}
                 description={t`Manage this application's OAuth connection.`}
               />
-              {connection.isOwnedByCurrentUser && (
-                <StyledActions>
-                  {connection.authFailedAt && (
-                    <Button
-                      title={t`Reconnect`}
-                      Icon={IconRefresh}
-                      variant="secondary"
-                      accent="blue"
-                      onClick={handleReconnect}
-                    />
-                  )}
-                  {connection.visibility !== 'workspace' && (
-                    <Button
-                      title={t`Share with workspace`}
-                      Icon={IconUsers}
-                      variant="secondary"
-                      accent="default"
-                      onClick={() => openModal(shareWithWorkspaceModalId)}
-                    />
-                  )}
+              <StyledActions>
+                {connection.authFailedAt && (
                   <Button
-                    title={t`Disconnect`}
-                    Icon={IconTrash}
-                    variant="secondary"
-                    accent="danger"
-                    onClick={() => openModal(deleteModalId)}
-                  />
-                </StyledActions>
-              )}
-            </Section>
-            <Section>
-              <H2Title
+                    startIcon={<IconRefresh />}
+                    onClick={handleReconnect}
+                    variant="outline"
+                    color="accent"
+                  >{t`Reconnect`}</Button>
+                )}
+                {connection.visibility !== 'workspace' && (
+                  <Button
+                    startIcon={<IconUsers />}
+                    onClick={() => openDialog(shareWithWorkspaceModalId)}
+                    variant="outline"
+                  >{t`Share with workspace`}</Button>
+                )}
+                <Button
+                  startIcon={<IconTrash />}
+                  onClick={() => openDialog(deleteModalId)}
+                  variant="outline"
+                  color="danger"
+                >{t`Disconnect`}</Button>
+              </StyledActions>
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Details`}
                 description={t`OAuth credential metadata for this application connection`}
               />
@@ -383,9 +377,9 @@ export const SettingsApplicationConnectionDetail = () => {
                   ))}
                 </TableSection>
               </Table>
-            </Section>
-            <ConfirmationModal
-              modalInstanceId={deleteModalId}
+            </Section.Root>
+            <ConfirmationDialog
+              dialogId={deleteModalId}
               title={t`Disconnect connection?`}
               subtitle={
                 <Trans>
@@ -396,8 +390,8 @@ export const SettingsApplicationConnectionDetail = () => {
               confirmButtonText={t`Disconnect`}
               loading={isDeleting}
             />
-            <ConfirmationModal
-              modalInstanceId={shareWithWorkspaceModalId}
+            <ConfirmationDialog
+              dialogId={shareWithWorkspaceModalId}
               title={t`Share with workspace?`}
               subtitle={
                 <Trans>
@@ -407,7 +401,7 @@ export const SettingsApplicationConnectionDetail = () => {
               }
               onConfirmClick={handleShareWithWorkspace}
               confirmButtonText={t`Reconnect and share`}
-              confirmButtonAccent="blue"
+              confirmButtonColor="accent"
             />
           </>
         )}

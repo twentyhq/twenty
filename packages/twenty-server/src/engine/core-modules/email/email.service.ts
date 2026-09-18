@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type SendMailOptions } from 'nodemailer';
 
+import { EMAIL_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/email/constants/email-send-retry-backoff.constant';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -18,7 +19,7 @@ export class EmailService {
     await this.messageQueueService.add<SendMailOptions>(
       EmailSenderJob.name,
       sendMailOptions,
-      { retryLimit: 3 },
+      { retryLimit: 3, backoff: EMAIL_SEND_RETRY_BACKOFF },
     );
   }
 }
