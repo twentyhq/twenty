@@ -7,6 +7,7 @@ import { AGENT_CHAT_THREAD_INBOX_STATE_LABELS } from '@/ai/constants/AgentChatTh
 import { AGENT_CHAT_THREAD_INBOX_STATE_ORDER } from '@/ai/constants/AgentChatThreadInboxStateOrder';
 import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 
 const StyledContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
@@ -41,16 +42,18 @@ export const AiChatThreadInboxStateTabs = ({
   });
 
   return (
-    <StyledContainer>
-      <TabList
-        aria-label={t`Filter chats by state`}
-        tabs={tabs}
-        behaveAsLinks={false}
-        componentInstanceId={componentInstanceId}
-        onChangeTab={(tabId) =>
-          onChangeInboxState(tabId as AgentChatThreadInboxState)
-        }
-      />
-    </StyledContainer>
+    <TabListRoot componentInstanceId={componentInstanceId}>
+      <StyledContainer>
+        <TabList
+          aria-label={t`Filter chats by state`}
+          tabs={tabs}
+          behaveAsLinks={false}
+          componentInstanceId={componentInstanceId}
+          onChangeTab={(tabId) =>
+            onChangeInboxState(tabId as AgentChatThreadInboxState)
+          }
+        />
+      </StyledContainer>
+    </TabListRoot>
   );
 };
