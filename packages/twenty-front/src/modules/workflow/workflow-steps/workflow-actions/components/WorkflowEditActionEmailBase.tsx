@@ -123,6 +123,7 @@ export const WorkflowEditActionEmailBase = ({
     accounts: sendableAccounts,
     configuredAccount,
     myConfiguredAccount: ownAccount,
+    isConfiguredAccountRemoved,
     loading,
   } = useWorkflowStepConnectedAccounts({
     connectedAccountId: configuredAccountId,
@@ -148,15 +149,21 @@ export const WorkflowEditActionEmailBase = ({
         }
       : null;
 
-  const senderOptions = buildConnectedAccountSenderOptions(sendableAccounts);
+  const senderOptions = [
+    ...buildConnectedAccountSenderOptions(sendableAccounts),
+    ...(isConfiguredAccountRemoved
+      ? [{ label: t`Removed account`, value: configuredAccountId }]
+      : []),
+  ];
 
   const configuredSenderHandle = isNonEmptyString(formData.fromHandle)
     ? formData.fromHandle
     : configuredAccount?.handle;
 
-  const selectedSenderValue = isSenderVariable
-    ? configuredAccountId
-    : configuredSenderHandle;
+  const selectedSenderValue =
+    isSenderVariable || isConfiguredAccountRemoved
+      ? configuredAccountId
+      : configuredSenderHandle;
 
   const handleSenderChange = (senderValue: string | null) => {
     if (!isNonEmptyString(senderValue)) {
@@ -204,6 +211,8 @@ export const WorkflowEditActionEmailBase = ({
             onChange={handleSenderChange}
             VariablePicker={WorkflowVariablePicker}
             readonly={actionOptions.readonly}
+            isNullable
+            emptyOptionLabel={t`Default sender`}
             callToActionButton={{
               onClick: () => {
                 closeSidePanelMenu();

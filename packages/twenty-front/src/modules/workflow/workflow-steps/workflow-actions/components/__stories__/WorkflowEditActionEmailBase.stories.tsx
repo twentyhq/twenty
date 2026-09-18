@@ -190,47 +190,66 @@ const VARIABLE_SENDER_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
   },
 };
 
+const TEAMMATE_ACCOUNT_HANDLE = {
+  id: TEAMMATE_CONNECTED_ACCOUNT_ID,
+  handle: 'phil@apple.dev',
+  provider: 'google',
+  handleAliases: [],
+};
+
+const buildMswHandlers = (
+  workflowStepConnectedAccountHandle: typeof TEAMMATE_ACCOUNT_HANDLE | null,
+) => [
+  ...graphqlMocks.handlers,
+  graphql.query('MyConnectedAccounts', () => {
+    return HttpResponse.json({
+      data: {
+        myConnectedAccounts: mockedConnectedAccounts,
+      },
+    });
+  }),
+  graphql.query('MyMessageChannels', () => {
+    return HttpResponse.json({
+      data: {
+        myMessageChannels: [],
+      },
+    });
+  }),
+  graphql.query('MyCalendarChannels', () => {
+    return HttpResponse.json({
+      data: {
+        myCalendarChannels: [],
+      },
+    });
+  }),
+  graphql.query('WorkflowStepConnectedAccountHandle', () => {
+    return HttpResponse.json({
+      data: {
+        workflowStepConnectedAccountHandle,
+      },
+    });
+  }),
+];
+
+const buildSendEmailActionWithAccount = (
+  connectedAccountId: string,
+): WorkflowSendEmailAction => ({
+  ...CONFIGURED_SEND_EMAIL_ACTION,
+  settings: {
+    ...CONFIGURED_SEND_EMAIL_ACTION.settings,
+    input: {
+      ...CONFIGURED_SEND_EMAIL_ACTION.settings.input,
+      connectedAccountId,
+    },
+  },
+});
+
 const meta: Meta<typeof WorkflowEditActionEmailBase> = {
   title: 'Modules/Workflow/Actions/Email/EditAction',
   component: WorkflowEditActionEmailBase,
   parameters: {
     msw: {
-      handlers: [
-        ...graphqlMocks.handlers,
-        graphql.query('MyConnectedAccounts', () => {
-          return HttpResponse.json({
-            data: {
-              myConnectedAccounts: mockedConnectedAccounts,
-            },
-          });
-        }),
-        graphql.query('MyMessageChannels', () => {
-          return HttpResponse.json({
-            data: {
-              myMessageChannels: [],
-            },
-          });
-        }),
-        graphql.query('MyCalendarChannels', () => {
-          return HttpResponse.json({
-            data: {
-              myCalendarChannels: [],
-            },
-          });
-        }),
-        graphql.query('WorkflowStepConnectedAccountHandle', () => {
-          return HttpResponse.json({
-            data: {
-              workflowStepConnectedAccountHandle: {
-                id: TEAMMATE_CONNECTED_ACCOUNT_ID,
-                handle: 'phil@apple.dev',
-                provider: 'google',
-                handleAliases: [],
-              },
-            },
-          });
-        }),
-      ],
+      handlers: buildMswHandlers(TEAMMATE_ACCOUNT_HANDLE),
     },
   },
   args: {
@@ -289,18 +308,24 @@ export const Configured: Story = {
   },
 };
 
+export const DefaultSender: Story = {
+  args: {
+    action: buildSendEmailActionWithAccount(''),
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Default sender')).toBeVisible();
+    expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
+  },
+};
+
 export const TeammateSender: Story = {
   args: {
-    action: {
-      ...CONFIGURED_SEND_EMAIL_ACTION,
-      settings: {
-        ...CONFIGURED_SEND_EMAIL_ACTION.settings,
-        input: {
-          ...CONFIGURED_SEND_EMAIL_ACTION.settings.input,
-          connectedAccountId: TEAMMATE_CONNECTED_ACCOUNT_ID,
-        },
-      },
-    },
+    action: buildSendEmailActionWithAccount(TEAMMATE_CONNECTED_ACCOUNT_ID),
     actionOptions: {
       onActionUpdate: fn(),
     },
@@ -310,6 +335,26 @@ export const TeammateSender: Story = {
 
     expect(await canvas.findByText('phil@apple.dev')).toBeVisible();
     expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
+  },
+};
+
+export const RemovedSender: Story = {
+  args: {
+    action: buildSendEmailActionWithAccount(TEAMMATE_CONNECTED_ACCOUNT_ID),
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: buildMswHandlers(null),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Removed account')).toBeVisible();
+    expect(canvas.queryByText('Default sender')).not.toBeInTheDocument();
   },
 };
 

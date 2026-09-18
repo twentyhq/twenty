@@ -54,8 +54,49 @@ const mockedCalendarChannels = [
   },
 ];
 
+const TEAMMATE_ACCOUNT_HANDLE = {
+  id: TEAMMATE_CONNECTED_ACCOUNT_ID,
+  handle: 'phil@apple.dev',
+  provider: 'google',
+  handleAliases: [],
+};
+
+const buildMswHandlers = (
+  workflowStepConnectedAccountHandle: typeof TEAMMATE_ACCOUNT_HANDLE | null,
+) => [
+  ...graphqlMocks.handlers,
+  graphql.query('MyConnectedAccounts', () => {
+    return HttpResponse.json({
+      data: {
+        myConnectedAccounts: mockedConnectedAccounts,
+      },
+    });
+  }),
+  graphql.query('MyMessageChannels', () => {
+    return HttpResponse.json({
+      data: {
+        myMessageChannels: [],
+      },
+    });
+  }),
+  graphql.query('MyCalendarChannels', () => {
+    return HttpResponse.json({
+      data: {
+        myCalendarChannels: mockedCalendarChannels,
+      },
+    });
+  }),
+  graphql.query('WorkflowStepConnectedAccountHandle', () => {
+    return HttpResponse.json({
+      data: {
+        workflowStepConnectedAccountHandle,
+      },
+    });
+  }),
+];
+
 const buildCreateCalendarEventAction = (
-  connectedAccountId: string,
+  input: Partial<WorkflowCreateCalendarEventAction['settings']['input']>,
 ): WorkflowCreateCalendarEventAction => ({
   id: getWorkflowNodeIdMock(),
   name: 'Create Calendar Event',
@@ -63,7 +104,7 @@ const buildCreateCalendarEventAction = (
   valid: true,
   settings: {
     input: {
-      connectedAccountId,
+      connectedAccountId: '',
       title: 'Quarterly review',
       description: '',
       location: '',
@@ -74,6 +115,7 @@ const buildCreateCalendarEventAction = (
       attendees: '',
       sendInvitations: false,
       addConferencing: false,
+      ...input,
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -92,42 +134,7 @@ const meta: Meta<typeof WorkflowEditActionCreateCalendarEvent> = {
   component: WorkflowEditActionCreateCalendarEvent,
   parameters: {
     msw: {
-      handlers: [
-        ...graphqlMocks.handlers,
-        graphql.query('MyConnectedAccounts', () => {
-          return HttpResponse.json({
-            data: {
-              myConnectedAccounts: mockedConnectedAccounts,
-            },
-          });
-        }),
-        graphql.query('MyMessageChannels', () => {
-          return HttpResponse.json({
-            data: {
-              myMessageChannels: [],
-            },
-          });
-        }),
-        graphql.query('MyCalendarChannels', () => {
-          return HttpResponse.json({
-            data: {
-              myCalendarChannels: mockedCalendarChannels,
-            },
-          });
-        }),
-        graphql.query('WorkflowStepConnectedAccountHandle', () => {
-          return HttpResponse.json({
-            data: {
-              workflowStepConnectedAccountHandle: {
-                id: TEAMMATE_CONNECTED_ACCOUNT_ID,
-                handle: 'phil@apple.dev',
-                provider: 'google',
-                handleAliases: [],
-              },
-            },
-          });
-        }),
-      ],
+      handlers: buildMswHandlers(TEAMMATE_ACCOUNT_HANDLE),
     },
   },
   decorators: [
@@ -145,9 +152,9 @@ export default meta;
 
 type Story = StoryObj<typeof WorkflowEditActionCreateCalendarEvent>;
 
-export const DefaultAccount: Story = {
+export const DefaultAccountAndTimeZone: Story = {
   args: {
-    action: buildCreateCalendarEventAction(''),
+    action: buildCreateCalendarEventAction({ timeZone: '' }),
     actionOptions: {
       onActionUpdate: fn(),
     },
@@ -155,14 +162,17 @@ export const DefaultAccount: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('No Account')).toBeVisible();
+    expect(await canvas.findByText('Default account')).toBeVisible();
     expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
+    expect(await canvas.findByText('Default (UTC)')).toBeVisible();
   },
 };
 
 export const TeammateAccount: Story = {
   args: {
-    action: buildCreateCalendarEventAction(TEAMMATE_CONNECTED_ACCOUNT_ID),
+    action: buildCreateCalendarEventAction({
+      connectedAccountId: TEAMMATE_CONNECTED_ACCOUNT_ID,
+    }),
     actionOptions: {
       onActionUpdate: fn(),
     },
@@ -172,7 +182,29 @@ export const TeammateAccount: Story = {
 
     expect(await canvas.findByText('phil@apple.dev')).toBeVisible();
     expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
-    expect(canvas.queryByText('No Account')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Default account')).not.toBeInTheDocument();
+  },
+};
+
+export const RemovedAccount: Story = {
+  args: {
+    action: buildCreateCalendarEventAction({
+      connectedAccountId: TEAMMATE_CONNECTED_ACCOUNT_ID,
+    }),
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: buildMswHandlers(null),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Removed account')).toBeVisible();
+    expect(canvas.queryByText('Default account')).not.toBeInTheDocument();
   },
 };
 
@@ -180,7 +212,9 @@ const clearToDefaultOnActionUpdate = fn();
 
 export const ClearTeammateAccountToDefault: Story = {
   args: {
-    action: buildCreateCalendarEventAction(TEAMMATE_CONNECTED_ACCOUNT_ID),
+    action: buildCreateCalendarEventAction({
+      connectedAccountId: TEAMMATE_CONNECTED_ACCOUNT_ID,
+    }),
     actionOptions: {
       onActionUpdate: clearToDefaultOnActionUpdate,
     },
@@ -192,9 +226,9 @@ export const ClearTeammateAccountToDefault: Story = {
 
     const dropdown = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(await dropdown.findByText('No Account'));
+    await userEvent.click(await dropdown.findByText('Default account'));
 
-    expect(await canvas.findByText('No Account')).toBeVisible();
+    expect(await canvas.findByText('Default account')).toBeVisible();
     expect(canvas.queryByText('phil@apple.dev')).not.toBeInTheDocument();
 
     await waitFor(

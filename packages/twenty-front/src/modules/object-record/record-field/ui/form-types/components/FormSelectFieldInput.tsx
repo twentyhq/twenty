@@ -26,6 +26,7 @@ type FormSelectFieldInputProps = {
   options: SelectOption[];
   readonly?: boolean;
   isNullable?: boolean;
+  emptyOptionLabel?: string;
   callToActionButton?: CallToActionButton;
 };
 
@@ -38,6 +39,7 @@ export const FormSelectFieldInput = ({
   options,
   readonly,
   isNullable,
+  emptyOptionLabel,
   callToActionButton,
 }: FormSelectFieldInputProps) => {
   const { theme } = useContext(ThemeContext);
@@ -95,7 +97,7 @@ export const FormSelectFieldInput = ({
   };
 
   const emptyOption: SelectOption = {
-    label: label ? t`No ${label}` : t`No value`,
+    label: emptyOptionLabel ?? (label ? t`No ${label}` : t`No value`),
     value: '',
     Icon: IconCircleOff,
   };

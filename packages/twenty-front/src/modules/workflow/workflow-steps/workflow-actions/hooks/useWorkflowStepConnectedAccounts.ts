@@ -58,6 +58,8 @@ export const useWorkflowStepConnectedAccounts = ({
       : [...selectableAccounts, configuredAccount],
     configuredAccount,
     myConfiguredAccount,
+    isConfiguredAccountRemoved:
+      teammateAccountData?.workflowStepConnectedAccountHandle === null,
     loading: myAccountsLoading || teammateAccountLoading,
   };
 };

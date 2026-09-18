@@ -62,15 +62,22 @@ export const WorkflowEditActionCreateCalendarEvent = ({
   const {
     accounts,
     myConfiguredAccount: selectedAccount,
+    isConfiguredAccountRemoved,
     loading,
   } = useWorkflowStepConnectedAccounts({
     connectedAccountId: formData.connectedAccountId,
     isSelectableAccount: isCalendarCreationEnabledForAccount,
   });
 
-  const connectedAccountOptions: SelectOption<string>[] = accounts.map(
-    (account) => ({ label: account.handle, value: account.id }),
-  );
+  const connectedAccountOptions: SelectOption<string>[] = [
+    ...accounts.map((account) => ({
+      label: account.handle,
+      value: account.id,
+    })),
+    ...(isConfiguredAccountRemoved
+      ? [{ label: t`Removed account`, value: formData.connectedAccountId }]
+      : []),
+  ];
 
   const missingScopes =
     isDefined(selectedAccount) &&
@@ -116,6 +123,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
           }
           readonly={actionOptions.readonly}
           isNullable
+          emptyOptionLabel={t`Default account`}
           callToActionButton={{
             onClick: () => {
               closeSidePanelMenu();
@@ -183,6 +191,8 @@ export const WorkflowEditActionCreateCalendarEvent = ({
           options={AVAILABLE_TIMEZONE_OPTIONS as SelectOption<string>[]}
           onChange={(value) => handleFieldChange('timeZone', value ?? '')}
           readonly={actionOptions.readonly}
+          isNullable
+          emptyOptionLabel={t`Default (UTC)`}
           VariablePicker={WorkflowVariablePicker}
         />
         <FormBooleanFieldSwitchInput
