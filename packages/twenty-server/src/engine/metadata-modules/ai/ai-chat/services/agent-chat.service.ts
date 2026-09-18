@@ -424,10 +424,13 @@ export class AgentChatService {
         });
       }
 
-      await this.broadcastThreadCreatedToRecipients({
-        thread,
-        recipientUserWorkspaceIds: recipientsAfter,
-      });
+      // The readers it keeps already had it, since everyone did, so they are
+      // told what changed rather than handed a thread they are holding.
+      if (recipientsAfter.length > 0 && updatedFields.length > 0) {
+        await this.broadcastThreadUpdated(thread, updatedFields, {
+          userWorkspaceIds: recipientsAfter,
+        });
+      }
 
       return;
     }
