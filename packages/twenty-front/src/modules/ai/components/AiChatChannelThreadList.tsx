@@ -1,36 +1,33 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { AiChatThreadListGroups } from '@/ai/components/AiChatThreadListGroups';
-import { AGENT_CHAT_THREAD_INBOX_STATE } from '@/ai/constants/AgentChatThreadInboxState';
-import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
-import { getAgentChatThreadInboxState } from '@/ai/utils/getAgentChatThreadInboxState';
+import { AGENT_CHAT_CHANNEL_TAB } from '@/ai/constants/AgentChatChannelTab';
+import { useAiChatChannelThreads } from '@/ai/hooks/useAiChatChannelThreads';
+import { type AgentChatChannelTab } from '@/ai/types/AgentChatChannelTab';
 
 type AiChatChannelThreadListProps = {
   channelId: string;
-  inboxState: AgentChatThreadInboxState;
+  channelTab: AgentChatChannelTab;
 };
 
 export const AiChatChannelThreadList = ({
   channelId,
-  inboxState,
+  channelTab,
 }: AiChatChannelThreadListProps) => {
   const { t } = useLingui();
-  const { threads } = useChatThreads();
-
-  const channelThreads = threads.filter(
-    (thread) =>
-      thread.channelId === channelId &&
-      getAgentChatThreadInboxState(thread) === inboxState,
-  );
+  const { threadsByTab } = useAiChatChannelThreads(channelId);
 
   const emptyLabel = {
-    [AGENT_CHAT_THREAD_INBOX_STATE.OPEN]: t`No chat in this channel yet`,
-    [AGENT_CHAT_THREAD_INBOX_STATE.SNOOZED]: t`Nothing snoozed here`,
-    [AGENT_CHAT_THREAD_INBOX_STATE.DONE]: t`Nothing marked done here`,
-  }[inboxState];
+    [AGENT_CHAT_CHANNEL_TAB.UNASSIGNED]: t`Nothing waiting to be picked up`,
+    [AGENT_CHAT_CHANNEL_TAB.ASSIGNED]: t`Nobody is on a chat here yet`,
+    [AGENT_CHAT_CHANNEL_TAB.SNOOZED]: t`Nothing snoozed here`,
+    [AGENT_CHAT_CHANNEL_TAB.DONE]: t`Nothing marked done here`,
+  }[channelTab];
 
   return (
-    <AiChatThreadListGroups threads={channelThreads} emptyLabel={emptyLabel} />
+    <AiChatThreadListGroups
+      threads={threadsByTab[channelTab]}
+      emptyLabel={emptyLabel}
+    />
   );
 };

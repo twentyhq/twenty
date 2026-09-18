@@ -58,11 +58,22 @@ jest.mock('@/navigation/hooks/useNavigationDrawerExpanded', () => ({
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: jest.fn() }),
 }));
-jest.mock('@/ai/components/AiChatChannelThreadPane', () => ({
-  AiChatChannelThreadPane: ({ channelId }: { channelId: string }) => (
-    <div>Chat pane for {channelId}</div>
-  ),
-}));
+jest.mock('@/ai/components/AiChatChannelThreadPane', () => {
+  const { useParams } = jest.requireActual('react-router-dom');
+
+  return {
+    AiChatChannelThreadPane: ({ channelId }: { channelId: string }) => {
+      const { threadId } = useParams();
+
+      return (
+        <div>
+          <div>Chat pane for {channelId}</div>
+          {threadId !== undefined && <div>Chat for {threadId}</div>}
+        </div>
+      );
+    },
+  };
+});
 
 const CHANNEL: AgentChatChannel = {
   __typename: 'AgentChatChannel',
@@ -223,10 +234,52 @@ describe('AiChatChannelPage', () => {
 
     renderPage(`/chat/channels/${CHANNEL.id}`);
 
-    expect(screen.getByText('No chat in this channel yet')).toBeVisible();
+    expect(screen.getByText('Nothing waiting to be picked up')).toBeVisible();
     expect(screen.getByText(`Chat pane for ${CHANNEL.id}`)).toBeVisible();
     screen.getByRole('button', { name: /New chat/ }).click();
     expect(switchToNewChat).toHaveBeenCalledTimes(1);
+  });
+
+  it('opens on the first chat of the list rather than on a new one', async () => {
+    setStore('agentChatThreads', [
+      buildThread('t1', 'Import companies', CHANNEL.id),
+      buildThread('t4', 'Q3 forecast', CHANNEL.id),
+    ]);
+
+    renderPage(`/chat/channels/${CHANNEL.id}`);
+
+    expect(await screen.findByText('Chat for t1')).toBeVisible();
+  });
+
+  it('keeps a chat somebody asked for rather than replacing it', async () => {
+    setStore('agentChatThreads', [
+      buildThread('t1', 'Import companies', CHANNEL.id),
+      buildThread('t4', 'Q3 forecast', CHANNEL.id),
+    ]);
+
+    renderPage(`/chat/channels/${CHANNEL.id}/t4`);
+
+    expect(await screen.findByText('Chat for t4')).toBeVisible();
+  });
+
+  it('splits what is open into what nobody has taken and what somebody has', async () => {
+    setStore('agentChatThreads', [
+      buildThread('t1', 'Import companies', CHANNEL.id),
+      {
+        ...buildThread('t4', 'Q3 forecast', CHANNEL.id),
+        assigneeUserWorkspaceId: 'uw-tim',
+      },
+    ]);
+
+    renderPage(`/chat/channels/${CHANNEL.id}/t1`);
+
+    expect(screen.getByText('Import companies')).toBeVisible();
+    expect(screen.queryByText('Q3 forecast')).toBeNull();
+
+    screen.getByRole('tab', { name: /Assigned/ }).click();
+
+    expect(await screen.findByText('Q3 forecast')).toBeVisible();
+    expect(screen.queryByText('Import companies')).toBeNull();
   });
 
   it('tells the reader when the channel is not visible to them', () => {

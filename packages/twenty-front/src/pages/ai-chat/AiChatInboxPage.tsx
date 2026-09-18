@@ -8,11 +8,17 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 import { AiChatChannelDeleteConfirmationModal } from '@/ai/components/AiChatChannelDeleteConfirmationModal';
 import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
+import { AiChatInboxTabs } from '@/ai/components/AiChatInboxTabs';
+import { AiChatSelectFirstThreadEffect } from '@/ai/components/AiChatSelectFirstThreadEffect';
 import { AiChatInboxThreadPane } from '@/ai/components/AiChatInboxThreadPane';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
+import { AI_CHAT_INBOX_TABS_INSTANCE_ID } from '@/ai/constants/AiChatInboxTabsInstanceId';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
+import { useAiChatInboxThreads } from '@/ai/hooks/useAiChatInboxThreads';
 import { agentChatInboxStateTabState } from '@/ai/states/agentChatInboxStateTabState';
+import { agentChatInboxTabState } from '@/ai/states/agentChatInboxTabState';
 import { AGENT_CHAT_THREAD_INBOX_STATE_LABELS } from '@/ai/constants/AgentChatThreadInboxStateLabels';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CollapseNavigationDrawerWhileSidePanelOpenEffect } from '@/navigation/components/CollapseNavigationDrawerWhileSidePanelOpenEffect';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -75,6 +81,11 @@ export const AiChatInboxPage = () => {
   const isMobile = useIsMobile();
   const navigateApp = useNavigateApp();
   const agentChatInboxStateTab = useAtomStateValue(agentChatInboxStateTabState);
+  const [agentChatInboxTab, setAgentChatInboxTab] = useAtomState(
+    agentChatInboxTabState,
+  );
+  const { getThreadsForInboxStateAndTab, getCountByInboxTab } =
+    useAiChatInboxThreads();
 
   const isChatVisible = !isMobile || isDefined(threadId);
   const isListVisible = !isMobile || !isChatVisible;
@@ -85,22 +96,44 @@ export const AiChatInboxPage = () => {
     <StyledPanel>
       {isListVisible && (
         <StyledListPane $isAlone={!isChatVisible}>
-          {/* The drawer already names the three states and marks the one in
-              view, so repeating them as tabs here would ask twice. */}
+          {/* Two questions, two controls: the drawer picks the state the
+              thread is in, the tabs pick why it is yours. */}
           <StyledHeader>
             {t`Inbox`}
             <StyledHeaderState>
               {t(AGENT_CHAT_THREAD_INBOX_STATE_LABELS[agentChatInboxStateTab])}
             </StyledHeaderState>
           </StyledHeader>
+          <AiChatInboxTabs
+            componentInstanceId={AI_CHAT_INBOX_TABS_INSTANCE_ID}
+            countByInboxTab={getCountByInboxTab(agentChatInboxStateTab)}
+            onChangeInboxTab={setAgentChatInboxTab}
+          />
           <StyledListBody>
-            <AiChatInboxThreadList inboxState={agentChatInboxStateTab} />
+            <AiChatInboxThreadList
+              inboxState={agentChatInboxStateTab}
+              inboxTab={agentChatInboxTab}
+            />
           </StyledListBody>
         </StyledListPane>
       )}
       {isChatVisible && (
         <AiChatInboxThreadPane
           onBackToList={isMobile ? backToList : undefined}
+        />
+      )}
+      {/* On a phone the two panes take turns, so opening the inbox on a thread
+          would hide the list the reader came for. */}
+      {!isMobile && (
+        <AiChatSelectFirstThreadEffect
+          channelId={null}
+          firstThreadId={
+            getThreadsForInboxStateAndTab(
+              agentChatInboxStateTab,
+              agentChatInboxTab,
+            ).at(0)?.id
+          }
+          isThreadSelected={isDefined(threadId)}
         />
       )}
       <CollapseNavigationDrawerWhileSidePanelOpenEffect />

@@ -11,17 +11,15 @@ import { AiChatChannelDeleteConfirmationModal } from '@/ai/components/AiChatChan
 import { AiChatChannelPageHeader } from '@/ai/components/AiChatChannelPageHeader';
 import { AiChatChannelThreadList } from '@/ai/components/AiChatChannelThreadList';
 import { AiChatChannelThreadPane } from '@/ai/components/AiChatChannelThreadPane';
-import { AiChatThreadInboxStateTabs } from '@/ai/components/AiChatThreadInboxStateTabs';
+import { AiChatChannelTabs } from '@/ai/components/AiChatChannelTabs';
+import { AiChatSelectFirstThreadEffect } from '@/ai/components/AiChatSelectFirstThreadEffect';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
-import { AGENT_CHAT_THREAD_INBOX_STATE_ORDER } from '@/ai/constants/AgentChatThreadInboxStateOrder';
 import { AI_CHAT_CHANNEL_TABS_INSTANCE_ID } from '@/ai/constants/AiChatChannelTabsInstanceId';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
+import { useAiChatChannelThreads } from '@/ai/hooks/useAiChatChannelThreads';
 import { useChatChannels } from '@/ai/hooks/useChatChannels';
-import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { agentChatChannelInboxStateTabState } from '@/ai/states/agentChatInboxStateTabState';
-import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
-import { getAgentChatThreadInboxState } from '@/ai/utils/getAgentChatThreadInboxState';
+import { agentChatChannelTabState } from '@/ai/states/agentChatInboxStateTabState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CollapseNavigationDrawerWhileSidePanelOpenEffect } from '@/navigation/components/CollapseNavigationDrawerWhileSidePanelOpenEffect';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -73,9 +71,10 @@ export const AiChatChannelPage = () => {
   const navigateApp = useNavigateApp();
   const { findChannelById, loading } = useChatChannels();
   const channel = findChannelById(channelId);
-  const [agentChatChannelInboxStateTab, setAgentChatChannelInboxStateTab] =
-    useAtomState(agentChatChannelInboxStateTabState);
-  const { threads } = useChatThreads();
+  const [agentChatChannelTab, setAgentChatChannelTab] = useAtomState(
+    agentChatChannelTabState,
+  );
+  const { threadsByTab, countByTab } = useAiChatChannelThreads(channelId);
   // On a phone the list and the chat take turns; a new chat has no thread in
   // the URL yet, so the page remembers that the chat was asked for.
   const [isNewChatOpenOnMobile, setIsNewChatOpenOnMobile] = useState(false);
@@ -91,20 +90,6 @@ export const AiChatChannelPage = () => {
       </StyledPanel>
     );
   }
-
-  const channelThreads = threads.filter(
-    (thread) => thread.channelId === channel.id,
-  );
-  const countByInboxState = AGENT_CHAT_THREAD_INBOX_STATE_ORDER.reduce(
-    (accumulator, state) => {
-      accumulator[state] = channelThreads.filter(
-        (thread) => getAgentChatThreadInboxState(thread) === state,
-      ).length;
-
-      return accumulator;
-    },
-    {} as Record<AgentChatThreadInboxState, number>,
-  );
 
   const isChatVisible =
     !isMobile || isDefined(threadId) || isNewChatOpenOnMobile;
@@ -126,15 +111,15 @@ export const AiChatChannelPage = () => {
             channel={channel}
             onNewChat={() => setIsNewChatOpenOnMobile(true)}
           />
-          <AiChatThreadInboxStateTabs
+          <AiChatChannelTabs
             componentInstanceId={AI_CHAT_CHANNEL_TABS_INSTANCE_ID}
-            countByInboxState={countByInboxState}
-            onChangeInboxState={setAgentChatChannelInboxStateTab}
+            countByTab={countByTab}
+            onChangeChannelTab={setAgentChatChannelTab}
           />
           <StyledListBody>
             <AiChatChannelThreadList
               channelId={channel.id}
-              inboxState={agentChatChannelInboxStateTab}
+              channelTab={agentChatChannelTab}
             />
           </StyledListBody>
         </StyledListPane>
@@ -143,6 +128,15 @@ export const AiChatChannelPage = () => {
         <AiChatChannelThreadPane
           channelId={channel.id}
           onBackToList={isMobile ? backToList : undefined}
+        />
+      )}
+      {/* On a phone the two panes take turns, so opening the channel on a
+          thread would hide the list the reader came for. */}
+      {!isMobile && !isNewChatOpenOnMobile && (
+        <AiChatSelectFirstThreadEffect
+          channelId={channel.id}
+          firstThreadId={threadsByTab[agentChatChannelTab].at(0)?.id}
+          isThreadSelected={isDefined(threadId)}
         />
       )}
       <CollapseNavigationDrawerWhileSidePanelOpenEffect />
