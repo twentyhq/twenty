@@ -328,6 +328,7 @@ describe('View Field REST API', () => {
 
       assertRestApiSuccessfulResponse(deleteResponse);
       expect(deleteResponse.body.success).toBe(true);
+      testViewFieldId = undefined;
 
       const getResponse = await makeRestAPIRequest({
         method: 'get',

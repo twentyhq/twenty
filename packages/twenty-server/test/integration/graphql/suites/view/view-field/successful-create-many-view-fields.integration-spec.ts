@@ -4,7 +4,6 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createManyViewFields } from 'test/integration/metadata/suites/view-field/utils/create-many-view-fields.util';
 import { deleteOneViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-view-field.util';
-import { destroyOneViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -150,12 +149,6 @@ describe('View Field Resolver - Successful Create Many Operations', () => {
         });
 
         expect(deleteViewField.deletedAt).not.toBeNull();
-        await destroyOneViewField({
-          expectToFail: false,
-          input: {
-            id: viewFieldId,
-          },
-        });
       }
     }
     createdViewFieldIds = [];
