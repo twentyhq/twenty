@@ -13,7 +13,6 @@ let mockActiveTabId = 'hidden-transcript-tab-id';
 let mockPrerenderedTabIds: string[] = [];
 let mockTargetRecordId = 'calendar-event-id';
 let mockIsInSidePanel = false;
-const mockSetActiveTabId = jest.fn();
 const mockSetPrerenderedTabIds = jest.fn();
 
 const homeTab = {
@@ -123,10 +122,6 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomComponentState', () => ({
   useSetAtomComponentState: () => mockSetPrerenderedTabIds,
 }));
 
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentState', () => ({
-  useAtomComponentState: () => [mockActiveTabId, mockSetActiveTabId],
-}));
-
 jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
   useIsMobile: () => false,
 }));
@@ -167,7 +162,6 @@ describe('PageLayoutTabsRenderer', () => {
     mockPrerenderedTabIds = [];
     mockTargetRecordId = 'calendar-event-id';
     mockIsInSidePanel = false;
-    mockSetActiveTabId.mockClear();
     mockSetPrerenderedTabIds.mockClear();
   });
 
@@ -177,7 +171,6 @@ describe('PageLayoutTabsRenderer', () => {
     render(<PageLayoutTabsRenderer />, { wrapper: TestWrapper });
 
     expect(screen.queryByText(/Rendered tab:/)).not.toBeInTheDocument();
-    expect(mockSetActiveTabId).toHaveBeenCalledWith('home-tab-id');
   });
 
   it('renders content when the active tab remains renderable', () => {
@@ -212,6 +205,35 @@ describe('PageLayoutTabsRenderer', () => {
     expect(
       screen.getByText('Rendered tab: front-component-tab-id'),
     ).toBeInTheDocument();
+  });
+
+  it('reveals a prerendered side-panel tab without remounting its content', () => {
+    mockIsInSidePanel = true;
+    mockActiveTabId = 'home-tab-id';
+    mockPrerenderedTabIds = ['timeline-tab-id'];
+
+    const { rerender } = render(<PageLayoutTabsRenderer />, {
+      wrapper: TestWrapper,
+    });
+    const prerenderedContent = screen.getByText(
+      'Rendered tab: timeline-tab-id',
+    );
+
+    expect(prerenderedContent).not.toBeVisible();
+    expect(screen.getByRole('tabpanel')).toHaveTextContent(
+      'Rendered tab: home-tab-id',
+    );
+
+    mockActiveTabId = 'timeline-tab-id';
+    rerender(<PageLayoutTabsRenderer />);
+
+    expect(screen.getByText('Rendered tab: timeline-tab-id')).toBe(
+      prerenderedContent,
+    );
+    expect(prerenderedContent).toBeVisible();
+    expect(screen.getByRole('tabpanel')).toHaveTextContent(
+      'Rendered tab: timeline-tab-id',
+    );
   });
 
   it('does not mount prerendered tabs that are not prerenderable', () => {

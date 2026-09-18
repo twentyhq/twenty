@@ -2504,19 +2504,6 @@ export interface WorkspaceMigration {
     __typename: 'WorkspaceMigration'
 }
 
-export interface RecordExport {
-    id: Scalars['UUID']
-    filename: Scalars['String']
-    status: RecordExportStatus
-    processedRecordCount: Scalars['Int']
-    totalRecordCount?: Scalars['Int']
-    errorMessage?: Scalars['String']
-    downloadUrl?: Scalars['String']
-    __typename: 'RecordExport'
-}
-
-export type RecordExportStatus = 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED'
-
 export interface PublicDomain {
     id: Scalars['UUID']
     domain: Scalars['String']
@@ -2921,6 +2908,15 @@ export interface EventLogQueryResult {
     totalCount: Scalars['Int']
     pageInfo: EventLogPageInfo
     __typename: 'EventLogQueryResult'
+}
+
+export interface RecordExport {
+    id: Scalars['UUID']
+    filename: Scalars['String']
+    progress: Scalars['Int']
+    errorMessage?: Scalars['String']
+    downloadUrl?: Scalars['String']
+    __typename: 'RecordExport'
 }
 
 export interface AiChatUsage {
@@ -6235,18 +6231,6 @@ export interface WorkspaceMigrationGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface RecordExportGenqlSelection{
-    id?: boolean | number
-    filename?: boolean | number
-    status?: boolean | number
-    processedRecordCount?: boolean | number
-    totalRecordCount?: boolean | number
-    errorMessage?: boolean | number
-    downloadUrl?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface PublicDomainGenqlSelection{
     id?: boolean | number
     domain?: boolean | number
@@ -6664,6 +6648,16 @@ export interface EventLogQueryResultGenqlSelection{
     records?: EventLogRecordGenqlSelection
     totalCount?: boolean | number
     pageInfo?: EventLogPageInfoGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface RecordExportGenqlSelection{
+    id?: boolean | number
+    filename?: boolean | number
+    progress?: boolean | number
+    errorMessage?: boolean | number
+    downloadUrl?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9694,14 +9688,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
-    const RecordExport_possibleTypes: string[] = ['RecordExport']
-    export const isRecordExport = (obj?: { __typename?: any } | null): obj is RecordExport => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordExport"')
-      return RecordExport_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const PublicDomain_possibleTypes: string[] = ['PublicDomain']
     export const isPublicDomain = (obj?: { __typename?: any } | null): obj is PublicDomain => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicDomain"')
@@ -10026,6 +10012,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isEventLogQueryResult = (obj?: { __typename?: any } | null): obj is EventLogQueryResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEventLogQueryResult"')
       return EventLogQueryResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const RecordExport_possibleTypes: string[] = ['RecordExport']
+    export const isRecordExport = (obj?: { __typename?: any } | null): obj is RecordExport => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordExport"')
+      return RecordExport_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10935,13 +10929,6 @@ export const enumFileFolder = {
    AppTarball: 'AppTarball' as const,
    GeneratedSdkClient: 'GeneratedSdkClient' as const,
    Dpa: 'Dpa' as const
-}
-
-export const enumRecordExportStatus = {
-   QUEUED: 'QUEUED' as const,
-   PROCESSING: 'PROCESSING' as const,
-   COMPLETED: 'COMPLETED' as const,
-   FAILED: 'FAILED' as const
 }
 
 export const enumEmailingDomainStatus = {
