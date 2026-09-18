@@ -7,20 +7,10 @@ import {
   getApplicationRegistrationClaimStateCookieName,
   getApplicationRegistrationClaimStateSecureCookieName,
 } from 'src/engine/core-modules/application/application-registration/constants/application-registration-claim-state-cookie-name.constant';
+import { isSecureCookieDeployment } from 'src/engine/core-modules/application/application-registration/utils/is-secure-cookie-deployment.util';
 import { readRequestCookie } from 'src/engine/core-modules/application/application-registration/utils/read-request-cookie.util';
+import { resolveClaimStateCookieSameSite } from 'src/engine/core-modules/application/application-registration/utils/resolve-claim-state-cookie-same-site.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-const isHttpsUrl = (url: string | undefined): boolean => {
-  if (!isNonEmptyString(url)) {
-    return false;
-  }
-
-  try {
-    return new URL(url).protocol === 'https:';
-  } catch {
-    return false;
-  }
-};
 
 @Injectable()
 export class ApplicationRegistrationClaimStateCookieService {
@@ -106,15 +96,15 @@ export class ApplicationRegistrationClaimStateCookieService {
   }
 
   private resolveSameSite(): 'lax' | 'none' {
-    return this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE') === 'none'
-      ? 'none'
-      : 'lax';
+    return resolveClaimStateCookieSameSite({
+      sameSite: this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE'),
+    });
   }
 
   private isSecureDeployment(): boolean {
-    const serverUrl = this.twentyConfigService.get('SERVER_URL');
-    const sameSite = this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE');
-
-    return isHttpsUrl(serverUrl) || sameSite === 'none';
+    return isSecureCookieDeployment({
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+      sameSite: this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE'),
+    });
   }
 }

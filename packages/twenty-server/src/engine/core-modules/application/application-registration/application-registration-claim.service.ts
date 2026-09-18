@@ -17,10 +17,8 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationClaimStateCookieService } from 'src/engine/core-modules/application/application-registration/services/application-registration-claim-state-cookie.service';
-import {
-  claimStateNonceMatches,
-  hashClaimStateNonce,
-} from 'src/engine/core-modules/application/application-registration/utils/hash-claim-state-nonce.util';
+import { claimStateNonceMatches } from 'src/engine/core-modules/application/application-registration/utils/claim-state-nonce-matches.util';
+import { hashClaimStateNonce } from 'src/engine/core-modules/application/application-registration/utils/hash-claim-state-nonce.util';
 import { type AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { isValidNpmVersionSpec } from 'src/engine/core-modules/application/application-package/utils/is-valid-npm-version-spec.util';
@@ -115,7 +113,7 @@ export class ApplicationRegistrationClaimService {
       applicationRegistrationId: registration.id,
       workspaceId: params.workspaceId,
       userId: params.userId,
-      nonceHash: hashClaimStateNonce(nonce),
+      nonceHash: hashClaimStateNonce({ nonce }),
     };
 
     const state = await this.jwtWrapperService.signAsyncOrThrow(statePayload, {
@@ -233,7 +231,10 @@ export class ApplicationRegistrationClaimService {
     if (
       !isNonEmptyString(stateNonce) ||
       !isNonEmptyString(statePayload.nonceHash) ||
-      !claimStateNonceMatches(stateNonce, statePayload.nonceHash)
+      !claimStateNonceMatches({
+        nonce: stateNonce,
+        expectedNonceHash: statePayload.nonceHash,
+      })
     ) {
       throw new ApplicationRegistrationException(
         'Claim state does not match the browser that started the claim',
