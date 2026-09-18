@@ -1,12 +1,12 @@
 import { isUndefined } from '@sniptt/guards';
 import { useState } from 'react';
-import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
+import { DEFAULT_COLOR_LABELS } from 'twenty-ui/components';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-ui/utilities';
 
+import { SettingsColorSample } from 'src/front-components/components/SettingsColorSample';
 import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
 import { SettingsSelectMenu } from 'src/front-components/components/SettingsSelectMenu';
-import { SettingsColorSample } from 'src/front-components/components/SettingsColorSample';
 import { StyledSettingsSelectAnchor } from 'src/front-components/components/StyledSettingsSelectAnchor';
 import { ThemeColorPickerMenu } from 'src/front-components/components/ThemeColorPickerMenu';
 import {

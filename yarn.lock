@@ -50621,10 +50621,13 @@ __metadata:
     monaco-editor: ">= 0.25.0 < 1"
     react: ^19.0.0
     react-dom: ^19.0.0
+    react-router-dom: ^6.30.6
   peerDependenciesMeta:
     "@monaco-editor/react":
       optional: true
     monaco-editor:
+      optional: true
+    react-router-dom:
       optional: true
   languageName: unknown
   linkType: soft

@@ -5,12 +5,12 @@ import { expect, userEvent, within } from 'storybook/test';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
-  type CatalogStory,
   ComponentDecorator,
+  type CatalogStory,
 } from '@ui/testing';
 
-import { IconBell, IconEdit, IconSettings, IconTrash } from '@ui/icon';
 import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
+import { IconBell, IconEdit, IconSettings, IconTrash } from '@ui/icon';
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
 import { type ListItemColor } from '@ui/primitives/navigation/ListItem/types/ListItemColor';
 import { type ListItemIndicator } from '@ui/primitives/navigation/ListItem/types/ListItemIndicator';

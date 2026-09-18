@@ -1,4 +1,4 @@
-import { Pill } from '@ui/primitives/data-display/Pill/Pill';
+import { Pill } from '@ui/primitives/data-display/internal/Pill/Pill';
 
 import styles from './ButtonSoon.module.scss';
 

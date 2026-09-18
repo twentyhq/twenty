@@ -5,9 +5,11 @@ import {
 import { styled } from '@linaria/react';
 import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/primitives/data-display';
+import {
+  OverflowingTextWithTooltip,
+  TintedIconTile,
+} from 'twenty-ui/components';
 import { IconChevronDown, type IconComponent } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

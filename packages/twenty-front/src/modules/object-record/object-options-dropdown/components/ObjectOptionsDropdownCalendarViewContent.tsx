@@ -12,7 +12,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { t } from '@lingui/core/macro';
-import { Pill } from 'twenty-ui/primitives/data-display';
+import { Pill } from 'twenty-ui/components';
 import {
   IconCalendarEvent,
   IconCalendarMonth,

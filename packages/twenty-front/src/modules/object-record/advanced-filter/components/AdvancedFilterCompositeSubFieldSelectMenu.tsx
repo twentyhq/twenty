@@ -26,6 +26,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/components';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 
 type AdvancedFilterCompositeSubFieldSelectMenuProps = {

@@ -1,25 +1,23 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  CardPicker,
+  ColorSchemePicker,
   IconButton,
   LightButton,
   LightIconButton,
   MainButton,
+  SearchInput,
   TabButton,
 } from 'twenty-ui/components';
-import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
+import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import {
   Button,
   ButtonGroup,
-  ColorSchemeCard,
-  ColorSchemePicker,
-  IconListViewGrip,
-  SearchInput,
-  SegmentedControl,
-  CardPicker,
   Checkbox,
   Radio,
   RadioGroup,
+  SegmentedControl,
   Slider,
   Switch,
 } from 'twenty-ui/primitives/input';
@@ -66,10 +64,6 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     node: <CodeEditorHeader title="Editor" />,
   },
   {
-    name: 'ColorSchemeCard',
-    node: <ColorSchemeCard variant="Light" />,
-  },
-  {
     name: 'ColorSchemePicker',
     node: (
       <ColorSchemePicker
@@ -107,10 +101,6 @@ const INPUT_ENTRIES: GalleryEntry[] = [
         </LightIconButton>
       </ButtonGroup>
     ),
-  },
-  {
-    name: 'IconListViewGrip',
-    node: <IconListViewGrip />,
   },
   {
     name: 'LightButton',

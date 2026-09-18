@@ -1,10 +1,10 @@
 import { clsx } from 'clsx';
 
 import { Button } from '@ui/primitives/input/Button/Button';
-import { TabsTabContent } from '@ui/primitives/navigation/Tabs/internal/TabsTabContent';
+import { TabsTabContent } from '@ui/primitives/navigation/internal/tab/TabsTabContent';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
-import tabStyles from '@ui/primitives/navigation/Tabs/Tabs.module.scss';
+import tabStyles from '@ui/primitives/navigation/internal/tab/Tab.module.scss';
 import styles from './TabButton.module.scss';
 import { type TabButtonProps } from './types/TabButtonProps';
 

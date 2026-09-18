@@ -6,11 +6,12 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import {
-  compositeTypeDefinitions,
-  FieldMetadataType,
   CoreObjectNameSingular,
+  FieldMetadataType,
+  compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/components';
 import { IconUserCircle, IconX, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

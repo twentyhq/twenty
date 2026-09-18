@@ -1,5 +1,5 @@
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useMemo, useState } from 'react';

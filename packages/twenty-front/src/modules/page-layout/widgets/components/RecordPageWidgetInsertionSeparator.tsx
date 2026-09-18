@@ -3,6 +3,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { FloatingIconButton } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

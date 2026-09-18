@@ -31,7 +31,8 @@ import {
   IconListDetails,
 } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { Button, SearchInput } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { SearchInput } from 'twenty-ui/components';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';

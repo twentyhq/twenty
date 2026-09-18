@@ -1,7 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
-import { IconSearch } from '@ui/icon';
 import { IconButton } from '@ui/components/IconButton/IconButton';
+import { IconSearch } from '@ui/icon';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -9,6 +8,7 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { LightIconButton } from '../LightIconButton';
 import { type LightIconButtonProps } from '../types/LightIconButtonProps';
 

@@ -21,7 +21,7 @@ import { searchWorkflowVariables } from '@/workflow/workflow-variables/utils/sea
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconX, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 
 type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;

@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useDebounce } from 'use-debounce';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebounce } from 'use-debounce';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -10,12 +10,12 @@ import { SettingsPaginationControls } from '@/settings/components/SettingsPagina
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { SettingsUnsubscribersFilterDropdown } from '@/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown';
-import { SETTINGS_UNSUBSCRIBERS_ALL_FILTER } from '@/settings/unsubscribers/constants/SettingsUnsubscribersAllFilter';
 import { MESSAGE_SUPPRESSIONS_PAGE_SIZE } from '@/settings/unsubscribers/constants/MessageSuppressionsPageSize';
+import { SETTINGS_UNSUBSCRIBERS_ALL_FILTER } from '@/settings/unsubscribers/constants/SettingsUnsubscribersAllFilter';
 import { useMessageSuppressions } from '@/settings/unsubscribers/hooks/useMessageSuppressions';
 import { getMessageSuppressionReasonBadge } from '@/settings/unsubscribers/utils/getMessageSuppressionReasonBadge';
+import { SearchInput } from 'twenty-ui/components';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { SearchInput } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   MessageSuppressionReason,

@@ -1,5 +1,5 @@
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { useEffect, useMemo, useState } from 'react';
 import { Key } from 'ts-key-enum';

@@ -1,11 +1,6 @@
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
-import {
-  MenuItemLeftContent,
-  StyledMenuItemIconCheck,
-  StyledMenuItemSelect,
-} from 'twenty-ui/navigation';
-import { useTheme } from 'twenty-ui/theme-constants';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 const StyledOptionContainer = styled.div`
   cursor: pointer;
@@ -29,8 +24,6 @@ export const DropdownMenuOption = ({
   LeftComponent,
   onSelect,
 }: DropdownMenuOptionProps) => {
-  const theme = useTheme();
-
   return (
     <StyledOptionContainer
       id={id}
@@ -39,14 +32,14 @@ export const DropdownMenuOption = ({
       aria-selected={selected}
       onClick={onSelect}
     >
-      <StyledMenuItemSelect focused={isActive}>
-        <MenuItemLeftContent
-          LeftComponent={LeftComponent}
-          LeftIcon={null}
-          text={text}
-        />
-        {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
-      </StyledMenuItemSelect>
+      <ListItem
+        focused={isActive}
+        selected={selected}
+        indicator="check"
+        startIcon={LeftComponent}
+      >
+        {text}
+      </ListItem>
     </StyledOptionContainer>
   );
 };

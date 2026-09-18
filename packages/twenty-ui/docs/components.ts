@@ -1,15 +1,15 @@
-import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
-import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
-import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
+import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
+import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
+import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
 import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
 import { SETTINGS_ROW_PROP_DESCRIPTIONS } from './settingsRowPropDescriptions';
@@ -126,6 +126,10 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/navigation/ListItem/ListItem.tsx',
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',
+    propDescriptions: {
+      actionsVisibility:
+        'When trailing actions are visible: on hover and focus, or always.',
+    },
   },
   {
     name: 'Tabs',
@@ -177,8 +181,8 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'Toast',
-    source: 'primitives/feedback/Toast/Toast.tsx',
-    entryPoint: 'twenty-ui/primitives/feedback',
+    source: 'components/Toast/Toast.tsx',
+    entryPoint: 'twenty-ui/components',
     slug: 'feedback/toast',
   },
   {

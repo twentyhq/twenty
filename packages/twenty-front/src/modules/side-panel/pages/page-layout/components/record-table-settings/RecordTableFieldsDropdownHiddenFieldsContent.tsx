@@ -14,6 +14,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/components';
 import { IconChevronLeft, IconEye, useIcons } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 import { sortByProperty } from '~/utils/array/sortByProperty';

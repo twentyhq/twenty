@@ -9,7 +9,7 @@ import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMet
 import { type FlatIndexMetadataItem } from '@/metadata-store/types/FlatIndexMetadataItem';
 import { type IndexFieldMetadataItem } from '@/object-metadata/types/IndexFieldMetadataItem';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   type CreateIndexInput,
   CreateOneIndexMetadataItemDocument,

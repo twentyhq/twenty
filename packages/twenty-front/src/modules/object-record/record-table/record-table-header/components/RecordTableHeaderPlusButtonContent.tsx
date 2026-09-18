@@ -19,7 +19,8 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSettings, useIcons } from 'twenty-ui/icon';
-import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();

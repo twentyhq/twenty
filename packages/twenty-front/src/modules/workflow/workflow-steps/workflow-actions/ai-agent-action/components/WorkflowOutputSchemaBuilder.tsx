@@ -4,7 +4,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
-import { InputLabel } from 'twenty-ui/primitives/input';
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';

@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { enqueueSnackbar, t, useColorScheme } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Info } from 'twenty-ui/feedback';
+import { Info } from 'twenty-ui/components';
 import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
 import {
   ThemeContext,

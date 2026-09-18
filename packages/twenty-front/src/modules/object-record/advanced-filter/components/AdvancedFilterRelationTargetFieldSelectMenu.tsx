@@ -24,6 +24,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/components';
 import { IconChevronLeft, IconUserCircle, useIcons } from 'twenty-ui/icon';
 
 const RELATION_RECORD_SELECTABLE_ITEM_ID = 'relation-record-select';

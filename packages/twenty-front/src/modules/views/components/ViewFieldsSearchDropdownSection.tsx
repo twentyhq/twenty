@@ -12,6 +12,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { MenuItem } from 'twenty-ui/components';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
 
 type ViewFieldsSearchDropdownSectionProps = {

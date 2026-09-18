@@ -1,9 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
+import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
 import { IconCopy } from '@ui/icon/components/TablerIcons';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { CodeEditorHeader } from '../CodeEditorHeader';

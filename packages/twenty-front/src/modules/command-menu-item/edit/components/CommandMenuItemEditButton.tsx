@@ -1,4 +1,4 @@
-import { AnimatedIconCrossfade } from 'twenty-ui/primitives/layout';
+import { AnimatedIconCrossfade } from 'twenty-ui/components';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';

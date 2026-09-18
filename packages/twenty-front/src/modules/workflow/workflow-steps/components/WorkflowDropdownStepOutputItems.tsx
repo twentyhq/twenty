@@ -23,7 +23,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowDropdownStepOutputItemsProps = {

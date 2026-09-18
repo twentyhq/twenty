@@ -17,7 +17,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Section, LightIconButton } from 'twenty-ui/components';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconMessage,

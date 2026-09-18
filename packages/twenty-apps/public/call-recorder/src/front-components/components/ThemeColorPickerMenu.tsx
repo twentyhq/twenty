@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
+import { DEFAULT_COLOR_LABELS } from 'twenty-ui/components';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 
 import { DropdownMenuItemsContainer } from 'src/front-components/components/DropdownMenuItemsContainer';

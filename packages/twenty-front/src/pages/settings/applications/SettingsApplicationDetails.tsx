@@ -26,14 +26,15 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { InlineBanner } from 'twenty-ui/components';
 import {
-  IconAlertTriangle,
   IconAdjustments,
+  IconAlertTriangle,
   IconDeviceFloppy,
   IconSettings,
   IconVariable,
 } from 'twenty-ui/icon';
-import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import {
   FindMarketplaceAppDetailDocument,

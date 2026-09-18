@@ -8,8 +8,8 @@ import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableLi
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
+import { MenuItemDraggable } from 'twenty-ui/components';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldListContainer = styled.div`

@@ -18,6 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { MenuItem } from 'twenty-ui/components';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
 
 type PageLayoutTabListNewTabDropdownContentProps = {

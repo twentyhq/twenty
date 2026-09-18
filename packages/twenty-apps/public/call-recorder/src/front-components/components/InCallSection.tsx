@@ -1,6 +1,5 @@
 import { useId, useState } from 'react';
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/components';
 
 import { LabelledSettingsField } from 'src/front-components/components/LabelledSettingsField';
 import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
@@ -56,8 +55,8 @@ export const InCallSection = () => {
   };
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title="In the call"
         description="What the recorder does while it is in your meetings."
       />
@@ -101,6 +100,6 @@ export const InCallSection = () => {
           </LabelledSettingsField>
         </StyledDimmable>
       </StyledSettingsSectionStack>
-    </Section>
+    </Section.Root>
   );
 };
