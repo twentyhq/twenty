@@ -175,17 +175,13 @@ export class AgentChatThreadParticipantService {
     lastMentionedAt: Date;
     workspaceId: string;
   }): Promise<void> {
-    const existing = await this.participantRepository.findOne(workspaceId, {
-      where: { threadId, userWorkspaceId },
-    });
+    const { affected } = await this.participantRepository.update(
+      workspaceId,
+      { threadId, userWorkspaceId },
+      { lastMentionedAt },
+    );
 
-    if (isDefined(existing)) {
-      await this.participantRepository.update(
-        workspaceId,
-        { id: existing.id },
-        { lastMentionedAt },
-      );
-
+    if ((affected ?? 0) > 0) {
       return;
     }
 
@@ -198,12 +194,20 @@ export class AgentChatThreadParticipantService {
         lastMentionedAt,
       });
     } catch (error) {
-      // Two mentions of the same person landing together is a race the
-      // unique index settles; the row that won already says what this one
-      // would have.
       if (!isUniqueViolation(error)) {
         throw error;
       }
+
+      // Two mentions of the same person landing together race to create the
+      // row. The one that lost still has a mention to record, and the row that
+      // won carries only its own time, so write this one onto it. Updating
+      // rather than upserting keeps an owner's role from being overwritten
+      // with MEMBER.
+      await this.participantRepository.update(
+        workspaceId,
+        { threadId, userWorkspaceId },
+        { lastMentionedAt },
+      );
     }
   }
 

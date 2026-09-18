@@ -1,3 +1,5 @@
+import { QueryFailedError } from 'typeorm';
+
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 
 const WORKSPACE_ID = 'workspace-id';
@@ -10,10 +12,16 @@ const OUTSIDER_USER_WORKSPACE_ID = 'outsider-user-workspace-id';
 const mention = (workspaceMemberId: string, displayName: string) =>
   `[[record:workspaceMember:${workspaceMemberId}:${displayName}]]`;
 
+const uniqueViolation = () =>
+  new QueryFailedError('insert', [], {
+    code: '23505',
+    message: 'duplicate key value violates unique constraint',
+  } as unknown as Error);
+
 const buildService = ({ readers = [READER_USER_WORKSPACE_ID] } = {}) => {
   const participantRepository = {
     findOne: jest.fn().mockResolvedValue(null),
-    update: jest.fn().mockResolvedValue({ affected: 1 }),
+    update: jest.fn().mockResolvedValue({ affected: 0 }),
     insertAndReturnOne: jest.fn().mockResolvedValue({ id: 'participant-id' }),
   };
 
@@ -111,7 +119,7 @@ describe('AgentChatThreadParticipantService mentions', () => {
   it('only freshens the mention time for somebody already in the thread', async () => {
     const { service, participantRepository } = buildService();
 
-    participantRepository.findOne.mockResolvedValue({ id: 'participant-id' });
+    participantRepository.update.mockResolvedValue({ affected: 1 });
 
     await service.recordMentionsFromMessage({
       threadId: THREAD_ID,
@@ -121,10 +129,47 @@ describe('AgentChatThreadParticipantService mentions', () => {
 
     expect(participantRepository.update).toHaveBeenCalledWith(
       WORKSPACE_ID,
-      { id: 'participant-id' },
+      { threadId: THREAD_ID, userWorkspaceId: READER_USER_WORKSPACE_ID },
       expect.objectContaining({ lastMentionedAt: expect.any(Date) }),
     );
     expect(participantRepository.insertAndReturnOne).not.toHaveBeenCalled();
+  });
+
+  it('records the mention time when another mention wins the race to create the row', async () => {
+    const { service, participantRepository } = buildService();
+
+    participantRepository.insertAndReturnOne.mockRejectedValue(
+      uniqueViolation(),
+    );
+
+    await service.recordMentionsFromMessage({
+      threadId: THREAD_ID,
+      text: mention(READER_MEMBER_ID, 'Ada'),
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(participantRepository.update).toHaveBeenCalledTimes(2);
+    expect(participantRepository.update).toHaveBeenLastCalledWith(
+      WORKSPACE_ID,
+      { threadId: THREAD_ID, userWorkspaceId: READER_USER_WORKSPACE_ID },
+      expect.objectContaining({ lastMentionedAt: expect.any(Date) }),
+    );
+  });
+
+  it('lets an insert failure that is not the race surface', async () => {
+    const { service, participantRepository } = buildService();
+
+    participantRepository.insertAndReturnOne.mockRejectedValue(
+      new Error('connection terminated'),
+    );
+
+    await expect(
+      service.recordMentionsFromMessage({
+        threadId: THREAD_ID,
+        text: mention(READER_MEMBER_ID, 'Ada'),
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).rejects.toThrow('connection terminated');
   });
 
   it('leaves a message that names nobody alone', async () => {
