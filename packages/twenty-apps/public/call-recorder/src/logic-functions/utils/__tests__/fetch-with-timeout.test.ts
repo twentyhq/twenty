@@ -4,7 +4,7 @@ import { fetchWithTimeout } from 'src/logic-functions/utils/fetch-with-timeout.u
 
 const stubPendingFetch = () => {
   const fetchMock = vi.fn(
-    (_input: unknown, options?: RequestInit) =>
+    (_input: Parameters<typeof fetch>[0], options?: RequestInit) =>
       new Promise<Response>((_resolve, reject) => {
         options?.signal?.addEventListener(
           'abort',

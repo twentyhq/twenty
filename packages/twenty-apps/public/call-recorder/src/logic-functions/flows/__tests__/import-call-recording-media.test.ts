@@ -1,10 +1,12 @@
 import { type ClientRequest, type IncomingMessage } from 'node:http';
 import { PassThrough, Readable } from 'node:stream';
 
+import { isUndefined } from '@sniptt/guards';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { importCallRecordingMedia } from 'src/logic-functions/flows/import-call-recording-media.util';
+import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 const saveProgressMock = vi.fn().mockResolvedValue(undefined);
 
@@ -581,7 +583,7 @@ describe('importCallRecordingMedia', () => {
     });
   });
   it('checkpoints video before audio fails and resumes with only the missing file', async () => {
-    const saved: { audio?: unknown; video?: unknown } = {};
+    const saved: Pick<CallRecordingUpdateFields, 'audio' | 'video'> = {};
     saveProgressMock.mockImplementation(async (data) =>
       Object.assign(saved, data),
     );
@@ -618,7 +620,7 @@ describe('importCallRecordingMedia', () => {
     const secondAttempt = await importCallRecordingMedia({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
-      hasVideo: saved.video !== undefined,
+      hasVideo: !isUndefined(saved.video),
       hasAudio: false,
       saveProgress: saveProgressMock,
     });

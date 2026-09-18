@@ -1,3 +1,4 @@
+import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 import { enqueueJobs, getJobs } from 'twenty-sdk/logic-function';
 
 import { IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -17,20 +18,39 @@ export const enqueueCallRecordingArtifactsImport = async ({
   trigger?: 'recording' | 'transcript-ready' | 'expired' | 'recovery';
   requestedAt?: string;
 }): Promise<void> => {
+  const isQueueStatusRequired = trigger === 'recovery' || trigger === 'expired';
+  const recoveryDate = requestedAt.slice(0, 10);
+  // An import started before midnight can still be running the next day.
+  const previousRecoveryDate = new Date(
+    new Date(requestedAt).getTime() - 24 * 60 * 60 * 1000,
+  )
+    .toISOString()
+    .slice(0, 10);
+
   for (const scope of scopes) {
+    const jobIdSuffixes = [
+      '',
+      '-expired',
+      `-recovery-${recoveryDate}`,
+      `-recovery-${previousRecoveryDate}`,
+      ...(scope === 'transcript' ? ['-ready'] : []),
+    ];
+
     for (const recordingIds of getBatches(
       callRecordingIds,
-      MAX_PAYLOADS_PER_ENQUEUE_JOBS_CALL / 2,
+      Math.floor(
+        MAX_PAYLOADS_PER_ENQUEUE_JOBS_CALL /
+          (isQueueStatusRequired ? jobIdSuffixes.length : 1),
+      ),
     )) {
       const baseJobs = recordingIds.map((callRecordingId) => ({
         jobId: `call-recorder-${callRecordingId}-${scope}`,
         payload: { callRecordingId, requestedAt, scope },
       }));
-      const needsQueueStatus = trigger === 'recovery' || trigger === 'expired';
-      const statuses = needsQueueStatus
+      const statuses = isQueueStatusRequired
         ? await getJobs(
             baseJobs.flatMap(({ jobId }) =>
-              scope === 'transcript' ? [jobId, `${jobId}-ready`] : [jobId],
+              jobIdSuffixes.map((suffix) => `${jobId}${suffix}`),
             ),
           )
         : [];
@@ -38,35 +58,46 @@ export const enqueueCallRecordingArtifactsImport = async ({
         statuses.map((status) => [status.jobId, status]),
       );
       const jobs = baseJobs.flatMap(({ jobId, payload }) => {
-        const existing = statusesById.get(jobId);
-        const ready = statusesById.get(`${jobId}-ready`);
+        const initialJobStatus = statusesById.get(jobId);
+        const transcriptReadyJobStatus = statusesById.get(`${jobId}-ready`);
 
         if (
-          [existing, ready].some(
-            (status) =>
-              status &&
+          jobIdSuffixes.some((suffix) => {
+            const status = statusesById.get(`${jobId}${suffix}`);
+
+            return (
+              !isUndefined(status) &&
               status.state !== 'COMPLETED' &&
-              status.state !== 'FAILED',
-          )
+              status.state !== 'FAILED'
+            );
+          })
         ) {
           return [];
         }
 
-        // Queue history also deduplicates completed/failed ids. A repair is a
-        // new attempt, while repeated dispatches within that repair share an id.
-        const suffix =
-          trigger === 'recovery' && (existing || ready)
-            ? `-recovery-${requestedAt.slice(0, 10)}`
-            : trigger === 'transcript-ready'
-              ? '-ready'
-              : trigger === 'expired'
-                ? '-expired'
-                : '';
+        // Queue history deduplicates completed and failed IDs, so repairs need a new ID.
+        if (
+          trigger === 'recovery' &&
+          (!isUndefined(initialJobStatus) ||
+            !isUndefined(transcriptReadyJobStatus))
+        ) {
+          return [{ jobId: `${jobId}-recovery-${recoveryDate}`, payload }];
+        }
 
-        return [{ jobId: `${jobId}${suffix}`, payload }];
+        if (trigger === 'transcript-ready') {
+          return [{ jobId: `${jobId}-ready`, payload }];
+        }
+
+        if (trigger === 'expired') {
+          return [{ jobId: `${jobId}-expired`, payload }];
+        }
+
+        return [{ jobId, payload }];
       });
 
-      if (jobs.length === 0) continue;
+      if (!isNonEmptyArray(jobs)) {
+        continue;
+      }
 
       await enqueueJobs({
         logicFunctionUniversalIdentifier:

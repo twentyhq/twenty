@@ -193,7 +193,6 @@ const syncRecallBotState = async ({
   };
 };
 
-// Each artifact is saved as it lands so a cut-off job resumes from what it stored.
 const importScopeArtifacts = async ({
   callRecording,
   scope,

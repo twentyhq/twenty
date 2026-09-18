@@ -34,7 +34,7 @@ export const downloadTranscript = async ({
   const { downloadUrl, statusCode, statusSubCode } = retrieveResult.transcript;
 
   if (!isUndefined(downloadUrl)) {
-    return downloadTranscriptContent(downloadUrl, signal);
+    return downloadTranscriptContent({ downloadUrl, signal });
   }
 
   if (statusCode === 'error' || statusCode === 'failed') {
@@ -48,10 +48,13 @@ export const downloadTranscript = async ({
   return { outcome: 'pending' };
 };
 
-const downloadTranscriptContent = async (
-  downloadUrl: string,
-  signal?: AbortSignal,
-): Promise<DownloadTranscriptResult> => {
+const downloadTranscriptContent = async ({
+  downloadUrl,
+  signal,
+}: {
+  downloadUrl: string;
+  signal?: AbortSignal;
+}): Promise<DownloadTranscriptResult> => {
   try {
     const response = await fetch(downloadUrl, {
       signal: buildAbortSignalWithTimeout({

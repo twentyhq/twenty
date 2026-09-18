@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { getJobs } from 'twenty-sdk/logic-function';
@@ -315,12 +316,16 @@ class FakeRecallApi {
       requestUrl === `${process.env.TWENTY_API_URL}/metadata` &&
       String(requestInit?.body ?? '').includes('getJobs')
     ) {
+      const sentBody: { variables?: Record<string, string[]> } = JSON.parse(
+        requestInit?.body ?? '{}',
+      );
+      const requestedJobIds = Object.values(sentBody.variables ?? {}).flat();
+
       return jsonResponse(200, {
         data: {
-          getJobs: [...this.activeArtifactJobIds].map((jobId) => ({
-            jobId,
-            state: 'ACTIVE',
-          })),
+          getJobs: [...this.activeArtifactJobIds]
+            .filter((jobId) => requestedJobIds.includes(jobId))
+            .map((jobId) => ({ jobId, state: 'ACTIVE' })),
         },
       });
     }
@@ -700,8 +705,9 @@ describe('call recorder app lifecycle (integration)', () => {
         universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
     );
 
-    if (application === undefined)
+    if (isUndefined(application)) {
       throw new Error('Call recorder is not installed');
+    }
 
     const { generateApplicationToken } = await metadataClient.mutation({
       generateApplicationToken: {
@@ -1634,9 +1640,17 @@ describe('call recorder app lifecycle (integration)', () => {
       expectFailedWithExpiredArtifacts(callRecording);
     });
 
-    it.each(['audio', 'video'])(
-      'leaves the active %s import to the queue while settling the other expired artifacts',
-      async (scope) => {
+    it.each(
+      (['audio', 'video'] as const).flatMap((scope) =>
+        (['recovery', 'expired'] as const).flatMap((trigger) =>
+          ['', '-expired', '-recovery-2026-06-10', '-recovery-2026-06-09'].map(
+            (suffix) => ({ scope, trigger, suffix }),
+          ),
+        ),
+      ),
+    )(
+      'leaves the active $scope$suffix import to the queue on $trigger while settling the other expired artifacts',
+      async ({ scope, trigger, suffix }) => {
         const { calendarEventId, callRecordingId, botId, metadata } =
           await scheduleRecordingThroughCalendarReconciliation();
         const { startedAt, completedAt } = await deliverRecordingDone({
@@ -1652,10 +1666,16 @@ describe('call recorder app lifecycle (integration)', () => {
         });
         recall.artifactImportRequests = [];
         recall.activeArtifactJobIds.add(
-          `call-recorder-${callRecordingId}-${scope}`,
+          `call-recorder-${callRecordingId}-${scope}${suffix}`,
         );
 
-        await runStaleStateCron();
+        await enqueueCallRecordingArtifactsImport({
+          callRecordingIds: [callRecordingId],
+          scopes: ['transcript', 'audio', 'video'],
+          trigger,
+          requestedAt: '2026-06-10T00:05:00.000Z',
+        });
+        await runQueuedArtifactImports();
 
         const callRecording = await fetchCallRecording(callRecordingId);
 

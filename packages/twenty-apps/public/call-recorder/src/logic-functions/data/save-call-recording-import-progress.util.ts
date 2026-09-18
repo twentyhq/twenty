@@ -9,8 +9,7 @@ import { parseUnrecoverableMediaMarkers } from 'src/logic-functions/domain/parse
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
-// A stalled queue worker can be redelivered while its Lambda is still running.
-// Conditional writes keep that older attempt from replacing a saved outcome.
+// Queue redelivery can overlap a Lambda that is still running.
 export const saveCallRecordingImportProgress = async (
   client: CoreApiClient,
   {
@@ -28,24 +27,26 @@ export const saveCallRecordingImportProgress = async (
   }
 
   for (let saveAttempt = 0; saveAttempt < 3; saveAttempt++) {
-    const current = await findCallRecordingForArtifactsImport(
+    const currentCallRecording = await findCallRecordingForArtifactsImport(
       client,
       callRecordingId,
     );
 
     if (
-      isUndefined(current) ||
-      current.status !== CallRecordingStatus.PROCESSING ||
-      current.externalBotId !== externalBotId
+      isUndefined(currentCallRecording) ||
+      currentCallRecording.status !== CallRecordingStatus.PROCESSING ||
+      currentCallRecording.externalBotId !== externalBotId
     ) {
       return;
     }
 
-    const transcriptMarker = parseTranscriptMarker(current.transcript);
+    const transcriptMarker = parseTranscriptMarker(
+      currentCallRecording.transcript,
+    );
 
     if (
       !isUndefined(data.transcript) &&
-      !isUndefined(current.transcript) &&
+      !isUndefined(currentCallRecording.transcript) &&
       (transcriptMarker?.status !== 'PENDING' ||
         parseTranscriptMarker(data.transcript)?.status === 'PENDING')
     ) {
@@ -53,45 +54,51 @@ export const saveCallRecordingImportProgress = async (
     }
 
     const { isAudioUnrecoverable, isVideoUnrecoverable } =
-      parseUnrecoverableMediaMarkers(current.callRecorderFailureReason);
-    const resolved = {
-      audio: isNonEmptyArray(current.audio) || isAudioUnrecoverable,
-      video: isNonEmptyArray(current.video) || isVideoUnrecoverable,
+      parseUnrecoverableMediaMarkers(
+        currentCallRecording.callRecorderFailureReason,
+      );
+    const isResolvedByMediaField = {
+      audio:
+        isNonEmptyArray(currentCallRecording.audio) || isAudioUnrecoverable,
+      video:
+        isNonEmptyArray(currentCallRecording.video) || isVideoUnrecoverable,
     };
-    const updateData = { ...data };
+    const { audio, video, callRecorderFailureReason, ...otherUpdateData } =
+      data;
 
-    for (const field of ['audio', 'video'] as const) {
-      if (resolved[field]) delete updateData[field];
-    }
-
-    const failureReasons = (data.callRecorderFailureReason ?? '')
+    const failureReasons = (callRecorderFailureReason ?? '')
       .split(',')
       .filter(isNonEmptyString)
       .filter(
         (reason) =>
           !(['audio', 'video'] as const).some(
-            (field) => resolved[field] && reason.startsWith(`${field}_`),
+            (field) =>
+              isResolvedByMediaField[field] && reason.startsWith(`${field}_`),
           ),
       );
 
-    if (!isUndefined(data.callRecorderFailureReason)) {
-      const merged = [
-        ...new Set([
-          ...(current.callRecorderFailureReason ?? '')
-            .split(',')
-            .filter(isNonEmptyString),
-          ...failureReasons,
-        ]),
-      ].join(',');
+    const mergedCallRecorderFailureReason = [
+      ...new Set([
+        ...(currentCallRecording.callRecorderFailureReason ?? '')
+          .split(',')
+          .filter(isNonEmptyString),
+        ...failureReasons,
+      ]),
+    ].join(',');
+    const updateData: CallRecordingUpdateFields = {
+      ...otherUpdateData,
+      ...(isResolvedByMediaField.audio || isUndefined(audio) ? {} : { audio }),
+      ...(isResolvedByMediaField.video || isUndefined(video) ? {} : { video }),
+      ...(!isUndefined(callRecorderFailureReason) &&
+      mergedCallRecorderFailureReason !==
+        (currentCallRecording.callRecorderFailureReason ?? '')
+        ? { callRecorderFailureReason: mergedCallRecorderFailureReason }
+        : {}),
+    };
 
-      if (merged === (current.callRecorderFailureReason ?? '')) {
-        delete updateData.callRecorderFailureReason;
-      } else {
-        updateData.callRecorderFailureReason = merged;
-      }
+    if (!hasCallRecordingUpdateFields(updateData)) {
+      return;
     }
-
-    if (!hasCallRecordingUpdateFields(updateData)) return;
 
     const result = await client.mutation({
       updateCallRecordings: {
@@ -103,10 +110,10 @@ export const saveCallRecordingImportProgress = async (
               ? { is: 'NULL' }
               : { eq: externalBotId },
             callRecorderFailureReason: isUndefined(
-              current.callRecorderFailureReason,
+              currentCallRecording.callRecorderFailureReason,
             )
               ? { is: 'NULL' }
-              : { eq: current.callRecorderFailureReason },
+              : { eq: currentCallRecording.callRecorderFailureReason },
             and: [
               ...(['audio', 'video'] as const)
                 .filter(
@@ -147,7 +154,9 @@ export const saveCallRecordingImportProgress = async (
       },
     });
 
-    if ((result.updateCallRecordings ?? []).length > 0) return;
+    if (isNonEmptyArray(result.updateCallRecordings)) {
+      return;
+    }
   }
 
   throw new Error(

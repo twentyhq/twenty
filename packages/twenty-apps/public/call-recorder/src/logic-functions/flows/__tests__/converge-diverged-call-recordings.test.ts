@@ -109,6 +109,38 @@ describe('convergeDivergedCallRecordings', () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
+  it.each([
+    { suffix: '-expired', state: 'ACTIVE' },
+    { suffix: '-recovery-2026-06-10', state: 'ACTIVE' },
+    { suffix: '-recovery-2026-06-09', state: 'ACTIVE' },
+    { suffix: '-recovery-2026-06-10', state: 'WAITING' },
+    { suffix: '-recovery-2026-06-10', state: 'DELAYED' },
+  ])(
+    'leaves $state $suffix imports to the queue',
+    async ({ suffix, state }) => {
+      const client = buildClient([{ id: 'recording-1', status: 'PROCESSING' }]);
+      const activeJobIds = new Set(
+        ['transcript', 'audio', 'video'].map(
+          (scope) => `call-recorder-recording-1-${scope}${suffix}`,
+        ),
+      );
+
+      getJobsMock.mockImplementation(async (jobIds: string[]) =>
+        jobIds
+          .filter((jobId) => activeJobIds.has(jobId))
+          .map((jobId) => ({ jobId, state })),
+      );
+
+      await convergeDivergedCallRecordings({
+        client: client as unknown as CoreApiClient,
+        now: NOW,
+      });
+
+      expect(enqueueJobsMock).not.toHaveBeenCalled();
+      expect(client.mutation).not.toHaveBeenCalled();
+    },
+  );
+
   it('reaches every recording across pages, even when earlier recordings remain processing', async () => {
     const nodes = Array.from({ length: 225 }, (_, index) => ({
       id: `recording-${index}`,
@@ -124,7 +156,11 @@ describe('convergeDivergedCallRecordings', () => {
 
     await runPage();
     expect(client.query).toHaveBeenCalledTimes(1);
-    expect(queuedBatches()[0].payloads).toHaveLength(100);
+    expect(
+      queuedBatches().flatMap(({ payloads }) =>
+        payloads.filter(({ scope }) => scope === 'transcript'),
+      ),
+    ).toHaveLength(100);
 
     for (
       let batchIndex = 0;
@@ -159,6 +195,9 @@ describe('convergeDivergedCallRecordings', () => {
     expect(client.query).toHaveBeenCalledTimes(3);
     expect(
       queuedBatches().every(({ payloads }) => payloads.length <= 200),
+    ).toBe(true);
+    expect(
+      getJobsMock.mock.calls.every(([jobIds]) => jobIds.length <= 200),
     ).toBe(true);
   });
 
