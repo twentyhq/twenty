@@ -16,7 +16,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -47,7 +47,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
     currentRecordSortsComponentState,
   );
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const { triggerTableWithoutGroupDragAndDropOptimisticUpdate } =
     useTriggerTableWithoutGroupDragAndDropOptimisticUpdate();
@@ -57,7 +57,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
       if (!tableRecordDropResult.destination) return;
 
       if (currentRecordSorts.length > 0) {
-        openModal(getRecordIndexRemoveSortingModalId(recordIndexId));
+        openDialog(getRecordIndexRemoveSortingModalId(recordIndexId));
         return;
       }
 
@@ -161,7 +161,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
       selectedRowIds,
       store,
       updateOneRecord,
-      openModal,
+      openDialog,
       currentRecordSorts,
       originalDragSelection,
       allRecordIdsWithoutGroup,

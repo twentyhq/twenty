@@ -2,7 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { getSubdomainValidationSchema } from '@/settings/domains/utils/getSubdomainValidationSchema';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -22,7 +22,7 @@ export const useSettingsSubdomain = () => {
   const { enqueueToast } = useToast();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -45,7 +45,7 @@ export const useSettingsSubdomain = () => {
 
   const handleSave = () => {
     if (isDefined(currentWorkspace)) {
-      openModal(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
+      openDialog(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
     }
   };
 
@@ -64,7 +64,7 @@ export const useSettingsSubdomain = () => {
           CombinedGraphQLErrors.is(mutationError) &&
           mutationError.errors[0]?.extensions?.code === 'CONFLICT'
         ) {
-          closeModal(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
+          closeDialog(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
           setError(t`Subdomain already taken`);
           setIsSubmitting(false);
 

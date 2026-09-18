@@ -22,8 +22,8 @@ import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -58,7 +58,7 @@ export const SettingsObjectFieldEdit = () => {
   const workspaceSurface = useWorkspaceSurface();
   const { t } = useLingui();
 
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
   const { enqueueToast } = useToast();
 
   const navigate = useNavigate();
@@ -297,7 +297,7 @@ export const SettingsObjectFieldEdit = () => {
       return;
     }
 
-    openModal(DELETE_FIELD_MODAL_ID);
+    openDialog(DELETE_FIELD_MODAL_ID);
   };
 
   const confirmDelete = async () => {
@@ -313,7 +313,7 @@ export const SettingsObjectFieldEdit = () => {
 
     if (deleteResult.status === 'successful') {
       enqueueToast({ variant: 'success', children: t`Field deleted` });
-      closeModal(DELETE_FIELD_MODAL_ID);
+      closeDialog(DELETE_FIELD_MODAL_ID);
       navigateSettings(SettingsPath.ObjectDetail, {
         objectNamePlural,
       });
@@ -321,7 +321,7 @@ export const SettingsObjectFieldEdit = () => {
     }
 
     setIsDeleting(false);
-    closeModal(DELETE_FIELD_MODAL_ID);
+    closeDialog(DELETE_FIELD_MODAL_ID);
   };
 
   return (
@@ -460,15 +460,15 @@ export const SettingsObjectFieldEdit = () => {
         </SettingsPageLayout>
       </FormProvider>
       {isCustomField && (
-        <ConfirmationModal
-          modalInstanceId={DELETE_FIELD_MODAL_ID}
+        <ConfirmationDialog
+          dialogId={DELETE_FIELD_MODAL_ID}
           title={t`Delete ${fieldLabel} field?`}
           subtitle={t`This will permanently delete the field and all its data from ${objectLabel}. Type "yes" to confirm.`}
           confirmButtonText={t`Delete`}
           confirmationValue="yes"
           confirmationPlaceholder="yes"
           onConfirmClick={confirmDelete}
-          onClose={() => closeModal(DELETE_FIELD_MODAL_ID)}
+          onClose={() => closeDialog(DELETE_FIELD_MODAL_ID)}
           loading={isDeleting}
         />
       )}

@@ -9,8 +9,8 @@ import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFi
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -53,7 +53,7 @@ export const SettingsObjectIndexesSection = ({
   isReadOnly,
 }: SettingsObjectIndexesSectionProps) => {
   const { t } = useLingui();
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
   const { enqueueToast } = useToast();
   const { deleteOneIndexMetadataItem } = useDeleteOneIndexMetadataItem();
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -140,7 +140,7 @@ export const SettingsObjectIndexesSection = ({
 
   const handleRequestDelete = (item: SettingsObjectIndexesTableItem) => {
     setPendingDelete(item);
-    openModal(DELETE_INDEX_MODAL_ID);
+    openDialog(DELETE_INDEX_MODAL_ID);
   };
 
   const handleConfirmDelete = async () => {
@@ -152,7 +152,7 @@ export const SettingsObjectIndexesSection = ({
     });
 
     setIsDeleting(false);
-    closeModal(DELETE_INDEX_MODAL_ID);
+    closeDialog(DELETE_INDEX_MODAL_ID);
 
     if (result.status === 'successful') {
       enqueueToast({ variant: 'success', children: t`Index deleted` });
@@ -216,8 +216,8 @@ export const SettingsObjectIndexesSection = ({
           )}
         </StyledButtonContainer>
       )}
-      <ConfirmationModal
-        modalInstanceId={DELETE_INDEX_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={DELETE_INDEX_MODAL_ID}
         title={t`Delete this index?`}
         subtitle={t`Queries that relied on it will fall back to a sequential scan. You can recreate it later.`}
         confirmButtonText={t`Delete`}
