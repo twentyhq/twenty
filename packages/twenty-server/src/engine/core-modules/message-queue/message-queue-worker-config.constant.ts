@@ -175,9 +175,6 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
-  // Application install/uninstall hooks fan out over every workspace running
-  // an application, so they get their own queue: at higher concurrency they
-  // burst through the API rate limits of the app they call into.
   [MessageQueue.applicationLifecycleHookQueue]: {
     priority: 4,
     workerOptions: {
