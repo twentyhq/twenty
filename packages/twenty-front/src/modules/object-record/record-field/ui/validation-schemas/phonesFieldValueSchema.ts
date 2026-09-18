@@ -1,23 +1,26 @@
 import { z } from 'zod';
 
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-
-const additionalPhoneCodeSchema = z.preprocess(
-  (code) => code ?? '',
-  z.string(),
-);
+import { normalizeAdditionalPhones } from '@/object-record/record-field/ui/utils/normalizeAdditionalPhones';
+import { isDefined } from 'twenty-shared/utils';
 
 export const phonesFieldValueSchema = z.object({
   primaryPhoneNumber: z.string(),
   primaryPhoneCountryCode: z.string(),
   primaryPhoneCallingCode: z.string().optional(),
-  additionalPhones: z
-    .array(
-      z.object({
-        number: z.string(),
-        callingCode: additionalPhoneCodeSchema,
-        countryCode: additionalPhoneCodeSchema,
-      }),
-    )
-    .nullable(),
+  additionalPhones: z.preprocess(
+    (additionalPhones) =>
+      isDefined(additionalPhones)
+        ? normalizeAdditionalPhones(additionalPhones)
+        : additionalPhones,
+    z
+      .array(
+        z.object({
+          number: z.string(),
+          callingCode: z.string(),
+          countryCode: z.string(),
+        }),
+      )
+      .nullable(),
+  ),
 }) satisfies z.ZodType<FieldPhonesValue>;

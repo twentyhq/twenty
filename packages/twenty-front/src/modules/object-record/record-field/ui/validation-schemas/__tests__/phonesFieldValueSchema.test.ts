@@ -41,14 +41,31 @@ describe('phonesFieldValueSchema', () => {
     ]);
   });
 
-  it('should still reject an additional phone without a number', () => {
+  it('should drop an additional phone without a number instead of invalidating the value', () => {
     const result = phonesFieldValueSchema.safeParse({
       primaryPhoneNumber: '123456789',
       primaryPhoneCountryCode: 'US',
-      additionalPhones: [{ callingCode: '+44', countryCode: 'GB' }],
+      additionalPhones: [
+        { callingCode: '+44', countryCode: 'GB' },
+        { number: '555000333', callingCode: '+33', countryCode: 'FR' },
+      ],
     });
 
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
+    expect(result.data?.additionalPhones).toEqual([
+      { number: '555000333', callingCode: '+33', countryCode: 'FR' },
+    ]);
+  });
+
+  it('should keep a null additionalPhones as null', () => {
+    const result = phonesFieldValueSchema.safeParse({
+      primaryPhoneNumber: '123456789',
+      primaryPhoneCountryCode: 'US',
+      additionalPhones: null,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data?.additionalPhones).toBeNull();
   });
 
   it('should still reject a missing primary phone number', () => {

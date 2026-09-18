@@ -6,6 +6,7 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 
 import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
+import { normalizeAdditionalPhones } from '@/object-record/record-field/ui/utils/normalizeAdditionalPhones';
 import { isDefined } from 'twenty-shared/utils';
 import { RoundedLink } from 'twenty-ui/primitives/navigation';
 import { logError } from '~/utils/logError';
@@ -49,13 +50,15 @@ export const PhonesDisplay = ({
                 '',
             }
           : null,
-        ...parseAdditionalPhones(value?.additionalPhones),
+        ...normalizeAdditionalPhones(
+          parseAdditionalPhones(value?.additionalPhones),
+        ),
       ]
         .filter(isDefined)
         .map(({ number, callingCode }) => {
           return {
             number,
-            callingCode: callingCode ?? '',
+            callingCode,
           };
         }),
     [
