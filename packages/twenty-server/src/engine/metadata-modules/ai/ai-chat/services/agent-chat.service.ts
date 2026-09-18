@@ -751,10 +751,11 @@ export class AgentChatService {
     return summaryByThreadId.get(threadId) ?? EMPTY_LAST_MESSAGE_SUMMARY;
   }
 
-  // The latest visible message of each thread that has a text part, with that
-  // part, in one query, so thread lists can show who said what last. Role,
-  // author and time all come from the message being previewed, so a row never
-  // attributes one message's text to another's sender.
+  // What each thread last showed and when it last moved. The preview, its
+  // role and its author come from the newest message that has a text part, so
+  // a row never attributes one message's text to another's sender; the time
+  // is the newest message of any kind, so it agrees with the order the list
+  // was sorted in.
   async getLastMessageSummaryByThreadId({
     threadIds,
     workspaceId,
@@ -797,17 +798,52 @@ export class AgentChatService {
         textContent: string | null;
       }>();
 
-    return new Map(
+    // Last activity is every message, the preview is only what was said, so
+    // the two are asked separately: getThreadsForUser orders the list by
+    // MAX(createdAt) over all messages, and a lastMessageAt that skipped a
+    // tool-only tail would disagree with the order it was sent in.
+    const lastActivityRows = await this.messageRepository
+      .createQueryBuilder('message')
+      .select('message.threadId', 'threadId')
+      .addSelect('MAX(message.createdAt)', 'lastMessageAt')
+      .where('message.threadId IN (:...threadIds)', { threadIds })
+      .andWhere('message.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('message.isHidden = false')
+      .groupBy('message.threadId')
+      .getRawMany<{ threadId: string; lastMessageAt: Date }>();
+
+    const lastMessageAtByThreadId = new Map(
+      lastActivityRows.map((row) => [row.threadId, row.lastMessageAt]),
+    );
+
+    const summaryByThreadId = new Map<
+      string,
+      AgentChatThreadLastMessageSummary
+    >(
       rows.map((row) => [
         row.threadId,
         {
-          lastMessageAt: row.createdAt,
+          lastMessageAt:
+            lastMessageAtByThreadId.get(row.threadId) ?? row.createdAt,
           lastMessagePreview: toLastMessagePreview(row.textContent),
           lastMessageRole: row.role,
           lastMessageAuthorUserWorkspaceId: row.authorUserWorkspaceId,
         },
       ]),
     );
+
+    // A thread whose messages are all tool-only has activity but nothing to
+    // preview; it still belongs in the list at the time it last moved.
+    for (const [threadId, lastMessageAt] of lastMessageAtByThreadId) {
+      if (!summaryByThreadId.has(threadId)) {
+        summaryByThreadId.set(threadId, {
+          ...EMPTY_LAST_MESSAGE_SUMMARY,
+          lastMessageAt,
+        });
+      }
+    }
+
+    return summaryByThreadId;
   }
 
   async addMessage({
