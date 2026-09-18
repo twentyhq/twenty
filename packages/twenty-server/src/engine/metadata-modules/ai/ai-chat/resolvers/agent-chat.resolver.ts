@@ -42,6 +42,7 @@ import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/a
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { buildThreadAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-access-where.util';
+import { buildThreadWorkerWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-worker-where.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -666,8 +667,11 @@ export class AgentChatResolver {
       );
     }
 
+    // Dropping somebody's queued message is a write on the thread, so it takes
+    // the same gate as status: a public channel is readable by the whole
+    // workspace, and a reader passing by is not working this queue.
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: buildThreadAccessWhere({
+      where: buildThreadWorkerWhere({
         id: message.threadId,
         userWorkspaceId,
       }),
@@ -675,8 +679,8 @@ export class AgentChatResolver {
 
     if (!isDefined(thread)) {
       throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
+        'Join this channel to work on its chats',
+        AiExceptionCode.THREAD_NOT_JOINED,
       );
     }
 
