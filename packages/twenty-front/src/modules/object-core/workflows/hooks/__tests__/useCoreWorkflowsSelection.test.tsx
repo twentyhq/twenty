@@ -71,12 +71,21 @@ describe('useCoreWorkflowsSelection', () => {
     expect(result.current.selectedRowIds).toEqual(['core-3']);
   });
 
-  it('removes deleted records from displayed and command selections after refetch', () => {
+  it('preserves selected records that are not in the currently loaded page', () => {
     const { result, rerender } = renderSelection();
     act(() => result.current.toggleRow('core-1'));
     rerender({ coreWorkflows: coreWorkflows.slice(1) });
     expect(result.current.selectedRowIds).toEqual([]);
-    expect(jotaiStore.get(coreWorkflowsSelectionState.atom).rowIds).toEqual([]);
+    expect(jotaiStore.get(coreWorkflowsSelectionState.atom).rowIds).toEqual([
+      'core-1',
+    ]);
+
+    act(() => result.current.toggleRow('core-2'));
+
+    expect(jotaiStore.get(coreWorkflowsSelectionState.atom).rowIds).toEqual([
+      'core-1',
+      'core-2',
+    ]);
     expect(result.current.displayedCoreWorkflows.map(({ id }) => id)).toEqual([
       'core-2',
       'core-3',

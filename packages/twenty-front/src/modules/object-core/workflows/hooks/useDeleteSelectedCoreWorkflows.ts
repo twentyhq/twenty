@@ -55,9 +55,11 @@ export const useDeleteSelectedCoreWorkflows = () => {
     currentFilterSettings: coreWorkflowsFilterSettings,
   });
 
-  const deleteSelectedCoreWorkflows = async () => {
-    if (!isNonEmptyArray(selectedCoreWorkflowIds)) {
-      return;
+  const deleteSelectedCoreWorkflows = async (
+    coreWorkflowIds = selectedCoreWorkflowIds,
+  ) => {
+    if (!isNonEmptyArray(coreWorkflowIds)) {
+      return false;
     }
 
     let deletedCoreWorkflows: NonNullable<
@@ -66,7 +68,7 @@ export const useDeleteSelectedCoreWorkflows = () => {
 
     try {
       const { data } = await deleteCoreWorkflowsMutation({
-        variables: { input: { coreWorkflowIds: selectedCoreWorkflowIds } },
+        variables: { input: { coreWorkflowIds } },
       });
 
       deletedCoreWorkflows = data?.deleteCoreWorkflows ?? [];
@@ -77,7 +79,7 @@ export const useDeleteSelectedCoreWorkflows = () => {
         children: t`Failed to delete workflows`,
       });
 
-      return;
+      return false;
     }
 
     if (!isNonEmptyArray(deletedCoreWorkflows)) {
@@ -86,7 +88,7 @@ export const useDeleteSelectedCoreWorkflows = () => {
         children: t`No workflows were deleted`,
       });
 
-      return;
+      return false;
     }
 
     setCoreWorkflowsSelection(EMPTY_CORE_WORKFLOWS_SELECTION);
@@ -117,6 +119,8 @@ export const useDeleteSelectedCoreWorkflows = () => {
         deletedRecordIds: deletedWorkspaceWorkflowIds,
       },
     });
+
+    return true;
   };
 
   return { deleteSelectedCoreWorkflows, selectedCoreWorkflowIds };
