@@ -117,4 +117,12 @@ describe('downloadTranscript', () => {
       expect.stringContaining('socket leaked detail'),
     );
   });
+  it('settles a pending transcript whose provider resource now returns 404', async () => {
+    fetchMock.mockResolvedValue(new Response('{}', { status: 404 }));
+
+    await expect(
+      downloadTranscript({ transcriptId: 'recall-transcript-1' }),
+    ).resolves.toEqual({ outcome: 'deleted' });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
 });
