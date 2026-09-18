@@ -52,7 +52,7 @@ const environment: RowAccessPolicyEnvironment = {
   isRecordSharingEnabled: true,
   flatFieldMetadataMaps: { byId: {} } as never,
   flatObjectMetadataMaps: { byId: {} } as never,
-  recordShareTableExpression: '"workspace"."recordShare"',
+  resolveRecordShareTableExpression: () => '"workspace"."recordShare"',
   resolveTableExpression: (objectMetadataId) =>
     `"workspace"."${objectMetadataId}"`,
 };

@@ -1951,9 +1951,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       flatObjectMetadataMaps:
         this.options.internalContext.flatObjectMetadataMaps,
-      recordShareTableExpression: this.getTableExpression(
-        this.options.internalContext.objectIdByNameSingular.recordShare,
-      ),
+      resolveRecordShareTableExpression: () =>
+        this.getTableExpression(
+          this.options.internalContext.objectIdByNameSingular.recordShare,
+        ),
       resolveTableExpression: (objectMetadataId) =>
         this.getTableExpression(objectMetadataId),
     };

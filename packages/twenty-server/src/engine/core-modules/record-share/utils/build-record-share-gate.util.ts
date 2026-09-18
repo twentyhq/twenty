@@ -103,7 +103,7 @@ const buildOwnRecordShareGate = (
     condition: buildRecordShareCondition({
       tableAlias: target.tableAlias,
       recordShareTableExpression:
-        context.environment.recordShareTableExpression,
+        context.environment.resolveRecordShareTableExpression(),
       objectMetadataId: target.flatObjectMetadata.id,
       ...principals,
     }),
@@ -164,7 +164,7 @@ const buildInheritedReadabilityGate = ({
         }),
       ),
       recordShareTableExpression:
-        context.environment.recordShareTableExpression,
+        context.environment.resolveRecordShareTableExpression(),
       ...principals,
     }),
   };
