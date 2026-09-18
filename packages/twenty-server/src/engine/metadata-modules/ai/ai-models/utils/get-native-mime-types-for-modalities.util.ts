@@ -1,4 +1,4 @@
-import { MODALITY_TO_MIME_TYPES } from 'src/engine/metadata-modules/ai/ai-chat/constants/modality-to-mime-types.constant';
+import { MODALITY_TO_MIME_TYPES } from 'src/engine/metadata-modules/ai/ai-models/constants/modality-to-mime-types.constant';
 
 export const getNativeMimeTypesForModalities = (
   modalities: string[] = [],
