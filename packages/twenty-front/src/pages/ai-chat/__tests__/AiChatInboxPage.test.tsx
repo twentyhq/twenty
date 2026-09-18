@@ -180,7 +180,7 @@ describe('AiChatInboxPage', () => {
   it('narrows to the chats outside every channel', async () => {
     renderPage('/chat/inbox/t-direct');
 
-    screen.getByRole('tab', { name: /Direct messages/ }).click();
+    screen.getByRole('tab', { name: /DM/ }).click();
 
     expect(await screen.findByText('Private notes')).toBeVisible();
     expect(screen.queryByText('Pricing question')).toBeNull();

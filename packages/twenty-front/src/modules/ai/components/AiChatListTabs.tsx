@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -15,7 +14,6 @@ const StyledContainer = styled.div`
 type AiChatListTab = {
   id: string;
   title: string;
-  Icon: IconComponent;
   pill?: string;
 };
 
@@ -26,6 +24,11 @@ type AiChatListTabsProps = {
 };
 
 // The strip above a thread list, on a channel and on the personal inbox alike.
+// These panes are narrow, so the tabs scroll rather than collapsing the ones
+// that do not fit into a "+N More" dropdown: four labelled tabs clear a 400px
+// pane by a pixel or two, which any longer translation would eat. They carry
+// labels and no icons for the same reason — a tab nobody can see is worse
+// than a plain one.
 export const AiChatListTabs = ({
   componentInstanceId,
   tabs,
@@ -39,6 +42,7 @@ export const AiChatListTabs = ({
         <TabList
           aria-label={t`Filter chats`}
           tabs={tabs}
+          alwaysScrollTabs
           behaveAsLinks={false}
           componentInstanceId={componentInstanceId}
           onChangeTab={onChangeTab}

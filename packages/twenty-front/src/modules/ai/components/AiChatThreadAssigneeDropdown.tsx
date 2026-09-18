@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconUserPlus, IconUsers, IconX } from 'twenty-ui/icon';
+import { IconUserCircle, IconUserPlus, IconX } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -100,7 +100,7 @@ export const AiChatThreadAssigneeDropdown = ({
               </StyledAssigneeName>
             </>
           ) : (
-            <IconUsers size={14} />
+            <IconUserCircle size={14} />
           )}
         </StyledClickableContainer>
       }

@@ -37,6 +37,7 @@ export const AGENT_CHAT_THREAD_DATA_SEED_IDS = {
   APPLE_DEFAULT_THREAD: '20202020-0000-4000-8000-000000000011',
   APPLE_IMPORT_THREAD: '20202020-0000-4000-8000-000000000013',
   APPLE_FOLLOW_UP_THREAD: '20202020-0000-4000-8000-000000000014',
+  APPLE_PRICING_THREAD: '20202020-0000-4000-8000-000000000015',
   YCOMBINATOR_DEFAULT_THREAD: '20202020-0000-4000-8000-000000000012',
 };
 
@@ -127,6 +128,22 @@ export const APPLE_AGENT_CHAT_CONVERSATION_SEEDS: AgentChatConversationSeed[] =
         [
           'Summarize the next steps.',
           '## Ready for review\n\n1. Clean and normalize the source file.\n2. Review potential duplicates.\n3. Confirm field mapping and required values.\n4. Import a small sample.\n5. Review the resulting records.\n6. Import the remaining rows once the sample is correct.\n\nThis conversation is a preparation checklist. No import has been performed.',
+        ],
+      ],
+    },
+    {
+      // Left open and unassigned on purpose: a channel opens on what nobody
+      // has picked up, so the tab a team lands on has something in it.
+      threadId: AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_PRICING_THREAD,
+      channelId: AGENT_CHAT_CHANNEL_DATA_SEED_IDS.APPLE_SALES_CHANNEL,
+      exchanges: [
+        [
+          'A prospect is asking for a discount on the annual plan. What do we usually do?',
+          'Annual plans are already billed at a lower effective rate than monthly, so the usual answer is to hold the price and add value elsewhere: a longer pilot, onboarding help, or a later start date. Discounting the list price sets an expectation for the renewal.',
+        ],
+        [
+          'They are comparing us with a cheaper tool. How should I answer?',
+          '## Answering a price comparison\n\n1. Ask what they are actually comparing — seats, storage, or the features they use.\n2. Name the two or three things the cheaper tool does not do for them.\n3. Put the difference in their terms: hours saved, handoffs avoided, data they stop re-entering.\n4. Offer a short pilot rather than a lower price.\n\nIf the gap is real and the budget is fixed, say so early rather than late.',
         ],
       ],
     },

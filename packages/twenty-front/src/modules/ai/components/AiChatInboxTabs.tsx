@@ -2,7 +2,6 @@ import { useLingui } from '@lingui/react/macro';
 
 import { AiChatListTabs } from '@/ai/components/AiChatListTabs';
 import { AGENT_CHAT_INBOX_TAB } from '@/ai/constants/AgentChatInboxTab';
-import { AGENT_CHAT_INBOX_TAB_ICONS } from '@/ai/constants/AgentChatInboxTabIcons';
 import { AGENT_CHAT_INBOX_TAB_LABELS } from '@/ai/constants/AgentChatInboxTabLabels';
 import { AGENT_CHAT_INBOX_TAB_ORDER } from '@/ai/constants/AgentChatInboxTabOrder';
 import { type AgentChatInboxTab } from '@/ai/types/AgentChatInboxTab';
@@ -26,7 +25,6 @@ export const AiChatInboxTabs = ({
     return {
       id: inboxTab,
       title: t(AGENT_CHAT_INBOX_TAB_LABELS[inboxTab]),
-      Icon: AGENT_CHAT_INBOX_TAB_ICONS[inboxTab],
       // All repeats the sum of the others, so its count says nothing new.
       pill:
         count > 0 && inboxTab !== AGENT_CHAT_INBOX_TAB.ALL

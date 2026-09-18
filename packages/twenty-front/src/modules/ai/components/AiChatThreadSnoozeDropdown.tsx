@@ -1,9 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconClockHour8 } from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
+import { IconClockHour8, IconClockPlay } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 
+import { AGENT_CHAT_THREAD_INBOX_STATE } from '@/ai/constants/AgentChatThreadInboxState';
 import { AGENT_CHAT_THREAD_SNOOZE_PRESETS } from '@/ai/constants/AgentChatThreadSnoozePresets';
+import { useAiChatThreadById } from '@/ai/hooks/useAiChatThreadById';
+import { getAgentChatThreadInboxState } from '@/ai/utils/getAgentChatThreadInboxState';
 import { getAgentChatThreadSnoozeDate } from '@/ai/utils/getAgentChatThreadSnoozeDate';
 import { useChatThreadInboxActions } from '@/ai/hooks/useChatThreadInboxActions';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -22,22 +26,44 @@ export const AiChatThreadSnoozeDropdown = ({
   threadId,
 }: AiChatThreadSnoozeDropdownProps) => {
   const { t } = useLingui();
-  const { snoozeChatThread } = useChatThreadInboxActions();
+  const { snoozeChatThread, reopenChatThread } = useChatThreadInboxActions();
   const { closeDropdown } = useCloseDropdown();
   const dropdownId = getAiChatThreadSnoozeDropdownId(threadId);
+  const thread = useAiChatThreadById(threadId);
+  const isSnoozed =
+    isDefined(thread) &&
+    getAgentChatThreadInboxState(thread) ===
+      AGENT_CHAT_THREAD_INBOX_STATE.SNOOZED;
 
   return (
     <Dropdown
       dropdownId={dropdownId}
       dropdownPlacement="bottom-end"
       clickableComponent={
-        <IconButton size="sm" variant="outline" aria-label={t`Snooze chat`}>
+        <IconButton
+          size="sm"
+          variant="outline"
+          aria-label={isSnoozed ? t`Snoozed` : t`Snooze chat`}
+        >
           <IconClockHour8 />
         </IconButton>
       }
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
+            {/* A snoozed chat is put away until a date nobody remembers, so
+                the way back has to be the first thing in the menu that put it
+                there. */}
+            {isSnoozed && (
+              <MenuItem
+                LeftIcon={IconClockPlay}
+                text={t`Unsnooze`}
+                onClick={() => {
+                  void reopenChatThread(threadId);
+                  closeDropdown(dropdownId);
+                }}
+              />
+            )}
             {AGENT_CHAT_THREAD_SNOOZE_PRESETS.map((preset) => (
               <MenuItem
                 key={preset.key}

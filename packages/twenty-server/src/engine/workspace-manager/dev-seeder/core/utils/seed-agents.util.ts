@@ -140,9 +140,17 @@ const seedChatThreads = async ({
       .orIgnore()
       .values(
         // One thread per inbox state, so a fresh workspace shows what the
-        // Open, Snoozed and Done tabs are for without anyone having to
-        // produce the states by hand.
+        // Open, Snoozed and Done lists are for without anyone having to
+        // produce the states by hand — and one left open and unassigned in
+        // the Sales channel, since that is the tab a channel opens on.
         [
+          {
+            id: AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_PRICING_THREAD,
+            title: 'Answer a pricing objection',
+            status: AgentChatThreadStatus.OPEN,
+            snoozedUntil: null,
+            assigneeUserWorkspaceId: null,
+          },
           {
             id: AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_IMPORT_THREAD,
             title: 'Prepare a company import',
@@ -183,6 +191,7 @@ const seedChatThreads = async ({
       workspaceId === SEED_APPLE_WORKSPACE_ID
         ? [
             threadId,
+            AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_PRICING_THREAD,
             AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_IMPORT_THREAD,
             AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_FOLLOW_UP_THREAD,
             AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN_THREAD,

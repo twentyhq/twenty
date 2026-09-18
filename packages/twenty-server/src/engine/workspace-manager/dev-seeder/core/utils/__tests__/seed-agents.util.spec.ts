@@ -25,7 +25,7 @@ type SeedRow = {
 
 describe('seedAgents', () => {
   it.each([
-    [SEED_APPLE_WORKSPACE_ID, 5, 28, 14, 7, 2, 5, 1, 2],
+    [SEED_APPLE_WORKSPACE_ID, 6, 32, 16, 8, 2, 5, 1, 2],
     [SEED_YCOMBINATOR_WORKSPACE_ID, 1, 4, 2, 1, 0, 0, 0, 0],
   ])(
     'keeps messages, turns, and parts in their owning conversation for %s',

@@ -131,7 +131,10 @@ export const AiChatPageThreadHeader = ({
           </StyledTitleDisplay>
         )}
       </StyledTitle>
-      <AiChatThreadChannelChip channelId={thread.channelId} />
+      <AiChatThreadChannelChip
+        threadId={thread.id}
+        channelId={thread.channelId}
+      />
       <AiChatThreadWorkflowRunChip workflowRunId={thread.workflowRunId} />
       <StyledActions>
         <AiChatThreadParticipants threadId={thread.id} />
