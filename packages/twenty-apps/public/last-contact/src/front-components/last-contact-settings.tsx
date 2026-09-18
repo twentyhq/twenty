@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { defineSettingsFrontComponent } from 'twenty-sdk/define';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
-import { H2Title, Button, Section } from 'twenty-ui';
+import { H2Title, MainButton, Section } from 'twenty-ui';
 import 'twenty-ui/style.css';
 
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -49,13 +49,13 @@ const LastContactSettings = () => {
           'Recompute last-contact fields for people, companies, and opportunities from synced emails and meetings.',
         )}
       />
-      <Button
+      <MainButton
         onClick={handleBackfill}
         loading={isStarting}
         disabled={isStarting}
       >
         {t('Trigger backfill')}
-      </Button>
+      </MainButton>
     </Section>
   );
 };
