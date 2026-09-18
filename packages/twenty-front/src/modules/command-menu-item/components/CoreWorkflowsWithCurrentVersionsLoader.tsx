@@ -7,54 +7,40 @@ type CoreWorkflowsWithCurrentVersionsLoaderProps = {
   workflowIds: string[];
 };
 
-type CoreWorkflowWithCurrentVersionLoaderProps =
-  CoreWorkflowsWithCurrentVersionsLoaderProps & {
-    loadedWorkflows: WorkflowWithCurrentVersion[];
-    workflowIndex: number;
-  };
+type CoreWorkflowWithCurrentVersionLoaderProps = {
+  children: (
+    workflow: WorkflowWithCurrentVersion | undefined,
+  ) => React.ReactNode;
+  workflowId: string;
+};
 
 const CoreWorkflowWithCurrentVersionLoader = ({
   children,
-  loadedWorkflows,
-  workflowIds,
-  workflowIndex,
+  workflowId,
 }: CoreWorkflowWithCurrentVersionLoaderProps) => {
-  const workflow = useWorkflowWithCurrentVersion(workflowIds[workflowIndex]);
-  const nextLoadedWorkflows = isDefined(workflow)
-    ? [...loadedWorkflows, workflow]
-    : loadedWorkflows;
-  const nextWorkflowIndex = workflowIndex + 1;
-
-  if (nextWorkflowIndex >= workflowIds.length) {
-    return children(nextLoadedWorkflows);
-  }
-
-  return (
-    <CoreWorkflowWithCurrentVersionLoader
-      workflowIds={workflowIds}
-      workflowIndex={nextWorkflowIndex}
-      loadedWorkflows={nextLoadedWorkflows}
-    >
-      {children}
-    </CoreWorkflowWithCurrentVersionLoader>
-  );
+  return children(useWorkflowWithCurrentVersion(workflowId));
 };
 
 export const CoreWorkflowsWithCurrentVersionsLoader = ({
   children,
   workflowIds,
 }: CoreWorkflowsWithCurrentVersionsLoaderProps) => {
-  if (workflowIds.length === 0) {
-    return children([]);
-  }
-
-  return (
-    <CoreWorkflowWithCurrentVersionLoader
-      workflowIds={workflowIds}
-      workflowIndex={0}
-      loadedWorkflows={[]}
-    >
-      {children}
-    </CoreWorkflowWithCurrentVersionLoader>
+  const renderLoadedWorkflows = workflowIds.reduceRight<
+    (loadedWorkflows: WorkflowWithCurrentVersion[]) => React.ReactNode
+  >(
+    (renderNextWorkflow, workflowId) => (loadedWorkflows) => (
+      <CoreWorkflowWithCurrentVersionLoader workflowId={workflowId}>
+        {(workflow) =>
+          renderNextWorkflow(
+            isDefined(workflow)
+              ? [...loadedWorkflows, workflow]
+              : loadedWorkflows,
+          )
+        }
+      </CoreWorkflowWithCurrentVersionLoader>
+    ),
+    children,
   );
+
+  return renderLoadedWorkflows([]);
 };
