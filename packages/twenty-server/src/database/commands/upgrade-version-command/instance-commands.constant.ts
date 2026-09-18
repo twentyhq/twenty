@@ -202,6 +202,7 @@ import { AddAgentChatThreadWorkflowRunFastInstanceCommand } from 'src/database/c
 import { AddAgentChatThreadInboxStateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789728234977-add-agent-chat-thread-inbox-state';
 import { AddAgentChatThreadReadsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789743315956-add-agent-chat-thread-reads';
 import { AddWorkflowExecutionCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789719131000-add-workflow-execution-compatibility';
+import { CoreWorkflowCommandMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789730706712-core-workflow-command-menu-items';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -396,6 +397,7 @@ export const INSTANCE_COMMANDS = [
   AddCoreVersionPointersFastInstanceCommand,
   AddWorkspaceWorkflowVersionIdToWorkflowVersionFastInstanceCommand,
   AddWorkflowExecutionCompatibilityFastInstanceCommand,
+  CoreWorkflowCommandMenuItemsFastInstanceCommand,
   AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand,
   AddAppMessageChannelTypeFastInstanceCommand,
   AddAppMessageChannelUniqueHandleFastInstanceCommand,
