@@ -20,12 +20,25 @@ i18n.activate(SOURCE_LOCALE);
 
 const mockIsCoreEnabled = jest.fn();
 const mockHasPermission = jest.fn();
+const mockCanSoftDeleteWorkflow = jest.fn();
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: () => mockIsCoreEnabled(),
 }));
 jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
   useHasPermissionFlag: () => mockHasPermission(),
+}));
+jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
+  useObjectMetadataItem: () => ({
+    objectMetadataItem: {
+      id: '20202020-9e2b-4f2b-8f47-61b41565859a',
+    },
+  }),
+}));
+jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
+  useObjectPermissionsForObject: () => ({
+    canSoftDeleteObjectRecords: mockCanSoftDeleteWorkflow(),
+  }),
 }));
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -68,6 +81,7 @@ describe('useCoreObjectsCommands', () => {
   beforeEach(() => {
     mockIsCoreEnabled.mockReturnValue(true);
     mockHasPermission.mockReturnValue(true);
+    mockCanSoftDeleteWorkflow.mockReturnValue(true);
     jotaiStore.set(coreWorkflowsFilterSettingsState.atom, {});
   });
 
@@ -79,6 +93,12 @@ describe('useCoreObjectsCommands', () => {
 
   it('does not expose core deletion without the workflow permission', () => {
     mockHasPermission.mockReturnValue(false);
+    const { result } = renderCommands();
+    expect(result.current.shouldDisplayCoreWorkflowsDeleteCommand).toBe(false);
+  });
+
+  it('does not expose core deletion without object delete permission', () => {
+    mockCanSoftDeleteWorkflow.mockReturnValue(false);
     const { result } = renderCommands();
     expect(result.current.shouldDisplayCoreWorkflowsDeleteCommand).toBe(false);
   });
