@@ -21,6 +21,7 @@ import { FrontComponentEntity } from 'src/engine/metadata-modules/front-componen
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
+    provideWorkspaceScopedRepository(FrontComponentEntity),
     ApplicationManifestApplyService,
     ApplicationManifestMigrationService,
     ApplicationSyncService,

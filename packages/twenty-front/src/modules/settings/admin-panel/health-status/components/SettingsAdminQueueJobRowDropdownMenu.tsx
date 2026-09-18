@@ -4,7 +4,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconRefresh, IconTrash } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { JobState } from '~/generated-admin/graphql';
 
@@ -39,11 +39,9 @@ export const SettingsAdminQueueJobRowDropdownMenu = ({
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
       clickableComponent={
-        <LightIconButton
-          aria-label={t`Job Actions`}
-          Icon={IconDotsVertical}
-          accent="tertiary"
-        />
+        <LightIconButton aria-label={t`Job Actions`} emphasis="subtle">
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownComponents={
         <DropdownContent>

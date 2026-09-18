@@ -27,7 +27,7 @@ import {
   IconPlus,
   useIcons,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -255,10 +255,12 @@ export const SettingsObjectFieldItemTableRow = ({
           ) : (
             canToggleField && (
               <LightIconButton
-                Icon={IconMinus}
-                accent="tertiary"
+                emphasis="subtle"
                 onClick={handleToggleField}
-              />
+                aria-label={t`Deactivate field`}
+              >
+                <IconMinus />
+              </LightIconButton>
             )
           )
         ) : mode === 'view' ? (
@@ -279,10 +281,12 @@ export const SettingsObjectFieldItemTableRow = ({
           />
         ) : (
           <LightIconButton
-            Icon={IconPlus}
-            accent="tertiary"
+            emphasis="subtle"
             onClick={handleToggleField}
-          />
+            aria-label={t`Add`}
+          >
+            <IconPlus />
+          </LightIconButton>
         )}
       </TableCell>
     </TableRow>

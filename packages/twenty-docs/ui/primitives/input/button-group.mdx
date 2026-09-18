@@ -1,8 +1,9 @@
 ---
 title: ButtonGroup
-description: Group related buttons with joined borders and shared appearance.
+description: Group related buttons with shared appearance and an optional frame.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import ButtonGroupReference from '/snippets/ui/generated/input/button-group.mdx';
 
 Give a group an accessible name and place related buttons inside it. The group joins adjacent borders and can apply a shared size, variant, and color. Buttons retain their own tab stops.
@@ -29,3 +30,38 @@ export const RecordActions = () => (
 ## Props
 
 <ButtonGroupReference />
+
+## Detached controls
+
+Set `attached={false}` to keep each control's rounded corners and a 2px gap. Shared size, surface, and color still apply through wrappers and tooltip anchors.
+
+## Framed controls
+
+Set `framed` to add a translucent background, border, 2px padding, and concentric corners. The frame works with attached or detached controls and preserves each button's size and appearance unless you set them on the group. Use `size="xs"` on [LightIconButton](/ui/components/input/light-icon-button) for compact 20px actions.
+
+<StoryEmbed
+  storyId="ui-input-button-buttongroup--framed-documentation"
+  title="Framed button group"
+  height={180}
+/>
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components';
+import { IconPlus, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const CompactRecordActions = () => (
+  <ButtonGroup framed attached={false} aria-label="Record actions">
+    <LightIconButton size="xs" aria-label="Add" emphasis="subtle">
+      <IconPlus />
+    </LightIconButton>
+    <LightIconButton size="xs" aria-label="Delete" emphasis="subtle" disabled>
+      <IconTrash />
+    </LightIconButton>
+  </ButtonGroup>
+);
+```
+
+## Updating existing groups
+
+Replace `IconButtonGroup` and its `iconButtons` array with `ButtonGroup framed attached={false}` and explicit children. Replace `InsideButton` with `LightIconButton size="xs"`. Each button owns its accessible name, action handler, disabled state, and optional tooltip.

@@ -7,7 +7,7 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { AiChatThreadMoveToChannelMenu } from '@/ai/components/AiChatThreadMoveToChannelMenu';
@@ -91,11 +91,9 @@ export const AiChatThreadItemMenu = ({
       onClose={goToRoot}
       clickableComponent={
         clickableComponent ?? (
-          <LightIconButton
-            aria-label={t`Chat actions`}
-            Icon={IconDotsVertical}
-            accent="tertiary"
-          />
+          <LightIconButton aria-label={t`Chat actions`} emphasis="subtle">
+            <IconDotsVertical />
+          </LightIconButton>
         )
       }
       dropdownComponents={

@@ -24,7 +24,7 @@ import {
   IconChevronRight,
   IconClock,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
@@ -224,11 +224,9 @@ export const DateTimePickerHeader = ({
           <Dropdown
             dropdownId={DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID}
             clickableComponent={
-              <LightIconButton
-                Icon={IconCalendar}
-                size="medium"
-                aria-label={t`Select month and year`}
-              />
+              <LightIconButton size="md" aria-label={t`Select month and year`}>
+                <IconCalendar />
+              </LightIconButton>
             }
             dropdownPlacement="bottom-start"
             dropdownOffset={{ y: 8 }}
@@ -274,17 +272,21 @@ export const DateTimePickerHeader = ({
           />
           <StyledNavigationButtons>
             <LightIconButton
-              Icon={IconChevronLeft}
               onClick={onSubtractMonth}
-              size="medium"
+              size="md"
               disabled={prevMonthButtonDisabled}
-            />
+              aria-label={t`Previous`}
+            >
+              <IconChevronLeft />
+            </LightIconButton>
             <LightIconButton
-              Icon={IconChevronRight}
               onClick={onAddMonth}
-              size="medium"
+              size="md"
               disabled={nextMonthButtonDisabled}
-            />
+              aria-label={t`Next`}
+            >
+              <IconChevronRight />
+            </LightIconButton>
           </StyledNavigationButtons>
         </StyledRightControls>
       </StyledTimeRow>

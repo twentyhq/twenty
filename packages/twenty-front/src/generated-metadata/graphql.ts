@@ -4444,7 +4444,7 @@ export type MutationUpdateOneAgentArgs = {
 
 
 export type MutationUpdateOneApplicationVariableArgs = {
-  applicationId: Scalars['UUID']['input'];
+  applicationId?: InputMaybe<Scalars['UUID']['input']>;
   key: Scalars['String']['input'];
   value: Scalars['String']['input'];
 };

@@ -32,7 +32,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 
 const StyledHeader = styled.div<{ isReadOnly: boolean }>`
   align-items: center;
@@ -270,22 +270,24 @@ export const RecordBoardColumnHeader = () => {
                 data-dropdown-open={isDropdownOpen ? 'true' : undefined}
               >
                 <LightIconButton
-                  accent="tertiary"
+                  emphasis="subtle"
                   aria-label={t`More options`}
-                  Icon={IconDotsVertical}
                   onClick={() => {
                     toggleDropdown({
                       dropdownComponentInstanceIdFromProps: dropdownId,
                     });
                   }}
-                />
+                >
+                  <IconDotsVertical />
+                </LightIconButton>
                 {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
                   <LightIconButton
-                    accent="tertiary"
+                    emphasis="subtle"
                     aria-label={t`Add new`}
-                    Icon={IconPlus}
                     onClick={handleCreateNewRecordClick}
-                  />
+                  >
+                    <IconPlus />
+                  </LightIconButton>
                 )}
               </StyledHeaderActions>
             )}

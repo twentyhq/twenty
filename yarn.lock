@@ -50178,11 +50178,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules":
+"twenty-oxlint-rules@workspace:*, twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules":
   version: 0.0.0-use.local
   resolution: "twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules"
   dependencies:
     "@oxlint/plugins": "npm:^1.51.0"
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -50444,6 +50445,7 @@ __metadata:
     tslib: "npm:2.8.1"
     twenty-client-sdk: "workspace:*"
     twenty-emails: "workspace:*"
+    twenty-oxlint-rules: "workspace:*"
     twenty-shared: "workspace:*"
     type-fest: "npm:4.10.1"
     typeorm: "patch:typeorm@0.3.31#./patches/typeorm+0.3.31.patch"
