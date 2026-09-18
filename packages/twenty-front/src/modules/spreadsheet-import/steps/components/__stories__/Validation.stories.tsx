@@ -9,7 +9,7 @@ import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/comp
 import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/SpreadSheetImportModalWrapper';
 import { ValidationStep } from '@/spreadsheet-import/steps/components/ValidationStep/ValidationStep';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { isDialogOpenedComponentState } from '@/ui/layout/dialog/states/isDialogOpenedComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { Provider as JotaiProvider } from 'jotai';
 
@@ -22,7 +22,7 @@ const meta: Meta<typeof ValidationStep> = {
   decorators: [
     (Story) => {
       jotaiStore.set(
-        isModalOpenedComponentState.atomFamily({
+        isDialogOpenedComponentState.atomFamily({
           instanceId: 'validation-step',
         }),
         true,
