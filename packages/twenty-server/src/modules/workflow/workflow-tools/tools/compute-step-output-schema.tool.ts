@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
   workflowActionSchema,
   workflowTriggerSchema,
@@ -15,16 +16,16 @@ const computeStepOutputSchemaSchema = z.object({
   step: z
     .union([workflowTriggerSchema, workflowActionSchema])
     .describe('The workflow step configuration'),
-  workflowVersionId: z
+  coreWorkflowVersionId: z
     .string()
     .uuid()
-    .describe('The UUID of the workflow version'),
+    .describe('The core workflow version UUID'),
 });
 
 export const createComputeStepOutputSchemaTool = (
   deps: Pick<
     WorkflowToolDependencies,
-    'workflowSchemaService' | 'workflowCommonService'
+    'workflowSchemaService' | 'coreWorkflowVersionListService'
   >,
   context: WorkflowToolContext,
 ) => ({
@@ -34,21 +35,30 @@ export const createComputeStepOutputSchemaTool = (
   inputSchema: computeStepOutputSchemaSchema,
   execute: async (parameters: {
     step: WorkflowTrigger | WorkflowAction;
-    workflowVersionId: string;
+    coreWorkflowVersionId: string;
   }) => {
     try {
-      const workflowVersion =
-        await deps.workflowCommonService.getWorkflowVersionOrFail({
-          workflowVersionId: parameters.workflowVersionId,
-          workspaceId: context.workspaceId,
-        });
+      const coreWorkflowVersion =
+        await deps.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId(
+          {
+            workspaceId: context.workspaceId,
+            coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+          },
+        );
+
+      if (!isDefined(coreWorkflowVersion)) {
+        return {
+          success: false,
+          error: `Workflow version ${parameters.coreWorkflowVersionId} not found`,
+        };
+      }
 
       return await deps.workflowSchemaService.computeStepOutputSchema({
         step: parameters.step,
         workspaceId: context.workspaceId,
         workflowVersionContent: {
-          trigger: workflowVersion.trigger,
-          steps: workflowVersion.steps,
+          trigger: coreWorkflowVersion.trigger,
+          steps: coreWorkflowVersion.steps,
         },
       });
     } catch (error) {

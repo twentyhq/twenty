@@ -4,7 +4,10 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
-import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import {
+  WorkflowVersionEntity,
+  WorkflowVersionStatus as CoreWorkflowVersionStatus,
+} from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
@@ -131,6 +134,17 @@ export class CoreWorkflowVersionListService {
         updatedAt: coreWorkflowVersion.updatedAt.toISOString(),
       }))
       .reverse();
+  }
+
+  async findDraftCoreWorkflowVersions({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<Pick<WorkflowVersionEntity, 'id' | 'steps'>[]> {
+    return this.coreWorkflowVersionRepository.find(workspaceId, {
+      where: { status: CoreWorkflowVersionStatus.DRAFT },
+      select: { id: true, steps: true },
+    });
   }
 
   async findOneByCoreWorkflowVersionId({

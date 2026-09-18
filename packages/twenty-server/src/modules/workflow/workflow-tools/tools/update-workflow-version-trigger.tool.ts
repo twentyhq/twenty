@@ -1,46 +1,41 @@
 import { workflowTriggerSchema } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import type { UpdateWorkflowVersionTriggerInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-trigger.input';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const updateWorkflowVersionTriggerSchema = z.object({
-  workflowVersionId: z
+  coreWorkflowVersionId: z
     .string()
     .uuid()
-    .describe('The UUID of the workflow version containing the trigger'),
+    .describe('The core workflow version UUID containing the trigger'),
   trigger: workflowTriggerSchema.describe('The updated trigger configuration'),
 });
 
 export const createUpdateWorkflowVersionTriggerTool = (
-  deps: Pick<WorkflowToolDependencies, 'workflowVersionStepHelpersService'>,
+  deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionMutationService'>,
   context: WorkflowToolContext,
 ) => ({
   name: 'update_workflow_version_trigger' as const,
   description:
     'Update the trigger of a workflow version. This modifies the trigger configuration (e.g., changing trigger type, settings, or conditions).',
   inputSchema: updateWorkflowVersionTriggerSchema,
-  execute: async (parameters: UpdateWorkflowVersionTriggerInput) => {
+  execute: async (parameters: {
+    coreWorkflowVersionId: string;
+    trigger: WorkflowTrigger;
+  }) => {
     try {
-      await deps.workflowVersionStepHelpersService.getValidatedDraftWorkflowVersion(
-        {
-          workflowVersionId: parameters.workflowVersionId,
+      const { trigger } =
+        await deps.coreWorkflowVersionMutationService.updateTrigger({
           workspaceId: context.workspaceId,
-        },
-      );
-
-      await deps.workflowVersionStepHelpersService.updateWorkflowVersionStepsAndTrigger(
-        {
-          workspaceId: context.workspaceId,
-          workflowVersionId: parameters.workflowVersionId,
+          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
           trigger: parameters.trigger,
-        },
-      );
+        });
 
-      return parameters.trigger;
+      return trigger;
     } catch (error) {
       return {
         success: false,

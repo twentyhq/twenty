@@ -1,19 +1,19 @@
 import { z } from 'zod';
 
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
-  WorkflowStatus,
-  type WorkflowWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+  CoreWorkflowFilterFieldKey,
+  CoreWorkflowFilterLogicalOperator,
+  CoreWorkflowFilterOperand,
+} from 'src/engine/core-modules/workflow/dtos/core-workflow-filter.input';
+import {
+  CoreWorkflowOrderByDirection,
+  CoreWorkflowOrderByField,
+} from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
+import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
-
-type ListWorkflowsToolContext = WorkflowToolContext & {
-  rolePermissionConfig: RolePermissionConfig;
-};
 
 const listWorkflowsSchema = z.object({
   status: z
@@ -21,64 +21,62 @@ const listWorkflowsSchema = z.object({
     .optional()
     .describe('Filter by status (DRAFT, ACTIVE, DEACTIVATED)'),
   limit: z.number().int().min(1).max(100).optional().default(50),
-  offset: z.number().int().min(0).optional().default(0),
+  after: z
+    .string()
+    .optional()
+    .describe(
+      'Cursor returned as endCursor by a previous call, to fetch the next page',
+    ),
 });
 
 type ListWorkflowsInput = z.infer<typeof listWorkflowsSchema>;
 
 export const createListWorkflowsTool = (
-  deps: Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-  context: ListWorkflowsToolContext,
+  deps: Pick<WorkflowToolDependencies, 'coreWorkflowListService'>,
+  context: WorkflowToolContext,
 ) => ({
   name: 'list_workflows' as const,
   description:
-    'List all workflows in the workspace. Supports filtering by status and pagination.',
+    'List all workflows in the workspace. Supports filtering by status and cursor pagination. Returns core workflow IDs (coreWorkflowId), which every other workflow tool expects. Use get_workflow_current_version to get the workflow current core version.',
   inputSchema: listWorkflowsSchema,
   execute: async (parameters: ListWorkflowsInput) => {
     try {
-      const authContext = buildSystemAuthContext(context.workspaceId);
+      const { edges, pageInfo, totalCount } =
+        await deps.coreWorkflowListService.findManyByWorkspaceId(
+          context.workspaceId,
+          {
+            first: parameters.limit,
+            after: parameters.after,
+            orderBy: CoreWorkflowOrderByField.UPDATED_AT,
+            orderByDirection: CoreWorkflowOrderByDirection.DESC,
+            filter: parameters.status
+              ? {
+                  logicalOperator: CoreWorkflowFilterLogicalOperator.AND,
+                  rules: [
+                    {
+                      fieldKey: CoreWorkflowFilterFieldKey.STATUSES,
+                      operand: CoreWorkflowFilterOperand.IS,
+                      value: JSON.stringify([parameters.status]),
+                    },
+                  ],
+                }
+              : undefined,
+          },
+        );
 
-      return await deps.workspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workflowRepository =
-            deps.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-              'workflow',
-              context.rolePermissionConfig,
-            );
-
-          const queryBuilder =
-            workflowRepository.createQueryBuilder('workflow');
-
-          if (parameters.status) {
-            queryBuilder.where(':status = ANY(workflow.statuses)', {
-              status: parameters.status,
-            });
-          }
-
-          queryBuilder
-            .orderBy('workflow.createdAt', 'DESC')
-            .take(parameters.limit)
-            .skip(parameters.offset);
-
-          const workflows =
-            await queryBuilder.getMany<WorkflowWorkspaceEntity>();
-          const totalCount = await queryBuilder.getCount();
-
-          return {
-            success: true,
-            workflows: workflows.map((workflow) => ({
-              id: workflow.id,
-              name: workflow.name,
-              statuses: workflow.statuses,
-              lastPublishedVersionId: workflow.lastPublishedVersionId,
-              createdAt: workflow.createdAt,
-              updatedAt: workflow.updatedAt,
-            })),
-            totalCount,
-          };
-        },
-        authContext,
-      );
+      return {
+        success: true,
+        workflows: edges.map(({ node }) => ({
+          coreWorkflowId: node.id,
+          name: node.name,
+          statuses: node.statuses,
+          createdAt: node.createdAt,
+          updatedAt: node.updatedAt,
+        })),
+        totalCount,
+        endCursor: pageInfo.endCursor,
+        hasNextPage: pageInfo.hasNextPage,
+      };
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);

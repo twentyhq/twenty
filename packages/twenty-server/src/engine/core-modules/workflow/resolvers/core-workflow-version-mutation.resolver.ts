@@ -35,6 +35,7 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { UserOrApplicationAuthGuard } from 'src/engine/guards/user-or-application-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -46,7 +47,7 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
   WorkspaceAuthGuard,
-  UserAuthGuard,
+  UserOrApplicationAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
 @UseFilters(
@@ -108,6 +109,7 @@ export class CoreWorkflowVersionMutationResolver {
   }
 
   @Mutation(() => RunWorkflowVersionDTO)
+  @UseGuards(UserAuthGuard)
   async runCoreWorkflowVersion(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

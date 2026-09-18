@@ -2,7 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import {
+  buildWorkflowGraph,
+  computeWorkflowLayout,
+  TRIGGER_STEP_ID,
+  WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
+} from 'twenty-shared/workflow';
 
 import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { type CreateCoreWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-core-workflow-version-step.input';
@@ -581,6 +586,44 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       coreWorkflowVersionId,
       trigger: updatedTrigger,
       steps: updatedSteps,
+    });
+  }
+
+  async autoLayoutCoreWorkflowVersion({
+    workspaceId,
+    coreWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    coreWorkflowVersionId: string;
+  }): Promise<void> {
+    const { trigger, steps } =
+      await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
+        { workspaceId, coreWorkflowVersionId },
+      );
+
+    const { childrenByStepId } = buildWorkflowGraph({
+      trigger,
+      steps: steps ?? [],
+    });
+
+    const nodes = [
+      { id: TRIGGER_STEP_ID, ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS },
+      ...(steps ?? []).map((step) => ({
+        id: step.id,
+        ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
+      })),
+    ];
+
+    const edges = [...childrenByStepId.entries()].flatMap(([source, targets]) =>
+      targets.map((target) => ({ source, target })),
+    );
+
+    await this.updatePositions({
+      workspaceId,
+      coreWorkflowVersionId,
+      positions: computeWorkflowLayout({ nodes, edges }).map(
+        ({ id, centerPosition }) => ({ id, position: centerPosition }),
+      ),
     });
   }
 

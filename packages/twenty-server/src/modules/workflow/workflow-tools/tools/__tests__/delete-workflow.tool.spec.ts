@@ -1,70 +1,78 @@
 import { createDeleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow.tool';
 
-const WORKFLOW_ID = 'b3b8a4f0-0000-4000-8000-000000000000';
+const CORE_WORKFLOW_ID = 'b3b8a4f0-0000-4000-8000-000000000000';
 
 const buildTool = () => {
-  const workflowRepository = {
-    softDelete: jest.fn().mockResolvedValue({ affected: 1 }),
+  const coreWorkflowListService = {
+    findOneById: jest.fn().mockResolvedValue({ id: CORE_WORKFLOW_ID }),
   };
-  const workspaceOrmManager = {
-    executeInWorkspaceContext: jest.fn((callback: () => unknown) => callback()),
-    getRepository: jest.fn().mockReturnValue(workflowRepository),
-  };
-  const workflowCommonService = {
-    handleWorkflowSubEntities: jest.fn().mockResolvedValue(undefined),
+  const coreWorkflowMutationService = {
+    deleteWorkflows: jest.fn().mockResolvedValue([]),
   };
 
   const tool = createDeleteWorkflowTool(
     {
-      workspaceOrmManager,
-      workflowCommonService,
+      coreWorkflowListService,
+      coreWorkflowMutationService,
     } as never,
     {
       workspaceId: 'workspace-id',
       rolePermissionConfig: { shouldBypassPermissionChecks: true },
-    } as never,
+    },
   );
 
-  return {
-    tool,
-    workflowRepository,
-    workspaceOrmManager,
-    workflowCommonService,
-  };
+  return { tool, coreWorkflowListService, coreWorkflowMutationService };
 };
 
-const baseInput = {
-  workflowId: WORKFLOW_ID,
-} as unknown as Parameters<
-  ReturnType<typeof createDeleteWorkflowTool>['execute']
->[0];
+const baseInput = { coreWorkflowId: CORE_WORKFLOW_ID };
 
 describe('createDeleteWorkflowTool', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should soft delete the workflow and clean up sub-entities', async () => {
-    const { tool, workflowRepository, workflowCommonService } = buildTool();
+  it('should delete the workflow through the core destroy path', async () => {
+    const { tool, coreWorkflowMutationService } = buildTool();
 
     const result = (await tool.execute(baseInput)) as Record<string, unknown>;
 
-    expect(workflowRepository.softDelete).toHaveBeenCalledWith(WORKFLOW_ID);
-    expect(
-      workflowCommonService.handleWorkflowSubEntities,
-    ).toHaveBeenCalledWith({
-      workflowIds: [WORKFLOW_ID],
-      workspaceId: 'workspace-id',
-      operation: 'delete',
-    });
+    expect(coreWorkflowMutationService.deleteWorkflows).toHaveBeenCalledWith(
+      'workspace-id',
+      { coreWorkflowIds: [CORE_WORKFLOW_ID] },
+    );
     expect(result.success).toBe(true);
-    expect(result.workflowId).toBe(WORKFLOW_ID);
+    expect(result.coreWorkflowId).toBe(CORE_WORKFLOW_ID);
+  });
+
+  it('should delete a workflow that has no workspace mirror', async () => {
+    const { tool, coreWorkflowMutationService } = buildTool();
+
+    coreWorkflowMutationService.deleteWorkflows.mockResolvedValue([]);
+
+    const result = (await tool.execute(baseInput)) as Record<string, unknown>;
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should report not found without deleting when the core workflow is absent', async () => {
+    const { tool, coreWorkflowListService, coreWorkflowMutationService } =
+      buildTool();
+
+    coreWorkflowListService.findOneById.mockResolvedValue(null);
+
+    const result = (await tool.execute(baseInput)) as Record<string, unknown>;
+
+    expect(coreWorkflowMutationService.deleteWorkflows).not.toHaveBeenCalled();
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Workflow not found');
   });
 
   it('should return a failure result when deletion throws', async () => {
-    const { tool, workflowRepository } = buildTool();
+    const { tool, coreWorkflowMutationService } = buildTool();
 
-    workflowRepository.softDelete.mockRejectedValue(new Error('boom'));
+    coreWorkflowMutationService.deleteWorkflows.mockRejectedValue(
+      new Error('boom'),
+    );
 
     const result = (await tool.execute(baseInput)) as Record<string, unknown>;
 

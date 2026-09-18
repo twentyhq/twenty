@@ -43,6 +43,16 @@ const getFlatEntities = ({
 const isSoftDeleted = (flatEntity: ApplicationFlatEntity): boolean =>
   'deletedAt' in flatEntity && isDefined(flatEntity.deletedAt);
 
+// A workflow command may reference its definition by the core pointer alone,
+// so neither pointer on its own decides whether the command is workflow-generated.
+const isWorkflowTriggerCommandMenuItem = (
+  flatEntity: ApplicationFlatEntity,
+): boolean =>
+  ('workflowVersionId' in flatEntity &&
+    isDefined(flatEntity.workflowVersionId)) ||
+  ('coreWorkflowVersionId' in flatEntity &&
+    isDefined(flatEntity.coreWorkflowVersionId));
+
 const classifyFlatEntity = ({
   metadataName,
   flatEntity,
@@ -79,10 +89,7 @@ const classifyFlatEntity = ({
           }
         : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
     case 'commandMenuItem':
-      if (
-        'workflowVersionId' in flatEntity &&
-        isDefined(flatEntity.workflowVersionId)
-      ) {
+      if (isWorkflowTriggerCommandMenuItem(flatEntity)) {
         return {
           status: ApplicationExportCoverageStatus.EXCLUDED,
           reason: 'workflow trigger command',

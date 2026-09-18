@@ -6,10 +6,10 @@ import {
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const activateWorkflowVersionSchema = z.object({
-  workflowVersionId: z
+  coreWorkflowVersionId: z
     .string()
     .uuid()
-    .describe('The UUID of the workflow version to activate'),
+    .describe('The core workflow version UUID to activate'),
 });
 
 type ActivateWorkflowVersionInput = z.infer<
@@ -17,7 +17,7 @@ type ActivateWorkflowVersionInput = z.infer<
 >;
 
 export const createActivateWorkflowVersionTool = (
-  deps: Pick<WorkflowToolDependencies, 'workflowTriggerService'>,
+  deps: Pick<WorkflowToolDependencies, 'coreWorkflowLifecycleService'>,
   context: WorkflowToolContext,
 ) => ({
   name: 'activate_workflow_version' as const,
@@ -26,9 +26,11 @@ export const createActivateWorkflowVersionTool = (
   inputSchema: activateWorkflowVersionSchema,
   execute: async (parameters: ActivateWorkflowVersionInput) => {
     try {
-      return await deps.workflowTriggerService.activateWorkflowVersion(
-        parameters.workflowVersionId,
-        context.workspaceId,
+      return await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion(
+        {
+          workspaceId: context.workspaceId,
+          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+        },
       );
     } catch (error) {
       return {

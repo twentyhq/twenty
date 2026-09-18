@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import type { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step.input';
+import { type CreateCoreWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-core-workflow-version-step.input';
 import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import {
   type WorkflowToolContext,
@@ -10,10 +10,10 @@ import {
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const baseStepFields = {
-  workflowVersionId: z
+  coreWorkflowVersionId: z
     .string()
     .uuid()
-    .describe('The UUID of the workflow version to add the step to'),
+    .describe('The core workflow version UUID to add the step to'),
   parentStepId: z
     .string()
     .optional()
@@ -93,9 +93,7 @@ const enrichResultWithNextStep = ({
 export const createCreateWorkflowVersionStepTool = (
   deps: Pick<
     WorkflowToolDependencies,
-    | 'workflowVersionStepService'
-    | 'workflowVersionStepHelpersService'
-    | 'workflowVersionService'
+    'coreWorkflowVersionMutationService' | 'coreWorkflowVersionWriteService'
   >,
   context: WorkflowToolContext,
 ) => ({
@@ -103,50 +101,45 @@ export const createCreateWorkflowVersionStepTool = (
   description:
     'Create a new step in a workflow version. This adds a step to the specified workflow version with the given configuration. If parentStepId is not provided, the step will be appended at the end of the workflow.',
   inputSchema: createWorkflowVersionStepSchema,
-  execute: async (parameters: CreateWorkflowVersionStepInput) => {
+  execute: async (parameters: CreateCoreWorkflowVersionStepInput) => {
     try {
+      const { workspaceId } = context;
+      const { coreWorkflowVersionId } = parameters;
+
       let effectiveParentStepId = parameters.parentStepId;
 
       if (!isDefined(effectiveParentStepId)) {
-        const workflowVersion =
-          await deps.workflowVersionStepHelpersService.getValidatedDraftWorkflowVersion(
-            {
-              workflowVersionId: parameters.workflowVersionId,
-              workspaceId: context.workspaceId,
-            },
+        const { steps } =
+          await deps.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
+            { workspaceId, coreWorkflowVersionId },
           );
 
-        const steps = workflowVersion.steps ?? [];
+        const existingSteps = steps ?? [];
 
-        if (steps.length === 0) {
+        if (existingSteps.length === 0) {
           effectiveParentStepId = TRIGGER_STEP_ID;
         } else {
-          const leafStep = steps.filter(
+          const leafSteps = existingSteps.filter(
             (step) =>
               !isDefined(step.nextStepIds) || step.nextStepIds.length === 0,
           );
 
-          if (leafStep.length > 1) {
-            effectiveParentStepId = undefined;
-          } else {
-            effectiveParentStepId = leafStep[0]?.id;
-          }
+          effectiveParentStepId =
+            leafSteps.length > 1 ? undefined : leafSteps[0]?.id;
         }
       }
 
-      const result =
-        await deps.workflowVersionStepService.createWorkflowVersionStep({
-          workspaceId: context.workspaceId,
-          input: {
-            ...parameters,
-            parentStepId: effectiveParentStepId,
-          },
-        });
-
-      await deps.workflowVersionService.autoLayoutWorkflowVersion({
-        workflowVersionId: parameters.workflowVersionId,
-        workspaceId: context.workspaceId,
+      const result = await deps.coreWorkflowVersionMutationService.createStep({
+        workspaceId,
+        input: {
+          ...parameters,
+          parentStepId: effectiveParentStepId,
+        },
       });
+
+      await deps.coreWorkflowVersionMutationService.autoLayoutCoreWorkflowVersion(
+        { workspaceId, coreWorkflowVersionId },
+      );
 
       return enrichResultWithNextStep({
         result,

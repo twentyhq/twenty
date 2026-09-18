@@ -1,18 +1,20 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-export const findExistingWorkflowId = async ({
+import { queryCoreWorkflowsByNameContains } from 'src/logic-functions/utils/core-workflow-operations';
+
+// The core name filter has no exact-match operand, so the exact name is matched
+// here to keep seeding idempotent rather than matching a longer workflow name.
+export const findExistingCoreWorkflowId = async ({
   client,
   name,
 }: {
   client: CoreApiClient;
   name: string;
 }): Promise<string | undefined> => {
-  const result = (await client.query({
-    workflows: {
-      __args: { filter: { name: { eq: name } } },
-      edges: { node: { id: true } },
-    },
-  })) as { workflows?: { edges?: { node?: { id?: string } }[] } };
+  const coreWorkflows = await queryCoreWorkflowsByNameContains({
+    client,
+    name,
+  });
 
-  return result.workflows?.edges?.[0]?.node?.id;
+  return coreWorkflows.find((coreWorkflow) => coreWorkflow.name === name)?.id;
 };

@@ -27,14 +27,19 @@ import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/servic
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { CoreWorkflowActorWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-actor.workspace-service';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { UserOrApplicationAuthGuard } from 'src/engine/guards/user-or-application-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
@@ -42,7 +47,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
   WorkspaceAuthGuard,
-  UserAuthGuard,
+  UserOrApplicationAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
 @UseFilters(
@@ -56,6 +61,7 @@ export class CoreWorkflowResolver {
     private readonly coreWorkflowListService: CoreWorkflowListService,
     private readonly coreWorkflowMutationWorkspaceService: CoreWorkflowMutationWorkspaceService,
     private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
+    private readonly coreWorkflowActorWorkspaceService: CoreWorkflowActorWorkspaceService,
   ) {}
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
@@ -77,7 +83,10 @@ export class CoreWorkflowResolver {
   @Mutation(() => CoreWorkflowDTO)
   async duplicateCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUser() user: AuthContextUser,
+    @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
+    @AuthApplication({ allowUndefined: true })
+    application: FlatApplication | undefined,
+    @AuthApiKey() apiKey: FlatApiKey | undefined,
     @Args('input')
     {
       coreWorkflowIdToDuplicate,
@@ -86,7 +95,13 @@ export class CoreWorkflowResolver {
   ): Promise<CoreWorkflowDTO> {
     return this.coreWorkflowMutationWorkspaceService.duplicateWorkflow({
       workspaceId,
-      user,
+      createdBy:
+        await this.coreWorkflowActorWorkspaceService.resolveActorOrThrow({
+          workspaceId,
+          userId: user?.id,
+          application,
+          apiKey,
+        }),
       coreWorkflowIdToDuplicate,
       coreWorkflowVersionIdToCopy,
     });
@@ -95,14 +110,23 @@ export class CoreWorkflowResolver {
   @Mutation(() => CoreWorkflowDTO)
   async createCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUser() user: AuthContextUser,
+    @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
+    @AuthApplication({ allowUndefined: true })
+    application: FlatApplication | undefined,
+    @AuthApiKey() apiKey: FlatApiKey | undefined,
     @Args('input') input: CreateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO> {
-    return this.coreWorkflowMutationWorkspaceService.createWorkflow(
+    return this.coreWorkflowMutationWorkspaceService.createWorkflow({
       workspaceId,
-      user,
-      input,
-    );
+      createdBy:
+        await this.coreWorkflowActorWorkspaceService.resolveActorOrThrow({
+          workspaceId,
+          userId: user?.id,
+          application,
+          apiKey,
+        }),
+      name: input.name,
+    });
   }
 
   @Mutation(() => [DeletedCoreWorkflowDTO])
