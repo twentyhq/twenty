@@ -342,20 +342,25 @@ export class AgentChatResolver {
       });
     }
 
-    // Recorded before the message is queued or streamed, so a thread that
-    // names someone reaches their inbox even when the answer takes a while.
-    const mentionedUserWorkspaceIds =
-      await this.agentChatThreadParticipantService.recordMentionsFromMessage({
-        threadId,
-        text,
-        workspaceId: workspace.id,
-      });
+    // Recorded once the message exists, never before: a mention writes a
+    // participant row, and a send that fails after it would leave somebody
+    // named on a thread by a message nobody can read. The user message is
+    // persisted as the send starts rather than when the answer lands, so the
+    // thread still reaches their list while the assistant is still writing.
+    const recordMentions = async () => {
+      const mentionedUserWorkspaceIds =
+        await this.agentChatThreadParticipantService.recordMentionsFromMessage({
+          threadId,
+          text,
+          workspaceId: workspace.id,
+        });
 
-    if (mentionedUserWorkspaceIds.length > 0) {
-      await this.agentChatService.broadcastThreadUpdated(thread, [
-        'mentionedUserWorkspaceIds',
-      ]);
-    }
+      if (mentionedUserWorkspaceIds.length > 0) {
+        await this.agentChatService.broadcastThreadUpdated(thread, [
+          'mentionedUserWorkspaceIds',
+        ]);
+      }
+    };
 
     if (isDefined(thread.activeStreamId)) {
       const interruptedError =
@@ -383,6 +388,8 @@ export class AgentChatResolver {
         userWorkspaceId,
       });
 
+      await recordMentions();
+
       await this.eventPublisherService.publish({
         threadId,
         workspaceId: workspace.id,
@@ -402,6 +409,8 @@ export class AgentChatResolver {
       messageId,
       fileAttachments: fileAttachments ?? undefined,
     });
+
+    await recordMentions();
 
     if (result.queued) {
       await this.eventPublisherService.publish({
