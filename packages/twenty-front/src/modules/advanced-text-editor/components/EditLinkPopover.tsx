@@ -71,6 +71,7 @@ export const EditLinkPopover = ({
       isDropdownInModal={true}
       clickableComponent={
         <BubbleMenuIconButton
+          label={isActive ? t`Edit link` : t`Add link`}
           isActive={isActive}
           Icon={isActive ? IconPencil : IconLink}
         />
