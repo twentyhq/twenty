@@ -24,7 +24,9 @@ describe('getAgentChatThreadSnoozeDate', () => {
     expect(getAgentChatThreadSnoozeDate('nextWeek', WEDNESDAY)).toEqual(
       getAgentChatThreadSnoozeDate('nextWeek', FRIDAY),
     );
-    expect(getAgentChatThreadSnoozeDate('nextWeek', WEDNESDAY).getDay()).toBe(1);
+    expect(getAgentChatThreadSnoozeDate('nextWeek', WEDNESDAY).getDay()).toBe(
+      1,
+    );
   });
 
   it('carries a Monday over to the following Monday rather than staying put', () => {
