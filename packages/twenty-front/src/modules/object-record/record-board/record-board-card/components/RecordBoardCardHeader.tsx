@@ -2,6 +2,7 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { t } from '@lingui/core/macro';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
@@ -105,12 +106,17 @@ export const RecordBoardCardHeader = () => {
         <StyledCompactIconContainer className="compact-icon-container">
           <StopPropagationContainer>
             <LightIconButton
-              Icon={recordBoardCardIsExpanded ? IconEyeOff : IconEye}
-              accent="tertiary"
+              emphasis="subtle"
               onClick={() => {
                 setRecordBoardCardIsExpanded(!recordBoardCardIsExpanded);
               }}
-            />
+              aria-label={
+                recordBoardCardIsExpanded ? t`Collapse card` : t`Expand card`
+              }
+              aria-expanded={recordBoardCardIsExpanded}
+            >
+              {recordBoardCardIsExpanded ? <IconEyeOff /> : <IconEye />}
+            </LightIconButton>
           </StopPropagationContainer>
         </StyledCompactIconContainer>
       )}

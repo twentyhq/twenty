@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent, useContext, useMemo, useState } from 'react';
 import { type AskQuestionAnswer, type AskQuestionItem } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton, RoundedIconButton } from 'twenty-ui/components';
+import { IconButton, LightIconButton } from 'twenty-ui/components';
 import {
   IconArrowUp,
   IconChevronLeft,
@@ -385,26 +385,30 @@ export const AiChatQuestionCard = ({
           {hasMultipleQuestions && (
             <StyledPager>
               <LightIconButton
-                Icon={IconChevronLeft}
-                size="small"
+                size="sm"
                 disabled={currentIndex === 0}
                 onClick={() =>
                   setCurrentIndex((index) => Math.max(0, index - 1))
                 }
-              />
+                aria-label={t`Previous`}
+              >
+                <IconChevronLeft />
+              </LightIconButton>
               <StyledPagerLabel>
                 {currentIndex + 1}/{questions.length}
               </StyledPagerLabel>
               <LightIconButton
-                Icon={IconChevronRightPipe}
-                size="small"
+                size="sm"
                 disabled={isLastQuestion}
                 onClick={() =>
                   setCurrentIndex((index) =>
                     Math.min(questions.length - 1, index + 1),
                   )
                 }
-              />
+                aria-label={t`Next question`}
+              >
+                <IconChevronRightPipe />
+              </LightIconButton>
             </StyledPager>
           )}
         </StyledQuestionHeaderRow>
@@ -465,10 +469,12 @@ export const AiChatQuestionCard = ({
                       onClick={(event) => event.stopPropagation()}
                     >
                       <LightIconButton
-                        Icon={IconInfoCircle}
-                        size="small"
-                        accent="tertiary"
-                      />
+                        size="sm"
+                        emphasis="subtle"
+                        aria-label={t`Information`}
+                      >
+                        <IconInfoCircle />
+                      </LightIconButton>
                     </span>
                   </Tooltip>
                 )}
@@ -502,12 +508,17 @@ export const AiChatQuestionCard = ({
               dropdownId="ai-chat-question-model-tier-dropdown"
               disabled={hasNoEnabledModels}
             />
-            <RoundedIconButton
-              Icon={IconArrowUp}
-              size="medium"
+            <IconButton
+              variant="solid"
+              color="accent"
+              shape="round"
+              aria-label={t`Send message`}
+              size="sm"
               onClick={handleSend}
               disabled={!allQuestionsAnswered || isSubmitting}
-            />
+            >
+              <IconArrowUp />
+            </IconButton>
           </StyledRightActions>
         </StyledActionsRow>
       </StyledComposerSection>

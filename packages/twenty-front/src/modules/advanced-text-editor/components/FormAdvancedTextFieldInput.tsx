@@ -251,11 +251,13 @@ export const FormAdvancedTextFieldInput = ({
                 >
                   {!readonly && !isFullScreen && (
                     <LightIconButton
-                      Icon={IconMaximize}
-                      size="small"
+                      size="sm"
                       onClick={handleEnterFullScreen}
-                      accent="tertiary"
-                    />
+                      emphasis="subtle"
+                      aria-label={t`Expand to full screen`}
+                    >
+                      <IconMaximize />
+                    </LightIconButton>
                   )}
                 </StyledEditorActionButtonContainer>
               )}

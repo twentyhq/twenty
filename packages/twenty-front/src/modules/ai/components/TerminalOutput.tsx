@@ -156,12 +156,14 @@ export const TerminalOutput = ({
             </StyledTab>
           )}
           <LightIconButton
-            Icon={IconCopy}
             onClick={() => copyToClipboard(currentOutput)}
             title={t`Copy output`}
-            size="small"
-            accent="tertiary"
-          />
+            size="sm"
+            emphasis="subtle"
+            aria-label={t`Copy output`}
+          >
+            <IconCopy />
+          </LightIconButton>
         </StyledTabContainer>
       </StyledHeader>
       <StyledOutputArea isError={activeTab === 'stderr'}>

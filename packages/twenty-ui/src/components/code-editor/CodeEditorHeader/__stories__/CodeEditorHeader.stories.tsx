@@ -40,7 +40,9 @@ export const WithActions: Story = {
   ...Default,
   args: {
     leftNodes: [
-      <LightIconButton key="copy" Icon={IconCopy} aria-label="Copy code" />,
+      <LightIconButton key="copy" aria-label="Copy code">
+        <IconCopy />
+      </LightIconButton>,
     ],
     rightNodes: [
       <Button key="run" size="sm" variant="solid" color="accent">

@@ -115,10 +115,12 @@ export const SettingsObjectIndexTable = ({
                 <StyledActionCell>
                   {item.isCustom && !isReadOnly && (
                     <LightIconButton
-                      Icon={IconTrash}
-                      accent="tertiary"
+                      emphasis="subtle"
                       onClick={() => onDeleteIndex(item)}
-                    />
+                      aria-label={t`Delete index`}
+                    >
+                      <IconTrash />
+                    </LightIconButton>
                   )}
                 </StyledActionCell>
               </TableRow>

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -23,10 +24,12 @@ export const FieldWidgetEditAction = () => {
   return (
     <WidgetCardHeaderHoverReveal>
       <LightIconButton
-        Icon={IconPencil}
-        accent="secondary"
+        emphasis="standard"
         onClick={handleClick}
-      />
+        aria-label={t`Edit field`}
+      >
+        <IconPencil />
+      </LightIconButton>
     </WidgetCardHeaderHoverReveal>
   );
 };

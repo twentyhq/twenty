@@ -7,7 +7,8 @@ import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatIn
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { RoundedIconButton } from 'twenty-ui/components';
+import { t } from '@lingui/core/macro';
+import { IconButton } from 'twenty-ui/components';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
 
 type SendMessageButtonProps = {
@@ -41,20 +42,30 @@ export const SendMessageButton = ({
 
   if (agentChatIsStreaming || agentChatIsAwaitingFirstChunk) {
     return (
-      <RoundedIconButton
-        Icon={IconPlayerStop}
-        size="medium"
+      <IconButton
+        variant="solid"
+        color="accent"
+        shape="round"
+        aria-label={t`Stop response`}
+        size="sm"
         onClick={handleStopClick}
-      />
+      >
+        <IconPlayerStop />
+      </IconButton>
     );
   }
 
   return (
-    <RoundedIconButton
-      Icon={IconArrowUp}
-      size="medium"
+    <IconButton
+      variant="solid"
+      color="accent"
+      shape="round"
+      aria-label={t`Send message`}
+      size="sm"
       onClick={onSend}
       disabled={isDisabled || agentChatInputIsEmpty || agentChatIsLoading}
-    />
+    >
+      <IconArrowUp />
+    </IconButton>
   );
 };

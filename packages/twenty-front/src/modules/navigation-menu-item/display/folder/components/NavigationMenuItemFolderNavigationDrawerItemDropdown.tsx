@@ -33,7 +33,9 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
       section="favorite"
       dropdownId={dropdownId}
       clickableComponent={
-        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+        <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownPlacement="bottom-start"
       renderMenu={({ onClose, onAdd }) => (

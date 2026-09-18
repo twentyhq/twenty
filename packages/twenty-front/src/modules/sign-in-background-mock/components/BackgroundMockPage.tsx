@@ -39,10 +39,12 @@ export const BackgroundMockPage = () => {
                 color="accent"
               >{t`New Company`}</Button>
               <LightIconButton
-                Icon={IconDotsVertical}
-                accent="tertiary"
-                size="small"
-              />
+                emphasis="subtle"
+                size="sm"
+                aria-label={t`More options`}
+              >
+                <IconDotsVertical />
+              </LightIconButton>
               <Button
                 startIcon={<IconLayoutSidebarRight />}
                 aria-label={t`Open side panel`}

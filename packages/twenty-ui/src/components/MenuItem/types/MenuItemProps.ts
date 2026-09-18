@@ -3,14 +3,13 @@ import { type IconComponent } from '@ui/icon';
 import { type ThemeColor } from '@ui/theme';
 import { type Nullable } from '@ui/utilities/types/Nullable';
 import { type MouseEvent, type ReactNode } from 'react';
-import { type MenuItemIconButton } from './MenuItemIconButton';
 
 export type MenuItemProps = {
   accent?: MenuItemAccent;
   className?: string;
   withIconContainer?: boolean;
   withIconContainerBackground?: boolean;
-  iconButtons?: MenuItemIconButton[];
+  iconButtons?: ReactNode;
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;

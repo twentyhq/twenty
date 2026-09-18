@@ -299,10 +299,9 @@ export const WorkflowEditActionFormBuilder = ({
                         {showButtons && (
                           <StyledGripButtonContainer>
                             <DragDropItemSortableHandle>
-                              <LightIconButton
-                                Icon={IconGripVertical}
-                                aria-label={t`Reorder field`}
-                              />
+                              <LightIconButton aria-label={t`Reorder field`}>
+                                <IconGripVertical />
+                              </LightIconButton>
                             </DragDropItemSortableHandle>
                           </StyledGripButtonContainer>
                         )}
@@ -348,7 +347,6 @@ export const WorkflowEditActionFormBuilder = ({
                         {showButtons && (
                           <StyledTrashButtonContainer>
                             <LightIconButton
-                              Icon={IconTrash}
                               aria-label={t`Delete field`}
                               onClick={() => {
                                 const updatedFormData = formData.filter(
@@ -366,7 +364,9 @@ export const WorkflowEditActionFormBuilder = ({
                                   },
                                 });
                               }}
-                            />
+                            >
+                              <IconTrash />
+                            </LightIconButton>
                           </StyledTrashButtonContainer>
                         )}
 

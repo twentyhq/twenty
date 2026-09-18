@@ -9,12 +9,9 @@ import {
   FloatingIconButton,
   FloatingIconButtonGroup,
   IconButton,
-  IconButtonGroup,
   LightButton,
   LightIconButton,
-  LightIconButtonGroup,
   MainButton,
-  RoundedIconButton,
   SearchInput,
   TabButton,
 } from 'twenty-ui/components';
@@ -128,11 +125,13 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'IconButtonGroup',
+    name: 'ButtonGroup (framed)',
     node: (
-      <IconButtonGroup
-        iconButtons={[{ Icon: IconTrash, ariaLabel: 'Delete' }]}
-      />
+      <ButtonGroup framed attached={false} aria-label="Record actions">
+        <LightIconButton size="xs" aria-label="Delete" emphasis="subtle">
+          <IconTrash />
+        </LightIconButton>
+      </ButtonGroup>
     ),
   },
   {
@@ -141,14 +140,10 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'LightIconButton',
-    node: <LightIconButton Icon={IconStar} aria-label="Star" />,
-  },
-  {
-    name: 'LightIconButtonGroup',
     node: (
-      <LightIconButtonGroup
-        iconButtons={[{ Icon: IconStar, ariaLabel: 'Star', onClick: () => {} }]}
-      />
+      <LightIconButton aria-label="Star">
+        <IconStar />
+      </LightIconButton>
     ),
   },
   {
@@ -171,10 +166,6 @@ const INPUT_ENTRIES: GalleryEntry[] = [
         <Radio value="b">B</Radio>
       </RadioGroup>
     ),
-  },
-  {
-    name: 'RoundedIconButton',
-    node: <RoundedIconButton Icon={IconPlus} aria-label="Add" />,
   },
   {
     name: 'SearchInput',

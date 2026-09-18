@@ -9,7 +9,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemDraggable } from 'twenty-ui/components';
+import { LightIconButton, MenuItemDraggable } from 'twenty-ui/components';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 
 type RecordGroupMenuItemDraggableProps = {
@@ -43,32 +43,9 @@ export const RecordGroupMenuItemDraggable = ({
   const isNoValue =
     recordGroupDefinition.type === RecordGroupDefinitionType.NoValue;
 
-  const getIconButtons = (recordGroupDefinition: RecordGroupDefinition) => {
-    const groupValue = recordGroupDefinition.value;
-
-    if (!recordGroupDefinition.isVisible && isVisibleLimitReached) {
-      return undefined;
-    }
-
-    const iconButtons = [
-      {
-        Icon: recordGroupDefinition.isVisible ? IconEyeOff : IconEye,
-        ariaLabel: recordGroupDefinition.isVisible
-          ? t`Hide group ${groupValue ?? ''}`
-          : t`Show group ${groupValue ?? ''}`,
-        dataTestId: recordGroupDefinition.isVisible
-          ? `hide-group-${recordGroupDefinition.value?.toLowerCase().replace(' ', '-') ?? ''}`
-          : `show-group-${recordGroupDefinition.value?.toLowerCase().replace(' ', '-') ?? ''}`,
-        onClick: () =>
-          onVisibilityChange({
-            ...recordGroupDefinition,
-            isVisible: !recordGroupDefinition.isVisible,
-          }),
-      },
-    ].filter(isDefined);
-
-    return iconButtons.length ? iconButtons : undefined;
-  };
+  const groupValue = recordGroupDefinition.value;
+  const canToggleVisibility =
+    recordGroupDefinition.isVisible || !isVisibleLimitReached;
 
   return (
     <MenuItemDraggable
@@ -80,7 +57,30 @@ export const RecordGroupMenuItemDraggable = ({
         />
       }
       accent={isNoValue || showDragGrip ? 'placeholder' : 'default'}
-      iconButtons={getIconButtons(recordGroupDefinition)}
+      iconButtons={
+        canToggleVisibility && (
+          <LightIconButton
+            aria-label={
+              recordGroupDefinition.isVisible
+                ? t`Hide group ${groupValue ?? ''}`
+                : t`Show group ${groupValue ?? ''}`
+            }
+            data-testid={
+              recordGroupDefinition.isVisible
+                ? `hide-group-${groupValue?.toLowerCase().replace(' ', '-') ?? ''}`
+                : `show-group-${groupValue?.toLowerCase().replace(' ', '-') ?? ''}`
+            }
+            onClick={() =>
+              onVisibilityChange({
+                ...recordGroupDefinition,
+                isVisible: !recordGroupDefinition.isVisible,
+              })
+            }
+          >
+            {recordGroupDefinition.isVisible ? <IconEyeOff /> : <IconEye />}
+          </LightIconButton>
+        )
+      }
       gripMode={isNoValue || showDragGrip ? 'always' : 'never'}
       isDragDisabled={!isDraggable}
     />

@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import { LightIconButton } from 'twenty-ui/components';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldsConfigurationFieldItem } from '@/page-layout/types/FieldsConfiguration';
 import { MenuItemDraggable } from 'twenty-ui/components';
@@ -25,15 +27,17 @@ export const FieldsConfigurationFieldEditor = ({
       gripMode="onHover"
       withIconContainer
       isIconDisplayedOnHoverOnly={false}
-      iconButtons={[
-        {
-          Icon: isVisible ? IconEye : IconEyeOff,
-          onClick: (e) => {
-            e.stopPropagation();
+      iconButtons={
+        <LightIconButton
+          aria-label={isVisible ? t`Hide field` : t`Show field`}
+          onClick={(event) => {
+            event.stopPropagation();
             onToggleVisibility();
-          },
-        },
-      ]}
+          }}
+        >
+          {isVisible ? <IconEye /> : <IconEyeOff />}
+        </LightIconButton>
+      }
     />
   );
 };

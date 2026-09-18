@@ -48,12 +48,13 @@ export const NavigationDrawerCollapseButton = ({
     >
       <StyledCollapseButton className={className}>
         <LightIconButton
-          Icon={Icon}
-          accent="secondary"
-          size="small"
+          emphasis="standard"
+          size="sm"
           onClick={toggleNavigationDrawer}
           aria-label={label}
-        />
+        >
+          <Icon />
+        </LightIconButton>
       </StyledCollapseButton>
     </Tooltip>
   );

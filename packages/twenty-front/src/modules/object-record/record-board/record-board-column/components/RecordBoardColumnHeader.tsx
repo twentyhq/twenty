@@ -270,22 +270,24 @@ export const RecordBoardColumnHeader = () => {
                 data-dropdown-open={isDropdownOpen ? 'true' : undefined}
               >
                 <LightIconButton
-                  accent="tertiary"
+                  emphasis="subtle"
                   aria-label={t`More options`}
-                  Icon={IconDotsVertical}
                   onClick={() => {
                     toggleDropdown({
                       dropdownComponentInstanceIdFromProps: dropdownId,
                     });
                   }}
-                />
+                >
+                  <IconDotsVertical />
+                </LightIconButton>
                 {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
                   <LightIconButton
-                    accent="tertiary"
+                    emphasis="subtle"
                     aria-label={t`Add new`}
-                    Icon={IconPlus}
                     onClick={handleCreateNewRecordClick}
-                  />
+                  >
+                    <IconPlus />
+                  </LightIconButton>
                 )}
               </StyledHeaderActions>
             )}

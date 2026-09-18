@@ -76,12 +76,14 @@ export const WorkflowEditActionFormFieldSettings = ({
         </StyledTitleContainer>
         <StyledCloseButtonContainer>
           <LightIconButton
-            testId="close-button"
-            Icon={IconX}
-            size="small"
-            accent="secondary"
+            data-testid="close-button"
+            size="sm"
+            emphasis="standard"
             onClick={onClose}
-          />
+            aria-label={t`Close`}
+          >
+            <IconX />
+          </LightIconButton>
         </StyledCloseButtonContainer>
       </StyledSettingsHeader>
       <StyledSettingsContent>

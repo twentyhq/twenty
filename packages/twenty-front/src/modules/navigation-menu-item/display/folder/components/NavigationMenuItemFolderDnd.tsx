@@ -371,15 +371,17 @@ export const NavigationMenuItemFolderDnd = ({
                     rightOptions={
                       isEditInPlace ? (
                         <LightIconButton
-                          Icon={IconHeartOff}
                           onClick={(event) => {
                             event.stopPropagation();
                             deleteManyNavigationMenuItems([
                               navigationMenuItem.id,
                             ]);
                           }}
-                          accent="tertiary"
-                        />
+                          emphasis="subtle"
+                          aria-label={t`Remove from favorites`}
+                        >
+                          <IconHeartOff />
+                        </LightIconButton>
                       ) : undefined
                     }
                     onNavigationMenuItemClick={

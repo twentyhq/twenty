@@ -1,6 +1,6 @@
 # Breaking module ownership migration
 
-This change removes the previous exports immediately. Release it as a breaking package change and migrate applications together with the library. The package now exposes 41 primitives and 50 shared React components, including the optional code editor.
+This change removes the previous exports immediately. Release it as a breaking package change and migrate applications together with the library. The package now exposes 41 primitives and 47 shared React components, including the optional code editor.
 
 ## Choosing a module
 
@@ -19,7 +19,7 @@ Foundational controls keep their `twenty-ui/primitives/<family>` imports. Import
 
 ### Shared components
 
-`CodeEditor`, `CodeEditorHeader`, `IconButton`, `LightButton`, `MainButton`, `Section`, `TabButton`, `AvatarGroup`, `CommandBlock`, `NotificationCounter`, `Pill`, `TintedIconTile`, `Callout`, `Info`, `InlineBanner`, `Toast`, `ToastProvider`, `Toaster`, `AnimatedLightIconButton`, `CardPicker`, `ColorPickerButton`, `ColorSchemePicker`, `FloatingButton`, `FloatingButtonGroup`, `FloatingIconButton`, `FloatingIconButtonGroup`, `IconButtonGroup`, `LightIconButton`, `LightIconButtonGroup`, `RoundedIconButton`, `SearchInput`, `JsonTree`, `AnimatedIconCrossfade`, `MenuItem`, `MenuItemAvatar`, `MenuItemDraggable`, `MenuItemMultiSelect`, `MenuItemMultiSelectAvatar`, `MenuItemMultiSelectTag`, `MenuItemNavigate`, `MenuItemSelect`, `MenuItemSelectAvatar`, `MenuItemSelectColor`, `MenuItemSelectTag`, `MenuItemSuggestion`, `MenuItemSwitch`, `MenuPicker`, `NavigationBar`, `RoundedLink`, `OverflowingTextWithTooltip`.
+`CodeEditor`, `CodeEditorHeader`, `IconButton`, `LightButton`, `MainButton`, `Section`, `TabButton`, `AvatarGroup`, `CommandBlock`, `NotificationCounter`, `Pill`, `TintedIconTile`, `Callout`, `Info`, `InlineBanner`, `Toast`, `ToastProvider`, `Toaster`, `AnimatedLightIconButton`, `CardPicker`, `ColorPickerButton`, `ColorSchemePicker`, `FloatingButton`, `FloatingButtonGroup`, `FloatingIconButton`, `FloatingIconButtonGroup`, `LightIconButton`, `SearchInput`, `JsonTree`, `AnimatedIconCrossfade`, `MenuItem`, `MenuItemAvatar`, `MenuItemDraggable`, `MenuItemMultiSelect`, `MenuItemMultiSelectAvatar`, `MenuItemMultiSelectTag`, `MenuItemNavigate`, `MenuItemSelect`, `MenuItemSelectAvatar`, `MenuItemSelectColor`, `MenuItemSelectTag`, `MenuItemSuggestion`, `MenuItemSwitch`, `MenuPicker`, `NavigationBar`, `RoundedLink`, `OverflowingTextWithTooltip`.
 
 ## Interface changes
 
@@ -64,7 +64,6 @@ The table records every removed React export. Internal implementation files are 
 | `IconListViewGrip`                      | object-record/record-table internal asset                                                     |
 | `InputHint`                             | Field.Description or Field.Error for new forms; frontend input adapter for existing controls. |
 | `InputLabel`                            | Field.Label for new forms; frontend input adapter for existing controls.                      |
-| `InsideButton`                          | IconButtonGroup/internal.                                                                     |
 | `JsonArrayNode`                         | JsonTree/internal                                                                             |
 | `JsonNestedNode`                        | JsonTree entries for grouped roots; node implementation is private.                           |
 | `JsonNode`                              | JsonTree/internal                                                                             |

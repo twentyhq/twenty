@@ -1,5 +1,7 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { t } from '@lingui/core/macro';
 import { type MouseEvent, useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
@@ -50,10 +52,12 @@ export const MenuItemWithOptionDropdown = ({
           <Dropdown
             clickableComponent={
               <LightIconButton
-                Icon={RightIcon ?? IconDotsVertical}
-                size="small"
-                accent="tertiary"
-              />
+                size="sm"
+                emphasis="subtle"
+                aria-label={t`More options`}
+              >
+                {isDefined(RightIcon) ? <RightIcon /> : <IconDotsVertical />}
+              </LightIconButton>
             }
             dropdownPlacement={dropdownPlacement}
             dropdownComponents={dropdownContent}

@@ -1,5 +1,6 @@
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
 import { useDeleteQueuedMessage } from '@/ai/hooks/useDeleteQueuedMessage';
 import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
@@ -67,10 +68,12 @@ export const AiChatQueuedMessages = () => {
           <StyledQueuedItem key={message.id}>
             <StyledQueuedText>{displayText}</StyledQueuedText>
             <LightIconButton
-              Icon={IconX}
               onClick={() => deleteQueuedMessage(message.id)}
-              size="small"
-            />
+              size="sm"
+              aria-label={t`Remove queued message`}
+            >
+              <IconX />
+            </LightIconButton>
           </StyledQueuedItem>
         );
       })}

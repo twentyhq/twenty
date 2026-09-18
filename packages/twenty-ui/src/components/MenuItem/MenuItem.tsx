@@ -1,4 +1,3 @@
-import { LightIconButtonGroup } from '@ui/components/LightIconButtonGroup/LightIconButtonGroup';
 import { IconChevronRight } from '@ui/icon';
 import { type MouseEvent } from 'react';
 import { type MenuItemProps } from './types/MenuItemProps';
@@ -41,8 +40,6 @@ export const MenuItem = ({
   isSubMenuOpened = false,
 }: MenuItemProps) => {
   const theme = useTheme();
-  const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
-
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
     if (!onClick) return;
     event.preventDefault();
@@ -77,11 +74,9 @@ export const MenuItem = ({
 
       <StyledMenuItemRightContent>
         {iconButtons && (
-          <div className="hoverable-buttons">
-            {showIconButtons && (
-              <LightIconButtonGroup iconButtons={iconButtons} size="small" />
-            )}
-          </div>
+          <StyledMenuItemRightContent className="hoverable-buttons">
+            {iconButtons}
+          </StyledMenuItemRightContent>
         )}
         {hotKeys && <MenuItemHotKeys hotKeys={hotKeys} />}
         {RightIcon && (

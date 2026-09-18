@@ -230,15 +230,17 @@ export const CodeExecutionDisplay = ({
           </StyledSectionHeaderLeft>
           <StyledHeaderRight>
             <LightIconButton
-              Icon={IconCopy}
               onClick={(e) => {
                 e.stopPropagation();
                 copyToClipboard(code);
               }}
               title={t`Copy code`}
-              size="small"
-              accent="tertiary"
-            />
+              size="sm"
+              emphasis="subtle"
+              aria-label={t`Copy code`}
+            >
+              <IconCopy />
+            </LightIconButton>
             {isCodeExpanded ? (
               <IconChevronUp size={theme.icon.size.sm} />
             ) : (

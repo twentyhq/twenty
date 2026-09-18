@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { LightIconButton } from 'twenty-ui/components';
 import { IconHeartOff } from 'twenty-ui/icon';
@@ -88,13 +89,15 @@ export const NavigationMenuItemFolderContent = ({
               )}
               rightOptions={
                 <LightIconButton
-                  Icon={IconHeartOff}
                   onClick={(e) => {
                     e.stopPropagation();
                     deleteManyNavigationMenuItems([navigationMenuItem.id]);
                   }}
-                  accent="tertiary"
-                />
+                  emphasis="subtle"
+                  aria-label={t`Remove from favorites`}
+                >
+                  <IconHeartOff />
+                </LightIconButton>
               }
               triggerEvent="CLICK"
               to={computedLink}

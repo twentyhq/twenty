@@ -51,10 +51,12 @@ export const RecordDetailDuplicatesSection = ({
           rightAdornment={
             <LightIconButton
               className="displayOnHover"
-              Icon={IconArrowMerge}
-              accent="tertiary"
+              emphasis="subtle"
               onClick={openMergeRecordsPageInSidePanel}
-            />
+              aria-label={t`Merge duplicates`}
+            >
+              <IconArrowMerge />
+            </LightIconButton>
           }
         >
           <RecordDetailRecordsListContainer>

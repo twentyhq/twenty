@@ -164,7 +164,9 @@ export const SettingsAdminServerAdminAccess = ({
           dropdownId={dropdownId}
           dropdownPlacement="right-start"
           clickableComponent={
-            <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+            <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+              <IconDotsVertical />
+            </LightIconButton>
           }
           dropdownComponents={
             <DropdownContent>

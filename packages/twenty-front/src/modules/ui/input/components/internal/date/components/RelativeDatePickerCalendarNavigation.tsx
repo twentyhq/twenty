@@ -1,6 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { LightIconButton } from 'twenty-ui/components';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
@@ -46,18 +47,22 @@ export const RelativeDatePickerCalendarNavigation = ({
   return (
     <StyledContainer>
       <LightIconButton
-        Icon={IconChevronLeft}
         onClick={onPreviousMonth}
-        size="medium"
+        size="md"
         disabled={prevMonthButtonDisabled}
-      />
+        aria-label={t`Previous`}
+      >
+        <IconChevronLeft />
+      </LightIconButton>
       <StyledMonthYearLabel>{monthYearLabel}</StyledMonthYearLabel>
       <LightIconButton
-        Icon={IconChevronRight}
         onClick={onNextMonth}
-        size="medium"
+        size="md"
         disabled={nextMonthButtonDisabled}
-      />
+        aria-label={t`Next`}
+      >
+        <IconChevronRight />
+      </LightIconButton>
     </StyledContainer>
   );
 };

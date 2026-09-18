@@ -588,6 +588,7 @@
                 "ui/components/input/main-button",
                 "ui/components/input/light-button",
                 "ui/components/input/icon-button",
+                "ui/components/input/light-icon-button",
                 "ui/components/section",
                 "ui/components/tab-button",
                 "ui/components/code-editor",

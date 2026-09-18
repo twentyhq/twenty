@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
 import { Select } from '@/ui/input/components/Select';
 
@@ -93,17 +94,21 @@ export const DatePickerHeader = ({
           />
         </ClickOutsideListenerContext.Provider>
         <LightIconButton
-          Icon={IconChevronLeft}
           onClick={onSubtractMonth}
-          size="medium"
+          size="md"
           disabled={prevMonthButtonDisabled}
-        />
+          aria-label={t`Previous`}
+        >
+          <IconChevronLeft />
+        </LightIconButton>
         <LightIconButton
-          Icon={IconChevronRight}
           onClick={onAddMonth}
-          size="medium"
+          size="md"
           disabled={nextMonthButtonDisabled}
-        />
+          aria-label={t`Next`}
+        >
+          <IconChevronRight />
+        </LightIconButton>
       </StyledCustomDatePickerHeader>
     </>
   );

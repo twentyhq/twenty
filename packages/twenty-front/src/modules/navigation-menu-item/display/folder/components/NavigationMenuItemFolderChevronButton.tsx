@@ -38,12 +38,14 @@ export const NavigationMenuItemFolderChevronButton = ({
   return (
     <StyledButtonContainer isOpen={isOpen}>
       <LightIconButton
-        Icon={IconChevronRight}
-        size="small"
-        accent="tertiary"
+        size="sm"
+        emphasis="subtle"
         aria-label={isOpen ? t`Collapse folder` : t`Expand folder`}
         onClick={onClick}
-      />
+        aria-expanded={isOpen}
+      >
+        <IconChevronRight />
+      </LightIconButton>
     </StyledButtonContainer>
   );
 };

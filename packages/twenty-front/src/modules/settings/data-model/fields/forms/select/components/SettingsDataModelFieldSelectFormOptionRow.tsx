@@ -216,10 +216,12 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         clickableComponent={
           <StyledLightIconButtonContainer>
             <LightIconButton
-              accent="tertiary"
-              Icon={IconDotsVertical}
+              emphasis="subtle"
               disabled={shouldForbidRemoveAsDefault}
-            />
+              aria-label={t`More options`}
+            >
+              <IconDotsVertical />
+            </LightIconButton>
           </StyledLightIconButtonContainer>
         }
         dropdownComponents={

@@ -33,15 +33,16 @@ export const NavigationMenuItemRowActions = ({
     >
       {rightOptions}
       <LightIconButton
-        Icon={IconDotsVertical}
-        size="small"
-        accent="tertiary"
+        size="sm"
+        emphasis="subtle"
         aria-label={t`Menu item actions`}
         onClick={(event) => {
           event.stopPropagation();
           onOpenActions();
         }}
-      />
+      >
+        <IconDotsVertical />
+      </LightIconButton>
     </StyledActions>
   );
 };

@@ -116,20 +116,24 @@ export const WorkspaceSection = () => {
                 onOpen={openNavigationSection}
               >
                 <LightIconButton
-                  Icon={IconPlus}
-                  accent="tertiary"
-                  size="small"
-                />
+                  emphasis="subtle"
+                  size="sm"
+                  aria-label={t`Add`}
+                >
+                  <IconPlus />
+                </LightIconButton>
               </NavigationMenuItemAddDropdown>
             ) : (
               hasLayoutsPermission && (
                 <div onMouseEnter={preloadNavigationMenuItemDndKit}>
                   <LightIconButton
-                    Icon={IconTool}
-                    accent="tertiary"
-                    size="small"
+                    emphasis="subtle"
+                    size="sm"
                     onClick={handleEditClick}
-                  />
+                    aria-label={t`Edit navigation`}
+                  >
+                    <IconTool />
+                  </LightIconButton>
                 </div>
               )
             )}

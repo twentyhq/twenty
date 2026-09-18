@@ -121,10 +121,12 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           <Dropdown
             clickableComponent={
               <LightIconButton
-                Icon={IconDotsVertical}
-                size="small"
-                accent="tertiary"
-              />
+                size="sm"
+                emphasis="subtle"
+                aria-label={t`More options`}
+              >
+                <IconDotsVertical />
+              </LightIconButton>
             }
             dropdownId="multi-workspace-dropdown-context-menu"
             dropdownComponents={

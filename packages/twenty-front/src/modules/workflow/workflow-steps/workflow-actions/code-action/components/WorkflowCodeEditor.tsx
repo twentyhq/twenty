@@ -52,12 +52,14 @@ export const WorkflowCodeEditor = ({
       {!readonly && !fullScreenMode && onEnterFullScreen && (
         <StyledFullScreenButtonContainer>
           <LightIconButton
-            Icon={IconMaximize}
             onClick={onEnterFullScreen}
             title={t`Expand to Full Screen`}
-            size="small"
-            accent="tertiary"
-          />
+            size="sm"
+            emphasis="subtle"
+            aria-label={t`Expand to Full Screen`}
+          >
+            <IconMaximize />
+          </LightIconButton>
         </StyledFullScreenButtonContainer>
       )}
       <CodeEditor

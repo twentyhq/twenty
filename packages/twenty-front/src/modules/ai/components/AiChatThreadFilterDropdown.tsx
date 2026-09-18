@@ -33,10 +33,11 @@ export const AiChatThreadFilterDropdown = ({
       clickableComponent={
         <LightIconButton
           aria-label={t`Filter chats`}
-          Icon={IconFilter}
-          accent="tertiary"
-          size="small"
-        />
+          emphasis="subtle"
+          size="sm"
+        >
+          <IconFilter />
+        </LightIconButton>
       }
       dropdownComponents={
         <AiChatThreadFilterDropdownContent

@@ -201,13 +201,15 @@ export const WorkflowOutputSchemaBuilder = ({
                   />
                   {showRemoveFieldButton && (
                     <LightIconButton
-                      testId="remove-output-field-button"
-                      Icon={IconX}
-                      size="small"
+                      data-testid="remove-output-field-button"
+                      size="sm"
                       onClick={() => {
                         removeField(field.id);
                       }}
-                    />
+                      aria-label={t`Remove output field`}
+                    >
+                      <IconX />
+                    </LightIconButton>
                   )}
                 </StyledSettingsHeader>
                 <AnimatedExpandableContainer

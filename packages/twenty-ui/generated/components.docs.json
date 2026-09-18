@@ -1,5 +1,131 @@
 [
   {
+    "name": "LightIconButton",
+    "entryPoint": "twenty-ui/components",
+    "slug": "input/light-icon-button",
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Required accessible name describing the action."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Icon content. Decorative and hidden from assistive technology."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "color",
+        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic color of the button."
+      },
+      {
+        "name": "elevated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Adds a shadow to the button."
+      },
+      {
+        "name": "emphasis",
+        "type": "\"standard\" | \"subtle\"",
+        "required": false,
+        "defaultValue": "standard",
+        "description": "Standard secondary text or subtle tertiary text. Semantic colors and solid surfaces keep their own colors."
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows a loading indicator and disables activation while preserving the button width."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "shape",
+        "type": "\"round\" | \"square\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Square or round icon control."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\" | \"xs\"",
+        "required": false,
+        "defaultValue": "sm",
+        "description": "Button size: `xs` (20px), `sm` (24px), or `md` (32px)."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "tooltip",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text displayed when hovering or focusing the button."
+      },
+      {
+        "name": "tooltipDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Delay before showing the tooltip."
+      },
+      {
+        "name": "tooltipOffset",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Distance in pixels between the button and the tooltip."
+      },
+      {
+        "name": "tooltipPlace",
+        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Preferred placement of the tooltip relative to the button."
+      },
+      {
+        "name": "variant",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "required": false,
+        "defaultValue": "ghost",
+        "description": "Visual treatment of the button surface."
+      }
+    ]
+  },
+  {
     "name": "IconButton",
     "entryPoint": "twenty-ui/components",
     "slug": "input/icon-button",
@@ -27,7 +153,7 @@
       },
       {
         "name": "color",
-        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
         "description": "Semantic color of the button."
@@ -61,11 +187,18 @@
         "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
       },
       {
-        "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "name": "shape",
+        "type": "\"round\" | \"square\"",
         "required": false,
-        "defaultValue": null,
-        "description": "Square button size: `sm` (24px) or `md` (32px)."
+        "defaultValue": "square",
+        "description": "Square or round icon control."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\" | \"xs\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Button size: `xs` (20px), `sm` (24px), or `md` (32px)."
       },
       {
         "name": "style",
@@ -97,14 +230,14 @@
       },
       {
         "name": "tooltipPlace",
-        "type": "\"top\" | \"right\" | \"bottom\" | \"left\"",
+        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": "bottom",
         "description": "Preferred placement of the tooltip relative to the button."
       },
       {
         "name": "variant",
-        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
         "description": "Visual treatment of the button surface."
@@ -125,7 +258,7 @@
       },
       {
         "name": "color",
-        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
         "description": "Semantic color of the button."
@@ -181,7 +314,7 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": null,
         "description": "Button height: `sm` (24px) or `md` (32px)."
@@ -216,7 +349,7 @@
       },
       {
         "name": "variant",
-        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "solid",
         "description": "Visual treatment of the button surface."
@@ -237,7 +370,7 @@
       },
       {
         "name": "color",
-        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
         "description": "Semantic color of the button."
@@ -300,7 +433,7 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
         "description": "Button height: `sm` (24px) or `md` (32px)."
@@ -335,7 +468,7 @@
       },
       {
         "name": "variant",
-        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
         "description": "Visual treatment of the button surface."
@@ -356,7 +489,7 @@
       },
       {
         "name": "color",
-        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": "neutral",
         "description": "Semantic color of the button."
@@ -412,7 +545,7 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
         "description": "Button height: `sm` (24px) or `md` (32px)."
@@ -447,7 +580,7 @@
       },
       {
         "name": "variant",
-        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "outline",
         "description": "Visual treatment of the button surface."
@@ -460,11 +593,25 @@
     "slug": "input/button-group",
     "props": [
       {
+        "name": "attached",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Join adjacent controls. Set to false for independently rounded buttons with a 2px gap."
+      },
+      {
         "name": "color",
-        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
         "description": "Shared semantic color that overrides the color of buttons in the group."
+      },
+      {
+        "name": "framed",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Add a translucent frame with padding and concentric corners. Button sizes and appearance remain independent unless set on the group."
       },
       {
         "name": "render",
@@ -475,14 +622,14 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": null,
         "description": "Shared button height that overrides the size of buttons in the group."
       },
       {
         "name": "variant",
-        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
         "description": "Shared surface treatment that overrides the variant of buttons in the group."
@@ -765,7 +912,7 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": null,
         "description": "Visual size of the input. Inside an `InputGroup`, the group's size applies."
@@ -807,7 +954,7 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
         "description": "Visual size of the group and its input."
@@ -863,7 +1010,7 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
         "description": "Visual size of the textarea."
@@ -996,14 +1143,14 @@
       },
       {
         "name": "shape",
-        "type": "\"square\" | \"round\"",
+        "type": "\"round\" | \"square\"",
         "required": false,
         "defaultValue": "square",
         "description": "Corner shape of the box."
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
         "description": "Visual size of the checkbox."
@@ -1031,7 +1178,7 @@
       },
       {
         "name": "variant",
-        "type": "\"solid\" | \"outline\" | \"soft\"",
+        "type": "\"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "solid",
         "description": "Visual style of the box: filled, outlined, or tinted."
@@ -1094,7 +1241,7 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
         "description": "Visual size of the radio."
@@ -1411,7 +1558,7 @@
           },
           {
             "name": "size",
-            "type": "\"sm\" | \"md\"",
+            "type": "\"md\" | \"sm\"",
             "required": false,
             "defaultValue": "md",
             "description": "Visual size of the trigger."
@@ -1470,7 +1617,7 @@
         "props": [
           {
             "name": "align",
-            "type": "\"center\" | \"start\" | \"end\"",
+            "type": "\"center\" | \"end\" | \"start\"",
             "required": false,
             "defaultValue": "start",
             "description": "How to align the popup relative to the specified side."
@@ -1526,7 +1673,7 @@
           },
           {
             "name": "side",
-            "type": "\"top\" | \"right\" | \"bottom\" | \"left\" | \"inline-end\" | \"inline-start\"",
+            "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
             "required": false,
             "defaultValue": "bottom",
             "description": "Which side of the anchor element to align the popup against.\nMay automatically change to avoid collisions."
@@ -1566,7 +1713,7 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"inline\" | \"end\"",
+            "type": "\"end\" | \"inline\"",
             "required": false,
             "defaultValue": "inline",
             "description": "Where the description renders: inline after the content or at the end of\nthe row."
@@ -1853,7 +2000,7 @@
           },
           {
             "name": "thumbAlignment",
-            "type": "\"center\" | \"edge\" | \"edge-client-only\"",
+            "type": "\"center\" | \"edge-client-only\" | \"edge\"",
             "required": false,
             "defaultValue": "edge",
             "description": "How the thumb(s) are aligned relative to `Slider.Control` when the value is at `min` or `max`:\n- `center`: The center of the thumb is aligned with the control edge\n- `edge`: The thumb is inset within the control such that its edge is aligned with the control edge\n- `edge-client-only`: Same as `edge` but renders after React hydration on the client, reducing bundle size in return"
@@ -2200,7 +2347,7 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
         "description": "Visual size of the switch."
@@ -2242,14 +2389,14 @@
       },
       {
         "name": "actionsVisibility",
-        "type": "\"hover\" | \"always\"",
+        "type": "\"always\" | \"hover\"",
         "required": false,
         "defaultValue": "hover",
         "description": "When trailing actions are visible: on hover and focus, or always."
       },
       {
         "name": "color",
-        "type": "\"neutral\" | \"danger\"",
+        "type": "\"danger\" | \"neutral\"",
         "required": false,
         "defaultValue": "neutral",
         "description": "Color of the text and icons. `danger` marks a destructive action."
@@ -2263,7 +2410,7 @@
       },
       {
         "name": "descriptionPlacement",
-        "type": "\"inline\" | \"end\"",
+        "type": "\"end\" | \"inline\"",
         "required": false,
         "defaultValue": "inline",
         "description": "Where the description renders: inline after the content or at the end of\nthe row."
@@ -2305,7 +2452,7 @@
       },
       {
         "name": "indicator",
-        "type": "\"none\" | \"checkbox\" | \"check\"",
+        "type": "\"check\" | \"checkbox\" | \"none\"",
         "required": false,
         "defaultValue": "none",
         "description": "Selection indicator: a check icon after the content or a checkbox before\nit."
@@ -2487,7 +2634,7 @@
           },
           {
             "name": "size",
-            "type": "\"sm\" | \"md\"",
+            "type": "\"md\" | \"sm\"",
             "required": false,
             "defaultValue": "sm",
             "description": "Visual size of the tab."
@@ -2753,7 +2900,7 @@
           },
           {
             "name": "size",
-            "type": "\"sm\" | \"md\" | \"lg\" | \"xl\" | \"fullscreen\"",
+            "type": "\"fullscreen\" | \"lg\" | \"md\" | \"sm\" | \"xl\"",
             "required": false,
             "defaultValue": "md",
             "description": ""
@@ -2793,7 +2940,7 @@
           },
           {
             "name": "level",
-            "type": "5 | 1 | 2 | 3 | 4 | 6",
+            "type": "1 | 2 | 3 | 4 | 5 | 6",
             "required": false,
             "defaultValue": "2",
             "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
@@ -2807,7 +2954,7 @@
           },
           {
             "name": "size",
-            "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
             "required": false,
             "defaultValue": "lg",
             "description": "Visual font size, independent of the heading level. Defaults to `lg`."
@@ -3093,7 +3240,7 @@
           },
           {
             "name": "size",
-            "type": "\"sm\" | \"md\" | \"lg\" | \"xl\" | \"fullscreen\"",
+            "type": "\"fullscreen\" | \"lg\" | \"md\" | \"sm\" | \"xl\"",
             "required": false,
             "defaultValue": "md",
             "description": "Width of the dialog, or `fullscreen` to fill the viewport."
@@ -3426,7 +3573,7 @@
         "props": [
           {
             "name": "align",
-            "type": "\"center\" | \"start\" | \"end\"",
+            "type": "\"center\" | \"end\" | \"start\"",
             "required": false,
             "defaultValue": null,
             "description": "Alignment of the popup along the anchor. Defaults to `start`."
@@ -3482,7 +3629,7 @@
           },
           {
             "name": "side",
-            "type": "\"top\" | \"right\" | \"bottom\" | \"left\" | \"inline-end\" | \"inline-start\"",
+            "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
             "required": false,
             "defaultValue": null,
             "description": "Side of the anchor the popup is placed on. Defaults to `bottom` for a menu\nand `inline-end` for a submenu."
@@ -3522,7 +3669,7 @@
           },
           {
             "name": "color",
-            "type": "\"neutral\" | \"danger\"",
+            "type": "\"danger\" | \"neutral\"",
             "required": false,
             "defaultValue": null,
             "description": "Color of the text and icons. `danger` marks a destructive action."
@@ -3536,7 +3683,7 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"inline\" | \"end\"",
+            "type": "\"end\" | \"inline\"",
             "required": false,
             "defaultValue": null,
             "description": "Where the description renders: inline after the content or at the end of\nthe row."
@@ -3632,7 +3779,7 @@
           },
           {
             "name": "color",
-            "type": "\"neutral\" | \"danger\"",
+            "type": "\"danger\" | \"neutral\"",
             "required": false,
             "defaultValue": null,
             "description": "Color of the text and icons. `danger` marks a destructive action."
@@ -3653,7 +3800,7 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"inline\" | \"end\"",
+            "type": "\"end\" | \"inline\"",
             "required": false,
             "defaultValue": null,
             "description": "Where the description renders: inline after the content or at the end of\nthe row."
@@ -3810,7 +3957,7 @@
           },
           {
             "name": "color",
-            "type": "\"neutral\" | \"danger\"",
+            "type": "\"danger\" | \"neutral\"",
             "required": false,
             "defaultValue": null,
             "description": "Color of the text and icons. `danger` marks a destructive action."
@@ -3824,7 +3971,7 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"inline\" | \"end\"",
+            "type": "\"end\" | \"inline\"",
             "required": false,
             "defaultValue": null,
             "description": "Where the description renders: inline after the content or at the end of\nthe row."
@@ -4094,7 +4241,7 @@
           },
           {
             "name": "color",
-            "type": "\"neutral\" | \"danger\"",
+            "type": "\"danger\" | \"neutral\"",
             "required": false,
             "defaultValue": null,
             "description": "Color of the text and icons. `danger` marks a destructive action."
@@ -4115,7 +4262,7 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"inline\" | \"end\"",
+            "type": "\"end\" | \"inline\"",
             "required": false,
             "defaultValue": null,
             "description": "Where the description renders: inline after the content or at the end of\nthe row."
@@ -4355,7 +4502,7 @@
         "props": [
           {
             "name": "align",
-            "type": "\"center\" | \"start\" | \"end\"",
+            "type": "\"center\" | \"end\" | \"start\"",
             "required": false,
             "defaultValue": "center",
             "description": "Alignment of the popup along the anchor."
@@ -4425,7 +4572,7 @@
           },
           {
             "name": "side",
-            "type": "\"top\" | \"right\" | \"bottom\" | \"left\" | \"inline-end\" | \"inline-start\"",
+            "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
             "required": false,
             "defaultValue": "bottom",
             "description": "Side of the anchor the popup is placed on."
@@ -4547,7 +4694,7 @@
       },
       {
         "name": "align",
-        "type": "\"center\" | \"start\" | \"end\"",
+        "type": "\"center\" | \"end\" | \"start\"",
         "required": false,
         "defaultValue": null,
         "description": "Alignment relative to the trigger. Defaults to center."
@@ -4729,7 +4876,7 @@
       },
       {
         "name": "side",
-        "type": "\"top\" | \"right\" | \"bottom\" | \"left\"",
+        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": null,
         "description": "Preferred side of the trigger. Defaults to top and may change to avoid collisions."
@@ -4757,7 +4904,7 @@
       },
       {
         "name": "trackCursorAxis",
-        "type": "\"none\" | \"both\" | \"x\" | \"y\"",
+        "type": "\"both\" | \"none\" | \"x\" | \"y\"",
         "required": false,
         "defaultValue": "none",
         "description": "Determines which axis the tooltip should track the cursor on."
@@ -4846,7 +4993,7 @@
           },
           {
             "name": "trackCursorAxis",
-            "type": "\"none\" | \"both\" | \"x\" | \"y\"",
+            "type": "\"both\" | \"none\" | \"x\" | \"y\"",
             "required": false,
             "defaultValue": "none",
             "description": "Determines which axis the tooltip should track the cursor on."
@@ -4933,7 +5080,7 @@
         "props": [
           {
             "name": "align",
-            "type": "\"center\" | \"start\" | \"end\"",
+            "type": "\"center\" | \"end\" | \"start\"",
             "required": false,
             "defaultValue": "center",
             "description": "Alignment relative to the trigger. Defaults to center."
@@ -5031,7 +5178,7 @@
           },
           {
             "name": "side",
-            "type": "\"top\" | \"right\" | \"bottom\" | \"left\"",
+            "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
             "required": false,
             "defaultValue": "top",
             "description": "Preferred side of the trigger. Defaults to top and may change to avoid collisions."
@@ -5197,7 +5344,7 @@
       },
       {
         "name": "variant",
-        "type": "\"success\" | \"warning\" | \"default\" | \"error\" | \"info\"",
+        "type": "\"default\" | \"error\" | \"info\" | \"success\" | \"warning\"",
         "required": false,
         "defaultValue": "default",
         "description": "Visual variant that selects the icon and colors."
@@ -5316,14 +5463,14 @@
       },
       {
         "name": "shape",
-        "type": "\"circle\" | \"square\" | \"rounded-square\"",
+        "type": "\"circle\" | \"rounded-square\" | \"square\"",
         "required": false,
         "defaultValue": "square",
         "description": "Shape of the avatar and its fallback."
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\" | \"lg\" | \"xl\" | \"xs\"",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\"",
         "required": false,
         "defaultValue": "md",
         "description": "Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), or `xl` (40px)."
@@ -5442,14 +5589,14 @@
       },
       {
         "name": "shape",
-        "type": "\"square\" | \"round\"",
+        "type": "\"round\" | \"square\"",
         "required": false,
         "defaultValue": "square",
         "description": "Square or round corners."
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
         "description": "Visual size of the chip."
@@ -5470,21 +5617,21 @@
       },
       {
         "name": "tooltipPlace",
-        "type": "\"top\" | \"right\" | \"bottom\" | \"left\"",
+        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
         "required": false,
         "defaultValue": null,
         "description": "Position of the string-label tooltip."
       },
       {
         "name": "variant",
-        "type": "\"solid\" | \"ghost\" | \"soft\"",
+        "type": "\"ghost\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
         "description": "Background treatment of the chip."
       },
       {
         "name": "weight",
-        "type": "\"regular\" | \"medium\"",
+        "type": "\"medium\" | \"regular\"",
         "required": false,
         "defaultValue": "regular",
         "description": "Font weight of the label."
@@ -5498,14 +5645,14 @@
     "props": [
       {
         "name": "borderStyle",
-        "type": "\"solid\" | \"dashed\"",
+        "type": "\"dashed\" | \"solid\"",
         "required": false,
         "defaultValue": "solid",
         "description": "Border style used by the outline variant."
       },
       {
         "name": "color",
-        "type": "\"ruby\" | \"red\" | \"crimson\" | \"tomato\" | \"orange\" | \"amber\" | \"yellow\" | \"lime\" | \"grass\" | \"green\" | \"jade\" | \"mint\" | \"turquoise\" | \"cyan\" | \"sky\" | \"blue\" | \"iris\" | \"violet\" | \"purple\" | \"plum\" | \"pink\" | \"bronze\" | \"gold\" | \"brown\" | \"gray\" | \"transparent\"",
+        "type": "\"amber\" | \"blue\" | \"bronze\" | \"brown\" | \"crimson\" | \"cyan\" | \"gold\" | \"grass\" | \"gray\" | \"green\" | \"iris\" | \"jade\" | \"lime\" | \"mint\" | \"orange\" | \"pink\" | \"plum\" | \"purple\" | \"red\" | \"ruby\" | \"sky\" | \"tomato\" | \"transparent\" | \"turquoise\" | \"violet\" | \"yellow\"",
         "required": true,
         "defaultValue": null,
         "description": "Theme color for the tag, or `transparent` for an unfilled label."
@@ -5554,14 +5701,14 @@
       },
       {
         "name": "variant",
-        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "soft",
         "description": "Visual treatment of the tag background and border."
       },
       {
         "name": "weight",
-        "type": "\"regular\" | \"medium\"",
+        "type": "\"medium\" | \"regular\"",
         "required": false,
         "defaultValue": "regular",
         "description": "Font weight of the label."
@@ -5575,7 +5722,7 @@
     "props": [
       {
         "name": "color",
-        "type": "\"ruby\" | \"red\" | \"crimson\" | \"tomato\" | \"orange\" | \"amber\" | \"yellow\" | \"lime\" | \"grass\" | \"green\" | \"jade\" | \"mint\" | \"turquoise\" | \"cyan\" | \"sky\" | \"blue\" | \"iris\" | \"violet\" | \"purple\" | \"plum\" | \"pink\" | \"bronze\" | \"gold\" | \"brown\" | \"gray\"",
+        "type": "\"amber\" | \"blue\" | \"bronze\" | \"brown\" | \"crimson\" | \"cyan\" | \"gold\" | \"grass\" | \"gray\" | \"green\" | \"iris\" | \"jade\" | \"lime\" | \"mint\" | \"orange\" | \"pink\" | \"plum\" | \"purple\" | \"red\" | \"ruby\" | \"sky\" | \"tomato\" | \"turquoise\" | \"violet\" | \"yellow\"",
         "required": true,
         "defaultValue": null,
         "description": "Theme color used for the status background, text, and loader."
@@ -5617,7 +5764,7 @@
       },
       {
         "name": "weight",
-        "type": "\"regular\" | \"medium\"",
+        "type": "\"medium\" | \"regular\"",
         "required": false,
         "defaultValue": "regular",
         "description": "Font weight of the label."
@@ -5638,7 +5785,7 @@
       },
       {
         "name": "level",
-        "type": "5 | 1 | 2 | 3 | 4 | 6",
+        "type": "1 | 2 | 3 | 4 | 5 | 6",
         "required": false,
         "defaultValue": "2",
         "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
@@ -5652,7 +5799,7 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
         "required": false,
         "defaultValue": "md",
         "description": "Visual font size, independent of the heading level. Defaults to `md`."
@@ -5731,7 +5878,7 @@
           },
           {
             "name": "level",
-            "type": "5 | 1 | 2 | 3 | 4 | 6",
+            "type": "1 | 2 | 3 | 4 | 5 | 6",
             "required": false,
             "defaultValue": "2",
             "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
@@ -5745,7 +5892,7 @@
           },
           {
             "name": "size",
-            "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
             "required": false,
             "defaultValue": "md",
             "description": "Visual font size, independent of the heading level. Defaults to `md`."
@@ -5775,7 +5922,7 @@
       },
       {
         "name": "contentPadding",
-        "type": "\"default\" | \"comfortable\"",
+        "type": "\"comfortable\" | \"default\"",
         "required": false,
         "defaultValue": "default",
         "description": "`default` pads the top and bottom of the content. `comfortable` also widens the gap between line numbers and code."
@@ -5859,7 +6006,7 @@
       },
       {
         "name": "variant",
-        "type": "\"default\" | \"with-header\" | \"borderless\"",
+        "type": "\"borderless\" | \"default\" | \"with-header\"",
         "required": false,
         "defaultValue": "default",
         "description": "Border treatment: `default` draws a rounded border, `with-header` attaches the editor below a `CodeEditorHeader`, and `borderless` removes the border."
@@ -5943,7 +6090,7 @@
       },
       {
         "name": "size",
-        "type": "\"sm\" | \"md\"",
+        "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
         "description": "Padding of the tab content: sm or md."

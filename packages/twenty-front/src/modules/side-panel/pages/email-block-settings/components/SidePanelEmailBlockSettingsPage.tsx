@@ -182,12 +182,14 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
       <StyledBlockHeader>
         <StyledBlockTitle>{i18n._(blockDefinition.label)}</StyledBlockTitle>
         <LightIconButton
-          Icon={IconTrash}
-          size="small"
-          accent="tertiary"
+          size="sm"
+          emphasis="subtle"
           title={t`Remove block`}
           onClick={handleRemoveBlock}
-        />
+          aria-label={t`Remove block`}
+        >
+          <IconTrash />
+        </LightIconButton>
       </StyledBlockHeader>
       {fields.map((field) => {
         const key = `${target.nodeType}-${target.pos}-${field.property}`;

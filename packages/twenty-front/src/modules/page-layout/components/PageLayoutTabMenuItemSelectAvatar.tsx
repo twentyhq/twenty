@@ -1,5 +1,6 @@
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { t } from '@lingui/core/macro';
 import { type MouseEvent, useState } from 'react';
 import { LightIconButton } from 'twenty-ui/components';
 import { IconPencil } from 'twenty-ui/icon';
@@ -43,14 +44,16 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
         isHovered &&
         showEditButton && (
           <LightIconButton
-            Icon={IconPencil}
-            size="small"
-            accent="tertiary"
+            size="sm"
+            emphasis="subtle"
+            aria-label={t`Edit tab icon`}
             onClick={(event) => {
               event.stopPropagation();
               onEditClick?.(tab.id);
             }}
-          />
+          >
+            <IconPencil />
+          </LightIconButton>
         )
       }
     >

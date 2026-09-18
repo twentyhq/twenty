@@ -88,12 +88,13 @@ export const NavigationDrawerHeader = () => {
   const searchButton = !isMobile && (
     <StyledSearchButtonContainer isExpanded={isExpanded}>
       <LightIconButton
-        Icon={IconSearch}
-        accent="secondary"
-        size="small"
+        emphasis="standard"
+        size="sm"
         onClick={openRecordsSearchPage}
         aria-label={t`Search`}
-      />
+      >
+        <IconSearch />
+      </LightIconButton>
     </StyledSearchButtonContainer>
   );
 

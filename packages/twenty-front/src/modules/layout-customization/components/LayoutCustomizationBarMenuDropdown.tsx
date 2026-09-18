@@ -44,10 +44,11 @@ export const LayoutCustomizationBarMenuDropdown = () => {
       clickableComponent={
         <StyledInvertedIconButtonWrapper>
           <LightIconButton
-            Icon={IconDotsVertical}
-            accent="tertiary"
+            emphasis="subtle"
             aria-label={t`Layout customization menu`}
-          />
+          >
+            <IconDotsVertical />
+          </LightIconButton>
         </StyledInvertedIconButtonWrapper>
       }
       dropdownComponents={

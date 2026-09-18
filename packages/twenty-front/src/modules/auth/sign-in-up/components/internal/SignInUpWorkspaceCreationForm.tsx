@@ -277,13 +277,14 @@ export const SignInUpWorkspaceCreationForm = () => {
                 variant="outline"
               >{t`Upload logo`}</Button>
               <LightIconButton
-                Icon={IconTrash}
-                accent="tertiary"
-                size="medium"
+                emphasis="subtle"
+                size="md"
                 onClick={handleLogoRemove}
                 disabled={!isDefined(logoPreviewUrl)}
                 aria-label={t`Remove logo`}
-              />
+              >
+                <IconTrash />
+              </LightIconButton>
             </StyledLogoButtons>
           </StyledLogoRow>
         </OnboardingStepAnimatedItem>

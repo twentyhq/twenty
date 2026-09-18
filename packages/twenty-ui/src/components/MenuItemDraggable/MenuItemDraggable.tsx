@@ -1,8 +1,9 @@
 import { MenuItemLeftContent } from '@ui/components/MenuItem/parts/MenuItemLeftContent';
-import { StyledHoverableMenuItemBase } from '@ui/components/MenuItem/parts/StyledMenuItemBase';
+import {
+  StyledHoverableMenuItemBase,
+  StyledMenuItemRightContent,
+} from '@ui/components/MenuItem/parts/StyledMenuItemBase';
 import { type MenuItemDraggableProps } from './types/MenuItemDraggableProps';
-
-import { LightIconButtonGroup } from '@ui/components/LightIconButtonGroup/LightIconButtonGroup';
 
 export const MenuItemDraggable = ({
   LeftIcon,
@@ -17,8 +18,6 @@ export const MenuItemDraggable = ({
   isIconDisplayedOnHoverOnly = true,
   gripMode = 'never',
 }: MenuItemDraggableProps) => {
-  const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
-
   const cursorType =
     gripMode !== 'never' ? (isDragDisabled ? 'default' : 'drag') : 'default';
 
@@ -38,11 +37,10 @@ export const MenuItemDraggable = ({
         disabled={isDragDisabled}
         gripMode={gripMode}
       />
-      {showIconButtons && (
-        <LightIconButtonGroup
-          className="hoverable-buttons"
-          iconButtons={iconButtons}
-        />
+      {iconButtons && (
+        <StyledMenuItemRightContent className="hoverable-buttons">
+          {iconButtons}
+        </StyledMenuItemRightContent>
       )}
     </StyledHoverableMenuItemBase>
   );

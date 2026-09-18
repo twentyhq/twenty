@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { type CalloutProps } from './types/CalloutProps';
 import { type CalloutVariant } from './types/CalloutVariant';
 
-import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
 import { IconHelp, IconX } from '@ui/icon/components/TablerIcons';
 import { Button } from '@ui/primitives/input/Button/Button';
 
@@ -68,9 +67,11 @@ export const Callout = ({
         </div>
         <div className={styles.title}>{title}</div>
         {isClosable && (
-          <LightIconButton
-            Icon={IconX}
-            size="small"
+          <Button
+            startIcon={<IconX />}
+            className={styles.closeButton}
+            variant="ghost"
+            size="sm"
             aria-label="Close"
             onClick={handleClose}
           />

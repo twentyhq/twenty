@@ -131,13 +131,14 @@ export const OnboardingHeader = ({
       <StyledLeftSide>
         {isDefined(onBack) && (
           <LightIconButton
-            Icon={IconChevronLeft}
-            accent="tertiary"
-            size="small"
+            emphasis="subtle"
+            size="sm"
             onClick={onBack}
             disabled={isBackDisabled}
             aria-label={t`Go back`}
-          />
+          >
+            <IconChevronLeft />
+          </LightIconButton>
         )}
       </StyledLeftSide>
       <StyledCenter>

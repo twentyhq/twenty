@@ -255,10 +255,12 @@ export const SettingsObjectFieldItemTableRow = ({
           ) : (
             canToggleField && (
               <LightIconButton
-                Icon={IconMinus}
-                accent="tertiary"
+                emphasis="subtle"
                 onClick={handleToggleField}
-              />
+                aria-label={t`Deactivate field`}
+              >
+                <IconMinus />
+              </LightIconButton>
             )
           )
         ) : mode === 'view' ? (
@@ -279,10 +281,12 @@ export const SettingsObjectFieldItemTableRow = ({
           />
         ) : (
           <LightIconButton
-            Icon={IconPlus}
-            accent="tertiary"
+            emphasis="subtle"
             onClick={handleToggleField}
-          />
+            aria-label={t`Add`}
+          >
+            <IconPlus />
+          </LightIconButton>
         )}
       </TableCell>
     </TableRow>

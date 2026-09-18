@@ -29,16 +29,12 @@ const START_ICON = <IconBell />;
 
 const ACTIONS = (
   <>
-    <LightIconButton
-      Icon={IconEdit}
-      aria-label="Edit"
-      onClick={action('Edit')}
-    />
-    <LightIconButton
-      Icon={IconTrash}
-      aria-label="Delete"
-      onClick={action('Delete')}
-    />
+    <LightIconButton aria-label="Edit" onClick={action('Edit')}>
+      <IconEdit />
+    </LightIconButton>
+    <LightIconButton aria-label="Delete" onClick={action('Delete')}>
+      <IconTrash />
+    </LightIconButton>
   </>
 );
 

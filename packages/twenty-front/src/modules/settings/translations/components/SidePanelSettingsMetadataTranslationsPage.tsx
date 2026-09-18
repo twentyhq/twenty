@@ -138,11 +138,13 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
                     <TableCell>
                       {isEdited && (
                         <LightIconButton
-                          Icon={IconRestore}
                           title={t`Reset to default`}
-                          accent="tertiary"
+                          emphasis="subtle"
                           onClick={() => saveTranslationRow(row, null)}
-                        />
+                          aria-label={t`Reset to default`}
+                        >
+                          <IconRestore />
+                        </LightIconButton>
                       )}
                     </TableCell>
                   </TableRow>

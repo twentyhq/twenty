@@ -1,3 +1,4 @@
+import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 
@@ -26,9 +27,11 @@ export const Default: Story = {
   args: {
     LeftIcon: IconBell,
     accent: 'default',
-    iconButtons: [
-      { Icon: IconMinus, onClick: action('Clicked'), ariaLabel: 'Remove' },
-    ],
+    iconButtons: (
+      <LightIconButton aria-label={'Remove'} onClick={action('Clicked')}>
+        <IconMinus />
+      </LightIconButton>
+    ),
     onClick: action('Clicked'),
     text: 'Menu item draggable',
     isDragDisabled: false,
@@ -91,18 +94,19 @@ export const Catalog: Story = {
             switch (choice) {
               case 'no icon button': {
                 return {
-                  iconButtons: [],
+                  iconButtons: null,
                 };
               }
               case 'minus icon buttons': {
                 return {
-                  iconButtons: [
-                    {
-                      Icon: IconMinus,
-                      onClick: action('Clicked on minus icon button'),
-                      ariaLabel: 'Remove',
-                    },
-                  ],
+                  iconButtons: (
+                    <LightIconButton
+                      aria-label={'Remove'}
+                      onClick={action('Clicked on minus icon button')}
+                    >
+                      <IconMinus />
+                    </LightIconButton>
+                  ),
                 };
               }
             }

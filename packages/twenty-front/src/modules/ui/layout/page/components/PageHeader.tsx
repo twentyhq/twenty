@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext } from 'react';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
@@ -117,11 +118,13 @@ export const PageHeader = ({
           )}
           {hasClosePageButton && (
             <LightIconButton
-              Icon={IconX}
-              size="small"
-              accent="tertiary"
+              size="sm"
+              emphasis="subtle"
               onClick={() => onClosePage?.()}
-            />
+              aria-label={t`Close page`}
+            >
+              <IconX />
+            </LightIconButton>
           )}
 
           <StyledTopBarIconStyledTitleContainer>

@@ -223,9 +223,11 @@ export const RecordDetailRelationRecordsListItem = ({
         <StyledClickableZone onClick={handleClick} data-testid="expand-button">
           <LightIconButton
             className="displayOnHover"
-            Icon={AnimatedIconChevronDown}
-            accent="tertiary"
-          />
+            emphasis="subtle"
+            aria-label={t`Expand relation`}
+          >
+            <AnimatedIconChevronDown />
+          </LightIconButton>
         </StyledClickableZone>
         {!parentIsRecordFieldReadOnly && (
           <Dropdown
@@ -234,9 +236,11 @@ export const RecordDetailRelationRecordsListItem = ({
             clickableComponent={
               <LightIconButton
                 className="displayOnHover"
-                Icon={IconDotsVertical}
-                accent="tertiary"
-              />
+                emphasis="subtle"
+                aria-label={t`More options`}
+              >
+                <IconDotsVertical />
+              </LightIconButton>
             }
             dropdownComponents={
               <DropdownContent>

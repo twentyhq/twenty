@@ -21,7 +21,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useState } from 'react';
-import { useToast, LightIconButton, MenuItem } from 'twenty-ui/components';
+import { LightIconButton, MenuItem, useToast } from 'twenty-ui/components';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import {
@@ -237,12 +237,14 @@ export const SettingsObjectSearchSection = ({
                   <TableCell align="right">
                     {isEditable && !entry.isLabelIdentifier && (
                       <LightIconButton
-                        Icon={IconTrash}
-                        accent="tertiary"
+                        emphasis="subtle"
                         onClick={() =>
                           handleSetFieldSearchable(entry.id, false)
                         }
-                      />
+                        aria-label={t`Remove searchable field`}
+                      >
+                        <IconTrash />
+                      </LightIconButton>
                     )}
                   </TableCell>
                 </TableRow>

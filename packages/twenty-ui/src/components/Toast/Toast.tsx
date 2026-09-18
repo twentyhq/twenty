@@ -103,10 +103,13 @@ export const Toast = ({
                 </Button>
               )}
               {isDefined(onClose) && (
-                <LightIconButton
+                <Button
                   title={closeLabel}
                   aria-label={closeLabel}
-                  Icon={IconX}
+                  startIcon={<IconX />}
+                  className={styles.closeButton}
+                  variant="ghost"
+                  size="sm"
                   onClick={onClose}
                 />
               )}

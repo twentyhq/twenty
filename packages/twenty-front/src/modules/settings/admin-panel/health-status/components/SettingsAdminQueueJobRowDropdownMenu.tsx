@@ -38,11 +38,9 @@ export const SettingsAdminQueueJobRowDropdownMenu = ({
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
       clickableComponent={
-        <LightIconButton
-          aria-label={t`Job Actions`}
-          Icon={IconDotsVertical}
-          accent="tertiary"
-        />
+        <LightIconButton aria-label={t`Job Actions`} emphasis="subtle">
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownComponents={
         <DropdownContent>

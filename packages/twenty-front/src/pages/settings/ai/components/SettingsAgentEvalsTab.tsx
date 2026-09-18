@@ -169,10 +169,12 @@ export const SettingsAgentEvalsTab = ({
                 dropdownPlacement="right-start"
                 clickableComponent={
                   <LightIconButton
-                    Icon={IconDotsVertical}
-                    accent="tertiary"
+                    emphasis="subtle"
                     disabled={disabled}
-                  />
+                    aria-label={t`More options`}
+                  >
+                    <IconDotsVertical />
+                  </LightIconButton>
                 }
                 dropdownComponents={
                   <DropdownContent>

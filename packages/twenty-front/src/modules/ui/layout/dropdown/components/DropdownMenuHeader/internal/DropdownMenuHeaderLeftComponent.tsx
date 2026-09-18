@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { type MouseEvent, type ReactElement, useContext } from 'react';
 import { LightIconButton } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -46,11 +47,13 @@ export const DropdownMenuHeaderLeftComponent = ({
       {'Icon' in props &&
         (onClick ? (
           <LightIconButton
-            Icon={props.Icon}
-            accent="tertiary"
-            size="small"
+            emphasis="subtle"
+            size="sm"
             onClick={onClick}
-          />
+            aria-label={t`Go back`}
+          >
+            <props.Icon />
+          </LightIconButton>
         ) : (
           <StyledNonClickableStartIcon>
             <props.Icon

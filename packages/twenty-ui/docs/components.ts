@@ -9,6 +9,7 @@ import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
+import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
 import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
@@ -17,6 +18,13 @@ import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
 import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'LightIconButton',
+    source: 'components/LightIconButton/LightIconButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'input/light-icon-button',
+    propDescriptions: LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS,
+  },
   {
     name: 'IconButton',
     source: 'components/IconButton/IconButton.tsx',

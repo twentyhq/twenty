@@ -367,9 +367,11 @@ export const SettingsDataModelFieldSelectForm = ({
                       dropdownId={OPTIONS_DROPDOWN_ID}
                       clickableComponent={
                         <LightIconButton
-                          Icon={IconDotsVertical}
-                          accent="tertiary"
-                        />
+                          emphasis="subtle"
+                          aria-label={t`More options`}
+                        >
+                          <IconDotsVertical />
+                        </LightIconButton>
                       }
                       dropdownComponents={
                         <DropdownContent

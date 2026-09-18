@@ -78,11 +78,9 @@ export const AiChatThreadItemMenu = ({
       dropdownPlacement="bottom-end"
       clickableComponent={
         clickableComponent ?? (
-          <LightIconButton
-            aria-label={t`Chat actions`}
-            Icon={IconDotsVertical}
-            accent="tertiary"
-          />
+          <LightIconButton aria-label={t`Chat actions`} emphasis="subtle">
+            <IconDotsVertical />
+          </LightIconButton>
         )
       }
       dropdownComponents={

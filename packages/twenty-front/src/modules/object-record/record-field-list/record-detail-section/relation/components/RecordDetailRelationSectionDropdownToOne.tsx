@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { type ReactNode, useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -168,9 +169,11 @@ export const RecordDetailRelationSectionDropdownToOne = ({
         dropdownTriggerClickableComponent ?? (
           <LightIconButton
             className="displayOnHover"
-            Icon={IconPencil}
-            accent="tertiary"
-          />
+            emphasis="subtle"
+            aria-label={t`Edit relation`}
+          >
+            <IconPencil />
+          </LightIconButton>
         )
       }
       dropdownComponents={

@@ -236,10 +236,12 @@ export const SettingsAgentLogsTab = ({
                       .replace(':turnId', turn.id)}
                   >
                     <LightIconButton
-                      Icon={IconChevronRight}
                       title={t`View all evaluations`}
-                      accent="tertiary"
-                    />
+                      emphasis="subtle"
+                      aria-label={t`View all evaluations`}
+                    >
+                      <IconChevronRight />
+                    </LightIconButton>
                   </UndecoratedLink>
                 )}
               </TableCell>

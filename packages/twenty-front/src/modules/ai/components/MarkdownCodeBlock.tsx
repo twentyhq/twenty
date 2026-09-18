@@ -67,12 +67,14 @@ export const MarkdownCodeBlock = ({
     <StyledContainer className="markdown-code-outer-container">
       <StyledCopyButtonContainer>
         <LightIconButton
-          Icon={IconCopy}
           onClick={() => copyToClipboard(codeText, t`Code copied to clipboard`)}
           title={t`Copy code`}
-          size="small"
-          accent="tertiary"
-        />
+          size="sm"
+          emphasis="subtle"
+          aria-label={t`Copy code`}
+        >
+          <IconCopy />
+        </LightIconButton>
       </StyledCopyButtonContainer>
       <pre className="markdown-block-code">{children}</pre>
     </StyledContainer>

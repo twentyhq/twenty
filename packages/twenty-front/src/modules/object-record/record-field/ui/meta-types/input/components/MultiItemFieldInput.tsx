@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { useDebounce } from 'use-debounce';
@@ -367,9 +368,11 @@ export const MultiItemFieldInput = <T,>({
           rightComponent={
             items.length ? (
               <LightIconButton
-                Icon={isAddingNewItem ? IconPlus : IconCheck}
                 onClick={handleEnter}
-              />
+                aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
+              >
+                {isAddingNewItem ? <IconPlus /> : <IconCheck />}
+              </LightIconButton>
             ) : null
           }
         />

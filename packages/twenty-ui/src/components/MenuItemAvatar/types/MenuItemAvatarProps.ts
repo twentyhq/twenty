@@ -1,12 +1,11 @@
 import { type MenuItemAccent } from '@ui/components/MenuItem/types/MenuItemAccent';
-import { type MenuItemIconButton } from '@ui/components/MenuItem/types/MenuItemIconButton';
 import { type AvatarProps } from '@ui/primitives/data-display/Avatar/types/AvatarProps';
 import { type MouseEvent, type ReactNode } from 'react';
 
 export type MenuItemAvatarProps = {
   accent?: MenuItemAccent;
   className?: string;
-  iconButtons?: MenuItemIconButton[];
+  iconButtons?: ReactNode;
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   avatar?: Pick<

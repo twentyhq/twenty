@@ -40,9 +40,10 @@ export const SettingsSkillInactiveMenuDropDown = ({
       clickableComponent={
         <LightIconButton
           aria-label={t`Inactive Skill Options`}
-          Icon={IconDotsVertical}
-          accent="tertiary"
-        />
+          emphasis="subtle"
+        >
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>

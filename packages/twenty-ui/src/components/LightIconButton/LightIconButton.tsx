@@ -1,44 +1,21 @@
-import { clsx } from 'clsx';
-import { type LightIconButtonProps } from './types/LightIconButtonProps';
-
-import { useTheme } from '@ui/theme-constants';
+import { IconButton } from '@ui/components/IconButton/IconButton';
+import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from './LightIconButton.module.scss';
+import { type LightIconButtonProps } from './types/LightIconButtonProps';
 
 export const LightIconButton = ({
-  'aria-label': ariaLabel,
   className,
-  testId,
-  Icon,
-  active = false,
-  size = 'small',
-  accent = 'secondary',
-  disabled = false,
-  focus = false,
-  onClick,
-  title,
-}: LightIconButtonProps) => {
-  const theme = useTheme();
-
-  return (
-    <button
-      data-testid={testId}
-      aria-label={ariaLabel}
-      onClick={onClick}
-      disabled={disabled}
-      className={clsx(styles.button, styles[size], className)}
-      data-accent={accent}
-      data-active={active || undefined}
-      data-disabled={disabled || undefined}
-      data-focus={(focus && !disabled) || undefined}
-      title={title}
-    >
-      {Icon && (
-        <Icon
-          size={size === 'medium' ? theme.icon.size.md : theme.icon.size.sm}
-          aria-hidden={!!ariaLabel}
-        />
-      )}
-    </button>
-  );
-};
+  emphasis = 'standard',
+  size = 'sm',
+  variant = 'ghost',
+  ...props
+}: LightIconButtonProps) => (
+  <IconButton
+    {...props}
+    size={size}
+    variant={variant}
+    data-emphasis={emphasis}
+    className={mergeClassNames(styles.button, className)}
+  />
+);
