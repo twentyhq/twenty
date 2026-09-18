@@ -1373,10 +1373,7 @@ describe('Application export - data model', () => {
           ({ universalIdentifier }) =>
             universalIdentifier === removedPredicateId,
         ),
-      ).toMatchObject({
-        metadataName: 'rowLevelPermissionPredicate',
-        status: ApplicationExportCoverageStatus.EXCLUDED,
-      });
+      ).toBeUndefined();
 
       const dryRun = await syncApplication({
         manifest: data.exportApplication.manifest,
