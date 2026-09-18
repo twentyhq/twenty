@@ -13,7 +13,7 @@
   {
     "name": "components",
     "path": "dist/components.mjs",
-    "limit": "95 kB"
+    "limit": "125 kB"
   },
   {
     "name": "components/code-editor",
@@ -46,9 +46,10 @@
     "limit": "230 kB"
   },
   {
-    "name": "primitives/json-visualizer",
-    "path": "dist/primitives/json-visualizer.mjs",
-    "limit": "30 kB"
+    "name": "components (JsonTree)",
+    "path": "dist/components.mjs",
+    "limit": "30 kB",
+    "import": "{ JsonTree }"
   },
   {
     "name": "primitives/layout",
