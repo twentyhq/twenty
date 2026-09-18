@@ -37,7 +37,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Adds a shadow to the button."
+        "description": "Adds a shadow. Defaults to the value of `floating`."
       },
       {
         "name": "emphasis",
@@ -45,6 +45,13 @@
         "required": false,
         "defaultValue": "standard",
         "description": "Standard secondary text or subtle tertiary text. Semantic colors and solid surfaces keep their own colors."
+      },
+      {
+        "name": "floating",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Adds a floating surface, backdrop blur, and a shadow by default. Does not change the size or position."
       },
       {
         "name": "focusableWhenDisabled",
@@ -162,8 +169,15 @@
         "name": "elevated",
         "type": "boolean",
         "required": false,
-        "defaultValue": null,
-        "description": "Adds a shadow to the button."
+        "defaultValue": "floating",
+        "description": "Adds a shadow. Defaults to the value of `floating`."
+      },
+      {
+        "name": "floating",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Adds a floating surface, backdrop blur, and a shadow by default. Does not change the size or position."
       },
       {
         "name": "focusableWhenDisabled",
@@ -6199,132 +6213,6 @@
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-      }
-    ]
-  },
-  {
-    "name": "FloatingIconButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/floating-icon-button",
-    "props": [
-      {
-        "name": "aria-label",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Required accessible name describing the action."
-      },
-      {
-        "name": "blur",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Blurs content behind the floating surface. Enabled by default."
-      },
-      {
-        "name": "children",
-        "type": "ReactNode",
-        "required": true,
-        "defaultValue": null,
-        "description": "Icon content. Decorative and hidden from assistive technology."
-      },
-      {
-        "name": "className",
-        "type": "string | ((state: ButtonState) => string | undefined)",
-        "required": false,
-        "defaultValue": null,
-        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-      },
-      {
-        "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Semantic color of the button."
-      },
-      {
-        "name": "elevated",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Adds a shadow to the floating surface. Enabled by default."
-      },
-      {
-        "name": "focusableWhenDisabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Whether the button should be focusable when disabled."
-      },
-      {
-        "name": "loading",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Shows a loading indicator and disables activation while preserving the button width."
-      },
-      {
-        "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
-      },
-      {
-        "name": "shape",
-        "type": "\"round\" | \"square\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Square or round icon control."
-      },
-      {
-        "name": "size",
-        "type": "\"md\" | \"sm\" | \"xs\"",
-        "required": false,
-        "defaultValue": "'sm'",
-        "description": "Button size: `xs` (20px), `sm` (24px), or `md` (32px)."
-      },
-      {
-        "name": "style",
-        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-      },
-      {
-        "name": "tooltip",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text displayed when hovering or focusing the button."
-      },
-      {
-        "name": "tooltipDelay",
-        "type": "number",
-        "required": false,
-        "defaultValue": null,
-        "description": "Delay before showing the tooltip."
-      },
-      {
-        "name": "tooltipOffset",
-        "type": "number",
-        "required": false,
-        "defaultValue": null,
-        "description": "Distance in pixels between the button and the tooltip."
-      },
-      {
-        "name": "tooltipPlace",
-        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Preferred placement of the tooltip relative to the button."
-      },
-      {
-        "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visual treatment of the button surface."
       }
     ]
   }

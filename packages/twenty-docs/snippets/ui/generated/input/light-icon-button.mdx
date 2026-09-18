@@ -29,11 +29,15 @@
 </ParamField>
 
 <ParamField body="elevated" type="boolean">
-  Adds a shadow to the button.
+  Adds a shadow. Defaults to the value of `floating`.
 </ParamField>
 
 <ParamField body="emphasis" type="&quot;standard&quot; | &quot;subtle&quot;" default="standard">
   Standard secondary text or subtle tertiary text. Semantic colors and solid surfaces keep their own colors.
+</ParamField>
+
+<ParamField body="floating" type="boolean">
+  Adds a floating surface, backdrop blur, and a shadow by default. Does not change the size or position.
 </ParamField>
 
 <ParamField body="focusableWhenDisabled" type="boolean" default="false">

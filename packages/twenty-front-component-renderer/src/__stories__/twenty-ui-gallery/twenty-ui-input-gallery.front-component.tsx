@@ -1,6 +1,5 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  FloatingIconButton,
   IconButton,
   LightButton,
   LightIconButton,
@@ -120,11 +119,11 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'FloatingIconButton',
+    name: 'IconButton (floating)',
     node: (
-      <FloatingIconButton aria-label="Search">
+      <IconButton floating size="sm" aria-label="Search">
         <IconSearch />
-      </FloatingIconButton>
+      </IconButton>
     ),
   },
 

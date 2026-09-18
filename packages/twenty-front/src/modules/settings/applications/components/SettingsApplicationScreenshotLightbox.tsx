@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { IconChevronLeft, IconChevronRight, IconX } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsApplicationScreenshotLightboxProps = {
@@ -114,18 +114,25 @@ export const SettingsApplicationScreenshotLightbox = ({
         >
           <StyledContainer>
             <StyledCloseButton>
-              <FloatingIconButton aria-label={t`Close`} onClick={onClose}>
+              <IconButton
+                floating
+                size="sm"
+                aria-label={t`Close`}
+                onClick={onClose}
+              >
                 <IconX />
-              </FloatingIconButton>
+              </IconButton>
             </StyledCloseButton>
             {hasSeveralScreenshots && (
               <StyledPreviousButton>
-                <FloatingIconButton
+                <IconButton
+                  floating
+                  size="sm"
                   aria-label={t`Previous screenshot`}
                   onClick={showPrevious}
                 >
                   <IconChevronLeft />
-                </FloatingIconButton>
+                </IconButton>
               </StyledPreviousButton>
             )}
             <StyledImage
@@ -135,12 +142,14 @@ export const SettingsApplicationScreenshotLightbox = ({
             {hasSeveralScreenshots && (
               <>
                 <StyledNextButton>
-                  <FloatingIconButton
+                  <IconButton
+                    floating
+                    size="sm"
                     aria-label={t`Next screenshot`}
                     onClick={showNext}
                   >
                     <IconChevronRight />
-                  </FloatingIconButton>
+                  </IconButton>
                 </StyledNextButton>
                 <StyledCounter>
                   {selectedIndex + 1} / {screenshotCount}
