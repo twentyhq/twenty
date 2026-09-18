@@ -38,16 +38,6 @@ export type { MenuItemDraggableProps } from './MenuItemDraggable/MenuItemDraggab
 export { MenuItemDraggable } from './MenuItemDraggable/MenuItemDraggable';
 export type { MenuItemHotKeysProps } from './MenuItemHotKeys/MenuItemHotKeys';
 export { MenuItemHotKeys } from './MenuItemHotKeys/MenuItemHotKeys';
-export { MenuItemMultiSelect } from './MenuItemMultiSelect/MenuItemMultiSelect';
-export { MenuItemMultiSelectAvatar } from './MenuItemMultiSelectAvatar/MenuItemMultiSelectAvatar';
-export { MenuItemMultiSelectTag } from './MenuItemMultiSelectTag/MenuItemMultiSelectTag';
-export {
-  StyledMenuItemSelect,
-  MenuItemSelect,
-} from './MenuItemSelect/MenuItemSelect';
-export { MenuItemSelectAvatar } from './MenuItemSelectAvatar/MenuItemSelectAvatar';
-export { MenuItemSelectColor } from './MenuItemSelectColor/MenuItemSelectColor';
-export { MenuItemSelectTag } from './MenuItemSelectTag/MenuItemSelectTag';
 export type { MenuItemSuggestionProps } from './MenuItemSuggestion/MenuItemSuggestion';
 export { MenuItemSuggestion } from './MenuItemSuggestion/MenuItemSuggestion';
 export { MenuPicker } from './MenuPicker/MenuPicker';

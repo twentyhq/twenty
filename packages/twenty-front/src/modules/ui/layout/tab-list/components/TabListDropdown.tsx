@@ -1,10 +1,11 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { MenuItemSelectAvatar } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type TabListDropdownProps = {
   dropdownId: string;
@@ -47,11 +48,8 @@ export const TabListDropdown = ({
               const isDisabled = tab.disabled ?? loading;
 
               return (
-                <MenuItemSelectAvatar
+                <ListItem
                   key={tab.id}
-                  text={tab.title}
-                  avatar={<TabAvatar tab={tab} />}
-                  selected={tab.id === activeTabId}
                   onClick={
                     isDisabled
                       ? undefined
@@ -61,7 +59,14 @@ export const TabListDropdown = ({
                         }
                   }
                   disabled={isDisabled}
-                />
+                  role="option"
+                  aria-selected={tab.id === activeTabId}
+                  selected={tab.id === activeTabId}
+                  indicator="check"
+                  startIcon={<TabAvatar tab={tab} />}
+                >
+                  <OverflowingTextWithTooltip text={tab.title} />
+                </ListItem>
               );
             })}
           </DropdownMenuItemsContainer>
