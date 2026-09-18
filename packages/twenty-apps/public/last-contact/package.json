@@ -36,6 +36,7 @@
     "vitest": "^4.0.0"
   },
   "dependencies": {
-    "semver": "^7.8.5"
+    "semver": "^7.8.5",
+    "twenty-ui": "^2.41.0"
   }
 }
