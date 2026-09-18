@@ -2012,6 +2012,72 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  workflow: {
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    lastPublishedVersionId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    lastPublishedCoreWorkflowVersionId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    workspaceWorkflowId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  workflowVersion: {
+    status: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    triggers: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    steps: { toCompare: true, toStringify: true, universalProperty: undefined },
+    coreWorkflowId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    workflowId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    workspaceWorkflowVersionId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
 } as const satisfies {
   [P in AllMetadataName]: MetadataEntityPropertyConfiguration<P>;
 };
