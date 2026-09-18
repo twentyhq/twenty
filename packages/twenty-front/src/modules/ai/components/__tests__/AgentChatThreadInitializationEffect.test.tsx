@@ -100,6 +100,7 @@ describe('AgentChatThreadInitializationEffect', () => {
             totalOutputCredits: 0.05,
             ownerUserWorkspaceId: 'owner-user-workspace-id',
             status: AgentChatThreadStatus.OPEN,
+            mentionedUserWorkspaceIds: [],
           } satisfies AgentChatThread,
         ],
       });

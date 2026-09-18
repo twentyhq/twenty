@@ -4,6 +4,7 @@ import { IconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { AGENT_CHAT_THREAD_SNOOZE_PRESETS } from '@/ai/constants/AgentChatThreadSnoozePresets';
+import { getAgentChatThreadSnoozeDate } from '@/ai/utils/getAgentChatThreadSnoozeDate';
 import { useChatThreadInboxActions } from '@/ai/hooks/useChatThreadInboxActions';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -42,7 +43,10 @@ export const AiChatThreadSnoozeDropdown = ({
                 key={preset.key}
                 text={t(preset.label)}
                 onClick={() => {
-                  void snoozeChatThread(threadId, preset.getSnoozedUntil());
+                  void snoozeChatThread(
+                    threadId,
+                    getAgentChatThreadSnoozeDate(preset.key),
+                  );
                   closeDropdown(dropdownId);
                 }}
               />

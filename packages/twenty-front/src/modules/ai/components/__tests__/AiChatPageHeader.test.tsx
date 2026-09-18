@@ -67,6 +67,7 @@ const THREAD: AgentChatThread = {
   title: 'Best leads',
   ownerUserWorkspaceId: 'owner-user-workspace-id',
   status: AgentChatThreadStatus.OPEN,
+  mentionedUserWorkspaceIds: [],
   createdAt: '2026-09-01T00:00:00.000Z',
   updatedAt: '2026-09-01T00:00:00.000Z',
   lastMessageAt: '2026-09-01T00:00:00.000Z',

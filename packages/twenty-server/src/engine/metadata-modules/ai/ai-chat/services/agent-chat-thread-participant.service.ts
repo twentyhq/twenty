@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { parseRecordReferences } from 'twenty-shared/ai';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread-participant.entity';
 import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
@@ -36,7 +39,135 @@ export class AgentChatThreadParticipantService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
+
+  // A mention is what hands a shared thread to somebody in particular, so the
+  // mentioned person joins the conversation and the time is kept: a later
+  // mention brings the thread back even after they have cleared it.
+  async recordMentionsFromMessage({
+    threadId,
+    text,
+    workspaceId,
+  }: {
+    threadId: string;
+    text: string;
+    workspaceId: string;
+  }): Promise<string[]> {
+    const mentionedWorkspaceMemberIds = [
+      ...new Set(
+        parseRecordReferences(text)
+          .filter(
+            (reference) =>
+              reference.objectNameSingular ===
+              CoreObjectNameSingular.WorkspaceMember,
+          )
+          .map((reference) => reference.recordId),
+      ),
+    ];
+
+    if (mentionedWorkspaceMemberIds.length === 0) {
+      return [];
+    }
+
+    const mentionedUserWorkspaceIds = (
+      await Promise.all(
+        mentionedWorkspaceMemberIds.map((workspaceMemberId) =>
+          this.resolveUserWorkspaceIdForWorkspaceMember({
+            workspaceMemberId,
+            workspaceId,
+          }),
+        ),
+      )
+    ).filter(isDefined);
+
+    if (mentionedUserWorkspaceIds.length === 0) {
+      return [];
+    }
+
+    const lastMentionedAt = new Date();
+
+    await Promise.all(
+      mentionedUserWorkspaceIds.map((userWorkspaceId) =>
+        this.upsertMentionedParticipant({
+          threadId,
+          userWorkspaceId,
+          lastMentionedAt,
+          workspaceId,
+        }),
+      ),
+    );
+
+    return mentionedUserWorkspaceIds;
+  }
+
+  private async resolveUserWorkspaceIdForWorkspaceMember({
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<string | null> {
+    const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
+      workspaceMemberId,
+      workspaceId,
+    });
+
+    if (!isDefined(workspaceMember)) {
+      return null;
+    }
+
+    const userWorkspace =
+      await this.userWorkspaceService.getUserWorkspaceForUser({
+        userId: workspaceMember.userId,
+        workspaceId,
+      });
+
+    return userWorkspace?.id ?? null;
+  }
+
+  private async upsertMentionedParticipant({
+    threadId,
+    userWorkspaceId,
+    lastMentionedAt,
+    workspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    lastMentionedAt: Date;
+    workspaceId: string;
+  }): Promise<void> {
+    const existing = await this.participantRepository.findOne(workspaceId, {
+      where: { threadId, userWorkspaceId },
+    });
+
+    if (isDefined(existing)) {
+      await this.participantRepository.update(
+        workspaceId,
+        { id: existing.id },
+        { lastMentionedAt },
+      );
+
+      return;
+    }
+
+    try {
+      await this.participantRepository.insertAndReturnOne(workspaceId, {
+        threadId,
+        userWorkspaceId,
+        workspaceId,
+        role: AgentChatThreadParticipantRole.MEMBER,
+        lastMentionedAt,
+      });
+    } catch (error) {
+      // Two mentions of the same person landing together is a race the
+      // unique index settles; the row that won already says what this one
+      // would have.
+      if (!isUniqueViolation(error)) {
+        throw error;
+      }
+    }
+  }
 
   async getParticipantsForThread({
     threadId,

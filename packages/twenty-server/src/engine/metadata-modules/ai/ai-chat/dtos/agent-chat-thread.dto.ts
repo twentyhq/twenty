@@ -62,6 +62,9 @@ export class AgentChatThreadDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   assigneeUserWorkspaceId: string | null;
 
+  @Field(() => [UUIDScalarType])
+  mentionedUserWorkspaceIds: string[];
+
   @Field(() => Date, { nullable: true })
   deletedAt: Date | null;
 

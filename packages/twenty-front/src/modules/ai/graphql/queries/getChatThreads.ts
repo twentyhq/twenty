@@ -19,6 +19,7 @@ export const GET_CHAT_THREADS = gql`
       status
       snoozedUntil
       assigneeUserWorkspaceId
+      mentionedUserWorkspaceIds
       deletedAt
       lastMessageAt
       lastMessagePreview

@@ -87,6 +87,7 @@ const buildThread = (
     updatedAt: '2026-09-01T00:00:00.000Z',
     lastMessageAt: '2026-09-01T00:00:00.000Z',
     status: AgentChatThreadStatus.OPEN,
+    mentionedUserWorkspaceIds: [],
     snoozedUntil: null,
     assigneeUserWorkspaceId: null,
     ...overrides,

@@ -1,5 +1,9 @@
-import { IconCheck, IconClockHour8, IconInbox } from 'twenty-ui/icon';
-import { type IconComponent } from 'twenty-ui/icon';
+import {
+  IconCheck,
+  IconClockHour8,
+  IconInbox,
+  type IconComponent,
+} from 'twenty-ui/icon';
 
 import { AGENT_CHAT_THREAD_INBOX_STATE } from '@/ai/constants/AgentChatThreadInboxState';
 import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';

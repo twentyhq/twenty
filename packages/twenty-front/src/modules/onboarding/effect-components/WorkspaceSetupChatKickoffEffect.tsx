@@ -93,6 +93,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           channelId: thread.channelId ?? null,
           ownerUserWorkspaceId: thread.ownerUserWorkspaceId,
           status: AgentChatThreadStatus.OPEN,
+          mentionedUserWorkspaceIds: [],
           createdAt: thread.createdAt,
           updatedAt: thread.updatedAt,
           conversationSize: thread.conversationSize,

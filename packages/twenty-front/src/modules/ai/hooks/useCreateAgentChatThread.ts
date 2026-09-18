@@ -48,6 +48,7 @@ export const useCreateAgentChatThread = () => {
         workflowStepId: null,
         ownerUserWorkspaceId: data.createChatThread.ownerUserWorkspaceId,
         status: AgentChatThreadStatus.OPEN,
+        mentionedUserWorkspaceIds: [],
         createdAt: data.createChatThread.createdAt,
         updatedAt: data.createChatThread.updatedAt,
         lastMessageAt: null,

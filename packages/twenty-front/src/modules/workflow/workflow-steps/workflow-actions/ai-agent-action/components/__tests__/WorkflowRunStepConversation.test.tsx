@@ -36,6 +36,7 @@ const RUN_THREAD: AgentChatThread = {
   workflowStepId: STEP_ID,
   ownerUserWorkspaceId: 'uw-tim',
   status: AgentChatThreadStatus.OPEN,
+  mentionedUserWorkspaceIds: [],
   createdAt: '2026-09-01T00:00:00.000Z',
   updatedAt: '2026-09-01T00:00:00.000Z',
   totalInputTokens: 0,

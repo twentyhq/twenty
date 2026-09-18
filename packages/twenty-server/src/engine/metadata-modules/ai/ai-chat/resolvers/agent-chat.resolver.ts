@@ -285,6 +285,21 @@ export class AgentChatResolver {
       });
     }
 
+    // Recorded before the message is queued or streamed, so a thread that
+    // names someone reaches their inbox even when the answer takes a while.
+    const mentionedUserWorkspaceIds =
+      await this.agentChatThreadParticipantService.recordMentionsFromMessage({
+        threadId,
+        text,
+        workspaceId: workspace.id,
+      });
+
+    if (mentionedUserWorkspaceIds.length > 0) {
+      await this.agentChatService.broadcastThreadUpdated(thread, [
+        'mentionedUserWorkspaceIds',
+      ]);
+    }
+
     if (isDefined(thread.activeStreamId)) {
       const interruptedError =
         await this.agentChatStreamingService.reapDeadStream({

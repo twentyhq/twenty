@@ -27,6 +27,7 @@ describe('groupThreadsByDate', () => {
     title: 'Test Thread',
     ownerUserWorkspaceId: 'owner-user-workspace-id',
     status: AgentChatThreadStatus.OPEN,
+    mentionedUserWorkspaceIds: [],
     createdAt: twoDaysAgo.toISOString(),
     totalInputTokens: 0,
     totalOutputTokens: 0,

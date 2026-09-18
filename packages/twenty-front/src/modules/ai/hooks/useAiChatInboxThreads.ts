@@ -9,13 +9,18 @@ import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatTh
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 // A thread reaches someone's own list the way it does in a shared inbox: it
-// was handed to them, or it is theirs to begin with. Everything else stays in
-// the channel it belongs to until somebody takes it.
+// was handed to them, it called on them by name, or it is theirs to begin
+// with. Everything else stays in the channel it belongs to until somebody
+// takes it.
 const isThreadInPersonalInbox = (
   thread: FlatAgentChatThread,
   userWorkspaceId: string,
 ): boolean => {
   if (thread.assigneeUserWorkspaceId === userWorkspaceId) {
+    return true;
+  }
+
+  if (thread.mentionedUserWorkspaceIds.includes(userWorkspaceId)) {
     return true;
   }
 

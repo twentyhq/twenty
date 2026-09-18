@@ -79,6 +79,7 @@ describe('useSelectAiChatThread', () => {
       totalOutputCredits: 0.05,
       ownerUserWorkspaceId: 'owner-user-workspace-id',
       status: AgentChatThreadStatus.OPEN,
+      mentionedUserWorkspaceIds: [],
     } satisfies AgentChatThread;
     const metadataAtom = metadataStoreState.atomFamily('agentChatThreads');
     jotaiStore.set(metadataAtom, {

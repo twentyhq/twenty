@@ -74,6 +74,7 @@ const toLastMessagePreview = (text: string | null): string | null => {
 const serializeThreadForBroadcast = (
   thread: AgentChatThreadEntity,
   lastMessageSummary: AgentChatThreadLastMessageSummary,
+  mentionedUserWorkspaceIds: string[],
 ) => ({
   id: thread.id,
   title: thread.title,
@@ -91,6 +92,7 @@ const serializeThreadForBroadcast = (
   totalOutputCredits: toDisplayCredits(thread.totalOutputCredits),
   status: thread.status,
   snoozedUntil: thread.snoozedUntil,
+  mentionedUserWorkspaceIds,
   assigneeUserWorkspaceId: thread.assigneeUserWorkspaceId,
   deletedAt: thread.deletedAt,
   ...lastMessageSummary,
@@ -210,10 +212,16 @@ export class AgentChatService {
     thread: AgentChatThreadEntity;
     recipientUserWorkspaceIds: string[] | undefined;
   }): Promise<void> {
-    const lastMessageSummary = await this.getLastMessageSummaryForThread({
-      threadId: thread.id,
-      workspaceId: thread.workspaceId,
-    });
+    const [lastMessageSummary, mentionedUserWorkspaceIds] = await Promise.all([
+      this.getLastMessageSummaryForThread({
+        threadId: thread.id,
+        workspaceId: thread.workspaceId,
+      }),
+      this.getMentionedUserWorkspaceIdsForThread({
+        threadId: thread.id,
+        workspaceId: thread.workspaceId,
+      }),
+    ]);
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: thread.workspaceId,
@@ -224,7 +232,11 @@ export class AgentChatService {
           recordId: thread.id,
           recipientUserWorkspaceIds,
           properties: {
-            after: serializeThreadForBroadcast(thread, lastMessageSummary),
+            after: serializeThreadForBroadcast(
+              thread,
+              lastMessageSummary,
+              mentionedUserWorkspaceIds,
+            ),
           },
         },
       ],
@@ -250,6 +262,7 @@ export class AgentChatService {
             before: serializeThreadForBroadcast(
               thread,
               EMPTY_LAST_MESSAGE_SUMMARY,
+              [],
             ),
           },
         },
@@ -572,8 +585,12 @@ export class AgentChatService {
         { userWorkspaceId },
       )
       .where('thread.workspaceId = :workspaceId', { workspaceId })
+      // The creator clause mirrors buildThreadAccessWhere: the owner
+      // participant row is written from this same column, so naming it here
+      // too keeps a thread listed for its owner in the window between the
+      // deploy that creates the participant table and the pass that fills it.
       .andWhere(
-        '(participant.id IS NOT NULL OR channelMember.id IS NOT NULL OR channelRoleTarget.id IS NOT NULL OR channel.visibility = :publicVisibility)',
+        '(thread.userWorkspaceId = :userWorkspaceId OR participant.id IS NOT NULL OR channelMember.id IS NOT NULL OR channelRoleTarget.id IS NOT NULL OR channel.visibility = :publicVisibility)',
         { publicVisibility: AgentChatChannelVisibility.PUBLIC },
       )
       .groupBy('thread.id')
@@ -589,15 +606,20 @@ export class AgentChatService {
       (rankedThread) => rankedThread.id,
     );
 
-    const [threads, lastMessageSummaryByThreadId] = await Promise.all([
-      this.threadRepository.find(workspaceId, {
-        where: { id: In(rankedThreadIds) },
-      }),
-      this.getLastMessageSummaryByThreadId({
-        threadIds: rankedThreadIds,
-        workspaceId,
-      }),
-    ]);
+    const [threads, lastMessageSummaryByThreadId, mentionsByThreadId] =
+      await Promise.all([
+        this.threadRepository.find(workspaceId, {
+          where: { id: In(rankedThreadIds) },
+        }),
+        this.getLastMessageSummaryByThreadId({
+          threadIds: rankedThreadIds,
+          workspaceId,
+        }),
+        this.getMentionedUserWorkspaceIdsByThreadId({
+          threadIds: rankedThreadIds,
+          workspaceId,
+        }),
+      ]);
 
     const threadById = new Map(threads.map((thread) => [thread.id, thread]));
 
@@ -610,10 +632,58 @@ export class AgentChatService {
               ...thread,
               ...(lastMessageSummaryByThreadId.get(thread.id) ??
                 EMPTY_LAST_MESSAGE_SUMMARY),
+              mentionedUserWorkspaceIds:
+                mentionsByThreadId.get(thread.id) ?? [],
             },
           ]
         : [];
     });
+  }
+
+  // Who a thread has called on, in one query for the whole list, so the
+  // inbox can tell a thread that named you from one that merely reached you.
+  async getMentionedUserWorkspaceIdsByThreadId({
+    threadIds,
+    workspaceId,
+  }: {
+    threadIds: string[];
+    workspaceId: string;
+  }): Promise<Map<string, string[]>> {
+    if (threadIds.length === 0) {
+      return new Map();
+    }
+
+    const participants = await this.participantRepository.find(workspaceId, {
+      where: { threadId: In(threadIds), lastMentionedAt: Not(IsNull()) },
+      select: ['threadId', 'userWorkspaceId'],
+    });
+
+    return participants.reduce((accumulator, participant) => {
+      const current = accumulator.get(participant.threadId) ?? [];
+
+      accumulator.set(participant.threadId, [
+        ...current,
+        participant.userWorkspaceId,
+      ]);
+
+      return accumulator;
+    }, new Map<string, string[]>());
+  }
+
+  async getMentionedUserWorkspaceIdsForThread({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<string[]> {
+    const mentionsByThreadId =
+      await this.getMentionedUserWorkspaceIdsByThreadId({
+        threadIds: [threadId],
+        workspaceId,
+      });
+
+    return mentionsByThreadId.get(threadId) ?? [];
   }
 
   async getLastMessageSummaryForThread({
@@ -1720,12 +1790,16 @@ export class AgentChatService {
     await this.broadcastThreadUpdated(thread, updatedFields);
   }
 
-  private async broadcastThreadUpdated(
+  async broadcastThreadUpdated(
     thread: AgentChatThreadEntity,
     updatedFields: (keyof AgentChatThreadDTO)[],
     recipients?: { userWorkspaceIds: string[] | undefined },
   ): Promise<void> {
-    const [lastMessageSummary, recipientUserWorkspaceIds] = await Promise.all([
+    const [
+      lastMessageSummary,
+      recipientUserWorkspaceIds,
+      mentionedUserWorkspaceIds,
+    ] = await Promise.all([
       this.getLastMessageSummaryForThread({
         threadId: thread.id,
         workspaceId: thread.workspaceId,
@@ -1736,6 +1810,10 @@ export class AgentChatService {
             threadId: thread.id,
             workspaceId: thread.workspaceId,
           }),
+      this.getMentionedUserWorkspaceIdsForThread({
+        threadId: thread.id,
+        workspaceId: thread.workspaceId,
+      }),
     ]);
 
     await this.workspaceEventBroadcaster.broadcast({
@@ -1748,7 +1826,11 @@ export class AgentChatService {
           recipientUserWorkspaceIds,
           properties: {
             updatedFields,
-            after: serializeThreadForBroadcast(thread, lastMessageSummary),
+            after: serializeThreadForBroadcast(
+              thread,
+              lastMessageSummary,
+              mentionedUserWorkspaceIds,
+            ),
           },
         },
       ],
