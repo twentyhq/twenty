@@ -459,6 +459,60 @@ describe('importCallRecordingMedia', () => {
     );
   });
 
+  it('reports the recording gone without asking for a redelivery when Recall answers 404', async () => {
+    buildRecallRecordingResponse = () =>
+      new Response(JSON.stringify({ detail: 'Not found.' }), { status: 404 });
+
+    const mediaImportResult = await importCallRecordingMedia({
+      callRecordingId: 'call-recording-1',
+      externalRecordingId: 'recall-recording-1',
+      hasAudio: false,
+      hasVideo: false,
+    });
+
+    expect(mediaImportResult).toEqual({
+      updateData: {},
+      hasRetryableFailure: false,
+      isRecordingGone: true,
+    });
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('records an expired marker for a deleted artifact', async () => {
+    buildRecallRecordingResponse = () =>
+      new Response(
+        JSON.stringify({
+          id: 'recall-recording-1',
+          media_shortcuts: {
+            video_mixed: { status: { code: 'deleted' } },
+            audio_mixed: { download_url: AUDIO_URL, status: { code: 'done' } },
+          },
+        }),
+        { status: 200 },
+      );
+    stubFetch({
+      downloadsByUrl: {
+        [AUDIO_URL]: buildDownloadResponse({ contentLengthBytes: 8 }),
+      },
+    });
+
+    const mediaImportResult = await importCallRecordingMedia({
+      callRecordingId: 'call-recording-1',
+      externalRecordingId: 'recall-recording-1',
+      hasAudio: false,
+      hasVideo: false,
+    });
+
+    expect(mediaImportResult).toEqual({
+      updateData: {
+        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        callRecorderFailureReason: 'video_import_expired',
+      },
+      hasRetryableFailure: false,
+    });
+    expect(getUploadRequestCall('video.mp4')).toBeUndefined();
+  });
+
   it('records both markers when video and audio exceed the cap', async () => {
     stubFetch({
       downloadsByUrl: {
