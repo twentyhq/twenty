@@ -114,6 +114,8 @@ export type AgentChatQuestionAnswerInput = {
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
   assigneeUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
+  assistantLastReadAt?: Maybe<Scalars['DateTime']['output']>;
+  assistantLastReadMessageId?: Maybe<Scalars['UUID']['output']>;
   channelId?: Maybe<Scalars['UUID']['output']>;
   contextWindowTokens?: Maybe<Scalars['Int']['output']>;
   conversationSize: Scalars['Int']['output'];

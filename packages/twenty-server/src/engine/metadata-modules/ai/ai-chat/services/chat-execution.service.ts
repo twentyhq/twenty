@@ -97,6 +97,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { AgentChatThreadReadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-read.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 
@@ -139,6 +140,7 @@ export class ChatExecutionService {
     private readonly messagePruningService: MessagePruningService,
     private readonly metricsService: MetricsService,
     private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
+    private readonly agentChatThreadReadService: AgentChatThreadReadService,
   ) {}
 
   async streamChat({
@@ -424,6 +426,17 @@ export class ChatExecutionService {
     }
 
     const modelMessages = pruningResult.messages;
+
+    // The conversation is now in the model's hands, so the assistant has read
+    // it whether or not it ends up saying anything. Moving the cursor here
+    // rather than after the reply is what lets silence be legible: a thread it
+    // took in and had nothing to add to still shows as seen.
+    if (isDefined(threadId)) {
+      await this.agentChatThreadReadService.markThreadReadByAssistant({
+        threadId,
+        workspaceId: workspace.id,
+      });
+    }
 
     let hasNoMoreAvailableCredits = false;
     const streamStartedAt = performance.now();

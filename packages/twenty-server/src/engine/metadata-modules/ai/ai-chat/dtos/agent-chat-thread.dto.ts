@@ -65,6 +65,15 @@ export class AgentChatThreadDTO {
   @Field(() => [UUIDScalarType])
   mentionedUserWorkspaceIds: string[];
 
+  // Where the assistant has read to. It moves when the conversation reaches
+  // the model, so a thread it took in and had nothing to add to still shows
+  // as seen rather than as ignored.
+  @Field(() => Date, { nullable: true })
+  assistantLastReadAt: Date | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  assistantLastReadMessageId: string | null;
+
   @Field(() => Date, { nullable: true })
   deletedAt: Date | null;
 
