@@ -476,7 +476,23 @@ export class AgentChatService {
       role: AgentChatThreadParticipantRole.OWNER,
     });
 
-    if (!isOwner) {
+    if (isOwner) {
+      return;
+    }
+
+    // The same deploy window buildThreadAccessWhere covers on the read side:
+    // the fast command creates the participant table and the slow one fills
+    // it, so in between a thread that predates the upgrade has no owner row.
+    // The owner row is written from this column and can be neither removed nor
+    // handed over, so the column answers the same question. Without this, the
+    // creator of an older thread could read it but not rename, move or delete
+    // it until the backfill caught up.
+    const isCreator = await this.threadRepository.existsBy(workspaceId, {
+      id: threadId,
+      userWorkspaceId,
+    });
+
+    if (!isCreator) {
       throw new AiException(
         'Only the thread owner can do this',
         AiExceptionCode.THREAD_ACTION_NOT_ALLOWED,
