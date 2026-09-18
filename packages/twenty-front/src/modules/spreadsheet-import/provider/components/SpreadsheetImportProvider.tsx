@@ -6,7 +6,7 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { SPREADSHEET_IMPORT_MODAL_ID } from '@/spreadsheet-import/constants/SpreadsheetImportModalId';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { matchColumnsState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -40,7 +40,7 @@ export const SpreadsheetImportProvider = (
 
   const setMatchColumns = useSetAtomState(matchColumnsState);
 
-  const { closeModal } = useModal();
+  const { closeDialog } = useDialog();
 
   const handleClose = () => {
     spreadsheetImportDialog.options?.onAbortSubmit?.();
@@ -50,7 +50,7 @@ export const SpreadsheetImportProvider = (
       options: null,
     });
 
-    closeModal(SPREADSHEET_IMPORT_MODAL_ID);
+    closeDialog(SPREADSHEET_IMPORT_MODAL_ID);
 
     setMatchColumns([]);
   };

@@ -24,8 +24,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
@@ -85,7 +85,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const { onSubmit } = useContext(FieldInputEventContext);
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const { relationType, objectMetadataNameSingular } =
     fieldDefinition.metadata as FieldRelationMetadata;
@@ -188,7 +188,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const handleDelete = async () => {
     closeDropdown(dropdownInstanceId);
-    openModal(getDeleteRelationModalId(relationRecord.id));
+    openDialog(getDeleteRelationModalId(relationRecord.id));
   };
 
   const handleConfirmDelete = async () => {
@@ -274,8 +274,8 @@ export const RecordDetailRelationRecordsListItem = ({
         />
       </AnimatedEaseInOut>
       {createPortal(
-        <ConfirmationModal
-          modalInstanceId={getDeleteRelationModalId(relationRecord.id)}
+        <ConfirmationDialog
+          dialogId={getDeleteRelationModalId(relationRecord.id)}
           title={t`Delete Related ${relationObjectLabelSingular}`}
           subtitle={
             <Trans>
