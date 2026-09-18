@@ -27,6 +27,13 @@ export class AddAgentChatThreadInboxStateFastInstanceCommand implements FastInst
     );
 
     await queryRunner.query(
+      `ALTER TABLE "core"."agentChatThread"
+       ADD CONSTRAINT "FK_2b8480f5591cd2c1674334a5872"
+       FOREIGN KEY ("assigneeUserWorkspaceId") REFERENCES "core"."userWorkspace"("id")
+       ON DELETE SET NULL ON UPDATE NO ACTION`,
+    );
+
+    await queryRunner.query(
       `ALTER TABLE "core"."agentChatThreadParticipant" ADD COLUMN IF NOT EXISTS "lastMentionedAt" timestamptz`,
     );
   }
@@ -34,6 +41,10 @@ export class AddAgentChatThreadInboxStateFastInstanceCommand implements FastInst
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."agentChatThreadParticipant" DROP COLUMN IF EXISTS "lastMentionedAt"`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."agentChatThread" DROP CONSTRAINT IF EXISTS "FK_2b8480f5591cd2c1674334a5872"`,
     );
 
     await queryRunner.query(

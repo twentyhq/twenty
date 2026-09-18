@@ -29,6 +29,7 @@ import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration
 
 @Entity({ name: 'agentChatThread', schema: 'core' })
 @Index('IDX_AGENT_CHAT_THREAD_ID_DELETED_AT', ['id', 'deletedAt'])
+@Index('IDX_AGENT_CHAT_THREAD_STATUS', ['workspaceId', 'status'])
 export class AgentChatThreadEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
