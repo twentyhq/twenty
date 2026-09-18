@@ -1,6 +1,6 @@
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
-import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/PickerListItemsTest';
+import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { type Meta } from '@storybook/react-vite';
