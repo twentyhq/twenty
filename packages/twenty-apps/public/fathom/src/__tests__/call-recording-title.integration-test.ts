@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { FATHOM_MEETING_TOPIC_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { renameFathomCallRecording } from 'src/logic-functions/utils/rename-fathom-call-recording.util';
 
 const runAgentMock = vi.hoisted(() => vi.fn());
@@ -92,7 +93,10 @@ describe('Fathom background recording titles', () => {
         renamed: false,
       },
     );
-    expect(runAgentMock).toHaveBeenCalledTimes(1);
+    expect(runAgentMock).toHaveBeenCalledExactlyOnceWith({
+      agentUniversalIdentifier: FATHOM_MEETING_TOPIC_AGENT_UNIVERSAL_IDENTIFIER,
+      prompt: TITLE_CONTEXT.summary,
+    });
   });
 
   it('skips generation when the title was already changed', async () => {
@@ -149,7 +153,10 @@ describe('Fathom background recording titles', () => {
         renamed: false,
       },
     );
-    expect(runAgentMock).toHaveBeenCalledTimes(1);
+    expect(runAgentMock).toHaveBeenCalledExactlyOnceWith({
+      agentUniversalIdentifier: FATHOM_MEETING_TOPIC_AGENT_UNIVERSAL_IDENTIFIER,
+      prompt: TITLE_CONTEXT.summary,
+    });
     expect(await readTitle(payload.callRecordingId)).toBe(
       'My customer follow-up',
     );
