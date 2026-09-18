@@ -13,6 +13,8 @@ import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constan
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { coreWorkflowsSelectionState } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
 import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -31,6 +33,13 @@ export const useCoreObjectsCommands = () => {
   );
 
   const canManageWorkflows = useHasPermissionFlag(PermissionFlagType.WORKFLOWS);
+  const { objectMetadataItem: workflowObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.Workflow,
+    });
+  const workflowObjectPermissions = useObjectPermissionsForObject(
+    workflowObjectMetadataItem.id,
+  );
 
   const coreWorkflowsSelection = useAtomStateValue(coreWorkflowsSelectionState);
   const coreWorkflowsFilterSettings = useAtomStateValue(
@@ -70,6 +79,7 @@ export const useCoreObjectsCommands = () => {
     !isInPreviewMode &&
     isNonEmptyArray(selectedCoreWorkflowIds) &&
     canManageWorkflows &&
+    workflowObjectPermissions.canSoftDeleteObjectRecords &&
     matchesSidePanelSearch(coreWorkflowsDeleteCommandLabel);
 
   const coreObjectsCommandIds = [

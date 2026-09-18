@@ -2,6 +2,7 @@ import { useCoreWorkflowForShowPage } from '@/object-core/workflows/hooks/useCor
 import { useCoreWorkflowVersionContent } from '@/object-core/workflows/hooks/useCoreWorkflowVersionContent';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useEffectiveDraftVersionId } from '@/workflow/hooks/useEffectiveDraftVersionId';
+import { getWorkflowCurrentVersion } from '@/workflow/utils/getWorkflowCurrentVersion';
 import {
   type Workflow,
   type WorkflowVersion,
@@ -82,7 +83,7 @@ export const useWorkflowWithCurrentVersion = (
     .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
 
   const currentVersionId = isWorkflowCoreIndexPageEnabled
-    ? (draftVersionIdFromServer ?? workflowVersions[0]?.id)
+    ? getWorkflowCurrentVersion(workflowVersions)?.id
     : (effectiveDraftId ?? workflowVersions[0]?.id);
 
   const { record: workspaceCurrentVersion } = useFindOneRecord<WorkflowVersion>(

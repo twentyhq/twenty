@@ -3,6 +3,7 @@ import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-comman
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -47,14 +48,21 @@ export const SeeRunsWorkflowVersionSingleRecordCommand = () => {
   const isCore = useIsWorkflowCoreEnabled();
   const { selectedRecords } = useHeadlessCommandContextApi();
 
-  const recordId = selectedRecords[0]?.id;
   const selectedRecord = selectedRecords[0];
+  const workspaceWorkflowVersionId = selectedRecord?.id;
+  const workspaceWorkflowId = selectedRecord?.workflow?.id;
+  const { coreWorkflowVersion } = useCoreWorkflowVersion(
+    isCore ? selectedRecord?.coreWorkflowVersionId : undefined,
+  );
 
   const workflowId = isCore
-    ? selectedRecord?.workflowId
-    : selectedRecord?.workflow?.id;
+    ? coreWorkflowVersion?.coreWorkflowId
+    : workspaceWorkflowId;
+  const workflowVersionId = isCore
+    ? coreWorkflowVersion?.id
+    : workspaceWorkflowVersionId;
 
-  if (!isDefined(recordId) || !isDefined(workflowId)) {
+  if (!isDefined(workflowVersionId) || !isDefined(workflowId)) {
     throw new Error(
       'Record ID and workflow ID are required to see runs workflow version',
     );
@@ -63,7 +71,7 @@ export const SeeRunsWorkflowVersionSingleRecordCommand = () => {
   return (
     <SeeRunsWorkflowVersionSingleRecordCommandContent
       workflowId={workflowId}
-      recordId={recordId}
+      recordId={workflowVersionId}
     />
   );
 };

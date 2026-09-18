@@ -38,9 +38,15 @@ export const WorkflowRunVisualizerEffect = ({
   );
 
   const workflowVersionId = isCore
-    ? (workflowRun?.coreWorkflowVersionId ?? undefined)
+    ? (workflowRun?.coreWorkflowVersionId ??
+      workflowRun?.workflowVersionId ??
+      undefined)
     : (workflowRun?.workflowVersionId ?? undefined);
-  const workflowVersion = useWorkflowVersion(workflowVersionId);
+  const workflowVersion = useWorkflowVersion(
+    isCore
+      ? (workflowRun?.coreWorkflowVersionId ?? undefined)
+      : workflowVersionId,
+  );
   const setWorkflowVisualizerWorkflowVersionId = useSetAtomComponentState(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
@@ -89,7 +95,7 @@ export const WorkflowRunVisualizerEffect = ({
 
     setWorkflowVisualizerWorkflowId(
       isCore
-        ? (workflowRun.coreWorkflowId ?? undefined)
+        ? (workflowRun.coreWorkflowId ?? workflowRun.workflowId ?? undefined)
         : (workflowRun.workflowId ?? undefined),
     );
   }, [isCore, setWorkflowVisualizerWorkflowId, workflowRun]);

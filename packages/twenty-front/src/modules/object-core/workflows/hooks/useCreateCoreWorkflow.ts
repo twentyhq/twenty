@@ -1,13 +1,16 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CREATE_CORE_WORKFLOW } from '@/object-core/workflows/graphql/mutations/createCoreWorkflow';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import {
@@ -20,9 +23,19 @@ import { logError } from '~/utils/logError';
 export const useCreateCoreWorkflow = () => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const canCreateCoreWorkflow = useHasPermissionFlag(
-    PermissionFlagType.WORKFLOWS,
+  const canManageWorkflows = useHasPermissionFlag(PermissionFlagType.WORKFLOWS);
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.Workflow,
+  });
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
   );
+  const canCreateCoreWorkflow =
+    canManageWorkflows &&
+    canCreateRecordsForObjectMetadataItem({
+      objectPermissions,
+      objectMetadataItem,
+    });
 
   const [createCoreWorkflowMutation] = useMutation<
     CreateCoreWorkflowMutation,

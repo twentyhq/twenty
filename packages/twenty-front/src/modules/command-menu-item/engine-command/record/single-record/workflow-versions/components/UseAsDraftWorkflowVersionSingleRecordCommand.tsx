@@ -4,6 +4,7 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -72,11 +73,21 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
 };
 
 export const UseAsDraftWorkflowVersionSingleRecordCommand = () => {
+  const isCore = useIsWorkflowCoreEnabled();
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const selectedRecord = selectedRecords[0];
+  const { coreWorkflowVersion } = useCoreWorkflowVersion(
+    isCore ? selectedRecord?.coreWorkflowVersionId : undefined,
+  );
+  const workflowId = isCore
+    ? coreWorkflowVersion?.coreWorkflowId
+    : selectedRecord?.workflowId;
+  const workflowVersionId = isCore
+    ? coreWorkflowVersion?.id
+    : selectedRecord?.id;
 
-  if (!isDefined(selectedRecord) || !isDefined(selectedRecord.workflowId)) {
+  if (!isDefined(workflowId) || !isDefined(workflowVersionId)) {
     throw new Error(
       'Record ID and workflow ID are required to use as draft workflow version',
     );
@@ -84,8 +95,8 @@ export const UseAsDraftWorkflowVersionSingleRecordCommand = () => {
 
   return (
     <UseAsDraftWorkflowVersionSingleRecordCommandContent
-      workflowId={selectedRecord.workflowId}
-      workflowVersionId={selectedRecord.id}
+      workflowId={workflowId}
+      workflowVersionId={workflowVersionId}
     />
   );
 };

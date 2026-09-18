@@ -174,20 +174,30 @@ export class WorkflowCommonWorkspaceService {
     if (!isNonEmptyString(workflow.lastPublishedVersionId)) {
       return;
     }
+    const lastPublishedVersionId = workflow.lastPublishedVersionId;
 
-    const workflowVersion = await this.getWorkflowVersionOrFail({
-      workspaceId,
-      workflowVersionId: workflow.lastPublishedVersionId,
-    });
+    const workflowVersion =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowVersionRepository =
+          this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return workflowVersionRepository.findOne({
+          where: { id: lastPublishedVersionId },
+          withDeleted: true,
+        });
+      }, buildSystemAuthContext(workspaceId));
     const existingCommandMenuItem =
-      (isDefined(workflowVersion.coreWorkflowVersionId)
+      (isDefined(workflowVersion?.coreWorkflowVersionId)
         ? await this.commandMenuItemService.findByCoreWorkflowVersionId(
             workflowVersion.coreWorkflowVersionId,
             workspaceId,
           )
         : null) ??
       (await this.commandMenuItemService.findByWorkflowVersionId(
-        workflow.lastPublishedVersionId,
+        lastPublishedVersionId,
         workspaceId,
       ));
 

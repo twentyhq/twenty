@@ -43,12 +43,16 @@ export const useActiveWorkflowVersion = ({
       workflowVersion: core.data?.coreWorkflowVersions.find(
         (version) => version.status === 'ACTIVE',
       ),
+      hasDraftVersion: core.data?.coreWorkflowVersions.some(
+        (version) => version.status === 'DRAFT',
+      ),
       loading: core.loading,
     };
   }
 
   return {
     workflowVersion: workflowVersions?.[0],
+    hasDraftVersion: false,
     loading,
   };
 };

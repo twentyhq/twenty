@@ -2,7 +2,10 @@ import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CoreWorkflowsWithCurrentVersionsLoader } from '@/command-menu-item/components/CoreWorkflowsWithCurrentVersionsLoader';
 import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useWorkflowsWithCurrentVersions';
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 
 import { CommandMenuContextProviderContent } from './CommandMenuContextProviderContent';
 
@@ -23,44 +26,59 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   selectedWorkflowRecordIds,
   isInPreviewMode,
 }: CommandMenuContextProviderWithWorkflowEnrichmentProps) => {
+  const isCore = useIsWorkflowCoreEnabled();
   const workflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
-    selectedWorkflowRecordIds,
+    isCore ? [] : selectedWorkflowRecordIds,
   );
 
-  const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
-    (record) => {
-      const workflowWithCurrentVersion = workflowsWithCurrentVersions.find(
-        (workflow) => workflow.id === record.id,
-      );
+  const renderProvider = (
+    workflows: WorkflowWithCurrentVersion[],
+  ): React.ReactNode => {
+    const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
+      (record) => {
+        const workflowWithCurrentVersion = workflows.find(
+          (workflow) => workflow.id === record.id,
+        );
 
-      if (!isDefined(workflowWithCurrentVersion)) {
-        return record;
-      }
+        if (!isDefined(workflowWithCurrentVersion)) {
+          return record;
+        }
 
-      return {
-        ...record,
-        currentVersion: workflowWithCurrentVersion.currentVersion,
-        versions: workflowWithCurrentVersion.versions,
-        statuses: workflowWithCurrentVersion.statuses,
-        lastPublishedVersionId:
-          workflowWithCurrentVersion.lastPublishedVersionId,
-      };
-    },
-  );
+        return {
+          ...record,
+          currentVersion: workflowWithCurrentVersion.currentVersion,
+          versions: workflowWithCurrentVersion.versions,
+          statuses: workflowWithCurrentVersion.statuses,
+          lastPublishedVersionId:
+            workflowWithCurrentVersion.lastPublishedVersionId,
+        };
+      },
+    );
 
-  const enrichedCommandMenuContextApi = {
-    ...commandMenuContextApi,
-    selectedRecords: enrichedSelectedRecords,
+    const enrichedCommandMenuContextApi = {
+      ...commandMenuContextApi,
+      selectedRecords: enrichedSelectedRecords,
+    };
+
+    return (
+      <CommandMenuContextProviderContent
+        displayType={displayType}
+        containerType={containerType}
+        commandMenuContextApi={enrichedCommandMenuContextApi}
+        isInPreviewMode={isInPreviewMode}
+      >
+        {children}
+      </CommandMenuContextProviderContent>
+    );
   };
 
-  return (
-    <CommandMenuContextProviderContent
-      displayType={displayType}
-      containerType={containerType}
-      commandMenuContextApi={enrichedCommandMenuContextApi}
-      isInPreviewMode={isInPreviewMode}
+  return isCore ? (
+    <CoreWorkflowsWithCurrentVersionsLoader
+      workflowIds={selectedWorkflowRecordIds}
     >
-      {children}
-    </CommandMenuContextProviderContent>
+      {renderProvider}
+    </CoreWorkflowsWithCurrentVersionsLoader>
+  ) : (
+    renderProvider(workflowsWithCurrentVersions)
   );
 };

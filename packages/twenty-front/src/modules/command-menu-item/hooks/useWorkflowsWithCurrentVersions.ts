@@ -1,5 +1,3 @@
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -27,10 +25,6 @@ const getCurrentVersionId = (workflow: Workflow): string | undefined => {
 export const useWorkflowsWithCurrentVersions = (
   workflowIds: string[],
 ): WorkflowWithCurrentVersion[] => {
-  const isCore = useIsWorkflowCoreEnabled();
-  const coreWorkflow = useWorkflowWithCurrentVersion(
-    isCore ? workflowIds[0] : undefined,
-  );
   const { records: workflows } = useFindManyRecords<Workflow>({
     objectNameSingular: CoreObjectNameSingular.Workflow,
     filter: { id: { in: workflowIds } },
@@ -46,7 +40,7 @@ export const useWorkflowsWithCurrentVersions = (
         createdAt: true,
       },
     },
-    skip: isCore || workflowIds.length === 0,
+    skip: workflowIds.length === 0,
   });
 
   const currentVersionIds = workflows
@@ -56,12 +50,8 @@ export const useWorkflowsWithCurrentVersions = (
   const { records: currentVersions } = useFindManyRecords<WorkflowVersion>({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     filter: { id: { in: currentVersionIds } },
-    skip: isCore || currentVersionIds.length === 0,
+    skip: currentVersionIds.length === 0,
   });
-
-  if (isCore) {
-    return isDefined(coreWorkflow) ? [coreWorkflow] : [];
-  }
 
   return workflows
     .map((workflow) => {

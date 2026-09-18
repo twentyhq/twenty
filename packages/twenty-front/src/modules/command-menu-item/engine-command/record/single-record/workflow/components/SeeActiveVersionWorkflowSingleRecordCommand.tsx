@@ -11,9 +11,10 @@ export const SeeActiveVersionWorkflowSingleRecordCommand = () => {
 
   const recordId = selectedRecords[0]?.id;
 
-  const { workflowVersion, loading } = useActiveWorkflowVersion({
-    workflowId: recordId ?? '',
-  });
+  const { workflowVersion, hasDraftVersion, loading } =
+    useActiveWorkflowVersion({
+      workflowId: recordId ?? '',
+    });
 
   if (!isDefined(recordId)) {
     throw new Error('Record ID is required to see active version workflow');
@@ -28,7 +29,9 @@ export const SeeActiveVersionWorkflowSingleRecordCommand = () => {
       <HeadlessNavigateEngineCommand
         to={AppPath.WorkflowCoreShowPage}
         params={{ coreWorkflowId: recordId }}
-        queryParams={{ version: workflowVersion.id }}
+        queryParams={
+          hasDraftVersion ? { version: workflowVersion.id } : undefined
+        }
       />
     );
   }
