@@ -1,4 +1,5 @@
 import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 
 describe('groupThreadsByDate', () => {
@@ -23,6 +24,7 @@ describe('groupThreadsByDate', () => {
   > = {
     title: 'Test Thread',
     ownerUserWorkspaceId: 'owner-user-workspace-id',
+    status: AgentChatThreadStatus.OPEN,
     createdAt: twoDaysAgo.toISOString(),
     totalInputTokens: 0,
     totalOutputTokens: 0,

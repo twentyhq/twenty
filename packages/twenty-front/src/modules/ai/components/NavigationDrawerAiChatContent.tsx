@@ -9,9 +9,9 @@ import { AiChatChannelDeleteConfirmationModal } from '@/ai/components/AiChatChan
 import { AiChatChannelsMenu } from '@/ai/components/AiChatChannelsMenu';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { NavigationDrawerAiChatChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
+import { NavigationDrawerAiChatInboxSection } from '@/ai/components/NavigationDrawerAiChatInboxSection';
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
-import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatChannels } from '@/ai/hooks/useChatChannels';
@@ -62,7 +62,6 @@ const StyledFetchMoreTrigger = styled.div`
   width: 100%;
 `;
 
-const AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID = 'AiChatDirectMessages';
 const AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
 
 export const NavigationDrawerAiChatContent = () => {
@@ -83,13 +82,6 @@ export const NavigationDrawerAiChatContent = () => {
     fetchMoreRef,
   } = useChatThreads();
   const { joinedChannels, browsableChannels } = useChatChannels();
-  // Channel threads live on their channel page and a workflow run's
-  // conversation is reached from the run, so the drawer lists the channels
-  // themselves and, beside them, only the chats a person holds directly.
-  const threads = allThreads.filter(
-    (thread) =>
-      !isDefined(thread.channelId) && !isDefined(thread.workflowRunId),
-  );
   const hasChannelsSection =
     joinedChannels.length > 0 || browsableChannels.length > 0;
 
@@ -111,12 +103,20 @@ export const NavigationDrawerAiChatContent = () => {
             onClick={() => switchToNewChat()}
           />
         </StyledNewChatItem>
+        <NavigationDrawerAiChatInboxSection />
         {hasChannelsSection && (
           <StyledSectionsContainer>
             <CollapsibleNavigationDrawerSection
               sectionId={AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID}
               label={t`Channels`}
-              rightIcon={<AiChatChannelsMenu />}
+              rightIcon={
+                <>
+                  <AiChatChannelsMenu />
+                  <AiChatThreadFilterDropdown
+                    surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
+                  />
+                </>
+              }
               alwaysShowRightIcon={joinedChannels.length === 0}
             >
               {joinedChannels.map((channel) => (
@@ -128,21 +128,6 @@ export const NavigationDrawerAiChatContent = () => {
             </CollapsibleNavigationDrawerSection>
           </StyledSectionsContainer>
         )}
-        <NavigationDrawerAiChatThreadSection
-          sectionId={AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID}
-          title={t`Direct messages`}
-          threads={threads}
-          currentThreadId={currentAiChatThread}
-          onThreadClick={handleThreadClick}
-          rightIcon={
-            <>
-              {!hasChannelsSection && <AiChatChannelsMenu />}
-              <AiChatThreadFilterDropdown
-                surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-              />
-            </>
-          }
-        />
         {allThreads.length === 0 && isExpanded ? (
           <StyledEmptyState>{t`No chat`}</StyledEmptyState>
         ) : null}

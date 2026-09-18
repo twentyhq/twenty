@@ -41,6 +41,12 @@ const AiChatChannelPage = lazy(() =>
   })),
 );
 
+const AiChatInboxPage = lazy(() =>
+  import('~/pages/ai-chat/AiChatInboxPage').then((module) => ({
+    default: module.AiChatInboxPage,
+  })),
+);
+
 const AiChatPage = lazy(() =>
   import('~/pages/ai-chat/AiChatPage').then((module) => ({
     default: module.AiChatPage,
@@ -130,6 +136,14 @@ export const createWorkspaceRouteObjects = ({
       element: (
         <LazyRoute>
           <AiChatChannelPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.AiChatInbox,
+      element: (
+        <LazyRoute>
+          <AiChatInboxPage />
         </LazyRoute>
       ),
     },

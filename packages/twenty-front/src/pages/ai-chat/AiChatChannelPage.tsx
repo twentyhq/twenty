@@ -11,10 +11,18 @@ import { AiChatChannelDeleteConfirmationModal } from '@/ai/components/AiChatChan
 import { AiChatChannelPageHeader } from '@/ai/components/AiChatChannelPageHeader';
 import { AiChatChannelThreadList } from '@/ai/components/AiChatChannelThreadList';
 import { AiChatChannelThreadPane } from '@/ai/components/AiChatChannelThreadPane';
+import { AiChatThreadInboxStateTabs } from '@/ai/components/AiChatThreadInboxStateTabs';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
+import { AGENT_CHAT_THREAD_INBOX_STATE_ORDER } from '@/ai/constants/AgentChatThreadInboxStateLabels';
+import { AI_CHAT_CHANNEL_TABS_INSTANCE_ID } from '@/ai/constants/AiChatInboxTabsInstanceId';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useChatChannels } from '@/ai/hooks/useChatChannels';
+import { useChatThreads } from '@/ai/hooks/useChatThreads';
+import { agentChatChannelInboxStateTabState } from '@/ai/states/agentChatInboxStateTabState';
+import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
+import { getAgentChatThreadInboxState } from '@/ai/utils/getAgentChatThreadInboxState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const CHANNEL_THREAD_LIST_PANE_WIDTH = 400;
@@ -64,6 +72,10 @@ export const AiChatChannelPage = () => {
   const navigateApp = useNavigateApp();
   const { findChannelById, loading } = useChatChannels();
   const channel = findChannelById(channelId);
+  const [inboxState, setInboxState] = useAtomState(
+    agentChatChannelInboxStateTabState,
+  );
+  const { threads } = useChatThreads();
   // On a phone the list and the chat take turns; a new chat has no thread in
   // the URL yet, so the page remembers that the chat was asked for.
   const [isNewChatOpenOnMobile, setIsNewChatOpenOnMobile] = useState(false);
@@ -79,6 +91,20 @@ export const AiChatChannelPage = () => {
       </StyledPanel>
     );
   }
+
+  const channelThreads = threads.filter(
+    (thread) => thread.channelId === channel.id,
+  );
+  const countByInboxState = AGENT_CHAT_THREAD_INBOX_STATE_ORDER.reduce(
+    (accumulator, state) => {
+      accumulator[state] = channelThreads.filter(
+        (thread) => getAgentChatThreadInboxState(thread) === state,
+      ).length;
+
+      return accumulator;
+    },
+    {} as Record<AgentChatThreadInboxState, number>,
+  );
 
   const isChatVisible =
     !isMobile || isDefined(threadId) || isNewChatOpenOnMobile;
@@ -100,8 +126,16 @@ export const AiChatChannelPage = () => {
             channel={channel}
             onNewChat={() => setIsNewChatOpenOnMobile(true)}
           />
+          <AiChatThreadInboxStateTabs
+            componentInstanceId={AI_CHAT_CHANNEL_TABS_INSTANCE_ID}
+            countByInboxState={countByInboxState}
+            onChangeInboxState={setInboxState}
+          />
           <StyledListBody>
-            <AiChatChannelThreadList channelId={channel.id} />
+            <AiChatChannelThreadList
+              channelId={channel.id}
+              inboxState={inboxState}
+            />
           </StyledListBody>
         </StyledListPane>
       )}

@@ -4,6 +4,7 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getAiChatChannelIdFromPathname } from '~/utils/getAiChatChannelIdFromPathname';
 import { getCurrentHistoryEntryState } from '~/utils/getCurrentHistoryEntryState';
+import { isAiChatInboxPath } from '~/utils/isAiChatPath';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export const useProjectAiChatThreadToUrl = () => {
@@ -23,6 +24,19 @@ export const useProjectAiChatThreadToUrl = () => {
       navigateApp(
         AppPath.AiChatChannel,
         { channelId, threadId: threadIdParam },
+        undefined,
+        navigateOptions,
+      );
+
+      return;
+    }
+
+    // The inbox keeps the selected thread in its own URL for the same reason
+    // a channel does: the list beside the chat follows it.
+    if (isAiChatInboxPath(window.location.pathname)) {
+      navigateApp(
+        AppPath.AiChatInbox,
+        { threadId: threadIdParam },
         undefined,
         navigateOptions,
       );

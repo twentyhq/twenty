@@ -16,6 +16,9 @@ export const GET_CHAT_THREADS = gql`
       conversationSize
       totalInputCredits
       totalOutputCredits
+      status
+      snoozedUntil
+      assigneeUserWorkspaceId
       deletedAt
       lastMessageAt
       lastMessagePreview

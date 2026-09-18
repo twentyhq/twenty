@@ -21,6 +21,7 @@ import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 import { useMutation } from '@apollo/client/react';
 import { CreateChatThreadDocument } from '~/generated-metadata/graphql';
+import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
 
 export const useCreateAgentChatThread = () => {
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
@@ -44,6 +45,7 @@ export const useCreateAgentChatThread = () => {
         workflowRunId: null,
         workflowStepId: null,
         ownerUserWorkspaceId: data.createChatThread.ownerUserWorkspaceId,
+        status: AgentChatThreadStatus.OPEN,
         createdAt: data.createChatThread.createdAt,
         updatedAt: data.createChatThread.updatedAt,
         lastMessageAt: null,

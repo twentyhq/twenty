@@ -21,6 +21,7 @@ import {
   AgentChatChannelVisibility,
   type AgentChatThread,
 } from '~/generated-metadata/graphql';
+import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 import { AiChatChannelPage } from '~/pages/ai-chat/AiChatChannelPage';
 
@@ -103,6 +104,7 @@ const buildThread = (
   title,
   channelId,
   ownerUserWorkspaceId: 'uw-tim',
+  status: AgentChatThreadStatus.OPEN,
   createdAt: '2026-09-01T00:00:00.000Z',
   updatedAt: '2026-09-01T00:00:00.000Z',
   lastMessageAt: '2026-09-01T00:00:00.000Z',

@@ -22,6 +22,7 @@ import {
   StartWorkspaceSetupChatDocument,
   WorkspaceSetupChatOutcome,
 } from '~/generated-metadata/graphql';
+import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
 
 export const WorkspaceSetupChatKickoffEffect = () => {
   const [startWorkspaceSetupChatMutation] = useMutation(
@@ -91,6 +92,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           title: thread.title ?? null,
           channelId: thread.channelId ?? null,
           ownerUserWorkspaceId: thread.ownerUserWorkspaceId,
+          status: AgentChatThreadStatus.OPEN,
           createdAt: thread.createdAt,
           updatedAt: thread.updatedAt,
           conversationSize: thread.conversationSize,

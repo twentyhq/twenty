@@ -18,6 +18,7 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
 
 const switchToNewChat = jest.fn();
 const renameChatThread = jest.fn();
@@ -59,6 +60,7 @@ const THREAD: AgentChatThread = {
   id: 'thread-1',
   title: 'Best leads',
   ownerUserWorkspaceId: 'owner-user-workspace-id',
+  status: AgentChatThreadStatus.OPEN,
   createdAt: '2026-09-01T00:00:00.000Z',
   updatedAt: '2026-09-01T00:00:00.000Z',
   lastMessageAt: '2026-09-01T00:00:00.000Z',

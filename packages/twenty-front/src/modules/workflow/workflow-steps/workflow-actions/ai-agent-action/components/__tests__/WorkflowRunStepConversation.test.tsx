@@ -10,6 +10,7 @@ import { StepStatus } from 'twenty-shared/workflow';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { WorkflowRunStepConversation } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepConversation';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { AgentChatThreadStatus } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
@@ -32,6 +33,7 @@ const RUN_THREAD: AgentChatThread = {
   workflowRunId: RUN_ID,
   workflowStepId: STEP_ID,
   ownerUserWorkspaceId: 'uw-tim',
+  status: AgentChatThreadStatus.OPEN,
   createdAt: '2026-09-01T00:00:00.000Z',
   updatedAt: '2026-09-01T00:00:00.000Z',
   totalInputTokens: 0,
