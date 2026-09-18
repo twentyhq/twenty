@@ -5,7 +5,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconArchiveOff, IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type SettingsSkillInactiveMenuDropDownProps = {
@@ -41,9 +41,10 @@ export const SettingsSkillInactiveMenuDropDown = ({
       clickableComponent={
         <LightIconButton
           aria-label={t`Inactive Skill Options`}
-          Icon={IconDotsVertical}
-          accent="tertiary"
-        />
+          emphasis="subtle"
+        >
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>

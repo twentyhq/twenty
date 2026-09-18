@@ -1,3 +1,4 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
@@ -6,6 +7,7 @@ import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SeeRunsWorkflowSingleRecordCommand = () => {
+  const isCore = useIsWorkflowCoreEnabled();
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
@@ -22,13 +24,15 @@ export const SeeRunsWorkflowSingleRecordCommand = () => {
       to={AppPath.RecordIndexPage}
       params={{ objectNamePlural: CoreObjectNamePlural.WorkflowRun }}
       queryParams={{
-        filter: {
-          workflow: {
-            [ViewFilterOperand.IS]: {
-              selectedRecordIds: [workflowWithCurrentVersion?.id],
+        filter: isCore
+          ? { coreWorkflowId: { [ViewFilterOperand.IS]: recordId } }
+          : {
+              workflow: {
+                [ViewFilterOperand.IS]: {
+                  selectedRecordIds: [workflowWithCurrentVersion?.id],
+                },
+              },
             },
-          },
-        },
       }}
     />
   );

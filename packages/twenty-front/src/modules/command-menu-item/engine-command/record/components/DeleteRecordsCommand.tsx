@@ -1,3 +1,9 @@
+import { DeleteCoreWorkflowsCommand } from '@/object-core/workflows/components/DeleteCoreWorkflowsCommand';
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlOperationFilter,
+} from 'twenty-shared/types';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/common/hooks/useRemoveNavigationMenuItemByTargetRecordId';
@@ -8,10 +14,9 @@ import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-
 import { PLACEHOLDER_RECORD_INDEX_ID } from '@/object-record/record-index/constants/PlaceholderRecordIndexId';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const DeleteRecordsCommand = () => {
+const DeleteWorkspaceRecordsCommand = () => {
   const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
     useHeadlessCommandContextApi();
 
@@ -73,4 +78,15 @@ export const DeleteRecordsCommand = () => {
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
+};
+
+export const DeleteRecordsCommand = () => {
+  const isCore = useIsWorkflowCoreEnabled();
+  const { objectMetadataItem } = useHeadlessCommandContextApi();
+  return isCore &&
+    objectMetadataItem?.nameSingular === CoreObjectNameSingular.Workflow ? (
+    <DeleteCoreWorkflowsCommand />
+  ) : (
+    <DeleteWorkspaceRecordsCommand />
+  );
 };

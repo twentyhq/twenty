@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconCopy, IconTerminal } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -156,12 +156,14 @@ export const TerminalOutput = ({
             </StyledTab>
           )}
           <LightIconButton
-            Icon={IconCopy}
             onClick={() => copyToClipboard(currentOutput)}
             title={t`Copy output`}
-            size="small"
-            accent="tertiary"
-          />
+            size="sm"
+            emphasis="subtle"
+            aria-label={t`Copy output`}
+          >
+            <IconCopy />
+          </LightIconButton>
         </StyledTabContainer>
       </StyledHeader>
       <StyledOutputArea isError={activeTab === 'stderr'}>

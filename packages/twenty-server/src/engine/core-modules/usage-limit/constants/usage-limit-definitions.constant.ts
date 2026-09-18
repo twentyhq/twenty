@@ -2,10 +2,7 @@ import { type UsageLimitDefinitions } from 'src/engine/core-modules/usage-limit/
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
-export const USAGE_LIMIT_DEFINITIONS: Record<
-  UsageResourceType,
-  UsageLimitDefinitions
-> = {
+export const USAGE_LIMIT_DEFINITIONS = {
   [UsageResourceType.API]: {
     speed: {
       allowedOperationTypes: [UsageOperationType.API_REQUEST],
@@ -53,7 +50,21 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
   },
   [UsageResourceType.WORKFLOW]: {},
   [UsageResourceType.APP]: {},
-  [UsageResourceType.STORAGE]: {},
+  [UsageResourceType.STORAGE]: {
+    stock: {
+      allowedOperationTypes: [UsageOperationType.STORAGE_FILE],
+      allowedSpenderTypes: ['workspace', 'application'],
+      allowedMeters: ['bytes', 'quantity'],
+      defaults: [
+        {
+          spenderType: 'workspace',
+          meter: 'bytes',
+          limitValueConfigVariable: 'WORKSPACE_STORAGE_LIMIT_BYTES',
+          isOverridable: true,
+        },
+      ],
+    },
+  },
   [UsageResourceType.LOGIC_FUNCTION]: {},
   [UsageResourceType.EMAIL]: {
     speed: {
@@ -98,4 +109,4 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
       ],
     },
   },
-};
+} satisfies Record<UsageResourceType, UsageLimitDefinitions>;

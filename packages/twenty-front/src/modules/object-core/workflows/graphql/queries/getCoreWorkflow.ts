@@ -1,12 +1,12 @@
 import { gql } from '@apollo/client';
 
 export const GET_CORE_WORKFLOW = gql`
-  query GetCoreWorkflow($workspaceWorkflowId: UUID!) {
-    coreWorkflow(workspaceWorkflowId: $workspaceWorkflowId) {
+  query GetCoreWorkflow($coreWorkflowId: UUID!) {
+    coreWorkflow: coreWorkflowById(coreWorkflowId: $coreWorkflowId) {
       id
       name
       statuses
-      lastPublishedVersionId
+      lastPublishedCoreWorkflowVersionId
       workspaceWorkflowId
       createdAt
       updatedAt

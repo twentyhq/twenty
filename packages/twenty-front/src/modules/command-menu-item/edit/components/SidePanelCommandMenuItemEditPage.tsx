@@ -28,6 +28,8 @@ import {
   useIcons,
 } from 'twenty-ui/icon';
 import { MenuItem, MenuItemDraggable } from 'twenty-ui/primitives/navigation';
+import { LightIconButton } from 'twenty-ui/components';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -133,17 +135,6 @@ export const SidePanelCommandMenuItemEditPage = () => {
     });
   };
 
-  const makeOptionsDropdownWrapper =
-    (item: Pick<CommandMenuItemFieldsFragment, 'id' | 'shortLabel'>) =>
-    ({ iconButton }: { iconButton: React.ReactElement }) => (
-      <CommandMenuItemOptionsDropdown
-        itemId={item.id}
-        shortLabel={item.shortLabel}
-        serverShortLabel={serverItemsById.get(item.id)?.shortLabel ?? null}
-        iconButton={iconButton}
-      />
-    );
-
   const handlePinnedDragEnd = (result: DraggableListDropResult) => {
     const { source, destination, draggableId } = result;
 
@@ -236,20 +227,35 @@ export const SidePanelCommandMenuItemEditPage = () => {
                           text={getDisplayLabel(item)}
                           gripMode="onHover"
                           isIconDisplayedOnHoverOnly={false}
-                          iconButtons={[
-                            {
-                              Icon: IconDotsVertical,
-                              Wrapper: makeOptionsDropdownWrapper(item),
-                              onClick: () => {},
-                            },
-                            {
-                              Icon: IconPinnedOff,
-                              onClick: (event) => {
-                                event.stopPropagation();
-                                handleTogglePin(item.id, true);
-                              },
-                            },
-                          ]}
+                          iconButtons={
+                            <ButtonGroup
+                              attached={false}
+                              aria-label={t`Menu item actions`}
+                            >
+                              <CommandMenuItemOptionsDropdown
+                                itemId={item.id}
+                                shortLabel={item.shortLabel}
+                                serverShortLabel={
+                                  serverItemsById.get(item.id)?.shortLabel ??
+                                  null
+                                }
+                                iconButton={
+                                  <LightIconButton aria-label={t`More options`}>
+                                    <IconDotsVertical />
+                                  </LightIconButton>
+                                }
+                              />
+                              <LightIconButton
+                                aria-label={t`Unpin`}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleTogglePin(item.id, true);
+                                }}
+                              >
+                                <IconPinnedOff />
+                              </LightIconButton>
+                            </ButtonGroup>
+                          }
                         />
                       </SelectableListItem>
                     }
@@ -276,15 +282,17 @@ export const SidePanelCommandMenuItemEditPage = () => {
                     LeftIcon={ItemIcon}
                     text={getDisplayLabel(item)}
                     isIconDisplayedOnHoverOnly={false}
-                    iconButtons={[
-                      {
-                        Icon: IconPin,
-                        onClick: (event) => {
+                    iconButtons={
+                      <LightIconButton
+                        aria-label={t`Pin`}
+                        onClick={(event) => {
                           event.stopPropagation();
                           handleTogglePin(item.id, false);
-                        },
-                      },
-                    ]}
+                        }}
+                      >
+                        <IconPin />
+                      </LightIconButton>
+                    }
                   />
                 </SelectableListItem>
               );

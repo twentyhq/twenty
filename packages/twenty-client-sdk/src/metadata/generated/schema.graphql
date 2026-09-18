@@ -104,6 +104,7 @@ type FrontComponent {
 type CommandMenuItem {
   id: UUID!
   workflowVersionId: UUID
+  coreWorkflowVersionId: UUID
   frontComponentId: UUID
   frontComponent: FrontComponent
   engineComponentKey: EngineComponentKey!
@@ -1576,6 +1577,90 @@ type EnterpriseSubscriptionStatusDTO {
   isCancellationScheduled: Boolean!
 }
 
+type UsageQuotaDefinition {
+  resourceType: UsageResourceType!
+  limitKind: String!
+  allowedOperationTypes: [UsageOperationType!]!
+  allowedSpenderTypes: [String!]!
+  allowedMeters: [String!]!
+}
+
+enum UsageResourceType {
+  AI
+  WORKFLOW
+  APP
+  STORAGE
+  API
+  LOGIC_FUNCTION
+  EMAIL
+  WEBHOOK
+}
+
+enum UsageOperationType {
+  ALL
+  AI_CHAT_TOKEN
+  AI_WORKFLOW_TOKEN
+  WORKFLOW_EXECUTION
+  CODE_EXECUTION
+  WEB_SEARCH
+  CALL_RECORDING
+  EMAIL_SEND
+  API_REQUEST
+  WEBHOOK_CALL
+  STORAGE_FILE
+  SUBSCRIPTION
+}
+
+type UsageQuotaDefinitions {
+  definitions: [UsageQuotaDefinition!]!
+  isIntraWorkspaceLimitEntitled: Boolean!
+  hasAllowancePeriod: Boolean!
+}
+
+type UsageQuotaWithConsumption {
+  id: UUID!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String
+  spenderLabel: String
+  periodUnit: String!
+  meter: String!
+  limitValue: BigInt!
+  isEnforced: Boolean!
+  consumedValue: BigInt
+  remainingValue: BigInt
+  periodStart: DateTime
+  periodEnd: DateTime
+}
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+type UsageQuotaScopeConsumption {
+  consumedValue: BigInt
+  periodStart: DateTime!
+  periodEnd: DateTime!
+}
+
+type UsageLimit {
+  id: UUID!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String
+  limitKind: String!
+  periodCount: Int!
+  periodUnit: String!
+  meter: String!
+  limitValue: BigInt!
+  burstValue: BigInt
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type FileWithSignedUrl {
   id: UUID!
   path: String!
@@ -1794,88 +1879,6 @@ type UsageAnalytics {
   userDailyUsage: UsageUserDaily
 }
 
-type UsageQuotaDefinition {
-  resourceType: UsageResourceType!
-  allowedOperationTypes: [UsageOperationType!]!
-  allowedSpenderTypes: [String!]!
-  allowedMeters: [String!]!
-}
-
-enum UsageResourceType {
-  AI
-  WORKFLOW
-  APP
-  STORAGE
-  API
-  LOGIC_FUNCTION
-  EMAIL
-  WEBHOOK
-}
-
-enum UsageOperationType {
-  ALL
-  AI_CHAT_TOKEN
-  AI_WORKFLOW_TOKEN
-  WORKFLOW_EXECUTION
-  CODE_EXECUTION
-  WEB_SEARCH
-  CALL_RECORDING
-  EMAIL_SEND
-  API_REQUEST
-  WEBHOOK_CALL
-  SUBSCRIPTION
-}
-
-type UsageQuotaDefinitions {
-  definitions: [UsageQuotaDefinition!]!
-  isIntraWorkspaceLimitEntitled: Boolean!
-  hasAllowancePeriod: Boolean!
-}
-
-type UsageQuotaWithConsumption {
-  id: UUID!
-  resourceType: UsageResourceType!
-  operationType: UsageOperationType!
-  spenderType: String!
-  spenderId: String
-  spenderLabel: String
-  periodUnit: String!
-  meter: String!
-  limitValue: BigInt!
-  isEnforced: Boolean!
-  consumedValue: BigInt
-  remainingValue: BigInt
-  periodStart: DateTime
-  periodEnd: DateTime
-}
-
-"""
-The `BigInt` scalar type represents non-fractional signed whole numeric values.
-"""
-scalar BigInt
-
-type UsageQuotaScopeConsumption {
-  consumedValue: BigInt
-  periodStart: DateTime!
-  periodEnd: DateTime!
-}
-
-type UsageLimit {
-  id: UUID!
-  resourceType: UsageResourceType!
-  operationType: UsageOperationType!
-  spenderType: String!
-  spenderId: String
-  limitKind: String!
-  periodCount: Int!
-  periodUnit: String!
-  meter: String!
-  limitValue: BigInt!
-  burstValue: BigInt
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type ApprovedAccessDomain {
   id: UUID!
   domain: String!
@@ -1983,6 +1986,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_ASYNC_CSV_EXPORT_ENABLED
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
@@ -2840,6 +2844,7 @@ type ApplicationFileUploadTarget {
 }
 
 enum FileFolder {
+  RecordExport
   CorePicture
   AgentChat
   BuiltLogicFunction
@@ -3153,6 +3158,8 @@ type ToolIndexEntry {
   category: String!
   objectName: String
   icon: String
+  widgetName: String
+  frontComponentId: String
   inputSchema: JSON
 }
 
@@ -3298,6 +3305,14 @@ type EventLogQueryResult {
   records: [EventLogRecord!]!
   totalCount: Int!
   pageInfo: EventLogPageInfo!
+}
+
+type RecordExport {
+  id: UUID!
+  filename: String!
+  progress: Int!
+  errorMessage: String
+  downloadUrl: String
 }
 
 type AiChatUsage {
@@ -3634,11 +3649,11 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
-  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   usageLimits: [UsageLimit!]!
   usageQuotasWithConsumption: [UsageQuotaWithConsumption!]!
   usageQuotaDefinitions: UsageQuotaDefinitions!
   usageQuotaScopeConsumption(input: UsageQuotaScopeInput!): UsageQuotaScopeConsumption
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
   getViewFilterGroup(id: String!): ViewFilterGroup
   getViewFilters(viewId: String): [ViewFilter!]!
@@ -3777,13 +3792,6 @@ type Query {
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
 }
 
-input UsageAnalyticsInput {
-  periodStart: DateTime
-  periodEnd: DateTime
-  userWorkspaceId: String
-  operationTypes: [UsageOperationType!]
-}
-
 input UsageQuotaScopeInput {
   resourceType: UsageResourceType!
   operationType: UsageOperationType!
@@ -3791,6 +3799,13 @@ input UsageQuotaScopeInput {
   spenderId: String
   periodUnit: String!
   meter: String!
+}
+
+input UsageAnalyticsInput {
+  periodStart: DateTime
+  periodEnd: DateTime
+  userWorkspaceId: String
+  operationTypes: [UsageOperationType!]
 }
 
 input GetApiKeyInput {
@@ -3948,7 +3963,7 @@ type Mutation {
   revokeUserSession(userSessionId: UUID!): Boolean!
   revokeAllOtherUserSessions: Int!
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
+  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
@@ -4484,7 +4499,7 @@ input UpdateViewFieldGroupInputUpdates {
   name: String
   position: Float
   isVisible: Boolean
-  deletedAt: String
+  deletedAt: String @deprecated(reason: "Ignored: view field groups are no longer soft-deleted. Use destroyViewFieldGroup instead.")
 }
 
 input CreateViewFieldGroupInput {
@@ -5501,6 +5516,7 @@ type Subscription {
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
   eventLogsLive(table: EventLogTable!): [EventLogRecord!]
+  exportRecords(input: CreateRecordExportInput!): RecordExport!
 }
 
 input LogicFunctionLogsInput {
@@ -5509,4 +5525,11 @@ input LogicFunctionLogsInput {
   name: String
   id: UUID
   universalIdentifier: UUID
+}
+
+input CreateRecordExportInput {
+  objectMetadataId: UUID!
+  fieldMetadataIds: [UUID!]!
+  filter: JSON
+  orderBy: JSON
 }

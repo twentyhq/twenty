@@ -1,11 +1,14 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
+import {
+  UpdateCoreWorkflowVersionPositionsDocument,
+  type UpdateWorkflowVersionPositionsMutation,
+  type UpdateWorkflowVersionPositionsMutationVariables,
+} from '~/generated/graphql';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type UpdateWorkflowVersionPositionsMutation,
-  type UpdateWorkflowVersionPositionsMutationVariables,
-} from '~/generated/graphql';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -21,6 +24,10 @@ import { UPDATE_WORKFLOW_VERSION_POSITIONS } from '@/workflow/workflow-version/g
 
 export const useTidyUpWorkflowVersion = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
+  const isCore = useIsWorkflowCoreEnabled();
+  const [mutateCore] = useMutation(UpdateCoreWorkflowVersionPositionsDocument, {
+    client: apolloCoreClient,
+  });
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -43,7 +50,15 @@ export const useTidyUpWorkflowVersion = (instanceId?: string) => {
     workflowVersionId: string,
     positions: { id: string; position: { x: number; y: number } }[],
   ) => {
-    await mutate({ variables: { input: { workflowVersionId, positions } } });
+    if (isCore) {
+      await mutateCore({
+        variables: {
+          input: { coreWorkflowVersionId: workflowVersionId, positions },
+        },
+      });
+    } else {
+      await mutate({ variables: { input: { workflowVersionId, positions } } });
+    }
 
     setFlow((currentFlow) => {
       if (!isDefined(currentFlow)) {
@@ -76,6 +91,11 @@ export const useTidyUpWorkflowVersion = (instanceId?: string) => {
           }) ?? null,
       };
     });
+
+    if (isCore) {
+      await invalidateCoreWorkflowVersions(apolloCoreClient);
+      return;
+    }
 
     const cachedRecord = getRecordFromCache<WorkflowVersion>(workflowVersionId);
 

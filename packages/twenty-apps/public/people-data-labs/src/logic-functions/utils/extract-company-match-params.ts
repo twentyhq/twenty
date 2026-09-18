@@ -21,6 +21,7 @@ export const extractCompanyMatchParams = ({
       pdlId: existingPdlId,
       minLikelihood: resolveMinLikelihood({
         inputMinLikelihood: input.minLikelihood,
+        defaultMinLikelihood: process.env.PDL_COMPANY_MIN_LIKELIHOOD,
         hasStrongIdentifier: true,
       }),
     };
@@ -46,6 +47,7 @@ export const extractCompanyMatchParams = ({
     ...companyMatchParams,
     minLikelihood: resolveMinLikelihood({
       inputMinLikelihood: input.minLikelihood,
+      defaultMinLikelihood: process.env.PDL_COMPANY_MIN_LIKELIHOOD,
       hasStrongIdentifier,
     }),
   };

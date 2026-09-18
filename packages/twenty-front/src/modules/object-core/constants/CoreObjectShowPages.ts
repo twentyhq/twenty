@@ -14,9 +14,11 @@ export const CORE_OBJECT_SHOW_PAGES: ReadonlyMap<
   [
     CoreObjectNameSingular.Workflow,
     lazy(() =>
-      import('~/pages/object-core/WorkflowCoreShowPage').then((module) => ({
-        default: module.WorkflowCoreShowPage,
-      })),
+      import('~/pages/object-core/WorkflowCoreObjectShowPage').then(
+        (module) => ({
+          default: module.WorkflowCoreObjectShowPage,
+        }),
+      ),
     ),
   ],
 ]);

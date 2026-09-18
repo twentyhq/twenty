@@ -1,5 +1,4 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
-
 import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -18,10 +17,10 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
@@ -175,15 +174,13 @@ export const SettingsObjectIndexesSection = ({
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <MenuItemSwitch
-                    LeftIcon={IconEyeOff}
+                  <SettingsRow
+                    startIcon={<IconEyeOff />}
                     onCheckedChange={() =>
                       setHideSystemIndexes(!hideSystemIndexes)
                     }
                     checked={hideSystemIndexes}
-                    text={t`Hide system indexes`}
-                    size="sm"
-                  />
+                  >{t`Hide system indexes`}</SettingsRow>
                 </DropdownMenuItemsContainer>
               </DropdownContent>
             }

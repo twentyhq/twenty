@@ -1,4 +1,4 @@
-import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
+import { type FlatQuotaLimit } from 'src/engine/core-modules/usage-limit/types/flat-quota-limit.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
@@ -11,7 +11,7 @@ export const buildLimitQuotaCounter = ({
 }: {
   workspaceId: string;
   limit: Omit<
-    FlatUsageLimit,
+    FlatQuotaLimit,
     'id' | 'limitKind' | 'periodCount' | 'burstValue'
   >;
   period: UsagePeriod;

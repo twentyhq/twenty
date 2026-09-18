@@ -5,6 +5,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @RegisteredWorkspaceCommand('2.42.0', 1789645879295)
@@ -69,6 +70,18 @@ export class RelinkWorkflowVersionsToCoreWorkflowsCommand extends ProvisionedWor
       );
 
       if (!isDefined(workflowTable?.table)) {
+        return;
+      }
+
+      if (
+        !(await hasCoreWorkflowWorkspaceWorkflowIdColumn((query) =>
+          queryRunner.query(query),
+        ))
+      ) {
+        this.logger.warn(
+          `core.workflow.workspaceWorkflowId missing for workspace ${workspaceId}, skipping relink`,
+        );
+
         return;
       }
 

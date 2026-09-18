@@ -42,6 +42,18 @@ jest.mock('@/ai/components/CodeExecutionDisplay', () => ({
   CodeExecutionDisplay: () => <div data-testid="code-execution-display" />,
 }));
 
+jest.mock('@/ai/components/AiChatToolPartRenderer', () => ({
+  AiChatToolPartRenderer: ({ toolPart }: { toolPart: { type: string } }) => (
+    <div data-testid="tool-widget">{toolPart.type}</div>
+  ),
+}));
+
+const mockUseToolWidgetByName = jest.fn(() => new Map());
+
+jest.mock('@/ai/hooks/useToolWidgetByName', () => ({
+  useToolWidgetByName: () => mockUseToolWidgetByName(),
+}));
+
 const renderAssistantRenderer = (
   messageParts: ExtendedUIMessagePart[],
   { isLastMessageStreaming = false }: { isLastMessageStreaming?: boolean } = {},
@@ -57,6 +69,10 @@ const renderAssistantRenderer = (
 };
 
 describe('AiChatAssistantMessageRenderer', () => {
+  beforeEach(() => {
+    mockUseToolWidgetByName.mockReturnValue(new Map());
+  });
+
   it('should group reasoning and tool steps into ThinkingStepsDisplay', () => {
     const messageParts = [
       {
@@ -423,5 +439,61 @@ describe('AiChatAssistantMessageRenderer', () => {
     expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
       'thinking-1-answer-started',
     );
+  });
+  it('should render a tool call that has a widget on its own, not folded into the step group', () => {
+    mockUseToolWidgetByName.mockReturnValue(
+      new Map([['find_many_companies', { kind: 'builtin', name: 'records' }]]),
+    );
+
+    renderAssistantRenderer([
+      {
+        type: 'tool-find_many_companies',
+        toolCallId: 'call_1',
+        state: 'output-available',
+        input: {},
+        output: { recordReferences: [] },
+      },
+    ] as unknown as ExtendedUIMessagePart[]);
+
+    expect(screen.getByTestId('tool-widget')).toHaveTextContent(
+      'tool-find_many_companies',
+    );
+    expect(screen.queryByTestId('thinking-steps-display')).toBeNull();
+  });
+
+  it('should resolve the widget of a call dispatched through execute_tool', () => {
+    mockUseToolWidgetByName.mockReturnValue(
+      new Map([['create_one_task', { kind: 'builtin', name: 'records' }]]),
+    );
+
+    renderAssistantRenderer([
+      {
+        type: 'tool-execute_tool',
+        toolCallId: 'call_1',
+        state: 'output-available',
+        input: { toolName: 'create_one_task', arguments: { title: 'Ship it' } },
+        output: { recordReferences: [] },
+      },
+    ] as unknown as ExtendedUIMessagePart[]);
+
+    expect(screen.getByTestId('tool-widget')).toBeInTheDocument();
+  });
+
+  it('should keep a call that has a widget but has not run yet in the step group', () => {
+    mockUseToolWidgetByName.mockReturnValue(
+      new Map([['find_many_companies', { kind: 'builtin', name: 'records' }]]),
+    );
+
+    renderAssistantRenderer([
+      {
+        type: 'tool-find_many_companies',
+        toolCallId: 'call_1',
+        state: 'input-available',
+        input: {},
+      },
+    ] as unknown as ExtendedUIMessagePart[]);
+
+    expect(screen.getByTestId('thinking-steps-display')).toBeInTheDocument();
+    expect(screen.queryByTestId('tool-widget')).toBeNull();
   });
 });

@@ -11,12 +11,14 @@ import { ConnectionProviderEntity } from 'src/engine/core-modules/application/co
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class ConnectionProviderService {
   constructor(
-    @InjectRepository(ConnectionProviderEntity)
-    private readonly connectionProviderRepository: Repository<ConnectionProviderEntity>,
+    @InjectWorkspaceScopedRepository(ConnectionProviderEntity)
+    private readonly connectionProviderRepository: WorkspaceScopedRepository<ConnectionProviderEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
@@ -174,19 +176,28 @@ export class ConnectionProviderService {
   async findOneByApplicationAndName({
     applicationId,
     name,
+    workspaceId,
   }: {
     applicationId: string;
     name: string;
+    workspaceId: string;
   }): Promise<ConnectionProviderEntity | null> {
-    return this.connectionProviderRepository.findOne({
+    return this.connectionProviderRepository.findOne(workspaceId, {
       where: { applicationId, name },
     });
   }
 
-  async findOneByIdOrThrow(id: string): Promise<ConnectionProviderEntity> {
-    const provider = await this.connectionProviderRepository.findOne({
-      where: { id },
-    });
+  async findOneByIdOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ConnectionProviderEntity> {
+    const provider = await this.connectionProviderRepository.findOne(
+      workspaceId,
+      { where: { id } },
+    );
 
     if (!isDefined(provider)) {
       throw new ConnectionProviderException(
@@ -205,8 +216,8 @@ export class ConnectionProviderService {
     applicationId: string;
     workspaceId: string;
   }): Promise<ConnectionProviderEntity[]> {
-    return this.connectionProviderRepository.find({
-      where: { applicationId, workspaceId },
+    return this.connectionProviderRepository.find(workspaceId, {
+      where: { applicationId },
     });
   }
 }
