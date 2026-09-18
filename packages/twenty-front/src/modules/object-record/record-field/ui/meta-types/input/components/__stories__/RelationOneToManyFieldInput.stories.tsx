@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useEffect, useMemo } from 'react';
 import { useSetAtom } from 'jotai';
+import { useEffect, useMemo } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -8,24 +8,24 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   mockCurrentWorkspace,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { RelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationOneToManyFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const personMetadata = getMockObjectMetadataItemOrThrow('person');
 const companyMetadata = getMockObjectMetadataItemOrThrow('company');
@@ -128,7 +128,7 @@ const meta: Meta = {
   decorators: [
     MemoryRouterDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     FileUploadDecorator,
   ],
   parameters: {

@@ -23,7 +23,7 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
 import { getSuggestionMenuItemAnchorId } from '@/ui/suggestion/utils/getSuggestionMenuItemAnchorId';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 // The preview card brings its own surface, so the tooltip only contributes
@@ -32,7 +32,6 @@ const previewTooltipClass = css`
   background: transparent !important;
   border-radius: ${themeCssVariables.border.radius.md} !important;
   box-shadow: ${themeCssVariables.boxShadow.strong} !important;
-  opacity: 1 !important;
   padding: 0 !important;
 `;
 
@@ -237,19 +236,18 @@ const SuggestionMenuInner = <TItem,>(
         </DropdownContent>
       </OverlayContainer>
       {shouldDisplayPreview && (
-        <AppTooltip
-          anchorSelect={`#${getSuggestionMenuItemAnchorId(getItemKey(selectedItem))}`}
-          place="right-start"
-          offset={16}
-          noArrow
-          interactive
-          isOpen
-          delay={TooltipDelay.noDelay}
-          className={previewTooltipClass}
-          maxWidth={`${selectedItemPreview.width}px`}
-        >
-          {selectedItemPreview.render(selectedItem)}
-        </AppTooltip>
+        <Tooltip.Root key={getItemKey(selectedItem)} open>
+          <Tooltip.Popup
+            anchor={activeItemRef}
+            side="right"
+            align="start"
+            sideOffset={16}
+            className={previewTooltipClass}
+            maxWidth={`${selectedItemPreview.width}px`}
+          >
+            {selectedItemPreview.render(selectedItem)}
+          </Tooltip.Popup>
+        </Tooltip.Root>
       )}
     </motion.div>
   );

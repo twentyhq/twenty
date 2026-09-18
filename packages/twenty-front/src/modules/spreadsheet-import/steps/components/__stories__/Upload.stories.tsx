@@ -6,12 +6,12 @@ import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/S
 import { UploadStep } from '@/spreadsheet-import/steps/components/UploadStep/UploadStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { isDialogOpenedComponentState } from '@/ui/layout/dialog/states/isDialogOpenedComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { Provider as JotaiProvider } from 'jotai';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const meta: Meta<typeof UploadStep> = {
   title: 'Modules/SpreadsheetImport/UploadStep',
@@ -24,7 +24,7 @@ const meta: Meta<typeof UploadStep> = {
     ContextStoreDecorator,
     (Story) => {
       jotaiStore.set(
-        isModalOpenedComponentState.atomFamily({
+        isDialogOpenedComponentState.atomFamily({
           instanceId: 'upload-step',
         }),
         true,
@@ -35,7 +35,7 @@ const meta: Meta<typeof UploadStep> = {
         </JotaiProvider>
       );
     },
-    SnackBarDecorator,
+    ToastDecorator,
   ],
 };
 

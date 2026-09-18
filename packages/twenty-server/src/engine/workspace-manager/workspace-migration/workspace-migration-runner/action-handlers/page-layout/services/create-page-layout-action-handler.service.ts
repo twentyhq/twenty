@@ -63,6 +63,7 @@ export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
+        navigationMenuItemIds: [],
         tabIds: [],
         ...emptyUniversalForeignKeyAggregators,
       },

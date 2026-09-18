@@ -5,13 +5,13 @@ import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppRootErrorFallback } from '@/error-handler/components/AppRootErrorFallback';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { Provider as JotaiProvider } from 'jotai';
 import { HelmetProvider } from '@dr.pogodin/react-helmet';
+import { ToastProvider } from 'twenty-ui/primitives/feedback';
 import { IconsProvider } from 'twenty-ui/icon';
 import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
 
@@ -28,9 +28,7 @@ export const App = () => {
           <I18nProvider i18n={i18n}>
             <LocaleDirectionProvider>
               <ApolloDevLogEffect />
-              <SnackBarComponentInstanceContext.Provider
-                value={{ instanceId: 'snack-bar-manager' }}
-              >
+              <ToastProvider>
                 <IconsProvider>
                   <ExceptionHandlerProvider>
                     <HelmetProvider>
@@ -42,7 +40,7 @@ export const App = () => {
                     </HelmetProvider>
                   </ExceptionHandlerProvider>
                 </IconsProvider>
-              </SnackBarComponentInstanceContext.Provider>
+              </ToastProvider>
             </LocaleDirectionProvider>
           </I18nProvider>
         </I18nActivationGate>

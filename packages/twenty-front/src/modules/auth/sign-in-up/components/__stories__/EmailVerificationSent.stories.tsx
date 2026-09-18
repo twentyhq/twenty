@@ -1,30 +1,30 @@
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
-const RenderWithModalContent = (
+const RenderWithStyledAuthContent = (
   args: React.ComponentProps<typeof EmailVerificationSent>,
 ) => {
   return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
+    <StyledAuthContent>
       <EmailVerificationSent email={args.email} isError={args.isError} />
-    </ModalContent>
+    </StyledAuthContent>
   );
 };
 
 const meta: Meta<typeof EmailVerificationSent> = {
   title: 'Modules/Auth/EmailVerificationSent',
   component: EmailVerificationSent,
-  decorators: [ComponentDecorator, SnackBarDecorator],
+  decorators: [ComponentDecorator, ToastDecorator],
   parameters: {
     codeSection: {
-      docs: 'This component should always be wrapped with ModalContent in the app.\n\nCorrect usage:\n```tsx\n<ModalContent isVerticallyCentered isHorizontallyCentered>\n  <EmailVerificationSent email={email} />\n</ModalContent>\n```\n',
+      docs: 'This component should always be wrapped with StyledAuthContent in the app.\n\nCorrect usage:\n```tsx\n<StyledAuthContent>\n  <EmailVerificationSent email={email} />\n</StyledAuthContent>\n```\n',
     },
   },
-  render: RenderWithModalContent,
+  render: RenderWithStyledAuthContent,
 };
 
 export default meta;

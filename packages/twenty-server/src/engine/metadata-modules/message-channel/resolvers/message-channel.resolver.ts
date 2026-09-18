@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -15,6 +15,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -36,6 +37,7 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
@@ -46,6 +48,7 @@ import {
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(MessageChannelGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => MessageChannelDTO)
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class MessageChannelResolver {
   constructor(
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
@@ -113,6 +116,7 @@ export class MessageChannelResolver {
 
   @Query(() => [MessageChannelDTO])
   @UseGuards(NoPermissionGuard)
+  @AllowSuspendedWorkspace()
   async myMessageChannels(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -193,6 +197,7 @@ export class MessageChannelResolver {
     }
 
     if (
+      messageChannel.type === MessageChannelType.EMAIL &&
       messageChannel.syncStage !==
         MessageChannelSyncStage.PENDING_CONFIGURATION &&
       isDefined(input.update.excludeGroupEmails) &&

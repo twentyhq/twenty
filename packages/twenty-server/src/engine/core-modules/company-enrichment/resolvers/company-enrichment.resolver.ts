@@ -3,6 +3,7 @@ import { Mutation } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceCompanyEnrichmentResultDTO } from 'src/engine/core-modules/company-enrichment/dtos/workspace-company-enrichment-result.dto';
 import { WorkspaceCompanyEnrichmentOutcome } from 'src/engine/core-modules/company-enrichment/enums/workspace-company-enrichment-outcome.enum';
 import { WorkspacePersonEnrichmentOutcome } from 'src/engine/core-modules/company-enrichment/enums/workspace-person-enrichment-outcome.enum';
@@ -20,7 +21,10 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
+@UseFilters(
+  PreventNestToAutoLogGraphqlErrorsFilter,
+  AuthGraphqlApiExceptionFilter,
+)
 @MetadataResolver()
 export class CompanyEnrichmentResolver {
   constructor(

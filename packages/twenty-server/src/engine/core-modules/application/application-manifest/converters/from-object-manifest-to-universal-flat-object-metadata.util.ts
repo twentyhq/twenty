@@ -46,6 +46,7 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     fieldUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    navigationMenuItemUniversalIdentifiers: [],
     commandMenuItemUniversalIdentifiers: [],
     objectPermissionUniversalIdentifiers: [],
     fieldPermissionUniversalIdentifiers: [],

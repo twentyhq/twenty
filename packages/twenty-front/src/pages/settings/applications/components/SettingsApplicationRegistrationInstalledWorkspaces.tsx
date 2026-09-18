@@ -4,10 +4,10 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronDown, IconDotsVertical } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -29,7 +29,7 @@ const INITIAL_VISIBLE_WORKSPACES = 3;
 const SHOW_MORE_PAGE_SIZE = 20;
 const INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
-const StyledSection = styled(Section)`
+const StyledSection = styled(Section.Root)`
   margin-top: ${themeCssVariables.spacing[5]};
 `;
 
@@ -193,23 +193,21 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
       {!hasFailed && !isExpanded && totalCount > INITIAL_VISIBLE_WORKSPACES && (
         <StyledButtonContainer>
           <Button
-            title={t`Show all`}
-            Icon={IconChevronDown}
-            variant="secondary"
-            size="small"
+            startIcon={<IconChevronDown />}
+            size="sm"
             onClick={() => setIsExpanded(true)}
-          />
+            variant="outline"
+          >{t`Show all`}</Button>
         </StyledButtonContainer>
       )}
       {!hasFailed && isExpanded && hasMore && (
         <StyledButtonContainer>
           <Button
-            title={t`Show more`}
-            Icon={IconDotsVertical}
-            variant="secondary"
-            size="small"
+            startIcon={<IconDotsVertical />}
+            size="sm"
             onClick={handleShowMore}
-          />
+            variant="outline"
+          >{t`Show more`}</Button>
         </StyledButtonContainer>
       )}
     </StyledSection>

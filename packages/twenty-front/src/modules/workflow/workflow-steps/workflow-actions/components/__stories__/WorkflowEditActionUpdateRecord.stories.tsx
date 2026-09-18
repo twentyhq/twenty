@@ -1,14 +1,14 @@
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
-import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
@@ -51,7 +51,7 @@ const meta: Meta<typeof WorkflowEditActionUpdateRecord> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     RouterDecorator,
     WorkspaceDecorator,
   ],

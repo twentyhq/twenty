@@ -3,8 +3,8 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -56,9 +56,9 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         links={getSettingsAiBreadcrumbLinks(t`Agent`)}
       >
         <SettingsPageContainer>
-          <Section>
+          <Section.Root>
             <SettingsAgentDetailSkeletonLoader />
-          </Section>
+          </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
     );

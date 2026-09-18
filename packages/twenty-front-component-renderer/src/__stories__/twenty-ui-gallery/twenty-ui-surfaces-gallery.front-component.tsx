@@ -1,16 +1,12 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button } from 'twenty-ui/primitives/input';
 import {
-  AppTooltip,
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
   OverflowingTextWithTooltip,
+  Tooltip,
 } from 'twenty-ui/primitives/surfaces';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
@@ -21,16 +17,13 @@ import {
 
 const SURFACES_ENTRIES: GalleryEntry[] = [
   {
-    name: 'AppTooltip',
+    name: 'Tooltip',
     node: (
-      <>
-        <span id="gallery-tooltip-anchor">Tooltip anchor</span>
-        <AppTooltip
-          anchorSelect="#gallery-tooltip-anchor"
-          title="Tooltip content"
-          isOpen={true}
-        />
-      </>
+      <Tooltip content="Tooltip content">
+        <span>
+          <Button>Tooltip anchor</Button>
+        </span>
+      </Tooltip>
     ),
   },
   {
@@ -49,36 +42,6 @@ const SURFACES_ENTRIES: GalleryEntry[] = [
     name: 'CardHeader',
     node: <CardHeader>Card header</CardHeader>,
   },
-  // Rendered closed here so a hang cannot mask the rest of this gallery; the
-  // open-Modal known issue is exposed by twenty-ui-modal-open-gallery.
-  {
-    name: 'Modal',
-    node: (
-      <Modal isOpen={false} ariaLabel="Gallery modal">
-        Modal body
-      </Modal>
-    ),
-  },
-  {
-    name: 'ModalBackdrop',
-    node: (
-      <ModalBackdrop overlay="dark" backdropZIndex={39}>
-        Backdrop child
-      </ModalBackdrop>
-    ),
-  },
-  {
-    name: 'ModalContent',
-    node: <ModalContent>Modal content</ModalContent>,
-  },
-  {
-    name: 'ModalFooter',
-    node: <ModalFooter>Modal footer</ModalFooter>,
-  },
-  {
-    name: 'ModalHeader',
-    node: <ModalHeader>Modal header</ModalHeader>,
-  },
   {
     name: 'OverflowingTextWithTooltip',
     node: <OverflowingTextWithTooltip text="Some overflowing text" />,
@@ -86,7 +49,7 @@ const SURFACES_ENTRIES: GalleryEntry[] = [
 ];
 
 const SurfacesGallery = () => (
-  <ThemeProvider colorScheme="light">
+  <ThemeProvider colorScheme="light" applyToRoot={false}>
     <ComponentGallery
       title="twenty-ui/primitives/surfaces"
       entries={SURFACES_ENTRIES}

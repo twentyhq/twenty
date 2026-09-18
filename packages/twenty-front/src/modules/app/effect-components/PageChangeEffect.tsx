@@ -121,7 +121,6 @@ export const PageChangeEffect = () => {
       if (!hasRoutedSidePanelTarget) {
         const currentPage = store.get(sidePanelPageInfoSelector.atom).page;
         const shouldKeepSidePanelOpen =
-          currentPage === SidePanelPages.NavigationMenuItemEdit ||
           currentPage === SidePanelPages.AskAI ||
           currentPage === SidePanelPages.RoutedPage;
 

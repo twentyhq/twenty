@@ -83,7 +83,7 @@ To release an update:
 
 1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
 2. Run `yarn twenty app:publish --private` (or `yarn twenty app:publish --private --remote production`)
-3. Workspaces that have the app installed and enabled auto-upgrade for it (in the app's Settings tab) are upgraded automatically in the background; the others will see the upgrade available in their settings
+3. Workspaces that have the app installed and enabled auto-upgrade for it (in the app's General tab) are upgraded automatically in the background; the others will see the upgrade available in their settings
 
 <Note>
 Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is allowed, and a final release like `1.0.0` is correctly recognized as higher than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver string.
@@ -275,6 +275,8 @@ The metadata shown in the marketplace comes from your `defineApplication()` conf
 
 <Note>
 If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
+
+The About tab renders markdown text only. Images do not render, whether they use markdown syntax or `<img>` tags, and raw HTML such as badges or `<div align="center">` blocks shows as plain text.
 </Note>
 
 ### CI publishing

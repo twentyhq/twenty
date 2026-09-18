@@ -1,3 +1,4 @@
+import { BUTTON_INVERTED_CLASS_NAME } from '@/ui/input/styles/ButtonInvertedClassName';
 import { t } from '@lingui/core/macro';
 import { type IconComponent, IconDeviceFloppy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -15,20 +16,19 @@ export const SaveButton = ({
   disabled,
   isLoading,
   inverted = false,
-  saveIcon,
+  saveIcon: SaveIcon = IconDeviceFloppy,
 }: SaveButtonProps) => {
   return (
     <Button
-      title={t`Save`}
-      variant={inverted ? 'secondary' : 'primary'}
-      size="small"
-      accent={inverted ? 'default' : 'blue'}
-      inverted={inverted}
+      className={inverted ? BUTTON_INVERTED_CLASS_NAME : undefined}
+      size="sm"
       disabled={disabled}
       onClick={onSave}
       type="submit"
-      Icon={saveIcon ?? IconDeviceFloppy}
-      isLoading={isLoading}
-    />
+      startIcon={<SaveIcon />}
+      loading={isLoading}
+      variant={inverted ? 'outline' : 'solid'}
+      color={inverted ? 'neutral' : 'accent'}
+    >{t`Save`}</Button>
   );
 };

@@ -138,7 +138,7 @@ export const SettingsAccountsBlocklistInput = ({
             )}
           />
         </StyledLinkContainer>
-        <Button title={t`Add to blocklist`} type="submit" />
+        <Button type="submit">{t`Add to blocklist`}</Button>
       </StyledContainer>
     </form>
   );

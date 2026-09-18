@@ -175,7 +175,7 @@ export const SettingsDataModelFieldRelationForm = ({
               dropdownId="field-destination-icon-picker"
               selectedIconKey={value ?? undefined}
               onChange={({ iconKey }) => onChange(iconKey)}
-              variant="primary"
+              variant="outline"
             />
           )}
         />

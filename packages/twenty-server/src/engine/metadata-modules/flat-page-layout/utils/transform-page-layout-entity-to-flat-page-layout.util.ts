@@ -77,6 +77,12 @@ export const transformPageLayoutEntityToFlatPageLayout = ({
     tabUniversalIdentifiers: pageLayoutEntity.tabs.map(
       (tab) => tab.universalIdentifier,
     ),
+    navigationMenuItemIds:
+      pageLayoutEntity.navigationMenuItems?.map(({ id }) => id) ?? [],
+    navigationMenuItemUniversalIdentifiers:
+      pageLayoutEntity.navigationMenuItems?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
     defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
   };
 };

@@ -2,7 +2,20 @@
 
 exports[`Application export - data model exports the whole application as a stable manifest and classifies every row: coverage 1`] = `
 {
-  "deterministicUnnamed": [],
+  "deterministicUnnamed": [
+    {
+      "metadataName": "rolePermissionFlag",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "8fbcf3d1-999e-5109-8304-aef08d8c8f33",
+    },
+    {
+      "metadataName": "rolePermissionFlag",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "de7e7102-6725-5a65-8ee8-3154fe4fb94b",
+    },
+  ],
   "named": [
     {
       "metadataName": "fieldMetadata",
@@ -221,6 +234,12 @@ exports[`Application export - data model exports the whole application as a stab
       "universalIdentifier": "<TICKET_updatedBy_ENGINE_FIELD>",
     },
     {
+      "metadataName": "fieldPermission",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION>",
+    },
+    {
       "metadataName": "index",
       "reason": null,
       "status": "ENGINE_DERIVED",
@@ -267,6 +286,12 @@ exports[`Application export - data model exports the whole application as a stab
       "reason": null,
       "status": "EXPORTED",
       "universalIdentifier": "<TICKET_OBJECT>",
+    },
+    {
+      "metadataName": "objectPermission",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TEST_ROLE_TICKET_OBJECT_PERMISSION>",
     },
     {
       "metadataName": "pageLayout",
@@ -503,10 +528,34 @@ exports[`Application export - data model exports the whole application as a stab
       "universalIdentifier": "<TICKET_RECORD_PAGE_WIDGET_Timeline>",
     },
     {
+      "metadataName": "permissionFlag",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<EXPORT_TICKETS_PERMISSION_FLAG>",
+    },
+    {
       "metadataName": "role",
       "reason": null,
-      "status": "UNSUPPORTED",
+      "status": "EXPORTED",
       "universalIdentifier": "<TEST_ROLE>",
+    },
+    {
+      "metadataName": "rowLevelPermissionPredicate",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TEST_ROLE_TICKET_TITLE_PREDICATE>",
+    },
+    {
+      "metadataName": "rowLevelPermissionPredicateGroup",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP>",
+    },
+    {
+      "metadataName": "rowLevelPermissionPredicateGroup",
+      "reason": null,
+      "status": "EXPORTED",
+      "universalIdentifier": "<TEST_ROLE_TICKET_PREDICATE_GROUP>",
     },
     {
       "metadataName": "view",
@@ -1038,9 +1087,77 @@ exports[`Application export - data model exports the whole application as a stab
       "universalIdentifier": "<TICKET_BOARD_LAYOUT>",
     },
   ],
-  "permissionFlags": [],
+  "permissionFlags": [
+    {
+      "key": "EXPORT_TICKETS",
+      "label": "Export tickets",
+      "permissionType": "settings",
+      "universalIdentifier": "<EXPORT_TICKETS_PERMISSION_FLAG>",
+    },
+  ],
   "publicAssets": [],
-  "roles": [],
+  "roles": [
+    {
+      "canAccessAllTools": false,
+      "canBeAssignedToAgents": true,
+      "canBeAssignedToApiKeys": false,
+      "canBeAssignedToUsers": true,
+      "canDestroyAllObjectRecords": false,
+      "canReadAllObjectRecords": true,
+      "canSoftDeleteAllObjectRecords": false,
+      "canUpdateAllObjectRecords": false,
+      "canUpdateAllSettings": false,
+      "description": "A test role",
+      "fieldPermissions": [
+        {
+          "canUpdateFieldValue": false,
+          "fieldUniversalIdentifier": "<TICKET_TITLE_FIELD>",
+          "objectUniversalIdentifier": "<TICKET_OBJECT>",
+          "universalIdentifier": "<TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION>",
+        },
+      ],
+      "label": "Test Role",
+      "objectPermissions": [
+        {
+          "canReadObjectRecords": true,
+          "canUpdateObjectRecords": false,
+          "objectUniversalIdentifier": "<TICKET_OBJECT>",
+          "universalIdentifier": "<TEST_ROLE_TICKET_OBJECT_PERMISSION>",
+        },
+      ],
+      "permissionFlagUniversalIdentifiers": [
+        "<EXPORT_TICKETS_PERMISSION_FLAG>",
+        "86a58859-a539-5fa8-ba18-a6aaddc811b6",
+      ],
+      "rowLevelPermissionPredicateGroups": [
+        {
+          "logicalOperator": "OR",
+          "objectUniversalIdentifier": "<TICKET_OBJECT>",
+          "position": 0,
+          "universalIdentifier": "<TEST_ROLE_TICKET_PREDICATE_GROUP>",
+        },
+        {
+          "logicalOperator": "AND",
+          "objectUniversalIdentifier": "<TICKET_OBJECT>",
+          "parentPredicateGroupUniversalIdentifier": "<TEST_ROLE_TICKET_PREDICATE_GROUP>",
+          "position": 1,
+          "universalIdentifier": "<TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP>",
+        },
+      ],
+      "rowLevelPermissionPredicates": [
+        {
+          "fieldUniversalIdentifier": "<TICKET_TITLE_FIELD>",
+          "objectUniversalIdentifier": "<TICKET_OBJECT>",
+          "operand": "CONTAINS",
+          "position": 0,
+          "predicateGroupUniversalIdentifier": "<TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP>",
+          "universalIdentifier": "<TEST_ROLE_TICKET_TITLE_PREDICATE>",
+          "value": "bug",
+        },
+      ],
+      "universalIdentifier": "<TEST_ROLE>",
+    },
+  ],
   "skills": [],
   "timelineActivityTypes": [],
   "translations": {

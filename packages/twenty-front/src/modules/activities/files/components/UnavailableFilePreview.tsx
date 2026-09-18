@@ -49,11 +49,10 @@ export const UnavailableFilePreview = ({
       </StyledTitle>
       <StyledMessage>{message}</StyledMessage>
       <Button
-        Icon={IconDownload}
-        title={t`Download File`}
+        startIcon={<IconDownload />}
         onClick={() => downloadFile(fileUrl, fileName)}
-        variant="secondary"
-      />
+        variant="outline"
+      >{t`Download File`}</Button>
     </StyledContainer>
   );
 };

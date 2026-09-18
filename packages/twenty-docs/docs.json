@@ -511,54 +511,76 @@
                     ]
                   },
                   {
-                    "group": "Data display",
+                    "group": "Primitives",
                     "pages": [
-                      "ui/components/data-display/avatar",
-                      "ui/components/data-display/chip",
-                      "ui/components/data-display/tag",
-                      "ui/components/data-display/status"
+                      "ui/primitives/overview",
+                      {
+                        "group": "Data display",
+                        "pages": [
+                          "ui/primitives/data-display/avatar",
+                          "ui/primitives/data-display/chip",
+                          "ui/primitives/data-display/tag",
+                          "ui/primitives/data-display/status"
+                        ]
+                      },
+                      {
+                        "group": "Forms",
+                        "pages": [
+                          "ui/primitives/input/button",
+                          "ui/primitives/input/button-group",
+                          "ui/primitives/input/field",
+                          "ui/primitives/input/input",
+                          "ui/primitives/input/input-group",
+                          "ui/primitives/input/textarea",
+                          "ui/primitives/input/checkbox",
+                          "ui/primitives/input/radio",
+                          "ui/primitives/input/radio-group",
+                          "ui/primitives/input/select",
+                          "ui/primitives/input/slider",
+                          "ui/primitives/input/switch"
+                        ]
+                      },
+                      {
+                        "group": "Navigation",
+                        "pages": [
+                          "ui/primitives/navigation/list-item",
+                          "ui/primitives/navigation/tabs"
+                        ]
+                      },
+                      {
+                        "group": "Surfaces",
+                        "pages": [
+                          "ui/primitives/surfaces/alert-dialog",
+                          "ui/primitives/surfaces/dialog",
+                          "ui/primitives/surfaces/menu",
+                          "ui/primitives/surfaces/popover"
+                        ]
+                      },
+                      {
+                        "group": "Feedback",
+                        "pages": [
+                          "ui/primitives/feedback/toast"
+                        ]
+                      },
+                      {
+                        "group": "Typography",
+                        "pages": [
+                          "ui/primitives/typography/heading",
+                          "ui/primitives/typography/text"
+                        ]
+                      }
                     ]
                   },
                   {
-                    "group": "Forms",
+                    "group": "Components",
                     "pages": [
-                      "ui/components/input/field",
-                      "ui/components/input/input",
-                      "ui/components/input/input-group",
-                      "ui/components/input/textarea",
-                      "ui/components/input/checkbox",
-                      "ui/components/input/radio",
-                      "ui/components/input/radio-group",
-                      "ui/components/input/select",
-                      "ui/components/input/slider",
-                      "ui/components/input/switch"
-                    ]
-                  },
-                  {
-                    "group": "Navigation",
-                    "pages": [
-                      "ui/components/navigation/list-item",
-                      "ui/components/navigation/tabs"
-                    ]
-                  },
-                  {
-                    "group": "Surfaces",
-                    "pages": [
-                      "ui/components/surfaces/alert-dialog",
-                      "ui/components/surfaces/menu",
-                      "ui/components/surfaces/popover"
-                    ]
-                  },
-                  {
-                    "group": "Feedback",
-                    "pages": [
-                      "ui/components/feedback/toast"
-                    ]
-                  },
-                  {
-                    "group": "Typography",
-                    "pages": [
-                      "ui/components/typography/text"
+                      "ui/components/overview",
+                      "ui/components/input/main-button",
+                      "ui/components/input/light-button",
+                      "ui/components/input/icon-button",
+                      "ui/components/section",
+                      "ui/components/tab-button",
+                      "ui/components/code-editor"
                     ]
                   }
                 ]
@@ -6598,27 +6620,27 @@
   "redirects": [
     {
       "source": "/twenty-ui/input/checkbox",
-      "destination": "/ui/components/input/checkbox"
+      "destination": "/ui/primitives/input/checkbox"
     },
     {
       "source": "/twenty-ui/input/radio",
-      "destination": "/ui/components/input/radio"
+      "destination": "/ui/primitives/input/radio"
     },
     {
       "source": "/twenty-ui/input/select",
-      "destination": "/ui/components/input/select"
+      "destination": "/ui/primitives/input/select"
     },
     {
       "source": "/twenty-ui/input/text",
-      "destination": "/ui/components/input/input"
+      "destination": "/ui/primitives/input/input"
     },
     {
       "source": "/twenty-ui/input/toggle",
-      "destination": "/ui/components/input/switch"
+      "destination": "/ui/primitives/input/switch"
     },
     {
       "source": "/twenty-ui/navigation/menu-item",
-      "destination": "/ui/components/navigation/list-item"
+      "destination": "/ui/primitives/navigation/list-item"
     },
     {
       "source": "/twenty-ui",

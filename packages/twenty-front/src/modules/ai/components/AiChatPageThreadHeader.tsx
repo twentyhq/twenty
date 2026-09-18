@@ -3,7 +3,8 @@ import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -24,8 +25,24 @@ const StyledTitle = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
   max-width: 100%;
   min-width: 0;
-  padding: 0 ${themeCssVariables.spacing[1]};
   width: fit-content;
+`;
+
+const StyledTitleDisplay = styled.div`
+  align-items: center;
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  height: 24px;
+  overflow: hidden;
+  padding: 0 5px;
+
+  &:hover,
+  &:focus-visible {
+    background: ${themeCssVariables.background.transparent.light};
+    outline: none;
+  }
 `;
 
 const StyledActions = styled.div`
@@ -96,19 +113,31 @@ export const AiChatPageThreadHeader = ({
             autoFocus
           />
         ) : (
-          <OverflowingTextWithTooltip text={displayTitle} />
+          <StyledTitleDisplay
+            role="button"
+            tabIndex={0}
+            aria-label={t`Rename chat`}
+            onClick={startRename}
+            onKeyDown={(event) => {
+              if (event.key === Key.Enter || event.key === ' ') {
+                event.preventDefault();
+                startRename();
+              }
+            }}
+          >
+            <OverflowingTextWithTooltip text={displayTitle} />
+          </StyledTitleDisplay>
         )}
       </StyledTitle>
       <StyledActions>
         {hasConversation && (
           <Button
-            Icon={IconPlus}
-            title={t`New chat`}
-            size="small"
-            variant="primary"
-            accent="blue"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={() => switchToNewChat()}
-          />
+            variant="solid"
+            color="accent"
+          >{t`New chat`}</Button>
         )}
         <AiChatThreadItemMenu
           threadId={thread.id}
@@ -118,11 +147,12 @@ export const AiChatPageThreadHeader = ({
           onRenameRequested={startRename}
           clickableComponent={
             <IconButton
-              Icon={IconDotsVertical}
-              size="small"
-              variant="secondary"
-              ariaLabel={t`Chat actions`}
-            />
+              size="sm"
+              variant="outline"
+              aria-label={t`Chat actions`}
+            >
+              <IconDotsVertical />
+            </IconButton>
           }
         />
       </StyledActions>
