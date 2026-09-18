@@ -142,6 +142,7 @@ export const FormSelectFieldInput = ({
           <Select
             dropdownId={`${instanceId}-select-display`}
             options={optionsWithEmptyOption}
+            emptyOption={emptyOption}
             value={selectedOption?.value}
             onChange={onSelect}
             callToActionButton={callToActionButton}

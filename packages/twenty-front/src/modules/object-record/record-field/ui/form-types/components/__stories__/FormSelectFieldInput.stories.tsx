@@ -126,6 +126,32 @@ export const NonNullable: Story = {
   },
 };
 
+export const EmptyValueWithOptions: Story = {
+  args: {
+    label: 'Work Policy',
+    defaultValue: '',
+    options: [
+      {
+        label: 'Work Policy 1',
+        value: 'WORK_POLICY_1',
+        color: 'blue',
+      },
+      {
+        label: 'Work Policy 2',
+        value: 'WORK_POLICY_2',
+        color: 'green',
+      },
+    ],
+    onChange: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('No Work Policy')).toBeVisible();
+    expect(canvas.queryByText('Work Policy 1')).not.toBeInTheDocument();
+  },
+};
+
 export const NoOptionsWithCallToAction: Story = {
   args: {
     label: 'Work Policy',
