@@ -15,31 +15,50 @@ const callCoreOperation = async <TResult>(
   request: Record<string, unknown>,
 ): Promise<TResult> => (await call(request as never)) as TResult;
 
+const CORE_WORKFLOWS_PAGE_SIZE = 200;
+
+export type CoreWorkflowsPage = {
+  nodes: CoreWorkflowNode[];
+  endCursor?: string;
+  hasNextPage: boolean;
+};
+
 export const queryCoreWorkflowsByNameContains = async ({
   client,
   name,
+  after,
 }: {
   client: CoreApiClient;
   name: string;
-}): Promise<CoreWorkflowNode[]> => {
+  after?: string;
+}): Promise<CoreWorkflowsPage> => {
   const result = await callCoreOperation<{
-    coreWorkflows?: { edges?: { node?: CoreWorkflowNode }[] };
+    coreWorkflows?: {
+      edges?: { node?: CoreWorkflowNode }[];
+      pageInfo?: { endCursor?: string | null; hasNextPage?: boolean };
+    };
   }>((request) => client.query(request), {
     coreWorkflows: {
       __args: {
-        first: 200,
+        first: CORE_WORKFLOWS_PAGE_SIZE,
+        ...(after === undefined ? {} : { after }),
         filter: {
           logicalOperator: 'AND',
           rules: [{ fieldKey: 'NAME', operand: 'CONTAINS', value: name }],
         },
       },
       edges: { node: { id: true, name: true } },
+      pageInfo: { endCursor: true, hasNextPage: true },
     },
   });
 
-  return (result.coreWorkflows?.edges ?? [])
-    .map((edge) => edge.node)
-    .filter((node): node is CoreWorkflowNode => node !== undefined);
+  return {
+    nodes: (result.coreWorkflows?.edges ?? [])
+      .map((edge) => edge.node)
+      .filter((node): node is CoreWorkflowNode => node !== undefined),
+    endCursor: result.coreWorkflows?.pageInfo?.endCursor ?? undefined,
+    hasNextPage: result.coreWorkflows?.pageInfo?.hasNextPage === true,
+  };
 };
 
 export const createCoreWorkflow = async ({

@@ -1,9 +1,11 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { queryCoreWorkflowsByNameContains } from 'src/logic-functions/utils/core-workflow-operations';
+import { isDefined } from 'src/utils/is-defined';
 
 // The core name filter has no exact-match operand, so the exact name is matched
 // here to keep seeding idempotent rather than matching a longer workflow name.
+// Every page is walked: missing the match would seed a duplicate workflow.
 export const findExistingCoreWorkflowId = async ({
   client,
   name,
@@ -11,10 +13,22 @@ export const findExistingCoreWorkflowId = async ({
   client: CoreApiClient;
   name: string;
 }): Promise<string | undefined> => {
-  const coreWorkflows = await queryCoreWorkflowsByNameContains({
-    client,
-    name,
-  });
+  let after: string | undefined;
 
-  return coreWorkflows.find((coreWorkflow) => coreWorkflow.name === name)?.id;
+  for (;;) {
+    const { nodes, endCursor, hasNextPage } =
+      await queryCoreWorkflowsByNameContains({ client, name, after });
+
+    const exactMatch = nodes.find((coreWorkflow) => coreWorkflow.name === name);
+
+    if (isDefined(exactMatch)) {
+      return exactMatch.id;
+    }
+
+    if (!hasNextPage || !isDefined(endCursor)) {
+      return undefined;
+    }
+
+    after = endCursor;
+  }
 };
