@@ -156,9 +156,10 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
     errors.push({
       code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
       message: isDefined(remainingFlatEntityMapsToValidate)
-        ? 'Relation field target metadata not found in both existing and about to be created field metadatas'
-        : 'Relation field target metadata not found',
+        ? `Relation field target metadata not found in both existing and about to be created field metadatas (target: ${relationTargetFieldMetadataUniversalIdentifier}). Relations are bidirectional: declare the reverse field and cross-reference both universal identifiers`
+        : `Relation field target metadata not found (target: ${relationTargetFieldMetadataUniversalIdentifier})`,
       userFriendlyMessage: msg`Relation field target metadata not found`,
+      value: relationTargetFieldMetadataUniversalIdentifier,
     });
   } else {
     if (!isMorphOrRelationUniversalFlatFieldMetadata(targetFlatFieldMetadata)) {

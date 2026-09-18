@@ -109,7 +109,11 @@ export default defineField({
 
 ## Relating to standard objects
 
-To create a relation with a built-in Twenty object (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+To create a relation with a built-in Twenty object (Person, Company, Opportunity, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`.
+
+Relations are always bidirectional, even when the target is a standard object. You must declare **both sides** and cross-reference their `universalIdentifier`s. The reverse `ONE_TO_MANY` side lives on the standard object itself and is declared as a top-level `defineField`:
+
+**Step 1: Define the MANY_TO_ONE side on your custom object** (holds the foreign key):
 
 ```ts src/fields/person-on-self-hosting-user.field.ts
 import {
@@ -121,6 +125,7 @@ import {
 } from 'twenty-sdk/define';
 import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
 
+// Both identifiers live here so imports stay one-way (the reverse field imports from this file)
 export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
 export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
 
@@ -142,6 +147,42 @@ export default defineField({
   },
 });
 ```
+
+**Step 2: Define the ONE_TO_MANY reverse side on the standard object:**
+
+```ts src/fields/self-hosting-users-on-person.field.ts
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
+import {
+  PERSON_FIELD_ID,
+  SELF_HOSTING_USER_REVERSE_FIELD_ID,
+} from './person-on-self-hosting-user.field';
+// Keep imports one-way: field manifests execute eagerly, so mutual imports can read an uninitialized identifier.
+
+export default defineField({
+  universalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  type: FieldType.RELATION,
+  name: 'selfHostingUsers',
+  label: 'Self Hosting Users',
+  relationTargetObjectMetadataUniversalIdentifier:
+    SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: PERSON_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
+});
+```
+
+<Note>
+If you only declare the `MANY_TO_ONE` side, sync fails with `FIELD_METADATA_NOT_FOUND: Relation field target metadata not found`. Declare the reverse `ONE_TO_MANY` field on the standard object (Person, Company, Opportunity, …) as shown above so both sides resolve.
+</Note>
 
 ## Relation field properties
 
