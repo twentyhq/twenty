@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.42.0', 1789728234977)
+@RegisteredInstanceCommand('2.42.0', 1789750766493)
 export class AddAgentChatThreadInboxStateFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -24,6 +24,10 @@ export class AddAgentChatThreadInboxStateFastInstanceCommand implements FastInst
 
     await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "IDX_AGENT_CHAT_THREAD_ASSIGNEE_USER_WORKSPACE_ID" ON "core"."agentChatThread" ("assigneeUserWorkspaceId")`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."agentChatThread" DROP CONSTRAINT IF EXISTS "FK_2b8480f5591cd2c1674334a5872"`,
     );
 
     await queryRunner.query(

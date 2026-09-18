@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.42.0', 1789743315956)
+@RegisteredInstanceCommand('2.42.0', 1789750766494)
 export class AddAgentChatThreadReadsFastInstanceCommand
   implements FastInstanceCommand
 {
@@ -37,6 +37,10 @@ export class AddAgentChatThreadReadsFastInstanceCommand
     );
 
     await queryRunner.query(
+      `ALTER TABLE "core"."agentChatThreadRead" DROP CONSTRAINT IF EXISTS "FK_6b566bb4e0a58c34a355bbdedf5"`,
+    );
+
+    await queryRunner.query(
       `ALTER TABLE "core"."agentChatThreadRead"
        ADD CONSTRAINT "FK_6b566bb4e0a58c34a355bbdedf5"
        FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id")
@@ -44,10 +48,18 @@ export class AddAgentChatThreadReadsFastInstanceCommand
     );
 
     await queryRunner.query(
+      `ALTER TABLE "core"."agentChatThreadRead" DROP CONSTRAINT IF EXISTS "FK_9b6f82801bcab52e6bd48f31bd6"`,
+    );
+
+    await queryRunner.query(
       `ALTER TABLE "core"."agentChatThreadRead"
        ADD CONSTRAINT "FK_9b6f82801bcab52e6bd48f31bd6"
        FOREIGN KEY ("threadId") REFERENCES "core"."agentChatThread"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."agentChatThreadRead" DROP CONSTRAINT IF EXISTS "FK_957ba31ca1a57c168adb79bf594"`,
     );
 
     await queryRunner.query(

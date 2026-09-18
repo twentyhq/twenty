@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.42.0', 1789728234974)
+@RegisteredInstanceCommand('2.42.0', 1789750766490)
 export class AddAgentChatChannelsFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -30,10 +30,18 @@ export class AddAgentChatChannelsFastInstanceCommand implements FastInstanceComm
     );
 
     await queryRunner.query(
+      `ALTER TABLE "core"."agentChatChannel" DROP CONSTRAINT IF EXISTS "FK_06abd1f6b49da7e9d621edbb34d"`,
+    );
+
+    await queryRunner.query(
       `ALTER TABLE "core"."agentChatChannel"
        ADD CONSTRAINT "FK_06abd1f6b49da7e9d621edbb34d"
        FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."agentChatChannel" DROP CONSTRAINT IF EXISTS "FK_4c27e9ecd8f477466332d3545a3"`,
     );
 
     await queryRunner.query(
@@ -72,6 +80,10 @@ export class AddAgentChatChannelsFastInstanceCommand implements FastInstanceComm
     );
 
     await queryRunner.query(
+      `ALTER TABLE "core"."agentChatChannelMember" DROP CONSTRAINT IF EXISTS "FK_772eaebbcd16c07f65fc4e66c44"`,
+    );
+
+    await queryRunner.query(
       `ALTER TABLE "core"."agentChatChannelMember"
        ADD CONSTRAINT "FK_772eaebbcd16c07f65fc4e66c44"
        FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id")
@@ -79,10 +91,18 @@ export class AddAgentChatChannelsFastInstanceCommand implements FastInstanceComm
     );
 
     await queryRunner.query(
+      `ALTER TABLE "core"."agentChatChannelMember" DROP CONSTRAINT IF EXISTS "FK_965f596c773333c1292feecdc63"`,
+    );
+
+    await queryRunner.query(
       `ALTER TABLE "core"."agentChatChannelMember"
        ADD CONSTRAINT "FK_965f596c773333c1292feecdc63"
        FOREIGN KEY ("channelId") REFERENCES "core"."agentChatChannel"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."agentChatChannelMember" DROP CONSTRAINT IF EXISTS "FK_1c675bde6b319647903e2c9ae6a"`,
     );
 
     await queryRunner.query(
@@ -98,6 +118,10 @@ export class AddAgentChatChannelsFastInstanceCommand implements FastInstanceComm
 
     await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "IDX_AGENT_CHAT_THREAD_CHANNEL_ID" ON "core"."agentChatThread" ("channelId")`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."agentChatThread" DROP CONSTRAINT IF EXISTS "FK_ccc443637199a66cd10b123262f"`,
     );
 
     await queryRunner.query(
