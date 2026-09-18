@@ -5,7 +5,6 @@ import { useReorderVisibleRecordFields } from '@/object-record/record-field/hook
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useProcessOptionDropdownDragEnd = (recordTableId: string) => {
   const { reorderVisibleRecordFields } =
@@ -27,10 +26,6 @@ export const useProcessOptionDropdownDragEnd = (recordTableId: string) => {
         fromIndex: result.source.index - 1,
         toIndex: result.destination.index - 1,
       });
-
-      if (!isDefined(updatedRecordField)) {
-        return;
-      }
 
       saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);
     },

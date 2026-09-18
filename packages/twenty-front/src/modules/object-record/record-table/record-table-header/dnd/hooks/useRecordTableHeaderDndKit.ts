@@ -95,10 +95,6 @@ export const useRecordTableHeaderDndKit = (): {
       toIndex: destinationIndex,
     });
 
-    if (!isDefined(updatedRecordField)) {
-      return;
-    }
-
     saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);
   };
 

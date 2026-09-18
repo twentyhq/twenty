@@ -3,12 +3,10 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { computeNewPositionOfDraggedRecord } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
-import { resolveDropTargetRecord } from '@/object-record/utils/resolveDropTargetRecord';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useReorderVisibleRecordFields = (recordTableId: string) => {
   const store = useStore();
@@ -29,16 +27,12 @@ export const useReorderVisibleRecordFields = (recordTableId: string) => {
       const visibleRecordFieldsValue = store.get(visibleRecordFields);
       const currentRecordFieldsValue = store.get(currentRecordFields);
 
+      const isDroppedAfterList = toIndex >= visibleRecordFieldsValue.length;
+
       const recordToMove = visibleRecordFieldsValue[fromIndex];
-
-      const { targetRecord, isDroppedAfterList } = resolveDropTargetRecord({
-        records: visibleRecordFieldsValue,
-        toIndex,
-      });
-
-      if (!isDefined(recordToMove) || !isDefined(targetRecord)) {
-        return undefined;
-      }
+      const targetRecord = isDroppedAfterList
+        ? visibleRecordFieldsValue[visibleRecordFieldsValue.length - 1]
+        : visibleRecordFieldsValue[toIndex];
 
       const newPositionOfTargetRecord = computeNewPositionOfDraggedRecord({
         arrayOfRecordsWithPosition: currentRecordFieldsValue,
