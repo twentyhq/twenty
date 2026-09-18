@@ -74,8 +74,6 @@ export class FrontComponentDTO {
   @Field()
   usesSdkClient: boolean;
 
-  // A non-null settingsTab marks the component as one of the application's
-  // settings tabs, tab options or not.
   @IsOptional()
   @Field(() => FrontComponentSettingsTabDTO, { nullable: true })
   settingsTab?: FrontComponentSettingsTabDTO;

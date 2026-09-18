@@ -2,6 +2,7 @@ import {
   DEFAULT_FRONT_COMPONENT_SETTINGS_TAB,
   type Manifest,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { applyLegacySettingsFrontComponentTab } from 'src/engine/core-modules/application/application-manifest/utils/apply-legacy-settings-front-component-tab.util';
 
@@ -20,7 +21,7 @@ const buildManifest = ({
   ({
     application: {
       displayName: 'Stripe',
-      ...(settingsFrontComponentUniversalIdentifier !== undefined
+      ...(isDefined(settingsFrontComponentUniversalIdentifier)
         ? {
             settingsFrontComponent: {
               universalIdentifier: settingsFrontComponentUniversalIdentifier,

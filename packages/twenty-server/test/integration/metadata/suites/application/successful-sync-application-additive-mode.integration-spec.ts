@@ -278,8 +278,6 @@ describe('Manifest sync - additive mode', () => {
       position: 2,
     });
 
-    // The application FK carries the lowest-positioned tab, whatever order the
-    // manifest declared the components in.
     expect(declaredReferences.settingsCustomTabFrontComponentId).toBe(
       firstSettingsTab.id,
     );

@@ -373,9 +373,6 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
 
-        // settingsTab is dropped rather than spread through: the config comes
-        // from a user module, so the type omitting it does not stop the value
-        // from being there and marking a regular component a settings tab.
         const {
           component,
           tab,
@@ -397,8 +394,6 @@ export const buildManifest = async (
           builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtComponentChecksum: '',
           isHeadless: rest.isHeadless ?? false,
-          // A defined settingsTab is what marks the component as a settings
-          // tab, so it stays set even when the app declares no tab options.
           ...(isSettingsFrontComponent ? { settingsTab: tab ?? {} } : {}),
         };
 

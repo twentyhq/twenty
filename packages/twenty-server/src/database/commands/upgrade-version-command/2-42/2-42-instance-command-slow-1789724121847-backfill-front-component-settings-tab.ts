@@ -13,13 +13,6 @@ export class BackfillFrontComponentSettingsTabSlowInstanceCommand
     BackfillFrontComponentSettingsTabSlowInstanceCommand.name,
   );
 
-  // The application used to point at its single settings component; a
-  // non-null settingsTab is what marks one from now on, so carry the
-  // existing pointer over before it stops being read. That component stood in
-  // for the generated Variables tab rather than sitting next to it, so it is
-  // backfilled with that tab's own label, icon and position. The values are
-  // inlined rather than read from DEFAULT_FRONT_COMPONENT_SETTINGS_TAB so this
-  // migration keeps writing what it wrote the day it ran.
   async runDataMigration(dataSource: DataSource): Promise<void> {
     const backfilledFrontComponents: { id: string }[] = await dataSource.query(
       `UPDATE "core"."frontComponent" "frontComponent"

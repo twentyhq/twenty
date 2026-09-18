@@ -45,9 +45,6 @@ export class FrontComponentEntity
   @Column({ default: false })
   usesSdkClient: boolean;
 
-  // A non-null settingsTab is what marks the component as one of the
-  // application's settings tabs, so it stays set even for a tab declared
-  // without any options.
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_FRONT_COMPONENT_SETTINGS_TAB_UPGRADE_COMMAND_NAME,
   })

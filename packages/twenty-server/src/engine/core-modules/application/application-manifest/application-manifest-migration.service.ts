@@ -324,9 +324,6 @@ export class ApplicationManifestMigrationService {
       }
     }
 
-    // The application FK only holds one component: until the settings page
-    // reads the tabs off the front components themselves, it points at the
-    // first one so a single-tab app keeps rendering.
     const [firstSettingsFrontComponentManifest] =
       sortFrontComponentSettingsTabs(
         manifest.frontComponents.filter(({ settingsTab }) =>

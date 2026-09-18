@@ -4,9 +4,6 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-// A manifest built before the tab moved onto the front component carries the
-// application-level pointer and no settingsTab anywhere, so syncing one would
-// otherwise clear the settings tab the application currently renders.
 export const applyLegacySettingsFrontComponentTab = (
   manifest: Manifest,
 ): Manifest => {

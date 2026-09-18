@@ -13,9 +13,6 @@ export const validateSettingsFrontComponentTabs = ({
     isDefined(settingsTab),
   );
 
-  // A lone settings component can fall back to the default tab, but siblings
-  // sharing that fallback would render as identically labelled tabs stacked on
-  // the same position.
   if (settingsFrontComponents.length <= 1) {
     return [];
   }

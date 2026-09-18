@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { RICH_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
 
@@ -13,7 +15,7 @@ describe('buildManifest settings front components', () => {
     expect(errors).toEqual([]);
 
     const settingsFrontComponents = manifest?.frontComponents.filter(
-      ({ settingsTab }) => settingsTab !== undefined,
+      ({ settingsTab }) => isDefined(settingsTab),
     );
 
     expect(
@@ -45,7 +47,6 @@ describe('buildManifest settings front components', () => {
 
     expect(errors).toEqual([]);
 
-    // The fixture smuggles a settingsTab past the config type on purpose
     const regularFrontComponent = manifest?.frontComponents.find(
       ({ name }) => name === 'card-component',
     );

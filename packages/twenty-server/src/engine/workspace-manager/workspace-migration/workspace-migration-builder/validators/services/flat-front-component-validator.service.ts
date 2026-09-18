@@ -248,9 +248,6 @@ export class FlatFrontComponentValidatorService {
     return errors;
   }
 
-  // Two components taking the default tab would render as identically labelled
-  // tabs on the same position. The SDK build rejects it, so this only catches a
-  // manifest synced without going through it.
   private getDefaultSettingsTabCollisionErrors({
     applicationUniversalIdentifier,
     settingsTab,
