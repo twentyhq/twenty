@@ -364,6 +364,19 @@ export class AgentRunThreadService {
         rollback,
       });
 
+      // The answer goes back with the question. Leaving it would show the
+      // thread answered while the question is pending again, and the next
+      // attempt would post the same answer a second time. A failure to clean
+      // it up must not replace the error that caused the rollback.
+      if (isDefined(answerMessage)) {
+        await this.agentChatService
+          .deleteMessage({
+            messageId: answerMessage.id,
+            workspaceId: thread.workspaceId,
+          })
+          .catch(() => {});
+      }
+
       throw error;
     }
 

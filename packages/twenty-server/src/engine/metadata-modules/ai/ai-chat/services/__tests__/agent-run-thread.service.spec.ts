@@ -60,6 +60,7 @@ const buildService = () => {
       rollback: { partId: 'part-id', previousOutput: {} },
     }),
     restorePendingQuestion: jest.fn().mockResolvedValue(undefined),
+    deleteMessage: jest.fn().mockResolvedValue(undefined),
   };
   const eventPublisherService = {
     publish: jest.fn().mockResolvedValue(undefined),
@@ -254,6 +255,64 @@ describe('AgentRunThreadService', () => {
     ).rejects.toThrow('queue is down');
 
     expect(agentChatService.restorePendingQuestion).toHaveBeenCalled();
+  });
+
+  // The answer goes back with the question: leaving it would read as answered
+  // while the question is pending again, and the next attempt would post it
+  // a second time.
+  it('takes the answer back out when the run cannot be re-queued', async () => {
+    const { service, agentChatService, messageQueueService } = buildService();
+
+    messageQueueService.add.mockRejectedValue(new Error('queue is down'));
+
+    await expect(
+      service.answerRunQuestion({
+        thread: buildThread() as never,
+        messageId: 'question-message-id',
+        answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+        userWorkspaceId: OWNER_ID,
+      }),
+    ).rejects.toThrow('queue is down');
+
+    expect(agentChatService.deleteMessage).toHaveBeenCalledWith({
+      messageId: 'user-message-id',
+      workspaceId: WORKSPACE_ID,
+    });
+  });
+
+  it('keeps the original error when taking the answer back out also fails', async () => {
+    const { service, agentChatService, messageQueueService } = buildService();
+
+    messageQueueService.add.mockRejectedValue(new Error('queue is down'));
+    agentChatService.deleteMessage.mockRejectedValue(
+      new Error('delete failed'),
+    );
+
+    await expect(
+      service.answerRunQuestion({
+        thread: buildThread() as never,
+        messageId: 'question-message-id',
+        answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+        userWorkspaceId: OWNER_ID,
+      }),
+    ).rejects.toThrow('queue is down');
+  });
+
+  it('has no answer to take back out when writing it is what failed', async () => {
+    const { service, agentChatService } = buildService();
+
+    agentChatService.addMessage.mockRejectedValue(new Error('write failed'));
+
+    await expect(
+      service.answerRunQuestion({
+        thread: buildThread() as never,
+        messageId: 'question-message-id',
+        answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+        userWorkspaceId: OWNER_ID,
+      }),
+    ).rejects.toThrow('write failed');
+
+    expect(agentChatService.deleteMessage).not.toHaveBeenCalled();
   });
 
   it('refuses an answer once the run is no longer waiting for one', async () => {
