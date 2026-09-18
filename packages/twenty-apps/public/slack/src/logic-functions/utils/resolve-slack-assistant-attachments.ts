@@ -15,8 +15,6 @@ type ResolvedSlackAssistantAttachments = {
   namesOnlyFileNames: string[];
 };
 
-// two shared files can carry one name, and one shared file can appear on
-// several messages of the thread, so files are told apart by id or by identity
 const getSlackFileIdentity = (
   file: SlackMessageFile,
 ): string | SlackMessageFile => file.id ?? file;

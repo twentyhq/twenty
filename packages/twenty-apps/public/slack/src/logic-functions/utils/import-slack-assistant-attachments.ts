@@ -69,8 +69,6 @@ export const importSlackAssistantAttachments = async ({
     return NO_ATTACHMENTS;
   }
 
-  // the PUT carries its own timeout, but the surrounding GraphQL calls only
-  // stop on the client's signal, and an unbounded one eats the agent's budget
   const metadataClient = new MetadataApiClient({
     signal: AbortSignal.timeout(Math.max(deadlineAtMs - Date.now(), 1)),
   });
@@ -85,8 +83,6 @@ export const importSlackAssistantAttachments = async ({
       break;
     }
 
-    // Whatever is left when the import window closes stays a name in the
-    // prompt: an answer without the file beats a deadline error with it
     const remainingMs = deadlineAtMs - Date.now();
 
     if (remainingMs <= 0) {

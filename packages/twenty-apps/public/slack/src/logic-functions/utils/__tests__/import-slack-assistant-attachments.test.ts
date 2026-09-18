@@ -206,8 +206,6 @@ describe('importSlackAssistantAttachments', () => {
 
     expect(slackClient.files.info).toHaveBeenCalledWith({ file: 'F1' });
     expect(result.attachedFileNames).toEqual(['screenshot.png']);
-    // the stub itself is reported, so the prompt drops it by identity rather
-    // than by the placeholder name it shared with any other unnamed file
     expect(result.attachedSourceFiles).toHaveLength(1);
   });
 });

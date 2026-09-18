@@ -23,8 +23,6 @@ const parseContentLengthBytes = (
     : undefined;
 };
 
-// Slack reports the size on the file event, but that is member-controlled and
-// absent on stubs, so the limit is enforced against the bytes as they arrive
 const readBoundedBody = async (
   body: ReadableStream<Uint8Array>,
 ): Promise<Uint8Array<ArrayBuffer> | undefined> => {
@@ -94,8 +92,6 @@ export const downloadSlackFile = async ({
     return { success: false, error: `status ${response.status}` };
   }
 
-  // Slack answers a token missing files:read with the HTML sign-in page under a
-  // 200, so the content type is the only signal that the bytes are the file
   const responseContentType = response.headers.get('content-type') ?? '';
 
   if (!responseContentType.startsWith(mimeType)) {

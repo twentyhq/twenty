@@ -132,7 +132,6 @@ describe('downloadSlackFile', () => {
 
     expect(result.success).toBe(false);
     expect(result).toHaveProperty('error', expect.stringContaining('limit'));
-    // the read stops at the limit instead of draining an endless body
     expect(enqueuedChunks).toBeLessThan(14);
   });
 });
