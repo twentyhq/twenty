@@ -62,8 +62,13 @@ export class SetMessageTextDisplayedMaxRowsCommand extends ProvisionedWorkspaceC
 
     const textSettings =
       textField.settings as FieldMetadataSettings<FieldMetadataType.TEXT>;
+    const universalTextSettings =
+      textField.universalSettings as FieldMetadataSettings<FieldMetadataType.TEXT>;
 
-    if (textSettings?.displayedMaxRows === DISPLAYED_MAX_ROWS) {
+    if (
+      textSettings?.displayedMaxRows === DISPLAYED_MAX_ROWS &&
+      universalTextSettings?.displayedMaxRows === DISPLAYED_MAX_ROWS
+    ) {
       this.logger.log(
         `message.text displayedMaxRows already set for workspace ${workspaceId}, skipping`,
       );
@@ -84,12 +89,18 @@ export class SetMessageTextDisplayedMaxRowsCommand extends ProvisionedWorkspaceC
         { workspaceId },
       );
 
+    const updatedSettings = {
+      ...textSettings,
+      displayedMaxRows: DISPLAYED_MAX_ROWS,
+    };
+
+    // the builder diffs universal properties and the runner writes the settings
+    // column from universalSettings, so an update that only moves settings
+    // builds no action at all and reports success having changed nothing
     const fieldToUpdate = {
       ...textField,
-      settings: {
-        ...textSettings,
-        displayedMaxRows: DISPLAYED_MAX_ROWS,
-      },
+      settings: updatedSettings,
+      universalSettings: updatedSettings,
     };
 
     const result =

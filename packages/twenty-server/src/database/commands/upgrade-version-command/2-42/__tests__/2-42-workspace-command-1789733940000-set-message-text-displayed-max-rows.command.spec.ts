@@ -67,6 +67,7 @@ describe('SetMessageTextDisplayedMaxRowsCommand', () => {
       id: string;
       universalIdentifier: string;
       settings?: Record<string, unknown>;
+      universalSettings?: Record<string, unknown>;
     } | null = {
       id: TEXT_FIELD_ID,
       universalIdentifier: TEXT_FIELD_UNIVERSAL_IDENTIFIER,
@@ -100,6 +101,10 @@ describe('SetMessageTextDisplayedMaxRowsCommand', () => {
     expect(getUpdatedField()).toMatchObject({
       id: TEXT_FIELD_ID,
       settings: { displayedMaxRows: DISPLAYED_MAX_ROWS },
+      // the runner writes the settings column from universalSettings, and the
+      // builder only diffs universal properties, so settings alone changes
+      // nothing
+      universalSettings: { displayedMaxRows: DISPLAYED_MAX_ROWS },
     });
   });
 
@@ -113,6 +118,10 @@ describe('SetMessageTextDisplayedMaxRowsCommand', () => {
     await runOnWorkspace();
 
     expect(getUpdatedField().settings).toEqual({
+      displayedMaxRows: DISPLAYED_MAX_ROWS,
+      someOtherSetting: 'kept',
+    });
+    expect(getUpdatedField().universalSettings).toEqual({
       displayedMaxRows: DISPLAYED_MAX_ROWS,
       someOtherSetting: 'kept',
     });
@@ -134,6 +143,7 @@ describe('SetMessageTextDisplayedMaxRowsCommand', () => {
       id: TEXT_FIELD_ID,
       universalIdentifier: TEXT_FIELD_UNIVERSAL_IDENTIFIER,
       settings: { displayedMaxRows: DISPLAYED_MAX_ROWS },
+      universalSettings: { displayedMaxRows: DISPLAYED_MAX_ROWS },
     });
 
     await runOnWorkspace();
@@ -144,6 +154,22 @@ describe('SetMessageTextDisplayedMaxRowsCommand', () => {
     expect(loggerLogMock).toHaveBeenCalledWith(
       expect.stringContaining('already set'),
     );
+  });
+
+  // a workspace whose settings column was written without universalSettings
+  // still renders one line on the next build, so it is not done yet
+  it('still runs when only the settings column carries the value', async () => {
+    mockWorkspaceCache({
+      id: TEXT_FIELD_ID,
+      universalIdentifier: TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+      settings: { displayedMaxRows: DISPLAYED_MAX_ROWS },
+    });
+
+    await runOnWorkspace();
+
+    expect(getUpdatedField().universalSettings).toEqual({
+      displayedMaxRows: DISPLAYED_MAX_ROWS,
+    });
   });
 
   it('skips a workspace without the message text field', async () => {
