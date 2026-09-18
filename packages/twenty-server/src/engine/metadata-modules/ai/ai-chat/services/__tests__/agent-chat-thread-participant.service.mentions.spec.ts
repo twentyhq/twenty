@@ -1,4 +1,5 @@
 import { QueryFailedError } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 
@@ -205,8 +206,12 @@ describe('AgentChatThreadParticipantService mentions', () => {
           'assigneeUserWorkspaceId' in clause,
       ),
     ).toBe(true);
+    // The reader builder's public clause nests it — { channel: { visibility } }
+    // — so a top-level key check passes for both builders and guards nothing.
     expect(
-      where.some((clause: Record<string, unknown>) => 'visibility' in clause),
+      where.some((clause: { channel?: Record<string, unknown> }) =>
+        isDefined(clause.channel) ? 'visibility' in clause.channel : false,
+      ),
     ).toBe(false);
   });
 });
