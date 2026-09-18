@@ -78,7 +78,10 @@ describe('AiChatThreadAssigneeDropdown', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    participants = [{ userWorkspaceId: 'uw-tim' }, { userWorkspaceId: 'uw-ada' }];
+    participants = [
+      { userWorkspaceId: 'uw-tim' },
+      { userWorkspaceId: 'uw-ada' },
+    ];
     jotaiStore.set(currentWorkspaceMembersState.atom, [TIM, ADA] as never);
     jotaiStore.set(currentWorkspaceMemberState.atom, TIM as never);
   });

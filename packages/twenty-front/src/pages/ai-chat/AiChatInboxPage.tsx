@@ -14,6 +14,7 @@ import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActio
 import { agentChatInboxStateTabState } from '@/ai/states/agentChatInboxStateTabState';
 import { AGENT_CHAT_THREAD_INBOX_STATE_LABELS } from '@/ai/constants/AgentChatThreadInboxStateLabels';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { CollapseNavigationDrawerWhileSidePanelOpenEffect } from '@/navigation/components/CollapseNavigationDrawerWhileSidePanelOpenEffect';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const INBOX_THREAD_LIST_PANE_WIDTH = 400;
@@ -102,6 +103,7 @@ export const AiChatInboxPage = () => {
           onBackToList={isMobile ? backToList : undefined}
         />
       )}
+      <CollapseNavigationDrawerWhileSidePanelOpenEffect />
       {/* Thread rows on this page use the side panel action surface. */}
       <AiChatThreadDeleteConfirmationModal
         surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
