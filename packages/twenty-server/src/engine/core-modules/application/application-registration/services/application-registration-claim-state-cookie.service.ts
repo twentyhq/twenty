@@ -80,9 +80,15 @@ export class ApplicationRegistrationClaimStateCookieService {
     return {
       httpOnly: true,
       secure: this.isSecureDeployment(),
-      sameSite: this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE'),
+      sameSite: this.resolveSameSite(),
       path: '/',
     };
+  }
+
+  private resolveSameSite(): 'lax' | 'none' {
+    return this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE') === 'none'
+      ? 'none'
+      : 'lax';
   }
 
   private isSecureDeployment(): boolean {
