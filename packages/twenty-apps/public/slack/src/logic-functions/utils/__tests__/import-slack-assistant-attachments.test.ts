@@ -1,6 +1,7 @@
 import { type WebClient } from '@slack/web-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type SlackMessageFile } from 'src/logic-functions/types/slack-message-file.type';
 import { downloadSlackFile } from 'src/logic-functions/utils/download-slack-file';
 import { importSlackAssistantAttachments } from 'src/logic-functions/utils/import-slack-assistant-attachments';
 import { reportSlackConnectionAuthFailure } from 'src/logic-functions/utils/report-slack-connection-auth-failure';
@@ -25,7 +26,7 @@ const slackClient = {
   files: { info: vi.fn() },
 } as unknown as WebClient;
 
-const importFiles = async (files: (typeof PNG_FILE)[]) =>
+const importFiles = async (files: SlackMessageFile[]) =>
   await importSlackAssistantAttachments({
     client: slackClient,
     files,
@@ -196,6 +197,39 @@ describe('importSlackAssistantAttachments', () => {
     ]);
 
     expect(reportSlackConnectionAuthFailure).toHaveBeenCalledTimes(1);
+  });
+
+  it('should invite the workspace to reconnect when Slack refuses to describe a stub', async () => {
+    vi.mocked(slackClient.files.info).mockRejectedValueOnce(
+      Object.assign(new Error('An API error occurred: missing_scope'), {
+        data: { ok: false, error: 'missing_scope' },
+      }),
+    );
+
+    const result = await importFiles([
+      { id: 'F9', file_access: 'check_file_info' },
+    ]);
+
+    expect(result.attachments).toEqual([]);
+    expect(downloadSlackFile).not.toHaveBeenCalled();
+    expect(reportSlackConnectionAuthFailure).toHaveBeenCalledWith({
+      connectionId: 'connection-1',
+      reason: expect.stringContaining('files:read'),
+    });
+  });
+
+  it('should not invite a reconnect when a stub fails files.info for another reason', async () => {
+    vi.mocked(slackClient.files.info).mockRejectedValueOnce(
+      Object.assign(new Error('An API error occurred: file_not_found'), {
+        data: { ok: false, error: 'file_not_found' },
+      }),
+    );
+
+    await importFiles([
+      { id: 'F9', file_access: 'check_file_info' },
+    ]);
+
+    expect(reportSlackConnectionAuthFailure).not.toHaveBeenCalled();
   });
 
   it('should not invite a reconnect when the download fails for another reason', async () => {

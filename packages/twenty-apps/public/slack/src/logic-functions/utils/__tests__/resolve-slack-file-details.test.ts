@@ -27,9 +27,9 @@ describe('resolveSlackFileDetails', () => {
       url_private: 'https://files.slack.com/screenshot.png',
     };
 
-    expect(await resolveSlackFileDetails({ client: slackClient, file })).toBe(
-      file,
-    );
+    expect(
+      await resolveSlackFileDetails({ client: slackClient, file }),
+    ).toEqual({ file, isFilesReadScopeMissing: false });
     expect(filesInfo).not.toHaveBeenCalled();
   });
 
@@ -50,13 +50,16 @@ describe('resolveSlackFileDetails', () => {
     expect(
       await resolveSlackFileDetails({ client: slackClient, file: STUB_FILE }),
     ).toEqual({
-      id: 'F1',
-      name: 'screenshot.png',
-      title: 'Screenshot',
-      mimetype: 'image/png',
-      size: 1024,
-      url_private: 'https://files.slack.com/screenshot.png',
-      file_access: undefined,
+      file: {
+        id: 'F1',
+        name: 'screenshot.png',
+        title: 'Screenshot',
+        mimetype: 'image/png',
+        size: 1024,
+        url_private: 'https://files.slack.com/screenshot.png',
+        file_access: undefined,
+      },
+      isFilesReadScopeMissing: false,
     });
   });
 
@@ -65,14 +68,26 @@ describe('resolveSlackFileDetails', () => {
 
     expect(
       await resolveSlackFileDetails({ client: slackClient, file: STUB_FILE }),
-    ).toBe(STUB_FILE);
+    ).toEqual({ file: STUB_FILE, isFilesReadScopeMissing: false });
   });
 
   it('should leave the stub as it is when files.info fails', async () => {
-    filesInfo.mockRejectedValue(new Error('missing_scope'));
+    filesInfo.mockRejectedValue(new Error('boom'));
 
     expect(
       await resolveSlackFileDetails({ client: slackClient, file: STUB_FILE }),
-    ).toBe(STUB_FILE);
+    ).toEqual({ file: STUB_FILE, isFilesReadScopeMissing: false });
+  });
+
+  it('should name the missing scope when Slack refuses to describe the stub', async () => {
+    filesInfo.mockRejectedValue(
+      Object.assign(new Error('An API error occurred: missing_scope'), {
+        data: { ok: false, error: 'missing_scope' },
+      }),
+    );
+
+    expect(
+      await resolveSlackFileDetails({ client: slackClient, file: STUB_FILE }),
+    ).toEqual({ file: STUB_FILE, isFilesReadScopeMissing: true });
   });
 });

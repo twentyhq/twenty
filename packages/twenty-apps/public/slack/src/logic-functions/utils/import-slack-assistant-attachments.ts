@@ -19,6 +19,7 @@ import { uploadFileToAgentChat } from 'src/logic-functions/utils/upload-file-to-
 type ResolvedSlackFile = {
   resolved: SlackMessageFile;
   sourceFile: SlackMessageFile;
+  isFilesReadScopeMissing: boolean;
 };
 
 type ResolvedSlackAttachmentCandidate = ResolvedSlackFile & {
@@ -38,6 +39,25 @@ const NO_ATTACHMENTS: ImportedSlackAttachments = {
 
 const FILES_READ_SCOPE_MISSING_REASON =
   'Slack refused to serve a shared file, which means the stored bot token predates the files:read scope. Reconnect Slack so the assistant can read files shared with it.';
+
+// Every file failure degrades silently, so the connection is the only place
+// an admin can learn that reconnecting is what restores file reading
+const reportFilesReadScopeMissing = async ({
+  isFilesReadScopeMissing,
+  connectionId,
+}: {
+  isFilesReadScopeMissing: boolean;
+  connectionId: string | undefined;
+}): Promise<void> => {
+  if (!isFilesReadScopeMissing || !isNonEmptyString(connectionId)) {
+    return;
+  }
+
+  await reportSlackConnectionAuthFailure({
+    connectionId,
+    reason: FILES_READ_SCOPE_MISSING_REASON,
+  });
+};
 
 export const importSlackAssistantAttachments = async ({
   client,
@@ -62,16 +82,25 @@ export const importSlackAssistantAttachments = async ({
   }
 
   const resolvedFiles = await Promise.all(
-    files.map(
-      async (file): Promise<ResolvedSlackFile> => ({
-        resolved: await resolveSlackFileDetails({ client, file }),
-        sourceFile: file,
-      }),
-    ),
+    files.map(async (file): Promise<ResolvedSlackFile> => {
+      const { file: resolved, isFilesReadScopeMissing } =
+        await resolveSlackFileDetails({ client, file });
+
+      return { resolved, sourceFile: file, isFilesReadScopeMissing };
+    }),
   );
   const candidates = resolvedFiles.filter(isResolvedAttachmentCandidate);
 
+  let isFilesReadScopeMissing = resolvedFiles.some(
+    (resolvedFile) => resolvedFile.isFilesReadScopeMissing,
+  );
+
   if (!isNonEmptyArray(candidates)) {
+    await reportFilesReadScopeMissing({
+      isFilesReadScopeMissing,
+      connectionId,
+    });
+
     return NO_ATTACHMENTS;
   }
 
@@ -83,7 +112,6 @@ export const importSlackAssistantAttachments = async ({
     attachedFileNames: [],
     attachedSourceFiles: [],
   };
-  let isFilesReadScopeMissing = false;
 
   for (const { resolved: candidate, sourceFile } of candidates) {
     if (imported.attachments.length >= SLACK_ASSISTANT_MAX_ATTACHMENTS) {
@@ -142,14 +170,7 @@ export const importSlackAssistantAttachments = async ({
     }
   }
 
-  // Every file failure degrades silently, so the connection is the only place
-  // an admin can learn that reconnecting is what restores file reading
-  if (isFilesReadScopeMissing && isNonEmptyString(connectionId)) {
-    await reportSlackConnectionAuthFailure({
-      connectionId,
-      reason: FILES_READ_SCOPE_MISSING_REASON,
-    });
-  }
+  await reportFilesReadScopeMissing({ isFilesReadScopeMissing, connectionId });
 
   return imported;
 };

@@ -16,7 +16,11 @@ export const reportSlackConnectionAuthFailure = async ({
   const reportPromise = reportConnectionAuthFailure({
     connectionId,
     reason,
-  }).catch(() => undefined);
+  }).catch((error: unknown) => {
+    console.warn(
+      `[slack] reporting the connection auth failure failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  });
 
   const timeoutPromise = new Promise<void>((resolve) => {
     timeoutId = setTimeout(
