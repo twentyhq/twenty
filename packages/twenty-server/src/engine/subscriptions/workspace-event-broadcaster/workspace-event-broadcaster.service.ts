@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type PermissionFlagType } from 'twenty-shared/constants';
+
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { resolveUserWorkspaceIdsWithPermissionFlag } from 'src/engine/metadata-modules/permissions/utils/resolve-user-workspace-ids-with-permission-flag.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
@@ -14,6 +18,7 @@ export class WorkspaceEventBroadcaster {
   constructor(
     private readonly eventStreamService: EventStreamService,
     private readonly subscriptionService: SubscriptionService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async broadcast({
@@ -29,11 +34,31 @@ export class WorkspaceEventBroadcaster {
       return;
     }
 
+    const allowedUserWorkspaceIdsByPermissionFlag =
+      await this.resolveAllowedUserWorkspaceIdsByPermissionFlag({
+        workspaceId,
+        events,
+      });
+
     await this.publishToActiveStreams(workspaceId, (streamData) => {
       const streamUserWorkspaceId = streamData.authContext.userWorkspaceId;
 
       const metadataEventsForStream = events
         .filter((event) => {
+          if (isDefined(event.requiredPermissionFlag)) {
+            const allowedUserWorkspaceIds =
+              allowedUserWorkspaceIdsByPermissionFlag.get(
+                event.requiredPermissionFlag,
+              );
+
+            if (
+              !isDefined(streamUserWorkspaceId) ||
+              !allowedUserWorkspaceIds?.has(streamUserWorkspaceId)
+            ) {
+              return false;
+            }
+          }
+
           // Events without recipientUserWorkspaceIds are workspace-wide; delivered
           // to every stream. Events with the field are user-scoped; only delivered
           // to streams whose authContext.userWorkspaceId is in the list.
@@ -84,6 +109,59 @@ export class WorkspaceEventBroadcaster {
           }
         : undefined,
     );
+  }
+
+  private async resolveAllowedUserWorkspaceIdsByPermissionFlag({
+    workspaceId,
+    events,
+  }: {
+    workspaceId: string;
+    events: WorkspaceBroadcastEvent[];
+  }): Promise<Map<PermissionFlagType, Set<string>>> {
+    const requiredPermissionFlags = new Set(
+      events
+        .map((event) => event.requiredPermissionFlag)
+        .filter((permissionFlag): permissionFlag is PermissionFlagType =>
+          isDefined(permissionFlag),
+        ),
+    );
+
+    const allowedUserWorkspaceIdsByPermissionFlag = new Map<
+      PermissionFlagType,
+      Set<string>
+    >();
+
+    if (requiredPermissionFlags.size === 0) {
+      return allowedUserWorkspaceIdsByPermissionFlag;
+    }
+
+    const { flatRoleMaps, flatRolePermissionFlagMaps, flatRoleTargetMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatRoleMaps',
+            'flatRolePermissionFlagMaps',
+            'flatRoleTargetMaps',
+          ],
+        },
+      );
+
+    for (const permissionFlag of requiredPermissionFlags) {
+      allowedUserWorkspaceIdsByPermissionFlag.set(
+        permissionFlag,
+        new Set(
+          resolveUserWorkspaceIdsWithPermissionFlag({
+            permissionFlag,
+            flatRoleMaps,
+            flatRolePermissionFlagMaps,
+            flatRoleTargetMaps,
+          }),
+        ),
+      );
+    }
+
+    return allowedUserWorkspaceIdsByPermissionFlag;
   }
 
   private async publishToActiveStreams(

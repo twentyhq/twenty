@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
+import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import {
   FlatDeleteWorkflowVersionAction,
   UniversalDeleteWorkflowVersionAction,
@@ -32,12 +32,10 @@ export class DeleteWorkflowVersionActionHandlerService extends WorkspaceMigratio
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
 
-    const connectionProviderRepository =
-      queryRunner.manager.getRepository<ConnectionProviderEntity>(
-        ConnectionProviderEntity,
-      );
+    const workflowVersionRepository =
+      queryRunner.manager.getRepository<WorkflowVersionEntity>(WorkflowVersionEntity);
 
-    await connectionProviderRepository.delete({
+    await workflowVersionRepository.delete({
       id: flatAction.entityId,
       workspaceId,
     });

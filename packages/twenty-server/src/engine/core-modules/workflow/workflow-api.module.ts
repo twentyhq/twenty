@@ -1,3 +1,6 @@
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { CoreWorkflowMigrationWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-migration-write.service';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { Module } from '@nestjs/common';
 
 import { WorkflowVersionValidationModule } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.module';
@@ -45,6 +48,9 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
 
 @Module({
   imports: [
+    ApplicationModule,
+    WorkspaceMigrationModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
     RecordPositionModule,
     AutomatedTriggerModule,
@@ -70,6 +76,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
   ],
   controllers: [WorkflowTriggerController],
   providers: [
+    CoreWorkflowMigrationWriteService,
     WorkflowTriggerResolver,
     WorkflowBuilderResolver,
     WorkflowVersionStepResolver,

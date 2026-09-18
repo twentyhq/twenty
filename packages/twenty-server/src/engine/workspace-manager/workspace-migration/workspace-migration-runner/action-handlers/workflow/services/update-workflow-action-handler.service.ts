@@ -24,8 +24,8 @@ export class UpdateWorkflowActionHandlerService extends WorkspaceMigrationRunner
   ): Promise<FlatUpdateWorkflowAction> {
     const { action, allFlatEntityMaps } = context;
 
-    const flatConnectionProvider = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatConnectionProviderMaps,
+    const flatWorkflow = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatWorkflowMaps,
       universalIdentifier: action.universalIdentifier,
     });
 
@@ -38,7 +38,7 @@ export class UpdateWorkflowActionHandlerService extends WorkspaceMigrationRunner
     return {
       type: 'update',
       metadataName: 'workflow',
-      entityId: flatConnectionProvider.id,
+      entityId: flatWorkflow.id,
       update,
     };
   }

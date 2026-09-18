@@ -24,8 +24,8 @@ export class UpdateWorkflowVersionActionHandlerService extends WorkspaceMigratio
   ): Promise<FlatUpdateWorkflowVersionAction> {
     const { action, allFlatEntityMaps } = context;
 
-    const flatConnectionProvider = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatConnectionProviderMaps,
+    const flatWorkflowVersion = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatWorkflowVersionMaps,
       universalIdentifier: action.universalIdentifier,
     });
 
@@ -38,7 +38,7 @@ export class UpdateWorkflowVersionActionHandlerService extends WorkspaceMigratio
     return {
       type: 'update',
       metadataName: 'workflowVersion',
-      entityId: flatConnectionProvider.id,
+      entityId: flatWorkflowVersion.id,
       update,
     };
   }
