@@ -43,8 +43,6 @@ const getFlatEntities = ({
 const isSoftDeleted = (flatEntity: ApplicationFlatEntity): boolean =>
   'deletedAt' in flatEntity && isDefined(flatEntity.deletedAt);
 
-// A workflow command may reference its definition by the core pointer alone,
-// so neither pointer on its own decides whether the command is workflow-generated.
 const isWorkflowTriggerCommandMenuItem = (
   flatEntity: ApplicationFlatEntity,
 ): boolean =>

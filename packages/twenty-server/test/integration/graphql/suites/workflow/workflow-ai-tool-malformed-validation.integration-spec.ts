@@ -82,8 +82,6 @@ describe('Workflow AI tool validation (e2e)', () => {
   const createdCoreWorkflowIds: string[] = [];
 
   afterAll(async () => {
-    // Deleting through the tool removes the core definition and its rollback
-    // mirror; dropping the workspace row alone would leave the core row behind.
     for (const coreWorkflowId of createdCoreWorkflowIds) {
       await callMcpTool('execute_tool', {
         toolName: 'delete_workflow',

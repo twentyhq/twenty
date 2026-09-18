@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import request from 'supertest';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -29,8 +30,6 @@ const graphqlAs = (token: string, query: string, variables?: object) =>
     .set('Authorization', `Bearer ${token}`)
     .send({ query, variables });
 
-// Installs a real application, then issues it a client-credentials token: that
-// grant carries no user, which is how an install hook or a cron reaches the API.
 const installApplicationWithoutUser = async ({
   name,
   grantsWorkflowsPermission,
@@ -263,6 +262,72 @@ describe('core workflow API with application credentials (integration)', () => {
 
     expect(mirror.createdBySource).toBe('APPLICATION');
     expect(mirror.createdByWorkspaceMemberId).toBeNull();
+  });
+
+  it('should attribute the workflow to the workspace member when a user creates it', async () => {
+    const createResponse = await graphqlAs(
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      CREATE_CORE_WORKFLOW,
+      { input: { name: `User created workflow ${crypto.randomUUID()}` } },
+    );
+
+    expect(createResponse.body.errors).toBeUndefined();
+
+    const { id: coreWorkflowId, workspaceWorkflowId } =
+      createResponse.body.data.createCoreWorkflow;
+
+    coreWorkflowIdsToDelete.push(coreWorkflowId);
+
+    const [mirror] = await global.testDataSource.query(
+      `SELECT "createdBySource", "createdByWorkspaceMemberId", "createdByName"
+       FROM "${APPLE_WORKSPACE_SCHEMA}"."workflow" WHERE id = $1`,
+      [workspaceWorkflowId],
+    );
+
+    expect(mirror.createdBySource).toBe('MANUAL');
+    expect(mirror.createdByWorkspaceMemberId).not.toBeNull();
+  });
+
+  it('should keep the application role when a user acts through the application', async () => {
+    const { data } = await generateApplicationToken({
+      applicationId: authorizedApplication.applicationId,
+    });
+
+    const delegatedToken =
+      data.generateApplicationToken.applicationAccessToken.token;
+
+    const createResponse = await graphqlAs(
+      delegatedToken,
+      CREATE_CORE_WORKFLOW,
+      { input: { name: `Delegated workflow ${crypto.randomUUID()}` } },
+    );
+
+    expect(createResponse.body.errors).toBeUndefined();
+
+    const { id: coreWorkflowId, workspaceWorkflowId } =
+      createResponse.body.data.createCoreWorkflow;
+
+    coreWorkflowIdsToDelete.push(coreWorkflowId);
+
+    const [mirror] = await global.testDataSource.query(
+      `SELECT "createdBySource", "createdByWorkspaceMemberId"
+       FROM "${APPLE_WORKSPACE_SCHEMA}"."workflow" WHERE id = $1`,
+      [workspaceWorkflowId],
+    );
+
+    expect(mirror.createdBySource).toBe('MANUAL');
+    expect(mirror.createdByWorkspaceMemberId).not.toBeNull();
+  });
+
+  it('should refuse an API key, which is neither a user nor an application', async () => {
+    const response = await graphqlAs(
+      API_KEY_ACCESS_TOKEN,
+      CREATE_CORE_WORKFLOW,
+      { input: { name: `Api key workflow ${crypto.randomUUID()}` } },
+    );
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.data?.createCoreWorkflow).toBeFalsy();
   });
 
   it('should deny an application whose role does not grant the workflows permission', async () => {

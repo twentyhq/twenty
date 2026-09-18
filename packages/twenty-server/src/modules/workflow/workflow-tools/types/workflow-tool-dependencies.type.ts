@@ -29,10 +29,6 @@ export type WorkflowToolDependencies = {
 
 export type WorkflowToolContext = {
   workspaceId: string;
-  // workflowRun stays a workspace object, so its reads keep the caller's
-  // effective role rather than a system context.
   rolePermissionConfig: RolePermissionConfig;
-  // Attribution for definitions the tool creates; MCP resolves it from the
-  // caller's identity, never from a synthesised user.
   actorContext?: ActorMetadata;
 };

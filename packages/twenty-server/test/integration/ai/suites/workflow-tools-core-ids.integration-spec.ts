@@ -40,7 +40,6 @@ const callWorkflowTool = async <TResult>(
 
   expect(raw).toBeDefined();
 
-  // execute_tool returns the tool's own payload, unwrapped.
   return JSON.parse(raw as string) as TResult;
 };
 
@@ -207,8 +206,6 @@ describe('workflow MCP tools on core identities (integration)', () => {
       const iteratorStep = steps.find((step) => step.id === iteratorStepId);
       const loopBodyStep = steps.find((step) => step.id === loopBodyStepId);
 
-      // The loop body hangs off initialLoopStepIds; nextStepIds carries what
-      // runs once the loop is done.
       expect(iteratorStep?.settings?.input?.initialLoopStepIds).toEqual([
         loopBodyStepId,
       ]);

@@ -27,8 +27,6 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
 
-// The core definition services are consumed by the GraphQL resolvers and by the
-// MCP/agent tools, which must not depend on the resolver module.
 @Module({
   imports: [
     TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),

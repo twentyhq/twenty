@@ -2,10 +2,8 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type WorkflowBulkRecordsTrigger } from 'src/types/workflow-bulk-records-trigger';
 import { type WorkflowLogicFunctionStep } from 'src/types/workflow-logic-function-step';
+import { isDefined } from 'src/utils/is-defined';
 
-// The generated core client is built from the workspace object schema, which
-// does not carry the core workflow resolvers, so their operations are declared
-// here once with their real shapes instead of being cast at each call site.
 type CoreWorkflowNode = { id?: string; name?: string | null };
 
 type CoreWorkflowVersionNode = { id?: string; status?: string };
@@ -41,7 +39,7 @@ export const queryCoreWorkflowsByNameContains = async ({
     coreWorkflows: {
       __args: {
         first: CORE_WORKFLOWS_PAGE_SIZE,
-        ...(after === undefined ? {} : { after }),
+        ...(isDefined(after) ? { after } : {}),
         filter: {
           logicalOperator: 'AND',
           rules: [{ fieldKey: 'NAME', operand: 'CONTAINS', value: name }],
@@ -57,7 +55,7 @@ export const queryCoreWorkflowsByNameContains = async ({
       .map((edge) => edge.node)
       .filter((node): node is CoreWorkflowNode => node !== undefined),
     endCursor: result.coreWorkflows?.pageInfo?.endCursor ?? undefined,
-    hasNextPage: result.coreWorkflows?.pageInfo?.hasNextPage === true,
+    hasNextPage: result.coreWorkflows?.pageInfo?.hasNextPage ?? false,
   };
 };
 

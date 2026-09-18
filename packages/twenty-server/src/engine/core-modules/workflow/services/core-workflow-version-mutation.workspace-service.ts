@@ -2,12 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import {
-  buildWorkflowGraph,
-  computeWorkflowLayout,
-  TRIGGER_STEP_ID,
-  WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
-} from 'twenty-shared/workflow';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { type CreateCoreWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-core-workflow-version-step.input';
@@ -37,6 +32,7 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { computeWorkflowStepPositions } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-step-positions.util';
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import {
@@ -601,29 +597,13 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         { workspaceId, coreWorkflowVersionId },
       );
 
-    const { childrenByStepId } = buildWorkflowGraph({
-      trigger,
-      steps: steps ?? [],
-    });
-
-    const nodes = [
-      { id: TRIGGER_STEP_ID, ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS },
-      ...(steps ?? []).map((step) => ({
-        id: step.id,
-        ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
-      })),
-    ];
-
-    const edges = [...childrenByStepId.entries()].flatMap(([source, targets]) =>
-      targets.map((target) => ({ source, target })),
-    );
-
     await this.updatePositions({
       workspaceId,
       coreWorkflowVersionId,
-      positions: computeWorkflowLayout({ nodes, edges }).map(
-        ({ id, centerPosition }) => ({ id, position: centerPosition }),
-      ),
+      positions: computeWorkflowStepPositions({
+        trigger,
+        steps: steps ?? [],
+      }),
     });
   }
 

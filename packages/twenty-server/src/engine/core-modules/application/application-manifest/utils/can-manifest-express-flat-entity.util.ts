@@ -5,8 +5,6 @@ const METADATA_NAMES_WITHOUT_MANIFEST_REPRESENTATION: AllMetadataName[] = [
   'webhook',
 ];
 
-// coreWorkflowVersionId is the authoritative pointer; a workflow command that
-// has no rollback mirror still carries only that one.
 const WORKSPACE_BOUND_PROPERTIES = [
   'userWorkspaceId',
   'apiKeyId',
