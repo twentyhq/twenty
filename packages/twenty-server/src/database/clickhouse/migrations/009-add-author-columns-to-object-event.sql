@@ -1,0 +1,3 @@
+ALTER TABLE objectEvent ADD COLUMN IF NOT EXISTS apiKeyId String DEFAULT '';
+
+ALTER TABLE objectEvent ADD COLUMN IF NOT EXISTS applicationId String DEFAULT '';

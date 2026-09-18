@@ -12,5 +12,7 @@ export class ObjectRecordBaseEvent<T = object> {
   userId?: string;
   userWorkspaceId?: string;
   workspaceMemberId?: string;
+  apiKeyId?: string;
+  applicationId?: string;
   properties: Properties<T>;
 }

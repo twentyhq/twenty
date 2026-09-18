@@ -128,6 +128,8 @@ export class CreateEventLogFromInternalEvent {
       ...eventData.properties,
       recordId: eventData.recordId,
       objectMetadataId: batch.objectMetadata.id,
+      apiKeyId: eventData.apiKeyId,
+      applicationId: eventData.applicationId,
     };
   }
 }

@@ -23,6 +23,8 @@ export type ObjectEventRow = AnalyticsEventRow & {
   recordId: string;
   objectMetadataId: string;
   isCustom?: boolean;
+  apiKeyId?: string;
+  applicationId?: string;
 };
 
 export type UsageEventRow = {

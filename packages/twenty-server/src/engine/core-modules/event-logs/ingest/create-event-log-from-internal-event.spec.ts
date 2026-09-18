@@ -44,6 +44,25 @@ describe('CreateEventLogFromInternalEvent', () => {
     expect(ingestedEnvelopes[0].table).toBe('objectEvent');
   });
 
+  it('stores the api key and application that wrote the record', async () => {
+    await handler.handle({
+      ...batch,
+      events: [
+        {
+          recordId: 'record-1',
+          apiKeyId: 'api-key-1',
+          applicationId: 'application-1',
+          properties: {},
+        },
+      ],
+    } as unknown as WorkspaceEventBatch<ObjectRecordEvent>);
+
+    expect(ingest.mock.calls[0]?.[0][0].row).toMatchObject({
+      apiKeyId: 'api-key-1',
+      applicationId: 'application-1',
+    });
+  });
+
   it('requeues once on a transient ClickHouse network error instead of failing', async () => {
     ingest.mockRejectedValue(transientError);
 

@@ -29,6 +29,7 @@ import {
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type InheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
+import { buildObjectRecordEventAuthor } from 'src/engine/twenty-orm/utils/build-object-record-event-author.util';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <
@@ -56,6 +57,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   >;
 }): DatabaseBatchEventInput<T, DatabaseEventAction> | undefined => {
   const objectMetadataNameSingular = objectMetadataItem.nameSingular;
+  const author = buildObjectRecordEventAuthor(authContext);
 
   const buildInheritedReadabilityChildRecordsProperty = (recordId: string) => {
     const inheritedReadabilityChildRecords =
@@ -89,11 +91,8 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
 
       events =
         recordsAfter?.map((recordAfter) => {
-          const event = new ObjectRecordCreateEvent<T>();
+          const event = Object.assign(new ObjectRecordCreateEvent<T>(), author);
 
-          event.userId = authContext?.user?.id;
-          event.userWorkspaceId = authContext?.userWorkspaceId;
-          event.workspaceMemberId = authContext?.workspaceMemberId;
           event.recordId = recordAfter.id;
           event.properties = { after: recordAfter };
 
@@ -157,9 +156,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
           }
 
           const eventPayload = {
-            userId: authContext?.user?.id,
-            userWorkspaceId: authContext?.userWorkspaceId,
-            workspaceMemberId: authContext?.workspaceMemberId,
+            ...author,
             recordId: recordAfter.id,
             properties: {
               before: correspondingRecordBefore,
@@ -208,11 +205,8 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
       }
 
       events = recordsBefore.map((recordBefore) => {
-        const event = new ObjectRecordDestroyEvent<T>();
+        const event = Object.assign(new ObjectRecordDestroyEvent<T>(), author);
 
-        event.userId = authContext?.user?.id;
-        event.userWorkspaceId = authContext?.userWorkspaceId;
-        event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = recordBefore.id;
         event.properties = {
           before: recordBefore,
@@ -233,11 +227,8 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
       }
 
       events = recordsAfter.map((recordAfter) => {
-        const event = new ObjectRecordUpsertEvent<T>();
+        const event = Object.assign(new ObjectRecordUpsertEvent<T>(), author);
 
-        event.userId = authContext?.user?.id;
-        event.userWorkspaceId = authContext?.userWorkspaceId;
-        event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = recordAfter.id;
 
         const correspondingRecordBefore = recordsBefore?.find(

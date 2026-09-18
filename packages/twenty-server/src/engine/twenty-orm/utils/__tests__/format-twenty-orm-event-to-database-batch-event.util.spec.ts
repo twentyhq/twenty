@@ -6,6 +6,7 @@ import {
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -333,5 +334,42 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
         'inheritedReadabilityChildRecords',
       );
     });
+  });
+
+  describe('author', () => {
+    const apiKeyAuthContext = {
+      apiKey: { id: 'api-key-id' },
+      application: { id: 'application-id' },
+    } as RawAuthContext;
+
+    it.each([
+      [DatabaseEventAction.CREATED, { recordsAfter: [{ id: 'record-1' }] }],
+      [
+        DatabaseEventAction.UPDATED,
+        {
+          recordsAfter: [{ id: 'record-1', name: 'Jane' }],
+          recordsBefore: [{ id: 'record-1', name: 'John' }],
+        },
+      ],
+      [DatabaseEventAction.DESTROYED, { recordsBefore: [{ id: 'record-1' }] }],
+      [DatabaseEventAction.UPSERTED, { recordsAfter: [{ id: 'record-1' }] }],
+    ])(
+      'should carry the api key and application on %s events',
+      (action, records) => {
+        const result = formatTwentyOrmEventToDatabaseBatchEvent({
+          action,
+          objectMetadataItem: flatObjectMetadata,
+          flatFieldMetadataMaps,
+          workspaceId: mockWorkspaceId,
+          authContext: apiKeyAuthContext,
+          ...records,
+        });
+
+        expect(result?.events?.[0]).toMatchObject({
+          apiKeyId: 'api-key-id',
+          applicationId: 'application-id',
+        });
+      },
+    );
   });
 });

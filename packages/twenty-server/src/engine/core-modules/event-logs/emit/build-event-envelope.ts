@@ -35,10 +35,18 @@ export const buildObjectEventEnvelope = <T extends TrackEventName>(
     recordId: string;
     objectMetadataId: string;
     isCustom?: boolean;
+    apiKeyId?: string;
+    applicationId?: string;
   },
 ): WorkspaceEventEnvelope => {
-  const { recordId, objectMetadataId, isCustom, ...restProperties } =
-    properties;
+  const {
+    recordId,
+    objectMetadataId,
+    isCustom,
+    apiKeyId,
+    applicationId,
+    ...restProperties
+  } = properties;
 
   return {
     table: 'objectEvent',
@@ -51,6 +59,8 @@ export const buildObjectEventEnvelope = <T extends TrackEventName>(
       recordId,
       objectMetadataId,
       isCustom,
+      apiKeyId,
+      applicationId,
     },
   };
 };
