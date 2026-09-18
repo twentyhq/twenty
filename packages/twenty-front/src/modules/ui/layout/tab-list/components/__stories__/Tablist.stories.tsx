@@ -1,3 +1,6 @@
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -54,6 +57,7 @@ const meta: Meta<typeof TabList> = {
   title: 'UI/Layout/TabList/TabList',
   component: TabList,
   args: {
+    'aria-label': 'Record sections',
     tabs: tabs,
     componentInstanceId: 'tab-list',
   },
@@ -74,13 +78,27 @@ export const Default: Story = {
       <p>
         <strong>↔ Drag the bottom-right corner to resize!</strong>
       </p>
-      <TabList
-        tabs={args.tabs}
+      <TabListRoot
         componentInstanceId={args.componentInstanceId}
-        loading={args.loading}
-        behaveAsLinks={args.behaveAsLinks}
-        className={args.className}
-      />
+        enabled={args.behaveAsLinks === false}
+      >
+        <TabList
+          aria-label={args['aria-label']}
+          tabs={args.tabs}
+          componentInstanceId={args.componentInstanceId}
+          loading={args.loading}
+          behaveAsLinks={args.behaveAsLinks}
+          className={args.className}
+        />
+        {args.behaveAsLinks === false &&
+          args.tabs
+            .filter((tab) => !tab.hide)
+            .map((tab) => (
+              <Tabs.Panel key={tab.id} value={tab.id}>
+                <Text>{tab.title} content</Text>
+              </Tabs.Panel>
+            ))}
+      </TabListRoot>
     </StyledInteractiveContainer>
   ),
 };
