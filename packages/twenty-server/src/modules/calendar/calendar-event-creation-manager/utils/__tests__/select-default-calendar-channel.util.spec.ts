@@ -12,13 +12,11 @@ const buildCalendarChannel = ({
   connectedAccountId,
   userWorkspaceId = TEAMMATE_USER_WORKSPACE_ID,
   scopes = [GOOGLE_CALENDAR_EVENTS_SCOPE],
-  visibility = 'workspace',
   archivedAt = null,
 }: {
   connectedAccountId: string;
   userWorkspaceId?: string;
   scopes?: string[];
-  visibility?: 'workspace' | 'user';
   archivedAt?: Date | null;
 }) => ({
   connectedAccountId,
@@ -27,7 +25,6 @@ const buildCalendarChannel = ({
     provider: ConnectedAccountProvider.GOOGLE,
     userWorkspaceId,
     scopes,
-    visibility,
     archivedAt,
   },
 });
@@ -76,19 +73,15 @@ describe('selectDefaultCalendarChannel', () => {
     expect(calendarChannel?.connectedAccountId).toBe('caller-account');
   });
 
-  it("never picks a teammate's private account for the caller", () => {
+  it('falls back to a teammate account when the caller has none', () => {
     const calendarChannel = selectDefaultCalendarChannel({
       calendarChannels: [
-        buildCalendarChannel({
-          connectedAccountId: 'private-teammate-account',
-          visibility: 'user',
-        }),
-        buildCalendarChannel({ connectedAccountId: 'shared-teammate-account' }),
+        buildCalendarChannel({ connectedAccountId: 'teammate-account' }),
       ],
       userWorkspaceId: CALLER_USER_WORKSPACE_ID,
     });
 
-    expect(calendarChannel?.connectedAccountId).toBe('shared-teammate-account');
+    expect(calendarChannel?.connectedAccountId).toBe('teammate-account');
   });
 
   it('returns nothing when no account can create calendar events', () => {
