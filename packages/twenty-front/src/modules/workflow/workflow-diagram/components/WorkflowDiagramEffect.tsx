@@ -46,9 +46,8 @@ export const WorkflowDiagramEffect = () => {
   const store = useStore();
   const currentVersion = workflowWithCurrentVersion?.currentVersion;
 
-  const { content, refetchContent, revision } = useWorkflowVersionContent(
-    currentVersion?.id,
-  );
+  const { content, refetchContent, contentUpdatedAt } =
+    useWorkflowVersionContent(currentVersion?.id);
 
   const [shouldWorkflowRefetchRequest, setShouldWorkflowRefetchRequest] =
     useAtomFamilyState(
@@ -57,8 +56,9 @@ export const WorkflowDiagramEffect = () => {
     );
 
   const [seededVersionId, setSeededVersionId] = useState<string>();
-  const [seededRevision, setSeededRevision] = useState<string>();
-  const [previousDiagramRevision, setPreviousDiagramRevision] =
+  const [seededVersionUpdatedAt, setSeededVersionUpdatedAt] =
+    useState<string>();
+  const [previousDiagramUpdatedAt, setPreviousDiagramUpdatedAt] =
     useState<string>();
   const [previousDiagramVersionId, setPreviousDiagramVersionId] =
     useState<string>();
@@ -136,11 +136,14 @@ export const WorkflowDiagramEffect = () => {
       return;
     }
 
-    if (seededVersionId === currentVersion.id && seededRevision === revision) {
+    if (
+      seededVersionId === currentVersion.id &&
+      seededVersionUpdatedAt === contentUpdatedAt
+    ) {
       return;
     }
 
-    if (isDefined(revision)) {
+    if (isDefined(contentUpdatedAt)) {
       deleteStepsOutputSchema({
         workflowVersionId: currentVersion.id,
         stepIds: [
@@ -150,7 +153,7 @@ export const WorkflowDiagramEffect = () => {
       });
     }
     setSeededVersionId(currentVersion.id);
-    setSeededRevision(revision);
+    setSeededVersionUpdatedAt(contentUpdatedAt);
 
     setFlow({
       workflowVersionId: currentVersion.id,
@@ -161,8 +164,8 @@ export const WorkflowDiagramEffect = () => {
     content,
     currentVersion,
     seededVersionId,
-    seededRevision,
-    revision,
+    seededVersionUpdatedAt,
+    contentUpdatedAt,
     setFlow,
     deleteStepsOutputSchema,
   ]);
@@ -176,14 +179,14 @@ export const WorkflowDiagramEffect = () => {
     const isTransitionToDraft = currentVersion?.status === 'DRAFT';
     const shouldPreservePositions =
       (isSameVersion || isTransitionToDraft) &&
-      previousDiagramRevision === revision;
+      previousDiagramUpdatedAt === contentUpdatedAt;
 
     setPreviousDiagramVersionId(flow.workflowVersionId);
-    setPreviousDiagramRevision(revision);
+    setPreviousDiagramUpdatedAt(contentUpdatedAt);
 
     computeAndMergeNewWorkflowDiagram(flow, shouldPreservePositions);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [computeAndMergeNewWorkflowDiagram, flow, revision]);
+  }, [computeAndMergeNewWorkflowDiagram, flow, contentUpdatedAt]);
 
   useEffect(() => {
     if (!isDefined(currentVersion) || !isDefined(flow)) {

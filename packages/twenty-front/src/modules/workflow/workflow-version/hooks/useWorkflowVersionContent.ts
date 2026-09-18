@@ -46,7 +46,9 @@ export const useWorkflowVersionContent = (workflowVersionId?: string) => {
     content: isCore ? coreContent : data?.workflowVersionContent,
     loading: isCore ? core.loading : loading,
     refetchContent: isCore ? core.refetch : refetch,
-    revision: isCore ? core.data?.coreWorkflowVersion?.updatedAt : undefined,
+    contentUpdatedAt: isCore
+      ? core.data?.coreWorkflowVersion?.updatedAt
+      : undefined,
     error: core.error,
   };
 };

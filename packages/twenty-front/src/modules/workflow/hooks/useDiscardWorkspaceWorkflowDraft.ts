@@ -9,7 +9,7 @@ import {
   type DiscardCoreWorkflowDraftMutationVariables,
 } from '~/generated/graphql';
 
-export const useDiscardWorkflowDraft = () => {
+export const useDiscardWorkspaceWorkflowDraft = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { evictDiscardedDraftFromWorkflowCache } =
     useEvictDiscardedDraftFromWorkflowCache();
@@ -19,7 +19,7 @@ export const useDiscardWorkflowDraft = () => {
     DiscardCoreWorkflowDraftMutationVariables
   >(DISCARD_CORE_WORKFLOW_DRAFT, { client: apolloCoreClient });
 
-  const discardWorkflowDraft = async ({
+  const discardWorkspaceWorkflowDraft = async ({
     workspaceWorkflowVersionId,
   }: {
     workspaceWorkflowVersionId: string;
@@ -33,5 +33,5 @@ export const useDiscardWorkflowDraft = () => {
     await invalidateCoreWorkflowVersions(apolloCoreClient);
   };
 
-  return { discardWorkflowDraft };
+  return { discardWorkspaceWorkflowDraft };
 };

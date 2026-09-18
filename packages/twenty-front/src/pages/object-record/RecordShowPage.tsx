@@ -3,7 +3,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
-import { WorkspaceWorkflowRedirect } from '@/object-core/workflows/components/WorkspaceWorkflowRedirect';
+import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPage';
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordShowPageShell } from '@/object-record/record-show/components/RecordShowPageShell';
@@ -72,16 +72,12 @@ export const RecordShowPage = () => {
     return <WorkspaceRouteUnavailable />;
   }
 
-  if (
-    isWorkflowCoreIndexPageEnabled &&
-    parameters.objectNameSingular === 'workflow' &&
-    isDefined(parameters.objectRecordId)
-  ) {
-    return (
-      <WorkspaceWorkflowRedirect
-        workspaceWorkflowId={parameters.objectRecordId}
-      />
-    );
+  const CoreObjectShowPage = isWorkflowCoreIndexPageEnabled
+    ? findCoreObjectShowPage(parameters.objectNameSingular)
+    : undefined;
+
+  if (isDefined(CoreObjectShowPage) && isDefined(parameters.objectRecordId)) {
+    return <CoreObjectShowPage objectRecordId={parameters.objectRecordId} />;
   }
 
   return <WorkspaceRecordShowPageContent parameters={parameters} />;
