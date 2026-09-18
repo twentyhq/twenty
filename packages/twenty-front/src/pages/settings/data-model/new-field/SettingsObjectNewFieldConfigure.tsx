@@ -23,10 +23,9 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -228,20 +227,19 @@ export const SettingsObjectNewFieldConfigure = () => {
             }
             trailing={
               <Button
-                title={t`Save`}
-                variant="primary"
-                size="small"
-                accent="blue"
+                size="sm"
                 onClick={formConfig.handleSubmit(handleSave)}
                 disabled={!canSave || isSaving}
-              />
+                variant="solid"
+                color="accent"
+              >{t`Save`}</Button>
             }
           />
         }
       >
         <SettingsPageContainer>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Icon and Name`}
               description={t`The name and icon of this field`}
             />
@@ -249,9 +247,9 @@ export const SettingsObjectNewFieldConfigure = () => {
               maxLength={FIELD_NAME_MAXIMUM_LENGTH}
               isCreationMode={true}
             />
-          </Section>
-          <Section>
-            <H2Title
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
               title={t`Customization`}
               description={t`Customize field settings`}
             />
@@ -260,7 +258,7 @@ export const SettingsObjectNewFieldConfigure = () => {
               existingFieldMetadataId=""
               objectNameSingular={activeObjectMetadataItem.nameSingular}
             />
-          </Section>
+          </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
     </FormProvider>

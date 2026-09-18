@@ -190,6 +190,7 @@ export type ThemeType = {
   boxShadow: {
     color: string;
     light: string;
+    sidebar: string;
     strong: string;
     underline: string;
     superHeavy: string;

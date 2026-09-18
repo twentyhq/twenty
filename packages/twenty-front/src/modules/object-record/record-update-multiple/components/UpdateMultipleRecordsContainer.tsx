@@ -3,8 +3,8 @@ import { UpdateMultipleRecordsFooter } from '@/object-record/record-update-multi
 import { UpdateMultipleRecordsForm } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsForm';
 import { useUpdateMultipleRecordsActions } from '@/object-record/record-update-multiple/hooks/useUpdateMultipleRecordsActions';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -57,7 +57,7 @@ export const UpdateMultipleRecordsContainer = ({
 
   const { t } = useLingui();
   const { enqueueToast } = useToast();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const [fieldUpdates, setFieldUpdates] = useState<UpdateMultipleRecordsState>(
@@ -65,7 +65,7 @@ export const UpdateMultipleRecordsContainer = ({
   );
 
   const handleUpdateClick = () => {
-    openModal(UPDATE_MULTIPLE_RECORDS_CONFIRMATION_MODAL_ID);
+    openDialog(UPDATE_MULTIPLE_RECORDS_CONFIRMATION_MODAL_ID);
   };
 
   const handleConfirmedUpdate = async () => {
@@ -120,13 +120,13 @@ export const UpdateMultipleRecordsContainer = ({
           />
         </StyledShowPageRightContainer>
       </ShowPageContainer>
-      <ConfirmationModal
-        modalInstanceId={UPDATE_MULTIPLE_RECORDS_CONFIRMATION_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={UPDATE_MULTIPLE_RECORDS_CONFIRMATION_MODAL_ID}
         title={t`Update ${contextStoreNumberOfSelectedRecords} records`}
         subtitle={t`This will modify ${contextStoreNumberOfSelectedRecords} records. This action cannot be undone.`}
         onConfirmClick={handleConfirmedUpdate}
         confirmButtonText={t`Update records`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
       />
     </SidePanelProvider>
   );

@@ -1,5 +1,5 @@
+import { Section } from '@ui/components/Section/Section';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
-import { H1Title, H1TitleFontColor } from '@ui/primitives/typography/H1Title/H1Title';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { i18n } from '@lingui/core';
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -41,16 +41,17 @@ export const RecordingControls = ({
           size="xl"
           shape="rounded-square"
         />
-        <div className="grow">
-          <H1Title
-            className="live-title"
-            title={active.title}
-            fontColor={H1TitleFontColor.Primary}
-          />
-          <span className="small muted" role="status">
-            {label} · <RecordingTimer recording={active} />
-          </span>
-        </div>
+        <Section.Header
+          className="grow live-section-header"
+          title={active.title}
+          level={2}
+          size="lg"
+          description={
+            <div className="small muted" role="status">
+              {label} · <RecordingTimer recording={active} />
+            </div>
+          }
+        />
       </div>
       <div className="live-actions">
         <Button
@@ -58,22 +59,24 @@ export const RecordingControls = ({
             isPending('pause', 'resume', 'stop', 'record') || transitional
           }
           onClick={() => void command({ type: paused ? 'resume' : 'pause' })}
-          variant="secondary"
-          size="medium"
-          Icon={paused ? IconPlayerPlay : IconPlayerPause}
-          title={paused ? i18n._('Resume') : i18n._('Pause')}
-        />
+          variant="outline"
+          size="md"
+          startIcon={paused ? <IconPlayerPlay /> : <IconPlayerPause />}
+        >
+          {paused ? i18n._('Resume') : i18n._('Pause')}
+        </Button>
         <Button
           disabled={
             isPending('pause', 'resume', 'stop', 'record') || transitional
           }
           onClick={() => void command({ type: 'stop' })}
-          variant="secondary"
-          accent="danger"
-          size="medium"
-          Icon={IconPlayerStop}
-          title={i18n._('Finish recording')}
-        />
+          variant="outline"
+          color="danger"
+          size="md"
+          startIcon={<IconPlayerStop />}
+        >
+          {i18n._('Finish recording')}
+        </Button>
       </div>
     </Card>
   );

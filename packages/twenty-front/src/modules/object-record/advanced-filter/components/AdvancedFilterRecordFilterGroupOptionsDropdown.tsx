@@ -9,7 +9,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type AdvancedFilterRecordFilterGroupOptionsDropdownProps = {
@@ -48,11 +48,9 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <IconButton
-          aria-label={t`Filter group rule options`}
-          variant="tertiary"
-          Icon={IconDotsVertical}
-        />
+        <IconButton aria-label={t`Filter group rule options`} variant="ghost">
+          <IconDotsVertical />
+        </IconButton>
       }
       dropdownComponents={
         <DropdownContent>

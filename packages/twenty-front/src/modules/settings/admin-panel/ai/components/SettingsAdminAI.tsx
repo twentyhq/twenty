@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { useMemo, useState } from 'react';
 
@@ -7,10 +9,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { IconMessage } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -158,8 +156,8 @@ export const SettingsAdminAI = () => {
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Providers`}
           description={t`Built-in providers activated by API key. Click to manage models.`}
         />
@@ -168,10 +166,10 @@ export const SettingsAdminAI = () => {
           providers={catalogProviders}
           showAddButton={false}
         />
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Custom Providers`}
           description={t`Add custom endpoints, private gateways, or additional regions.`}
           adornment={
@@ -193,11 +191,11 @@ export const SettingsAdminAI = () => {
             buttonTitle={t`Activate`}
           />
         )}
-      </Section>
+      </Section.Root>
 
       {enabledModels.length > 0 && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Default Models`}
             description={t`The model behind each mode for every workspace. Workspaces can pin their own.`}
           />
@@ -230,26 +228,24 @@ export const SettingsAdminAI = () => {
               ))}
             </StyledSettingsSelectGroup>
           </Card>
-        </Section>
+        </Section.Root>
       )}
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Chats`}
           description={t`Browse AI chat threads across all workspaces, including onboarding chats`}
         />
-        <UndecoratedLink to={getSettingsPath(SettingsPath.AdminPanelChats)}>
-          <Button
-            Icon={IconMessage}
-            title={t`View all chats`}
-            size="small"
-            variant="secondary"
-          />
-        </UndecoratedLink>
-      </Section>
+        <NavigationButton
+          to={getSettingsPath(SettingsPath.AdminPanelChats)}
+          startIcon={<IconMessage />}
+          size="sm"
+          variant="outline"
+        >{t`View all chats`}</NavigationButton>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`AI Usage by Workspace`}
           description={t`AI consumption across all workspaces.`}
           adornment={
@@ -310,7 +306,7 @@ export const SettingsAdminAI = () => {
             buttonTitle={t`Activate`}
           />
         )}
-      </Section>
+      </Section.Root>
     </>
   );
 };

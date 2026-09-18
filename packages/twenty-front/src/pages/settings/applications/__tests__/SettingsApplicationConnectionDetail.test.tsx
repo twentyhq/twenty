@@ -43,14 +43,14 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: jest.fn(() => jest.fn()),
 }));
 
-jest.mock('@/ui/layout/modal/hooks/useModal', () => ({
-  useModal: jest.fn(() => ({
-    openModal: mockOpenModal,
+jest.mock('@/ui/layout/dialog/hooks/useDialog', () => ({
+  useDialog: jest.fn(() => ({
+    openDialog: mockOpenModal,
   })),
 }));
 
-jest.mock('@/ui/layout/modal/components/ConfirmationModal', () => ({
-  ConfirmationModal: ({
+jest.mock('@/ui/layout/dialog/components/ConfirmationDialog', () => ({
+  ConfirmationDialog: ({
     confirmButtonText,
     onConfirmClick,
   }: {

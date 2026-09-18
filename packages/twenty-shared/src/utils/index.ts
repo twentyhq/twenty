@@ -30,6 +30,8 @@ export { evaluateConditionalAvailabilityExpression } from './command-menu-items/
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { formatValueForCSV } from './csv/formatValueForCSV';
+export { sanitizeValueForCSVExport } from './csv/sanitizeValueForCSVExport';
 export {
   NON_ISO_DATE_FORMATS,
   ACCEPTED_DATE_FORMATS,
@@ -227,6 +229,7 @@ export { uncapitalize } from './strings/uncapitalize';
 export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFromDisplayName';
 export type { CanvasTheme } from './tiptap/canvas-theme';
 export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
+export { convertTipTapBlocksToMarkdown } from './tiptap/convert-tiptap-blocks-to-markdown';
 export type { EmailDocumentMarkType } from './tiptap/email-document-mark-catalog';
 export {
   EMAIL_DOCUMENT_MARK_CATALOG,
@@ -279,6 +282,7 @@ export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './
 export { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';
 export { typedObjectEntries } from './typed-object-entries';
 export { isMetadataGqlOperationSignature } from './typeguard/isMetadataGqlOperationSignature';
+export { isNonEmptyString } from './typeguard/isNonEmptyString';
 export { isPlainObject } from './typeguard/isPlainObject';
 export { isRecordGqlOperationSignature } from './typeguard/isRecordGqlOperationSignature';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';

@@ -2,7 +2,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsAdminRevokeSigningKeyConfirmationModal } from '@/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal';
 import { useRevokeSigningKey } from '@/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -54,7 +54,7 @@ const getStatusTag = (
 
 export const SettingsAdminSigningKeysTable = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { copyToClipboard } = useCopyToClipboard();
   const [selectedSigningKey, setSelectedSigningKey] =
     useState<SelectedSigningKey | null>(null);
@@ -70,7 +70,7 @@ export const SettingsAdminSigningKeysTable = () => {
 
   const handleRevokeClick = (signingKey: SelectedSigningKey) => {
     setSelectedSigningKey(signingKey);
-    openModal(REVOKE_MODAL_ID);
+    openDialog(REVOKE_MODAL_ID);
   };
 
   const handleConfirmRevoke = async () => {
@@ -123,13 +123,13 @@ export const SettingsAdminSigningKeysTable = () => {
                     alwaysShowTooltip
                   />
                   <Button
-                    Icon={IconCopy}
-                    size="small"
-                    variant="tertiary"
-                    ariaLabel={t`Copy key ID`}
+                    startIcon={<IconCopy />}
+                    size="sm"
+                    aria-label={t`Copy key ID`}
                     onClick={() =>
                       copyToClipboard(signingKey.id, t`Key ID copied`)
                     }
+                    variant="ghost"
                   />
                 </TableCell>
                 <TableCell>
@@ -153,10 +153,7 @@ export const SettingsAdminSigningKeysTable = () => {
                 </TableCell>
                 <TableCell align="right">
                   <Button
-                    title={t`Revoke`}
-                    size="small"
-                    variant="secondary"
-                    accent="danger"
+                    size="sm"
                     disabled={isRevoked || isRevoking}
                     onClick={() =>
                       handleRevokeClick({
@@ -164,7 +161,9 @@ export const SettingsAdminSigningKeysTable = () => {
                         isCurrent: signingKey.isCurrent,
                       })
                     }
-                  />
+                    variant="outline"
+                    color="danger"
+                  >{t`Revoke`}</Button>
                 </TableCell>
               </TableRow>
             );

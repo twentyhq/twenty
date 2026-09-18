@@ -31,7 +31,8 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -238,12 +239,14 @@ export const SettingsObjectSearchSection = ({
                   <TableCell align="right">
                     {isEditable && !entry.isLabelIdentifier && (
                       <LightIconButton
-                        Icon={IconTrash}
-                        accent="tertiary"
+                        emphasis="subtle"
                         onClick={() =>
                           handleSetFieldSearchable(entry.id, false)
                         }
-                      />
+                        aria-label={t`Remove searchable field`}
+                      >
+                        <IconTrash />
+                      </LightIconButton>
                     )}
                   </TableCell>
                 </TableRow>
@@ -260,12 +263,11 @@ export const SettingsObjectSearchSection = ({
             dropdownOffset={{ x: 0, y: 8 }}
             clickableComponent={
               <Button
-                Icon={IconPlus}
-                title={t`Add field`}
-                size="small"
-                variant="secondary"
+                startIcon={<IconPlus />}
+                size="sm"
                 disabled={addableFields.length === 0}
-              />
+                variant="outline"
+              >{t`Add field`}</Button>
             }
             dropdownComponents={
               <DropdownContent>

@@ -6,8 +6,8 @@ import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -245,7 +245,7 @@ export const ResourceCreditPriceSelector = ({
   const formatAnimatedRolloverLimit = (value: number) =>
     formatNumber(Math.max(0, Math.round(value)), { decimals: 2 });
 
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
 
   const redirectToRequiredBillingAction = () => {
     if (shouldRedirectToUpdatePayment) {
@@ -269,7 +269,7 @@ export const ResourceCreditPriceSelector = ({
     }
 
     setSelectedPriceId(price.stripePriceId);
-    openModal(BILLING_MODAL_IDS.confirmResourceCreditPriceChange);
+    openDialog(BILLING_MODAL_IDS.confirmResourceCreditPriceChange);
   };
 
   const handleOpenCreditPackagePicker = () => {
@@ -278,7 +278,7 @@ export const ResourceCreditPriceSelector = ({
     }
 
     setSelectedPriceId(defaultResourceCreditPriceForPicker?.stripePriceId);
-    openModal(BILLING_MODAL_IDS.creditPackagePicker);
+    openDialog(BILLING_MODAL_IDS.creditPackagePicker);
   };
 
   const handleSliderValueChange = (value: number) => {
@@ -294,8 +294,8 @@ export const ResourceCreditPriceSelector = ({
       return;
     }
 
-    closeModal(BILLING_MODAL_IDS.creditPackagePicker);
-    openModal(BILLING_MODAL_IDS.confirmResourceCreditPriceChange);
+    closeDialog(BILLING_MODAL_IDS.creditPackagePicker);
+    openDialog(BILLING_MODAL_IDS.confirmResourceCreditPriceChange);
   };
 
   const handleConfirmClick = async () => {
@@ -345,7 +345,7 @@ export const ResourceCreditPriceSelector = ({
     }
 
     if (isTrialing) {
-      openModal(BILLING_MODAL_IDS.endTrialPeriod);
+      openDialog(BILLING_MODAL_IDS.endTrialPeriod);
       return;
     }
 
@@ -357,13 +357,12 @@ export const ResourceCreditPriceSelector = ({
       <StyledActionContainer>
         {canCancelCreditPackSwitch && (
           <Button
-            Icon={IconCircleX}
-            title={t`Cancel credit pack switching`}
-            variant="secondary"
-            size="small"
+            startIcon={<IconCircleX />}
+            size="sm"
             onClick={onCancelCreditPackSwitch}
             disabled={isUpdating}
-          />
+            variant="outline"
+          >{t`Cancel credit pack switching`}</Button>
         )}
         {!isTrialing &&
           !canCancelCreditPackSwitch &&
@@ -375,31 +374,23 @@ export const ResourceCreditPriceSelector = ({
             return (
               <Button
                 key={price.stripePriceId}
-                Icon={IconArrowUp}
-                title={t`Increase to $${priceDisplay}`}
-                variant="secondary"
-                size="small"
+                startIcon={<IconArrowUp />}
+                size="sm"
                 onClick={() => openConfirmationForPrice(price)}
                 disabled={
                   isUpdating ||
                   (shouldRedirectToManageBilling && isManageBillingDisabled)
                 }
-              />
+                variant="outline"
+              >{t`Increase to $${priceDisplay}`}</Button>
             );
           })}
         {shouldShowPrimaryAction && (
           <Button
-            Icon={PrimaryActionIcon}
-            title={
-              shouldRedirectToUpdatePayment
-                ? t`Update payment`
-                : shouldRedirectToManageBilling
-                  ? t`Manage billing`
-                  : t`Manage`
+            startIcon={
+              isDefined(PrimaryActionIcon) ? <PrimaryActionIcon /> : undefined
             }
-            variant="primary"
-            accent="green"
-            size="small"
+            size="sm"
             onClick={handlePrimaryActionClick}
             disabled={
               isUpdating ||
@@ -410,7 +401,15 @@ export const ResourceCreditPriceSelector = ({
                 !isTrialing &&
                 !hasAlternativeResourceCreditPrice)
             }
-          />
+            variant="solid"
+            color="success"
+          >
+            {shouldRedirectToUpdatePayment
+              ? t`Update payment`
+              : shouldRedirectToManageBilling
+                ? t`Manage billing`
+                : t`Manage`}
+          </Button>
         )}
       </StyledActionContainer>
       <ResourceCreditPackagePickerModal
@@ -426,7 +425,7 @@ export const ResourceCreditPriceSelector = ({
         isUpdating={isUpdating}
         newRolloverLimit={newRolloverLimit}
         newRolloverLimitValue={newRolloverLimitValue}
-        onCancel={() => closeModal(BILLING_MODAL_IDS.creditPackagePicker)}
+        onCancel={() => closeDialog(BILLING_MODAL_IDS.creditPackagePicker)}
         onConfirm={handleConfirmPackagePicker}
         onSliderValueChange={handleSliderValueChange}
         priceCount={sortedResourceCreditPrices.length}
@@ -434,8 +433,8 @@ export const ResourceCreditPriceSelector = ({
         selectedPriceAmountValue={selectedPriceAmountValue}
         selectedPriceIndex={selectedPriceIndex}
       />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.confirmResourceCreditPriceChange}
+      <ConfirmationDialog
+        dialogId={BILLING_MODAL_IDS.confirmResourceCreditPriceChange}
         title={isUpgrade() ? t`Confirm upgrade` : t`Confirm downgrade`}
         subtitle={
           isDefined(selectedCreditAmountDisplay) &&
@@ -444,7 +443,7 @@ export const ResourceCreditPriceSelector = ({
             : t`Confirm changing your current resource credit allocation.`
         }
         confirmButtonText={isUpgrade() ? t`Upgrade` : t`Downgrade`}
-        confirmButtonAccent={isUpgrade() ? 'blue' : 'danger'}
+        confirmButtonColor={isUpgrade() ? 'accent' : 'danger'}
         loading={isUpdating}
         onConfirmClick={handleConfirmClick}
       />

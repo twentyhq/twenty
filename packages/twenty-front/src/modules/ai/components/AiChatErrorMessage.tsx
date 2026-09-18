@@ -75,12 +75,11 @@ export const AiChatErrorMessage = ({
       </StyledErrorContent>
       {isDefined(onRetry) && (
         <Button
-          variant="secondary"
-          size="small"
-          Icon={IconRefresh}
+          size="sm"
+          startIcon={<IconRefresh />}
           onClick={onRetry}
-          title={t`Retry`}
-        />
+          variant="outline"
+        >{t`Retry`}</Button>
       )}
     </StyledErrorContainer>
   );

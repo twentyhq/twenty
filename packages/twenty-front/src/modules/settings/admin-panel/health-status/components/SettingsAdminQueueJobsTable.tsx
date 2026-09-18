@@ -8,7 +8,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { useDeleteJobs } from '@/settings/admin-panel/health-status/hooks/useDeleteJobs';
 import { useRetryJobs } from '@/settings/admin-panel/health-status/hooks/useRetryJobs';
 import { Select } from '@/ui/input/components/Select';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -82,7 +82,7 @@ export const SettingsAdminQueueJobsTable = ({
   const [stateFilter, setStateFilter] = useState<JobState>(JobState.COMPLETED);
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [selectedJobIds, setSelectedJobIds] = useState<Set<string>>(new Set());
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const jobStateOptions: { value: JobState; label: string }[] = [
     { value: JobState.COMPLETED, label: t`Completed` },
@@ -170,7 +170,7 @@ export const SettingsAdminQueueJobsTable = ({
   };
 
   const handleRetrySelected = () => {
-    openModal(RETRY_MODAL_ID);
+    openDialog(RETRY_MODAL_ID);
   };
 
   const confirmRetrySelected = async () => {
@@ -180,7 +180,7 @@ export const SettingsAdminQueueJobsTable = ({
   };
 
   const handleDeleteSelected = () => {
-    openModal(DELETE_MODAL_ID);
+    openDialog(DELETE_MODAL_ID);
   };
 
   const confirmDeleteSelected = async () => {
@@ -228,40 +228,41 @@ export const SettingsAdminQueueJobsTable = ({
         <StyledButtonGroup>
           {selectedCount > 0 && (
             <Button
-              Icon={IconTrash}
-              title={plural(selectedCount, {
+              startIcon={<IconTrash />}
+              onClick={handleDeleteSelected}
+              disabled={isDeleting || loading}
+              size="sm"
+              variant="outline"
+              color="danger"
+            >
+              {plural(selectedCount, {
                 one: `Delete ${selectedCount} Job`,
                 other: `Delete ${selectedCount} Jobs`,
               })}
-              onClick={handleDeleteSelected}
-              disabled={isDeleting || loading}
-              size="small"
-              variant="secondary"
-              accent="danger"
-            />
+            </Button>
           )}
           {allSelectedAreFailed && (
             <Button
-              Icon={IconRefresh}
-              title={plural(selectedCount, {
+              startIcon={<IconRefresh />}
+              onClick={handleRetrySelected}
+              disabled={isRetrying || loading}
+              size="sm"
+              variant="outline"
+            >
+              {plural(selectedCount, {
                 one: `Retry ${selectedCount} Job`,
                 other: `Retry ${selectedCount} Jobs`,
               })}
-              onClick={handleRetrySelected}
-              disabled={isRetrying || loading}
-              size="small"
-              variant="secondary"
-            />
+            </Button>
           )}
           {failedJobs.length > 0 && selectedCount === 0 && (
             <Button
-              Icon={IconRefresh}
-              title={t`Retry All Failed`}
+              startIcon={<IconRefresh />}
               onClick={handleRetrySelected}
               disabled={isRetrying || loading}
-              size="small"
-              variant="secondary"
-            />
+              size="sm"
+              variant="outline"
+            >{t`Retry All Failed`}</Button>
           )}
         </StyledButtonGroup>
       </StyledControlsContainer>
@@ -368,23 +369,21 @@ export const SettingsAdminQueueJobsTable = ({
 
           <StyledPaginationContainer>
             <Button
-              title={t`Previous`}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0 || loading}
-              size="small"
-              variant="secondary"
-            />
+              size="sm"
+              variant="outline"
+            >{t`Previous`}</Button>
             <div>
               {t`Page`} {page + 1} {totalCount > 0 ? t`of` : ''}{' '}
               {totalCount > 0 ? Math.max(1, Math.ceil(totalCount / LIMIT)) : ''}
             </div>
             <Button
-              title={t`Next`}
               onClick={() => setPage((p) => p + 1)}
               disabled={!hasMore || loading}
-              size="small"
-              variant="secondary"
-            />
+              size="sm"
+              variant="outline"
+            >{t`Next`}</Button>
           </StyledPaginationContainer>
         </>
       )}

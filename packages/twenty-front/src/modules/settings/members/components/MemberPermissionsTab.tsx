@@ -1,8 +1,8 @@
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { Select } from '@/ui/input/components/Select';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -10,11 +10,10 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconArrowUpRight, IconUser, useIcons } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { UpdateWorkspaceMemberRoleDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -55,7 +54,7 @@ export const MemberPermissionsTab = ({
   const { getIcon } = useIcons();
   const navigateSettings = useNavigateSettings();
   const { enqueueToast } = useToast();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const [pendingRole, setPendingRole] = useState<RoleWithPartialMembers | null>(
     null,
   );
@@ -78,7 +77,7 @@ export const MemberPermissionsTab = ({
     if (!newRole || newRoleId === primaryRole?.id) return;
 
     setPendingRole(newRole);
-    openModal(CONFIRM_ROLE_CHANGE_MODAL_ID);
+    openDialog(CONFIRM_ROLE_CHANGE_MODAL_ID);
   };
 
   const handleConfirmRoleChange = async () => {
@@ -124,8 +123,8 @@ export const MemberPermissionsTab = ({
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Role`}
           description={t`Customize what this user can view and perform`}
         />
@@ -141,23 +140,22 @@ export const MemberPermissionsTab = ({
             />
           </StyledRoleSelector>
           <Button
-            Icon={IconArrowUpRight}
-            title={t`Open in Roles`}
-            variant="secondary"
+            startIcon={<IconArrowUpRight />}
             onClick={handleOpenRole}
-          />
+            variant="outline"
+          >{t`Open in Roles`}</Button>
         </StyledRoleContainer>
         <SettingsRolePermissions roleId={primaryRole.id} isEditable={false} />
-      </Section>
+      </Section.Root>
 
       {pendingRole && (
-        <ConfirmationModal
-          modalInstanceId={CONFIRM_ROLE_CHANGE_MODAL_ID}
+        <ConfirmationDialog
+          dialogId={CONFIRM_ROLE_CHANGE_MODAL_ID}
           title={t`Confirm role update`}
           subtitle={t`Are you sure you want to update the role of this user from "${oldRoleLabel}" to "${newRoleLabel}"?`}
           onConfirmClick={handleConfirmRoleChange}
           confirmButtonText={t`Update role`}
-          confirmButtonAccent="blue"
+          confirmButtonColor="accent"
         />
       )}
     </>

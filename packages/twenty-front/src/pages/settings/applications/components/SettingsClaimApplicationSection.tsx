@@ -17,11 +17,10 @@ import {
 } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconBrandGithub, IconRefresh, IconSearch } from 'twenty-ui/icon';
 import { Callout, useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   FindClaimableApplicationRegistrationDocument,
@@ -220,8 +219,8 @@ export const SettingsClaimApplicationSection = () => {
   );
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Claim an application`}
         description={t`Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it.`}
       />
@@ -259,19 +258,17 @@ export const SettingsClaimApplicationSection = () => {
           />
         </StyledInputContainer>
         <Button
-          title={t`Look up`}
-          Icon={IconSearch}
+          startIcon={<IconSearch />}
           onClick={handleLookup}
           disabled={isLookingUp || lookupValue.trim().length === 0}
-        />
+        >{t`Look up`}</Button>
         {canSyncCatalog && (
           <Button
-            title={t`Sync catalog`}
-            variant="secondary"
-            Icon={IconRefresh}
+            startIcon={<IconRefresh />}
             onClick={handleSync}
             disabled={isSyncing}
-          />
+            variant="outline"
+          >{t`Sync catalog`}</Button>
         )}
       </StyledRow>
 
@@ -301,15 +298,15 @@ export const SettingsClaimApplicationSection = () => {
           </StyledHint>
           <StyledRow>
             <Button
-              title={t`Claim with GitHub`}
-              Icon={IconBrandGithub}
-              accent="blue"
+              startIcon={<IconBrandGithub />}
               onClick={handleClaimWithGithub}
               disabled={isRedirectingToGithub}
-            />
+              variant="solid"
+              color="accent"
+            >{t`Claim with GitHub`}</Button>
           </StyledRow>
         </StyledResultCard>
       )}
-    </Section>
+    </Section.Root>
   );
 };

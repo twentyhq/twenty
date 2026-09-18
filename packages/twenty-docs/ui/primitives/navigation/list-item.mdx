@@ -60,6 +60,10 @@ export const DuplicateAction = ({ onDuplicate }: DuplicateActionProps) => (
 
 The default element is a `div`. Use `render` to give an interactive row appropriate semantics, such as a button or link. `hotkeys` displays shortcut hints; your application must register the shortcuts.
 
+## Settings row
+
+Use [SettingsRow](/ui/components/settings-row) for a labeled switch row. It composes `ListItem` and `Switch`, manages their accessible association, and applies disabled behavior to both.
+
 ## Selection indicator
 
 ```tsx
@@ -100,12 +104,13 @@ export const ContactRow = ({ onOpen }: ContactRowProps) => (
     actions={
       <Button
         type="button"
-        title="Open"
-        ariaLabel="Open Alex Morgan's profile"
-        variant="tertiary"
-        size="small"
+        aria-label="Open Alex Morgan's profile"
+        variant="ghost"
+        size="sm"
         onClick={onOpen}
-      />
+      >
+        Open
+      </Button>
     }
   >
     Alex Morgan

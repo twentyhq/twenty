@@ -4,7 +4,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconX } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import { IconButton } from '@ui/components/IconButton/IconButton';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -37,7 +37,7 @@ const PopoverStory = ({
       <Popover.Trigger
         aria-label="Open"
         style={{ alignSelf: 'flex-start', marginInline: 'auto' }}
-        render={<Button title="Open" />}
+        render={<Button>Open</Button>}
       />
       <Popover.Popup
         side={side}
@@ -48,14 +48,22 @@ const PopoverStory = ({
       >
         <Popover.Title>Details</Popover.Title>
         <Popover.Description>More information</Popover.Description>
-        <Button type="button" title="First action" ariaLabel="First action" />
+        <Button type="button" aria-label="First action">
+          First action
+        </Button>
         <Popover.Close
           style={{ alignSelf: 'flex-start' }}
-          render={<IconButton Icon={IconX} ariaLabel="Close" size="small" />}
+          render={
+            <IconButton aria-label="Close" size="sm">
+              <IconX />
+            </IconButton>
+          }
         />
       </Popover.Popup>
     </Popover.Root>
-    <Button type="button" title="Outside" ariaLabel="Outside" />
+    <Button type="button" aria-label="Outside">
+      Outside
+    </Button>
   </>
 );
 
@@ -133,14 +141,14 @@ export const Documentation: Story = {
       <Popover.Trigger
         aria-label="Show details"
         style={{ alignSelf: 'flex-start' }}
-        render={<Button title="Show details" />}
+        render={<Button>Show details</Button>}
       />
       <Popover.Popup>
         <Popover.Title>Contact details</Popover.Title>
         <Popover.Description>
           Add notes and contact information here.
         </Popover.Description>
-        <Popover.Close aria-label="Close" render={<Button title="Close" />} />
+        <Popover.Close aria-label="Close" render={<Button>Close</Button>} />
       </Popover.Popup>
     </Popover.Root>
   ),
@@ -181,10 +189,11 @@ const ArrowPopoverStory = (props: PopoverStoryProps) => {
       <PopoverStory {...props} open arrow={arrow} />
       <Button
         type="button"
-        title="Toggle arrow"
-        ariaLabel="Toggle arrow"
+        aria-label="Toggle arrow"
         onClick={() => setArrow(!arrow)}
-      />
+      >
+        Toggle arrow
+      </Button>
     </div>
   );
 };
@@ -322,7 +331,7 @@ export const WithoutTabbableContent: Story = {
   args: {},
   render: (args) => (
     <Popover.Root {...args}>
-      <Popover.Trigger aria-label="Open" render={<Button title="Open" />} />
+      <Popover.Trigger aria-label="Open" render={<Button>Open</Button>} />
       <Popover.Popup>
         <Popover.Title>Details</Popover.Title>
       </Popover.Popup>
@@ -373,10 +382,11 @@ const ControlledPopoverStory = (props: PopoverStoryProps) => {
       <PopoverStory {...props} open={open} />
       <Button
         type="button"
-        title="Apply closed state"
-        ariaLabel="Apply closed state"
+        aria-label="Apply closed state"
         onClick={() => setOpen(false)}
-      />
+      >
+        Apply closed state
+      </Button>
     </>
   );
 };

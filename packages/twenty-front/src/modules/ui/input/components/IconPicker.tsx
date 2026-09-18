@@ -2,24 +2,20 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
-import React, {
-  type ReactNode,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import React, { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ColorSample } from 'twenty-ui/primitives/data-display';
+import {
+  ColorSample,
+  getIconTileColorShades,
+} from 'twenty-ui/primitives/data-display';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
 import {
-  IconButton,
-  type IconButtonSize,
-  type IconButtonVariant,
-  LightIconButton,
+  type ButtonSize,
+  type ButtonVariant,
 } from 'twenty-ui/primitives/input';
+import { IconButton, LightIconButton } from 'twenty-ui/components';
 import { type ThemeColor } from 'twenty-ui/theme';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
@@ -52,13 +48,14 @@ export type IconPickerProps = {
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
-  variant?: IconButtonVariant;
+  variant?: ButtonVariant;
   className?: string;
-  size?: IconButtonSize;
+  size?: ButtonSize;
   clickableComponent?: ReactNode;
   dropdownWidth?: number;
   dropdownOffset?: DropdownOffset;
   maxIconsVisible?: number;
+  iconColor?: ThemeColor;
   iconColorPicker?: {
     selectedColor: ThemeColor;
     onColorChange: (color: ThemeColor) => void;
@@ -119,16 +116,12 @@ const IconPickerSearchRow = ({
           }}
           dropdownPlacement="right-start"
           clickableComponent={
-            <LightIconButton
-              accent="secondary"
-              Icon={() => (
-                <ColorSample
-                  colorName={iconColorPicker.selectedColor}
-                  variant="circle"
-                />
-              )}
-              size="small"
-            />
+            <LightIconButton aria-label={t`Choose icon color`}>
+              <ColorSample
+                colorName={iconColorPicker.selectedColor}
+                variant="circle"
+              />
+            </LightIconButton>
           }
           dropdownComponents={
             <DropdownContent
@@ -166,8 +159,9 @@ const focusedIconButtonStyle = css`
   background: ${themeCssVariables.background.transparent.light};
 `;
 
-type StyledLightIconButtonProps = React.ComponentProps<
-  typeof LightIconButton
+type StyledLightIconButtonProps = Pick<
+  React.ComponentProps<typeof LightIconButton>,
+  'aria-label' | 'children' | 'size' | 'title' | 'onClick' | 'className'
 > & {
   isSelected?: boolean;
   isFocused?: boolean;
@@ -178,29 +172,21 @@ const StyledLightIconButton = ({
   isFocused,
   className,
   'aria-label': ariaLabel,
+  children,
   size,
   title,
-  Icon,
   onClick,
-  testId,
-  active,
-  accent,
-  disabled,
-  focus,
 }: StyledLightIconButtonProps) => (
   <LightIconButton
     aria-label={ariaLabel}
     size={size}
     title={title}
-    Icon={Icon}
     onClick={onClick}
-    testId={testId}
-    active={active}
-    accent={accent}
-    disabled={disabled}
-    focus={focus}
+    aria-pressed={isSelected}
     className={`${className ?? ''} ${isSelected ? selectedIconButtonStyle : isFocused ? focusedIconButtonStyle : ''}`}
-  />
+  >
+    {children}
+  </LightIconButton>
 );
 
 const StyledLoadingMore = styled.div`
@@ -240,8 +226,6 @@ const IconPickerIcon = ({
   focusedIconKey,
   color,
 }: IconPickerIconProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     iconKey,
@@ -253,19 +237,20 @@ const IconPickerIcon = ({
         <StyledLightIconButton
           key={iconKey}
           aria-label={convertIconKeyToLabel(iconKey)}
-          size="medium"
+          size="md"
           title={iconKey}
           isSelected={iconKey === selectedIconKey || !!selectedItemId}
           isFocused={iconKey === focusedIconKey}
-          Icon={(iconProps) => (
-            <Icon
-              // oxlint-disable-next-line react/jsx-props-no-spreading
-              {...iconProps}
-              color={isDefined(color) ? theme.color[color] : iconProps.color}
-            />
-          )}
           onClick={onSelect}
-        />
+        >
+          <Icon
+            color={
+              isDefined(color)
+                ? getIconTileColorShades(color).iconColor
+                : undefined
+            }
+          />
+        </StyledLightIconButton>
       </SelectableListItem>
     </StyledMatrixItem>
   );
@@ -279,14 +264,15 @@ export const IconPicker = ({
   onClickOutside,
   onClose,
   onOpen,
-  variant = 'secondary',
+  variant = 'outline',
   className,
-  size = 'medium',
+  size = 'md',
   clickableComponent,
   dropdownWidth,
   dropdownOffset,
   maxIconsVisible,
   iconColorPicker,
+  iconColor,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
@@ -394,16 +380,16 @@ export const IconPicker = ({
     [matchingSearchIconKeys],
   );
 
-  const { theme } = useContext(ThemeContext);
-
   const BaseIcon = selectedIconKey ? getIcon(selectedIconKey) : IconApps;
 
-  const displayIcon: IconComponent = !isDefined(iconColorPicker)
+  const selectedColor = iconColorPicker?.selectedColor ?? iconColor;
+
+  const DisplayIcon: IconComponent = !isDefined(selectedColor)
     ? BaseIcon
     : (iconProps) => (
         <BaseIcon
           className={iconProps.className}
-          color={theme.color[iconColorPicker.selectedColor]}
+          color={getIconTileColorShades(selectedColor).iconColor}
           size={iconProps.size}
           stroke={iconProps.stroke}
           style={iconProps.style}
@@ -438,12 +424,13 @@ export const IconPicker = ({
         clickableComponent={
           clickableComponent ?? (
             <IconButton
-              ariaLabel={t`Click to select icon ${iconAriaLabel}`}
+              aria-label={t`Click to select icon ${iconAriaLabel}`}
               disabled={disabled}
-              Icon={displayIcon}
               variant={variant}
               size={size}
-            />
+            >
+              <DisplayIcon />
+            </IconButton>
           )
         }
         dropdownComponents={
@@ -483,7 +470,7 @@ export const IconPicker = ({
                           selectedIconKey={selectedIconKey}
                           Icon={getIcon(iconKey)}
                           focusedIconKey={focusedIconKey}
-                          color={iconColorPicker?.selectedColor}
+                          color={selectedColor}
                         />
                       ))}
                     </StyledMenuIconItemsContainer>

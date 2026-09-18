@@ -9,8 +9,7 @@ import {
   IconSquareRoundedCheck,
   IconX,
 } from '@ui/icon';
-import { LightButton } from '@ui/primitives/input/LightButton/LightButton';
-import { LightIconButton } from '@ui/primitives/input/LightIconButton/LightIconButton';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { HorizontalSeparator } from '@ui/primitives/layout/HorizontalSeparator/HorizontalSeparator';
 import { useTheme } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -93,13 +92,23 @@ export const Toast = ({
             <div className={styles.message}>{children}</div>
             <div className={styles.actions}>
               {isDefined(onCancel) && (
-                <LightButton title={cancelLabel} onClick={onCancel} />
+                <Button
+                  onClick={onCancel}
+                  size="sm"
+                  variant="ghost"
+                  style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+                >
+                  {cancelLabel}
+                </Button>
               )}
               {isDefined(onClose) && (
-                <LightIconButton
+                <Button
                   title={closeLabel}
                   aria-label={closeLabel}
-                  Icon={IconX}
+                  startIcon={<IconX />}
+                  className={styles.closeButton}
+                  variant="ghost"
+                  size="sm"
                   onClick={onClose}
                 />
               )}

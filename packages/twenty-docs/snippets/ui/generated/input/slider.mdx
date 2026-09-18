@@ -119,14 +119,14 @@
   returns a style object based on the component's state.
 </ParamField>
 
-<ParamField body="Root.thumbAlignment" type="&quot;center&quot; | &quot;edge&quot; | &quot;edge-client-only&quot;" default="edge">
+<ParamField body="Root.thumbAlignment" type="&quot;center&quot; | &quot;edge-client-only&quot; | &quot;edge&quot;" default="edge">
   How the thumb(s) are aligned relative to `Slider.Control` when the value is at `min` or `max`:
   - `center`: The center of the thumb is aligned with the control edge
   - `edge`: The thumb is inset within the control such that its edge is aligned with the control edge
   - `edge-client-only`: Same as `edge` but renders after React hydration on the client, reducing bundle size in return
 </ParamField>
 
-<ParamField body="Root.thumbCollisionBehavior" type="&quot;push&quot; | &quot;none&quot; | &quot;swap&quot;" default="push">
+<ParamField body="Root.thumbCollisionBehavior" type="&quot;none&quot; | &quot;push&quot; | &quot;swap&quot;" default="push">
   Controls how thumbs behave when they collide during pointer interactions.
 
   - `'push'` (default): Thumbs push each other without restoring their previous positions when dragged back.

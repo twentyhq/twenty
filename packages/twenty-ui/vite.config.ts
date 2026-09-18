@@ -80,6 +80,7 @@ export default defineConfig(({ command }) => {
       // mid-run during browser-mode Storybook tests — re-bundling rotates the
       // optimized chunk hash and 404s in-flight dynamic imports (vite 8 / rolldown).
       include: [
+        '@base-ui/utils/store',
         'react',
         'react-dom',
         'react-dom/client',

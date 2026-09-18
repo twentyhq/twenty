@@ -12,6 +12,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { formatUpgradeCommandName, getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconAlertTriangle,
   IconCalendar,
@@ -21,8 +22,6 @@ import {
 import { Status } from 'twenty-ui/primitives/data-display';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
@@ -112,8 +111,8 @@ export const SettingsAdminInstanceStatus = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Instance status`}
             description={t`Health of the latest instance command`}
           />
@@ -169,13 +168,12 @@ export const SettingsAdminInstanceStatus = () => {
           />
           <StyledRefreshButtonContainer>
             <Button
-              variant="secondary"
-              title={t`Refresh status`}
               onClick={handleRefreshUpgradeStatus}
               disabled={isRefreshingUpgradeStatus || isLoadingUpgradeStatus}
-            />
+              variant="outline"
+            >{t`Refresh status`}</Button>
           </StyledRefreshButtonContainer>
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

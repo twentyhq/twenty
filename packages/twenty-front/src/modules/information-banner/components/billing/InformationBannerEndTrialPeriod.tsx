@@ -4,7 +4,7 @@ import { StartSubscriptionConfirmationModal } from '@/settings/billing/component
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -15,7 +15,7 @@ const INFORMATION_BANNER_END_TRIAL_PERIOD_MODAL_ID =
 export const InformationBannerEndTrialPeriod = () => {
   const { endTrialPeriod, isLoading } = useEndSubscriptionTrialPeriod();
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const { [PermissionFlagType.BILLING]: hasPermissionToEndTrialPeriod } =
     usePermissionFlagMap();
@@ -43,7 +43,7 @@ export const InformationBannerEndTrialPeriod = () => {
             : undefined
         }
         buttonOnClick={() =>
-          openModal(INFORMATION_BANNER_END_TRIAL_PERIOD_MODAL_ID)
+          openDialog(INFORMATION_BANNER_END_TRIAL_PERIOD_MODAL_ID)
         }
         isButtonDisabled={isLoading}
       />

@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -16,10 +15,11 @@ import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-we
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
-import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-operations-to-match.util';
+import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
-import { EVERYONE_ROW_ACCESS_POLICY_SUBJECT } from 'src/engine/record-share/constants/everyone-row-access-policy-subject.constant';
-import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
+import { EVERYONE_ROW_ACCESS_POLICY_SUBJECT } from 'src/engine/core-modules/record-share/constants/everyone-row-access-policy-subject.constant';
+import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
@@ -32,6 +32,7 @@ export class CallWebhookJobsJob {
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly recordSharingFeatureService: RecordSharingFeatureService,
     private readonly webhookRateLimitService: WebhookRateLimitService,
   ) {}
 
@@ -44,26 +45,16 @@ export class CallWebhookJobsJob {
     // Also change the openApi schema for webhooks
     // packages/twenty-server/src/engine/core-modules/open-api/utils/computeWebhooks.utils.ts
 
-    const [nameSingular, operation] = workspaceEventBatch.name.split('.');
-
-    const operationsToMatch = computeWebhookOperationsToMatch({
-      nameSingular,
-      operation,
-    });
-
-    const { flatWebhookMaps, flatObjectMetadataMaps, featureFlagsMap } =
+    const { flatWebhookMaps, flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(
         workspaceEventBatch.workspaceId,
-        ['flatWebhookMaps', 'flatObjectMetadataMaps', 'featureFlagsMap'],
+        ['flatWebhookMaps', 'flatObjectMetadataMaps'],
       );
 
-    const webhooks = Object.values(flatWebhookMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter((webhook) =>
-        operationsToMatch.some((operationToMatch) =>
-          webhook.operations.includes(operationToMatch),
-        ),
-      );
+    const webhooks = findWebhooksMatchingEventName({
+      flatWebhookMaps,
+      eventName: workspaceEventBatch.name,
+    });
 
     if (webhooks.length === 0) {
       return;
@@ -75,7 +66,9 @@ export class CallWebhookJobsJob {
     });
 
     const isRecordSharingEnabled =
-      featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] ?? false;
+      await this.recordSharingFeatureService.isRecordSharingEnabled(
+        workspaceEventBatch.workspaceId,
+      );
 
     // Without the readability the batch cannot be gated, so nothing may leave
     if (isRecordSharingEnabled && !isDefined(flatObjectMetadata)) {

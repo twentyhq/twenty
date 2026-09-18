@@ -1,9 +1,22 @@
 ---
 title: Components
 sidebarTitle: Overview
-description: Reusable app building blocks composed from Twenty UI primitives.
+description: Shared design presets and reusable app building blocks composed from Twenty UI primitives.
 ---
 
-Components combine [primitives](/ui/primitives/overview) into reusable app building blocks, such as tables, boards, and pickers. Like primitives, they receive data and callbacks from your application.
+Components combine [primitives](/ui/primitives/overview) into recurring design presets and reusable app building blocks. Like primitives, they receive data and callbacks from your application.
 
-The `twenty-ui/components` entry point is reserved for this layer. It does not export any components yet. All currently available controls are documented under [Primitives](/ui/primitives/overview).
+Import shared components from `twenty-ui/components`. The code editor has its own entry point, `twenty-ui/components/code-editor`, because it requires Monaco. See [Getting started](/ui/getting-started) for installation and theme setup.
+
+## Browse components
+
+| Component                                                 | Purpose                                                               |
+| --------------------------------------------------------- | --------------------------------------------------------------------- |
+| [MainButton](/ui/components/input/main-button)            | Prominent actions with a solid surface, elevation, and semibold text. |
+| [LightButton](/ui/components/input/light-button)          | Lightweight actions with standard or subtle emphasis.                 |
+| [IconButton](/ui/components/input/icon-button)            | Square or round icon actions built on Button.                         |
+| [LightIconButton](/ui/components/input/light-icon-button) | Lightweight icon actions with standard or subtle emphasis.            |
+| [Section](/ui/components/section)                         | Related content with a heading, description, and optional action.     |
+| [SettingsRow](/ui/components/settings-row)                | Labeled switches for settings and filters.                            |
+| [TabButton](/ui/components/tab-button)                    | Route links and adjacent actions with the same appearance as tabs.    |
+| [CodeEditor](/ui/components/code-editor)                  | Code editing with Monaco, an optional header, and the Twenty theme.   |

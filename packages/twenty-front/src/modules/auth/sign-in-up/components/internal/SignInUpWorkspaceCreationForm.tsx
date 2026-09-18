@@ -15,13 +15,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { MainButton, LightIconButton } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
-import {
-  Button,
-  LightIconButton,
-  MainButton,
-} from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContentContainer = styled.div`
@@ -275,19 +273,19 @@ export const SignInUpWorkspaceCreationForm = () => {
             />
             <StyledLogoButtons>
               <Button
-                Icon={IconUpload}
-                title={t`Upload logo`}
-                variant="secondary"
+                startIcon={<IconUpload />}
                 onClick={openFilePicker}
-              />
+                variant="outline"
+              >{t`Upload logo`}</Button>
               <LightIconButton
-                Icon={IconTrash}
-                accent="tertiary"
-                size="medium"
+                emphasis="subtle"
+                size="md"
                 onClick={handleLogoRemove}
                 disabled={!isDefined(logoPreviewUrl)}
                 aria-label={t`Remove logo`}
-              />
+              >
+                <IconTrash />
+              </LightIconButton>
             </StyledLogoButtons>
           </StyledLogoRow>
         </OnboardingStepAnimatedItem>
@@ -347,11 +345,10 @@ export const SignInUpWorkspaceCreationForm = () => {
       </StyledFormSection>
       <OnboardingStepAnimatedItem index={isMultiWorkspaceEnabled ? 5 : 4}>
         <MainButton
-          title={t`Create workspace`}
           onClick={handleSubmit}
           disabled={isContinueDisabled}
           fullWidth
-        />
+        >{t`Create workspace`}</MainButton>
       </OnboardingStepAnimatedItem>
     </StyledContentContainer>
   );

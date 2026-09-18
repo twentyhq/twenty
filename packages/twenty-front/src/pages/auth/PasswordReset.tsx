@@ -1,3 +1,4 @@
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { Logo } from '@/auth/components/Logo';
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
@@ -29,9 +30,8 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/primitives/feedback';
-import { MainButton } from 'twenty-ui/primitives/input';
+import { MainButton } from 'twenty-ui/components';
 import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 import {
@@ -211,7 +211,7 @@ export const PasswordReset = () => {
 
   return (
     isTokenValid && (
-      <ModalContent isVerticallyCentered isHorizontallyCentered>
+      <StyledAuthContent>
         <StyledMainContainer>
           <AnimatedEaseIn>
             <Logo
@@ -293,18 +293,19 @@ export const PasswordReset = () => {
 
                 <StyledMainButtonContainer>
                   <MainButton
-                    variant="secondary"
-                    title={passwordActionLabel}
                     type="submit"
                     fullWidth
                     disabled={isUpdatingPassword}
-                  />
+                    variant="outline"
+                  >
+                    {passwordActionLabel}
+                  </MainButton>
                 </StyledMainButtonContainer>
               </StyledForm>
             )}
           </StyledOnboardingContentContainer>
         </StyledMainContainer>
-      </ModalContent>
+      </StyledAuthContent>
     )
   );
 };

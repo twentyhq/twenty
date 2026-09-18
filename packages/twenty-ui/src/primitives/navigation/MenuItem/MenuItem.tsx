@@ -1,12 +1,5 @@
 import { IconChevronRight, type IconComponent } from '@ui/icon';
-import { type LightIconButtonProps } from '@ui/primitives/input/LightIconButton/LightIconButton';
-import { LightIconButtonGroup } from '@ui/primitives/input/LightIconButtonGroup/LightIconButtonGroup';
-import {
-  type FunctionComponent,
-  type MouseEvent,
-  type ReactElement,
-  type ReactNode,
-} from 'react';
+import { type MouseEvent, type ReactNode } from 'react';
 
 import { MenuItemHotKeys } from '@ui/primitives/navigation/MenuItemHotKeys/MenuItemHotKeys';
 import { type ThemeColor } from '@ui/theme';
@@ -33,22 +26,12 @@ export {
   StyledMenuItemLeftContent,
 };
 
-export type MenuItemIconButton = {
-  Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;
-  Icon: IconComponent;
-  accent?: LightIconButtonProps['accent'];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onClick?: (event: MouseEvent<any>) => void;
-  ariaLabel?: string;
-  dataTestId?: string;
-};
-
 export type MenuItemProps = {
   accent?: MenuItemAccent;
   className?: string;
   withIconContainer?: boolean;
   withIconContainerBackground?: boolean;
-  iconButtons?: MenuItemIconButton[];
+  iconButtons?: ReactNode;
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
@@ -98,8 +81,6 @@ export const MenuItem = ({
   isSubMenuOpened = false,
 }: MenuItemProps) => {
   const theme = useTheme();
-  const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
-
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
     if (!onClick) return;
     event.preventDefault();
@@ -134,11 +115,9 @@ export const MenuItem = ({
 
       <StyledMenuItemRightContent>
         {iconButtons && (
-          <div className="hoverable-buttons">
-            {showIconButtons && (
-              <LightIconButtonGroup iconButtons={iconButtons} size="small" />
-            )}
-          </div>
+          <StyledMenuItemRightContent className="hoverable-buttons">
+            {iconButtons}
+          </StyledMenuItemRightContent>
         )}
         {hotKeys && <MenuItemHotKeys hotKeys={hotKeys} />}
         {RightIcon && (

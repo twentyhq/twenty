@@ -1,58 +1,38 @@
+import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
-import React, { type ReactNode } from 'react';
-import { isDefined } from '@ui/utilities/utils/isDefined';
-
-import type { ButtonPosition } from '@ui/primitives/input/Button/types/ButtonPosition';
-import type { ButtonProps } from '@ui/primitives/input/Button/types/ButtonProps';
 
 import styles from './ButtonGroup.module.scss';
-
-export type ButtonGroupProps = Partial<
-  Pick<ButtonProps, 'variant' | 'size' | 'accent'>
-> & {
-  className?: string;
-  children: ReactNode[];
-};
+import { ButtonGroupContext } from './internal/ButtonGroupContext';
+import { type ButtonGroupProps } from './types/ButtonGroupProps';
 
 export const ButtonGroup = ({
+  attached = true,
+  framed = false,
   className,
   children,
   variant,
   size,
-  accent,
+  color,
+  render,
+  ref,
+  ...props
 }: ButtonGroupProps) => {
+  const element = useRender({
+    render,
+    ref,
+    props: {
+      role: 'group',
+      'data-attached': attached || undefined,
+      'data-framed': framed || undefined,
+      ...props,
+      className: clsx(styles.container, className),
+      children,
+    },
+  });
+
   return (
-    <div className={clsx(styles.container, className)}>
-      {React.Children.map(children, (child, index) => {
-        if (!React.isValidElement(child)) return null;
-
-        let position: ButtonPosition;
-
-        if (index === 0) {
-          position = 'left';
-        } else if (index === children.length - 1) {
-          position = 'right';
-        } else {
-          position = 'middle';
-        }
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const additionalProps: any = { position };
-
-        if (isDefined(variant)) {
-          additionalProps.variant = variant;
-        }
-
-        if (isDefined(accent)) {
-          additionalProps.accent = accent;
-        }
-
-        if (isDefined(size)) {
-          additionalProps.size = size;
-        }
-
-        return React.cloneElement(child, additionalProps);
-      })}
-    </div>
+    <ButtonGroupContext.Provider value={{ variant, color, size }}>
+      {element}
+    </ButtonGroupContext.Provider>
   );
 };

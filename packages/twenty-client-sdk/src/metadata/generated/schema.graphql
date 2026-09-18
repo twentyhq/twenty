@@ -954,6 +954,128 @@ type ApplicationRegistration {
   galleryImagesUrls: [String!]!
 }
 
+type BillingSubscriptionSchedulePhaseItem {
+  price: String!
+  quantity: Float
+}
+
+type BillingSubscriptionSchedulePhase {
+  start_date: Float!
+  end_date: Float!
+  items: [BillingSubscriptionSchedulePhaseItem!]!
+}
+
+type BillingProductMetadata {
+  planKey: BillingPlanKey!
+  priceUsageBased: BillingUsageType!
+  productKey: BillingProductKey!
+  isLegacy: String
+}
+
+"""The different billing plans available"""
+enum BillingPlanKey {
+  PRO
+  ENTERPRISE
+}
+
+enum BillingUsageType {
+  METERED
+  LICENSED
+}
+
+"""The different billing products available"""
+enum BillingProductKey {
+  BASE_PRODUCT
+  RESOURCE_CREDIT
+}
+
+type BillingPriceLicensed {
+  recurringInterval: SubscriptionInterval!
+  unitAmount: Float!
+  stripePriceId: String!
+  priceUsageType: BillingUsageType!
+  creditAmount: Float
+  isSellable: Boolean!
+}
+
+enum SubscriptionInterval {
+  Month
+  Year
+}
+
+type BillingPriceTier {
+  upTo: Float
+  flatAmount: Float
+  unitAmount: Float
+}
+
+type BillingPriceMetered {
+  tiers: [BillingPriceTier!]!
+  recurringInterval: SubscriptionInterval!
+  stripePriceId: String!
+  priceUsageType: BillingUsageType!
+}
+
+type BillingProduct {
+  name: String!
+  description: String!
+  images: [String!]
+  metadata: BillingProductMetadata!
+}
+
+type BillingLicensedProduct implements BillingProductDTO {
+  name: String!
+  description: String!
+  images: [String!]
+  metadata: BillingProductMetadata!
+  prices: [BillingPriceLicensed!]
+}
+
+type BillingMeteredProduct implements BillingProductDTO {
+  name: String!
+  description: String!
+  images: [String!]
+  metadata: BillingProductMetadata!
+  prices: [BillingPriceMetered!]
+}
+
+type BillingSubscriptionItem {
+  id: UUID!
+  hasReachedCurrentPeriodCap: Boolean!
+  quantity: Float
+  stripePriceId: String!
+  unitAmount: Float
+  creditAmount: Float
+  billingProduct: BillingProductDTO!
+}
+
+type BillingSubscription {
+  id: UUID!
+  status: SubscriptionStatus!
+  interval: SubscriptionInterval
+  billingSubscriptionItems: [BillingSubscriptionItem!]
+  currentPeriodEnd: DateTime
+  metadata: JSON!
+  phases: [BillingSubscriptionSchedulePhase!]!
+  cancelAt: DateTime
+}
+
+enum SubscriptionStatus {
+  Active
+  Canceled
+  Incomplete
+  IncompleteExpired
+  PastDue
+  Paused
+  Trialing
+  Unpaid
+}
+
+type BillingCustomer {
+  id: UUID!
+  hasPaymentMethod: Boolean
+}
+
 type SdkClientChecksums {
   core: String
   metadata: String!
@@ -1414,128 +1536,6 @@ type ApplicationConnectionProvider {
   logoUrl: String
 }
 
-type BillingSubscriptionSchedulePhaseItem {
-  price: String!
-  quantity: Float
-}
-
-type BillingSubscriptionSchedulePhase {
-  start_date: Float!
-  end_date: Float!
-  items: [BillingSubscriptionSchedulePhaseItem!]!
-}
-
-type BillingProductMetadata {
-  planKey: BillingPlanKey!
-  priceUsageBased: BillingUsageType!
-  productKey: BillingProductKey!
-  isLegacy: String
-}
-
-"""The different billing plans available"""
-enum BillingPlanKey {
-  PRO
-  ENTERPRISE
-}
-
-enum BillingUsageType {
-  METERED
-  LICENSED
-}
-
-"""The different billing products available"""
-enum BillingProductKey {
-  BASE_PRODUCT
-  RESOURCE_CREDIT
-}
-
-type BillingPriceLicensed {
-  recurringInterval: SubscriptionInterval!
-  unitAmount: Float!
-  stripePriceId: String!
-  priceUsageType: BillingUsageType!
-  creditAmount: Float
-  isSellable: Boolean!
-}
-
-enum SubscriptionInterval {
-  Month
-  Year
-}
-
-type BillingPriceTier {
-  upTo: Float
-  flatAmount: Float
-  unitAmount: Float
-}
-
-type BillingPriceMetered {
-  tiers: [BillingPriceTier!]!
-  recurringInterval: SubscriptionInterval!
-  stripePriceId: String!
-  priceUsageType: BillingUsageType!
-}
-
-type BillingProduct {
-  name: String!
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-}
-
-type BillingLicensedProduct implements BillingProductDTO {
-  name: String!
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  prices: [BillingPriceLicensed!]
-}
-
-type BillingMeteredProduct implements BillingProductDTO {
-  name: String!
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  prices: [BillingPriceMetered!]
-}
-
-type BillingSubscriptionItem {
-  id: UUID!
-  hasReachedCurrentPeriodCap: Boolean!
-  quantity: Float
-  stripePriceId: String!
-  unitAmount: Float
-  creditAmount: Float
-  billingProduct: BillingProductDTO!
-}
-
-type BillingCustomer {
-  id: UUID!
-  hasPaymentMethod: Boolean
-}
-
-type BillingSubscription {
-  id: UUID!
-  status: SubscriptionStatus!
-  interval: SubscriptionInterval
-  billingSubscriptionItems: [BillingSubscriptionItem!]
-  currentPeriodEnd: DateTime
-  metadata: JSON!
-  phases: [BillingSubscriptionSchedulePhase!]!
-  cancelAt: DateTime
-}
-
-enum SubscriptionStatus {
-  Active
-  Canceled
-  Incomplete
-  IncompleteExpired
-  PastDue
-  Paused
-  Trialing
-  Unpaid
-}
-
 type LogicFunctionExecutionResult {
   """Execution result in JSON format"""
   data: JSON
@@ -1983,6 +1983,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_ASYNC_CSV_EXPORT_ENABLED
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
@@ -1992,10 +1993,8 @@ enum FeatureFlagKey {
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
-  IS_API_RATE_LIMIT_V2_ENABLED
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
-  IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_SHARING_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_WEBHOOK_RATE_LIMIT_ENABLED
@@ -2628,6 +2627,7 @@ enum BillingEntitlementKey {
   SSO
   CUSTOM_DOMAIN
   RLS
+  RECORD_SHARING
   AUDIT_LOGS
   USAGE_LIMIT
 }
@@ -2841,6 +2841,7 @@ type ApplicationFileUploadTarget {
 }
 
 enum FileFolder {
+  RecordExport
   CorePicture
   AgentChat
   BuiltLogicFunction
@@ -3154,6 +3155,8 @@ type ToolIndexEntry {
   category: String!
   objectName: String
   icon: String
+  widgetName: String
+  frontComponentId: String
   inputSchema: JSON
 }
 
@@ -3299,6 +3302,14 @@ type EventLogQueryResult {
   records: [EventLogRecord!]!
   totalCount: Int!
   pageInfo: EventLogPageInfo!
+}
+
+type RecordExport {
+  id: UUID!
+  filename: String!
+  progress: Int!
+  errorMessage: String
+  downloadUrl: String
 }
 
 type AiChatUsage {
@@ -3949,7 +3960,7 @@ type Mutation {
   revokeUserSession(userSessionId: UUID!): Boolean!
   revokeAllOtherUserSessions: Int!
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
+  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
@@ -5502,6 +5513,7 @@ type Subscription {
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
   eventLogsLive(table: EventLogTable!): [EventLogRecord!]
+  exportRecords(input: CreateRecordExportInput!): RecordExport!
 }
 
 input LogicFunctionLogsInput {
@@ -5510,4 +5522,11 @@ input LogicFunctionLogsInput {
   name: String
   id: UUID
   universalIdentifier: UUID
+}
+
+input CreateRecordExportInput {
+  objectMetadataId: UUID!
+  fieldMetadataIds: [UUID!]!
+  filter: JSON
+  orderBy: JSON
 }

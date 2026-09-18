@@ -8,8 +8,8 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -49,7 +49,7 @@ export const SettingsWorkspaceMember = () => {
   const { workspaceMemberId = '' } = useParams();
   const navigateSettings = useNavigateSettings();
   const { enqueueToast } = useToast();
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { startImpersonating } = useImpersonationSession();
@@ -128,7 +128,7 @@ export const SettingsWorkspaceMember = () => {
         variant: 'success',
         children: t`Member removed from workspace`,
       });
-      closeModal(DELETE_MEMBER_MODAL_ID);
+      closeDialog(DELETE_MEMBER_MODAL_ID);
       navigateSettings(SettingsPath.WorkspaceMembersPage);
     } catch (error) {
       enqueueToast({
@@ -204,6 +204,7 @@ export const SettingsWorkspaceMember = () => {
           ]}
           secondaryBar={
             <SettingsTabBar
+              aria-label={t`Member details`}
               tabs={[
                 {
                   id: SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS,
@@ -233,7 +234,7 @@ export const SettingsWorkspaceMember = () => {
                     : undefined
                 }
                 onNameChange={debouncedUpdateName}
-                onDelete={() => openModal(DELETE_MEMBER_MODAL_ID)}
+                onDelete={() => openDialog(DELETE_MEMBER_MODAL_ID)}
               />
             )}
 
@@ -247,8 +248,8 @@ export const SettingsWorkspaceMember = () => {
             )}
           </SettingsPageContainer>
 
-          <ConfirmationModal
-            modalInstanceId={DELETE_MEMBER_MODAL_ID}
+          <ConfirmationDialog
+            dialogId={DELETE_MEMBER_MODAL_ID}
             title={t`Remove member from workspace`}
             subtitle={t`This action cannot be undone. This member will be removed and unassigned from their records. Their synced emails and calendars will stop syncing and be reassigned to you.`}
             onConfirmClick={handleDeleteMember}

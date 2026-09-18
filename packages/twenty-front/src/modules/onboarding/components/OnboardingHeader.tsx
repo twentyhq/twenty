@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconCoins, IconInfoCircle } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   MOBILE_VIEWPORT,
   themeCssVariables,
@@ -131,13 +131,14 @@ export const OnboardingHeader = ({
       <StyledLeftSide>
         {isDefined(onBack) && (
           <LightIconButton
-            Icon={IconChevronLeft}
-            accent="tertiary"
-            size="small"
+            emphasis="subtle"
+            size="sm"
             onClick={onBack}
             disabled={isBackDisabled}
             aria-label={t`Go back`}
-          />
+          >
+            <IconChevronLeft />
+          </LightIconButton>
         )}
       </StyledLeftSide>
       <StyledCenter>

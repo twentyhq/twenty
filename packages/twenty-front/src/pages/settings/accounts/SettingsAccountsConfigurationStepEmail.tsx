@@ -45,24 +45,22 @@ export const SettingsAccountsConfigurationStepEmail = ({
       actionButton={
         hasNextStep ? (
           <Button
-            Icon={IconChevronRight}
-            title={t`Next`}
-            accent="blue"
-            size="small"
-            variant="secondary"
+            startIcon={<IconChevronRight />}
+            size="sm"
             onClick={onNext}
             disabled={isSubmitting}
-          />
+            variant="outline"
+            color="accent"
+          >{t`Next`}</Button>
         ) : (
           <Button
-            Icon={IconPlus}
-            title={t`Add account`}
-            accent="blue"
-            size="small"
-            variant="primary"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={onAddAccount}
             disabled={isSubmitting}
-          />
+            variant="solid"
+            color="accent"
+          >{t`Add account`}</Button>
         )
       }
     >

@@ -6,8 +6,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { useToast } from 'twenty-ui/primitives/feedback';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -78,7 +78,7 @@ export const SettingsAdminServerAdminAccess = ({
 }) => {
   const dropdownId = `server-admin-access-${userId}`;
   const apolloAdminClient = useApolloAdminClient();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { closeDropdown } = useCloseDropdown();
   const { enqueueToast } = useToast();
 
@@ -111,7 +111,7 @@ export const SettingsAdminServerAdminAccess = ({
     closeDropdown(dropdownId);
     setOtp('');
     setPendingChange(change);
-    openModal(SERVER_ADMIN_ACCESS_CONFIRMATION_MODAL_ID);
+    openDialog(SERVER_ADMIN_ACCESS_CONFIRMATION_MODAL_ID);
   };
 
   const handleConfirm = async () => {
@@ -166,7 +166,9 @@ export const SettingsAdminServerAdminAccess = ({
           dropdownId={dropdownId}
           dropdownPlacement="right-start"
           clickableComponent={
-            <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+            <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+              <IconDotsVertical />
+            </LightIconButton>
           }
           dropdownComponents={
             <DropdownContent>
@@ -222,10 +224,10 @@ export const SettingsAdminServerAdminAccess = ({
           }
         />
       </StyledValue>
-      <ConfirmationModal
-        modalInstanceId={SERVER_ADMIN_ACCESS_CONFIRMATION_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={SERVER_ADMIN_ACCESS_CONFIRMATION_MODAL_ID}
         title={pendingChange?.isRevoking ? t`Revoke access` : t`Grant access`}
-        confirmButtonAccent={pendingChange?.isRevoking ? 'danger' : 'blue'}
+        confirmButtonColor={pendingChange?.isRevoking ? 'danger' : 'accent'}
         confirmButtonText={t`Confirm`}
         onConfirmClick={handleConfirm}
         onClose={() => {

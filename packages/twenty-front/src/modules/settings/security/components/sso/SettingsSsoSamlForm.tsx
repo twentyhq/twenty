@@ -5,10 +5,10 @@ import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useContext, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconCheck, IconCopy, IconDownload, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { HorizontalSeparator, Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -118,8 +118,8 @@ export const SettingsSsoSamlForm = () => {
   };
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Identity Provider Metadata XML`}
           description={t`Upload the XML file with your connection infos`}
         />
@@ -131,11 +131,10 @@ export const SettingsSsoSamlForm = () => {
             accept=".xml"
           />
           <Button
-            Icon={IconUpload}
+            startIcon={<IconUpload />}
             onClick={handleUploadFileClick}
-            title={t`Upload file`}
             type="button"
-          ></Button>
+          >{t`Upload file`}</Button>
           {isXMLMetadataValid() && (
             <IconCheck
               size={theme.icon.size.md}
@@ -144,20 +143,19 @@ export const SettingsSsoSamlForm = () => {
             />
           )}
         </StyledUploadFileContainer>
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Service Provider Details`}
           description={t`Enter the infos to set the connection`}
         />
         <StyledInputsContainer>
           <StyledContainer>
             <Button
-              Icon={IconDownload}
+              startIcon={<IconDownload />}
               onClick={downloadMetadata}
-              title={t`Download file`}
               type="button"
-            />
+            >{t`Download file`}</Button>
           </StyledContainer>
           <HorizontalSeparator text={t`Or`} />
           <StyledContainer>
@@ -172,13 +170,12 @@ export const SettingsSsoSamlForm = () => {
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
-                Icon={IconCopy}
-                title={t`Copy`}
+                startIcon={<IconCopy />}
                 onClick={() => {
                   copyToClipboard(acsUrl, t`ACS URL copied to clipboard`);
                 }}
                 type="button"
-              />
+              >{t`Copy`}</Button>
             </StyledButtonCopy>
           </StyledContainer>
           <StyledContainer>
@@ -193,17 +190,16 @@ export const SettingsSsoSamlForm = () => {
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
-                Icon={IconCopy}
-                title={t`Copy`}
+                startIcon={<IconCopy />}
                 onClick={() => {
                   copyToClipboard(entityID, t`Entity ID copied to clipboard`);
                 }}
                 type="button"
-              />
+              >{t`Copy`}</Button>
             </StyledButtonCopy>
           </StyledContainer>
         </StyledInputsContainer>
-      </Section>
+      </Section.Root>
     </>
   );
 };

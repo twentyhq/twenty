@@ -1,3 +1,4 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -7,8 +8,8 @@ import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFi
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -16,13 +17,10 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import {
-  MenuItemSwitch,
-  UndecoratedLink,
-} from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
@@ -54,7 +52,7 @@ export const SettingsObjectIndexesSection = ({
   isReadOnly,
 }: SettingsObjectIndexesSectionProps) => {
   const { t } = useLingui();
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
   const { enqueueToast } = useToast();
   const { deleteOneIndexMetadataItem } = useDeleteOneIndexMetadataItem();
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -141,7 +139,7 @@ export const SettingsObjectIndexesSection = ({
 
   const handleRequestDelete = (item: SettingsObjectIndexesTableItem) => {
     setPendingDelete(item);
-    openModal(DELETE_INDEX_MODAL_ID);
+    openDialog(DELETE_INDEX_MODAL_ID);
   };
 
   const handleConfirmDelete = async () => {
@@ -153,7 +151,7 @@ export const SettingsObjectIndexesSection = ({
     });
 
     setIsDeleting(false);
-    closeModal(DELETE_INDEX_MODAL_ID);
+    closeDialog(DELETE_INDEX_MODAL_ID);
 
     if (result.status === 'successful') {
       enqueueToast({ variant: 'success', children: t`Index deleted` });
@@ -176,15 +174,13 @@ export const SettingsObjectIndexesSection = ({
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <MenuItemSwitch
-                    LeftIcon={IconEyeOff}
+                  <SettingsRow
+                    startIcon={<IconEyeOff />}
                     onCheckedChange={() =>
                       setHideSystemIndexes(!hideSystemIndexes)
                     }
                     checked={hideSystemIndexes}
-                    text={t`Hide system indexes`}
-                    size="sm"
-                  />
+                  >{t`Hide system indexes`}</SettingsRow>
                 </DropdownMenuItemsContainer>
               </DropdownContent>
             }
@@ -199,31 +195,26 @@ export const SettingsObjectIndexesSection = ({
       {!isReadOnly && (
         <StyledButtonContainer>
           {canCreate ? (
-            <UndecoratedLink
+            <NavigationButton
               to={getSettingsPath(SettingsPath.ObjectNewIndex, {
                 objectNamePlural: objectMetadataItem.namePlural,
               })}
-            >
-              <Button
-                Icon={IconPlus}
-                title={t`Add Index`}
-                size="small"
-                variant="secondary"
-              />
-            </UndecoratedLink>
+              startIcon={<IconPlus />}
+              size="sm"
+              variant="outline"
+            >{t`Add Index`}</NavigationButton>
           ) : (
             <Button
-              Icon={IconPlus}
-              title={t`Add Index`}
-              size="small"
-              variant="secondary"
+              startIcon={<IconPlus />}
+              size="sm"
               disabled
-            />
+              variant="outline"
+            >{t`Add Index`}</Button>
           )}
         </StyledButtonContainer>
       )}
-      <ConfirmationModal
-        modalInstanceId={DELETE_INDEX_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={DELETE_INDEX_MODAL_ID}
         title={t`Delete this index?`}
         subtitle={t`Queries that relied on it will fall back to a sequential scan. You can recreate it later.`}
         confirmButtonText={t`Delete`}

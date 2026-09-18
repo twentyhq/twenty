@@ -145,6 +145,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
       pageTitle={settingsDraftRole.label}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Role settings`}
           tabs={tabs}
           componentInstanceId={tabsComponentInstanceId}
         />

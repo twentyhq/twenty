@@ -15,7 +15,8 @@ import {
   IconTypography,
   IconVariable,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -221,16 +222,17 @@ export const AdvancedTextEditorInsertRail = ({
       />
       <StyledRail>
         <LightIconButton
-          Icon={IconTypography}
-          size="medium"
-          accent={openMenu === 'text' ? 'secondary' : 'tertiary'}
+          size="md"
+          emphasis={openMenu === 'text' ? 'standard' : 'subtle'}
           title={t`Text`}
           onClick={() => setOpenMenu(openMenu === 'text' ? null : 'text')}
-        />
+          aria-label={t`Text`}
+        >
+          <IconTypography />
+        </LightIconButton>
         <LightIconButton
-          Icon={IconPhoto}
-          size="medium"
-          accent={openMenu === 'image' ? 'secondary' : 'tertiary'}
+          size="md"
+          emphasis={openMenu === 'image' ? 'standard' : 'subtle'}
           title={isUploadingImage ? t`Uploading...` : t`Image`}
           disabled={isUploadingImage}
           onClick={() => {
@@ -241,24 +243,31 @@ export const AdvancedTextEditorInsertRail = ({
 
             setOpenMenu(openMenu === 'image' ? null : 'image');
           }}
-        />
+          aria-label={isUploadingImage ? t`Uploading...` : t`Image`}
+        >
+          <IconPhoto />
+        </LightIconButton>
         <LightIconButton
-          Icon={IconLayoutGrid}
-          size="medium"
-          accent={openMenu === 'blocks' ? 'secondary' : 'tertiary'}
+          size="md"
+          emphasis={openMenu === 'blocks' ? 'standard' : 'subtle'}
           title={t`Blocks`}
           onClick={() => setOpenMenu(openMenu === 'blocks' ? null : 'blocks')}
-        />
+          aria-label={t`Blocks`}
+        >
+          <IconLayoutGrid />
+        </LightIconButton>
         {hasVariables && (
           <LightIconButton
-            Icon={IconVariable}
-            size="medium"
-            accent={openMenu === 'variables' ? 'secondary' : 'tertiary'}
+            size="md"
+            emphasis={openMenu === 'variables' ? 'standard' : 'subtle'}
             title={t`Variables`}
             onClick={() =>
               setOpenMenu(openMenu === 'variables' ? null : 'variables')
             }
-          />
+            aria-label={t`Variables`}
+          >
+            <IconVariable />
+          </LightIconButton>
         )}
       </StyledRail>
       {openMenu === 'variables' && (
@@ -316,10 +325,9 @@ export const AdvancedTextEditorInsertRail = ({
               {t`Paste a link to a hosted image`}
             </StyledImageHint>
             <Button
-              title={t`Insert image`}
-              size="small"
+              size="sm"
               onClick={handleInsertImage}
-            />
+            >{t`Insert image`}</Button>
           </StyledImageForm>
         </StyledPopover>
       )}

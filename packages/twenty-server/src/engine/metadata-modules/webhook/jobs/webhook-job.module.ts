@@ -10,7 +10,8 @@ import { CallWebhookJobsForMetadataJob } from 'src/engine/metadata-modules/webho
 import { CallWebhookJobsJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook-jobs.job';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
-import { RecordShareModule } from 'src/engine/record-share/record-share.module';
+import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
+import { RecordSharingFeatureModule } from 'src/engine/core-modules/record-share/record-sharing-feature.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     FlatWebhookModule,
     MetricsModule,
     RecordShareModule,
+    RecordSharingFeatureModule,
     SecureHttpClientModule,
     UsageLimitModule,
     WorkspaceCacheModule,

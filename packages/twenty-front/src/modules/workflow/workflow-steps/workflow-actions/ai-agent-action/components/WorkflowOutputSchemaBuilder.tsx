@@ -6,8 +6,8 @@ import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSc
 import {
   InputLabel,
   AnimatedLightIconButton,
-  LightIconButton,
 } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
@@ -201,13 +201,15 @@ export const WorkflowOutputSchemaBuilder = ({
                   />
                   {showRemoveFieldButton && (
                     <LightIconButton
-                      testId="remove-output-field-button"
-                      Icon={IconX}
-                      size="small"
+                      data-testid="remove-output-field-button"
+                      size="sm"
                       onClick={() => {
                         removeField(field.id);
                       }}
-                    />
+                      aria-label={t`Remove output field`}
+                    >
+                      <IconX />
+                    </LightIconButton>
                   )}
                 </StyledSettingsHeader>
                 <AnimatedExpandableContainer

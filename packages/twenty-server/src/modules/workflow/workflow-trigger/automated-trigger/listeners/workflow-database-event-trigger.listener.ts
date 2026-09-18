@@ -1,3 +1,4 @@
+import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
@@ -27,9 +28,9 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
-import { omitInheritedReadabilityChildRecords } from 'src/engine/record-share/utils/omit-inherited-readability-child-records.util';
-import { buildRoleRowAccessPolicySubject } from 'src/engine/record-share/utils/build-role-row-access-policy-subject.util';
+import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
+import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
@@ -51,6 +52,7 @@ import {
 
 type DatabaseEventTriggerListener = {
   workflowId: string;
+  legacyWorkflowId?: string;
   settings: AutomatedTriggerSettings;
 } & CoreDispatchIds;
 
@@ -381,10 +383,9 @@ export class WorkflowDatabaseEventTriggerListener {
             WorkflowTriggerJob.name,
             {
               workspaceId,
-              workflowId: eventListener.workflowId,
-              coreWorkflowVersionId: eventListener.coreWorkflowVersionId,
-              workspaceWorkflowVersionId:
-                eventListener.workspaceWorkflowVersionId,
+              workflowId:
+                eventListener.legacyWorkflowId ?? eventListener.workflowId,
+              ...buildCoreDispatchIds(eventListener),
               payload: omitInheritedReadabilityChildRecords(eventPayload),
             },
             { retryLimit: 3 },

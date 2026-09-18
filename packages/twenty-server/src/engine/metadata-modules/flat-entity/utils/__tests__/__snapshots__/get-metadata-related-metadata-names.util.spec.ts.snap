@@ -64,6 +64,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "searchFieldMetadata",
   "pageLayout",
   "commandMenuItem",
+  "navigationMenuItem",
 ]
 `;
 
@@ -78,6 +79,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 [
   "objectMetadata",
   "pageLayoutTab",
+  "navigationMenuItem",
 ]
 `;
 
@@ -165,6 +167,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "viewGroup",
   "viewFieldGroup",
   "viewSort",
+  "navigationMenuItem",
 ]
 `;
 

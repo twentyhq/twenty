@@ -1,5 +1,13 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  IconButton,
+  LightButton,
+  LightIconButton,
+  MainButton,
+  TabButton,
+} from 'twenty-ui/components';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
+import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
   AnimatedButton,
   AnimatedLightIconButton,
@@ -8,25 +16,13 @@ import {
   ColorPickerButton,
   ColorSchemeCard,
   ColorSchemePicker,
-  CoreEditorHeader,
   FloatingButton,
   FloatingButtonGroup,
   FloatingIconButton,
   FloatingIconButtonGroup,
-  IconButton,
-  IconButtonGroup,
   IconListViewGrip,
-  InsideButton,
-  LightButton,
-  LightIconButton,
-  LightIconButtonGroup,
-  MainButton,
-  RoundedIconButton,
   SearchInput,
   SegmentedControl,
-  StyledTabContainer,
-  TabButton,
-  TabContent,
   CardPicker,
   Checkbox,
   Radio,
@@ -57,13 +53,13 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Button',
-    node: <Button title="Button" onClick={() => {}} />,
+    node: <Button onClick={() => {}}>{'Button'}</Button>,
   },
   {
     name: 'ButtonGroup',
     node: (
       <ButtonGroup>
-        {[<Button key="a" title="A" />, <Button key="b" title="B" />]}
+        {[<Button key="a">{'A'}</Button>, <Button key="b">{'B'}</Button>]}
       </ButtonGroup>
     ),
   },
@@ -86,8 +82,8 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'CoreEditorHeader',
-    node: <CoreEditorHeader title="Editor" />,
+    name: 'CodeEditorHeader',
+    node: <CodeEditorHeader title="Editor" />,
   },
   {
     name: 'ColorPickerButton',
@@ -138,14 +134,20 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'IconButton',
-    node: <IconButton Icon={IconPlus} ariaLabel="Add" onClick={() => {}} />,
+    node: (
+      <IconButton aria-label="Add" onClick={() => {}}>
+        <IconPlus />
+      </IconButton>
+    ),
   },
   {
-    name: 'IconButtonGroup',
+    name: 'ButtonGroup (framed)',
     node: (
-      <IconButtonGroup
-        iconButtons={[{ Icon: IconTrash, ariaLabel: 'Delete' }]}
-      />
+      <ButtonGroup framed attached={false} aria-label="Record actions">
+        <LightIconButton size="xs" aria-label="Delete" emphasis="subtle">
+          <IconTrash />
+        </LightIconButton>
+      </ButtonGroup>
     ),
   },
   {
@@ -153,28 +155,20 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     node: <IconListViewGrip />,
   },
   {
-    name: 'InsideButton',
-    node: <InsideButton Icon={IconPlus} ariaLabel="Add" />,
-  },
-  {
     name: 'LightButton',
-    node: <LightButton title="Light" />,
+    node: <LightButton>{'Light'}</LightButton>,
   },
   {
     name: 'LightIconButton',
-    node: <LightIconButton Icon={IconStar} aria-label="Star" />,
-  },
-  {
-    name: 'LightIconButtonGroup',
     node: (
-      <LightIconButtonGroup
-        iconButtons={[{ Icon: IconStar, ariaLabel: 'Star', onClick: () => {} }]}
-      />
+      <LightIconButton aria-label="Star">
+        <IconStar />
+      </LightIconButton>
     ),
   },
   {
     name: 'MainButton',
-    node: <MainButton title="Main" />,
+    node: <MainButton>{'Main'}</MainButton>,
   },
   {
     name: 'Radio',
@@ -192,10 +186,6 @@ const INPUT_ENTRIES: GalleryEntry[] = [
         <Radio value="b">B</Radio>
       </RadioGroup>
     ),
-  },
-  {
-    name: 'RoundedIconButton',
-    node: <RoundedIconButton Icon={IconPlus} aria-label="Add" />,
   },
   {
     name: 'SearchInput',
@@ -229,20 +219,8 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'StyledTabContainer',
-    node: (
-      <StyledTabContainer>
-        <TabButton id="t1" title="Tab" />
-      </StyledTabContainer>
-    ),
-  },
-  {
     name: 'TabButton',
-    node: <TabButton id="tab1" title="Tab" />,
-  },
-  {
-    name: 'TabContent',
-    node: <TabContent id="tc1" title="Content" />,
+    node: <TabButton>Tab</TabButton>,
   },
   {
     name: 'Switch',
@@ -259,7 +237,7 @@ const INPUT_ENTRIES: GalleryEntry[] = [
 const InputGallery = () => (
   <ThemeProvider colorScheme="light">
     <ComponentGallery
-      title="twenty-ui/primitives/input"
+      title="twenty-ui/primitives/input + twenty-ui/components"
       entries={INPUT_ENTRIES}
     />
   </ThemeProvider>
@@ -269,6 +247,6 @@ export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000107',
   name: 'twenty-ui-input-gallery',
   description:
-    'Renders every twenty-ui/primitives/input component (except monaco CodeEditor) in the sandbox',
+    'Renders input primitives and shared button presets in the sandbox',
   component: InputGallery,
 });

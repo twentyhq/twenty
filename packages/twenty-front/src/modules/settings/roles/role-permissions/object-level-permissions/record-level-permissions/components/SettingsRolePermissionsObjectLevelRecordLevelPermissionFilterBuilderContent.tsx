@@ -150,14 +150,12 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
           </StyledContainer>
         ) : (
           <Button
-            Icon={IconFilter}
-            size="small"
-            variant="secondary"
-            accent="default"
+            startIcon={<IconFilter />}
+            size="sm"
             onClick={handleCreateFirstFilter}
-            ariaLabel={t`Add filter`}
-            title={t`Add filter`}
-          />
+            aria-label={t`Add filter`}
+            variant="outline"
+          >{t`Add filter`}</Button>
         )}
       </AdvancedFilterContext.Provider>
     );

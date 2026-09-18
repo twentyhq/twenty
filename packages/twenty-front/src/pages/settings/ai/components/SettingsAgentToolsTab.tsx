@@ -1,16 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { isDefined } from 'twenty-shared/utils';
+import { SettingsRow, Section } from 'twenty-ui/components';
 import { IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { SearchInput } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
 import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSettingsAgentToolsTable';
@@ -76,8 +73,8 @@ export const SettingsAgentToolsTab = () => {
     .sort((a, b) => (a.label ?? a.name).localeCompare(b.label ?? b.name));
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Tools`}
         description={t`Use filter to see existing tools or create your own`}
       />
@@ -95,27 +92,21 @@ export const SettingsAgentToolsTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemSwitch
-                      LeftIcon={IconTool}
+                    <SettingsRow
+                      startIcon={<IconTool />}
                       onCheckedChange={setShowCustomTools}
                       checked={showCustomTools}
-                      text={t`Custom`}
-                      size="sm"
-                    />
-                    <MenuItemSwitch
-                      LeftIcon={IconLock}
+                    >{t`Custom`}</SettingsRow>
+                    <SettingsRow
+                      startIcon={<IconLock />}
                       onCheckedChange={setShowManagedTools}
                       checked={showManagedTools}
-                      text={t`Managed`}
-                      size="sm"
-                    />
-                    <MenuItemSwitch
-                      LeftIcon={IconPuzzle}
+                    >{t`Managed`}</SettingsRow>
+                    <SettingsRow
+                      startIcon={<IconPuzzle />}
                       onCheckedChange={setShowStandardTools}
                       checked={showStandardTools}
-                      text={t`Standard`}
-                      size="sm"
-                    />
+                    >{t`Standard`}</SettingsRow>
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }
@@ -132,6 +123,6 @@ export const SettingsAgentToolsTab = () => {
         }
         currentWorkspace={currentWorkspace}
       />
-    </Section>
+    </Section.Root>
   );
 };

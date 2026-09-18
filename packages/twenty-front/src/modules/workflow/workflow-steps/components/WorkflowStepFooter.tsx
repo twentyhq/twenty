@@ -168,15 +168,13 @@ export const WorkflowStepFooter = ({
 
   const deleteButton = (
     <Button
-      size="small"
-      title={t`Delete`}
+      size="sm"
       onClick={() => {
         deleteStep(stepId);
       }}
-      Icon={IconTrash}
-      accent="danger"
-      inverted
-    />
+      startIcon={<IconTrash />}
+      color="danger"
+    >{t`Delete`}</Button>
   );
 
   return (

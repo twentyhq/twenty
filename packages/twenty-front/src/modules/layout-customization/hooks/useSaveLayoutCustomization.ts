@@ -1,3 +1,5 @@
+import { objectColorsDraftState } from '@/layout-customization/states/objectColorsDraftState';
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { useSaveCommandMenuItemsDraft } from '@/command-menu-item/edit/hooks/useSaveCommandMenuItemsDraft';
 import { useCommandMenuItemsDraftState } from '@/command-menu-item/hooks/useCommandMenuItemsDraftState';
 import { useExitLayoutCustomizationMode } from '@/layout-customization/hooks/useExitLayoutCustomizationMode';
@@ -27,6 +29,8 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
 export const useSaveLayoutCustomization = () => {
+  const { updateOneObjectMetadataItem, refetchCommandMenuItems } =
+    useUpdateOneObjectMetadataItem();
   const [isSaving, setIsSaving] = useState(false);
   const store = useStore();
   const { t } = useLingui();
@@ -47,6 +51,50 @@ export const useSaveLayoutCustomization = () => {
   const save = useCallback(async () => {
     setIsSaving(true);
     try {
+      const objectColorEntries = Object.entries(
+        store.get(objectColorsDraftState.atom),
+      );
+
+      if (objectColorEntries.length > 0) {
+        // TODO: replace with an updateManyObjectMetadataItems endpoint, landing
+        // in its own PR after this one, so saving colours is a single request.
+        // Each update otherwise refetches the command menu, so send them
+        // together and refetch once.
+        const colorResults = await Promise.all(
+          objectColorEntries.map(async ([objectId, color]) => ({
+            objectId,
+            color,
+            result: await updateOneObjectMetadataItem({
+              idToUpdate: objectId,
+              updatePayload: { color },
+              shouldRefetchCommandMenuItems: false,
+            }),
+          })),
+        );
+
+        const savedColorByObjectId = new Map(
+          colorResults
+            .filter(({ result }) => result.status === 'successful')
+            .map(({ objectId, color }) => [objectId, color]),
+        );
+
+        // The picker stays live while these run, so only drop an entry the user
+        // has not changed again since it was sent.
+        store.set(objectColorsDraftState.atom, (draft) =>
+          Object.fromEntries(
+            Object.entries(draft).filter(
+              ([objectId, color]) =>
+                savedColorByObjectId.get(objectId) !== color,
+            ),
+          ),
+        );
+
+        await refetchCommandMenuItems();
+
+        if (savedColorByObjectId.size !== objectColorEntries.length) {
+          return;
+        }
+      }
       const navigationDraft = store.get(navigationMenuItemsDraftState.atom);
       const prefetchItems = store.get(navigationMenuItemsSelector.atom);
       const workspaceItems = filterWorkspaceNavigationMenuItems(prefetchItems);
@@ -153,6 +201,8 @@ export const useSaveLayoutCustomization = () => {
       setIsSaving(false);
     }
   }, [
+    updateOneObjectMetadataItem,
+    refetchCommandMenuItems,
     saveDraft,
     saveCommandMenuItemsDraft,
     isCommandMenuItemsDirty,
