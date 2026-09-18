@@ -16,6 +16,7 @@ import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import {
   AgentMessageEntity,
@@ -121,6 +122,8 @@ export class AgentChatService {
     private readonly channelRoleRepository: WorkspaceScopedRepository<AgentChatChannelRoleEntity>,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
+    @InjectWorkspaceScopedRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: WorkspaceScopedRepository<UserWorkspaceEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -309,6 +312,17 @@ export class AgentChatService {
     ];
   }
 
+  private async getWorkspaceUserWorkspaceIds(
+    workspaceId: string,
+  ): Promise<string[]> {
+    const userWorkspaces = await this.userWorkspaceRepository.find(
+      workspaceId,
+      { select: ['id'] },
+    );
+
+    return userWorkspaces.map((userWorkspace) => userWorkspace.id);
+  }
+
   // Everyone who reads a channel without being public: its members plus the
   // users holding one of its roles.
   async getChannelReaderUserWorkspaceIds({
@@ -374,11 +388,26 @@ export class AgentChatService {
       return;
     }
 
+    // The thread was readable by the whole workspace and now is not, so the
+    // readers it loses are everyone outside the new set. Telling the whole
+    // workspace it was deleted would take it from the readers who keep it and
+    // hand it back a moment later.
     if (!isDefined(recipientsBefore)) {
-      await this.broadcastThreadDeletedToRecipients({
-        thread,
-        recipientUserWorkspaceIds: undefined,
-      });
+      const workspaceUserWorkspaceIds = await this.getWorkspaceUserWorkspaceIds(
+        thread.workspaceId,
+      );
+      const keptRecipients = new Set(recipientsAfter);
+      const losingRecipients = workspaceUserWorkspaceIds.filter(
+        (userWorkspaceId) => !keptRecipients.has(userWorkspaceId),
+      );
+
+      if (losingRecipients.length > 0) {
+        await this.broadcastThreadDeletedToRecipients({
+          thread,
+          recipientUserWorkspaceIds: losingRecipients,
+        });
+      }
+
       await this.broadcastThreadCreatedToRecipients({
         thread,
         recipientUserWorkspaceIds: recipientsAfter,
