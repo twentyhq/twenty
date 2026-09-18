@@ -4,7 +4,10 @@ import {
   getEnterprisePriceId,
   getStripeClient,
   hasPriorSubscriptionForServer,
+  isSearchableMetadataValue,
+  normalizeServerId,
   resolveTrialPeriodDays,
+  STRIPE_METADATA_KEY,
 } from '@/platform/enterprise';
 
 const DEFAULT_TRIAL_PERIOD_DAYS = 30;
@@ -56,13 +59,22 @@ export async function POST(request: Request) {
         ? body.seatCount
         : 1;
 
+    const serverId = normalizeServerId(body.instanceMetadata?.serverId);
+
     const trialPeriodDays = resolveTrialPeriodDays({
       defaultTrialPeriodDays: DEFAULT_TRIAL_PERIOD_DAYS,
       hasPriorSubscription: await hasPriorSubscriptionForServer({
         stripe,
-        serverId: body.instanceMetadata?.serverId,
+        serverId,
       }),
     });
+
+    // Recorded only when a trial is actually granted: the key answers "has this
+    // server consumed a trial", not "has this server ever bought".
+    const trialServerIdMetadata: Record<string, string> =
+      trialPeriodDays !== undefined && isSearchableMetadataValue(serverId)
+        ? { [STRIPE_METADATA_KEY.TRIAL_SERVER_ID]: serverId }
+        : {};
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
@@ -79,6 +91,7 @@ export async function POST(request: Request) {
           : { trial_period_days: trialPeriodDays }),
         metadata: {
           source: 'enterprise-self-hosted',
+          ...trialServerIdMetadata,
         },
       },
     });

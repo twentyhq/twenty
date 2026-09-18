@@ -2,6 +2,8 @@ NEXTJS_ENV=development
 
 # Stripe — use a test-mode key locally
 STRIPE_SECRET_KEY=
+# From `stripe listen --forward-to localhost:3000/api/enterprise/stripe-webhook`
+STRIPE_WEBHOOK_SECRET=
 
 # Enterprise JWT — generate a test RSA keypair for local dev
 ENTERPRISE_JWT_PRIVATE_KEY=
