@@ -64,6 +64,7 @@ export const SettingsApplications = () => {
       title={t`Applications`}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Applications`}
           tabs={tabs}
           componentInstanceId={APPLICATIONS_TAB_LIST_ID}
         />

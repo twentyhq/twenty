@@ -59,8 +59,8 @@ export class ApplicationService {
     private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(ApplicationVariableEntity)
-    private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationVariableEntity)
+    private readonly applicationVariableRepository: WorkspaceScopedRepository<ApplicationVariableEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
@@ -172,7 +172,7 @@ export class ApplicationService {
     );
   }
 
-  async findOneApplication({
+  async findOneApplicationWithRelations({
     id,
     universalIdentifier,
     workspaceId,
@@ -225,8 +225,8 @@ export class ApplicationService {
       this.objectMetadataRepository.find({
         where: { applicationId: application.id, workspaceId },
       }),
-      this.applicationVariableRepository.find({
-        where: { applicationId: application.id, workspaceId },
+      this.applicationVariableRepository.find(workspaceId, {
+        where: { applicationId: application.id },
       }),
     ]);
 
@@ -240,7 +240,7 @@ export class ApplicationService {
     return application;
   }
 
-  async findOneApplicationOrThrow({
+  async findOneApplicationWithRelationsOrThrow({
     id,
     universalIdentifier,
     workspaceId,
@@ -249,7 +249,7 @@ export class ApplicationService {
     universalIdentifier?: string;
     workspaceId: string;
   }): Promise<ApplicationEntity> {
-    const application = await this.findOneApplication({
+    const application = await this.findOneApplicationWithRelations({
       id,
       universalIdentifier,
       workspaceId,

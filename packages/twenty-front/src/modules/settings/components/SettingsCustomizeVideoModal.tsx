@@ -1,11 +1,14 @@
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type SettingsCustomizeVideoModalTab } from '@/settings/types/SettingsCustomizeVideoModalTab';
-import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
+import { Tabs } from 'twenty-ui/primitives/navigation';
 import { t } from '@lingui/core/macro';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { styled } from '@linaria/react';
-import { useState } from 'react';
 import { IconX } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
@@ -82,7 +85,10 @@ export const SettingsCustomizeVideoModal = ({
 }: SettingsCustomizeVideoModalProps) => {
   const theme = useTheme();
   const { closeDialog } = useDialog();
-  const [activeTabId, setActiveTabId] = useState<string>(tabs[0]?.id ?? '');
+  const activeTabId = useAtomComponentStateValue(
+    activeTabIdComponentState,
+    tabsInstanceId,
+  );
 
   if (tabs.length === 0) {
     return null;
@@ -95,6 +101,21 @@ export const SettingsCustomizeVideoModal = ({
   const handleClose = () => {
     closeDialog(modalInstanceId);
   };
+
+  const videoContent = (
+    <StyledVideoContainer>
+      <StyledVideoIframe
+        key={activeTab.id}
+        src={
+          activeTab.hasSound
+            ? `https://player.vimeo.com/video/${activeTab.vimeoId}?byline=0&portrait=0&title=0&vimeo_logo=0&app_id=58479&dnt=1`
+            : `https://player.vimeo.com/video/${activeTab.vimeoId}?autoplay=1&loop=1&autopause=0&background=1&muted=1&dnt=1`
+        }
+        allow="autoplay; fullscreen; picture-in-picture"
+        title={activeTab.title}
+      />
+    </StyledVideoContainer>
+  );
 
   return (
     <DialogInstance
@@ -110,46 +131,44 @@ export const SettingsCustomizeVideoModal = ({
           size="lg"
           style={{ padding: 0 }}
         >
-          <StyledHeader $hasBottomBorder={!hasMultipleTabs}>
+          <TabListRoot
+            componentInstanceId={tabsInstanceId}
+            enabled={hasMultipleTabs}
+          >
+            <StyledHeader $hasBottomBorder={!hasMultipleTabs}>
+              {hasMultipleTabs ? (
+                <StyledTabsContainer>
+                  <TabList
+                    aria-label={t`Video tutorials`}
+                    tabs={tabs}
+                    behaveAsLinks={false}
+                    componentInstanceId={tabsInstanceId}
+                  />
+                </StyledTabsContainer>
+              ) : (
+                <StyledTitle>
+                  <ActiveTabIcon
+                    size={theme.icon.size.md}
+                    color={theme.font.color.primary}
+                    aria-hidden
+                  />
+                  <StyledTitleText>{activeTab.title}</StyledTitleText>
+                </StyledTitle>
+              )}
+              <IconButton
+                aria-label={t`Close video`}
+                onClick={handleClose}
+                size="sm"
+              >
+                <IconX />
+              </IconButton>
+            </StyledHeader>
             {hasMultipleTabs ? (
-              <StyledTabsContainer>
-                <TabList
-                  tabs={tabs}
-                  behaveAsLinks={false}
-                  componentInstanceId={tabsInstanceId}
-                  onChangeTab={(tabId) => setActiveTabId(tabId)}
-                />
-              </StyledTabsContainer>
+              <Tabs.Panel value={activeTab.id}>{videoContent}</Tabs.Panel>
             ) : (
-              <StyledTitle>
-                <ActiveTabIcon
-                  size={theme.icon.size.md}
-                  color={theme.font.color.primary}
-                  aria-hidden
-                />
-                <StyledTitleText>{activeTab.title}</StyledTitleText>
-              </StyledTitle>
+              videoContent
             )}
-            <IconButton
-              aria-label={t`Close video`}
-              onClick={handleClose}
-              size="sm"
-            >
-              <IconX />
-            </IconButton>
-          </StyledHeader>
-          <StyledVideoContainer>
-            <StyledVideoIframe
-              key={activeTab.id}
-              src={
-                activeTab.hasSound
-                  ? `https://player.vimeo.com/video/${activeTab.vimeoId}?byline=0&portrait=0&title=0&vimeo_logo=0&app_id=58479&dnt=1`
-                  : `https://player.vimeo.com/video/${activeTab.vimeoId}?autoplay=1&loop=1&autopause=0&background=1&muted=1&dnt=1`
-              }
-              allow="autoplay; fullscreen; picture-in-picture"
-              title={activeTab.title}
-            />
-          </StyledVideoContainer>
+          </TabListRoot>
         </Dialog.Popup>
       )}
     </DialogInstance>

@@ -906,6 +906,8 @@ setCompany(result.company);
 
 `MetadataApiClient` ships pre-built with the SDK (no generation required). It queries the `/metadata` endpoint for workspace configuration, applications, and file uploads. It takes the same `runAs` option as `CoreApiClient` — see [Whose access a call uses](#whose-access-a-call-uses).
 
+It is also how an app reads and updates its own [application variables](/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime), in a logic function as in a front component. An application token only ever reaches its own application, in its own workspace.
+
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 

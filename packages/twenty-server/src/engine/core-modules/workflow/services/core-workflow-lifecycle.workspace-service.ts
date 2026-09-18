@@ -26,6 +26,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import {
@@ -185,84 +186,122 @@ export class CoreWorkflowLifecycleWorkspaceService {
       steps: steps ?? [],
     });
 
-    const previousPublishedCoreVersionId =
-      await this.findPreviousPublishedCoreVersionId({
-        workspaceId,
-        coreWorkflow,
-      });
-
-    if (
-      isDefined(previousPublishedCoreVersionId) &&
-      previousPublishedCoreVersionId !== coreWorkflowVersion.id
-    ) {
-      await this.deactivateCoreWorkflowVersion({
-        workspaceId,
-        coreWorkflowVersionId: previousPublishedCoreVersionId,
-      });
-    }
-
-    const activeSiblingsCount = await this.coreWorkflowVersionRepository.count(
-      workspaceId,
-      {
-        where: {
-          coreWorkflowId: coreWorkflow.id,
-          status: CoreWorkflowVersionStatus.ACTIVE,
-        },
-      },
-    );
-
-    if (activeSiblingsCount > 0) {
-      throw new WorkflowTriggerException(
-        'Cannot have more than one active workflow version',
-        WorkflowTriggerExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Cannot have more than one active workflow version`,
-        },
-      );
-    }
+    let previousResolved: ResolvedCoreVersion | undefined;
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
+          await transactionScope.executeRawQuery(
+            `SELECT id FROM "${getWorkspaceSchemaName(workspaceId)}".workflow WHERE id = $1 FOR NO KEY UPDATE`,
+            [resolved.workspaceWorkflowId],
+          );
+          await transactionScope.executeRawQuery(
+            `SELECT id FROM "${getWorkspaceSchemaName(workspaceId)}"."workflowVersion" WHERE "workflowId" = $1 ORDER BY id FOR NO KEY UPDATE`,
+            [resolved.workspaceWorkflowId],
+          );
+          const [lockedCoreWorkflow] = await transactionScope.executeRawQuery(
+            `SELECT "lastPublishedCoreWorkflowVersionId" FROM core."workflow"
+               WHERE "id" = $1 AND "workspaceId" = $2 FOR NO KEY UPDATE`,
+            [coreWorkflow.id, workspaceId],
+          );
+
+          const unchangedVersion = await transactionScope.executeRawQuery(
+            `SELECT id FROM core."workflowVersion" WHERE id = $1 AND "workspaceId" = $2
+             AND status = $3 AND triggers IS NOT DISTINCT FROM $4::jsonb AND steps IS NOT DISTINCT FROM $5::jsonb`,
+            [
+              coreWorkflowVersion.id,
+              workspaceId,
+              coreWorkflowVersion.status,
+              JSON.stringify(coreWorkflowVersion.triggers),
+              JSON.stringify(coreWorkflowVersion.steps),
+            ],
+          );
+
+          if (unchangedVersion.length !== 1) {
+            throw new WorkflowTriggerException(
+              'Workflow version changed during activation',
+              WorkflowTriggerExceptionCode.INVALID_INPUT,
+              {
+                userFriendlyMessage: msg`Workflow version changed, please reload and retry`,
+              },
+            );
+          }
+
+          const activeVersions = await transactionScope.executeRawQuery(
+            `SELECT id FROM core."workflowVersion" WHERE "coreWorkflowId" = $1 AND "workspaceId" = $2 AND status = 'ACTIVE'`,
+            [coreWorkflow.id, workspaceId],
+          );
+
           if (
-            isDefined(previousPublishedCoreVersionId) &&
-            previousPublishedCoreVersionId !== coreWorkflowVersion.id
+            activeVersions.length > 1 ||
+            activeVersions[0]?.id === coreWorkflowVersion.id
           ) {
+            throw new WorkflowTriggerException(
+              'Cannot have more than one active workflow version',
+              WorkflowTriggerExceptionCode.FORBIDDEN,
+              {
+                userFriendlyMessage: msg`Cannot have more than one active workflow version`,
+              },
+            );
+          }
+
+          const previousCoreWorkflowVersionId =
+            typeof activeVersions[0]?.id === 'string'
+              ? activeVersions[0].id
+              : typeof lockedCoreWorkflow?.lastPublishedCoreWorkflowVersionId ===
+                    'string' &&
+                  lockedCoreWorkflow.lastPublishedCoreWorkflowVersionId !==
+                    coreWorkflowVersion.id
+                ? lockedCoreWorkflow.lastPublishedCoreWorkflowVersionId
+                : null;
+
+          if (isDefined(previousCoreWorkflowVersionId)) {
+            previousResolved = await this.resolveCoreVersionWithWorkflowOrThrow(
+              {
+                workspaceId,
+                coreWorkflowVersionId: previousCoreWorkflowVersionId,
+              },
+            );
+
+            if (
+              previousResolved.coreWorkflowVersion.status ===
+              CoreWorkflowVersionStatus.ACTIVE
+            ) {
+              await this.disableAutomatedTrigger({
+                resolved: previousResolved,
+                transactionScope,
+              });
+            }
             await this.writeVersionStatusInTransaction({
               transactionScope,
               workspaceId,
-              coreWorkflowVersionId: previousPublishedCoreVersionId,
+              coreWorkflowVersionId: previousResolved.coreWorkflowVersion.id,
               status: WorkflowVersionStatus.ARCHIVED,
             });
           }
 
-          if (
-            coreWorkflow.lastPublishedCoreWorkflowVersionId !==
-            coreWorkflowVersion.id
-          ) {
-            await transactionScope.executeRawQuery(
-              `UPDATE core."workflow"
-               SET "lastPublishedCoreWorkflowVersionId" = $3, "lastPublishedVersionId" = $4, "updatedAt" = now()
-               WHERE "id" = $1 AND "workspaceId" = $2`,
-              [
-                coreWorkflow.id,
-                workspaceId,
-                coreWorkflowVersion.id,
-                resolved.workspaceWorkflowVersionId,
-              ],
+          await transactionScope
+            .getRepository<WorkflowWorkspaceEntity>('workflow', {
+              shouldBypassPermissionChecks: true,
+            })
+            .update(
+              { id: resolved.workspaceWorkflowId },
+              {
+                lastPublishedVersionId: resolved.workspaceWorkflowVersionId,
+              },
             );
 
-            await transactionScope
-              .getRepository<WorkflowWorkspaceEntity>('workflow', {
-                shouldBypassPermissionChecks: true,
-              })
-              .update(
-                { id: resolved.workspaceWorkflowId },
-                {
-                  lastPublishedVersionId: resolved.workspaceWorkflowVersionId,
-                },
-              );
-          }
+          await transactionScope.executeRawQuery(
+            `UPDATE core."workflow"
+             SET "lastPublishedCoreWorkflowVersionId" = $3, "lastPublishedVersionId" = $4, "updatedAt" = now()
+             WHERE "id" = $1 AND "workspaceId" = $2`,
+            [
+              coreWorkflow.id,
+              workspaceId,
+              coreWorkflowVersion.id,
+              resolved.workspaceWorkflowVersionId,
+            ],
+          );
 
           await this.writeVersionStatusInTransaction({
             transactionScope,
@@ -278,6 +317,18 @@ export class CoreWorkflowLifecycleWorkspaceService {
         },
       );
     }, buildSystemAuthContext(workspaceId));
+
+    if (isDefined(previousResolved)) {
+      await this.deleteCommandMenuItem({
+        workspaceId,
+        resolved: previousResolved,
+      });
+      this.emitStatusUpdateEvent({
+        workspaceId,
+        resolved: previousResolved,
+        newStatus: WorkflowVersionStatus.ARCHIVED,
+      });
+    }
 
     await this.writeCronTriggerCacheEntryAfterCommit({ resolved });
 
@@ -317,8 +368,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
       return true;
     }
 
-    await this.deleteCommandMenuItem({ workspaceId, resolved });
-
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
@@ -336,6 +385,8 @@ export class CoreWorkflowLifecycleWorkspaceService {
         },
       );
     }, buildSystemAuthContext(workspaceId));
+
+    await this.deleteCommandMenuItem({ workspaceId, resolved });
 
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
       workspaceId,
@@ -463,13 +514,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
     coreWorkflowVersionId: string;
     status: WorkflowVersionStatus;
   }): Promise<void> {
-    await transactionScope.executeRawQuery(
-      `UPDATE core."workflowVersion"
-       SET "status" = $3, "updatedAt" = now()
-       WHERE "id" = $1 AND "workspaceId" = $2`,
-      [coreWorkflowVersionId, workspaceId, status],
-    );
-
     const mirrorUpdateResult = await transactionScope
       .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
         shouldBypassPermissionChecks: true,
@@ -480,6 +524,13 @@ export class CoreWorkflowLifecycleWorkspaceService {
       affected: mirrorUpdateResult.affected,
       coreWorkflowVersionId,
     });
+
+    await transactionScope.executeRawQuery(
+      `UPDATE core."workflowVersion"
+       SET "status" = $3, "updatedAt" = now()
+       WHERE "id" = $1 AND "workspaceId" = $2`,
+      [coreWorkflowVersionId, workspaceId, status],
+    );
   }
 
   private async enableAutomatedTrigger({
@@ -601,9 +652,11 @@ export class CoreWorkflowLifecycleWorkspaceService {
           transactionScope,
         });
 
-        await this.cacheStorageService.hashDelete({
-          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-          field: workspaceWorkflowId,
+        transactionScope.afterCommit(async () => {
+          await this.cacheStorageService.hashDelete({
+            key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+            field: workspaceWorkflowId,
+          });
         });
 
         return;

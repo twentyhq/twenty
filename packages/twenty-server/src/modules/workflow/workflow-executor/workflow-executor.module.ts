@@ -1,3 +1,4 @@
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { Module } from '@nestjs/common';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -26,6 +27,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
 
 @Module({
   imports: [
+    WorkflowCoreModule,
     WorkflowCommonModule,
     WorkflowRunModule,
     CodeActionModule,

@@ -1,3 +1,5 @@
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
+import { Tabs } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -340,33 +342,39 @@ const ThinkingToolStepRow = ({
             {hasError ? (
               <StyledToolErrorText>{part.errorText}</StyledToolErrorText>
             ) : (
-              <StyledToolDetailsContent>
-                <StyledToolTabListContainer>
-                  <TabList
-                    tabs={toolTabs}
-                    behaveAsLinks={false}
-                    componentInstanceId={toolTabListComponentInstanceId}
-                  />
-                </StyledToolTabListContainer>
-                <StyledToolJsonContent>
-                  <StyledJsonTreeContainer>
-                    <JsonTree
-                      value={
-                        (activeTab === 'output'
-                          ? toolOutput
-                          : toolInput) as JsonValue
-                      }
-                      shouldExpandNodeInitially={() => false}
-                      emptyArrayLabel={t`Empty Array`}
-                      emptyObjectLabel={t`Empty Object`}
-                      emptyStringLabel={t`[empty string]`}
-                      arrowButtonCollapsedLabel={t`Expand`}
-                      arrowButtonExpandedLabel={t`Collapse`}
-                      onNodeValueClick={copyToClipboard}
+              <TabListRoot componentInstanceId={toolTabListComponentInstanceId}>
+                <StyledToolDetailsContent>
+                  <StyledToolTabListContainer>
+                    <TabList
+                      aria-label={t`Tool details: ${displayMessage}`}
+                      tabs={toolTabs}
+                      behaveAsLinks={false}
+                      componentInstanceId={toolTabListComponentInstanceId}
                     />
-                  </StyledJsonTreeContainer>
-                </StyledToolJsonContent>
-              </StyledToolDetailsContent>
+                  </StyledToolTabListContainer>
+                  <Tabs.Panel
+                    value={activeTab}
+                    render={<StyledToolJsonContent />}
+                  >
+                    <StyledJsonTreeContainer>
+                      <JsonTree
+                        value={
+                          (activeTab === 'output'
+                            ? toolOutput
+                            : toolInput) as JsonValue
+                        }
+                        shouldExpandNodeInitially={() => false}
+                        emptyArrayLabel={t`Empty Array`}
+                        emptyObjectLabel={t`Empty Object`}
+                        emptyStringLabel={t`[empty string]`}
+                        arrowButtonCollapsedLabel={t`Expand`}
+                        arrowButtonExpandedLabel={t`Collapse`}
+                        onNodeValueClick={copyToClipboard}
+                      />
+                    </StyledJsonTreeContainer>
+                  </Tabs.Panel>
+                </StyledToolDetailsContent>
+              </TabListRoot>
             )}
           </StyledToolDetailsContainer>
         </AnimatedExpandableContainer>

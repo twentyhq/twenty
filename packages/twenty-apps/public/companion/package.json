@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/companion-app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",

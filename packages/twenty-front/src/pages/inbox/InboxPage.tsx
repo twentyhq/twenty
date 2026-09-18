@@ -190,6 +190,7 @@ export const InboxPage = () => {
             {isDefined(inboxQueueName) && (
               <StyledTabsContainer>
                 <TabList
+                  aria-label={t`Inbox views`}
                   tabs={INBOX_QUEUE_VIEWS.map((view) => ({
                     id: view.key,
                     title: t(view.label),

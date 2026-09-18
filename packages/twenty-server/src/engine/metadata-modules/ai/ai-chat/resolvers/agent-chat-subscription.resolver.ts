@@ -77,7 +77,7 @@ export class AgentChatSubscriptionResolver {
 
     let lastReapCheckAt = 0;
 
-    return wrapAsyncIteratorWithLifecycle(iterator, {
+    return wrapAsyncIteratorWithLifecycle(() => iterator, {
       initialValue: keepalivePayload,
       onHeartbeat: async () => {
         if (

@@ -20,9 +20,6 @@ type DriftCounts = Record<string, number>;
 const CRON_INTERVAL_HOURS = 3;
 const SHARD_TOTAL = 24 / CRON_INTERVAL_HOURS;
 
-// Detect drift between the workspace source-of-truth records and their core
-// mirror. The dual-write is best-effort (async, not transactional), so core can
-// silently fall out of sync; this quantifies that per workspace as metrics.
 @Injectable()
 export class WorkflowCoreConsistencyService {
   private readonly logger = new Logger(WorkflowCoreConsistencyService.name);
@@ -102,10 +99,10 @@ export class WorkflowCoreConsistencyService {
       [workspaceId],
     );
 
-    const [{ orphanCore }] = await this.coreDataSource.query(
-      `SELECT count(*)::int AS "orphanCore"
+    const [{ missingProjection }] = await this.coreDataSource.query(
+      `SELECT count(*)::int AS "missingProjection"
        FROM core."workflow" c
-       WHERE c."workspaceId" = $1
+       WHERE c."workspaceId" = $1 AND c."workspaceWorkflowId" IS NOT NULL
          AND NOT EXISTS (
            SELECT 1 FROM "${schema}"."workflow" wf WHERE wf."coreWorkflowId" = c.id
          )`,
@@ -119,8 +116,8 @@ export class WorkflowCoreConsistencyService {
       {
         unlinked: counts.unlinked,
         missingCore: counts.missingCore,
-        fieldMismatch: counts.fieldMismatch,
-        orphanCore,
+        projectionMismatch: counts.fieldMismatch,
+        missingProjection,
       },
     );
   }
@@ -148,10 +145,10 @@ export class WorkflowCoreConsistencyService {
       [workspaceId],
     );
 
-    const [{ orphanCore }] = await this.coreDataSource.query(
-      `SELECT count(*)::int AS "orphanCore"
+    const [{ missingProjection }] = await this.coreDataSource.query(
+      `SELECT count(*)::int AS "missingProjection"
        FROM core."workflowVersion" c
-       WHERE c."workspaceId" = $1
+       WHERE c."workspaceId" = $1 AND c."workspaceWorkflowVersionId" IS NOT NULL
          AND NOT EXISTS (
            SELECT 1 FROM "${schema}"."workflowVersion" wf WHERE wf."coreWorkflowVersionId" = c.id
          )`,
@@ -165,8 +162,8 @@ export class WorkflowCoreConsistencyService {
       {
         unlinked: counts.unlinked,
         missingCore: counts.missingCore,
-        fieldMismatch: counts.fieldMismatch,
-        orphanCore,
+        projectionMismatch: counts.fieldMismatch,
+        missingProjection,
       },
     );
   }
@@ -179,7 +176,11 @@ export class WorkflowCoreConsistencyService {
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'workflowAutomatedTriggerMaps',
       ]);
-    const cacheByWorkflowId = workflowAutomatedTriggerMaps.byWorkflowId;
+    const cacheByWorkflowId = Object.fromEntries(
+      Object.values(workflowAutomatedTriggerMaps.byWorkflowId)
+        .filter((trigger) => isDefined(trigger.legacyWorkflowId))
+        .map((trigger) => [trigger.legacyWorkflowId, trigger]),
+    );
 
     const tableRows: Array<{
       workflowId: string;

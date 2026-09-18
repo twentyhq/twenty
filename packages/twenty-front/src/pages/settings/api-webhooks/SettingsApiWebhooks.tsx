@@ -92,6 +92,7 @@ export const SettingsApiWebhooks = () => {
       title={t`MCP & APIs`}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`APIs and webhooks`}
           tabs={tabs}
           componentInstanceId={SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID}
         />

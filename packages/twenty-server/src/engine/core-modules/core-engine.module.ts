@@ -87,7 +87,7 @@ import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
-import { FileModule } from './file/file.module';
+import { FileApiModule } from './file/file-api.module';
 
 @Module({
   imports: [
@@ -102,7 +102,7 @@ import { FileModule } from './file/file.module';
     UsageModule,
     ClientConfigModule,
     FeatureFlagModule,
-    FileModule,
+    FileApiModule,
     RecordShareModule,
     RowLevelPermissionModule,
     OpenApiModule,
