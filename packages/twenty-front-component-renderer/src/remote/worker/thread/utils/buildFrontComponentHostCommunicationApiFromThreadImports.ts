@@ -16,7 +16,6 @@ export const buildFrontComponentHostCommunicationApiFromThreadImports = (
   updateProgress: hostThreadImports.updateProgress,
   copyToClipboard: hostThreadImports.copyToClipboard,
   uploadFile: hostThreadImports.uploadFile,
-  callTool: hostThreadImports.callTool,
   storageSet: hostThreadImports.storageSet,
   storageDelete: hostThreadImports.storageDelete,
   storageClear: hostThreadImports.storageClear,

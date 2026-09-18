@@ -3146,13 +3146,6 @@ type Webhook {
   deletedAt: DateTime
 }
 
-type ToolCallResult {
-  success: Boolean!
-  message: String!
-  error: String
-  result: JSON
-}
-
 type ToolIndexEntry {
   name: String!
   label: String!
@@ -4074,7 +4067,6 @@ type Mutation {
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
   runAgent(input: RunAgentInput!): RunAgentResult!
-  callTool(toolName: String!, input: JSON): ToolCallResult!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!

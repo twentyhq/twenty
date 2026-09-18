@@ -1,6 +1,5 @@
 export { Trans } from './components/Trans';
 export type { TransProps } from './components/Trans';
-export { callTool } from './functions/callTool';
 export { closeSidePanel } from './functions/closeSidePanel';
 export { copyToClipboard } from './functions/copyToClipboard';
 export { getApplicationVariable } from './functions/getApplicationVariable';
@@ -36,8 +35,6 @@ export type {
 export type { FrontComponentStorageType } from './types/FrontComponentStorageType';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
 export type {
-  CallToolFunction,
-  CallToolResult,
   CloseSidePanelFunction,
   CommandConfirmationModalAccent,
   CommandConfirmationModalResult,

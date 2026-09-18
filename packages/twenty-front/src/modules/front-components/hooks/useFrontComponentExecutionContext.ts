@@ -2,7 +2,6 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { resolveOpenRecordIn } from '@/object-record/record-index/utils/resolveOpenRecordIn';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useCallTool } from '@/ai/hooks/useCallTool';
 import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -161,7 +160,6 @@ export const useFrontComponentExecutionContext = ({
   const { copyToClipboardWithoutSuccessToast } = useCopyToClipboard();
   const { uploadFile: uploadFileToFilesField } = useDirectFileUpload();
   const { i18n } = useLingui();
-  const { callTool } = useCallTool();
   // oxlint-disable-next-line twenty/no-state-useref
   const lastCopyToClipboardCallAtRef = useRef<number>(Number.NEGATIVE_INFINITY);
   const setCommandMenuItemProgress = useSetAtomFamilyState(
@@ -586,7 +584,6 @@ export const useFrontComponentExecutionContext = ({
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
-      callTool,
       requestAccessTokenRefresh,
       openSidePanelPage,
       openCommandConfirmationModal,

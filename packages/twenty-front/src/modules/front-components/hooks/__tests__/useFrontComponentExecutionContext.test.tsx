@@ -54,12 +54,6 @@ const mockStorageClear = jest.fn();
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 let mockIsMobile = false;
 
-jest.mock('@/ai/hooks/useCallTool', () => ({
-  useCallTool: () => ({
-    callTool: jest.fn(),
-  }),
-}));
-
 jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => mockNavigateApp,
 }));

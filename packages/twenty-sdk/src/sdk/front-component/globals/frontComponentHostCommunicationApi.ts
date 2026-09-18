@@ -150,18 +150,6 @@ export type OpenCommandConfirmationModalHostFunction = (
   params: Parameters<OpenCommandConfirmationModalFunction>[0],
 ) => Promise<void>;
 
-export type CallToolResult = {
-  success: boolean;
-  message: string;
-  error?: string;
-  result?: Record<string, unknown>;
-};
-
-export type CallToolFunction = (
-  toolName: string,
-  input?: Record<string, unknown>,
-) => Promise<CallToolResult>;
-
 export type StorageSetFunction = (params: {
   storageType: FrontComponentStorageType;
   key: string;
@@ -188,7 +176,6 @@ export type FrontComponentHostCommunicationApiStore = {
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
   uploadFile?: UploadFileFunction;
-  callTool?: CallToolFunction;
   storageSet?: StorageSetFunction;
   storageDelete?: StorageDeleteFunction;
   storageClear?: StorageClearFunction;
