@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { type IconComponent } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/primitives/input';
+import { FloatingIconButton } from 'twenty-ui/components';
 import { AnimatedContainer } from 'twenty-ui/primitives/layout';
 
 const StyledInlineCellButtonContainer = styled.div`
@@ -19,13 +20,15 @@ export const RecordInlineCellButton = ({
 }) => {
   return (
     <AnimatedContainer>
-      <StyledInlineCellButtonContainer onClick={onClick}>
+      <StyledInlineCellButtonContainer>
         <FloatingIconButton
-          size="small"
-          Icon={Icon}
-          ariaLabel={ariaLabel}
+          size="sm"
+          aria-label={ariaLabel ?? t`Edit field`}
+          onClick={onClick}
           data-testid="inline-cell-edit-mode-container"
-        />
+        >
+          <Icon />
+        </FloatingIconButton>
       </StyledInlineCellButtonContainer>
     </AnimatedContainer>
   );

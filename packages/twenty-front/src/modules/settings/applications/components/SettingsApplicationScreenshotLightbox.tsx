@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { IconChevronLeft, IconChevronRight, IconX } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/primitives/input';
+import { FloatingIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsApplicationScreenshotLightboxProps = {
@@ -114,19 +114,18 @@ export const SettingsApplicationScreenshotLightbox = ({
         >
           <StyledContainer>
             <StyledCloseButton>
-              <FloatingIconButton
-                Icon={IconX}
-                ariaLabel={t`Close`}
-                onClick={onClose}
-              />
+              <FloatingIconButton aria-label={t`Close`} onClick={onClose}>
+                <IconX />
+              </FloatingIconButton>
             </StyledCloseButton>
             {hasSeveralScreenshots && (
               <StyledPreviousButton>
                 <FloatingIconButton
-                  Icon={IconChevronLeft}
-                  ariaLabel={t`Previous screenshot`}
+                  aria-label={t`Previous screenshot`}
                   onClick={showPrevious}
-                />
+                >
+                  <IconChevronLeft />
+                </FloatingIconButton>
               </StyledPreviousButton>
             )}
             <StyledImage
@@ -137,10 +136,11 @@ export const SettingsApplicationScreenshotLightbox = ({
               <>
                 <StyledNextButton>
                   <FloatingIconButton
-                    Icon={IconChevronRight}
-                    ariaLabel={t`Next screenshot`}
+                    aria-label={t`Next screenshot`}
                     onClick={showNext}
-                  />
+                  >
+                    <IconChevronRight />
+                  </FloatingIconButton>
                 </StyledNextButton>
                 <StyledCounter>
                   {selectedIndex + 1} / {screenshotCount}

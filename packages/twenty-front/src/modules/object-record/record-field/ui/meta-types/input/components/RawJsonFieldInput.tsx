@@ -11,7 +11,7 @@ import { useContext, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconPencil } from 'twenty-ui/icon';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
-import { FloatingIconButton } from 'twenty-ui/primitives/input';
+import { FloatingIconButton } from 'twenty-ui/components';
 import {
   JsonTree,
   isTwoFirstDepths,
@@ -181,9 +181,11 @@ export const RawJsonFieldInput = () => {
           {showEditingButton && (
             <StyledSwitchModeButtonContainer>
               <FloatingIconButton
-                Icon={IconPencil}
                 onClick={handleStartEditing}
-              />
+                aria-label={t`Edit JSON`}
+              >
+                <IconPencil />
+              </FloatingIconButton>
             </StyledSwitchModeButtonContainer>
           )}
 

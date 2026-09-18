@@ -10,10 +10,11 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { type FieldRichTextMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { Suspense, lazy, useContext, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/primitives/input';
+import { FloatingIconButton } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const ActivityRichTextEditor = lazy(() =>
@@ -132,13 +133,15 @@ export const RichTextFieldInput = () => {
       </StyledEditorScroll>
       <StyledCollapseButton>
         <FloatingIconButton
-          Icon={IconLayoutSidebarLeftCollapse}
-          size="small"
+          size="sm"
           onClick={() => {
             onEscape?.({ skipPersist: true });
             openRichTextInSidePanel(recordId, objectNameSingular, fieldName);
           }}
-        />
+          aria-label={t`Open in side panel`}
+        >
+          <IconLayoutSidebarLeftCollapse />
+        </FloatingIconButton>
       </StyledCollapseButton>
     </StyledContainer>
   );

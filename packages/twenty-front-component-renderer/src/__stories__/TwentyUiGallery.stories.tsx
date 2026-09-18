@@ -1,5 +1,6 @@
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
+import { floatingIconButtonTest } from '@/__stories__/twenty-ui-gallery/utils/floatingIconButtonTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { type Meta } from '@storybook/react-vite';
@@ -447,4 +448,16 @@ export const ChipControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-chip-controls',
   runtime: 'preact',
   play: chipControlsTest,
+});
+
+export const FloatingIconButtonReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-floating-icon-button',
+  runtime: 'react',
+  play: floatingIconButtonTest,
+});
+
+export const FloatingIconButtonPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-floating-icon-button',
+  runtime: 'preact',
+  play: floatingIconButtonTest,
 });

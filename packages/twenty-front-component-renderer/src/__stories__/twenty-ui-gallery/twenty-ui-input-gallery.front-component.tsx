@@ -1,5 +1,6 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  FloatingIconButton,
   IconButton,
   LightButton,
   LightIconButton,
@@ -18,8 +19,6 @@ import {
   ColorSchemePicker,
   FloatingButton,
   FloatingButtonGroup,
-  FloatingIconButton,
-  FloatingIconButtonGroup,
   IconListViewGrip,
   SearchInput,
   SegmentedControl,
@@ -122,16 +121,13 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'FloatingIconButton',
-    node: <FloatingIconButton Icon={IconSearch} ariaLabel="Search" />,
-  },
-  {
-    name: 'FloatingIconButtonGroup',
     node: (
-      <FloatingIconButtonGroup
-        iconButtons={[{ Icon: IconSearch, ariaLabel: 'Search' }]}
-      />
+      <FloatingIconButton aria-label="Search">
+        <IconSearch />
+      </FloatingIconButton>
     ),
   },
+
   {
     name: 'IconButton',
     node: (
