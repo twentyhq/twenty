@@ -15,8 +15,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
@@ -53,7 +53,7 @@ export const SettingsAdminAiProviderDetail = () => {
   const navigate = useNavigate();
   const { enqueueToast } = useToast();
   const { refetch: refetchClientConfig } = useClientConfig();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const [searchQuery, setSearchQuery] = useState('');
   const [modelToRemove, setModelToRemove] = useState<{
     modelId: string;
@@ -199,7 +199,7 @@ export const SettingsAdminAiProviderDetail = () => {
       label: model.label,
       name: model.name ?? model.modelId,
     });
-    openModal(REMOVE_MODEL_MODAL_ID);
+    openDialog(REMOVE_MODEL_MODAL_ID);
   };
 
   const providerInfoItems = useMemo(() => {
@@ -412,7 +412,7 @@ export const SettingsAdminAiProviderDetail = () => {
             />
             <Button
               startIcon={<IconTrash />}
-              onClick={() => openModal(REMOVE_PROVIDER_MODAL_ID)}
+              onClick={() => openDialog(REMOVE_PROVIDER_MODAL_ID)}
               variant="outline"
               color="danger"
             >{t`Remove provider`}</Button>
@@ -420,8 +420,8 @@ export const SettingsAdminAiProviderDetail = () => {
         )}
       </SettingsPageContainer>
 
-      <ConfirmationModal
-        modalInstanceId={REMOVE_PROVIDER_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={REMOVE_PROVIDER_MODAL_ID}
         title={t`Remove provider "${provider?.label ?? providerName ?? ''}"`}
         subtitle={t`This will disconnect all models from this provider. Models will no longer be available until a new provider is configured.`}
         onConfirmClick={handleRemoveProvider}
@@ -429,8 +429,8 @@ export const SettingsAdminAiProviderDetail = () => {
         confirmButtonColor="danger"
       />
 
-      <ConfirmationModal
-        modalInstanceId={REMOVE_MODEL_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={REMOVE_MODEL_MODAL_ID}
         title={t`Remove model "${modelToRemove?.label ?? ''}"`}
         subtitle={t`This model will be removed from the provider. You can re-add it later.`}
         onConfirmClick={handleRemoveModel}

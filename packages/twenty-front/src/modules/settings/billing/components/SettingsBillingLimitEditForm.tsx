@@ -20,8 +20,8 @@ import { buildUsageLimitFormValues } from '@/settings/billing/utils/buildUsageLi
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const DELETE_MODAL_ID = 'usage-limit-edit-delete';
@@ -42,7 +42,7 @@ export const SettingsBillingLimitEditForm = ({
     useUsageQuotaDefinitions();
   const { updateUsageLimit, loading: isSaving } = useUpdateUsageLimit();
   const { deleteUsageLimit, loading: isDeleting } = useDeleteUsageLimit();
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
 
   const [values, setValues] = useState<UsageLimitFormValues>(
     buildUsageLimitFormValues(quota),
@@ -62,7 +62,7 @@ export const SettingsBillingLimitEditForm = ({
         children: t`Failed to delete the limit.`,
       });
     } finally {
-      closeModal(DELETE_MODAL_ID);
+      closeDialog(DELETE_MODAL_ID);
     }
   };
 
@@ -136,12 +136,12 @@ export const SettingsBillingLimitEditForm = ({
                 startIcon={<IconTrash />}
                 size="sm"
                 disabled={isDeleting}
-                onClick={() => openModal(DELETE_MODAL_ID)}
+                onClick={() => openDialog(DELETE_MODAL_ID)}
                 variant="outline"
                 color="danger"
               >{t`Delete limit`}</Button>
-              <ConfirmationModal
-                modalInstanceId={DELETE_MODAL_ID}
+              <ConfirmationDialog
+                dialogId={DELETE_MODAL_ID}
                 title={t`Delete this limit?`}
                 subtitle={t`Spending will only be capped by your plan allowance and the other limits.`}
                 confirmButtonText={t`Delete`}

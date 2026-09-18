@@ -1,0 +1,102 @@
+---
+title: CodeEditor
+description: Edit and display code in a Monaco editor styled with the Twenty theme.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CodeEditorReference from '/snippets/ui/generated/components/code-editor.mdx';
+import CodeEditorHeaderReference from '/snippets/ui/generated/components/code-editor-header.mdx';
+
+`CodeEditor` renders a [Monaco](https://microsoft.github.io/monaco-editor/) editor that follows the Twenty theme in light and dark mode. `CodeEditorHeader` adds a bar above it for a title, tabs, or actions. Both come from `twenty-ui/components/code-editor`, a separate entry point, so the rest of Twenty UI works without Monaco.
+
+<StoryEmbed
+  storyId="ui-components-codeeditor--documentation"
+  title="Code editor example"
+  height={280}
+/>
+
+## Setup
+
+Install the editor's optional peer dependencies:
+
+```bash
+yarn add @monaco-editor/react monaco-editor
+```
+
+The editor loads your installed `monaco-editor` package rather than a copy from a CDN. Monaco runs language features such as validation and autocompletion in web workers, and creating those workers depends on your bundler. Before an editor mounts, define `MonacoEnvironment.getWorker` as described in [Monaco's ESM integration guide](https://github.com/microsoft/monaco-editor/blob/main/docs/integrate-esm.md). Without it, the editor still renders, but language features are unavailable.
+
+The code editor does not run inside [front components](/developers/extend/apps/layout/front-components) yet.
+
+## Usage
+
+```tsx
+import { useState } from 'react';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+
+export const PayloadEditor = () => {
+  const [payload, setPayload] = useState('{\n  "name": "Acme"\n}');
+
+  return (
+    <CodeEditor
+      language="json"
+      value={payload}
+      onChange={setPayload}
+      height={200}
+    />
+  );
+};
+```
+
+`onChange` receives the full content on every change. A loader shows until Monaco has loaded. Set `isLoading` to keep showing it while your own data loads.
+
+## Add a header
+
+```tsx
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
+import { Button } from 'twenty-ui/primitives/input';
+
+type ScriptEditorProps = {
+  script: string;
+  onRun: () => void;
+};
+
+export const ScriptEditor = ({ script, onRun }: ScriptEditorProps) => (
+  <div>
+    <CodeEditorHeader
+      title="index.ts"
+      rightNodes={[
+        <Button key="run" size="sm" onClick={onRun}>
+          Run
+        </Button>,
+      ]}
+    />
+    <CodeEditor language="typescript" value={script} variant="with-header" />
+  </div>
+);
+```
+
+`variant="with-header"` removes the editor's top border so it joins the header. Use `borderless` when the editor sits inside a surface that already has a border.
+
+## Size and appearance
+
+The editor is 450px tall by default. Set `height` to a number of pixels or a CSS length. `autoHeight` grows the editor with its content, and `resizable` adds a handle below it to drag the height. When both are set, `resizable` applies.
+
+`contentPadding="comfortable"` widens the gap between line numbers and code. `transparentBackground` lets the surrounding surface show through.
+
+## Validation
+
+Monaco reports its own diagnostics, such as JSON syntax errors, through `onValidate`. To add your own, return marker data from `setMarkers`. It runs when the editor mounts and after every change, and replaces the markers it set before.
+
+## Keyboard
+
+While the editor has focus, it stops keyboard events from propagating. React key handlers on parent components and document-level shortcuts do not receive keystrokes typed in the editor.
+
+## Props
+
+### CodeEditor
+
+<CodeEditorReference />
+
+### CodeEditorHeader
+
+<CodeEditorHeaderReference />
