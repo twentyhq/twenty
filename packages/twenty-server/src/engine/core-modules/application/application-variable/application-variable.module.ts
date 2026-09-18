@@ -9,6 +9,7 @@ import { WorkspaceApplicationVariableMapCacheService } from 'src/engine/core-mod
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { FlatApplicationVariableModule } from 'src/engine/metadata-modules/flat-application-variable/flat-application-variable.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     FlatApplicationVariableModule,
   ],
   providers: [
+    provideWorkspaceScopedRepository(ApplicationVariableEntity),
     ApplicationVariableEntityService,
     ApplicationVariableEntityResolver,
     WorkspaceApplicationVariableMapCacheService,

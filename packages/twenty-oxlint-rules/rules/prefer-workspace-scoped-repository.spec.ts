@@ -84,6 +84,25 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      // Application variables carry secrets per workspace: a raw repository
+      // once let a caller overwrite another workspace's variable by id.
+      code: `
+        class ApplicationVariableEntityService {
+          constructor(
+            @InjectRepository(ApplicationVariableEntity)
+            private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
+          ) {}
+        }
+      `,
+      filename: 'application-variable.service.ts',
+      errors: [
+        {
+          messageId: 'preferWorkspaceScopedRepository',
+          data: { entityName: 'ApplicationVariableEntity' },
+        },
+      ],
+    },
+    {
       // Plain (non-parameter-property) constructor parameter with an
       // explicit assignment in the body. Must still be caught — the
       // rule should not depend on the TSParameterProperty shorthand.
