@@ -17,7 +17,7 @@ import {
   IconTrash,
   IconX,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   type ColorLabels,
   MenuItem,
@@ -216,10 +216,12 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         clickableComponent={
           <StyledLightIconButtonContainer>
             <LightIconButton
-              accent="tertiary"
-              Icon={IconDotsVertical}
+              emphasis="subtle"
               disabled={shouldForbidRemoveAsDefault}
-            />
+              aria-label={t`More options`}
+            >
+              <IconDotsVertical />
+            </LightIconButton>
           </StyledLightIconButtonContainer>
         }
         dropdownComponents={

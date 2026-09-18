@@ -131,6 +131,8 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_CODE_EDITOR: '/ui/components/code-editor',
   UI_COMPONENTS_INPUT_ICON_BUTTON: '/ui/components/input/icon-button',
   UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',
+  UI_COMPONENTS_INPUT_LIGHT_ICON_BUTTON:
+    '/ui/components/input/light-icon-button',
   UI_COMPONENTS_INPUT_MAIN_BUTTON: '/ui/components/input/main-button',
   UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
   UI_COMPONENTS_SECTION: '/ui/components/section',
