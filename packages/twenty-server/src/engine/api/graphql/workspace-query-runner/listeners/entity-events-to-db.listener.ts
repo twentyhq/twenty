@@ -13,6 +13,8 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { CreateEventLogFromInternalEvent } from 'src/engine/core-modules/event-logs/ingest/create-event-log-from-internal-event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -36,6 +38,7 @@ export class EntityEventsToDbListener {
     private readonly triggerQueueService: MessageQueueService,
     private readonly objectRecordEventPublisher: ObjectRecordEventPublisher,
     private readonly timelineActivityRoutingPlanService: TimelineActivityRoutingPlanService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -80,7 +83,13 @@ export class EntityEventsToDbListener {
       return;
     }
 
-    const isAuditLogBatchEvent = batchEvent.objectMetadata?.isAuditLogged;
+    const shouldCreateEventLog =
+      batchEvent.objectMetadata?.isAuditLogged === true &&
+      action !== DatabaseEventAction.DESTROYED &&
+      (await this.billingSubscriptionService.getWorkspaceEntitlementValue(
+        batchEvent.workspaceId,
+        BillingEntitlementKey.AUDIT_LOGS,
+      ));
     const shouldCreateTimelineActivity =
       action !== DatabaseEventAction.DESTROYED &&
       (await this.timelineActivityRoutingPlanService.shouldProcessEvent({
@@ -127,7 +136,7 @@ export class EntityEventsToDbListener {
       );
     }
 
-    if (isAuditLogBatchEvent && action !== DatabaseEventAction.DESTROYED) {
+    if (shouldCreateEventLog) {
       promises.push(
         this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
           CreateEventLogFromInternalEvent.name,
