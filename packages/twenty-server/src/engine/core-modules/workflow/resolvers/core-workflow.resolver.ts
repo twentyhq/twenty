@@ -8,6 +8,8 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
 import { CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
+import { CoreWorkflowWithCurrentVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-with-current-version.dto';
+import { CoreWorkflowsWithCurrentVersionsInput } from 'src/engine/core-modules/workflow/dtos/core-workflows-with-current-versions.input';
 import { CreateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/create-core-workflow.input';
 import { DeletedCoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/deleted-core-workflow.dto';
 import { DeleteCoreWorkflowsInput } from 'src/engine/core-modules/workflow/dtos/delete-core-workflows.input';
@@ -26,6 +28,7 @@ import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-wo
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
+import { CoreWorkflowWithCurrentVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-with-current-version-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -56,6 +59,7 @@ export class CoreWorkflowResolver {
     private readonly coreWorkflowListService: CoreWorkflowListService,
     private readonly coreWorkflowMutationWorkspaceService: CoreWorkflowMutationWorkspaceService,
     private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
+    private readonly coreWorkflowWithCurrentVersionListService: CoreWorkflowWithCurrentVersionListService,
   ) {}
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
@@ -156,6 +160,17 @@ export class CoreWorkflowResolver {
     return this.coreWorkflowListService.findOneById({
       workspaceId,
       coreWorkflowId,
+    });
+  }
+
+  @Query(() => [CoreWorkflowWithCurrentVersionDTO])
+  async coreWorkflowsWithCurrentVersions(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('input') { coreWorkflowIds }: CoreWorkflowsWithCurrentVersionsInput,
+  ): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
+    return this.coreWorkflowWithCurrentVersionListService.findMany({
+      workspaceId,
+      coreWorkflowIds,
     });
   }
 
