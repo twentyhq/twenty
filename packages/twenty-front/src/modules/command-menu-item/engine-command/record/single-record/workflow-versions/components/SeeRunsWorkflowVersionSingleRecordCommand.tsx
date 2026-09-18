@@ -51,9 +51,13 @@ export const SeeRunsWorkflowVersionSingleRecordCommand = () => {
   const selectedRecord = selectedRecords[0];
   const workspaceWorkflowVersionId = selectedRecord?.id;
   const workspaceWorkflowId = selectedRecord?.workflow?.id;
-  const { coreWorkflowVersion } = useCoreWorkflowVersion(
+  const { coreWorkflowVersion, loading } = useCoreWorkflowVersion(
     isCore ? selectedRecord?.coreWorkflowVersionId : undefined,
   );
+
+  if (isCore && (loading || !isDefined(coreWorkflowVersion))) {
+    return null;
+  }
 
   const workflowId = isCore
     ? coreWorkflowVersion?.coreWorkflowId

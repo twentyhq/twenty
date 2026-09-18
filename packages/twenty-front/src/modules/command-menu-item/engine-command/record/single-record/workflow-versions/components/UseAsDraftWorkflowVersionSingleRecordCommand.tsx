@@ -77,9 +77,14 @@ export const UseAsDraftWorkflowVersionSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const selectedRecord = selectedRecords[0];
-  const { coreWorkflowVersion } = useCoreWorkflowVersion(
+  const { coreWorkflowVersion, loading } = useCoreWorkflowVersion(
     isCore ? selectedRecord?.coreWorkflowVersionId : undefined,
   );
+
+  if (isCore && (loading || !isDefined(coreWorkflowVersion))) {
+    return null;
+  }
+
   const workflowId = isCore
     ? coreWorkflowVersion?.coreWorkflowId
     : selectedRecord?.workflowId;
