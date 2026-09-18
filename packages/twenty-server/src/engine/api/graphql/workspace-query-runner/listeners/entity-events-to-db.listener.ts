@@ -134,17 +134,18 @@ export class EntityEventsToDbListener {
   private async enqueueWebhookJobsIfAnyWebhookMatches<
     T extends ObjectRecordEvent,
   >(batchEventForWebhook: WorkspaceEventBatchForWebhook<T>) {
-    const { flatWebhookMaps } = await this.workspaceCacheService.getOrRecompute(
-      batchEventForWebhook.workspaceId,
-      ['flatWebhookMaps'],
-    );
+    const hasMatchingWebhook = await this.workspaceCacheService
+      .getOrRecompute(batchEventForWebhook.workspaceId, ['flatWebhookMaps'])
+      .then(
+        ({ flatWebhookMaps }) =>
+          findWebhooksMatchingEventName({
+            flatWebhookMaps,
+            eventName: batchEventForWebhook.name,
+          }).length > 0,
+      )
+      .catch(() => true);
 
-    const matchingWebhooks = findWebhooksMatchingEventName({
-      flatWebhookMaps,
-      eventName: batchEventForWebhook.name,
-    });
-
-    if (matchingWebhooks.length === 0) {
+    if (!hasMatchingWebhook) {
       return;
     }
 
@@ -158,17 +159,18 @@ export class EntityEventsToDbListener {
   private async enqueueDatabaseEventTriggerJobsIfAnyLogicFunctionMatches<
     T extends ObjectRecordEvent,
   >(batchEvent: WorkspaceEventBatch<T>) {
-    const { flatLogicFunctionMaps } =
-      await this.workspaceCacheService.getOrRecompute(batchEvent.workspaceId, [
-        'flatLogicFunctionMaps',
-      ]);
+    const hasMatchingLogicFunction = await this.workspaceCacheService
+      .getOrRecompute(batchEvent.workspaceId, ['flatLogicFunctionMaps'])
+      .then(
+        ({ flatLogicFunctionMaps }) =>
+          findLogicFunctionsTriggeredByEventName({
+            flatLogicFunctionMaps,
+            eventName: batchEvent.name,
+          }).length > 0,
+      )
+      .catch(() => true);
 
-    const matchingLogicFunctions = findLogicFunctionsTriggeredByEventName({
-      flatLogicFunctionMaps,
-      eventName: batchEvent.name,
-    });
-
-    if (matchingLogicFunctions.length === 0) {
+    if (!hasMatchingLogicFunction) {
       return;
     }
 
