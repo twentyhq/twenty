@@ -40,15 +40,17 @@ describe('buildManifest settings front components', () => {
     expect(settingsFrontComponents).toHaveLength(2);
   }, 60000);
 
-  it('leaves settingsTab undefined on regular front components', async () => {
+  it('leaves settingsTab undefined on regular front components, even one declaring it', async () => {
     const { manifest, errors } = await buildManifest(RICH_APP_PATH);
 
     expect(errors).toEqual([]);
 
+    // The fixture smuggles a settingsTab past the config type on purpose
     const regularFrontComponent = manifest?.frontComponents.find(
       ({ name }) => name === 'card-component',
     );
 
+    expect(regularFrontComponent).toBeDefined();
     expect(regularFrontComponent?.settingsTab).toBeUndefined();
   }, 60000);
 

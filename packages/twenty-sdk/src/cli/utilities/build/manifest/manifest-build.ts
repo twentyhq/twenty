@@ -373,7 +373,17 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
 
-        const { component, tab, ...rest } = extract.config;
+        // settingsTab is dropped rather than spread through: the config comes
+        // from a user module, so the type omitting it does not stop the value
+        // from being there and marking a regular component a settings tab.
+        const {
+          component,
+          tab,
+          settingsTab: _settingsTab,
+          ...rest
+        } = extract.config as FrontComponentConfig &
+          Pick<SettingsFrontComponentConfig, 'tab'> &
+          Pick<FrontComponentManifest, 'settingsTab'>;
 
         const relativeFilePath = relative(appPath, filePath);
 

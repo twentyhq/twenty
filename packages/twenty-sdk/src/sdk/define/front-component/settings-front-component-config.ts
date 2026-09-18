@@ -6,7 +6,7 @@ import { type FrontComponentSettingsTabManifest } from 'twenty-shared/applicatio
 // so that declaring a settings tab always goes through this define function.
 export type SettingsFrontComponentConfig = Omit<
   FrontComponentConfig,
-  'isHeadless' | 'settingsTab'
+  'isHeadless'
 > & {
   tab?: FrontComponentSettingsTabManifest;
 };
