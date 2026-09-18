@@ -134,9 +134,15 @@ Call validate_workflow once when the workflow is complete, before activating.`,
         coreWorkflowId: coreWorkflow.id,
       });
 
+      const { coreWorkflowVersion } =
+        await deps.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
+          { workspaceId, coreWorkflowVersionId },
+        );
+
       await deps.coreWorkflowVersionWriteService.writeContentAndMirror({
         workspaceId,
         coreWorkflowVersionId,
+        expectedVersion: coreWorkflowVersion,
         trigger: parameters.trigger,
         steps: parameters.steps,
       });
