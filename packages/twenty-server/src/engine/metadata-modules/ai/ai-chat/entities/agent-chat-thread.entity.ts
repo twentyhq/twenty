@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { ADD_AGENT_CHAT_CHANNELS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-channels-upgrade-command-name.constant';
+import { ADD_AGENT_CHAT_THREAD_INBOX_STATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-thread-inbox-state-upgrade-command-name.constant';
 import { ADD_AGENT_CHAT_THREAD_WORKFLOW_RUN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-thread-workflow-run-upgrade-command-name.constant';
 import { ADD_LAST_STREAM_ERROR_TO_AGENT_CHAT_THREAD_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-last-stream-error-to-agent-chat-thread-upgrade-command-name.constant';
 import { ADD_PENDING_QUESTION_MESSAGE_ID_TO_AGENT_CHAT_THREAD_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-pending-question-message-id-to-agent-chat-thread-upgrade-command-name.constant';
@@ -21,6 +22,7 @@ import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-exec
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel.entity';
 import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread-participant.entity';
+import { AgentChatThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-status.enum';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
@@ -144,6 +146,35 @@ export class AgentChatThreadEntity {
 
   @OneToMany(() => AgentMessageEntity, (message) => message.thread)
   messages: EntityRelation<AgentMessageEntity[]>;
+
+  // Status is a property of the thread, not of each reader: marking a thread
+  // done takes it out of the list for everyone who shares it, the way a shared
+  // inbox works. Who it lands on personally is carried by the assignee and by
+  // the mentions on the participant rows.
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AGENT_CHAT_THREAD_INBOX_STATE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'varchar', default: AgentChatThreadStatus.OPEN })
+  status: AgentChatThreadStatus;
+
+  // A snooze that has come due is read as open rather than rewritten, so a
+  // thread returns on its own without a job having to sweep the table.
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AGENT_CHAT_THREAD_INBOX_STATE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'timestamptz', nullable: true })
+  snoozedUntil: Date | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AGENT_CHAT_THREAD_INBOX_STATE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'uuid', nullable: true })
+  @Index('IDX_AGENT_CHAT_THREAD_ASSIGNEE_USER_WORKSPACE_ID')
+  assigneeUserWorkspaceId: string | null;
+
+  @ManyToOne(() => UserWorkspaceEntity, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'assigneeUserWorkspaceId' })
+  assigneeUserWorkspace: EntityRelation<UserWorkspaceEntity> | null;
 
   @OneToMany(
     () => AgentChatThreadParticipantEntity,

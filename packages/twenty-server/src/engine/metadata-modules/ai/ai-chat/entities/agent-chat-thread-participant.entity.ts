@@ -9,6 +9,7 @@ import {
   Relation,
 } from 'typeorm';
 
+import { ADD_AGENT_CHAT_THREAD_INBOX_STATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-thread-inbox-state-upgrade-command-name.constant';
 import { ADD_AGENT_CHAT_THREAD_PARTICIPANTS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-thread-participants-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -61,6 +62,15 @@ export class AgentChatThreadParticipantEntity {
     default: AgentChatThreadParticipantRole.MEMBER,
   })
   role: AgentChatThreadParticipantRole;
+
+  // A mention is what puts a shared thread on someone's own list, so the time
+  // of the last one is kept rather than a flag: a later mention pulls a thread
+  // back even after its reader has cleared it.
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AGENT_CHAT_THREAD_INBOX_STATE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'timestamptz', nullable: true })
+  lastMentionedAt: Date | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

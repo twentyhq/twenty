@@ -1,6 +1,7 @@
 import { Field, Float, HideField, ID, Int, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AgentChatThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-status.enum';
 
 @ObjectType('AgentChatThread')
 export class AgentChatThreadDTO {
@@ -51,6 +52,15 @@ export class AgentChatThreadDTO {
 
   @Field()
   updatedAt: Date;
+
+  @Field(() => AgentChatThreadStatus)
+  status: AgentChatThreadStatus;
+
+  @Field(() => Date, { nullable: true })
+  snoozedUntil: Date | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  assigneeUserWorkspaceId: string | null;
 
   @Field(() => Date, { nullable: true })
   deletedAt: Date | null;

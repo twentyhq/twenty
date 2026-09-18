@@ -25,6 +25,7 @@ export enum AiExceptionCode {
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
   QUESTION_NOT_PENDING = 'QUESTION_NOT_PENDING',
   INVALID_QUESTION_ANSWER = 'INVALID_QUESTION_ANSWER',
+  INVALID_THREAD_SNOOZE = 'INVALID_THREAD_SNOOZE',
   API_KEY_NOT_CONFIGURED = 'API_KEY_NOT_CONFIGURED',
   USER_WORKSPACE_ID_NOT_FOUND = 'USER_WORKSPACE_ID_NOT_FOUND',
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
@@ -78,6 +79,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This question has already been answered.`;
     case AiExceptionCode.INVALID_QUESTION_ANSWER:
       return msg`Invalid answer for this question.`;
+    case AiExceptionCode.INVALID_THREAD_SNOOZE:
+      return msg`Pick a time in the future to snooze until.`;
     case AiExceptionCode.API_KEY_NOT_CONFIGURED:
       return msg`API key is not configured.`;
     case AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:

@@ -26,6 +26,7 @@ import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatQuestionAnswerInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-question-answer.input';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
+import { AgentChatThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-status.enum';
 import { AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { FileAttachmentInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/file-attachment.input';
 import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
@@ -525,6 +526,44 @@ export class AgentChatResolver {
       userWorkspaceId,
       workspaceId,
       title,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadDTO)
+  async setChatThreadStatus(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @Args('status', { type: () => AgentChatThreadStatus })
+    status: AgentChatThreadStatus,
+    @Args('snoozedUntil', { type: () => Date, nullable: true })
+    snoozedUntil: Date | null,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentChatThreadEntity> {
+    return this.agentChatService.setThreadStatus({
+      threadId: id,
+      status,
+      snoozedUntil: snoozedUntil ?? null,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadDTO)
+  async assignChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @Args('assigneeUserWorkspaceId', {
+      type: () => UUIDScalarType,
+      nullable: true,
+    })
+    assigneeUserWorkspaceId: string | null,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentChatThreadEntity> {
+    return this.agentChatService.assignThread({
+      threadId: id,
+      assigneeUserWorkspaceId: assigneeUserWorkspaceId ?? null,
+      userWorkspaceId,
+      workspaceId,
     });
   }
 

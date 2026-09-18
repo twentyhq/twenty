@@ -33,6 +33,7 @@ import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatChannelVisibility } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-visibility.enum';
 import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
+import { AgentChatThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-status.enum';
 import { buildThreadAccessWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-access-where.util';
 import { isForeignKeyViolation } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-foreign-key-violation.util';
 import {
@@ -88,6 +89,9 @@ const serializeThreadForBroadcast = (
   conversationSize: thread.conversationSize,
   totalInputCredits: toDisplayCredits(thread.totalInputCredits),
   totalOutputCredits: toDisplayCredits(thread.totalOutputCredits),
+  status: thread.status,
+  snoozedUntil: thread.snoozedUntil,
+  assigneeUserWorkspaceId: thread.assigneeUserWorkspaceId,
   deletedAt: thread.deletedAt,
   ...lastMessageSummary,
   createdAt: thread.createdAt,
@@ -1382,6 +1386,130 @@ export class AgentChatService {
     return updated;
   }
 
+  // Anyone who can read a thread can move it through the inbox: a shared inbox
+  // is worked by whoever picks it up, so this is deliberately not owner-only
+  // the way renaming and deleting are.
+  async setThreadStatus({
+    threadId,
+    status,
+    snoozedUntil,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    threadId: string;
+    status: AgentChatThreadStatus;
+    snoozedUntil: Date | null;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<AgentChatThreadEntity> {
+    const thread = await this.getThreadById({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    if (status === AgentChatThreadStatus.SNOOZED && !isDefined(snoozedUntil)) {
+      throw new AiException(
+        'A snoozed thread needs a time to come back at',
+        AiExceptionCode.INVALID_THREAD_SNOOZE,
+      );
+    }
+
+    if (
+      status === AgentChatThreadStatus.SNOOZED &&
+      isDefined(snoozedUntil) &&
+      snoozedUntil.getTime() <= Date.now()
+    ) {
+      throw new AiException(
+        'A snooze has to end in the future',
+        AiExceptionCode.INVALID_THREAD_SNOOZE,
+      );
+    }
+
+    const nextSnoozedUntil =
+      status === AgentChatThreadStatus.SNOOZED ? snoozedUntil : null;
+
+    await this.threadRepository.update(
+      workspaceId,
+      { id: threadId },
+      { status, snoozedUntil: nextSnoozedUntil },
+    );
+
+    thread.status = status;
+    thread.snoozedUntil = nextSnoozedUntil;
+
+    await this.broadcastThreadUpdated(thread, ['status', 'snoozedUntil']);
+
+    return thread;
+  }
+
+  async assignThread({
+    threadId,
+    assigneeUserWorkspaceId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    threadId: string;
+    assigneeUserWorkspaceId: string | null;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<AgentChatThreadEntity> {
+    const thread = await this.getThreadById({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    // Assigning to someone who cannot open the thread would hide work on a
+    // list they can never clear, so the assignee is resolved through the same
+    // read check the assigner went through.
+    if (isDefined(assigneeUserWorkspaceId)) {
+      await this.getThreadById({
+        threadId,
+        userWorkspaceId: assigneeUserWorkspaceId,
+        workspaceId,
+      });
+    }
+
+    await this.threadRepository.update(
+      workspaceId,
+      { id: threadId },
+      { assigneeUserWorkspaceId },
+    );
+
+    thread.assigneeUserWorkspaceId = assigneeUserWorkspaceId;
+
+    await this.broadcastThreadUpdated(thread, ['assigneeUserWorkspaceId']);
+
+    return thread;
+  }
+
+  // A reply is the one thing that overrides someone having put a thread away:
+  // done and snoozed both mean "nothing to do here yet", and a new message is
+  // exactly that changing.
+  private async reopenThreadOnNewMessage({
+    thread,
+    workspaceId,
+  }: {
+    thread: AgentChatThreadEntity;
+    workspaceId: string;
+  }): Promise<boolean> {
+    if (thread.status === AgentChatThreadStatus.OPEN) {
+      return false;
+    }
+
+    await this.threadRepository.update(
+      workspaceId,
+      { id: thread.id },
+      { status: AgentChatThreadStatus.OPEN, snoozedUntil: null },
+    );
+
+    thread.status = AgentChatThreadStatus.OPEN;
+    thread.snoozedUntil = null;
+
+    return true;
+  }
+
   async archiveThread({
     threadId,
     userWorkspaceId,
@@ -1532,7 +1660,17 @@ export class AgentChatService {
       workspaceId,
     });
 
-    await this.broadcastThreadUpdated(thread, ['lastMessageAt']);
+    const wasReopened = await this.reopenThreadOnNewMessage({
+      thread,
+      workspaceId,
+    });
+
+    await this.broadcastThreadUpdated(
+      thread,
+      wasReopened
+        ? ['lastMessageAt', 'status', 'snoozedUntil']
+        : ['lastMessageAt'],
+    );
   }
 
   async notifyThreadUsageUpdated({

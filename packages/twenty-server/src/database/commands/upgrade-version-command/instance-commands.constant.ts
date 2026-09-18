@@ -199,6 +199,7 @@ import { BackfillAgentChatThreadParticipantsSlowInstanceCommand } from 'src/data
 import { AddAgentChatChannelsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789717346445-add-agent-chat-channels';
 import { AddAgentChatChannelRolesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789717346446-add-agent-chat-channel-roles';
 import { AddAgentChatThreadWorkflowRunFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789717346447-add-agent-chat-thread-workflow-run';
+import { AddAgentChatThreadInboxStateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789723890000-add-agent-chat-thread-inbox-state';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -400,4 +401,5 @@ export const INSTANCE_COMMANDS = [
   AddAgentChatChannelsFastInstanceCommand,
   AddAgentChatChannelRolesFastInstanceCommand,
   AddAgentChatThreadWorkflowRunFastInstanceCommand,
+  AddAgentChatThreadInboxStateFastInstanceCommand,
 ];
