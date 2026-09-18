@@ -18,6 +18,57 @@ type CommandMenuContextProviderWithWorkflowEnrichmentProps = {
   isInPreviewMode: boolean;
 };
 
+type EnrichedWorkflowCommandMenuContextProviderProps = Omit<
+  CommandMenuContextProviderWithWorkflowEnrichmentProps,
+  'selectedWorkflowRecordIds'
+> & {
+  workflows: WorkflowWithCurrentVersion[];
+};
+
+const EnrichedWorkflowCommandMenuContextProvider = ({
+  displayType,
+  containerType,
+  children,
+  commandMenuContextApi,
+  isInPreviewMode,
+  workflows,
+}: EnrichedWorkflowCommandMenuContextProviderProps) => {
+  const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
+    (record) => {
+      const workflowWithCurrentVersion = workflows.find(
+        (workflow) => workflow.id === record.id,
+      );
+
+      if (!isDefined(workflowWithCurrentVersion)) {
+        return record;
+      }
+
+      return {
+        ...record,
+        currentVersion: workflowWithCurrentVersion.currentVersion,
+        versions: workflowWithCurrentVersion.versions,
+        statuses: workflowWithCurrentVersion.statuses,
+        lastPublishedVersionId:
+          workflowWithCurrentVersion.lastPublishedVersionId,
+      };
+    },
+  );
+
+  return (
+    <CommandMenuContextProviderContent
+      displayType={displayType}
+      containerType={containerType}
+      commandMenuContextApi={{
+        ...commandMenuContextApi,
+        selectedRecords: enrichedSelectedRecords,
+      }}
+      isInPreviewMode={isInPreviewMode}
+    >
+      {children}
+    </CommandMenuContextProviderContent>
+  );
+};
+
 export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   displayType,
   containerType,
@@ -31,54 +82,31 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
     isCore ? [] : selectedWorkflowRecordIds,
   );
 
-  const renderProvider = (
-    workflows: WorkflowWithCurrentVersion[],
-  ): React.ReactNode => {
-    const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
-      (record) => {
-        const workflowWithCurrentVersion = workflows.find(
-          (workflow) => workflow.id === record.id,
-        );
-
-        if (!isDefined(workflowWithCurrentVersion)) {
-          return record;
-        }
-
-        return {
-          ...record,
-          currentVersion: workflowWithCurrentVersion.currentVersion,
-          versions: workflowWithCurrentVersion.versions,
-          statuses: workflowWithCurrentVersion.statuses,
-          lastPublishedVersionId:
-            workflowWithCurrentVersion.lastPublishedVersionId,
-        };
-      },
-    );
-
-    const enrichedCommandMenuContextApi = {
-      ...commandMenuContextApi,
-      selectedRecords: enrichedSelectedRecords,
-    };
-
-    return (
-      <CommandMenuContextProviderContent
-        displayType={displayType}
-        containerType={containerType}
-        commandMenuContextApi={enrichedCommandMenuContextApi}
-        isInPreviewMode={isInPreviewMode}
-      >
-        {children}
-      </CommandMenuContextProviderContent>
-    );
-  };
-
   return isCore ? (
     <CoreWorkflowsWithCurrentVersionsLoader
       workflowIds={selectedWorkflowRecordIds}
     >
-      {renderProvider}
+      {(workflows) => (
+        <EnrichedWorkflowCommandMenuContextProvider
+          displayType={displayType}
+          containerType={containerType}
+          commandMenuContextApi={commandMenuContextApi}
+          isInPreviewMode={isInPreviewMode}
+          workflows={workflows}
+        >
+          {children}
+        </EnrichedWorkflowCommandMenuContextProvider>
+      )}
     </CoreWorkflowsWithCurrentVersionsLoader>
   ) : (
-    renderProvider(workflowsWithCurrentVersions)
+    <EnrichedWorkflowCommandMenuContextProvider
+      displayType={displayType}
+      containerType={containerType}
+      commandMenuContextApi={commandMenuContextApi}
+      isInPreviewMode={isInPreviewMode}
+      workflows={workflowsWithCurrentVersions}
+    >
+      {children}
+    </EnrichedWorkflowCommandMenuContextProvider>
   );
 };
