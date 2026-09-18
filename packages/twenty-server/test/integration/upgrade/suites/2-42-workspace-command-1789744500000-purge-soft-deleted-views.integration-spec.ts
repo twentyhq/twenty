@@ -3,6 +3,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
 import { createOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/create-one-view-filter-group.util';
 import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
 import { createOneViewSort } from 'test/integration/metadata/suites/view-sort/utils/create-one-view-sort.util';
@@ -19,6 +20,7 @@ import { In } from 'typeorm';
 
 import { type PurgeSoftDeletedViewsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789744500000-purge-soft-deleted-views.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
@@ -58,6 +60,8 @@ describe('2-42 workspace command 1789744500000 - PurgeSoftDeletedViewsCommand (i
   let keptViewId: string;
   let purgedViewId: string;
   let lastViewIds: string[];
+  let labelIdentifierViewFieldId: string;
+  let softDeletedViewFieldId: string;
   let keptViewFilterId: string;
   let softDeletedViewFilterId: string;
   let nestedViewFilterId: string;
@@ -82,7 +86,10 @@ describe('2-42 workspace command 1789744500000 - PurgeSoftDeletedViewsCommand (i
 
     const {
       data: {
-        createOneObject: { id: createdObjectMetadataId },
+        createOneObject: {
+          id: createdObjectMetadataId,
+          labelIdentifierFieldMetadataId,
+        },
       },
     } = await createOneObjectMetadata({
       expectToFail: false,
@@ -93,6 +100,7 @@ describe('2-42 workspace command 1789744500000 - PurgeSoftDeletedViewsCommand (i
         labelPlural: 'Purge Views Objects',
         icon: 'IconEye',
       },
+      gqlFields: 'id labelIdentifierFieldMetadataId',
     });
 
     objectMetadataId = createdObjectMetadataId;
@@ -154,6 +162,36 @@ describe('2-42 workspace command 1789744500000 - PurgeSoftDeletedViewsCommand (i
 
     keptViewId = keptView.id;
     purgedViewId = purgedView.id;
+
+    const {
+      data: { createViewField: labelIdentifierViewField },
+    } = await createOneViewField({
+      expectToFail: false,
+      input: {
+        viewId: keptViewId,
+        fieldMetadataId: labelIdentifierFieldMetadataId,
+        position: 0,
+        isVisible: true,
+      },
+      gqlFields: 'id',
+    });
+
+    labelIdentifierViewFieldId = labelIdentifierViewField.id;
+
+    const {
+      data: { createViewField: softDeletedViewField },
+    } = await createOneViewField({
+      expectToFail: false,
+      input: {
+        viewId: keptViewId,
+        fieldMetadataId,
+        position: 1,
+        isVisible: true,
+      },
+      gqlFields: 'id',
+    });
+
+    softDeletedViewFieldId = softDeletedViewField.id;
 
     const {
       data: { createViewFilterGroup: viewFilterGroup },
@@ -219,14 +257,15 @@ describe('2-42 workspace command 1789744500000 - PurgeSoftDeletedViewsCommand (i
 
     lastViewIds = lastViews.map(({ id }) => id).sort();
 
-    const twentyStandardApplication = await getCoreRepository<ApplicationEntity>(
-      ApplicationEntity,
-    ).findOneOrFail({
-      where: {
-        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-      },
-    });
+    const twentyStandardApplication =
+      await getCoreRepository<ApplicationEntity>(
+        ApplicationEntity,
+      ).findOneOrFail({
+        where: {
+          universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+        },
+      });
 
     twentyStandardApplicationId = twentyStandardApplication.id;
 
@@ -237,6 +276,9 @@ describe('2-42 workspace command 1789744500000 - PurgeSoftDeletedViewsCommand (i
 
     await getCoreRepository<ViewEntity>(ViewEntity).softDelete({
       id: In([purgedViewId, ...lastViewIds]),
+    });
+    await getCoreRepository<ViewFieldEntity>(ViewFieldEntity).softDelete({
+      id: In([labelIdentifierViewFieldId, softDeletedViewFieldId]),
     });
     await getCoreRepository<ViewFilterEntity>(ViewFilterEntity).softDelete({
       id: softDeletedViewFilterId,
@@ -252,6 +294,7 @@ describe('2-42 workspace command 1789744500000 - PurgeSoftDeletedViewsCommand (i
       'WorkspaceCacheService',
     ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
       'flatViewMaps',
+      'flatViewFieldMaps',
       'flatViewFilterMaps',
       'flatViewFilterGroupMaps',
       'flatViewSortMaps',
@@ -284,6 +327,12 @@ describe('2-42 workspace command 1789744500000 - PurgeSoftDeletedViewsCommand (i
       await findRemainingIds(ViewEntity, [purgedViewId, ...lastViewIds]),
     ).toEqual([purgedViewId, ...lastViewIds].sort());
     expect(
+      await findRemainingIds(ViewFieldEntity, [
+        labelIdentifierViewFieldId,
+        softDeletedViewFieldId,
+      ]),
+    ).toEqual([labelIdentifierViewFieldId, softDeletedViewFieldId].sort());
+    expect(
       await findRemainingIds(ViewFilterEntity, [
         softDeletedViewFilterId,
         nestedViewFilterId,
@@ -302,7 +351,7 @@ describe('2-42 workspace command 1789744500000 - PurgeSoftDeletedViewsCommand (i
     ).toEqual([softDeletedViewSortId]);
   });
 
-  it('hard-deletes soft-deleted views and children along with the rows under them, including a view owned by another application, skips the last views of an object, and is a no-op on a second run', async () => {
+  it('hard-deletes soft-deleted views and children along with the rows under them, including a view owned by another application, skips the last views of an object and the only label identifier view field of a live view, and is a no-op on a second run', async () => {
     const purgedViewBeforeRun = await getCoreRepository<ViewEntity>(
       ViewEntity,
     ).findOneOrFail({ where: { id: purgedViewId }, withDeleted: true });
@@ -319,6 +368,12 @@ describe('2-42 workspace command 1789744500000 - PurgeSoftDeletedViewsCommand (i
         ...lastViewIds,
       ]),
     ).toEqual([keptViewId, ...lastViewIds].sort());
+    expect(
+      await findRemainingIds(ViewFieldEntity, [
+        labelIdentifierViewFieldId,
+        softDeletedViewFieldId,
+      ]),
+    ).toEqual([labelIdentifierViewFieldId]);
     expect(
       await findRemainingIds(ViewFilterEntity, [
         keptViewFilterId,
