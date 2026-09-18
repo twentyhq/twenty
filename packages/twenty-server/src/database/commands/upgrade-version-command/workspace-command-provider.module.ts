@@ -51,6 +51,7 @@ import { V2_9_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-
     V2_2_UpgradeVersionCommandModule,
     V2_3_UpgradeVersionCommandModule,
     V2_4_UpgradeVersionCommandModule,
+    V2_40_UpgradeVersionCommandModule,
     V2_5_UpgradeVersionCommandModule,
     V2_7_UpgradeVersionCommandModule,
     V2_8_UpgradeVersionCommandModule,
