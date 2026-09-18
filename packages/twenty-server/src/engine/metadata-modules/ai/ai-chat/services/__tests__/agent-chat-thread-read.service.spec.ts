@@ -57,7 +57,11 @@ const buildService = ({
   // getUnreadThreadIds reads one row per thread through a DISTINCT ON query
   // builder rather than loading every message, so the builder is stubbed as a
   // chain ending in getRawMany.
-  const lastMessageRows: { threadId: string; createdAt: Date }[] = [];
+  const lastMessageRows: {
+    threadId: string;
+    createdAt: Date;
+    authorUserWorkspaceId: string | null;
+  }[] = [];
 
   const queryBuilder: Record<string, jest.Mock> = {};
 
@@ -192,6 +196,7 @@ describe('AgentChatThreadReadService', () => {
       lastMessageRows.push({
         threadId: THREAD_ID,
         createdAt: new Date('2026-01-02T00:00:00Z'),
+        authorUserWorkspaceId: OUTSIDER_ID,
       });
 
       expect(await unreadFor(service, [THREAD_ID])).toEqual([THREAD_ID]);
@@ -206,6 +211,7 @@ describe('AgentChatThreadReadService', () => {
       lastMessageRows.push({
         threadId: THREAD_ID,
         createdAt: new Date('2026-01-02T00:00:00Z'),
+        authorUserWorkspaceId: OUTSIDER_ID,
       });
 
       expect(await unreadFor(service, [THREAD_ID])).toEqual([]);
@@ -217,6 +223,7 @@ describe('AgentChatThreadReadService', () => {
       lastMessageRows.push({
         threadId: THREAD_ID,
         createdAt: new Date('2026-01-02T00:00:00Z'),
+        authorUserWorkspaceId: OUTSIDER_ID,
       });
 
       expect(await unreadFor(service, [THREAD_ID])).toEqual([THREAD_ID]);
@@ -245,10 +252,38 @@ describe('AgentChatThreadReadService', () => {
       lastMessageRows.push({
         threadId: THREAD_ID,
         createdAt: new Date('2026-01-02T00:00:00Z'),
+        authorUserWorkspaceId: OUTSIDER_ID,
       });
 
       expect(await unreadFor(service, [THREAD_ID])).toEqual([]);
       expect(readRepository.find).not.toHaveBeenCalled();
+    });
+
+    // You were there when you wrote it, and on the deploy that introduces
+    // cursors nobody has one yet — without this, every thread anybody has ever
+    // written in reads as unread on first load.
+    it('leaves a thread read when the last message is your own', async () => {
+      const { service, lastMessageRows } = buildService();
+
+      lastMessageRows.push({
+        threadId: THREAD_ID,
+        createdAt: new Date('2026-01-02T00:00:00Z'),
+        authorUserWorkspaceId: READER_ID,
+      });
+
+      expect(await unreadFor(service, [THREAD_ID])).toEqual([]);
+    });
+
+    it('counts the assistant answering you as unread', async () => {
+      const { service, lastMessageRows } = buildService();
+
+      lastMessageRows.push({
+        threadId: THREAD_ID,
+        createdAt: new Date('2026-01-02T00:00:00Z'),
+        authorUserWorkspaceId: null,
+      });
+
+      expect(await unreadFor(service, [THREAD_ID])).toEqual([THREAD_ID]);
     });
   });
 

@@ -157,6 +157,7 @@ export class AgentChatThreadReadService {
       .distinctOn(['message.threadId'])
       .select('message.threadId', 'threadId')
       .addSelect('message.createdAt', 'createdAt')
+      .addSelect('message.authorUserWorkspaceId', 'authorUserWorkspaceId')
       .where('message.threadId IN (:...threadIds)', {
         threadIds: readableThreadIds,
       })
@@ -164,22 +165,34 @@ export class AgentChatThreadReadService {
       .andWhere('message.isHidden = false')
       .orderBy('message.threadId')
       .addOrderBy('message.createdAt', 'DESC')
-      .getRawMany<{ threadId: string; createdAt: Date }>();
+      .getRawMany<{
+        threadId: string;
+        createdAt: Date;
+        authorUserWorkspaceId: string | null;
+      }>();
 
-    const lastMessageAtByThreadId = new Map(
-      lastMessageRows.map((row) => [row.threadId, row.createdAt]),
+    const lastMessageByThreadId = new Map(
+      lastMessageRows.map((row) => [row.threadId, row]),
     );
 
     return readableThreadIds.filter((threadId) => {
-      const lastMessageAt = lastMessageAtByThreadId.get(threadId);
+      const lastMessage = lastMessageByThreadId.get(threadId);
 
-      if (!isDefined(lastMessageAt)) {
+      if (!isDefined(lastMessage)) {
+        return false;
+      }
+
+      // Your own message never leaves a thread unread for you: you were there
+      // when it was written. Without this every thread reads as unread until
+      // its first open, which on the deploy that adds cursors is every thread
+      // anybody has ever written in.
+      if (lastMessage.authorUserWorkspaceId === userWorkspaceId) {
         return false;
       }
 
       const lastReadAt = lastReadAtByThreadId.get(threadId);
 
-      return !isDefined(lastReadAt) || lastReadAt < lastMessageAt;
+      return !isDefined(lastReadAt) || lastReadAt < lastMessage.createdAt;
     });
   }
 
