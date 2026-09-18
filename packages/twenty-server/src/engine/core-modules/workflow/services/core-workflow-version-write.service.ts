@@ -34,6 +34,15 @@ export type ValidatedDraftCoreWorkflowVersion = {
   steps: WorkflowAction[] | null;
 };
 
+export class CoreWorkflowVersionPostCommitError extends Error {
+  constructor(readonly cause: unknown) {
+    super(
+      'Workflow version content was committed, but cache invalidation failed',
+    );
+    this.name = 'CoreWorkflowVersionPostCommitError';
+  }
+}
+
 @Injectable()
 export class CoreWorkflowVersionWriteService {
   constructor(
@@ -152,9 +161,13 @@ export class CoreWorkflowVersionWriteService {
       );
     }, buildSystemAuthContext(workspaceId));
 
-    await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
-      workspaceId,
-    );
+    try {
+      await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+        workspaceId,
+      );
+    } catch (error) {
+      throw new CoreWorkflowVersionPostCommitError(error);
+    }
   }
 
   async createDraftCoreWorkflowVersionAndMirror({

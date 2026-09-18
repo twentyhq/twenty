@@ -16,7 +16,10 @@ import {
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
-import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
+import {
+  CoreWorkflowVersionPostCommitError,
+  CoreWorkflowVersionWriteService,
+} from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -253,11 +256,16 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       });
     } catch (error) {
       if (isStepTypeChanged) {
+        const stepsToDelete =
+          error instanceof CoreWorkflowVersionPostCommitError
+            ? [existingStep]
+            : [updatedStep, ...(additionalCreatedSteps ?? [])];
+
         await Promise.allSettled(
-          [updatedStep, ...(additionalCreatedSteps ?? [])].map((createdStep) =>
+          stepsToDelete.map((stepToDelete) =>
             this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
               {
-                step: createdStep,
+                step: stepToDelete,
                 workspaceId,
               },
             ),

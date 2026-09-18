@@ -1,6 +1,7 @@
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
+import { CoreWorkflowVersionPostCommitError } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const workspaceId = '20202020-0000-0000-0000-000000000001';
@@ -123,5 +124,27 @@ describe('CoreWorkflowVersionMutationWorkspaceService', () => {
     expect(writeContentAndMirror.mock.invocationCallOrder[0]).toBeLessThan(
       runWorkflowVersionStepDeletionSideEffects.mock.invocationCallOrder[0],
     );
+  });
+
+  it('keeps the committed replacement and deletes the old resource when cache invalidation fails', async () => {
+    const cacheError = new CoreWorkflowVersionPostCommitError(
+      new Error('Cache unavailable'),
+    );
+
+    writeContentAndMirror.mockRejectedValue(cacheError);
+
+    await expect(
+      service.updateStep({
+        workspaceId,
+        coreWorkflowVersionId,
+        step: { ...replacementEmptyStep, id: stepId },
+      }),
+    ).rejects.toBe(cacheError);
+
+    expect(runWorkflowVersionStepDeletionSideEffects).toHaveBeenCalledTimes(1);
+    expect(runWorkflowVersionStepDeletionSideEffects).toHaveBeenCalledWith({
+      step: existingCodeStep,
+      workspaceId,
+    });
   });
 });
