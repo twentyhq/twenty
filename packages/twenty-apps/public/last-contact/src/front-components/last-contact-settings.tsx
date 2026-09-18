@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { defineSettingsFrontComponent } from 'twenty-sdk/define';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
-import { H2Title, MainButton, Section } from 'twenty-ui';
+import { MainButton } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import 'twenty-ui/style.css';
 
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
