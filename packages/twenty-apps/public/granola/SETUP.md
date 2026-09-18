@@ -1,12 +1,22 @@
 # Set up Granola
 
-1. In a Granola Business or Enterprise workspace, create an API key from **Settings → Connectors → API keys**. One key serves the whole Twenty workspace; members cannot connect their own Granola accounts yet. Workspace keys sync notes shared with the whole workspace; personal keys also sync the owner's own notes.
+1. In a Granola Business or Enterprise workspace, create an API key from **Settings → Connectors → API keys**. One key serves the whole Twenty workspace; members cannot connect their own Granola accounts yet. A workspace key reaches workspace-visible notes and spaces with API access enabled. A personal key also reaches its owner's notes and notes shared with them.
 2. Install Granola in Twenty, then open **Settings → Applications → Granola → Settings**. You need application-management permission.
-3. Paste the key and choose **Connect**. The key is saved as a secret application variable. The app checks it, detects the key type, registers a signed webhook, and queues the last 31 days of notes. The **Connecting** button keeps its loader and label visible until setup finishes, then the API key card shows **Connected**.
-4. If connection setup fails, an error appears below the key field. Choose **Connect** to retry, or **Cancel** to remove the saved key and start again. Choosing **Connect** also repairs a missing or paused Granola endpoint. The app never re-enables a paused endpoint on its own; the daily catch-up only imports notes updated in the last two days.
+3. Paste the key and click **Connect**. The key is saved as a secret application variable. The API key card shows **Connecting** while the app checks the key, detects its type, registers a signed webhook, and queues the last 31 days of notes, then **Connected**.
+4. If setup does not finish, the card shows why. **Invalid key** offers **Use another key**, which removes the saved key. **Unreachable** and **Setup incomplete** offer **Retry**. If the key itself cannot be saved, an error appears under the key field.
 5. To restrict sync, choose **Some folders** and pick up to 100 folders. A picked folder includes its subfolders, and every click saves. Existing records outside a new filter are retained.
 6. Use **Import history** for a larger window, from 1 to 3650 days. Notes appear gradually in Call Recordings. Repeating an import updates the same records.
-7. To rotate the key, use the red trash button beside **Connected**, then enter the new key and choose **Connect**. The trash button is labelled **Remove API key** for screen readers. Setup registers the connection with the new key.
+7. To change the key, open **Danger zone**, click **Disconnect** and confirm, then paste the new key and click **Connect**. Disconnect deletes the Granola webhook with the old key first. If Granola refuses, the app only logs it, so check Granola for a leftover endpoint.
+
+## Paused sync
+
+Granola drops events while an endpoint is paused, and the app never re-enables it on its own. The card then shows **Paused**; click **Resume** to re-enable the endpoint, or recreate it if it was deleted. The daily catch-up imports notes updated in the last two days even while paused, so run a larger **Import history** after a longer outage.
+
+## Limits
+
+- Transcripts are fetched in up to 1,000 pages within 800 seconds. Notes beyond either limit are skipped without saving a partial transcript.
+- Notes without a transcript keep their summary and show no transcript in Twenty.
+- A recording links to a calendar event only when Granola's calendar event, or its invitees and start time, match exactly one Twenty event.
 
 ## Local development
 
@@ -26,7 +36,7 @@ For real webhook QA, expose your Twenty server through a public HTTPS tunnel and
 
 ## API import
 
-Use a Twenty bearer token belonging to a user with application-management permission:
+Live sync must be set up first. Use a Twenty bearer token belonging to a user with application-management permission:
 
 ```sh
 curl --request POST "$TWENTY_API_URL/s/granola/backfill" \
@@ -39,10 +49,10 @@ curl --request POST "$TWENTY_API_URL/s/granola/backfill" \
 
 - Connect a real workspace key, then a personal key, and verify the detected scopes and readable failures for invalid keys or unavailable plans.
 - Generate a meeting, edit its summary, and confirm one Call Recording is updated with transcript and shared summary. Confirm private notes never appear.
-- Deliver the same signed event twice; confirm the deterministic recording ID is unchanged. Check unsigned and expired deliveries are rejected, including after a queue delay.
+- Deliver the same signed event twice; confirm the deterministic recording ID is unchanged. Check unsigned and expired deliveries are rejected, and that a fresh delivery still verifies after a queue delay.
 - Pick a parent folder, confirm a descendant note syncs and an outside note does not, then switch back to **Everything**.
 - Run initial and manual history imports, including a deleted Twenty recording. Confirm it stays deleted.
-- Disable the endpoint in Granola, exercise daily catch-up, and confirm updated notes are still imported while the endpoint stays paused. Confirm **Connect** re-enables it.
+- Disable the endpoint in Granola, exercise daily catch-up, and confirm updated notes are still imported while the endpoint stays paused. Confirm **Resume** re-enables it.
 - Rotate the key and uninstall. Verify endpoint cleanup, or remove endpoints the replacement key cannot access.
 
 ## Provider references
