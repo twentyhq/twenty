@@ -28,6 +28,7 @@ import { AgentChatQuestionAnswerInput } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
 import { AgentChatThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-status.enum';
 import { AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
+import { AgentChatThreadReadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-read.dto';
 import { FileAttachmentInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/file-attachment.input';
 import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
 import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-stream-catchup-chunks.dto';
@@ -39,6 +40,7 @@ import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/
 import { AgentRunThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-run-thread.service';
 import { type AgentChatThreadLastMessageSummary } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-message-summary.type';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { AgentChatThreadReadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-read.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { buildThreadWorkerWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-worker-where.util';
@@ -75,6 +77,7 @@ export class AgentChatResolver {
     private readonly agentChatService: AgentChatService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
+    private readonly agentChatThreadReadService: AgentChatThreadReadService,
     private readonly agentChatChannelService: AgentChatChannelService,
     private readonly agentRunThreadService: AgentRunThreadService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
@@ -135,6 +138,42 @@ export class AgentChatResolver {
       userWorkspaceId,
       workspaceId,
     });
+  }
+
+  @Query(() => [AgentChatThreadReadDTO])
+  async chatThreadReads(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    return this.agentChatThreadReadService.getReadsForThread({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadReadDTO)
+  async markChatThreadRead(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    const read = await this.agentChatThreadReadService.markThreadRead({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    // Everyone on the thread sees the tick move, the same way they see a new
+    // message: a receipt nobody else is told about is not a receipt.
+    await this.eventPublisherService.publish({
+      threadId,
+      workspaceId,
+      event: { type: 'reads-updated' },
+    });
+
+    return read;
   }
 
   @Mutation(() => AgentChatThreadParticipantDTO)

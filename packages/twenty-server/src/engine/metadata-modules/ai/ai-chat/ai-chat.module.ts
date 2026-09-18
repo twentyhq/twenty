@@ -36,6 +36,7 @@ import { AgentChatChannelMemberEntity } from './entities/agent-chat-channel-memb
 import { AgentChatChannelRoleEntity } from './entities/agent-chat-channel-role.entity';
 import { AgentChatChannelEntity } from './entities/agent-chat-channel.entity';
 import { AgentChatThreadParticipantEntity } from './entities/agent-chat-thread-participant.entity';
+import { AgentChatThreadReadEntity } from './entities/agent-chat-thread-read.entity';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { StreamAgentChatJob } from './jobs/stream-agent-chat.job';
 import { AgentChatChannelResolver } from './resolvers/agent-chat-channel.resolver';
@@ -50,6 +51,7 @@ import { AgentChatStreamingService } from './services/agent-chat-streaming.servi
 import { AgentRunThreadService } from './services/agent-run-thread.service';
 import { AgentChatChannelService } from './services/agent-chat-channel.service';
 import { AgentChatThreadParticipantService } from './services/agent-chat-thread-participant.service';
+import { AgentChatThreadReadService } from './services/agent-chat-thread-read.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
 import { ChatExecutionService } from './services/chat-execution.service';
@@ -62,6 +64,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     TypeOrmModule.forFeature([
       AgentChatThreadEntity,
       AgentChatThreadParticipantEntity,
+      AgentChatThreadReadEntity,
       AgentChatChannelEntity,
       AgentChatChannelMemberEntity,
       AgentChatChannelRoleEntity,
@@ -102,6 +105,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatService,
     AgentChatStreamingService,
     AgentChatThreadParticipantService,
+    AgentChatThreadReadService,
     AgentChatChannelService,
     AgentRunThreadService,
     WorkspaceSetupChatService,
@@ -113,6 +117,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AiGraphqlApiExceptionInterceptor,
     provideWorkspaceScopedRepository(AgentChatThreadEntity),
     provideWorkspaceScopedRepository(AgentChatThreadParticipantEntity),
+    provideWorkspaceScopedRepository(AgentChatThreadReadEntity),
     provideWorkspaceScopedRepository(AgentChatChannelEntity),
     provideWorkspaceScopedRepository(AgentChatChannelMemberEntity),
     provideWorkspaceScopedRepository(AgentChatChannelRoleEntity),
@@ -128,6 +133,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatService,
     AgentChatStreamingService,
     AgentChatThreadParticipantService,
+    AgentChatThreadReadService,
     AgentChatChannelService,
     AgentRunThreadService,
     TypeOrmModule.forFeature([AgentChatThreadEntity]),

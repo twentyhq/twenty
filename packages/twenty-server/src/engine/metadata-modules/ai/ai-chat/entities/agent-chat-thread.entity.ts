@@ -12,6 +12,7 @@ import {
 
 import { ADD_AGENT_CHAT_CHANNELS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-channels-upgrade-command-name.constant';
 import { ADD_AGENT_CHAT_THREAD_INBOX_STATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-thread-inbox-state-upgrade-command-name.constant';
+import { ADD_AGENT_CHAT_THREAD_READS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-thread-reads-upgrade-command-name.constant';
 import { ADD_AGENT_CHAT_THREAD_WORKFLOW_RUN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-thread-workflow-run-upgrade-command-name.constant';
 import { ADD_LAST_STREAM_ERROR_TO_AGENT_CHAT_THREAD_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-last-stream-error-to-agent-chat-thread-upgrade-command-name.constant';
 import { ADD_PENDING_QUESTION_MESSAGE_ID_TO_AGENT_CHAT_THREAD_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-pending-question-message-id-to-agent-chat-thread-upgrade-command-name.constant';
@@ -22,6 +23,7 @@ import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-exec
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-channel.entity';
 import { AgentChatThreadParticipantEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread-participant.entity';
+import { AgentChatThreadReadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread-read.entity';
 import { AgentChatThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-status.enum';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -182,6 +184,23 @@ export class AgentChatThreadEntity {
     (participant) => participant.thread,
   )
   participants: EntityRelation<AgentChatThreadParticipantEntity[]>;
+
+  @OneToMany(() => AgentChatThreadReadEntity, (read) => read.thread)
+  reads: EntityRelation<AgentChatThreadReadEntity[]>;
+
+  // The assistant is one per thread, so its cursor is a column here rather
+  // than a row in a table keyed by who in the workspace read.
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AGENT_CHAT_THREAD_READS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'timestamptz', nullable: true })
+  assistantLastReadAt: Date | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AGENT_CHAT_THREAD_READS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  assistantLastReadMessageId: string | null;
 
   @Column({ type: 'timestamptz', nullable: true })
   deletedAt: Date | null;
