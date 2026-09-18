@@ -9,6 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AiChatThreadChannelChip } from '@/ai/components/AiChatThreadChannelChip';
 import { AiChatThreadWorkflowRunChip } from '@/ai/components/AiChatThreadWorkflowRunChip';
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
+import { AiChatThreadAssigneeDropdown } from '@/ai/components/AiChatThreadAssigneeDropdown';
 import { AiChatThreadParticipants } from '@/ai/components/AiChatThreadParticipants';
 import { AiChatThreadSnoozeDropdown } from '@/ai/components/AiChatThreadSnoozeDropdown';
 import { AGENT_CHAT_THREAD_INBOX_STATE } from '@/ai/constants/AgentChatThreadInboxState';
@@ -132,6 +133,7 @@ export const AiChatPageThreadHeader = ({
       <AiChatThreadWorkflowRunChip workflowRunId={thread.workflowRunId} />
       <StyledActions>
         <AiChatThreadParticipants threadId={thread.id} />
+        <AiChatThreadAssigneeDropdown threadId={thread.id} />
         {!isDone && <AiChatThreadSnoozeDropdown threadId={thread.id} />}
         <IconButton
           size="sm"

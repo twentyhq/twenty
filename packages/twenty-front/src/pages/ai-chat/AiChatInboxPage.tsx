@@ -10,14 +10,10 @@ import { AiChatChannelDeleteConfirmationModal } from '@/ai/components/AiChatChan
 import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPane } from '@/ai/components/AiChatInboxThreadPane';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
-import { AiChatThreadInboxStateTabs } from '@/ai/components/AiChatThreadInboxStateTabs';
-import { AGENT_CHAT_THREAD_INBOX_STATE_ORDER } from '@/ai/constants/AgentChatThreadInboxStateOrder';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
-import { AI_CHAT_INBOX_TABS_INSTANCE_ID } from '@/ai/constants/AiChatInboxTabsInstanceId';
-import { useAiChatInboxThreads } from '@/ai/hooks/useAiChatInboxThreads';
 import { agentChatInboxStateTabState } from '@/ai/states/agentChatInboxStateTabState';
-import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { AGENT_CHAT_THREAD_INBOX_STATE_LABELS } from '@/ai/constants/AgentChatThreadInboxStateLabels';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const INBOX_THREAD_LIST_PANE_WIDTH = 400;
@@ -54,6 +50,16 @@ const StyledHeader = styled.div`
   padding: 0 ${themeCssVariables.spacing[3]};
 `;
 
+const StyledHeaderState = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  font-weight: ${themeCssVariables.font.weight.regular};
+
+  &::before {
+    content: '·';
+    margin: 0 ${themeCssVariables.spacing[1]};
+  }
+`;
+
 const StyledListBody = styled.div`
   display: flex;
   flex: 1;
@@ -67,19 +73,7 @@ export const AiChatInboxPage = () => {
   const { threadId } = useParams();
   const isMobile = useIsMobile();
   const navigateApp = useNavigateApp();
-  const [agentChatInboxStateTab, setAgentChatInboxStateTab] = useAtomState(
-    agentChatInboxStateTabState,
-  );
-  const { threadsByInboxState } = useAiChatInboxThreads();
-
-  const countByInboxState = AGENT_CHAT_THREAD_INBOX_STATE_ORDER.reduce(
-    (accumulator, state) => {
-      accumulator[state] = threadsByInboxState[state].length;
-
-      return accumulator;
-    },
-    {} as Record<AgentChatThreadInboxState, number>,
-  );
+  const agentChatInboxStateTab = useAtomStateValue(agentChatInboxStateTabState);
 
   const isChatVisible = !isMobile || isDefined(threadId);
   const isListVisible = !isMobile || !isChatVisible;
@@ -90,12 +84,14 @@ export const AiChatInboxPage = () => {
     <StyledPanel>
       {isListVisible && (
         <StyledListPane $isAlone={!isChatVisible}>
-          <StyledHeader>{t`Inbox`}</StyledHeader>
-          <AiChatThreadInboxStateTabs
-            componentInstanceId={AI_CHAT_INBOX_TABS_INSTANCE_ID}
-            countByInboxState={countByInboxState}
-            onChangeInboxState={setAgentChatInboxStateTab}
-          />
+          {/* The drawer already names the three states and marks the one in
+              view, so repeating them as tabs here would ask twice. */}
+          <StyledHeader>
+            {t`Inbox`}
+            <StyledHeaderState>
+              {t(AGENT_CHAT_THREAD_INBOX_STATE_LABELS[agentChatInboxStateTab])}
+            </StyledHeaderState>
+          </StyledHeader>
           <StyledListBody>
             <AiChatInboxThreadList inboxState={agentChatInboxStateTab} />
           </StyledListBody>
