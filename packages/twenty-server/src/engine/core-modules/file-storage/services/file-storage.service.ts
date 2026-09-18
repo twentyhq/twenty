@@ -523,7 +523,9 @@ export class FileStorageService {
   }
 
   async deleteFolder(
-    params: Omit<ResourceIdentifier, 'resourcePath'> & { folderPath: string },
+    params: Omit<ResourceIdentifier, 'resourcePath'> & {
+      folderPath: string;
+    },
   ): Promise<void> {
     const {
       workspaceId,

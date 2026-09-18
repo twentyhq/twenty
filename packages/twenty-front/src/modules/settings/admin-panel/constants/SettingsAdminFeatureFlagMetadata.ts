@@ -10,6 +10,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     { label: MessageDescriptor; description: MessageDescriptor }
   >
 > = {
+  [FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED]: {
+    label: msg`Async CSV export`,
+    description: msg`Generate CSV exports in the background with progress and automatic downloads.`,
+  },
   [FeatureFlagKey.IS_APP_CLAIMING_ENABLED]: {
     label: msg`App claiming`,
     description: msg`Allow developers to claim ownership of applications.`,

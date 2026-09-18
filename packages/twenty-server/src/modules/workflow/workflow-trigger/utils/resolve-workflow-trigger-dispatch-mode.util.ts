@@ -8,27 +8,22 @@ export type WorkflowTriggerDispatchMode =
   | {
       mode: 'CORE';
       coreWorkflowVersionId: string;
-      workspaceWorkflowVersionId: string;
+      workspaceWorkflowVersionId?: string;
     }
-  | { mode: 'LEGACY' }
-  | { mode: 'INCOMPLETE' };
+  | { mode: 'LEGACY' };
 
 export const resolveWorkflowTriggerDispatchMode = ({
   coreWorkflowVersionId,
   workspaceWorkflowVersionId,
 }: QueuedWorkflowTriggerDispatchIds): WorkflowTriggerDispatchMode => {
-  if (
-    isDefined(coreWorkflowVersionId) &&
-    isDefined(workspaceWorkflowVersionId)
-  ) {
-    return { mode: 'CORE', coreWorkflowVersionId, workspaceWorkflowVersionId };
-  }
-
-  if (
-    isDefined(coreWorkflowVersionId) ||
-    isDefined(workspaceWorkflowVersionId)
-  ) {
-    return { mode: 'INCOMPLETE' };
+  if (isDefined(coreWorkflowVersionId)) {
+    return {
+      mode: 'CORE',
+      coreWorkflowVersionId,
+      ...(isDefined(workspaceWorkflowVersionId)
+        ? { workspaceWorkflowVersionId }
+        : {}),
+    };
   }
 
   return { mode: 'LEGACY' };

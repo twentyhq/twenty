@@ -10,6 +10,7 @@ export enum CacheStorageNamespace {
   EngineLock = 'engine:lock',
   EngineHealth = 'engine:health',
   EngineMetrics = 'engine:metrics',
+  EngineRecordExport = 'engine:record-export',
   EngineSubscriptions = 'engine:subscriptions',
   EngineUsageLimit = 'engine:usage-limit',
   EngineOnboardingInviteSuggestions = 'engine:onboarding-invite-suggestions',

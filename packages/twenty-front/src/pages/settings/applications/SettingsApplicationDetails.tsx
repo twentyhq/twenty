@@ -267,6 +267,7 @@ export const SettingsApplicationDetails = () => {
         }
         secondaryBar={
           <SettingsTabBar
+            aria-label={t`Application details`}
             tabs={tabs}
             componentInstanceId={APPLICATION_DETAIL_ID}
           />
