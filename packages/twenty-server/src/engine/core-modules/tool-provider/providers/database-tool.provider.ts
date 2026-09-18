@@ -36,7 +36,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { ToolCategory } from 'twenty-shared/ai';
+import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -467,7 +467,13 @@ export class DatabaseToolProvider implements ToolProvider {
       }
     }
 
-    return descriptors;
+    // Every record operation but group_by answers with recordReferences, which
+    // the records widget turns into links; group_by answers with aggregates.
+    return descriptors.map((descriptor) =>
+      descriptor.operation === 'group_by'
+        ? descriptor
+        : { ...descriptor, widgetName: RECORDS_TOOL_WIDGET_NAME },
+    );
   }
 
   private async buildFieldsResolver({
