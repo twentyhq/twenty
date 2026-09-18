@@ -6,7 +6,7 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 const ENGINE_KEY_COHERENCE_CHECK_NAME =
   'CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE';
 
-@RegisteredInstanceCommand('2.42.0', 1789654995357)
+@RegisteredInstanceCommand('2.42.0', 1789730706712)
 export class CoreWorkflowCommandMenuItemsFastInstanceCommand implements FastInstanceCommand {
   async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
