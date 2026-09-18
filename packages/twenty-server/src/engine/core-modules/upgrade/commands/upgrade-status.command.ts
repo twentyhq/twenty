@@ -222,7 +222,29 @@ export class UpgradeStatusCommand extends CommandRunner {
       );
     }
 
+    lines.push(
+      ...this.formatSkippedCommands(status.skippedCommandNames, indent),
+    );
+
     return lines;
+  }
+
+  private formatSkippedCommands(
+    skippedCommandNames: string[],
+    indent: string,
+  ): string[] {
+    if (skippedCommandNames.length === 0) {
+      return [];
+    }
+
+    return [
+      chalk.yellow(
+        `${indent}Skipped:          ${skippedCommandNames.length} command(s) the cursor moved past without running`,
+      ),
+      ...skippedCommandNames.map((commandName) =>
+        chalk.yellow(`${indent}  - ${formatUpgradeCommandName(commandName)}`),
+      ),
+    ];
   }
 
   private formatSummary(
@@ -247,6 +269,20 @@ export class UpgradeStatusCommand extends CommandRunner {
     ];
 
     lines.push(`  Workspaces: ${parts.join(', ')} (${totalCount} total)`);
+
+    const workspacesWithSkippedCommands = [
+      ...upToDate,
+      ...behind,
+      ...failed,
+    ].filter((status) => status.skippedCommandNames.length > 0);
+
+    if (workspacesWithSkippedCommands.length > 0) {
+      lines.push(
+        chalk.yellow(
+          `    ${workspacesWithSkippedCommands.length} with skipped command(s)`,
+        ),
+      );
+    }
 
     if (behind.length > 0) {
       const behindCounts = new Map<string | null, number>();

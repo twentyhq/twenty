@@ -15,6 +15,11 @@ import {
   resolveCompletedVersionFromCursor,
   type UpgradeCursor,
 } from 'src/engine/core-modules/upgrade/utils/resolve-completed-version-from-cursor.util';
+import {
+  isStepInUpgradeAuditWindow,
+  resolveUpgradeAuditWindow,
+  type UpgradeAuditWindow,
+} from 'src/engine/core-modules/upgrade/utils/resolve-upgrade-audit-window.util';
 
 import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -30,6 +35,7 @@ export type InstanceUpgradeStatus = {
   inferredVersion: string | null;
   health: UpgradeHealthEnum;
   latestCommand: LatestUpgradeCommand | null;
+  skippedCommandNames: string[];
 };
 
 export type WorkspaceUpgradeStatus = {
@@ -38,6 +44,7 @@ export type WorkspaceUpgradeStatus = {
   inferredVersion: string | null;
   health: UpgradeHealthEnum;
   latestCommand: LatestUpgradeCommand | null;
+  skippedCommandNames: string[];
 };
 
 export type WorkspaceUpgradeRef = {
@@ -72,6 +79,7 @@ type CachedInstanceAndWorkspaceUpgradeStatus = {
 const deriveHealth = (
   cursor: UpgradeCursor,
   lastExpectedCommandName: string | null,
+  skippedCommandNames: string[],
 ): UpgradeHealthEnum => {
   if (cursor.status === 'failed') {
     return UpgradeHealthEnum.FAILED;
@@ -81,6 +89,12 @@ const deriveHealth = (
     lastExpectedCommandName !== null &&
     cursor.name !== lastExpectedCommandName
   ) {
+    return UpgradeHealthEnum.BEHIND;
+  }
+
+  // The cursor only tells where the last run stopped, not that every command
+  // before it ran: a command the sequence jumped over leaves no record at all.
+  if (skippedCommandNames.length > 0) {
     return UpgradeHealthEnum.BEHIND;
   }
 
@@ -109,10 +123,45 @@ export class UpgradeStatusService {
     });
     const lastExpectedCommandName = stepNames[stepNames.length - 1] ?? null;
 
+    const skippedCommandNames =
+      await this.resolveSkippedInstanceCommandNames(cursor);
+
     return {
-      ...this.buildCursorStatus(cursor, lastExpectedCommandName),
+      ...this.buildCursorStatus(
+        cursor,
+        lastExpectedCommandName,
+        skippedCommandNames,
+      ),
       inferredVersion: this.resolveInstanceCompletedVersion(cursor),
     };
+  }
+
+  private async resolveSkippedInstanceCommandNames(
+    cursor: UpgradeCursor | null,
+  ): Promise<string[]> {
+    if (!isDefined(cursor)) {
+      return [];
+    }
+
+    const stepNames = this.upgradeSequenceReaderService.getUpgradeStepNames({
+      'fast-instance': true,
+      'slow-instance': true,
+    });
+
+    const auditWindow = resolveUpgradeAuditWindow({
+      stepNames,
+      cursorName: cursor.name,
+    });
+
+    if (!isDefined(auditWindow)) {
+      return [];
+    }
+
+    return this.upgradeMigrationService.findSkippedInstanceCommandNames(
+      stepNames.filter((_stepName, stepIndex) =>
+        isStepInUpgradeAuditWindow({ stepIndex, window: auditWindow }),
+      ),
+    );
   }
 
   async getInstanceCompletedVersion(): Promise<string | null> {
@@ -148,14 +197,78 @@ export class UpgradeStatusService {
     const stepNames = this.upgradeSequenceReaderService.getUpgradeStepNames();
     const lastExpectedCommandName = stepNames[stepNames.length - 1] ?? null;
 
+    const skippedCommandNamesByWorkspaceId =
+      await this.resolveSkippedWorkspaceCommandNames({
+        stepNames,
+        cursors,
+        workspaceIds: loadedWorkspaceIds,
+      });
+
     return workspaces.map((workspace) => ({
       ...this.buildCursorStatus(
         cursors.get(workspace.id) ?? null,
         lastExpectedCommandName,
+        skippedCommandNamesByWorkspaceId.get(workspace.id) ?? [],
       ),
       workspaceId: workspace.id,
       displayName: workspace.displayName ?? null,
     }));
+  }
+
+  private async resolveSkippedWorkspaceCommandNames({
+    stepNames,
+    cursors,
+    workspaceIds,
+  }: {
+    stepNames: string[];
+    cursors: Map<string, UpgradeCursor>;
+    workspaceIds: string[];
+  }): Promise<Map<string, string[]>> {
+    if (workspaceIds.length === 0) {
+      return new Map();
+    }
+
+    const initialCommandNamesByWorkspaceId =
+      await this.upgradeMigrationService.getWorkspaceInitialCommandNames(
+        workspaceIds,
+      );
+
+    const auditWindowByWorkspaceId = new Map<string, UpgradeAuditWindow>();
+
+    for (const workspaceId of workspaceIds) {
+      const cursor = cursors.get(workspaceId);
+
+      if (!isDefined(cursor)) {
+        continue;
+      }
+
+      const auditWindow = resolveUpgradeAuditWindow({
+        stepNames,
+        cursorName: cursor.name,
+        baselineNames: initialCommandNamesByWorkspaceId.get(workspaceId),
+      });
+
+      if (isDefined(auditWindow)) {
+        auditWindowByWorkspaceId.set(workspaceId, auditWindow);
+      }
+    }
+
+    const workspaceStepNames = new Set(
+      this.upgradeSequenceReaderService.getUpgradeStepNames({
+        workspace: true,
+      }),
+    );
+
+    const stepIndexByCommandName = new Map(
+      stepNames
+        .map((stepName, stepIndex) => [stepName, stepIndex] as const)
+        .filter(([stepName]) => workspaceStepNames.has(stepName)),
+    );
+
+    return this.upgradeMigrationService.findSkippedWorkspaceCommandNames({
+      auditWindowByWorkspaceId,
+      stepIndexByCommandName,
+    });
   }
 
   async getWorkspaceCompletedVersion(
@@ -339,18 +452,25 @@ export class UpgradeStatusService {
   private buildCursorStatus(
     cursor: LatestUpgradeCommand | null,
     lastExpectedCommandName: string | null,
+    skippedCommandNames: string[],
   ): InstanceUpgradeStatus {
     if (!isDefined(cursor)) {
       return {
         inferredVersion: null,
         health: UpgradeHealthEnum.BEHIND,
         latestCommand: null,
+        skippedCommandNames,
       };
     }
 
     return {
       inferredVersion: extractVersionFromCommandNameOrThrow(cursor.name),
-      health: deriveHealth(cursor, lastExpectedCommandName),
+      health: deriveHealth(
+        cursor,
+        lastExpectedCommandName,
+        skippedCommandNames,
+      ),
+      skippedCommandNames,
       latestCommand: {
         name: cursor.name,
         status: cursor.status,

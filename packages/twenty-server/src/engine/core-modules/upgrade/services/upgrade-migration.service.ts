@@ -10,6 +10,7 @@ import {
   UpgradeMigrationStatus,
 } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
+import { type UpgradeAuditWindow } from 'src/engine/core-modules/upgrade/utils/resolve-upgrade-audit-window.util';
 
 export type WorkspaceLastAttemptedCommand = {
   workspaceId: string;
@@ -298,6 +299,127 @@ export class UpgradeMigrationService {
     }
 
     return cursors;
+  }
+
+  async findSkippedInstanceCommandNames(
+    commandNames: string[],
+  ): Promise<string[]> {
+    if (commandNames.length === 0) {
+      return [];
+    }
+
+    const rows = await this.upgradeMigrationRepository.manager.query<
+      Array<{ name: string }>
+    >(
+      `
+        SELECT expected.name
+        FROM unnest($1::text[]) AS expected(name)
+        WHERE NOT EXISTS (
+          SELECT 1
+          FROM core."upgradeMigration" migration
+          WHERE migration."workspaceId" IS NULL
+          AND migration.name = expected.name
+          AND migration.status = 'completed'
+        )
+      `,
+      [commandNames],
+    );
+
+    return rows.map((row) => row.name);
+  }
+
+  async findSkippedWorkspaceCommandNames({
+    auditWindowByWorkspaceId,
+    stepIndexByCommandName,
+  }: {
+    auditWindowByWorkspaceId: Map<string, UpgradeAuditWindow>;
+    stepIndexByCommandName: Map<string, number>;
+  }): Promise<Map<string, string[]>> {
+    const skippedCommandNamesByWorkspaceId = new Map<string, string[]>();
+
+    if (
+      auditWindowByWorkspaceId.size === 0 ||
+      stepIndexByCommandName.size === 0
+    ) {
+      return skippedCommandNamesByWorkspaceId;
+    }
+
+    const workspaceIds = [...auditWindowByWorkspaceId.keys()];
+    const auditWindows = [...auditWindowByWorkspaceId.values()];
+    const commandNames = [...stepIndexByCommandName.keys()];
+
+    const rows = await this.upgradeMigrationRepository.manager.query<
+      Array<{ workspaceId: string; name: string }>
+    >(
+      `
+        SELECT target."workspaceId", expected.name
+        FROM unnest($1::uuid[], $2::int[], $3::int[])
+          AS target("workspaceId", "cursorIndex", "baselineIndex")
+        JOIN unnest($4::text[], $5::int[]) AS expected(name, "stepIndex")
+          ON expected."stepIndex" < target."cursorIndex"
+          AND expected."stepIndex" > target."baselineIndex"
+        WHERE NOT EXISTS (
+          SELECT 1
+          FROM core."upgradeMigration" migration
+          WHERE migration."workspaceId" = target."workspaceId"
+          AND migration.name = expected.name
+          AND migration.status = 'completed'
+        )
+        ORDER BY target."workspaceId", expected."stepIndex"
+      `,
+      [
+        workspaceIds,
+        auditWindows.map((auditWindow) => auditWindow.cursorIndex),
+        auditWindows.map((auditWindow) => auditWindow.baselineIndex),
+        commandNames,
+        [...stepIndexByCommandName.values()],
+      ],
+    );
+
+    for (const row of rows) {
+      const skippedCommandNames =
+        skippedCommandNamesByWorkspaceId.get(row.workspaceId) ?? [];
+
+      skippedCommandNames.push(row.name);
+      skippedCommandNamesByWorkspaceId.set(
+        row.workspaceId,
+        skippedCommandNames,
+      );
+    }
+
+    return skippedCommandNamesByWorkspaceId;
+  }
+
+  async getWorkspaceInitialCommandNames(
+    workspaceIds: string[],
+  ): Promise<Map<string, string[]>> {
+    const initialCommandNamesByWorkspaceId = new Map<string, string[]>();
+
+    if (workspaceIds.length === 0) {
+      return initialCommandNamesByWorkspaceId;
+    }
+
+    const rows = await this.upgradeMigrationRepository.find({
+      select: ['workspaceId', 'name'],
+      where: { workspaceId: In(workspaceIds), isInitial: true },
+    });
+
+    for (const row of rows) {
+      if (!isDefined(row.workspaceId)) {
+        continue;
+      }
+
+      const initialCommandNames =
+        initialCommandNamesByWorkspaceId.get(row.workspaceId) ?? [];
+
+      initialCommandNames.push(row.name);
+      initialCommandNamesByWorkspaceId.set(
+        row.workspaceId,
+        initialCommandNames,
+      );
+    }
+
+    return initialCommandNamesByWorkspaceId;
   }
 
   async areAllWorkspacesAtCommand({
