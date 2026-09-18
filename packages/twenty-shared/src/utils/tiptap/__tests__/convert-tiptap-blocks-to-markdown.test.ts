@@ -28,7 +28,7 @@ describe('convertTipTapBlocksToMarkdown', () => {
     );
   });
 
-  it('should convert a checklist, whose items degrade to a plain list', () => {
+  it('should convert a checklist, keeping the checked state', () => {
     const checklist = JSON.stringify([
       {
         type: 'taskList',
@@ -47,7 +47,9 @@ describe('convertTipTapBlocksToMarkdown', () => {
       },
     ]);
 
-    expect(convertTipTapBlocksToMarkdown(checklist)).toBe('call the client');
+    expect(convertTipTapBlocksToMarkdown(checklist)).toBe(
+      '- [x] call the client',
+    );
   });
 
   it('should convert a whole TipTap document', () => {
