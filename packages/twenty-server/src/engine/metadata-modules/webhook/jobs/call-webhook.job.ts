@@ -1,8 +1,15 @@
+import { Logger } from '@nestjs/common';
+
 import crypto from 'crypto';
 
 import { ensureAbsoluteUrl } from 'twenty-shared/utils';
 
+import {
+  buildWorkspaceEventEnvelope,
+  computeEventContextFields,
+} from 'src/engine/core-modules/event-logs/emit/build-event-envelope';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { type TrackEventProperties } from 'src/engine/core-modules/event-logs/emit/events.type';
 import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/webhook/webhook-response';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -12,8 +19,15 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type WebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 
+type WebhookResponse = {
+  workspaceId: string;
+  properties: TrackEventProperties<typeof WEBHOOK_RESPONSE_EVENT>;
+};
+
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJob {
+  private readonly logger = new Logger(CallWebhookJob.name);
+
   constructor(
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly metricsService: MetricsService,
@@ -33,22 +47,37 @@ export class CallWebhookJob {
 
   @Process(CallWebhookJob.name)
   async handle(webhookJobEvents: WebhookJobData[]): Promise<void> {
-    await Promise.all(
-      webhookJobEvents.map(
-        async (webhookJobEvent) => await this.callWebhook(webhookJobEvent),
+    const webhookResponses = await Promise.all(
+      webhookJobEvents.map((webhookJobEvent) =>
+        this.callWebhook(webhookJobEvent),
+      ),
+    );
+
+    void this.recordWebhookResponses(webhookResponses).catch((error) =>
+      this.logger.error('Failed to record webhook responses', error),
+    );
+  }
+
+  private async recordWebhookResponses(
+    webhookResponses: WebhookResponse[],
+  ): Promise<void> {
+    await this.eventLogEmitterService.dispatch(
+      webhookResponses.map(({ workspaceId, properties }) =>
+        buildWorkspaceEventEnvelope(
+          computeEventContextFields({ workspaceId }),
+          WEBHOOK_RESPONSE_EVENT,
+          properties,
+        ),
       ),
     );
   }
 
-  private async callWebhook(data: WebhookJobData): Promise<void> {
+  private async callWebhook(data: WebhookJobData): Promise<WebhookResponse> {
     const commonPayload = {
       url: data.targetUrl,
       webhookId: data.webhookId,
       eventName: data.eventName,
     };
-    const eventLogContext = this.eventLogEmitterService.createContext({
-      workspaceId: data.workspaceId,
-    });
 
     try {
       const headers: Record<string, string> = {
@@ -89,30 +118,36 @@ export class CallWebhookJob {
 
       const success = response.status >= 200 && response.status < 300;
 
-      void eventLogContext.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
-        status: response.status,
-        success,
-        ...commonPayload,
-      });
-
       void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobWebhookCallCompleted,
         shouldStoreInCache: false,
       });
+
+      return {
+        workspaceId: data.workspaceId,
+        properties: {
+          status: response.status,
+          success,
+          ...commonPayload,
+        },
+      };
     } catch (err) {
       const isSSRFBlocked =
         err instanceof Error &&
         err.message.includes('internal IP address') &&
         err.message.includes('is not allowed');
 
-      void eventLogContext.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
-        success: false,
-        ...commonPayload,
-        ...(err.response && { status: err.response.status }),
-        ...(isSSRFBlocked && {
-          error: 'Webhook URL resolves to a private/internal IP address',
-        }),
-      });
+      return {
+        workspaceId: data.workspaceId,
+        properties: {
+          success: false,
+          ...commonPayload,
+          ...(err.response && { status: err.response.status }),
+          ...(isSSRFBlocked && {
+            error: 'Webhook URL resolves to a private/internal IP address',
+          }),
+        },
+      };
     }
   }
 }

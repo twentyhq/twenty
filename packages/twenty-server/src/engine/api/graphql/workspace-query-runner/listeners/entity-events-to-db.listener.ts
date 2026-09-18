@@ -30,6 +30,8 @@ export class EntityEventsToDbListener {
   constructor(
     @InjectMessageQueue(MessageQueue.entityEventsToDbQueue)
     private readonly entityEventsToDbQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.eventLogQueue)
+    private readonly eventLogQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly webhookQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.triggerQueue)
@@ -129,7 +131,7 @@ export class EntityEventsToDbListener {
 
     if (isAuditLogBatchEvent && action !== DatabaseEventAction.DESTROYED) {
       promises.push(
-        this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
+        this.eventLogQueueService.add<WorkspaceEventBatch<T>>(
           CreateEventLogFromInternalEvent.name,
           batchEvent,
           { retryLimit: 1 },
