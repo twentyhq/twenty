@@ -8,6 +8,9 @@ type BuildCursorKeysetConditionParams = {
   isForwardPagination: boolean;
   isEqualityCondition: boolean;
   canFieldHoldNullValue: boolean;
+  // Mirrors the LOWER() the SQL ordering applies to this column: the
+  // continuation has to compare on the same expression that produced the page
+  isCaseInsensitiveOrder: boolean;
   // Wraps a leaf filter (e.g. { gt: value }) into the field's filter path
   buildLeafCondition: (
     leafFilter: Record<string, unknown>,
@@ -34,6 +37,7 @@ export function buildCursorKeysetCondition({
   isForwardPagination,
   isEqualityCondition,
   canFieldHoldNullValue,
+  isCaseInsensitiveOrder,
   buildLeafCondition,
   // The strict operators compare exactly: the empty-value widening of 'is'
   // and 'eq' does not mirror the SQL scan order the cursor continues
@@ -41,9 +45,17 @@ export function buildCursorKeysetCondition({
     buildLeafCondition({ isStrictly: isNull ? 'NULL' : 'NOT_NULL' }),
 }: BuildCursorKeysetConditionParams): Record<string, unknown> | null {
   if (isEqualityCondition) {
-    return cursorValue === null
-      ? buildNullCheckCondition(true)
-      : buildLeafCondition({ eqStrict: cursorValue });
+    if (cursorValue === null) {
+      return buildNullCheckCondition(true);
+    }
+
+    // Rows tying under LOWER() are one tie for the ordering, so the branch
+    // handing over to the next key has to treat them as one tie too
+    return buildLeafCondition(
+      isCaseInsensitiveOrder
+        ? { eqStrictCaseInsensitive: cursorValue }
+        : { eqStrict: cursorValue },
+    );
   }
 
   const { isAscending, areNullsScannedLast } = getEffectiveScanOrder(
@@ -57,8 +69,16 @@ export function buildCursorKeysetCondition({
     return areNullsScannedLast ? null : buildNullCheckCondition(false);
   }
 
+  const strictComparisonOperator = isCaseInsensitiveOrder
+    ? isAscending
+      ? 'gtCaseInsensitive'
+      : 'ltCaseInsensitive'
+    : isAscending
+      ? 'gt'
+      : 'lt';
+
   const mainCondition = buildLeafCondition({
-    [isAscending ? 'gt' : 'lt']: cursorValue,
+    [strictComparisonOperator]: cursorValue,
   });
 
   if (areNullsScannedLast && canFieldHoldNullValue) {

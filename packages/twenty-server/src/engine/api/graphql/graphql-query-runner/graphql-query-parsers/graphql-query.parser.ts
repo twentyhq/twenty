@@ -11,6 +11,7 @@ import {
 import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderGroupByParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order-group-by.parser';
+import { renderOrderByColumnSql } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
 import {
   GraphqlQueryOrderFieldParser,
   type OrderByClause,
@@ -25,6 +26,18 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+
+// A column the ordering compares through LOWER() has to reach the query
+// builders with that expression already rendered: both drop the keys of an
+// order value they do not know. Every other column stays in the "alias.column"
+// form the builders resolve themselves.
+const buildOrderByExpressionForBuilder = (
+  columnExpression: string,
+  orderByCondition: OrderByClause,
+): string =>
+  orderByCondition.useLower === true || orderByCondition.castToText === true
+    ? renderOrderByColumnSql(columnExpression, orderByCondition)
+    : columnExpression;
 
 export class GraphqlQueryParser {
   private flatObjectMetadata: FlatObjectMetadata;
@@ -140,7 +153,22 @@ export class GraphqlQueryParser {
       });
     }
 
-    queryBuilder.orderBy(parseResult.orderBy);
+    // Both query builders drop the keys of an order value they do not know, so
+    // the LOWER()/::text of a case-insensitively ordered column has to reach
+    // them rendered into the ORDER BY expression itself
+    queryBuilder.orderBy(
+      Object.fromEntries(
+        Object.entries(parseResult.orderBy).map(
+          ([columnExpression, orderByCondition]) => [
+            buildOrderByExpressionForBuilder(
+              columnExpression,
+              orderByCondition,
+            ),
+            { order: orderByCondition.order, nulls: orderByCondition.nulls },
+          ],
+        ),
+      ),
+    );
 
     // Return parsed orderBy so caller can add relation columns after setFindOptions
     return parseResult.orderBy;
@@ -194,21 +222,10 @@ export class GraphqlQueryParser {
           ? ` ${orderByCondition.nulls}`
           : '';
 
-        // Convert "alias.column" to quoted SQL identifier "alias"."column"
-        const parts = orderByField.split('.');
-        const quotedColumn =
-          parts.length === 2
-            ? `"${parts[0]}"."${parts[1]}"`
-            : `"${orderByField}"`;
-
-        let columnExpr = quotedColumn;
-
-        if (orderByCondition.castToText) {
-          columnExpr = `${columnExpr}::text`;
-        }
-        if (orderByCondition.useLower) {
-          columnExpr = `LOWER(${columnExpr})`;
-        }
+        const columnExpr = renderOrderByColumnSql(
+          orderByField,
+          orderByCondition,
+        );
 
         return `${columnExpr} ${orderByCondition.order}${nullsCondition}`;
       },
@@ -237,10 +254,15 @@ export class GraphqlQueryParser {
 
     parsedOrderBys.forEach((orderByField, index) => {
       Object.entries(orderByField).forEach(([expression, direction]) => {
+        const columnExpr = buildOrderByExpressionForBuilder(
+          expression,
+          direction,
+        );
+
         if (index === 0) {
-          queryBuilder.orderBy(expression, direction.order, direction.nulls);
+          queryBuilder.orderBy(columnExpr, direction.order, direction.nulls);
         } else {
-          queryBuilder.addOrderBy(expression, direction.order, direction.nulls);
+          queryBuilder.addOrderBy(columnExpr, direction.order, direction.nulls);
         }
       });
     });
