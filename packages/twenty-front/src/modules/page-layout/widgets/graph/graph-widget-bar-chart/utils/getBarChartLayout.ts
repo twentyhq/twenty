@@ -81,12 +81,7 @@ const resolveMarginInputs = ({
       ? tickResult.tickValues.map((value) =>
           formatGraphValue(value, formatOptions),
         )
-      : tickConfiguration.categoryTickValues.map((value) =>
-          truncateTickLabel(
-            String(value),
-            tickConfiguration.maxLeftAxisTickLabelLength,
-          ),
-        );
+      : tickConfiguration.categoryTickValues.map((value) => String(value));
 
   return { bottomTickLabels, leftTickLabels };
 };
