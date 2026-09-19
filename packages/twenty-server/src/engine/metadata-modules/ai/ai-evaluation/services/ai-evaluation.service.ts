@@ -34,6 +34,7 @@ export class AiEvaluationService {
 
   async evaluate({
     workspaceId,
+    userWorkspaceId,
     modelId: requestedModelId,
     state,
     questions,
@@ -49,6 +50,12 @@ export class AiEvaluationService {
         `Evaluation model ${skippedModelId} is in the catalog but not runnable; check its provider credentials and that its SDK package is installed. Classifying on ${modelId}.`,
       );
     }
+
+    await this.aiBillingService.assertAiExecutionAllowed({
+      workspaceId,
+      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      spenders: { userWorkspaceId },
+    });
 
     const runner =
       runnerKind === 'evaluation-model'
@@ -67,6 +74,8 @@ export class AiEvaluationService {
       { usage },
       workspaceId,
       UsageOperationType.AI_WORKFLOW_TOKEN,
+      null,
+      userWorkspaceId,
     );
 
     return { modelId, runnerKind, answers, usage };

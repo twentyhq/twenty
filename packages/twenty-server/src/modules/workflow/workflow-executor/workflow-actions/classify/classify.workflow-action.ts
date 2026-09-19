@@ -10,6 +10,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowClassifyAction } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/guards/is-workflow-classify-action.guard';
 import { type WorkflowClassifyActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/types/workflow-classify-action-input.type';
@@ -17,7 +18,10 @@ import { buildEvaluationQuestions } from 'src/modules/workflow/workflow-executor
 
 @Injectable()
 export class ClassifyWorkflowAction implements WorkflowAction {
-  constructor(private readonly aiEvaluationService: AiEvaluationService) {}
+  constructor(
+    private readonly aiEvaluationService: AiEvaluationService,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
+  ) {}
 
   async execute({
     currentStepId,
@@ -39,12 +43,21 @@ export class ClassifyWorkflowAction implements WorkflowAction {
       context,
     ) as WorkflowClassifyActionInput;
 
+    const executionContext =
+      await this.workflowExecutionContextService.getExecutionContext(runInfo);
+
+    const userWorkspaceId =
+      executionContext.authContext.type === 'user'
+        ? executionContext.authContext.userWorkspaceId
+        : null;
+
     const {
       answers,
       modelId: resolvedModelId,
       runnerKind,
     } = await this.aiEvaluationService.evaluate({
       workspaceId: runInfo.workspaceId,
+      userWorkspaceId,
       modelId,
       state,
       questions: buildEvaluationQuestions(questions),

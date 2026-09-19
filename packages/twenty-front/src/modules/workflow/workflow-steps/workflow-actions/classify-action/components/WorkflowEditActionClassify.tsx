@@ -51,13 +51,28 @@ type WorkflowEditActionClassifyProps = {
       };
 };
 
-const buildEmptyQuestion = (): WorkflowClassifyQuestion => ({
-  id: v4(),
-  name: '',
-  type: 'choice',
-  instructions: '',
-  criteria: [],
-});
+// The settings schema requires an answer name, so a blank one makes the whole
+// step unsaveable the moment a question is added. New questions get a unique
+// placeholder the author can rename.
+const buildEmptyQuestion = (
+  existingQuestions: WorkflowClassifyQuestion[],
+): WorkflowClassifyQuestion => {
+  const takenNames = new Set(existingQuestions.map(({ name }) => name));
+
+  let suffix = existingQuestions.length + 1;
+
+  while (takenNames.has(`question_${suffix}`)) {
+    suffix += 1;
+  }
+
+  return {
+    id: v4(),
+    name: `question_${suffix}`,
+    type: 'choice',
+    instructions: '',
+    criteria: [],
+  };
+};
 
 export const WorkflowEditActionClassify = ({
   action,
@@ -206,7 +221,9 @@ export const WorkflowEditActionClassify = ({
           <Button
             startIcon={<IconPlus />}
             onClick={() =>
-              updateInput({ questions: [...questions, buildEmptyQuestion()] })
+              updateInput({
+                questions: [...questions, buildEmptyQuestion(questions)],
+              })
             }
           >
             {t`Add question`}
