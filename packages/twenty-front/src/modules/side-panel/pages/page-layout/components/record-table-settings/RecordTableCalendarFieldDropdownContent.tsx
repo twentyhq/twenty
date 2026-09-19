@@ -1,3 +1,5 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
@@ -10,7 +12,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type RecordTableCalendarFieldDropdownContentProps = {
   pageLayoutId: string;
@@ -71,16 +73,24 @@ export const RecordTableCalendarFieldDropdownContent = ({
               closeDropdown();
             }}
           >
-            <MenuItemSelect
-              text={fieldMetadataItem.label}
-              LeftIcon={getIcon(fieldMetadataItem.icon)}
-              selected={currentCalendarFieldMetadataId === fieldMetadataItem.id}
+            <ListItem
               focused={selectedItemId === fieldMetadataItem.id}
               onClick={() => {
                 handleCalendarFieldChange(fieldMetadataItem);
                 closeDropdown();
               }}
-            />
+              role="option"
+              aria-selected={
+                currentCalendarFieldMetadataId === fieldMetadataItem.id
+              }
+              selected={currentCalendarFieldMetadataId === fieldMetadataItem.id}
+              indicator="check"
+              startIcon={
+                <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+              }
+            >
+              <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
+            </ListItem>
           </SelectableListItem>
         ))}
       </SelectableList>

@@ -1,3 +1,4 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -7,7 +8,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
@@ -59,16 +60,20 @@ export const DropdownMenuInnerSelect = ({
         <DropdownContent widthInPixels={widthInPixels}>
           <DropdownMenuItemsContainer>
             {options.map((selectOption) => (
-              <MenuItemSelect
+              <ListItem
                 key={`dropdown-menu-inner-select-item-${selectOption.value}`}
                 onClick={() => {
                   onChange(selectOption);
                   closeDropdown(dropdownId);
                 }}
-                text={selectOption.label}
                 disabled={selectOption.disabled}
+                role="option"
+                aria-selected={selectOption.value === selectedOption.value}
                 selected={selectOption.value === selectedOption.value}
-              />
+                indicator="check"
+              >
+                <OverflowingTextWithTooltip text={selectOption.label} />
+              </ListItem>
             ))}
           </DropdownMenuItemsContainer>
         </DropdownContent>

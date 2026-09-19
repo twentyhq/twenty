@@ -1,3 +1,5 @@
+import { Tag, ColorSample } from 'twenty-ui/primitives/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { IconHome, IconUser } from 'twenty-ui/icon';
 import {
@@ -10,13 +12,6 @@ import {
   MenuItemDraggable,
   MenuItemHotKeys,
   MenuItemLeftContent,
-  MenuItemMultiSelect,
-  MenuItemMultiSelectAvatar,
-  MenuItemMultiSelectTag,
-  MenuItemSelect,
-  MenuItemSelectAvatar,
-  MenuItemSelectColor,
-  MenuItemSelectTag,
   MenuItemSuggestion,
   MenuPicker,
   NavigationBar,
@@ -28,9 +23,9 @@ import {
   StyledMenuItemIconCheck,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
-  StyledMenuItemSelect,
   UndecoratedLink,
   ListItem,
+  DEFAULT_COLOR_LABELS,
 } from 'twenty-ui/primitives/navigation';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
@@ -101,35 +96,46 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     node: <MenuItemHotKeys hotKeys={['⌘', 'K']} />,
   },
   {
-    name: 'MenuItemMultiSelect',
+    name: 'ListItem multiple selection',
     node: (
-      <MenuItemMultiSelect
-        text="Multi select"
-        selected={false}
+      <ListItem
         className=""
-        onSelectChange={() => {}}
-      />
-    ),
-  },
-  {
-    name: 'MenuItemMultiSelectAvatar',
-    node: (
-      <MenuItemMultiSelectAvatar
-        text="Multi avatar"
-        selected={true}
-        onSelectChange={() => {}}
-      />
-    ),
-  },
-  {
-    name: 'MenuItemMultiSelectTag',
-    node: (
-      <MenuItemMultiSelectTag
-        text="Tag"
-        color="blue"
+        role="option"
+        aria-selected={false}
         selected={false}
+        indicator="checkbox"
         onClick={() => {}}
-      />
+      >
+        <OverflowingTextWithTooltip text={'Multi select'} />
+      </ListItem>
+    ),
+  },
+  {
+    name: 'ListItem multiple avatar selection',
+    node: (
+      <ListItem
+        role="option"
+        aria-selected={true}
+        selected={true}
+        indicator="checkbox"
+        onClick={() => {}}
+      >
+        <OverflowingTextWithTooltip text={'Multi avatar'} />
+      </ListItem>
+    ),
+  },
+  {
+    name: 'ListItem multiple tag selection',
+    node: (
+      <ListItem
+        onClick={() => {}}
+        role="option"
+        aria-selected={false}
+        selected={false}
+        indicator="checkbox"
+      >
+        <Tag color={'blue'}>{'Tag'}</Tag>
+      </ListItem>
     ),
   },
   {
@@ -146,38 +152,62 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'StyledMenuItemSelect',
-    node: <StyledMenuItemSelect>Select base</StyledMenuItemSelect>,
-  },
-  {
-    name: 'MenuItemSelect',
-    node: <MenuItemSelect text="Select" selected={true} onClick={() => {}} />,
-  },
-  {
-    name: 'MenuItemSelectAvatar',
+    name: 'ListItem selection',
     node: (
-      <MenuItemSelectAvatar
-        text="Select avatar"
-        selected={true}
+      <ListItem
         onClick={() => {}}
-      />
+        role="option"
+        aria-selected={true}
+        selected={true}
+        indicator="check"
+      >
+        <OverflowingTextWithTooltip text={'Select'} />
+      </ListItem>
     ),
   },
   {
-    name: 'MenuItemSelectColor',
+    name: 'ListItem avatar selection',
     node: (
-      <MenuItemSelectColor color="blue" selected={true} onClick={() => {}} />
+      <ListItem
+        onClick={() => {}}
+        role="option"
+        aria-selected={true}
+        selected={true}
+        indicator="check"
+      >
+        <OverflowingTextWithTooltip text={'Select avatar'} />
+      </ListItem>
     ),
   },
   {
-    name: 'MenuItemSelectTag',
+    name: 'ListItem color selection',
     node: (
-      <MenuItemSelectTag
-        color="blue"
-        text="Select tag"
-        selected={true}
+      <ListItem
         onClick={() => {}}
-      />
+        role="option"
+        aria-selected={true}
+        selected={true}
+        indicator="check"
+        startIcon={<ColorSample colorName={'blue'} />}
+      >
+        <OverflowingTextWithTooltip text={DEFAULT_COLOR_LABELS['blue']} />
+      </ListItem>
+    ),
+  },
+  {
+    name: 'ListItem tag selection',
+    node: (
+      <ListItem
+        onClick={() => {}}
+        role="option"
+        aria-selected={true}
+        selected={true}
+        indicator="check"
+      >
+        <Tag color={'blue'} borderStyle="dashed" variant={'soft'}>
+          {'Select tag'}
+        </Tag>
+      </ListItem>
     ),
   },
   {
