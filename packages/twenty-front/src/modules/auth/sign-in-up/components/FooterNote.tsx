@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 
 import { useWorkspaceBypass } from '@/auth/sign-in-up/hooks/useWorkspaceBypass';
+import { getSiteUrl } from '@/auth/utils/getSiteUrl';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -64,6 +65,7 @@ export const FooterNote = ({
   secondaryAgreement = 'privacyPolicy',
 }: FooterNoteProps) => {
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
+  const { i18n } = useLingui();
 
   const { shouldOfferBypass, shouldUseBypass, enableBypass } =
     useWorkspaceBypass();
@@ -73,7 +75,7 @@ export const FooterNote = ({
       <StyledCopyContainer>
         <Trans>By using Twenty, you agree to the</Trans>{' '}
         <a
-          href="https://twenty.com/legal/terms"
+          href={getSiteUrl(i18n.locale, 'terms')}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -90,7 +92,7 @@ export const FooterNote = ({
           </a>
         ) : (
           <a
-            href="https://twenty.com/legal/privacy"
+            href={getSiteUrl(i18n.locale, 'privacy-policy')}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -113,7 +115,7 @@ export const FooterNote = ({
         </>
       )}
       <a
-        href="https://twenty.com/legal/privacy"
+        href={getSiteUrl(i18n.locale, 'privacy-policy')}
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -121,7 +123,7 @@ export const FooterNote = ({
       </a>
       <StyledSeparator>•</StyledSeparator>
       <a
-        href="https://twenty.com/legal/terms"
+        href={getSiteUrl(i18n.locale, 'terms')}
         target="_blank"
         rel="noopener noreferrer"
       >
