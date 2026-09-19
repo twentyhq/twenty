@@ -56,6 +56,22 @@ describe('isMatchingStringFilter', () => {
         }),
       ).toBe(false);
     });
+
+    it('value matches like pattern with underscore wildcard', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { like: 't_st' },
+          value: 'test',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { like: 't_st' },
+          value: 'toast',
+        }),
+      ).toBe(false);
+    });
   });
 
   describe('ilike', () => {
@@ -73,6 +89,22 @@ describe('isMatchingStringFilter', () => {
         isMatchingStringFilter({
           stringFilter: { ilike: 'AB%' },
           value: 'test',
+        }),
+      ).toBe(false);
+    });
+
+    it('value matches ilike pattern with underscore wildcard', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: 'T_ST' },
+          value: 'test',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: 'T_ST' },
+          value: 'toast',
         }),
       ).toBe(false);
     });
@@ -177,4 +209,39 @@ describe('isMatchingStringFilter', () => {
       ).toBe(false);
     });
   });
+
+  describe('escaped wildcards', () => {
+    it('should match escaped underscore literally', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { like: 't\\_st' },
+          value: 't_st',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { like: 't\\_st' },
+          value: 'test',
+        }),
+      ).toBe(false);
+    });
+
+    it('should match escaped percent sign literally', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { like: '100\\%' },
+          value: '100%',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { like: '100\\%' },
+          value: '1000',
+        }),
+      ).toBe(false);
+    });
+  });
 });
+

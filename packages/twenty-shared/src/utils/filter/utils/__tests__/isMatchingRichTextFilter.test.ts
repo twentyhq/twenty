@@ -28,6 +28,110 @@ describe('isMatchingRichTextFilter', () => {
         }),
       ).toBe(true);
     });
+
+    it('should handle SQL single-character wildcard (_)', () => {
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: 'h_llo' } },
+          value: 'hello',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: 'h_llo' } },
+          value: 'hllo',
+        }),
+      ).toBe(false);
+
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: '%h_llo%' } },
+          value: 'prefix hillo suffix',
+        }),
+      ).toBe(true);
+    });
+
+    it('should match across newlines in multiline markdown', () => {
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: '%first%second%' } },
+          value: '# Title\nfirst paragraph\nsome text\nsecond paragraph',
+        }),
+      ).toBe(true);
+    });
+
+    it('should escape regex special characters while preserving SQL wildcards', () => {
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: '%price: $10.00 (tax incl.)%' } },
+          value: 'Total price: $10.00 (tax incl.) for the item',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: '%price: $10_00%' } },
+          value: 'Total price: $10.00 for the item',
+        }),
+      ).toBe(true);
+    });
+
+    it('should support object value with markdown property', () => {
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: '%note%' } },
+          value: { markdown: 'This is a note', blocknote: '{"root":{}}' },
+        }),
+      ).toBe(true);
+    });
+  });
+
+  describe('blocknote ilike', () => {
+    it('should match blocknote content with wildcards', () => {
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { blocknote: { ilike: '%content%' } },
+          value: { blocknote: 'rich text content here', markdown: 'other' },
+        }),
+      ).toBe(true);
+    });
+  });
+
+  describe('direct ilike and like predicates', () => {
+    it('should support direct ilike predicate on string value', () => {
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { ilike: '%direct%' } as any,
+          value: 'direct content',
+        }),
+      ).toBe(true);
+    });
+
+    it('should support direct ilike predicate on object value', () => {
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { ilike: '%direct%' } as any,
+          value: { markdown: 'some direct text' },
+        }),
+      ).toBe(true);
+    });
+
+    it('should support escaped wildcards in markdown ilike', () => {
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: '%100\\%%' } },
+          value: 'Coverage is 100% complete',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: '%100\\%%' } },
+          value: 'Coverage is 1000 complete',
+        }),
+      ).toBe(false);
+    });
   });
 
   describe('default', () => {
@@ -41,3 +145,4 @@ describe('isMatchingRichTextFilter', () => {
     });
   });
 });
+
