@@ -36,7 +36,6 @@ import {
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
-import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
@@ -318,14 +317,7 @@ export class BullMQDriver
     const queueOptions: JobsOptions = {
       priority: options?.priority,
       repeat: options?.repeat,
-      removeOnComplete: {
-        age: QUEUE_RETENTION.completedMaxAge,
-        count: QUEUE_RETENTION.completedMaxCount,
-      },
-      removeOnFail: {
-        age: QUEUE_RETENTION.failedMaxAge,
-        count: QUEUE_RETENTION.failedMaxCount,
-      },
+      ...this.buildRetentionOptions(),
     };
 
     await this.queueMap[queueName].upsertJobScheduler(
@@ -405,16 +397,33 @@ export class BullMQDriver
             jitter: options.backoff.jitter,
           }
         : undefined,
-      removeOnComplete: {
-        age: QUEUE_RETENTION.completedMaxAge,
-        count: QUEUE_RETENTION.completedMaxCount,
-      },
-      removeOnFail: {
-        age: QUEUE_RETENTION.failedMaxAge,
-        count: QUEUE_RETENTION.failedMaxCount,
-      },
+      ...this.buildRetentionOptions(),
       delay: options?.delay,
       broadcastTo: options?.broadcastTo,
+    };
+  }
+
+  private buildRetentionOptions(): Pick<
+    JobsOptions,
+    'removeOnComplete' | 'removeOnFail'
+  > {
+    return {
+      removeOnComplete: {
+        age: this.twentyConfigService.get(
+          'QUEUE_COMPLETED_JOBS_RETENTION_MAX_AGE_SECONDS',
+        ),
+        count: this.twentyConfigService.get(
+          'QUEUE_COMPLETED_JOBS_RETENTION_MAX_COUNT',
+        ),
+      },
+      removeOnFail: {
+        age: this.twentyConfigService.get(
+          'QUEUE_FAILED_JOBS_RETENTION_MAX_AGE_SECONDS',
+        ),
+        count: this.twentyConfigService.get(
+          'QUEUE_FAILED_JOBS_RETENTION_MAX_COUNT',
+        ),
+      },
     };
   }
 

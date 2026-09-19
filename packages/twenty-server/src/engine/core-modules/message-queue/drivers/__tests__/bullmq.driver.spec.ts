@@ -23,11 +23,25 @@ jest.mock('uuid', () => ({ v4: () => 'generated-uuid-000000000000000000000' }));
 
 const WAITING_JOB_ID = 'sync-catalog-ws-1-5c98b035-5b09-4550-a4fb-b52056c494d1';
 
+const RETENTION_CONFIG: Record<string, number> = {
+  QUEUE_COMPLETED_JOBS_RETENTION_MAX_AGE_SECONDS: 14400,
+  QUEUE_COMPLETED_JOBS_RETENTION_MAX_COUNT: 1000,
+  QUEUE_FAILED_JOBS_RETENTION_MAX_AGE_SECONDS: 604800,
+  QUEUE_FAILED_JOBS_RETENTION_MAX_COUNT: 1000,
+};
+
+const buildConfigServiceMock = (
+  overrides: Record<string, number> = {},
+): never =>
+  ({
+    get: (key: string) => ({ ...RETENTION_CONFIG, ...overrides })[key],
+  }) as never;
+
 describe('BullMQDriver deduplication', () => {
   const driver = new BullMQDriver(
     {} as never,
     {} as never,
-    {} as never,
+    buildConfigServiceMock(),
     {} as never,
   );
 
@@ -133,11 +147,44 @@ describe('BullMQDriver deduplication', () => {
   });
 });
 
+describe('BullMQDriver retention', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockAdd.mockResolvedValue({ id: 'job-id' });
+  });
+
+  it('applies the configured retention bounds to added jobs', async () => {
+    const driver = new BullMQDriver(
+      {} as never,
+      {} as never,
+      buildConfigServiceMock({
+        QUEUE_COMPLETED_JOBS_RETENTION_MAX_COUNT: 0,
+        QUEUE_COMPLETED_JOBS_RETENTION_MAX_AGE_SECONDS: 60,
+      }),
+      {} as never,
+    );
+
+    driver.register(MessageQueue.workspaceQueue);
+
+    await driver.add(MessageQueue.workspaceQueue, 'job', {});
+
+    expect(mockAdd).toHaveBeenCalledTimes(1);
+    expect(mockAdd).toHaveBeenCalledWith(
+      'job',
+      {},
+      expect.objectContaining({
+        removeOnComplete: { age: 60, count: 0 },
+        removeOnFail: { age: 604800, count: 1000 },
+      }),
+    );
+  });
+});
+
 describe('BullMQDriver progress', () => {
   const driver = new BullMQDriver(
     {} as never,
     { recordHistogram: jest.fn() } as never,
-    {} as never,
+    buildConfigServiceMock(),
     {} as never,
   );
 
