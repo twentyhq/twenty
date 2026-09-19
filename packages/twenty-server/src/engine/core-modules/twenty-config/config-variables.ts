@@ -35,6 +35,7 @@ import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.en
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
+import { AddressAutocompleteProvider } from 'src/engine/core-modules/geo-map/enums/address-autocomplete-provider.enum';
 import {
   LoggerDriverType,
   type TwentyLogLevel,
@@ -2177,7 +2178,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description: 'Enable or disable google map api usage',
+    description:
+      'Enable or disable address autocomplete (see ADDRESS_AUTOCOMPLETE_PROVIDER)',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -2185,11 +2187,28 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Address autocomplete provider: GOOGLE (Google Places, requires GOOGLE_MAP_API_KEY) or BAN (French Base Adresse Nationale, no key needed)',
+    type: ConfigVariableType.ENUM,
+    options: Object.values(AddressAutocompleteProvider),
+  })
+  @IsOptional()
+  @CastToUpperSnakeCase()
+  @IsEnum(AddressAutocompleteProvider)
+  ADDRESS_AUTOCOMPLETE_PROVIDER: AddressAutocompleteProvider =
+    AddressAutocompleteProvider.GOOGLE;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description: 'Google map api key for places and map',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
+  @ValidateIf(
+    (env) =>
+      env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED &&
+      env.ADDRESS_AUTOCOMPLETE_PROVIDER === AddressAutocompleteProvider.GOOGLE,
+  )
   GOOGLE_MAP_API_KEY: string;
 
   @ConfigVariablesMetadata({
