@@ -2124,6 +2124,21 @@ enum ModelFamily {
   GROK
 }
 
+type ClientAiEvaluationModelConfig {
+  modelId: String!
+  label: String!
+  description: String
+  providerLabel: String
+  isAvailable: Boolean!
+  supportedQuestionTypes: [String!]!
+  maxCriteriaPerQuestion: Float
+  maxScoreLevels: Float
+  medianLatencyMs: Float
+  inputCostPerMillionTokens: Float
+  outputCostPerMillionTokens: Float
+  isDeprecated: Boolean
+}
+
 type ClientAiModelTierConfig {
   tier: AiModelTier!
   modelId: String!
@@ -2190,6 +2205,7 @@ type ClientConfig {
   authProviders: AuthProviders!
   billing: Billing!
   aiModels: [ClientAiModelConfig!]!
+  aiEvaluationModels: [ClientAiEvaluationModelConfig!]!
   aiModelTiers: [ClientAiModelTierConfig!]!
   signInPrefilled: Boolean!
   isMultiWorkspaceEnabled: Boolean!

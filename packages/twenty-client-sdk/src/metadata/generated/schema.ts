@@ -1731,6 +1731,22 @@ export interface ClientAiModelConfig {
 
 export type ModelFamily = 'GPT' | 'CLAUDE' | 'GEMINI' | 'MISTRAL' | 'GROK'
 
+export interface ClientAiEvaluationModelConfig {
+    modelId: Scalars['String']
+    label: Scalars['String']
+    description?: Scalars['String']
+    providerLabel?: Scalars['String']
+    isAvailable: Scalars['Boolean']
+    supportedQuestionTypes: Scalars['String'][]
+    maxCriteriaPerQuestion?: Scalars['Float']
+    maxScoreLevels?: Scalars['Float']
+    medianLatencyMs?: Scalars['Float']
+    inputCostPerMillionTokens?: Scalars['Float']
+    outputCostPerMillionTokens?: Scalars['Float']
+    isDeprecated?: Scalars['Boolean']
+    __typename: 'ClientAiEvaluationModelConfig'
+}
+
 export interface ClientAiModelTierConfig {
     tier: AiModelTier
     modelId: Scalars['String']
@@ -1800,6 +1816,7 @@ export interface ClientConfig {
     authProviders: AuthProviders
     billing: Billing
     aiModels: ClientAiModelConfig[]
+    aiEvaluationModels: ClientAiEvaluationModelConfig[]
     aiModelTiers: ClientAiModelTierConfig[]
     signInPrefilled: Scalars['Boolean']
     isMultiWorkspaceEnabled: Scalars['Boolean']
@@ -5391,6 +5408,23 @@ export interface ClientAiModelConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ClientAiEvaluationModelConfigGenqlSelection{
+    modelId?: boolean | number
+    label?: boolean | number
+    description?: boolean | number
+    providerLabel?: boolean | number
+    isAvailable?: boolean | number
+    supportedQuestionTypes?: boolean | number
+    maxCriteriaPerQuestion?: boolean | number
+    maxScoreLevels?: boolean | number
+    medianLatencyMs?: boolean | number
+    inputCostPerMillionTokens?: boolean | number
+    outputCostPerMillionTokens?: boolean | number
+    isDeprecated?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ClientAiModelTierConfigGenqlSelection{
     tier?: boolean | number
     modelId?: boolean | number
@@ -5465,6 +5499,7 @@ export interface ClientConfigGenqlSelection{
     authProviders?: AuthProvidersGenqlSelection
     billing?: BillingGenqlSelection
     aiModels?: ClientAiModelConfigGenqlSelection
+    aiEvaluationModels?: ClientAiEvaluationModelConfigGenqlSelection
     aiModelTiers?: ClientAiModelTierConfigGenqlSelection
     signInPrefilled?: boolean | number
     isMultiWorkspaceEnabled?: boolean | number
@@ -8963,6 +8998,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isClientAiModelConfig = (obj?: { __typename?: any } | null): obj is ClientAiModelConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientAiModelConfig"')
       return ClientAiModelConfig_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ClientAiEvaluationModelConfig_possibleTypes: string[] = ['ClientAiEvaluationModelConfig']
+    export const isClientAiEvaluationModelConfig = (obj?: { __typename?: any } | null): obj is ClientAiEvaluationModelConfig => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isClientAiEvaluationModelConfig"')
+      return ClientAiEvaluationModelConfig_possibleTypes.includes(obj.__typename)
     }
     
 
