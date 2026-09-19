@@ -138,6 +138,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         joinColumnName: 'companyId',
       },
     ),
+    createMockFlatFieldMetadata('users-id', 'users', FieldMetadataType.ARRAY),
   ];
 
   const flatObjectMetadata = createMockFlatObjectMetadata(
@@ -156,6 +157,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       addressCity: 'Paris',
     },
     companyId: 'company-1',
+    users: ['user-1', 'user-2'],
     deletedAt: null,
     id: 'record-1',
     createdAt: new Date().toISOString(),
@@ -352,6 +354,26 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       isRecordMatchingRLSRowLevelPermissionPredicate({
         record: { ...baseRecord, company: { id: 'company-1' } } as ObjectRecord,
         filter: { company: { is: 'NULL' } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+  });
+
+  it('matches an array CONTAINS current-user filter that wraps the id in SQL wildcards', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: { users: { containsIlike: '%user-1%' } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: { users: { containsIlike: '%user-999%' } },
         flatObjectMetadata,
         flatFieldMetadataMaps,
       }),

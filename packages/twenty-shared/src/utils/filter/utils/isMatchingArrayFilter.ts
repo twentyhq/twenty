@@ -1,5 +1,7 @@
 import { type ArrayFilter } from '@/types';
 
+import { isMatchingStringFilter } from './isMatchingStringFilter';
+
 export const isMatchingArrayFilter = ({
   arrayFilter,
   value,
@@ -19,10 +21,17 @@ export const isMatchingArrayFilter = ({
       return Array.isArray(value) && value.length === 0;
     }
     case arrayFilter.containsIlike !== undefined: {
-      const searchTerm = arrayFilter.containsIlike.toLowerCase();
+      const ilikePattern = arrayFilter.containsIlike;
+
+      // Postgres unnest(array) ILIKE :pattern treats % as a wildcard
       return (
         Array.isArray(value) &&
-        value.some((item) => item.toLowerCase().includes(searchTerm))
+        value.some((item) =>
+          isMatchingStringFilter({
+            stringFilter: { ilike: ilikePattern },
+            value: item,
+          }),
+        )
       );
     }
     default: {
