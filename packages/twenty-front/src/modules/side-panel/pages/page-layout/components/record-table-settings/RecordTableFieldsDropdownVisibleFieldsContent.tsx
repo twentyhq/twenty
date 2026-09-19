@@ -70,23 +70,19 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
     )
     .toSorted(sortByProperty('position'));
 
+  // Item indices are positions in draggableRecordFields, so the drop resolves
+  // against the exact list that was rendered.
   const handleDragEnd = (result: DraggableListDropResult) => {
-    if (
-      !result.destination ||
-      result.destination.index === 1 ||
-      result.source.index === 1
-    ) {
+    if (!isDefined(result.destination)) {
       return;
     }
 
     const updatedField = reorderVisibleRecordFields({
-      fromIndex: result.source.index - 1,
-      toIndex: result.destination.index - 1,
+      recordFieldToMove: draggableRecordFields[result.source.index],
+      targetRecordField: draggableRecordFields[result.destination.index],
     });
 
-    if (isDefined(updatedField)) {
-      onFieldUpdated?.(updatedField.id, { position: updatedField.position });
-    }
+    onFieldUpdated?.(updatedField.id, { position: updatedField.position });
   };
 
   const handleHideField = (fieldMetadataId: string) => {
@@ -117,10 +113,6 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
             draggableItems={
               <>
                 {draggableRecordFields.map((recordField, index) => {
-                  const fieldIndex =
-                    index +
-                    (isDefined(fieldMetadataItemLabelIdentifier) ? 1 : 0);
-
                   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
                     recordField.fieldMetadataItemId,
                   );
@@ -129,7 +121,7 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                     <DraggableItem
                       key={recordField.fieldMetadataItemId}
                       draggableId={recordField.fieldMetadataItemId}
-                      index={fieldIndex + 1}
+                      index={index}
                       itemComponent={
                         <MenuItemDraggable
                           LeftIcon={getIcon(fieldMetadataItem.icon)}
