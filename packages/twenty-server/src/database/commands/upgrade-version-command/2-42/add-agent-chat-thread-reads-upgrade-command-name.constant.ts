@@ -1,2 +1,2 @@
 export const ADD_AGENT_CHAT_THREAD_READS_UPGRADE_COMMAND_NAME =
-  '2.42.0_AddAgentChatThreadReadsFastInstanceCommand_1789750766494';
+  '2.42.0_AddAgentChatThreadReadsFastInstanceCommand_1789850200006';
