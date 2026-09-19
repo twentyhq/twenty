@@ -154,5 +154,48 @@ describe('provider-options.util', () => {
         },
       ]);
     });
+
+    it('moves the breakpoint instead of stacking it across steps', () => {
+      const stepOne = injectCacheBreakpoint(
+        [
+          {
+            role: 'system',
+            content: 'system',
+            providerOptions: {
+              bedrock: { cachePoint: { type: 'default' } },
+            },
+          },
+          { role: 'user', content: 'first' },
+          { role: 'user', content: 'second' },
+        ],
+        AI_SDK_BEDROCK,
+      );
+
+      const stepTwo = injectCacheBreakpoint(
+        [
+          ...stepOne,
+          { role: 'assistant', content: 'thinking' },
+          { role: 'user', content: 'third' },
+        ],
+        AI_SDK_BEDROCK,
+      );
+
+      const withCachePoint = stepTwo.filter(
+        (message) => message.providerOptions?.bedrock?.cachePoint !== undefined,
+      );
+
+      // system + last message only
+      expect(withCachePoint).toHaveLength(2);
+      expect(stepTwo[0].providerOptions).toEqual({
+        bedrock: {
+          cachePoint: { type: 'default' },
+        },
+      });
+      expect(stepTwo[stepTwo.length - 1].providerOptions).toEqual({
+        bedrock: {
+          cachePoint: { type: 'default' },
+        },
+      });
+    });
   });
 });
