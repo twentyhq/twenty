@@ -13,6 +13,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   buildManualTriggerMetadataNode,
+  getClassificationOutputSchema,
   WORKFLOW_TRIGGER_METADATA_KEY,
   WORKFLOW_TRIGGER_PAYLOAD_KEY,
   WORKFLOW_TRIGGER_RECORD_LABEL,
@@ -75,6 +76,8 @@ export const computeStepOutputSchema = ({
   }
 
   switch (stepType) {
+    case 'CLASSIFY':
+      return getClassificationOutputSchema();
     case 'DATABASE_EVENT': {
       const eventName = step.settings?.eventName;
 

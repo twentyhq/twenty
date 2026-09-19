@@ -14,6 +14,7 @@ export const getActionIcon = (actionType: WorkflowActionType) => {
     case 'FIND_RECORDS':
     case 'PICK_RECORD':
       return RECORD_ACTIONS.find((item) => item.type === actionType)?.icon;
+    case 'CLASSIFY':
     case 'AI_AGENT':
       return AI_ACTIONS.find((item) => item.type === actionType)?.icon;
     case 'CODE':

@@ -14,6 +14,7 @@ const EXPECTED_PROVIDER_NAMES = [
   'google',
   'xai',
   'mistral',
+  'typesafe',
 ];
 
 describe('ai-providers.json integrity', () => {
@@ -40,7 +41,9 @@ describe('ai-providers.json integrity', () => {
         expect(model.inputCostPerMillionTokens).toBeDefined();
         expect(model.outputCostPerMillionTokens).toBeDefined();
         expect(model.contextWindowTokens).toBeGreaterThan(0);
-        expect(model.maxOutputTokens).toBeGreaterThan(0);
+        if (model.kind !== 'evaluation') {
+          expect(model.maxOutputTokens).toBeGreaterThan(0);
+        }
       });
     });
   });
@@ -99,10 +102,16 @@ describe('ai-providers.json integrity', () => {
     });
   });
 
-  it('should have npm field set for all providers', () => {
+  it('should declare a transport for all providers', () => {
     Object.values(PROVIDERS).forEach((config) => {
-      expect(config.npm).toBeDefined();
-      expect(config.npm).toMatch(/^@ai-sdk\//);
+      if (config.evaluationAdapter) {
+        expect(config.npm).toBeUndefined();
+        expect(
+          config.models?.every((model) => model.kind === 'evaluation'),
+        ).toBe(true);
+      } else {
+        expect(config.npm).toMatch(/^@ai-sdk\//);
+      }
     });
   });
 });

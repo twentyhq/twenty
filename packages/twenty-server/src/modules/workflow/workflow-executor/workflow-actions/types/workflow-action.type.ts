@@ -1,3 +1,4 @@
+import { type WorkflowClassifyActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/types/workflow-classify-action-settings.type';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type WorkflowAiAgentActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-settings.type';
@@ -128,7 +129,13 @@ export type WorkflowDelayAction = BaseWorkflowAction & {
   settings: WorkflowDelayActionSettings;
 };
 
+export type WorkflowClassifyAction = BaseWorkflowAction & {
+  type: WorkflowActionType.CLASSIFY;
+  settings: WorkflowClassifyActionSettings;
+};
+
 export type WorkflowAction =
+  | WorkflowClassifyAction
   | WorkflowCodeAction
   | WorkflowLogicFunctionAction
   | WorkflowSendEmailAction

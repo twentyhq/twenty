@@ -18,6 +18,7 @@ export const getAiModelPinOptions = ({
   aiModels
     .filter(
       (model) =>
+        model.kind !== 'evaluation' &&
         !isDefined(model.effort) &&
         (!model.isDeprecated || model.modelId === keepModelId),
     )

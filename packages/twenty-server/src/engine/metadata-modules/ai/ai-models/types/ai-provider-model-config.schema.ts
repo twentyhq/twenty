@@ -51,6 +51,18 @@ export const aiProviderModelConfigSchema = z
       path: ['costPerMinute'],
     },
   )
+  .refine(
+    (model) =>
+      model.kind !== 'evaluation' ||
+      (isDefined(model.inputCostPerMillionTokens) &&
+        model.inputCostPerMillionTokens >= 0 &&
+        isDefined(model.outputCostPerMillionTokens) &&
+        model.outputCostPerMillionTokens >= 0),
+    {
+      message:
+        'Evaluation models require explicit nonnegative input and output token prices',
+    },
+  )
   .superRefine((model, context) => {
     // A variant reads this map by its own effort, so a reading filed under
     // another effort's key, or under an effort no variant can pin, would hand

@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type LanguageModel, type TranscriptionModel } from 'ai';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  AI_MODEL_TIERS,
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
   DEFAULT_AI_AGENT_MODEL_TIER,
   getAiModelTierFromModelId,
@@ -22,12 +21,14 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { TypeSafeClassificationModel } from 'src/engine/metadata-modules/ai/ai-models/providers/typesafe-classification-model';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
 import {
   SdkProviderFactoryService,
   type AiSdkProviderInstance,
 } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
+import { type AiClassificationModel } from 'src/engine/metadata-modules/ai/ai-models/types/ai-classification-model.type';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { type AiTranscriptionModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-transcription-model-config.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
@@ -77,6 +78,7 @@ export class AiModelRegistryService {
     string,
     { providerName: string; modelDef: AiProviderModelConfig }
   > = new Map();
+  private evaluationRegistry = new Map<string, AiClassificationModel>();
   private currentConfigHash: string | null = null;
   private areCustomProvidersRegistered = true;
 
@@ -115,6 +117,7 @@ export class AiModelRegistryService {
 
   private buildModelRegistry(areCustomProvidersAllowed: boolean): void {
     this.modelRegistry.clear();
+    this.evaluationRegistry.clear();
     this.sdkProviderFactory.clearCache();
     this.modelConfigCache.clear();
     this.transcriptionRegistry.clear();
@@ -131,7 +134,7 @@ export class AiModelRegistryService {
 
   private registerModelsFromProviders(providers: AiProvidersConfig): void {
     for (const [providerKey, config] of Object.entries(providers)) {
-      if (!config.npm) {
+      if (!config.npm && !config.evaluationAdapter) {
         this.logger.warn(
           `Skipping provider "${providerKey}": missing npm field`,
         );
@@ -144,9 +147,10 @@ export class AiModelRegistryService {
         continue;
       }
 
-      const sdkInstance = isProviderConfigured(config)
-        ? this.sdkProviderFactory.createProvider(providerKey, config)
-        : undefined;
+      const sdkInstance =
+        config.npm && isProviderConfigured(config)
+          ? this.sdkProviderFactory.createProvider(providerKey, config)
+          : undefined;
 
       for (const modelDef of models) {
         const compositeId = buildCompositeModelId(providerKey, modelDef.name);
@@ -173,7 +177,17 @@ export class AiModelRegistryService {
           modelDef,
         });
 
-        if (sdkInstance) {
+        if (modelDef.kind === 'evaluation') {
+          if (config.evaluationAdapter === 'typesafe' && config.apiKey) {
+            this.evaluationRegistry.set(
+              compositeId,
+              new TypeSafeClassificationModel(config.apiKey, modelDef.name),
+            );
+          }
+          continue;
+        }
+
+        if (sdkInstance && config.npm) {
           this.modelRegistry.set(compositeId, {
             modelId: compositeId,
             sdkPackage: config.npm,
@@ -284,6 +298,10 @@ export class AiModelRegistryService {
       return;
     }
 
+    if (!config.npm) {
+      return;
+    }
+
     this.transcriptionConfigCache.set(compositeId, {
       modelId: compositeId,
       sdkPackage: config.npm,
@@ -363,6 +381,7 @@ export class AiModelRegistryService {
     return {
       modelId: compositeId,
       label: modelDef.label,
+      kind: modelDef.kind === 'evaluation' ? 'evaluation' : 'language',
       sdkPackage: providerConfig.npm,
       description: modelDef.description ?? compositeId,
       modelFamily:
@@ -382,10 +401,13 @@ export class AiModelRegistryService {
         modelDef.contextWindowTokens,
         DEFAULT_CONTEXT_WINDOW_TOKENS,
       ),
-      maxOutputTokens: getPositiveTokenLimitOrDefault(
-        modelDef.maxOutputTokens,
-        DEFAULT_MAX_OUTPUT_TOKENS,
-      ),
+      maxOutputTokens:
+        modelDef.kind === 'evaluation'
+          ? 0
+          : getPositiveTokenLimitOrDefault(
+              modelDef.maxOutputTokens,
+              DEFAULT_MAX_OUTPUT_TOKENS,
+            ),
       modalities: modelDef.modalities,
       supportsReasoning: modelDef.supportsReasoning,
       efforts: modelDef.efforts,
@@ -393,6 +415,26 @@ export class AiModelRegistryService {
       benchmarkByEffort: modelDef.benchmarkByEffort,
       isDeprecated: modelDef.isDeprecated,
     };
+  }
+
+  getConfiguredEvaluationModels(): {
+    modelId: string;
+    providerName?: string;
+  }[] {
+    this.ensureFresh();
+
+    return Array.from(this.evaluationRegistry.keys())
+      .filter((modelId) => this.isModelAdminAllowed(modelId))
+      .map((modelId) => ({
+        modelId,
+        providerName: this.providerModelDefCache.get(modelId)?.providerName,
+      }));
+  }
+
+  getEvaluationModel(modelId: string): AiClassificationModel | undefined {
+    this.ensureFresh();
+
+    return this.evaluationRegistry.get(modelId);
   }
 
   getModel(modelId: string): RegisteredAiModel | undefined {
@@ -602,7 +644,10 @@ export class AiModelRegistryService {
   // Catalog membership rather than registration: an instance can name a
   // model before it holds the provider key, and a key added later makes the
   // stored id work without touching the agent.
-  validateModelAvailability(modelId: string): void {
+  validateModelAvailability(
+    modelId: string,
+    kind: 'language' | 'evaluation' = 'language',
+  ): void {
     if (!this.isModelAdminAllowed(modelId)) {
       throw new AiException(
         'The selected model has been disabled by the administrator.',
@@ -610,10 +655,20 @@ export class AiModelRegistryService {
       );
     }
 
+    const modelConfig = this.getModelConfig(modelId);
+
     if (
       !isAutoSelectModelId(modelId) &&
-      !isDefined(this.getModelConfig(modelId))
+      isDefined(modelConfig) &&
+      (modelConfig.kind ?? 'language') !== kind
     ) {
+      throw new AiException(
+        'The selected model does not support this operation.',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
+
+    if (!isAutoSelectModelId(modelId) && !isDefined(modelConfig)) {
       throw new AiException(
         this.buildModelNotFoundMessage(modelId),
         AiExceptionCode.AGENT_EXECUTION_FAILED,
@@ -645,7 +700,8 @@ export class AiModelRegistryService {
 
         return {
           modelConfig,
-          isAvailable: !!registered,
+          isAvailable:
+            !!registered || this.evaluationRegistry.has(modelConfig.modelId),
           isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
           providerName: registered?.providerName ?? cached?.providerName,
           name: cached?.modelDef.name,
@@ -668,6 +724,12 @@ export class AiModelRegistryService {
 
   async setDefaultModel(tier: AiModelTier, modelId: string): Promise<void> {
     this.validateModelInRegistry(modelId);
+    if (this.getModelConfig(modelId)?.kind === 'evaluation') {
+      throw new AiException(
+        'Evaluation models cannot be chat defaults',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
     await this.preferencesService.setDefaultModel(tier, modelId);
   }
 

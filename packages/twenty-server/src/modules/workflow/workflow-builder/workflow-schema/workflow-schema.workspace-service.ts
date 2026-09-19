@@ -9,6 +9,7 @@ import { isDefined, isValidVariable } from 'twenty-shared/utils';
 import {
   BaseOutputSchemaV2,
   buildManualTriggerMetadataNode,
+  getClassificationOutputSchema,
   BulkRecordsAvailability,
   extractRawVariableNamePart,
   getCurrentItemSchemaFromFlattenedArrayOutputSchema,
@@ -143,6 +144,9 @@ export class WorkflowSchemaWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.CLASSIFY: {
+        return getClassificationOutputSchema();
+      }
       case WorkflowActionType.AI_AGENT: {
         return this.computeAiAgentActionOutputSchema({
           agentId: step.settings.input.agentId,
@@ -183,6 +187,7 @@ export class WorkflowSchemaWorkspaceService {
     const BACKEND_ENRICHED_TYPES = [
       WorkflowActionType.ITERATOR,
       WorkflowActionType.AI_AGENT,
+      WorkflowActionType.CLASSIFY,
     ];
 
     if (!BACKEND_ENRICHED_TYPES.includes(step.type)) {

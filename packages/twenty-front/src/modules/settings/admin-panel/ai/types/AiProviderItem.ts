@@ -8,7 +8,8 @@ import { type AiProviderSource } from '@/settings/admin-panel/ai/types/AiProvide
 // Fields are defined here; RawAiProviderConfig is Omit<AiProviderItem, 'id'>.
 export type AiProviderItem = {
   id: string;
-  npm: AiSdkPackage;
+  npm?: AiSdkPackage;
+  evaluationAdapter?: 'typesafe';
   // Optional provider display/catalog name from config (not a model name; models use `models[].name` on the backend).
   name?: string;
   label?: string;

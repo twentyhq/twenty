@@ -66,6 +66,7 @@ export class AdminPanelAiProviderService {
 
       masked[key] = {
         npm: config.npm,
+        evaluationAdapter: config.evaluationAdapter,
         label: config.label ?? key,
         source: isCatalog ? 'catalog' : 'custom',
         ...(config.authType && { authType: config.authType }),
@@ -166,6 +167,13 @@ export class AdminPanelAiProviderService {
       throw new UserInputError(
         `Provider "${providerName}" not found in custom providers`,
       );
+    }
+
+    if (
+      (validatedModelConfig.data.kind === 'evaluation') !==
+      (existing.evaluationAdapter === 'typesafe')
+    ) {
+      throw new UserInputError('Model kind must match the provider adapter');
     }
 
     const existingModels = existing.models ?? [];

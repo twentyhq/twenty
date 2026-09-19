@@ -140,6 +140,10 @@ export class SdkProviderFactoryService {
     factory: (opts: { apiKey?: string; baseURL?: string }) => CallableFunction,
     options?: { middleware?: LanguageModelMiddleware },
   ): AiSdkProviderInstance {
+    if (!config.npm) {
+      throw new Error('A language model provider requires an SDK package');
+    }
+
     const provider = factory({
       ...(config.apiKey && { apiKey: config.apiKey }),
       ...(config.baseUrl && { baseURL: config.baseUrl }),

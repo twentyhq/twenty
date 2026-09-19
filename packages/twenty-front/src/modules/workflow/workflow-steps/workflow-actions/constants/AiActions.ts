@@ -3,6 +3,9 @@ import { AI_AGENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/cons
 
 export const AI_ACTIONS: Array<{
   defaultLabel: string;
-  type: Extract<WorkflowActionType, 'AI_AGENT'>;
+  type: Extract<WorkflowActionType, 'AI_AGENT' | 'CLASSIFY'>;
   icon: string;
-}> = [AI_AGENT_ACTION];
+}> = [
+  AI_AGENT_ACTION,
+  { defaultLabel: 'Classify', type: 'CLASSIFY', icon: 'IconTags' },
+];

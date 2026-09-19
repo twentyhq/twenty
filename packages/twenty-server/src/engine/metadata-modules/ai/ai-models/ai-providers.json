@@ -2314,5 +2314,24 @@
         }
       }
     ]
+  },
+  "typesafe": {
+    "evaluationAdapter": "typesafe",
+    "label": "TypeSafe AI",
+    "apiKey": "{{TYPESAFE_API_KEY}}",
+    "models": [
+      {
+        "name": "jev-1.13.0",
+        "label": "Jev 1.13",
+        "kind": "evaluation",
+        "description": "Structured classification with category probabilities",
+        "inputCostPerMillionTokens": 0.042,
+        "outputCostPerMillionTokens": 0,
+        "contextWindowTokens": 32000,
+        "modalities": [
+          "text"
+        ]
+      }
+    ]
   }
 }

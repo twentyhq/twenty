@@ -36,6 +36,9 @@ export class NativeModelCapabilities {
 
 @ObjectType()
 export class ClientAiModelConfig {
+  @Field(() => String, { nullable: true })
+  kind?: 'language' | 'evaluation';
+
   @Field(() => String)
   // Composite model id (`provider/modelName`) for this workspace; matches registry and admin APIs.
   modelId: ModelId;
@@ -114,6 +117,9 @@ export class ClientAiModelTierConfig {
 
 @ObjectType()
 export class AdminAiModelConfig {
+  @Field(() => String, { nullable: true })
+  kind?: 'language' | 'evaluation';
+
   @Field(() => String)
   // Composite model id (`provider/modelName`) used for toggles, defaults, and registry lookups.
   modelId: string;

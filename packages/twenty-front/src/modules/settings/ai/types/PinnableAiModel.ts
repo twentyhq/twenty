@@ -3,6 +3,7 @@ import { type ModelFamily } from '~/generated-metadata/graphql';
 // The fields a pin select needs, shared by the workspace and admin model DTOs.
 export type PinnableAiModel = {
   modelId: string;
+  kind?: string | null;
   label: string;
   isDeprecated?: boolean | null;
   dataResidency?: string | null;

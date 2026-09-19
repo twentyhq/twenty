@@ -1,3 +1,4 @@
+import { type WorkflowClassifyActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/types/workflow-classify-action-settings.type';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { type WorkflowAiAgentActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-settings.type';
 import { type WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
@@ -36,6 +37,7 @@ export type WithExpectedOutputSchema = {
 };
 
 export type WorkflowActionSettings =
+  | WorkflowClassifyActionSettings
   | WorkflowLogicFunctionActionSettings
   | WorkflowSendEmailActionSettings
   | WorkflowCreateCalendarEventActionSettings

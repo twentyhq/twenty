@@ -10,7 +10,8 @@ import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types
 export type AiModelConfig = {
   // Composite model id (`provider/modelName`) used in the registry and GraphQL; same shape as SDK routing when applicable.
   modelId: string;
-  sdkPackage: AiSdkPackage;
+  sdkPackage?: AiSdkPackage;
+  kind?: 'language' | 'evaluation';
   label: string;
   description: string;
   modelFamily?: ModelFamily;

@@ -532,6 +532,24 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.CLASSIFY: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Classify',
+            type: WorkflowActionType.CLASSIFY,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                modelId: '',
+                text: '',
+                instructions: '',
+                categories: [],
+              },
+            },
+          },
+        };
+      }
       case WorkflowActionType.HTTP_REQUEST: {
         return {
           builtStep: {
