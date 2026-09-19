@@ -181,4 +181,37 @@ describe('validateWorkflowClassifyStep', () => {
       }),
     ).toEqual(['CLASSIFY_INCOMPLETE_QUESTION']);
   });
+
+  // A step should report every reason it cannot activate at once; otherwise an
+  // author fixes one problem only to be told about the next.
+  it('should report a duplicate name even when the first question is also incomplete', () => {
+    const issues = validateWorkflowClassifyStep(
+      buildStep({
+        questions: [
+          {
+            id: 'q1',
+            name: 'category',
+            type: 'choice',
+            instructions: '',
+            criteria: [{ id: 'c1', name: 'billing' }],
+          },
+          {
+            id: 'q2',
+            name: 'category',
+            type: 'choice',
+            instructions: 'Which team?',
+            criteria: [{ id: 'c2', name: 'support' }],
+          },
+        ],
+      }),
+    );
+
+    expect(issues).toHaveLength(2);
+    expect(issues.map(({ message }) => message)).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining('no instructions'),
+        expect.stringContaining('two questions named "category"'),
+      ]),
+    );
+  });
 });

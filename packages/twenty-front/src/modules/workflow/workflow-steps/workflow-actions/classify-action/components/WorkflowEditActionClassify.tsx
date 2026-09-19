@@ -126,11 +126,17 @@ export const WorkflowEditActionClassify = ({
     (evaluationModel) => evaluationModel.modelId === selectedModelId,
   );
 
-  const modelDescription = !isDefined(selectedModel)
-    ? t`Runs on the workspace's evaluation model, or its language model when none is configured. Probabilities are only returned by an evaluation model.`
-    : selectedModel.isAvailable
-      ? t`Returns a calibrated probability for every answer.`
-      : t`This model is in the catalog but its provider is not configured, so runs fall back to the workspace default.`;
+  const getModelDescription = () => {
+    if (!isDefined(selectedModel)) {
+      return t`Runs on the workspace's evaluation model, or its language model when none is configured. Probabilities are only returned by an evaluation model.`;
+    }
+
+    if (!selectedModel.isAvailable) {
+      return t`This model is in the catalog but its provider is not configured, so runs will fail until someone sets its API key.`;
+    }
+
+    return t`Returns a calibrated probability for every answer.`;
+  };
 
   const questionTypeOptions = AI_EVALUATION_QUESTION_TYPES.map(
     (questionType) => ({
@@ -189,7 +195,7 @@ export const WorkflowEditActionClassify = ({
             updateInput({ modelId: modelId === '' ? undefined : modelId })
           }
           disabled={actionOptions.readonly}
-          description={modelDescription}
+          description={getModelDescription()}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
         <FormTextFieldInput

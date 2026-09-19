@@ -95,10 +95,17 @@ export const validateWorkflowClassifyStep = (
         message: `Classify step "${stepLabel}" ${problem}.`,
         stepId: step.id,
       });
+    }
+
+    // An unnamed question is already reported above, and tracking the blank
+    // would make a second one look like a duplicate of it.
+    if (!isNonEmptyString(question.name)) {
       continue;
     }
 
     // Answers are keyed by name, so a repeat would overwrite the earlier one.
+    // Checked whatever else is wrong with the question: a step gets every
+    // reason it cannot activate in one pass, rather than one per fix.
     if (seenNames.has(question.name)) {
       issues.push({
         severity: 'error',
