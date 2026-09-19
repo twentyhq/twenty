@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -31,6 +33,8 @@ import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine
 import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
+import { collectCreatedObjectMetadataUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/collect-created-object-metadata-universal-identifiers.util';
+import { deduplicateAfterCommitSideEffects } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/deduplicate-after-commit-side-effects.util';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -44,6 +48,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly metricsService: MetricsService,
     private readonly logger: LoggerService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   private getLegacyCacheInvalidation(
@@ -186,6 +191,7 @@ export class WorkspaceMigrationRunnerService {
   run = async (args: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
+    deferSchemaOperations?: boolean;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -221,9 +227,11 @@ export class WorkspaceMigrationRunnerService {
   private executeRun = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
+    deferSchemaOperations,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
+    deferSchemaOperations?: boolean;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -337,6 +345,20 @@ export class WorkspaceMigrationRunnerService {
     const preallocatedIdByUniversalIdentifierByMetadataName =
       buildPreallocatedIdByUniversalIdentifierFromActions(actions);
 
+    const shouldDeferSchemaOperations =
+      deferSchemaOperations ??
+      (await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_DEFERRED_SCHEMA_OPERATIONS_ENABLED,
+        workspaceId,
+      ));
+
+    const deferSchemaOperationsContext = shouldDeferSchemaOperations
+      ? {
+          createdObjectMetadataUniversalIdentifiers:
+            collectCreatedObjectMetadataUniversalIdentifiers(actions),
+        }
+      : undefined;
+
     this.logger.perfTime('Runner', 'Transaction execution');
 
     await queryRunner.connect();
@@ -377,6 +399,7 @@ export class WorkspaceMigrationRunnerService {
                 preallocatedIdByUniversalIdentifierByMetadataName,
                 getSearchFieldMetadatasByTsVectorFieldId:
                   searchFieldMetadatasByTsVectorFieldIdAccessor.get,
+                deferSchemaOperations: deferSchemaOperationsContext,
               },
             },
           );
@@ -541,8 +564,12 @@ export class WorkspaceMigrationRunnerService {
       'Runner',
     );
 
+    const afterCommitSideEffectsToRun = deduplicateAfterCommitSideEffects(
+      allAfterCommitSideEffects,
+    );
+
     const sideEffectResults = await Promise.allSettled(
-      allAfterCommitSideEffects.map((sideEffect) =>
+      afterCommitSideEffectsToRun.map((sideEffect) =>
         Promise.resolve().then(() => sideEffect.run()),
       ),
     );
@@ -550,7 +577,7 @@ export class WorkspaceMigrationRunnerService {
     sideEffectResults.forEach((result, index) => {
       if (result.status === 'rejected') {
         this.logger.warn(
-          `After-commit side effect failed (${allAfterCommitSideEffects[index].description}): ${
+          `After-commit side effect failed (${afterCommitSideEffectsToRun[index].description}): ${
             result.reason instanceof Error
               ? result.reason.message
               : String(result.reason)

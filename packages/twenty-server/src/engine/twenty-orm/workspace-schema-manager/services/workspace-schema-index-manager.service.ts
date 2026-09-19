@@ -81,12 +81,21 @@ export class WorkspaceSchemaIndexManagerService {
     queryRunner,
     schemaName,
     indexName,
+    concurrently = false,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     indexName: string;
+    concurrently?: boolean;
   }): Promise<void> {
-    const sql = `DROP INDEX IF EXISTS ${escapeIdentifier(schemaName)}.${escapeIdentifier(indexName)}`;
+    if (concurrently && queryRunner.isTransactionActive) {
+      throw new WorkspaceSchemaManagerException(
+        'DROP INDEX CONCURRENTLY cannot run inside a transaction block. Pass a QueryRunner with no active transaction.',
+        WorkspaceSchemaManagerExceptionCode.CONCURRENT_INDEX_DROP_IN_TRANSACTION,
+      );
+    }
+
+    const sql = `DROP INDEX ${concurrently ? 'CONCURRENTLY ' : ''}IF EXISTS ${escapeIdentifier(schemaName)}.${escapeIdentifier(indexName)}`;
 
     await queryRunner.query(sql);
   }
