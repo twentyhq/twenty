@@ -29,9 +29,6 @@ i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
 // Read state has its own tests; these are about which threads a tab shows.
-jest.mock('@/ai/components/AiChatUnreadThreadsEffect', () => ({
-  AiChatUnreadThreadsEffect: () => null,
-}));
 jest.mock('@/ai/components/AiChatMarkThreadReadEffect', () => ({
   AiChatMarkThreadReadEffect: () => null,
 }));

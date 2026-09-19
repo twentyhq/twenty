@@ -11,7 +11,6 @@ import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxTabs } from '@/ai/components/AiChatInboxTabs';
 import { AiChatMarkThreadReadEffect } from '@/ai/components/AiChatMarkThreadReadEffect';
 import { AiChatSelectFirstThreadEffect } from '@/ai/components/AiChatSelectFirstThreadEffect';
-import { AiChatUnreadThreadsEffect } from '@/ai/components/AiChatUnreadThreadsEffect';
 import { AiChatInboxThreadPane } from '@/ai/components/AiChatInboxThreadPane';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AI_CHAT_INBOX_TABS_INSTANCE_ID } from '@/ai/constants/AiChatInboxTabsInstanceId';
@@ -138,7 +137,6 @@ export const AiChatInboxPage = () => {
           isThreadSelected={isDefined(threadId)}
         />
       )}
-      <AiChatUnreadThreadsEffect />
       <AiChatMarkThreadReadEffect threadId={threadId ?? null} />
       <CollapseNavigationDrawerWhileSidePanelOpenEffect />
       {/* Thread rows on this page use the side panel action surface. */}

@@ -7,7 +7,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AiChatChannelDeleteConfirmationModal } from '@/ai/components/AiChatChannelDeleteConfirmationModal';
 import { AiChatChannelsMenu } from '@/ai/components/AiChatChannelsMenu';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
-import { AiChatUnreadThreadsEffect } from '@/ai/components/AiChatUnreadThreadsEffect';
 import { NavigationDrawerAiChatChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
 import { NavigationDrawerAiChatInboxSection } from '@/ai/components/NavigationDrawerAiChatInboxSection';
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
@@ -126,7 +125,6 @@ export const NavigationDrawerAiChatContent = () => {
         ) : null}
         {hasNextPage ? <StyledFetchMoreTrigger ref={fetchMoreRef} /> : null}
       </StyledThreadList>
-      <AiChatUnreadThreadsEffect />
       <AiChatThreadDeleteConfirmationModal
         surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
       />

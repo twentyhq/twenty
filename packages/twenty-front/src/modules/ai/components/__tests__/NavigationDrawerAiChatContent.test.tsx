@@ -53,9 +53,6 @@ jest.mock('@/ai/components/AiChatThreadDeleteConfirmationModal', () => ({
 jest.mock('@/ai/components/AiChatChannelDeleteConfirmationModal', () => ({
   AiChatChannelDeleteConfirmationModal: () => null,
 }));
-jest.mock('@/ai/components/AiChatUnreadThreadsEffect', () => ({
-  AiChatUnreadThreadsEffect: () => null,
-}));
 jest.mock('@/ai/hooks/useRenameChatThread', () => ({
   useRenameChatThread: () => ({ renameChatThread: jest.fn() }),
 }));
