@@ -34,6 +34,7 @@ export class CreateCalendarEventTool implements Tool {
         await this.calendarEventComposerService.composeCalendarEvent(
           parameters,
           context.workspaceId,
+          context.userWorkspaceId,
         );
 
       if (!result.success) {
