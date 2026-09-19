@@ -11,6 +11,7 @@ export enum UsageResourceType {
   LOGIC_FUNCTION = 'LOGIC_FUNCTION',
   EMAIL = 'EMAIL',
   WEBHOOK = 'WEBHOOK',
+  RECORD = 'RECORD',
 }
 
 registerEnumType(UsageResourceType, {
