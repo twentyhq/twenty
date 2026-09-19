@@ -77,29 +77,50 @@ export class AiEvaluationService {
   // is the kind of model the operator picked.
   private resolveModel(requestedModelId?: string): ResolvedEvaluationModel {
     if (
-      isNonEmptyString(requestedModelId) &&
-      requestedModelId !== AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID
+      !isNonEmptyString(requestedModelId) ||
+      requestedModelId === AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID
     ) {
-      if (
-        isDefined(
-          this.aiModelRegistryService.getEvaluationModelConfig(
-            requestedModelId,
-          ),
-        )
-      ) {
-        return { modelId: requestedModelId, runnerKind: 'evaluation-model' };
-      }
+      return this.resolveDefaultModel();
+    }
 
-      if (isDefined(this.aiModelRegistryService.getModel(requestedModelId))) {
-        return { modelId: requestedModelId, runnerKind: 'language-model' };
-      }
+    // Asked of the registry, not the config cache: a catalog entry whose
+    // provider is unconfigured or whose SDK package is absent has a config and
+    // no runnable model, and routing on the config would hand the native runner
+    // an id it cannot resolve.
+    if (
+      isDefined(
+        this.aiModelRegistryService.getEvaluationModel(requestedModelId),
+      )
+    ) {
+      return { modelId: requestedModelId, runnerKind: 'evaluation-model' };
+    }
 
+    if (isDefined(this.aiModelRegistryService.getModel(requestedModelId))) {
+      return { modelId: requestedModelId, runnerKind: 'language-model' };
+    }
+
+    // A typo names nothing at all and stays an error. A model the catalog knows
+    // but cannot run degrades like an unpinned step instead of failing the run,
+    // and runnerKind reports whatever ends up answering.
+    if (
+      !isDefined(
+        this.aiModelRegistryService.getEvaluationModelConfig(requestedModelId),
+      )
+    ) {
       throw new AiException(
         `Model ${requestedModelId} is not available for classification.`,
         AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
       );
     }
 
+    this.logger.warn(
+      `Evaluation model ${requestedModelId} is in the catalog but not runnable; check its provider credentials and that its SDK package is installed.`,
+    );
+
+    return this.resolveDefaultModel();
+  }
+
+  private resolveDefaultModel(): ResolvedEvaluationModel {
     const defaultEvaluationModel =
       this.aiModelRegistryService.getDefaultEvaluationModel();
 
