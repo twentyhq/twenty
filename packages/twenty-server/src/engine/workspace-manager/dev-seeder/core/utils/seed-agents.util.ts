@@ -1,5 +1,6 @@
 import uniqBy from 'lodash.uniqby';
 import { type QueryRunner } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import {
@@ -29,6 +30,7 @@ const agentChatChannelRoleTableName = 'agentChatChannelRole';
 const agentTurnTableName = 'agentTurn';
 const agentMessageTableName = 'agentMessage';
 const agentMessagePartTableName = 'agentMessagePart';
+const agentChatThreadReadTableName = 'agentChatThreadRead';
 
 export const AGENT_DATA_SEED_IDS = {
   APPLE_DEFAULT_AGENT: '20202020-0000-4000-8000-000000000001',
@@ -940,6 +942,76 @@ const seedChatMessages = async ({
     ])
     .orIgnore()
     .values(messageParts)
+    .execute();
+
+  await seedChatThreadReads({ queryRunner, schemaName, workspaceId, messages });
+};
+
+type SeedChatThreadReadsArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+  messages: Array<{ id: string; threadId: string; createdAt: Date }>;
+};
+
+// Without a cursor every thread reads as never-opened, so a fresh workspace
+// shows the unread state of the chat and none of the read state. These put
+// some readers ahead of others: far enough to show a receipt naming them,
+// short enough elsewhere to leave a thread unread and a divider in it.
+const seedChatThreadReads = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+  messages,
+}: SeedChatThreadReadsArgs) => {
+  if (workspaceId !== SEED_APPLE_WORKSPACE_ID) {
+    return;
+  }
+
+  const threadReads = APPLE_AGENT_CHAT_CONVERSATION_SEEDS.flatMap(
+    (conversation) => {
+      const threadMessages = messages
+        .filter((message) => message.threadId === conversation.threadId)
+        .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
+      return Object.entries(
+        conversation.lastReadExchangeIndexByUserWorkspaceId ?? {},
+      ).flatMap(([userWorkspaceId, lastReadExchangeIndex]) => {
+        // An exchange is a message and the answer to it, so a reader who
+        // stopped on one has read as far as that answer.
+        const lastReadMessage = threadMessages[lastReadExchangeIndex * 2 + 1];
+
+        return isDefined(lastReadMessage)
+          ? [
+              {
+                workspaceId,
+                threadId: conversation.threadId,
+                userWorkspaceId,
+                lastReadAt: lastReadMessage.createdAt,
+                lastReadMessageId: lastReadMessage.id,
+              },
+            ]
+          : [];
+      });
+    },
+  );
+
+  if (threadReads.length === 0) {
+    return;
+  }
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentChatThreadReadTableName}`, [
+      'workspaceId',
+      'threadId',
+      'userWorkspaceId',
+      'lastReadAt',
+      'lastReadMessageId',
+    ])
+    .orIgnore()
+    .values(threadReads)
     .execute();
 };
 

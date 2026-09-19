@@ -89,6 +89,11 @@ type AgentChatConversationSeed = {
   memberUserWorkspaceIds?: string[];
   // Author of the user message of an exchange, by exchange index. Defaults to the owner.
   exchangeAuthorUserWorkspaceIds?: Record<number, string>;
+  // How far each reader has got, as the index of the last exchange they read.
+  // A cursor short of the final exchange leaves the thread unread for that
+  // reader, which is what the drawer badge and the new-message divider are
+  // drawn from; a reader with no cursor here has never opened the thread.
+  lastReadExchangeIndexByUserWorkspaceId?: Record<string, number>;
 };
 
 export const APPLE_AGENT_CHAT_CONVERSATION_SEEDS: AgentChatConversationSeed[] =
@@ -96,6 +101,10 @@ export const APPLE_AGENT_CHAT_CONVERSATION_SEEDS: AgentChatConversationSeed[] =
     {
       threadId: AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_IMPORT_THREAD,
       channelId: AGENT_CHAT_CHANNEL_DATA_SEED_IDS.APPLE_SALES_CHANNEL,
+      lastReadExchangeIndexByUserWorkspaceId: {
+        [USER_WORKSPACE_DATA_SEED_IDS.TIM]: 1,
+        [USER_WORKSPACE_DATA_SEED_IDS.JANE]: 7,
+      },
       exchanges: [
         [
           'Help me prepare a company import.',
@@ -156,6 +165,10 @@ export const APPLE_AGENT_CHAT_CONVERSATION_SEEDS: AgentChatConversationSeed[] =
       exchangeAuthorUserWorkspaceIds: {
         1: USER_WORKSPACE_DATA_SEED_IDS.JONY,
         2: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      },
+      lastReadExchangeIndexByUserWorkspaceId: {
+        [USER_WORKSPACE_DATA_SEED_IDS.JANE]: 2,
+        [USER_WORKSPACE_DATA_SEED_IDS.JONY]: 0,
       },
       exchanges: [
         [

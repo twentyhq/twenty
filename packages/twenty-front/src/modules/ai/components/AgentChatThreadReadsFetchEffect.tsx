@@ -4,7 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { AGENT_CHAT_REFETCH_READS_EVENT_NAME } from '@/ai/constants/AgentChatRefetchReadsEventName';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatThreadReadsComponentFamilyState } from '@/ai/states/agentChatThreadReadsComponentFamilyState';
+import { agentChatUnreadDividerCursorComponentFamilyState } from '@/ai/states/agentChatUnreadDividerCursorComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -16,6 +18,7 @@ import {
 
 export const AgentChatThreadReadsFetchEffect = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const isNewThread =
     !isDefined(currentAiChatThread) ||
@@ -25,12 +28,39 @@ export const AgentChatThreadReadsFetchEffect = () => {
     agentChatThreadReadsComponentFamilyState,
     { threadId: currentAiChatThread },
   );
+  const setAgentChatUnreadDividerCursor = useSetAtomComponentFamilyState(
+    agentChatUnreadDividerCursorComponentFamilyState,
+    { threadId: currentAiChatThread },
+  );
 
   const handleDataLoaded = useCallback(
     (data: GetChatThreadReadsQuery) => {
-      setAgentChatThreadReads(data.chatThreadReads ?? []);
+      const reads = data.chatThreadReads ?? [];
+
+      setAgentChatThreadReads(reads);
+
+      // Only the first snapshot of a thread says where the reader had got to:
+      // every later one has their cursor moved to the end by the read this
+      // very visit records.
+      setAgentChatUnreadDividerCursor((previousCursor) =>
+        previousCursor.hasCaptured
+          ? previousCursor
+          : {
+              hasCaptured: true,
+              lastReadAt:
+                reads.find(
+                  (read) =>
+                    read.userWorkspaceId ===
+                    currentWorkspaceMember?.userWorkspaceId,
+                )?.lastReadAt ?? null,
+            },
+      );
     },
-    [setAgentChatThreadReads],
+    [
+      setAgentChatThreadReads,
+      setAgentChatUnreadDividerCursor,
+      currentWorkspaceMember?.userWorkspaceId,
+    ],
   );
 
   const { refetch: refetchReads } = useQueryWithCallbacks(
