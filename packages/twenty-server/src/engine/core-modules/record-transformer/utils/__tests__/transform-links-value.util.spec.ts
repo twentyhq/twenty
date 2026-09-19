@@ -1,14 +1,11 @@
+import { RecordTransformerExceptionCode } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 
 describe('transformLinksValue', () => {
   it('should handle null/undefined/empty object values', () => {
     expect(transformLinksValue({ input: null })).toBeNull();
     expect(transformLinksValue({ input: undefined })).toBeUndefined();
-    expect(transformLinksValue({ input: {} })).toEqual({
-      primaryLinkLabel: null,
-      primaryLinkUrl: null,
-      secondaryLinks: null,
-    });
+    expect(transformLinksValue({ input: {} })).toEqual({});
   });
 
   describe('primary link', () => {
@@ -102,6 +99,105 @@ describe('transformLinksValue', () => {
       };
 
       expect(transformLinksValue({ input })).toEqual(expected);
+    });
+  });
+
+  // A subfield left out of the input keeps its stored value, so every
+  // assertion here is about which keys come back, not only their values.
+  describe('partial update', () => {
+    it('should leave the url and the secondary links alone when only the label is sent', () => {
+      expect(
+        transformLinksValue({ input: { primaryLinkLabel: 'Example' } }),
+      ).toEqual({ primaryLinkLabel: 'Example' });
+    });
+
+    it('should leave the label and the secondary links alone when only the url is sent', () => {
+      expect(
+        transformLinksValue({
+          input: { primaryLinkUrl: 'HTTPS://EXAMPLE.COM/' },
+        }),
+      ).toEqual({ primaryLinkUrl: 'https://example.com' });
+    });
+
+    it('should not promote a secondary link to primary when only the secondary links are sent', () => {
+      expect(
+        transformLinksValue({
+          input: {
+            secondaryLinks: JSON.stringify([
+              { url: 'https://docs.twenty.com', label: 'Documentation' },
+            ]),
+          },
+        }),
+      ).toEqual({
+        secondaryLinks: JSON.stringify([
+          { url: 'https://docs.twenty.com', label: 'Documentation' },
+        ]),
+      });
+    });
+
+    it('should clear the label along with the url, and still leave the secondary links alone', () => {
+      expect(transformLinksValue({ input: { primaryLinkUrl: '' } })).toEqual({
+        primaryLinkUrl: null,
+        primaryLinkLabel: null,
+      });
+    });
+
+    it('should drop a label that was sent together with an emptied url', () => {
+      expect(
+        transformLinksValue({
+          input: { primaryLinkUrl: null, primaryLinkLabel: 'Example' },
+        }),
+      ).toEqual({
+        primaryLinkUrl: null,
+        primaryLinkLabel: null,
+      });
+    });
+
+    it('should null the secondary links when the only ones sent are empty', () => {
+      expect(
+        transformLinksValue({
+          input: {
+            secondaryLinks: JSON.stringify([{ url: '', label: 'Empty' }]),
+          },
+        }),
+      ).toEqual({ secondaryLinks: null });
+    });
+
+    it('should still reject an invalid url', () => {
+      expect(() =>
+        transformLinksValue({ input: { primaryLinkUrl: 'lydia,com' } }),
+      ).toThrow(
+        expect.objectContaining({
+          code: RecordTransformerExceptionCode.INVALID_URL,
+        }),
+      );
+
+      expect(() =>
+        transformLinksValue({
+          input: { secondaryLinks: JSON.stringify([{ url: 'wikipedia' }]) },
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          code: RecordTransformerExceptionCode.INVALID_URL,
+        }),
+      );
+    });
+
+    it('should normalize with the field variant', () => {
+      expect(
+        transformLinksValue({
+          input: {
+            secondaryLinks: JSON.stringify([
+              { url: 'https://www.example-old.com/about', label: 'Old domain' },
+            ]),
+          },
+          settings: { type: 'domain' },
+        }),
+      ).toEqual({
+        secondaryLinks: JSON.stringify([
+          { url: 'example-old.com', label: 'Old domain' },
+        ]),
+      });
     });
   });
 
