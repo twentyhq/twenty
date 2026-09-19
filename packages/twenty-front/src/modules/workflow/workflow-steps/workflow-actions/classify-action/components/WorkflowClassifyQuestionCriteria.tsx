@@ -3,6 +3,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type WorkflowClassifyCriterion } from 'twenty-shared/workflow';
+import { v4 } from 'uuid';
 import { IconPlus, IconTrash } from 'twenty-ui/icon';
 import { Button, InputLabel } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -51,12 +52,12 @@ export const WorkflowClassifyQuestionCriteria = ({
     );
   };
 
-  const handleRemoveCriterion = (index: number) => {
-    onChange(criteria.filter((_, criterionIndex) => criterionIndex !== index));
+  const handleRemoveCriterion = (criterionId: string) => {
+    onChange(criteria.filter((criterion) => criterion.id !== criterionId));
   };
 
   const handleAddCriterion = () => {
-    onChange([...criteria, { name: '', description: '' }]);
+    onChange([...criteria, { id: v4(), name: '', description: '' }]);
   };
 
   return (
@@ -67,9 +68,10 @@ export const WorkflowClassifyQuestionCriteria = ({
 
       {criteria.map((criterion, index) => (
         <StyledCriterionRow
-          // Criteria are positional — a level's index is the score it means —
-          // and have no stable id, so the row index is the identity.
-          key={index}
+          // Keyed by id, not position: these inputs read defaultValue once, so
+          // removing a row would leave every later one showing the value it
+          // held before the shift.
+          key={criterion.id}
           readonly={readonly}
         >
           <FormTextFieldInput
@@ -91,7 +93,7 @@ export const WorkflowClassifyQuestionCriteria = ({
             <Button
               startIcon={<IconTrash />}
               aria-label={t`Delete`}
-              onClick={() => handleRemoveCriterion(index)}
+              onClick={() => handleRemoveCriterion(criterion.id)}
             />
           )}
         </StyledCriterionRow>

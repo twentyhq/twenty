@@ -1,7 +1,29 @@
 import {
   type BaseOutputSchemaV2,
+  type Node,
   type WorkflowClassifyQuestion,
 } from 'twenty-shared/workflow';
+
+// Only an evaluation model returns a distribution; the language-model fallback
+// answers without one, so these read as undefined on a workspace that has no
+// evaluation provider. The label says so, because the picker cannot show a
+// value that depends on which model answers at run time.
+const buildProbabilitiesNode = (keys: string[]): Node => ({
+  isLeaf: false,
+  type: 'object',
+  label: 'Probabilities (evaluation models only)',
+  value: Object.fromEntries(
+    keys.map((key) => [
+      key,
+      {
+        isLeaf: true as const,
+        type: 'number' as const,
+        label: key,
+        value: 0,
+      },
+    ]),
+  ),
+});
 
 const buildAnswerSchema = (
   question: WorkflowClassifyQuestion,
@@ -25,24 +47,11 @@ const buildAnswerSchema = (
           label: 'Choice',
           value: question.criteria[0]?.name ?? '',
         },
-        probabilities: {
-          isLeaf: false,
-          type: 'object',
-          label: 'Probabilities',
-          value: Object.fromEntries(
-            question.criteria
-              .filter((criterion) => criterion.name.length > 0)
-              .map((criterion) => [
-                criterion.name,
-                {
-                  isLeaf: true as const,
-                  type: 'number' as const,
-                  label: criterion.name,
-                  value: 0,
-                },
-              ]),
-          ),
-        },
+        probabilities: buildProbabilitiesNode(
+          question.criteria
+            .filter((criterion) => criterion.name.length > 0)
+            .map((criterion) => criterion.name),
+        ),
       };
     case 'score':
       return {
@@ -53,6 +62,11 @@ const buildAnswerSchema = (
           label: 'Score',
           value: 0,
         },
+        // Native scores carry a distribution over level indices, so the picker
+        // advertises it the same way it does for a choice.
+        probabilities: buildProbabilitiesNode(
+          question.criteria.map((_, level) => String(level)),
+        ),
       };
     case 'boolean':
       return {

@@ -82,6 +82,12 @@ type:
   so this runner reports no probabilities at all rather than reporting a number
   the model wrote about itself.
 
+Only the fallback builds a prompt, and the state it embeds is whatever a record
+or upstream step happened to contain. It is fenced with a per-call random tag so
+that text cannot close the block and have the rest of itself read as prompt, and
+the system prompt says the fenced content is data rather than instructions. The
+schema already bounds *what* an answer may be; this bounds what can steer it.
+
 Resolution order:
 
 1. An explicit model id resolves against whichever registry holds it.
@@ -161,6 +167,15 @@ Evaluation models bill on tokens like language models. `computeCostBreakdown`
 takes `AiModelCostConfig` — the fields costing actually reads — so both kinds go
 through one implementation, and `AiBillingService` looks in the evaluation config
 cache before the language one.
+
+## Validation
+
+A step is checked before a workflow can be activated, not only when it runs:
+`validateWorkflowClassifyStep` refuses a blank state, a question with no
+instructions, a choice with no options, a rubric with fewer than two levels, an
+answer name that is not a valid variable key, and two questions sharing a name.
+Both of its codes are in `NON_ACTIVABLE_WORKFLOW_VALIDATION_ISSUE_CODES`, so a
+half-configured node reports the gap in the editor instead of aborting a run.
 
 ## The Classify workflow node
 

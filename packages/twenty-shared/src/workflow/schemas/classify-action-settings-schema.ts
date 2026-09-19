@@ -4,7 +4,13 @@ import { AI_EVALUATION_QUESTION_TYPES } from '@/ai/constants/ai-evaluation-quest
 
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
 
+// An answer name is one segment of a variable path — {{stepId.answers.<name>}}.
+// A dot, brace or space in it would be read as structure by the variable
+// resolver, so the output the picker advertises would never resolve.
+export const CLASSIFY_ANSWER_NAME_PATTERN = /^[a-zA-Z0-9_-]{1,64}$/;
+
 export const workflowClassifyCriterionSchema = z.object({
+  id: z.uuid().describe('Stable identifier for this criterion row.'),
   name: z
     .string()
     .describe(
@@ -20,8 +26,9 @@ export const workflowClassifyQuestionSchema = z.object({
   id: z.uuid().describe('Stable identifier for this question row.'),
   name: z
     .string()
+    .regex(CLASSIFY_ANSWER_NAME_PATTERN)
     .describe(
-      'Answer key for this question. Downstream steps read {{stepId.answers.<name>}}.',
+      'Answer key for this question, made of letters, digits, underscores and dashes. Downstream steps read {{stepId.answers.<name>}}.',
     ),
   type: z
     .enum(AI_EVALUATION_QUESTION_TYPES)

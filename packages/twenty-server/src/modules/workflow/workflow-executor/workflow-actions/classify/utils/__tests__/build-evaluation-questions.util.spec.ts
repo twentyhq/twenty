@@ -11,8 +11,8 @@ describe('buildEvaluationQuestions', () => {
           type: 'choice',
           instructions: 'What does the message ask for?',
           criteria: [
-            { name: 'pricing', description: 'Asks about price' },
-            { name: 'support' },
+            { id: 'c1', name: 'pricing', description: 'Asks about price' },
+            { id: 'c2', name: 'support' },
           ],
         },
       ]),
@@ -34,8 +34,8 @@ describe('buildEvaluationQuestions', () => {
           type: 'score',
           instructions: 'How urgent?',
           criteria: [
-            { name: 'Low', description: 'Can wait a week' },
-            { name: 'High' },
+            { id: 'c1', name: 'Low', description: 'Can wait a week' },
+            { id: 'c2', name: 'High' },
           ],
         },
       ]),
@@ -57,7 +57,7 @@ describe('buildEvaluationQuestions', () => {
           name: 'isSpam',
           type: 'boolean',
           instructions: 'Is this spam?',
-          criteria: [{ name: 'ignored' }],
+          criteria: [{ id: 'c1', name: 'ignored' }],
         },
       ]),
     ).toEqual({

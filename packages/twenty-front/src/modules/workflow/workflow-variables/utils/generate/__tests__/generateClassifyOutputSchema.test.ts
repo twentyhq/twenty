@@ -8,7 +8,10 @@ describe('generateClassifyOutputSchema', () => {
         name: 'intent',
         type: 'choice',
         instructions: 'What does the message ask for?',
-        criteria: [{ name: 'pricing' }, { name: 'support' }],
+        criteria: [
+          { id: 'c1', name: 'pricing' },
+          { id: 'c2', name: 'support' },
+        ],
       },
     ]);
 
@@ -37,7 +40,7 @@ describe('generateClassifyOutputSchema', () => {
             probabilities: {
               isLeaf: false,
               type: 'object',
-              label: 'Probabilities',
+              label: 'Probabilities (evaluation models only)',
               value: {
                 pricing: {
                   isLeaf: true,
@@ -66,7 +69,10 @@ describe('generateClassifyOutputSchema', () => {
         name: 'urgency',
         type: 'score',
         instructions: 'How urgent?',
-        criteria: [{ name: 'Low' }, { name: 'High' }],
+        criteria: [
+          { id: 'c1', name: 'Low' },
+          { id: 'c2', name: 'High' },
+        ],
       },
     ]);
 
@@ -76,6 +82,15 @@ describe('generateClassifyOutputSchema', () => {
     ).toEqual({
       type: { isLeaf: true, type: 'string', label: 'Type', value: 'score' },
       score: { isLeaf: true, type: 'number', label: 'Score', value: 0 },
+      probabilities: {
+        isLeaf: false,
+        type: 'object',
+        label: 'Probabilities (evaluation models only)',
+        value: {
+          '0': { isLeaf: true, type: 'number', label: '0', value: 0 },
+          '1': { isLeaf: true, type: 'number', label: '1', value: 0 },
+        },
+      },
     });
   });
 

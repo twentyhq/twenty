@@ -36,6 +36,7 @@ export { baseWorkflowActionSchema } from './schemas/base-workflow-action-schema'
 export { baseWorkflowActionSettingsSchema } from './schemas/base-workflow-action-settings-schema';
 export { workflowClassifyActionSchema } from './schemas/classify-action-schema';
 export {
+  CLASSIFY_ANSWER_NAME_PATTERN,
   workflowClassifyCriterionSchema,
   workflowClassifyQuestionSchema,
   workflowClassifyActionSettingsSchema,

@@ -3,6 +3,10 @@ import { type AiEvaluationQuestionType } from '@/ai/constants/ai-evaluation-ques
 // A `choice` option or one `score` level. Score levels are ordered lowest
 // first, and their position is the score the model returns.
 export type WorkflowClassifyCriterion = {
+  // Positional meaning, stable identity: deleting a row shifts every later
+  // criterion, and an editor keyed on position would leave the shifted rows
+  // showing the values they held before.
+  id: string;
   name: string;
   description?: string;
 };
