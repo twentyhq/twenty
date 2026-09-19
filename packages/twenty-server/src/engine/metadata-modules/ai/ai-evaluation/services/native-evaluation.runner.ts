@@ -8,7 +8,6 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { assertEvaluationQuestionsAreSupported } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/assert-evaluation-questions-are-supported.util';
-import { readEvaluationConfidence } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/read-evaluation-confidence.util';
 import { type AiEvaluationRequest } from 'src/engine/metadata-modules/ai/ai-evaluation/types/ai-evaluation-request.type';
 import { type AiEvaluationRunnerOutput } from 'src/engine/metadata-modules/ai/ai-evaluation/types/ai-evaluation-result.type';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -57,10 +56,6 @@ export class NativeEvaluationRunner {
       ...(isDefined(abortSignal) && { abortSignal }),
     });
 
-    const confidenceByQuestionId = readEvaluationConfidence(
-      result.providerMetadata,
-    );
-
     return {
       answers: result.answers,
       usage: {
@@ -71,7 +66,6 @@ export class NativeEvaluationRunner {
           outputTokens: result.usage.outputTokens,
         }),
       },
-      ...(isDefined(confidenceByQuestionId) && { confidenceByQuestionId }),
     };
   }
 }

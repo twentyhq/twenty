@@ -113,7 +113,7 @@ export const WorkflowEditActionClassify = ({
     ...aiEvaluationModels
       .filter(
         (evaluationModel) =>
-          evaluationModel.isDeprecated !== true ||
+          !evaluationModel.isDeprecated ||
           evaluationModel.modelId === selectedModelId,
       )
       .map((evaluationModel) => ({

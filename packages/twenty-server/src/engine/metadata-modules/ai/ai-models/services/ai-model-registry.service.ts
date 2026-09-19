@@ -473,8 +473,7 @@ export class AiModelRegistryService {
   // one an operator listed first.
   getDefaultEvaluationModel(): RegisteredAiEvaluationModel | undefined {
     return this.getAvailableEvaluationModels().find(
-      (model) =>
-        this.getEvaluationModelConfig(model.modelId)?.isDeprecated !== true,
+      (model) => !this.getEvaluationModelConfig(model.modelId)?.isDeprecated,
     );
   }
 
