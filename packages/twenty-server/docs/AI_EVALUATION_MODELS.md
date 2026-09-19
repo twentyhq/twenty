@@ -103,7 +103,11 @@ tell which kind of model produced it.
 
 ## Adding an evaluation model
 
-Add an entry to `ai-providers.json`:
+Add an entry to `ai-evaluation-providers.json` — **not** `ai-providers.json`,
+which is projected from models.dev every day. models.dev describes language
+models only (and the sync filters on tool calling besides), so an evaluation
+model added there is dropped by the next rebuild. `DefaultAiCatalogService`
+merges the two:
 
 ```json
 "typesafe-ai": {

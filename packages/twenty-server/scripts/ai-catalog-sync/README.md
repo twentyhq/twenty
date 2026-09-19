@@ -1,6 +1,6 @@
 # AI catalog
 
-Three files in `src/engine/metadata-modules/ai/ai-models`, and two entry points
+Four files in `src/engine/metadata-modules/ai/ai-models`, and two entry points
 over them.
 
 | File | What it is |
@@ -8,6 +8,7 @@ over them.
 | `ai-models.json` | What every model is: identity, pricing, limits, modalities, efforts, benchmarks. No routes, no credentials. Synced daily. |
 | `ai-self-host-spec.json` | What a self-hosted deployment serves: the five direct routes and their key templates. Hand-maintained. |
 | `ai-providers.json` | The catalog the server bundles. Generated from the two above; a test fails if it is hand-edited. |
+| `ai-evaluation-providers.json` | Evaluation models and their routes. Hand-maintained, and outside this pipeline: models.dev describes language models only, so the sync can neither add these nor keep them. Merged into the bundled catalog by `DefaultAiCatalogService`. |
 
 Cloud works the same way, from a private spec in twenty-infra, so a deployment
 catalog is always a projection rather than a second copy of the truth.
