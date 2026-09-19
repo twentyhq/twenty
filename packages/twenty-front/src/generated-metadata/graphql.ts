@@ -1067,6 +1067,22 @@ export type ClaimableApplicationRegistration = {
   universalIdentifier: Scalars['String']['output'];
 };
 
+export type ClientAiEvaluationModelConfig = {
+  __typename?: 'ClientAiEvaluationModelConfig';
+  description?: Maybe<Scalars['String']['output']>;
+  inputCostPerMillionTokens?: Maybe<Scalars['Float']['output']>;
+  isAvailable: Scalars['Boolean']['output'];
+  isDeprecated?: Maybe<Scalars['Boolean']['output']>;
+  label: Scalars['String']['output'];
+  maxCriteriaPerQuestion?: Maybe<Scalars['Float']['output']>;
+  maxScoreLevels?: Maybe<Scalars['Float']['output']>;
+  medianLatencyMs?: Maybe<Scalars['Float']['output']>;
+  modelId: Scalars['String']['output'];
+  outputCostPerMillionTokens?: Maybe<Scalars['Float']['output']>;
+  providerLabel?: Maybe<Scalars['String']['output']>;
+  supportedQuestionTypes: Array<Scalars['String']['output']>;
+};
+
 export type ClientAiModelConfig = {
   __typename?: 'ClientAiModelConfig';
   contextWindowTokens?: Maybe<Scalars['Float']['output']>;
@@ -1099,6 +1115,7 @@ export type ClientAiModelTierConfig = {
 
 export type ClientConfig = {
   __typename?: 'ClientConfig';
+  aiEvaluationModels: Array<ClientAiEvaluationModelConfig>;
   aiModelTiers: Array<ClientAiModelTierConfig>;
   aiModels: Array<ClientAiModelConfig>;
   allowRequestsToTwentyIcons: Scalars['Boolean']['output'];

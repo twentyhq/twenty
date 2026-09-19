@@ -103,6 +103,51 @@ export class ClientAiModelConfig {
 }
 
 @ObjectType()
+// Evaluation models are kept in their own list rather than mixed into
+// aiModels: every existing picker reads that list, and a model that cannot
+// answer a chat turn must not be offered by one that forgot to filter.
+export class ClientAiEvaluationModelConfig {
+  @Field(() => String)
+  modelId: string;
+
+  @Field(() => String)
+  label: string;
+
+  @Field(() => String, { nullable: true })
+  description?: string;
+
+  @Field(() => String, { nullable: true })
+  providerLabel?: string;
+
+  // False when the catalog declares the model but the instance holds no key
+  // for its provider. The picker still shows it, so an operator can see what
+  // configuring the provider would buy.
+  @Field(() => Boolean)
+  isAvailable: boolean;
+
+  @Field(() => [String])
+  supportedQuestionTypes: string[];
+
+  @Field(() => Number, { nullable: true })
+  maxCriteriaPerQuestion?: number;
+
+  @Field(() => Number, { nullable: true })
+  maxScoreLevels?: number;
+
+  @Field(() => Number, { nullable: true })
+  medianLatencyMs?: number;
+
+  @Field(() => Number, { nullable: true })
+  inputCostPerMillionTokens?: number;
+
+  @Field(() => Number, { nullable: true })
+  outputCostPerMillionTokens?: number;
+
+  @Field(() => Boolean, { nullable: true })
+  isDeprecated?: boolean;
+}
+
+@ObjectType()
 export class ClientAiModelTierConfig {
   @Field(() => AiModelTierEnum)
   tier: AiModelTier;
@@ -301,6 +346,9 @@ export class ClientConfig {
 
   @Field(() => [ClientAiModelConfig])
   aiModels: ClientAiModelConfig[];
+
+  @Field(() => [ClientAiEvaluationModelConfig])
+  aiEvaluationModels: ClientAiEvaluationModelConfig[];
 
   @Field(() => [ClientAiModelTierConfig])
   aiModelTiers: ClientAiModelTierConfig[];

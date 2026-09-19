@@ -1,6 +1,8 @@
+import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowClassifyAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -12,6 +14,7 @@ import {
   type AiEvaluationQuestionType,
   AI_EVALUATION_QUESTION_TYPES,
 } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowClassifyQuestion } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 import {
@@ -95,6 +98,40 @@ export const WorkflowEditActionClassify = ({
     boolean: IconCheckbox,
   };
 
+  const aiEvaluationModels = useAtomStateValue(aiEvaluationModelsState);
+
+  const selectedModelId = action.settings.input.modelId;
+
+  // The workspace default is the point of the node: a workflow built before an
+  // evaluation provider existed starts using one the moment it is configured,
+  // with no edit. Naming a model pins that choice instead.
+  const modelOptions = [
+    {
+      label: t`Workspace default`,
+      value: '',
+    },
+    ...evaluationModels
+      .filter(
+        (evaluationModel) =>
+          evaluationModel.isDeprecated !== true ||
+          evaluationModel.modelId === selectedModelId,
+      )
+      .map((evaluationModel) => ({
+        label: evaluationModel.label,
+        value: evaluationModel.modelId,
+      })),
+  ];
+
+  const selectedModel = evaluationModels.find(
+    (evaluationModel) => evaluationModel.modelId === selectedModelId,
+  );
+
+  const modelDescription = !isDefined(selectedModel)
+    ? t`Runs on the workspace's evaluation model, or its language model when none is configured. Probabilities are only returned by an evaluation model.`
+    : selectedModel.isAvailable
+      ? t`Returns a calibrated probability for every answer.`
+      : t`This model is in the catalog but its provider is not configured, so runs fall back to the workspace default.`;
+
   const questionTypeOptions = AI_EVALUATION_QUESTION_TYPES.map(
     (questionType) => ({
       label: questionTypeLabels[questionType],
@@ -143,6 +180,18 @@ export const WorkflowEditActionClassify = ({
   return (
     <>
       <WorkflowStepBody>
+        <Select
+          dropdownId={`classify-model-${action.id}`}
+          label={t`Model`}
+          value={selectedModelId ?? ''}
+          options={modelOptions}
+          onChange={(modelId) =>
+            updateInput({ modelId: modelId === '' ? undefined : modelId })
+          }
+          disabled={actionOptions.readonly}
+          description={modelDescription}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+        />
         <FormTextFieldInput
           label={t`State`}
           multiline
