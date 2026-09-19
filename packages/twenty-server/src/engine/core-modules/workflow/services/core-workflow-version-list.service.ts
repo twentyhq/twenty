@@ -36,6 +36,7 @@ export class CoreWorkflowVersionListService {
         order: { createdAt: 'ASC', id: 'ASC' },
         select: {
           id: true,
+          coreWorkflowId: true,
           status: true,
           createdAt: true,
           updatedAt: true,
@@ -47,6 +48,7 @@ export class CoreWorkflowVersionListService {
     return coreWorkflowVersions
       .map((coreWorkflowVersion, index) => ({
         id: coreWorkflowVersion.id,
+        coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
         label: buildCoreWorkflowVersionLabel(index + 1),
         status: coreWorkflowVersion.status,
         workspaceWorkflowVersionId:
@@ -109,6 +111,7 @@ export class CoreWorkflowVersionListService {
         order: { createdAt: 'ASC', id: 'ASC' },
         select: {
           id: true,
+          coreWorkflowId: true,
           status: true,
           createdAt: true,
           updatedAt: true,
@@ -120,6 +123,7 @@ export class CoreWorkflowVersionListService {
     return coreWorkflowVersions
       .map((coreWorkflowVersion, index) => ({
         id: coreWorkflowVersion.id,
+        coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
         label: buildCoreWorkflowVersionLabel(index + 1),
         status: coreWorkflowVersion.status,
         workspaceWorkflowVersionId:
@@ -165,6 +169,7 @@ export class CoreWorkflowVersionListService {
 
     return {
       id: coreWorkflowVersion.id,
+      coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
       label: buildCoreWorkflowVersionLabel(versionRank),
       status: coreWorkflowVersion.status,
       workspaceWorkflowVersionId:

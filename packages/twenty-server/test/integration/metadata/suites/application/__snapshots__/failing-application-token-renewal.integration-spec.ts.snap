@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application token renewal should fail when the caller is an API key 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a session access token",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token renewal should fail when the caller is an application token instead of a session 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a session access token",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token renewal should fail when the refresh token has no user binding 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "Refresh token does not match authenticated session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token renewal should fail when the refresh token has no user workspace binding 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "Refresh token does not match authenticated session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token renewal should fail when the refresh token is bound to another user 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "Refresh token does not match authenticated session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token renewal should fail when the refresh token is bound to another user workspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "Refresh token does not match authenticated session",
+  "name": "ForbiddenError",
+}
+`;

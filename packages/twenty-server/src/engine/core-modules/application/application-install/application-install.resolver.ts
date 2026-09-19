@@ -25,10 +25,13 @@ import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { UpdateApplicationInput } from 'src/engine/core-modules/application/dtos/update-application.input';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { resolveTargetApplicationOrThrow } from 'src/engine/core-modules/application/utils/resolve-target-application-or-throw.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -66,6 +69,8 @@ export class ApplicationInstallResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async findOneApplication(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
     @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
     @Args('universalIdentifier', {
       type: () => UUIDScalarType,
@@ -73,11 +78,20 @@ export class ApplicationInstallResolver {
     })
     universalIdentifier?: string,
   ) {
-    return await this.applicationService.findOneApplicationOrThrow({
-      id,
-      universalIdentifier,
-      workspaceId,
-    });
+    const { targetApplicationId, targetApplicationUniversalIdentifier } =
+      resolveTargetApplicationOrThrow({
+        callingApplication,
+        applicationId: id,
+        applicationUniversalIdentifier: universalIdentifier,
+      });
+
+    return await this.applicationService.findOneApplicationWithRelationsOrThrow(
+      {
+        id: targetApplicationId,
+        universalIdentifier: targetApplicationUniversalIdentifier,
+        workspaceId,
+      },
+    );
   }
 
   @Mutation(() => Boolean, {
@@ -113,7 +127,7 @@ export class ApplicationInstallResolver {
       workspaceId: workspace.id,
     });
 
-    return this.applicationService.findOneApplicationOrThrow({
+    return this.applicationService.findOneApplicationWithRelationsOrThrow({
       universalIdentifier,
       workspaceId: workspace.id,
     });
@@ -190,7 +204,7 @@ export class ApplicationInstallResolver {
     @Args('input') input: UpdateApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    await this.applicationService.findOneApplicationOrThrow({
+    await this.applicationService.findOneApplicationWithRelationsOrThrow({
       id,
       workspaceId,
     });

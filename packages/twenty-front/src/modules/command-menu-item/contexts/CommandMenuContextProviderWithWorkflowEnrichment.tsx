@@ -2,7 +2,9 @@ import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useCoreWorkflowsWithCurrentVersions';
 import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useWorkflowsWithCurrentVersions';
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 
 import { CommandMenuContextProviderContent } from './CommandMenuContextProviderContent';
 
@@ -23,13 +25,21 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   selectedWorkflowRecordIds,
   isInPreviewMode,
 }: CommandMenuContextProviderWithWorkflowEnrichmentProps) => {
+  const isCore = useIsWorkflowCoreEnabled();
   const workflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
-    selectedWorkflowRecordIds,
+    isCore ? [] : selectedWorkflowRecordIds,
   );
+  const coreWorkflowsWithCurrentVersions = useCoreWorkflowsWithCurrentVersions(
+    isCore ? selectedWorkflowRecordIds : [],
+  );
+
+  const workflows = isCore
+    ? coreWorkflowsWithCurrentVersions
+    : workflowsWithCurrentVersions;
 
   const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
     (record) => {
-      const workflowWithCurrentVersion = workflowsWithCurrentVersions.find(
+      const workflowWithCurrentVersion = workflows.find(
         (workflow) => workflow.id === record.id,
       );
 
@@ -48,16 +58,14 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
     },
   );
 
-  const enrichedCommandMenuContextApi = {
-    ...commandMenuContextApi,
-    selectedRecords: enrichedSelectedRecords,
-  };
-
   return (
     <CommandMenuContextProviderContent
       displayType={displayType}
       containerType={containerType}
-      commandMenuContextApi={enrichedCommandMenuContextApi}
+      commandMenuContextApi={{
+        ...commandMenuContextApi,
+        selectedRecords: enrichedSelectedRecords,
+      }}
       isInPreviewMode={isInPreviewMode}
     >
       {children}

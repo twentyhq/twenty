@@ -4,8 +4,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { IconMaximize } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/components';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
-import { LightIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const CODE_EDITOR_MIN_HEIGHT = 343;
@@ -52,12 +52,14 @@ export const WorkflowCodeEditor = ({
       {!readonly && !fullScreenMode && onEnterFullScreen && (
         <StyledFullScreenButtonContainer>
           <LightIconButton
-            Icon={IconMaximize}
             onClick={onEnterFullScreen}
             title={t`Expand to Full Screen`}
-            size="small"
-            accent="tertiary"
-          />
+            size="sm"
+            emphasis="subtle"
+            aria-label={t`Expand to Full Screen`}
+          >
+            <IconMaximize />
+          </LightIconButton>
         </StyledFullScreenButtonContainer>
       )}
       <CodeEditor

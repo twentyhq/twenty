@@ -71,3 +71,7 @@
   justify-content: flex-end;
   padding-block-start: var(--t-spacing-1);
 }
+
+.closeButton {
+  @include square-button;
+}

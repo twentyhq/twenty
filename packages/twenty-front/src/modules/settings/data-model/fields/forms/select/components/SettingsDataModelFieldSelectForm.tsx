@@ -33,7 +33,7 @@ import { t } from '@lingui/core/macro';
 import { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { LightButton } from 'twenty-ui/components';
+import { LightButton, LightIconButton } from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconPencil,
@@ -41,7 +41,7 @@ import {
   IconPoint,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+
 import { CardContent, CardFooter } from 'twenty-ui/primitives/surfaces';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -369,9 +369,11 @@ export const SettingsDataModelFieldSelectForm = ({
                       dropdownId={OPTIONS_DROPDOWN_ID}
                       clickableComponent={
                         <LightIconButton
-                          Icon={IconDotsVertical}
-                          accent="tertiary"
-                        />
+                          emphasis="subtle"
+                          aria-label={t`More options`}
+                        >
+                          <IconDotsVertical />
+                        </LightIconButton>
                       }
                       dropdownComponents={
                         <DropdownContent

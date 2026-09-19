@@ -116,7 +116,7 @@ describe('process-recall-webhook', () => {
       },
     });
     expect(enqueueArtifactImportMock).toHaveBeenCalledWith(
-      expect.objectContaining({ callRecordingId: 'call-recording-1' }),
+      expect.objectContaining({ callRecordingIds: ['call-recording-1'] }),
     );
     expect(result).toEqual({
       status: 'updated',

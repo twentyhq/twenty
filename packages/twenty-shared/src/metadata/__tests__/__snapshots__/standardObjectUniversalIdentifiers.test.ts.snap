@@ -1139,6 +1139,40 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
         },
       },
+      "messageRecordPageFields": {
+        "universalIdentifier": "3dcb94ca-040a-5ea3-b77a-ae0d161ae997",
+        "viewFieldGroups": {
+          "general": {
+            "universalIdentifier": "9cfcc382-5949-5e3c-9d12-5d25facf9faa",
+          },
+          "system": {
+            "universalIdentifier": "818692c7-0ba3-5ec9-84b4-bfedf1e56353",
+          },
+        },
+        "viewFields": {
+          "createdAt": {
+            "universalIdentifier": "00f384d1-a224-50ea-8ec5-935490b11d09",
+          },
+          "createdBy": {
+            "universalIdentifier": "944070ce-0436-5bf8-9cb4-0b350f70dc57",
+          },
+          "headerMessageId": {
+            "universalIdentifier": "1f6cc726-d511-56a7-9c67-1e8ec054773e",
+          },
+          "messageParticipants": {
+            "universalIdentifier": "3a255411-1355-5b83-890e-819bd048833f",
+          },
+          "messageThread": {
+            "universalIdentifier": "81f8ca6f-68d0-552b-be97-b162067ce100",
+          },
+          "receivedAt": {
+            "universalIdentifier": "59195b7a-4973-5158-b803-d5cb4ffaabe4",
+          },
+          "text": {
+            "universalIdentifier": "51fc3e29-22a8-5c92-85cd-d96c2f7508db",
+          },
+        },
+      },
     },
   },
   "messageCampaign": {

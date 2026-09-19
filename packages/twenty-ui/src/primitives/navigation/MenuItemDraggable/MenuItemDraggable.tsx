@@ -1,18 +1,19 @@
 import { MenuItemLeftContent } from '@ui/primitives/navigation/MenuItem/parts/MenuItemLeftContent';
-import { StyledHoverableMenuItemBase } from '@ui/primitives/navigation/MenuItem/parts/StyledMenuItemBase';
+import {
+  StyledHoverableMenuItemBase,
+  StyledMenuItemRightContent,
+} from '@ui/primitives/navigation/MenuItem/parts/StyledMenuItemBase';
 import { type MenuItemAccent } from '@ui/primitives/navigation/MenuItem/types/MenuItemAccent';
 
 import { type IconComponent } from '@ui/icon';
-import { LightIconButtonGroup } from '@ui/primitives/input';
 import { type ReactNode } from 'react';
 import { type MenuItemDraggableGripMode } from '@ui/primitives/navigation/MenuItem/types/MenuItemDraggableGripMode';
-import { type MenuItemIconButton } from '@ui/primitives/navigation/MenuItem/MenuItem';
 
 export type MenuItemDraggableProps = {
   LeftIcon?: IconComponent | undefined;
   withIconContainer?: boolean;
   accent?: MenuItemAccent;
-  iconButtons?: MenuItemIconButton[];
+  iconButtons?: ReactNode;
   isTooltipOpen?: boolean;
   onClick?: () => void;
   text: ReactNode;
@@ -37,8 +38,6 @@ export const MenuItemDraggable = ({
   isIconDisplayedOnHoverOnly = true,
   gripMode = 'never',
 }: MenuItemDraggableProps) => {
-  const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
-
   const cursorType =
     gripMode !== 'never' ? (isDragDisabled ? 'default' : 'drag') : 'default';
 
@@ -58,11 +57,10 @@ export const MenuItemDraggable = ({
         disabled={isDragDisabled}
         gripMode={gripMode}
       />
-      {showIconButtons && (
-        <LightIconButtonGroup
-          className="hoverable-buttons"
-          iconButtons={iconButtons}
-        />
+      {iconButtons && (
+        <StyledMenuItemRightContent className="hoverable-buttons">
+          {iconButtons}
+        </StyledMenuItemRightContent>
       )}
     </StyledHoverableMenuItemBase>
   );

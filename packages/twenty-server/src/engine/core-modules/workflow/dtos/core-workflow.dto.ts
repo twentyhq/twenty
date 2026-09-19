@@ -22,6 +22,9 @@ export class CoreWorkflowDTO {
   lastPublishedVersionId: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
+  lastPublishedCoreWorkflowVersionId?: string | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
   applicationId: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
