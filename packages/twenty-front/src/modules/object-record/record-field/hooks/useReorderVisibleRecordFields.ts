@@ -21,8 +21,8 @@ export const useReorderVisibleRecordFields = (recordTableId: string) => {
       recordFieldToMove,
       targetRecordField,
     }: {
-      recordFieldToMove: RecordField;
-      targetRecordField: RecordField;
+      recordFieldToMove: Pick<RecordField, 'id' | 'fieldMetadataItemId'>;
+      targetRecordField: Pick<RecordField, 'id'>;
     }) => {
       const newPosition = computeNewPositionOfDraggedRecord({
         arrayOfRecordsWithPosition: store.get(currentRecordFields),
@@ -31,16 +31,9 @@ export const useReorderVisibleRecordFields = (recordTableId: string) => {
         isDroppedAfterList: false,
       });
 
-      updateRecordField(recordFieldToMove.fieldMetadataItemId, {
+      return updateRecordField(recordFieldToMove.fieldMetadataItemId, {
         position: newPosition,
       });
-
-      const updatedRecordField: RecordField = {
-        ...recordFieldToMove,
-        position: newPosition,
-      };
-
-      return updatedRecordField;
     },
     [currentRecordFields, updateRecordField, store],
   );
