@@ -54,4 +54,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Webhook rate limits`,
     description: msg`Limit the rate of outgoing webhook deliveries.`,
   },
+  [FeatureFlagKey.IS_DEFERRED_SCHEMA_OPERATIONS_ENABLED]: {
+    label: msg`Deferred schema operations`,
+    description: msg`Build relation indexes in the background instead of during metadata changes.`,
+  },
 };
