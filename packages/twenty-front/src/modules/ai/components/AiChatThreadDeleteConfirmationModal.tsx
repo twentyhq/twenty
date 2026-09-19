@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
@@ -29,7 +30,9 @@ export const AiChatThreadDeleteConfirmationModal = ({
   const modalInstanceId = getAiChatThreadDeleteModalId(surface);
 
   const handleDelete = async () => {
-    if (aiChatThreadPendingDelete === null) return;
+    if (!isDefined(aiChatThreadPendingDelete)) {
+      return;
+    }
 
     await deleteChatThread(aiChatThreadPendingDelete.threadId);
     setAiChatThreadPendingDelete(null);

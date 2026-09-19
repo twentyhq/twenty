@@ -31,6 +31,7 @@ import {
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import {
   AiException,
@@ -75,6 +76,7 @@ export class AgentRunThreadService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
+    private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -121,6 +123,43 @@ export class AgentRunThreadService {
     });
 
     return thread;
+  }
+
+  // An iterator runs the same step id again inside one run, so the conversation
+  // found for a step can be the previous item's. What tells the two apart is
+  // the last message: a run resumed after somebody answered a question has
+  // that answer at the end, while a fresh execution ends on the previous
+  // item's assistant turn and needs this item's own prompt appended - without
+  // it the agent would be handed the previous item's transcript and nothing
+  // else, and would answer for that item again.
+  async appendRunPromptForNewExecution({
+    thread,
+    prompt,
+    agentId,
+  }: {
+    thread: AgentChatThreadEntity;
+    prompt: string;
+    agentId: string | null;
+  }): Promise<void> {
+    const lastMessage = await this.messageRepository.findOne(
+      thread.workspaceId,
+      {
+        where: { threadId: thread.id, isHidden: false },
+        order: { createdAt: 'DESC' },
+        select: ['id', 'role'],
+      },
+    );
+
+    if (lastMessage?.role !== AgentMessageRole.ASSISTANT) {
+      return;
+    }
+
+    await this.agentChatService.addMessage({
+      threadId: thread.id,
+      uiMessage: { role: 'user', parts: [{ type: 'text', text: prompt }] },
+      agentId: agentId ?? undefined,
+      workspaceId: thread.workspaceId,
+    });
   }
 
   // The person the run conversation belongs to: whoever triggered the run
@@ -303,6 +342,12 @@ export class AgentRunThreadService {
       workspaceId: thread.workspaceId,
     });
 
+    // The claim below goes in activeStreamId, and every reader's subscription
+    // reaps an activeStreamId with no liveness key behind it. Without this the
+    // first heartbeat that overlaps the answer clears a claim that is being
+    // held on purpose and tells the thread its stream was interrupted.
+    await this.streamHeartbeatService.markClaimed(claimStreamId);
+
     const { rollback } = await this.agentChatService.resolvePendingQuestion({
       threadId: thread.id,
       messageId,
@@ -364,6 +409,8 @@ export class AgentRunThreadService {
         rollback,
       });
 
+      await this.streamHeartbeatService.clear(claimStreamId);
+
       // The answer goes back with the question. Leaving it would show the
       // thread answered while the question is pending again, and the next
       // attempt would post the same answer a second time. A failure to clean
@@ -387,6 +434,8 @@ export class AgentRunThreadService {
         { activeStreamId: null },
       )
       .catch(() => {});
+
+    await this.streamHeartbeatService.clear(claimStreamId);
 
     return { messageId: answerMessage.id };
   }

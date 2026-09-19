@@ -1,7 +1,7 @@
 import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
 import { AgentChatChannelsInitializationEffect } from '@/ai/components/AgentChatChannelsInitializationEffect';
 import { AgentChatThreadInitializationEffect } from '@/ai/components/AgentChatThreadInitializationEffect';
-import { AiChatUnreadThreadsEffect } from '@/ai/components/AiChatUnreadThreadsEffect';
+import { AiChatUnreadThreadsTracker } from '@/ai/components/AiChatUnreadThreadsTracker';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { Suspense } from 'react';
 
@@ -18,7 +18,7 @@ export const AgentChatProviderContent = ({
         <AgentChatThreadInitializationEffect />
         <AgentChatChannelsInitializationEffect />
         <AgentChatRuntimeEffects />
-        <AiChatUnreadThreadsEffect />
+        <AiChatUnreadThreadsTracker />
         {children}
       </AgentChatComponentInstanceContext.Provider>
     </Suspense>

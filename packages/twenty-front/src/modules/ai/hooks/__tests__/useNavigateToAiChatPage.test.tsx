@@ -160,6 +160,48 @@ describe('useNavigateToAiChatPage', () => {
     );
   });
 
+  it('opens a thread of an unreadable channel on the standalone chat page', () => {
+    jotaiStore.set(metadataStoreState.atomFamily('agentChatChannels'), {
+      current: [],
+      draft: [],
+      status: 'up-to-date',
+    });
+
+    const { result } = renderHook(() => useNavigateToAiChatPage(), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      result.current.navigateToAiChatPage({ threadId: CHANNEL_THREAD_ID });
+    });
+
+    expect(navigateMock).toHaveBeenCalledWith(
+      `/chat/${CHANNEL_THREAD_ID}`,
+      expect.anything(),
+    );
+  });
+
+  it('still opens the channel page once that channel is readable', () => {
+    jotaiStore.set(metadataStoreState.atomFamily('agentChatChannels'), {
+      current: [{ id: CHANNEL_ID }],
+      draft: [],
+      status: 'up-to-date',
+    });
+
+    const { result } = renderHook(() => useNavigateToAiChatPage(), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      result.current.navigateToAiChatPage({ threadId: CHANNEL_THREAD_ID });
+    });
+
+    expect(navigateMock).toHaveBeenCalledWith(
+      `/chat/channels/${CHANNEL_ID}/${CHANNEL_THREAD_ID}`,
+      expect.anything(),
+    );
+  });
+
   it('opens a new chat of a channel on that channel page', () => {
     const { result } = renderHook(() => useNavigateToAiChatPage(), {
       wrapper: Wrapper,

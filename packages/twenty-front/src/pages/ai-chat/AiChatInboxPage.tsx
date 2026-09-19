@@ -9,7 +9,6 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { AiChatChannelDeleteConfirmationModal } from '@/ai/components/AiChatChannelDeleteConfirmationModal';
 import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxTabs } from '@/ai/components/AiChatInboxTabs';
-import { AiChatMarkThreadReadEffect } from '@/ai/components/AiChatMarkThreadReadEffect';
 import { AiChatSelectFirstThreadEffect } from '@/ai/components/AiChatSelectFirstThreadEffect';
 import { AiChatInboxThreadPane } from '@/ai/components/AiChatInboxThreadPane';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
@@ -137,7 +136,6 @@ export const AiChatInboxPage = () => {
           isThreadSelected={isDefined(threadId)}
         />
       )}
-      <AiChatMarkThreadReadEffect threadId={threadId ?? null} />
       <CollapseNavigationDrawerWhileSidePanelOpenEffect />
       {/* Thread rows on this page use the side panel action surface. */}
       <AiChatThreadDeleteConfirmationModal

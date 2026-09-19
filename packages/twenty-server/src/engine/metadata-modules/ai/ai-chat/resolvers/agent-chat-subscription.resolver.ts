@@ -99,7 +99,11 @@ export class AgentChatSubscriptionResolver {
           );
 
           if (!hasAccess) {
-            await wrappedIterator.return?.();
+            // Closing waits for the running heartbeat to finish before it
+            // releases the underlying iterator, and this is that heartbeat:
+            // awaiting it here would leave the two waiting on each other and
+            // the Redis subscription would never be released.
+            void wrappedIterator.return?.().catch(() => {});
 
             return false;
           }

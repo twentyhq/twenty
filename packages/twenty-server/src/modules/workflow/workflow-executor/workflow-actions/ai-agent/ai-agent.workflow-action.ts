@@ -102,6 +102,8 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       workspaceId,
     });
 
+    const resolvedPrompt = resolveInput(prompt, context) as string;
+
     const thread =
       existingThread ??
       (await this.agentRunThreadService.openRunThread({
@@ -120,9 +122,17 @@ export class AiAgentWorkflowAction implements WorkflowAction {
           workspaceId,
           stepName: step.name,
         }),
-        prompt: resolveInput(prompt, context) as string,
+        prompt: resolvedPrompt,
         agentId: agent?.id ?? null,
       }));
+
+    if (isDefined(existingThread)) {
+      await this.agentRunThreadService.appendRunPromptForNewExecution({
+        thread: existingThread,
+        prompt: resolvedPrompt,
+        agentId: agent?.id ?? null,
+      });
+    }
 
     const messages = await this.agentRunThreadService.loadTranscript({
       threadId: thread.id,

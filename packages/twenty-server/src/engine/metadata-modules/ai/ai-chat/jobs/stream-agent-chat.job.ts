@@ -235,7 +235,6 @@ export class StreamAgentChatJob {
         await this.agentChatStreamingService
           .flushNextQueuedMessage(
             data.threadId,
-            data.userWorkspaceId,
             data.workspaceId,
             data.hasTitle,
           )

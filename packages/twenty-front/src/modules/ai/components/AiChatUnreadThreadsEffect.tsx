@@ -1,25 +1,23 @@
 import { useQuery } from '@apollo/client/react';
-import { useEffect } from 'react';
 import { useStore } from 'jotai';
+import { useEffect } from 'react';
 
-import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { agentChatUnreadThreadIdsState } from '@/ai/states/agentChatUnreadThreadIdsState';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
   GetUnreadChatThreadIdsDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-// Every thread the reader can see, not the ones one page happens to list: the
-// drawer counts unread threads across channels it is not showing, and a
-// narrower list would silently unread-mark whatever it left out.
-export const AiChatUnreadThreadsEffect = () => {
-  const store = useStore();
-  const { threads } = useChatThreads();
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+type AiChatUnreadThreadsEffectProps = {
+  threadIds: string[];
+};
 
-  const threadIds = threads.map((thread) => thread.id);
-  const threadIdsKey = threadIds.join(',');
+export const AiChatUnreadThreadsEffect = ({
+  threadIds,
+}: AiChatUnreadThreadsEffectProps) => {
+  const store = useStore();
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const { data } = useQuery(GetUnreadChatThreadIdsDocument, {
     variables: { threadIds },
@@ -34,7 +32,7 @@ export const AiChatUnreadThreadsEffect = () => {
       agentChatUnreadThreadIdsState.atom,
       unreadThreadIdsKey === '' ? [] : unreadThreadIdsKey.split(','),
     );
-  }, [store, unreadThreadIdsKey, threadIdsKey]);
+  }, [store, unreadThreadIdsKey]);
 
   return null;
 };

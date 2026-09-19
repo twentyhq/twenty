@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   AgentMessageRole,
@@ -76,6 +78,42 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     userWorkspaceId: 'user-workspace-id',
     workspace,
   };
+
+  it('takes the worker gate, so a public-channel reader alone cannot retry a failed turn', async () => {
+    const { service, threadRepository } = buildService();
+
+    await service.retryLastFailedTurn({
+      threadId: 'thread-id',
+      userWorkspaceId: 'user-workspace-id',
+      workspace,
+    });
+
+    const [, { where }] = threadRepository.findOne.mock.calls[0];
+
+    expect(
+      where.some(
+        (clause: {
+          assigneeUserWorkspaceId?: string;
+          channel?: Record<string, unknown>;
+        }) =>
+          isDefined(clause.channel) &&
+          'visibility' in clause.channel &&
+          !isDefined(clause.assigneeUserWorkspaceId),
+      ),
+    ).toBe(false);
+  });
+
+  it('refuses the retry when the caller does not work the thread', async () => {
+    const { service } = buildService({ thread: null as never });
+
+    await expect(
+      service.retryLastFailedTurn({
+        threadId: 'thread-id',
+        userWorkspaceId: 'user-workspace-id',
+        workspace,
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_JOINED });
+  });
 
   it('rejects when the thread has no persisted stream error', async () => {
     const { service, messageQueueService } = buildService({

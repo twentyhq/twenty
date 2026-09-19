@@ -72,6 +72,10 @@ const buildService = () => {
       .mockResolvedValue({ id: 'workflow-run-id', status: 'RUNNING' }),
   };
   const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
+  const streamHeartbeatService = {
+    markClaimed: jest.fn().mockResolvedValue(undefined),
+    clear: jest.fn().mockResolvedValue(undefined),
+  };
 
   const service = new AgentRunThreadService(
     threadRepository as never,
@@ -83,6 +87,7 @@ const buildService = () => {
     { findOne: jest.fn().mockResolvedValue(null) } as never,
     agentChatService as never,
     eventPublisherService as never,
+    streamHeartbeatService as never,
     { executeInWorkspaceContext: jest.fn() } as never,
     workflowRunWorkspaceService as never,
     messageQueueService as never,
@@ -92,6 +97,7 @@ const buildService = () => {
     service,
     threadRepository,
     messageRepository,
+    streamHeartbeatService,
     agentChatService,
     eventPublisherService,
     workflowRunWorkspaceService,
@@ -213,6 +219,88 @@ describe('AgentRunThreadService', () => {
     });
 
     expect(callOrder).toEqual(['addMessage', 'releaseClaim']);
+  });
+
+  it('registers liveness for the answer claim, so the stream reaper cannot clear it', async () => {
+    const { service, streamHeartbeatService, threadRepository } =
+      buildService();
+
+    await service.answerRunQuestion({
+      thread: buildThread() as never,
+      messageId: 'question-message-id',
+      answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+      userWorkspaceId: OWNER_ID,
+    });
+
+    const [claimStreamId] = streamHeartbeatService.markClaimed.mock.calls[0];
+
+    expect(claimStreamId).toMatch(/^workflow-run-answer:/);
+    expect(
+      streamHeartbeatService.markClaimed.mock.invocationCallOrder[0],
+    ).toBeLessThan(threadRepository.update.mock.invocationCallOrder[0]);
+    expect(streamHeartbeatService.clear).toHaveBeenCalledWith(claimStreamId);
+  });
+
+  it('clears the answer claim liveness when the run cannot be re-queued', async () => {
+    const { service, streamHeartbeatService, messageQueueService } =
+      buildService();
+
+    messageQueueService.add.mockRejectedValue(new Error('queue down'));
+
+    await expect(
+      service.answerRunQuestion({
+        thread: buildThread() as never,
+        messageId: 'question-message-id',
+        answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+        userWorkspaceId: OWNER_ID,
+      }),
+    ).rejects.toThrow('queue down');
+
+    const [claimStreamId] = streamHeartbeatService.markClaimed.mock.calls[0];
+
+    expect(streamHeartbeatService.clear).toHaveBeenCalledWith(claimStreamId);
+  });
+
+  it('appends this execution own prompt when the conversation ended on an assistant turn', async () => {
+    const { service, messageRepository, agentChatService } = buildService();
+
+    messageRepository.findOne.mockResolvedValue({
+      id: 'assistant-message-id',
+      role: AgentMessageRole.ASSISTANT,
+    });
+
+    await service.appendRunPromptForNewExecution({
+      thread: buildThread() as never,
+      prompt: 'Qualify Globex',
+      agentId: null,
+    });
+
+    expect(agentChatService.addMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadId: THREAD_ID,
+        uiMessage: {
+          role: 'user',
+          parts: [{ type: 'text', text: 'Qualify Globex' }],
+        },
+      }),
+    );
+  });
+
+  it('appends nothing when the conversation is resuming on somebody answer', async () => {
+    const { service, messageRepository, agentChatService } = buildService();
+
+    messageRepository.findOne.mockResolvedValue({
+      id: 'answer-message-id',
+      role: AgentMessageRole.USER,
+    });
+
+    await service.appendRunPromptForNewExecution({
+      thread: buildThread() as never,
+      prompt: 'Qualify Globex',
+      agentId: null,
+    });
+
+    expect(agentChatService.addMessage).not.toHaveBeenCalled();
   });
 
   it('puts the question back when writing the answer fails, so the run is not left half-answered', async () => {

@@ -73,9 +73,7 @@ export const NavigationDrawerAiChatContent = () => {
     loading,
     fetchMoreRef,
   } = useChatThreads();
-  const { joinedChannels, browsableChannels } = useChatChannels();
-  const hasChannelsSection =
-    joinedChannels.length > 0 || browsableChannels.length > 0;
+  const { joinedChannels } = useChatChannels();
 
   if (loading && allThreads.length === 0) {
     return (
@@ -96,30 +94,31 @@ export const NavigationDrawerAiChatContent = () => {
           />
         </StyledNewChatItem>
         <NavigationDrawerAiChatInboxSection />
-        {hasChannelsSection && (
-          <StyledSectionsContainer>
-            <CollapsibleNavigationDrawerSection
-              sectionId={AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID}
-              label={t`Channels`}
-              rightIcon={
-                <>
-                  <AiChatChannelsMenu />
-                  <AiChatThreadFilterDropdown
-                    surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-                  />
-                </>
-              }
-              alwaysShowRightIcon={joinedChannels.length === 0}
-            >
-              {joinedChannels.map((channel) => (
-                <NavigationDrawerAiChatChannelItem
-                  key={channel.id}
-                  channel={channel}
+        {/* The section is what carries the channels menu, and that menu holds
+            the only way to create a channel: hiding it until a channel exists
+            leaves a new workspace with no way to make its first one. */}
+        <StyledSectionsContainer>
+          <CollapsibleNavigationDrawerSection
+            sectionId={AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID}
+            label={t`Channels`}
+            rightIcon={
+              <>
+                <AiChatChannelsMenu />
+                <AiChatThreadFilterDropdown
+                  surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
                 />
-              ))}
-            </CollapsibleNavigationDrawerSection>
-          </StyledSectionsContainer>
-        )}
+              </>
+            }
+            alwaysShowRightIcon={joinedChannels.length === 0}
+          >
+            {joinedChannels.map((channel) => (
+              <NavigationDrawerAiChatChannelItem
+                key={channel.id}
+                channel={channel}
+              />
+            ))}
+          </CollapsibleNavigationDrawerSection>
+        </StyledSectionsContainer>
         {allThreads.length === 0 && isExpanded ? (
           <StyledEmptyState>{t`No chat`}</StyledEmptyState>
         ) : null}

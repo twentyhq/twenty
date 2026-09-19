@@ -4,6 +4,7 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type FlatAgentChatChannel } from '@/metadata-store/types/FlatAgentChatChannel';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -20,6 +21,24 @@ export const useNavigateToAiChatPage = () => {
       .current as FlatAgentChatThread[];
 
     return threads.find((thread) => thread.id === threadId)?.channelId ?? null;
+  };
+
+  // Thread access and channel access are independent: a thread can be shared
+  // with somebody who cannot read the private channel it sits in, and the
+  // channel page has nothing to show them. Until the channels have loaded
+  // there is nothing to conclude from one being absent.
+  const canReadChannel = (channelId: string) => {
+    const channelsStoreEntry = store.get(
+      metadataStoreState.atomFamily('agentChatChannels'),
+    );
+
+    if (channelsStoreEntry.status === 'empty') {
+      return true;
+    }
+
+    return (channelsStoreEntry.current as FlatAgentChatChannel[]).some(
+      (channel) => channel.id === channelId,
+    );
   };
 
   const navigateToAiChatPage = ({
@@ -49,7 +68,10 @@ export const useNavigateToAiChatPage = () => {
 
     // A thread of a channel opens on the channel page, beside the channel's
     // other chats; that page mirrors its selection in the URL itself.
-    if (isDefined(destinationChannelId)) {
+    if (
+      isDefined(destinationChannelId) &&
+      canReadChannel(destinationChannelId)
+    ) {
       if (
         getAiChatChannelIdFromPathname(window.location.pathname) ===
         destinationChannelId

@@ -68,6 +68,7 @@ const buildAction = ({
       messageId: 'assistant-message-id',
       pendingQuestions,
     }),
+    appendRunPromptForNewExecution: jest.fn().mockResolvedValue(undefined),
   };
 
   const action = new AiAgentWorkflowAction(
@@ -142,5 +143,31 @@ describe('AiAgentWorkflowAction', () => {
       threadId: THREAD_ID,
       workspaceId: WORKSPACE_ID,
     });
+  });
+
+  it('offers this execution its own resolved prompt to the existing conversation', async () => {
+    const { execute, agentRunThreadService } = buildAction({
+      existingThread: { id: THREAD_ID },
+    });
+
+    await execute();
+
+    expect(
+      agentRunThreadService.appendRunPromptForNewExecution,
+    ).toHaveBeenCalledWith({
+      thread: { id: THREAD_ID },
+      prompt: 'Qualify Acme',
+      agentId: null,
+    });
+  });
+
+  it('does not offer a prompt to a conversation it just opened', async () => {
+    const { execute, agentRunThreadService } = buildAction();
+
+    await execute();
+
+    expect(
+      agentRunThreadService.appendRunPromptForNewExecution,
+    ).not.toHaveBeenCalled();
   });
 });

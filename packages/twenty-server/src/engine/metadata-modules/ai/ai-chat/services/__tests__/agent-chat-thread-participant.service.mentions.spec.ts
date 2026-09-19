@@ -208,9 +208,17 @@ describe('AgentChatThreadParticipantService mentions', () => {
     ).toBe(true);
     // The reader builder's public clause nests it — { channel: { visibility } }
     // — so a top-level key check passes for both builders and guards nothing.
+    // The worker builder pins that visibility too, but only alongside the
+    // assignee, where it narrows the clause instead of admitting a reader.
     expect(
-      where.some((clause: { channel?: Record<string, unknown> }) =>
-        isDefined(clause.channel) ? 'visibility' in clause.channel : false,
+      where.some(
+        (clause: {
+          assigneeUserWorkspaceId?: string;
+          channel?: Record<string, unknown>;
+        }) =>
+          isDefined(clause.channel) &&
+          'visibility' in clause.channel &&
+          !isDefined(clause.assigneeUserWorkspaceId),
       ),
     ).toBe(false);
   });

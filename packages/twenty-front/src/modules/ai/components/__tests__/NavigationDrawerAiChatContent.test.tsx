@@ -42,7 +42,7 @@ jest.mock('@/navigation/hooks/useIsNavigationDrawerContentExpanded', () => ({
   useIsNavigationDrawerContentExpanded: () => true,
 }));
 jest.mock('@/ai/components/AiChatChannelsMenu', () => ({
-  AiChatChannelsMenu: () => null,
+  AiChatChannelsMenu: () => <div data-testid="ai-chat-channels-menu" />,
 }));
 jest.mock('@/ai/components/AiChatThreadFilterDropdown', () => ({
   AiChatThreadFilterDropdown: () => null,
@@ -144,6 +144,15 @@ describe('NavigationDrawerAiChatContent', () => {
 
     expect(screen.getByText('Open').parentElement).toHaveTextContent('· 1');
     expect(screen.queryByText('· 3')).toBeNull();
+  });
+
+  it('keeps the channels menu reachable in a workspace with no channel yet', () => {
+    threads = [buildThread('t1', 'A chat outside any channel')];
+
+    renderContent();
+
+    expect(screen.getByText('Channels')).toBeVisible();
+    expect(screen.getByTestId('ai-chat-channels-menu')).toBeInTheDocument();
   });
 
   it('badges a finished thread nobody has read yet', () => {

@@ -20,6 +20,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 import { AiChatJoinChannelBanner } from '@/ai/components/AiChatJoinChannelBanner';
 import { AiChatQueuedMessages } from '@/ai/components/AiChatQueuedMessages';
+import { AiChatMarkThreadReadEffect } from '@/ai/components/AiChatMarkThreadReadEffect';
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
@@ -79,6 +80,7 @@ export const AiChatTab = () => {
     >
       {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
       <AgentChatHasBeenOpenedEffect />
+      <AiChatMarkThreadReadEffect />
       <AgentChatStreamingPartsDiffSyncEffect />
       {isDraggingFile && (
         <DropZone

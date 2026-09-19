@@ -11,11 +11,10 @@ describe('buildThreadWorkerWhere', () => {
       userWorkspaceId: USER_WORKSPACE_ID,
     });
 
-    expect(workerClauses).not.toContainEqual(
-      expect.objectContaining({
-        channel: { visibility: AgentChatChannelVisibility.PUBLIC },
-      }),
-    );
+    expect(workerClauses).not.toContainEqual({
+      id: 'thread-id',
+      channel: { visibility: AgentChatChannelVisibility.PUBLIC },
+    });
     expect(
       buildThreadAccessWhere({
         id: 'thread-id',
@@ -28,7 +27,22 @@ describe('buildThreadWorkerWhere', () => {
     );
   });
 
-  it('counts the owner, the assignee, the participants and the channel', () => {
+  it('never authorizes an assignee on what they cannot read', () => {
+    const assigneeClauses = buildThreadWorkerWhere({
+      id: 'thread-id',
+      userWorkspaceId: USER_WORKSPACE_ID,
+    }).filter((clause) => clause.assigneeUserWorkspaceId === USER_WORKSPACE_ID);
+
+    expect(assigneeClauses).toEqual([
+      {
+        id: 'thread-id',
+        assigneeUserWorkspaceId: USER_WORKSPACE_ID,
+        channel: { visibility: AgentChatChannelVisibility.PUBLIC },
+      },
+    ]);
+  });
+
+  it('counts the owner, the participants, the channel and a public-channel assignee', () => {
     expect(
       buildThreadWorkerWhere({
         id: 'thread-id',
@@ -36,7 +50,6 @@ describe('buildThreadWorkerWhere', () => {
       }),
     ).toEqual([
       { id: 'thread-id', userWorkspaceId: USER_WORKSPACE_ID },
-      { id: 'thread-id', assigneeUserWorkspaceId: USER_WORKSPACE_ID },
       {
         id: 'thread-id',
         participants: { userWorkspaceId: USER_WORKSPACE_ID },
@@ -52,6 +65,11 @@ describe('buildThreadWorkerWhere', () => {
             role: { roleTargets: { userWorkspaceId: USER_WORKSPACE_ID } },
           },
         },
+      },
+      {
+        id: 'thread-id',
+        assigneeUserWorkspaceId: USER_WORKSPACE_ID,
+        channel: { visibility: AgentChatChannelVisibility.PUBLIC },
       },
     ]);
   });
