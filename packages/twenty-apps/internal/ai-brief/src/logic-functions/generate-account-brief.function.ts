@@ -71,10 +71,13 @@ export const generateAccountBriefHandler = async (
     };
   }
 
+  // Text agents return { response: string } (agent-async-executor wraps
+  // generateText output in an object).
+  const rawResult = agentResult.result as { response?: unknown };
   const rawResponse =
-    typeof agentResult.result === 'string'
-      ? agentResult.result
-      : String(agentResult.result);
+    typeof rawResult.response === 'string'
+      ? rawResult.response
+      : String(rawResult.response);
 
   const { briefMarkdown, sentiment } = parseAccountBriefResponse(rawResponse);
 

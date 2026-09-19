@@ -578,6 +578,20 @@ export class AgentAsyncExecutorService {
         creditsUsedMicro,
       };
     } catch (error) {
+      // Non-AiException failures often arrive with an empty message (e.g.
+      // raw APICallError); log the full shape before wrapping so operator
+      // logs carry the actual cause.
+      this.logger.error(
+        `Agent execution underlying error: ${JSON.stringify({
+          message: error instanceof Error ? error.message : String(error),
+          name: error instanceof Error ? error.name : typeof error,
+          stack: error instanceof Error ? error.stack?.split('\n').slice(0, 6) : undefined,
+          responseBody: (error as { responseBody?: unknown })?.responseBody,
+          data: (error as { data?: unknown })?.data,
+          statusCode: (error as { statusCode?: number })?.statusCode,
+          url: (error as { url?: string })?.url,
+        })}`,
+      );
       if (error instanceof AiException) {
         throw error;
       }
