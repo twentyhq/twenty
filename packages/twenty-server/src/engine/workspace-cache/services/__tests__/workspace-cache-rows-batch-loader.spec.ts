@@ -3,6 +3,7 @@ import { IsNull, Not, type EntityTarget } from 'typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import {
   WorkspaceCacheRowsBatchLoader,
   type WorkspaceCacheRowsSource,
@@ -310,5 +311,72 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
     ]);
 
     expect(findMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('forwards order clause to find options', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
+    const findMock = findMocksByEntity.get(ViewFieldEntity)!;
+
+    await rowsBatchLoader.loadRows([
+      {
+        viewField: {
+          columns: ['id'],
+          order: { createdAt: 'ASC', id: 'ASC' },
+        },
+      },
+    ]);
+
+    expect(findMock).toHaveBeenCalledTimes(1);
+    expect(findMock.mock.calls[0][0].order).toEqual({
+      createdAt: 'ASC',
+      id: 'ASC',
+    });
+  });
+
+  it('merges order clauses across requirements targeting the same entity', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
+    const findMock = findMocksByEntity.get(ViewFieldEntity)!;
+
+    await rowsBatchLoader.loadRows([
+      {
+        viewField: {
+          columns: ['id'],
+          order: { createdAt: 'ASC' },
+        },
+      },
+      {
+        viewField: {
+          columns: ['fieldMetadataId'],
+          order: { id: 'ASC' },
+        },
+      },
+    ]);
+
+    expect(findMock).toHaveBeenCalledTimes(1);
+    expect(findMock.mock.calls[0][0].order).toEqual({
+      createdAt: 'ASC',
+      id: 'ASC',
+    });
+  });
+
+  it('throws an exception when conflicting order clauses target the same entity field', async () => {
+    const { rowsBatchLoader } = setup();
+
+    await expect(
+      rowsBatchLoader.loadRows([
+        {
+          viewField: {
+            columns: ['id'],
+            order: { createdAt: 'ASC' },
+          },
+        },
+        {
+          viewField: {
+            columns: ['id'],
+            order: { createdAt: 'DESC' },
+          },
+        },
+      ]),
+    ).rejects.toThrow(WorkspaceCacheException);
   });
 });
