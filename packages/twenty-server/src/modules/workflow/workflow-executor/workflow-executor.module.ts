@@ -1,3 +1,4 @@
+import { ClassifyActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/classify-action.module';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { Module } from '@nestjs/common';
 
@@ -26,6 +27,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
 
 @Module({
   imports: [
+    ClassifyActionModule,
     WorkflowCoreModule,
     WorkflowCommonModule,
     WorkflowRunModule,

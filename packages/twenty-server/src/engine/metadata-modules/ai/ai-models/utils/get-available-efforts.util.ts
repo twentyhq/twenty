@@ -6,7 +6,9 @@ import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/typ
 export const getAvailableEfforts = (
   model: Pick<AiModelConfig, 'sdkPackage' | 'efforts'>,
 ): AiModelEffort[] => {
-  const sdkEfforts = AI_SDK_PACKAGE_EFFORTS[model.sdkPackage] ?? [];
+  const sdkEfforts =
+    (model.sdkPackage ? AI_SDK_PACKAGE_EFFORTS[model.sdkPackage] : undefined) ??
+    [];
 
   return (model.efforts ?? []).filter((effort) => sdkEfforts.includes(effort));
 };

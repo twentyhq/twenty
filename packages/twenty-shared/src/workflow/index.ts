@@ -34,6 +34,7 @@ export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-s
 export { baseTriggerSchema } from './schemas/base-trigger-schema';
 export { baseWorkflowActionSchema } from './schemas/base-workflow-action-schema';
 export { baseWorkflowActionSettingsSchema } from './schemas/base-workflow-action-settings-schema';
+export { workflowClassifyActionSchema } from './schemas/classify-action-schema';
 export { workflowCodeActionSchema } from './schemas/code-action-schema';
 export { workflowCodeActionSettingsSchema } from './schemas/code-action-settings-schema';
 export { workflowCreateCalendarEventActionSchema } from './schemas/create-calendar-event-action-schema';
@@ -126,6 +127,7 @@ export type {
 } from './types/WorkflowRunStepLog';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
+export { getClassificationOutputSchema } from './utils/get-classification-output-schema.util';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
 export { isStandaloneVariableString } from './utils/isStandaloneVariableString';

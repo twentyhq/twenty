@@ -1,3 +1,4 @@
+import { WorkflowEditActionClassify } from '@/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify';
 import {
   type WorkflowAction,
   type WorkflowTrigger,
@@ -220,6 +221,15 @@ export const WorkflowStepDetail = ({
         case 'HTTP_REQUEST': {
           return (
             <WorkflowEditActionHttpRequest
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
+        case 'CLASSIFY': {
+          return (
+            <WorkflowEditActionClassify
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}

@@ -27,6 +27,8 @@ export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.co
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
 export { ToolCategory } from './constants/tool-category.const';
+export type { AiClassificationInput } from './schemas/ai-classification-input.schema';
+export { aiClassificationInputSchema } from './schemas/ai-classification-input.schema';
 export type {
   AgentResponseFormatType,
   AgentTextResponseFormat,
@@ -38,6 +40,7 @@ export type {
   AgentResponseSchema,
 } from './types/agent-response-schema.type';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
+export type { AiClassificationResult } from './types/ai-classification-result.type';
 export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
 export type { AskQuestionItem } from './types/AskQuestionItem';
 export type { AskQuestionOption } from './types/AskQuestionOption';

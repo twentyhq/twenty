@@ -1,3 +1,4 @@
+import { WorkflowEditActionClassify } from '@/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify';
 import {
   type WorkflowAction,
   type WorkflowRunStepStatus,
@@ -246,6 +247,15 @@ export const WorkflowRunStepNodeDetail = ({
               actionOptions={{
                 readonly: true,
               }}
+            />
+          );
+        }
+        case 'CLASSIFY': {
+          return (
+            <WorkflowEditActionClassify
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{ readonly: true }}
             />
           );
         }

@@ -82,8 +82,12 @@ export class ClientConfigService {
 
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
 
-    const availableModels =
-      this.aiModelRegistryService.getAdminFilteredModels();
+    const availableModels = [
+      ...this.aiModelRegistryService.getAdminFilteredModels(),
+      ...this.aiModelRegistryService
+        .getConfiguredEvaluationModels()
+        .map((model) => ({ ...model, sdkPackage: undefined })),
+    ];
     const resolvedProviders =
       this.aiModelRegistryService.getResolvedProvidersForAdmin();
 
@@ -109,7 +113,8 @@ export class ClientConfigService {
           modelFamilyLabel: modelFamily
             ? MODEL_FAMILY_LABELS[modelFamily]
             : undefined,
-          sdkPackage: registeredModel.sdkPackage,
+          sdkPackage: registeredModel.sdkPackage ?? null,
+          kind: modelConfig?.kind ?? 'language',
           providerName,
           providerLabel: getProviderLabel(providerName),
           nativeCapabilities: getNativeModelCapabilities(

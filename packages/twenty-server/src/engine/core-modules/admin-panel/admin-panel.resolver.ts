@@ -292,7 +292,8 @@ export class AdminPanelResolver {
           modelFamilyLabel: modelConfig.modelFamily
             ? MODEL_FAMILY_LABELS[modelConfig.modelFamily]
             : undefined,
-          sdkPackage: modelConfig.sdkPackage,
+          sdkPackage: modelConfig.sdkPackage ?? null,
+          kind: modelConfig.kind ?? 'language',
           isAvailable,
           isAdminEnabled,
           isDeprecated: modelConfig.isDeprecated ?? false,

@@ -220,7 +220,7 @@ export const SettingsAdminAiProviderDetail = () => {
       {
         Icon: IconPlug,
         label: t`SDK`,
-        value: provider.npm,
+        value: provider.npm ?? provider.evaluationAdapter,
       },
     ];
 
@@ -322,7 +322,7 @@ export const SettingsAdminAiProviderDetail = () => {
         <Section.Root>
           <Section.Header
             title={provider?.label ?? providerName ?? ''}
-            description={provider?.npm ?? ''}
+            description={provider?.npm ?? provider?.evaluationAdapter ?? ''}
           />
 
           {provider && (

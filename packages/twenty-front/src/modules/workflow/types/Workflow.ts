@@ -3,6 +3,7 @@ import {
   type GlobalAvailability,
   type SingleRecordAvailability,
   type workflowAiAgentActionSchema,
+  type workflowClassifyActionSchema,
   type workflowCodeActionSchema,
   type workflowCreateCalendarEventActionSchema,
   type workflowCreateRecordActionSchema,
@@ -77,7 +78,12 @@ export type WorkflowIteratorAction = z.infer<
 export type WorkflowAiAgentAction = z.infer<typeof workflowAiAgentActionSchema>;
 export type WorkflowEmptyAction = z.infer<typeof workflowEmptyActionSchema>;
 
+export type WorkflowClassifyAction = z.infer<
+  typeof workflowClassifyActionSchema
+>;
+
 export type WorkflowAction =
+  | WorkflowClassifyAction
   | WorkflowCodeAction
   | WorkflowLogicFunctionAction
   | WorkflowSendEmailAction

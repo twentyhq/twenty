@@ -4,6 +4,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 export const WORKFLOW_VARIABLE_CONSUMING_ACTION_TYPES =
   new Set<WorkflowActionType>([
     WorkflowActionType.HTTP_REQUEST,
+    WorkflowActionType.CLASSIFY,
     WorkflowActionType.CODE,
     WorkflowActionType.LOGIC_FUNCTION,
     WorkflowActionType.SEND_EMAIL,

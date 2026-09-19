@@ -1,3 +1,4 @@
+import { ClassifyWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/classify.workflow-action';
 import { Injectable } from '@nestjs/common';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
@@ -30,6 +31,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 @Injectable()
 export class WorkflowActionFactory {
   constructor(
+    private readonly classifyWorkflowAction: ClassifyWorkflowAction,
     private readonly codeWorkflowAction: CodeWorkflowAction,
     private readonly logicFunctionWorkflowAction: LogicFunctionWorkflowAction,
     private readonly createRecordWorkflowAction: CreateRecordWorkflowAction,
@@ -53,6 +55,8 @@ export class WorkflowActionFactory {
 
   get(stepType: WorkflowActionType): WorkflowAction {
     switch (stepType) {
+      case WorkflowActionType.CLASSIFY:
+        return this.classifyWorkflowAction;
       case WorkflowActionType.CODE:
         return this.codeWorkflowAction;
       case WorkflowActionType.LOGIC_FUNCTION:

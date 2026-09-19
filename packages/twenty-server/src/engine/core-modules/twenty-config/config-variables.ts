@@ -1889,6 +1889,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
+    description: 'API key for TypeSafe evaluation models (Jev)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  TYPESAFE_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
     description: 'API key for Anthropic models (Claude)',
     type: ConfigVariableType.STRING,
   })
