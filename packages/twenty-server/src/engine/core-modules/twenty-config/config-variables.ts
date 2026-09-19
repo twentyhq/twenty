@@ -1452,6 +1452,50 @@ export class ConfigVariables {
   WORKER_EXCLUDED_QUEUES: string[] = [];
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'How long (seconds) a completed job is retained on its queue in Redis. Lower it when large job payloads push Redis toward maxmemory (default: 14400 = 4h).',
+    isEnvOnly: true,
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  QUEUE_COMPLETED_JOBS_RETENTION_MAX_AGE_SECONDS = 14400;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'How many completed jobs are retained per queue in Redis. Retention is bounded by count, not bytes, so a queue carrying multi-MB payloads can still exceed maxmemory at this count — lower it accordingly, or set 0 to keep none (default: 1000).',
+    isEnvOnly: true,
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  QUEUE_COMPLETED_JOBS_RETENTION_MAX_COUNT = 1000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'How long (seconds) a failed job is retained on its queue in Redis (default: 604800 = 7d).',
+    isEnvOnly: true,
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  QUEUE_FAILED_JOBS_RETENTION_MAX_AGE_SECONDS = 604800;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'How many failed jobs are retained per queue in Redis, or 0 to keep none (default: 1000).',
+    isEnvOnly: true,
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  QUEUE_FAILED_JOBS_RETENTION_MAX_COUNT = 1000;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Node environment (development, production, etc.)',
     type: ConfigVariableType.ENUM,
