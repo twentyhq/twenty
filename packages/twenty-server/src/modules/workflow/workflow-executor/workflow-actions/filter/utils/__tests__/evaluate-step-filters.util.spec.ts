@@ -216,4 +216,40 @@ describe('evaluateStepFilters', () => {
       }),
     ).toBe(false);
   });
+
+  it('performs exact value match for SELECT filters and does not match substrings', () => {
+    const selectFilterExactMatch: StepFilter = {
+      id: 'filter-select-match',
+      type: 'SELECT',
+      operand: ViewFilterOperand.IS,
+      value: JSON.stringify(['Acme']),
+      stepOutputKey: '{{trigger.properties.after.name}}',
+      stepFilterGroupId: group.id,
+    };
+
+    const selectFilterSubstringNoMatch: StepFilter = {
+      id: 'filter-select-no-match',
+      type: 'SELECT',
+      operand: ViewFilterOperand.IS,
+      value: JSON.stringify(['Ac']),
+      stepOutputKey: '{{trigger.properties.after.name}}',
+      stepFilterGroupId: group.id,
+    };
+
+    expect(
+      evaluateStepFilters({
+        stepFilterGroups: [group],
+        stepFilters: [selectFilterExactMatch],
+        context,
+      }),
+    ).toBe(true);
+
+    expect(
+      evaluateStepFilters({
+        stepFilterGroups: [group],
+        stepFilters: [selectFilterSubstringNoMatch],
+        context,
+      }),
+    ).toBe(false);
+  });
 });

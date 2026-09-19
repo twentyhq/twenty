@@ -485,12 +485,46 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
   }
 }
 
+function isSelectMatch(leftValue: unknown, rightValue: unknown): boolean {
+  if (Array.isArray(leftValue) && Array.isArray(rightValue)) {
+    return leftValue.some((item) => rightValue.includes(item));
+  }
+
+  if (Array.isArray(rightValue)) {
+    return rightValue.includes(leftValue);
+  }
+
+  if (Array.isArray(leftValue)) {
+    return leftValue.includes(rightValue);
+  }
+
+  if (isString(rightValue)) {
+    try {
+      const parsedRightValue = JSON.parse(rightValue);
+
+      if (Array.isArray(parsedRightValue)) {
+        if (Array.isArray(leftValue)) {
+          return leftValue.some((item) => parsedRightValue.includes(item));
+        }
+
+        return parsedRightValue.includes(leftValue);
+      } else {
+        return leftValue === parsedRightValue;
+      }
+    } catch {
+      return leftValue === rightValue;
+    }
+  }
+
+  return leftValue === rightValue;
+}
+
 function evaluateSelectFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
     case ViewFilterOperand.IS:
-      return contains(filter.leftOperand, filter.rightOperand);
+      return isSelectMatch(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_NOT:
-      return !contains(filter.leftOperand, filter.rightOperand);
+      return !isSelectMatch(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 
