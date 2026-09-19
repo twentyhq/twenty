@@ -110,7 +110,7 @@ export const WorkflowEditActionClassify = ({
       label: t`Workspace default`,
       value: '',
     },
-    ...evaluationModels
+    ...aiEvaluationModels
       .filter(
         (evaluationModel) =>
           evaluationModel.isDeprecated !== true ||
@@ -122,7 +122,7 @@ export const WorkflowEditActionClassify = ({
       })),
   ];
 
-  const selectedModel = evaluationModels.find(
+  const selectedModel = aiEvaluationModels.find(
     (evaluationModel) => evaluationModel.modelId === selectedModelId,
   );
 
