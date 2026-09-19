@@ -287,6 +287,35 @@ export const computeStepOutputSchema = ({
       };
     }
 
+    case 'CREATE_INBOX_ITEM': {
+      return {
+        inboxItemId: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Inbox Item ID',
+          value: '',
+        },
+        title: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Title',
+          value: '',
+        },
+        queueId: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Shared Inbox ID',
+          value: '',
+        },
+        assigneeUserWorkspaceId: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Assignee ID',
+          value: '',
+        },
+      };
+    }
+
     case 'FILTER':
     case 'DELAY':
     case 'EMPTY': {

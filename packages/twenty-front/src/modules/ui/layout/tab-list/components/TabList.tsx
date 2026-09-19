@@ -91,7 +91,7 @@ export const TabList = ({
   const shouldSelectRouteTab =
     behaveAsLinks &&
     workspaceSurface.ownsRouteLocation &&
-    visibleTabs.some((tab) => tab.id === routeTabId);
+    visibleTabs.some((tab) => tab.id === routeTabId && tab.disabled !== true);
   const nextActiveTabId = shouldSelectRouteTab
     ? routeTabId
     : activeTabExists

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkflowRunInboxWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/services/workflow-run-inbox.workspace-service';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
@@ -30,6 +31,7 @@ export class WorkflowRunWorkspaceService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
+    private readonly workflowRunInboxWorkspaceService: WorkflowRunInboxWorkspaceService,
   ) {}
 
   async createCoreWorkflowRun({
@@ -86,10 +88,11 @@ export class WorkflowRunWorkspaceService {
         ? parseInt(workflowRunCountMatch[1], 10)
         : 0;
       const id = workflowRunId ?? v4();
+      const name = `#${workflowRunCount + 1} - ${workflowName ?? 'Workflow'}`;
 
       await workflowRunRepository.insert({
         id,
-        name: `#${workflowRunCount + 1} - ${workflowName ?? 'Workflow'}`,
+        name,
         workflowVersionId: workspaceWorkflowVersionId,
         workflowId: workspaceWorkflowId,
         coreWorkflowId,
@@ -100,6 +103,15 @@ export class WorkflowRunWorkspaceService {
         state: this.getInitState({ trigger, steps }, triggerPayload, error),
         enqueuedAt: status === WorkflowRunStatus.ENQUEUED ? new Date() : null,
       });
+
+      // A run that is born failed never goes through endWorkflowRun.
+      if (status === WorkflowRunStatus.FAILED) {
+        await this.workflowRunInboxWorkspaceService.onWorkflowRunFailed({
+          workflowRun: { id, name, createdBy },
+          workspaceId,
+          error,
+        });
+      }
 
       return id;
     }, authContext);
@@ -201,6 +213,19 @@ export class WorkflowRunWorkspaceService {
         key: MetricsKeys.WorkflowRunSystemError,
         eventId: workflowRunId,
         debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
+      });
+    }
+
+    // Only the transition into FAILED is news; ending an already failed run
+    // again would revive an item its owner had acknowledged.
+    if (
+      status === WorkflowRunStatus.FAILED &&
+      workflowRunToUpdate.status !== WorkflowRunStatus.FAILED
+    ) {
+      await this.workflowRunInboxWorkspaceService.onWorkflowRunFailed({
+        workflowRun: workflowRunToUpdate,
+        workspaceId,
+        error,
       });
     }
   }

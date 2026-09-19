@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isInboxPath } from '~/utils/isInboxPath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
 
 type GetNavigationDrawerHomeDestinationParams = {
@@ -22,7 +23,9 @@ export const getNavigationDrawerHomeDestination = ({
 
   const [pathname] = memorizedUrl.split('?');
 
-  return isSettingsPath(pathname) || isAiChatPath(pathname)
+  return isSettingsPath(pathname) ||
+    isAiChatPath(pathname) ||
+    isInboxPath(pathname)
     ? defaultHomePagePath
     : memorizedUrl;
 };

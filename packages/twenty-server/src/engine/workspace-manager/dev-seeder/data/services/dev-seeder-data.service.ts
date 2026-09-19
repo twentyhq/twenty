@@ -70,6 +70,7 @@ import {
   MESSAGE_DATA_SEED_COLUMNS,
   MESSAGE_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
+import { getInboxMessageThreadDataSeeds } from 'src/engine/workspace-manager/dev-seeder/data/constants/inbox-message-thread-data-seeds.constant';
 import {
   getMessageParticipantDataSeeds,
   MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
@@ -143,6 +144,7 @@ const getRecordSeedsBatches = (
   // Participants are generated randomly, so they are built once and the
   // derived target junction seeds are computed from the same arrays.
   const messageParticipantSeeds = getMessageParticipantDataSeeds(workspaceId);
+  const inboxThreadSeeds = getInboxMessageThreadDataSeeds(workspaceId);
   const calendarEventParticipantSeeds =
     getCalendarEventParticipantDataSeeds(workspaceId);
 
@@ -223,7 +225,10 @@ const getRecordSeedsBatches = (
     {
       tableName: 'messageThread',
       pgColumns: MESSAGE_THREAD_DATA_SEED_COLUMNS,
-      recordSeeds: MESSAGE_THREAD_DATA_SEEDS,
+      recordSeeds: [
+        ...MESSAGE_THREAD_DATA_SEEDS,
+        ...inboxThreadSeeds.messageThreads,
+      ],
     },
     {
       tableName: 'messageListMember',
@@ -272,7 +277,7 @@ const getRecordSeedsBatches = (
     {
       tableName: 'message',
       pgColumns: MESSAGE_DATA_SEED_COLUMNS,
-      recordSeeds: MESSAGE_DATA_SEEDS,
+      recordSeeds: [...MESSAGE_DATA_SEEDS, ...inboxThreadSeeds.messages],
     },
   ];
 
@@ -281,12 +286,18 @@ const getRecordSeedsBatches = (
     {
       tableName: 'messageChannelMessageAssociation',
       pgColumns: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_COLUMNS,
-      recordSeeds: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
+      recordSeeds: [
+        ...MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
+        ...inboxThreadSeeds.messageChannelMessageAssociations,
+      ],
     },
     {
       tableName: 'messageParticipant',
       pgColumns: MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
-      recordSeeds: messageParticipantSeeds,
+      recordSeeds: [
+        ...messageParticipantSeeds,
+        ...inboxThreadSeeds.messageParticipants,
+      ],
     },
     {
       tableName: 'messageThreadTarget',

@@ -24,6 +24,9 @@ import {
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 
+import { ADD_MESSAGE_CHANNEL_DEFAULT_INBOX_QUEUE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-message-channel-default-inbox-queue-upgrade-command-name.constant';
+import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
@@ -68,6 +71,11 @@ registerEnumType(MessageChannelPendingGroupEmailsAction, {
   ['workspaceId', 'connectedAccountId', 'handle'],
   { unique: true, where: `"type" = 'APP'` },
 )
+// Deleting a shared inbox detaches every channel pointing at it, which without
+// this scans the whole table.
+@Index('IDX_MESSAGE_CHANNEL_DEFAULT_INBOX_QUEUE_ID', ['defaultInboxQueueId'], {
+  where: '"defaultInboxQueueId" IS NOT NULL',
+})
 export class MessageChannelEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -189,6 +197,24 @@ export class MessageChannelEntity extends WorkspaceRelatedEntity {
     (messageFolder: MessageFolderEntity) => messageFolder.messageChannel,
   )
   messageFolders: Relation<MessageFolderEntity[]>;
+
+  // Where work arriving on this channel lands. A shared address is watched by a
+  // team, so its mail belongs to a shared inbox rather than to whoever happens
+  // to hold the connected account. Null falls back to the routing configured
+  // for the kind of work, and then to triage.
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_MESSAGE_CHANNEL_DEFAULT_INBOX_QUEUE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'uuid', nullable: true })
+  defaultInboxQueueId: string | null;
+
+  @ManyToOne(() => InboxQueueEntity, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({
+    name: 'defaultInboxQueueId',
+    foreignKeyConstraintName: 'FK_MESSAGE_CHANNEL_DEFAULT_INBOX_QUEUE_ID',
+  })
+  defaultInboxQueue: Relation<InboxQueueEntity> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

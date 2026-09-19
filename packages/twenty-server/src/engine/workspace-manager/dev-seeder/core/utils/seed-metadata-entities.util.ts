@@ -14,7 +14,10 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
-import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
+import {
+  EMAIL_GROUP_CHANNEL_SEED_HANDLES,
+  MESSAGE_CHANNEL_DATA_SEED_IDS,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { MESSAGE_FOLDER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-folder-seed-ids.constant';
 import { getSeededEmailGroupDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
@@ -95,6 +98,11 @@ const getSeedIds = (workspaceId: string) => {
     messageFolderIds: MESSAGE_FOLDER_DATA_SEED_IDS,
   };
 };
+
+// The data seeds that attach mail to a shared address need the channel id of
+// the workspace they run in.
+export const getMessageChannelSeedIds = (workspaceId: string) =>
+  getSeedIds(workspaceId).messageChannelIds;
 
 export const seedMetadataEntities = async ({
   queryRunner,
@@ -329,7 +337,7 @@ const seedMessageChannels = async ({
     },
     {
       id: ids.messageChannelIds.SUPPORT_GROUP,
-      handle: 'emailgroup-support@demo.invalid',
+      handle: EMAIL_GROUP_CHANNEL_SEED_HANDLES.SUPPORT_GROUP,
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,
       type: MessageChannelType.EMAIL_GROUP,
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
@@ -345,7 +353,7 @@ const seedMessageChannels = async ({
     },
     {
       id: ids.messageChannelIds.CONTACT_GROUP,
-      handle: 'emailgroup-contact@demo.invalid',
+      handle: EMAIL_GROUP_CHANNEL_SEED_HANDLES.CONTACT_GROUP,
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,
       type: MessageChannelType.EMAIL_GROUP,
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,

@@ -117,6 +117,11 @@ export class MessageChannelDTO {
   @Field(() => UUIDScalarType)
   connectedAccountId: string;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  defaultInboxQueueId: string | null;
+
   @HideField()
   workspaceId: string;
 

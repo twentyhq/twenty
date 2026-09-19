@@ -18,6 +18,7 @@ import {
 } from 'twenty-shared/types';
 
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -31,6 +32,8 @@ import {
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { INBOUND_EMAIL_LOCAL_PART_PREFIX } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-prefix.constant';
 import { INBOUND_EMAIL_LOCAL_PART_RANDOM_BYTES } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-random-bytes.constant';
@@ -45,6 +48,8 @@ export class MessageChannelMetadataService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailingDomainService: EmailingDomainService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    @InjectWorkspaceScopedRepository(InboxQueueEntity)
+    private readonly inboxQueueRepository: WorkspaceScopedRepository<InboxQueueEntity>,
   ) {}
 
   async findAll(workspaceId: string): Promise<MessageChannelDTO[]> {
@@ -396,11 +401,13 @@ export class MessageChannelMetadataService {
   async updateEmailGroupChannel({
     id,
     displayName,
+    defaultInboxQueueId,
     userWorkspaceId,
     workspaceId,
   }: {
     id: string;
     displayName?: string | null;
+    defaultInboxQueueId?: string | null;
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageChannelDTO> {
@@ -417,22 +424,48 @@ export class MessageChannelMetadataService {
       );
     }
 
-    // An omitted displayName leaves the current one untouched; an explicit null clears it
-    if (displayName === undefined) {
+    if (isDefined(defaultInboxQueueId)) {
+      await this.assertInboxQueueBelongsToWorkspace({
+        inboxQueueId: defaultInboxQueueId,
+        workspaceId,
+      });
+    }
+
+    // An omitted field leaves the current value untouched; an explicit null
+    // clears it.
+    const data: Partial<MessageChannelEntity> = {
+      ...(displayName === undefined
+        ? {}
+        : { displayName: normalizeDisplayName(displayName) }),
+      ...(defaultInboxQueueId === undefined ? {} : { defaultInboxQueueId }),
+    };
+
+    if (Object.keys(data).length === 0) {
       return messageChannel;
     }
 
-    const trimmedDisplayName = displayName?.trim();
+    return this.update({ id, workspaceId, data });
+  }
 
-    return this.update({
-      id,
-      workspaceId,
-      data: {
-        displayName: isNonEmptyString(trimmedDisplayName)
-          ? trimmedDisplayName
-          : null,
-      },
+  // Looked up within the workspace, so a queue id from another workspace is
+  // rejected rather than becoming an address nobody here can see into.
+  private async assertInboxQueueBelongsToWorkspace({
+    inboxQueueId,
+    workspaceId,
+  }: {
+    inboxQueueId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const inboxQueue = await this.inboxQueueRepository.findOne(workspaceId, {
+      where: { id: inboxQueueId },
     });
+
+    if (!isDefined(inboxQueue)) {
+      throw new MessageChannelException(
+        `Inbox queue ${inboxQueueId} not found`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
   }
 
   async deleteEmailGroupChannel({
@@ -501,3 +534,9 @@ export class MessageChannelMetadataService {
     );
   }
 }
+
+const normalizeDisplayName = (displayName: string | null): string | null => {
+  const trimmedDisplayName = displayName?.trim();
+
+  return isNonEmptyString(trimmedDisplayName) ? trimmedDisplayName : null;
+};

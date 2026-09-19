@@ -1,0 +1,1 @@
+export const INBOX_QUEUE_LABEL_MAX_LENGTH = 100;

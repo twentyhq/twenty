@@ -55,6 +55,13 @@ describe('AgentChatStreamingService claim & reap', () => {
       clear: jest.fn().mockResolvedValue(undefined),
     };
 
+    const agentChatInboxService = {
+      onThreadCreated: jest.fn(),
+      onTurnCompleted: jest.fn(),
+      onTurnFailed: jest.fn().mockResolvedValue(undefined),
+      onThreadRemoved: jest.fn(),
+    };
+
     const service = new AgentChatStreamingService(
       threadRepository as never,
       { find: jest.fn().mockResolvedValue([]) } as never,
@@ -64,6 +71,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       { signFileByIdUrl: jest.fn() } as never,
       streamHeartbeatService as never,
       { incrementCounterBy: jest.fn() } as never,
+      agentChatInboxService as never,
     );
 
     return {
@@ -73,6 +81,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       agentChatService,
       eventPublisherService,
       streamHeartbeatService,
+      agentChatInboxService,
       publishedEvents,
     };
   };
@@ -181,16 +190,24 @@ describe('AgentChatStreamingService claim & reap', () => {
   });
 
   describe('reapDeadStream', () => {
+    const claimedThread = {
+      id: 'thread-id',
+      activeStreamId: 'stream-id',
+      userWorkspaceId: 'user-workspace-id',
+    };
+
     it('leaves a live stream alone', async () => {
-      const { service, threadRepository } = buildService();
+      const { service, threadRepository, agentChatInboxService } =
+        buildService();
 
       const reaped = await service.reapDeadStream({
-        thread: { id: 'thread-id', activeStreamId: 'stream-id' },
+        thread: claimedThread,
         workspaceId: 'workspace-id',
       });
 
       expect(reaped).toBeNull();
       expect(threadRepository.update).not.toHaveBeenCalled();
+      expect(agentChatInboxService.onTurnFailed).not.toHaveBeenCalled();
     });
 
     it('converts a heartbeat-less claim into a retryable interrupted error', async () => {
@@ -198,11 +215,12 @@ describe('AgentChatStreamingService claim & reap', () => {
         service,
         threadRepository,
         eventPublisherService,
+        agentChatInboxService,
         publishedEvents,
       } = buildService({ heartbeatAlive: false });
 
       const reaped = await service.reapDeadStream({
-        thread: { id: 'thread-id', activeStreamId: 'stream-id' },
+        thread: claimedThread,
         workspaceId: 'workspace-id',
       });
 
@@ -228,22 +246,53 @@ describe('AgentChatStreamingService claim & reap', () => {
           code: AiExceptionCode.STREAM_INTERRUPTED,
         }),
       );
+      expect(agentChatInboxService.onTurnFailed).toHaveBeenCalledWith({
+        threadId: 'thread-id',
+        workspaceId: 'workspace-id',
+        userWorkspaceId: 'user-workspace-id',
+        errorMessage: reaped?.message,
+      });
+    });
+
+    it('still reports the interruption when the inbox route fails', async () => {
+      const { service, agentChatInboxService } = buildService({
+        heartbeatAlive: false,
+      });
+
+      agentChatInboxService.onTurnFailed.mockRejectedValue(
+        new Error('inbox down'),
+      );
+
+      const reaped = await service.reapDeadStream({
+        thread: claimedThread,
+        workspaceId: 'workspace-id',
+      });
+
+      expect(reaped).toEqual(
+        expect.objectContaining({ code: AiExceptionCode.STREAM_INTERRUPTED }),
+      );
     });
 
     it('does nothing when the claim moved to a newer stream mid-check', async () => {
-      const { service, publishedEvents, threadRepository } = buildService({
+      const {
+        service,
+        publishedEvents,
+        threadRepository,
+        agentChatInboxService,
+      } = buildService({
         heartbeatAlive: false,
         claimAffected: 0,
       });
 
       const reaped = await service.reapDeadStream({
-        thread: { id: 'thread-id', activeStreamId: 'stream-id' },
+        thread: claimedThread,
         workspaceId: 'workspace-id',
       });
 
       expect(reaped).toBeNull();
       expect(threadRepository.update).toHaveBeenCalledTimes(1);
       expect(publishedEvents).toHaveLength(0);
+      expect(agentChatInboxService.onTurnFailed).not.toHaveBeenCalled();
     });
   });
 });

@@ -11,6 +11,7 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: true,
   [FeatureFlagKey.IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED]: false,
   [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: false,
+  [FeatureFlagKey.IS_INBOX_ENABLED]: true,
   [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: false,
 };
 

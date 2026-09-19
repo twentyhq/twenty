@@ -23,6 +23,7 @@ export type MessageChannel = {
   syncStage: MessageChannelSyncStage;
   syncStageStartedAt: string | null;
   connectedAccountId: string;
+  defaultInboxQueueId: string | null;
   connectedAccount: {
     id: string;
     handle: string;

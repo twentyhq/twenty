@@ -1,5 +1,6 @@
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
 import { ToolMenuItem } from '@/side-panel/pages/workflow/action/components/ToolMenuItem';
 import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
@@ -29,6 +30,11 @@ export const SidePanelWorkflowSelectAction = ({
 
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isInboxEnabled = useIsInboxEnabled();
+
+  const coreActions = isInboxEnabled
+    ? CORE_ACTIONS
+    : CORE_ACTIONS.filter((action) => action.type !== 'CREATE_INBOX_ITEM');
 
   const toolFunctions = logicFunctions.filter(
     (fn) =>
@@ -80,7 +86,7 @@ export const SidePanelWorkflowSelectAction = ({
         {t`Core`}
       </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={CORE_ACTIONS}
+        actions={coreActions}
         onClick={handleActionClick}
       />
 

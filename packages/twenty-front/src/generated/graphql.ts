@@ -217,6 +217,22 @@ export type CreateDraftFromWorkflowVersionInput = {
   workflowVersionIdToCopy: Scalars['UUID']['input'];
 };
 
+export type CreateInboxItemToolCallInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  icon?: InputMaybe<Scalars['String']['input']>;
+  inboxItemId: Scalars['UUID']['input'];
+  inputSchema?: InputMaybe<Array<InboxItemFieldInput>>;
+  label: Scalars['String']['input'];
+  proposedInput: Scalars['JSON']['input'];
+  toolName: Scalars['String']['input'];
+};
+
+export type CreateInboxQueueInput = {
+  icon?: InputMaybe<Scalars['String']['input']>;
+  label: Scalars['String']['input'];
+  roleIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
+};
+
 export type CreateWorkflowVersionEdgeInput = {
   /** Workflow version source step ID */
   source: Scalars['String']['input'];
@@ -394,6 +410,152 @@ export type GenerateSignedDpaResult = {
   downloadUrl: Scalars['String']['output'];
 };
 
+export type InboxCounts = {
+  __typename?: 'InboxCounts';
+  needsAction: Scalars['Int']['output'];
+  snoozed: Scalars['Int']['output'];
+  unread: Scalars['Int']['output'];
+};
+
+export type InboxItem = {
+  __typename?: 'InboxItem';
+  assigneeUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
+  context: InboxItemContext;
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  isAssignedToMe: Scalars['Boolean']['output'];
+  isUnread: Scalars['Boolean']['output'];
+  lastEventAt: Scalars['DateTime']['output'];
+  priority: InboxItemPriority;
+  queueId?: Maybe<Scalars['UUID']['output']>;
+  records: Array<InboxItemRecord>;
+  scope: InboxItemScope;
+  subjectObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
+  subjectRecordId?: Maybe<Scalars['UUID']['output']>;
+  summary?: Maybe<Scalars['String']['output']>;
+  threadId?: Maybe<Scalars['UUID']['output']>;
+  title: Scalars['String']['output'];
+  toolCalls: Array<InboxItemToolCall>;
+  version: Scalars['Int']['output'];
+};
+
+export type InboxItemContext = {
+  __typename?: 'InboxItemContext';
+  producer: Scalars['String']['output'];
+  source?: Maybe<InboxItemContextSource>;
+  version: Scalars['Int']['output'];
+};
+
+export type InboxItemContextSource = {
+  __typename?: 'InboxItemContextSource';
+  detail?: Maybe<Scalars['String']['output']>;
+  excerpt?: Maybe<Scalars['String']['output']>;
+  kind: InboxItemContextSourceKind;
+  label: Scalars['String']['output'];
+  messageCount?: Maybe<Scalars['Int']['output']>;
+};
+
+export enum InboxItemContextSourceKind {
+  CALL = 'CALL',
+  EMAIL = 'EMAIL',
+  RECORD = 'RECORD',
+  THREAD = 'THREAD'
+}
+
+export type InboxItemField = {
+  __typename?: 'InboxItemField';
+  isRequired: Scalars['Boolean']['output'];
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  type: InboxItemFieldType;
+};
+
+export type InboxItemFieldInput = {
+  isRequired?: InputMaybe<Scalars['Boolean']['input']>;
+  key: Scalars['String']['input'];
+  label: Scalars['String']['input'];
+  type: InboxItemFieldType;
+};
+
+export enum InboxItemFieldType {
+  BOOLEAN = 'BOOLEAN',
+  LONG_TEXT = 'LONG_TEXT',
+  NUMBER = 'NUMBER',
+  OBJECT = 'OBJECT',
+  TEXT = 'TEXT'
+}
+
+export enum InboxItemPriority {
+  NEEDS_ACTION = 'NEEDS_ACTION',
+  UPDATE = 'UPDATE'
+}
+
+export type InboxItemRecord = {
+  __typename?: 'InboxItemRecord';
+  id: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  objectMetadataId?: Maybe<Scalars['String']['output']>;
+  position: Scalars['Int']['output'];
+  recordId?: Maybe<Scalars['String']['output']>;
+  relationLabel?: Maybe<Scalars['String']['output']>;
+  subtitle?: Maybe<Scalars['String']['output']>;
+};
+
+export enum InboxItemScope {
+  ARCHIVED = 'ARCHIVED',
+  INBOX = 'INBOX',
+  SNOOZED = 'SNOOZED'
+}
+
+export type InboxItemToolCall = {
+  __typename?: 'InboxItemToolCall';
+  description?: Maybe<Scalars['String']['output']>;
+  editedInput?: Maybe<Scalars['JSON']['output']>;
+  error?: Maybe<Scalars['String']['output']>;
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  inputSchema: Array<InboxItemField>;
+  label: Scalars['String']['output'];
+  output?: Maybe<Scalars['JSON']['output']>;
+  position: Scalars['Int']['output'];
+  proposedInput: Scalars['JSON']['output'];
+  status: InboxItemToolCallStatus;
+  toolName: Scalars['String']['output'];
+};
+
+export enum InboxItemToolCallStatus {
+  EXECUTED = 'EXECUTED',
+  FAILED = 'FAILED',
+  PROPOSED = 'PROPOSED',
+  REJECTED = 'REJECTED'
+}
+
+export type InboxQueue = {
+  __typename?: 'InboxQueue';
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  label: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  needsAction: Scalars['Int']['output'];
+  unread: Scalars['Int']['output'];
+};
+
+export enum InboxQueueAssignment {
+  ALL = 'ALL',
+  ASSIGNED = 'ASSIGNED',
+  UNASSIGNED = 'UNASSIGNED'
+}
+
+export type InboxQueueSettings = {
+  __typename?: 'InboxQueueSettings';
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  isDefault: Scalars['Boolean']['output'];
+  label: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  roleIds: Array<Scalars['UUID']['output']>;
+};
+
 export type LinkMetadata = {
   __typename?: 'LinkMetadata';
   label: Scalars['String']['output'];
@@ -423,6 +585,8 @@ export type Mutation = {
   createCoreWorkflowVersionStep: WorkflowVersionStepChanges;
   createDraftFromCoreWorkflowVersion: CoreWorkflowVersionDto;
   createDraftFromWorkflowVersion: WorkflowVersionDto;
+  createInboxItemToolCall: InboxItemToolCall;
+  createInboxQueue: InboxQueueSettings;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateCoreWorkflowVersion: Scalars['Boolean']['output'];
@@ -430,6 +594,7 @@ export type Mutation = {
   deleteCoreWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteCoreWorkflowVersionStep: WorkflowVersionStepChanges;
   deleteCoreWorkflows: Array<DeletedCoreWorkflowDto>;
+  deleteInboxQueue: Scalars['Boolean']['output'];
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   discardCoreWorkflowDraft?: Maybe<CoreWorkflowDto>;
@@ -440,16 +605,24 @@ export type Mutation = {
   duplicateWorkflow: WorkflowVersionDto;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
   generateSignedDpa: GenerateSignedDpaResult;
+  markInboxItemRead: InboxItem;
   retryWorkflowRun: WorkflowRun;
   runCoreWorkflowVersion: RunWorkflowVersion;
+  runInboxItemToolCall: InboxItem;
+  runInboxItemToolCalls: InboxItem;
   runWorkflowVersion: RunWorkflowVersion;
+  setInboxItemToolCallRejected: InboxItemToolCall;
+  setInboxQueueRoles: InboxQueueSettings;
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
+  transitionInboxItem: InboxItem;
   updateCoreWorkflow?: Maybe<CoreWorkflowDto>;
   updateCoreWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateCoreWorkflowVersionStep: WorkflowAction;
   updateCoreWorkflowVersionTrigger: WorkflowVersionTrigger;
+  updateInboxItemToolCallInput: InboxItemToolCall;
+  updateInboxQueue: InboxQueueSettings;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateWorkflowVersionStep: WorkflowAction;
@@ -499,6 +672,16 @@ export type MutationCreateDraftFromWorkflowVersionArgs = {
 };
 
 
+export type MutationCreateInboxItemToolCallArgs = {
+  input: CreateInboxItemToolCallInput;
+};
+
+
+export type MutationCreateInboxQueueArgs = {
+  input: CreateInboxQueueInput;
+};
+
+
 export type MutationCreateWorkflowVersionEdgeArgs = {
   input: CreateWorkflowVersionEdgeInput;
 };
@@ -531,6 +714,11 @@ export type MutationDeleteCoreWorkflowVersionStepArgs = {
 
 export type MutationDeleteCoreWorkflowsArgs = {
   input: DeleteCoreWorkflowsInput;
+};
+
+
+export type MutationDeleteInboxQueueArgs = {
+  queueId: Scalars['UUID']['input'];
 };
 
 
@@ -579,6 +767,11 @@ export type MutationGenerateSignedDpaArgs = {
 };
 
 
+export type MutationMarkInboxItemReadArgs = {
+  inboxItemId: Scalars['UUID']['input'];
+};
+
+
 export type MutationRetryWorkflowRunArgs = {
   workflowRunId: Scalars['UUID']['input'];
 };
@@ -589,8 +782,31 @@ export type MutationRunCoreWorkflowVersionArgs = {
 };
 
 
+export type MutationRunInboxItemToolCallArgs = {
+  expectedVersion?: InputMaybe<Scalars['Int']['input']>;
+  inboxItemToolCallId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRunInboxItemToolCallsArgs = {
+  expectedVersion?: InputMaybe<Scalars['Int']['input']>;
+  inboxItemId: Scalars['UUID']['input'];
+};
+
+
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
+};
+
+
+export type MutationSetInboxItemToolCallRejectedArgs = {
+  inboxItemToolCallId: Scalars['UUID']['input'];
+  isRejected: Scalars['Boolean']['input'];
+};
+
+
+export type MutationSetInboxQueueRolesArgs = {
+  input: SetInboxQueueRolesInput;
 };
 
 
@@ -606,6 +822,13 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationTestHttpRequestArgs = {
   input: TestHttpRequestInput;
+};
+
+
+export type MutationTransitionInboxItemArgs = {
+  expectedVersion?: InputMaybe<Scalars['Int']['input']>;
+  inboxItemId: Scalars['UUID']['input'];
+  transition: TransitionInboxItemInput;
 };
 
 
@@ -626,6 +849,17 @@ export type MutationUpdateCoreWorkflowVersionStepArgs = {
 
 export type MutationUpdateCoreWorkflowVersionTriggerArgs = {
   input: UpdateCoreWorkflowVersionTriggerInput;
+};
+
+
+export type MutationUpdateInboxItemToolCallInputArgs = {
+  editedInput: Scalars['JSON']['input'];
+  inboxItemToolCallId: Scalars['UUID']['input'];
+};
+
+
+export type MutationUpdateInboxQueueArgs = {
+  input: UpdateInboxQueueInput;
 };
 
 
@@ -694,7 +928,12 @@ export type Query = {
   getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
   /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
+  inboxQueueSettings: Array<InboxQueueSettings>;
   isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
+  myInboxCounts: InboxCounts;
+  myInboxItem?: Maybe<InboxItem>;
+  myInboxItems: Array<InboxItem>;
+  myInboxQueues: Array<InboxQueue>;
   search: SearchResultConnection;
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
   workflowVersionContent: WorkflowVersionContent;
@@ -803,6 +1042,25 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 };
 
 
+export type QueryMyInboxCountsArgs = {
+  assignment?: InputMaybe<InboxQueueAssignment>;
+  queueName?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryMyInboxItemArgs = {
+  inboxItemId: Scalars['UUID']['input'];
+};
+
+
+export type QueryMyInboxItemsArgs = {
+  assignment?: InputMaybe<InboxQueueAssignment>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  queueName?: InputMaybe<Scalars['String']['input']>;
+  scope?: InputMaybe<InboxItemScope>;
+};
+
+
 export type QuerySearchArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
@@ -872,6 +1130,11 @@ export type SearchResultPageInfo = {
   __typename?: 'SearchResultPageInfo';
   endCursor?: Maybe<Scalars['String']['output']>;
   hasNextPage: Scalars['Boolean']['output'];
+};
+
+export type SetInboxQueueRolesInput = {
+  queueId: Scalars['UUID']['input'];
+  roleIds: Array<Scalars['UUID']['input']>;
 };
 
 export type SubmitFormStepInput = {
@@ -987,6 +1250,13 @@ export type TimelineThreadsWithTotal = {
   totalNumberOfThreads: Scalars['Int']['output'];
 };
 
+export type TransitionInboxItemInput = {
+  kind: Scalars['String']['input'];
+  resurfaceAt?: InputMaybe<Scalars['DateTime']['input']>;
+  toQueueId?: InputMaybe<Scalars['UUID']['input']>;
+  toUserWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export type UuidFilter = {
   eq?: InputMaybe<Scalars['UUID']['input']>;
   gt?: InputMaybe<Scalars['UUID']['input']>;
@@ -1022,6 +1292,12 @@ export type UpdateCoreWorkflowVersionTriggerInput = {
   coreWorkflowVersionId: Scalars['UUID']['input'];
   /** Trigger to update in JSON format */
   trigger: Scalars['JSON']['input'];
+};
+
+export type UpdateInboxQueueInput = {
+  icon?: InputMaybe<Scalars['String']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  queueId: Scalars['UUID']['input'];
 };
 
 export type UpdateWorkflowRunStepInput = {
@@ -1067,6 +1343,7 @@ export enum WorkflowActionType {
   AI_AGENT = 'AI_AGENT',
   CODE = 'CODE',
   CREATE_CALENDAR_EVENT = 'CREATE_CALENDAR_EVENT',
+  CREATE_INBOX_ITEM = 'CREATE_INBOX_ITEM',
   CREATE_RECORD = 'CREATE_RECORD',
   DELAY = 'DELAY',
   DELETE_RECORD = 'DELETE_RECORD',
@@ -1375,6 +1652,41 @@ export type GetCoreWorkflowVersionsQueryVariables = Exact<{
 
 export type GetCoreWorkflowVersionsQuery = { __typename?: 'Query', coreWorkflowVersions: Array<{ __typename?: 'CoreWorkflowVersionDTO', id: any, label: string, status: CoreWorkflowVersionStatus, coreWorkflowId?: any | null, createdAt: string, updatedAt: string }> };
 
+export type InboxQueueSettingsFieldsFragment = { __typename?: 'InboxQueueSettings', id: any, name: string, label: string, icon?: string | null, isDefault: boolean, roleIds: Array<any> };
+
+export type GetInboxQueueSettingsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetInboxQueueSettingsQuery = { __typename?: 'Query', inboxQueueSettings: Array<{ __typename?: 'InboxQueueSettings', id: any, name: string, label: string, icon?: string | null, isDefault: boolean, roleIds: Array<any> }> };
+
+export type CreateInboxQueueMutationVariables = Exact<{
+  input: CreateInboxQueueInput;
+}>;
+
+
+export type CreateInboxQueueMutation = { __typename?: 'Mutation', createInboxQueue: { __typename?: 'InboxQueueSettings', id: any, name: string, label: string, icon?: string | null, isDefault: boolean, roleIds: Array<any> } };
+
+export type UpdateInboxQueueMutationVariables = Exact<{
+  input: UpdateInboxQueueInput;
+}>;
+
+
+export type UpdateInboxQueueMutation = { __typename?: 'Mutation', updateInboxQueue: { __typename?: 'InboxQueueSettings', id: any, name: string, label: string, icon?: string | null, isDefault: boolean, roleIds: Array<any> } };
+
+export type SetInboxQueueRolesMutationVariables = Exact<{
+  input: SetInboxQueueRolesInput;
+}>;
+
+
+export type SetInboxQueueRolesMutation = { __typename?: 'Mutation', setInboxQueueRoles: { __typename?: 'InboxQueueSettings', id: any, name: string, label: string, icon?: string | null, isDefault: boolean, roleIds: Array<any> } };
+
+export type DeleteInboxQueueMutationVariables = Exact<{
+  queueId: Scalars['UUID']['input'];
+}>;
+
+
+export type DeleteInboxQueueMutation = { __typename?: 'Mutation', deleteInboxQueue: boolean };
+
 export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null };
 
 export type ActivateWorkflowVersionMutationVariables = Exact<{
@@ -1531,6 +1843,7 @@ export const TimelineCalendarEventsWithTotalFragmentFragmentDoc = {"kind":"Docum
 export const ParticipantFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}}]} as unknown as DocumentNode<ParticipantFragmentFragment, unknown>;
 export const TimelineThreadFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineThreadFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThread"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"read"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"firstParticipant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastTwoParticipants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageReceivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageBody"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"numberOfMessagesInThread"}},{"kind":"Field","name":{"kind":"Name","value":"participantCount"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageIsDraft"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}}]} as unknown as DocumentNode<TimelineThreadFragmentFragment, unknown>;
 export const TimelineThreadsWithTotalFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineThreadsWithTotalFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadsWithTotal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalNumberOfThreads"}},{"kind":"Field","name":{"kind":"Name","value":"relatedPersonIds"}},{"kind":"Field","name":{"kind":"Name","value":"timelineThreads"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineThreadFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineThreadFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThread"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"read"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"firstParticipant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastTwoParticipants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageReceivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageBody"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"numberOfMessagesInThread"}},{"kind":"Field","name":{"kind":"Name","value":"participantCount"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageIsDraft"}}]}}]} as unknown as DocumentNode<TimelineThreadsWithTotalFragmentFragment, unknown>;
+export const InboxQueueSettingsFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InboxQueueSettingsFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"InboxQueueSettings"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"roleIds"}}]}}]} as unknown as DocumentNode<InboxQueueSettingsFieldsFragment, unknown>;
 export const WorkflowDiffFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<WorkflowDiffFragmentFragment, unknown>;
 export const GetTimelineCalendarEventsFromObjectRecordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTimelineCalendarEventsFromObjectRecord"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectNameSingular"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recordId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pageSize"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTimelineCalendarEventsFromObjectRecord"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objectNameSingular"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectNameSingular"}}},{"kind":"Argument","name":{"kind":"Name","value":"recordId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recordId"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"pageSize"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pageSize"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventsWithTotalFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventCallRecordingFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventCallRecording"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEvent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"location"}},{"kind":"Field","name":{"kind":"Name","value":"startsAt"}},{"kind":"Field","name":{"kind":"Name","value":"endsAt"}},{"kind":"Field","name":{"kind":"Name","value":"isFullDay"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"participants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"callRecordings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventCallRecordingFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventsWithTotalFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventsWithTotal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalNumberOfCalendarEvents"}},{"kind":"Field","name":{"kind":"Name","value":"relatedPersonIds"}},{"kind":"Field","name":{"kind":"Name","value":"timelineCalendarEvents"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventFragment"}}]}}]}}]} as unknown as DocumentNode<GetTimelineCalendarEventsFromObjectRecordQuery, GetTimelineCalendarEventsFromObjectRecordQueryVariables>;
 export const GetTimelineThreadsFromObjectRecordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTimelineThreadsFromObjectRecord"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectNameSingular"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recordId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pageSize"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTimelineThreadsFromObjectRecord"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objectNameSingular"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectNameSingular"}}},{"kind":"Argument","name":{"kind":"Name","value":"recordId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recordId"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"pageSize"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pageSize"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineThreadsWithTotalFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineThreadFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThread"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"read"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"firstParticipant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastTwoParticipants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageReceivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageBody"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"numberOfMessagesInThread"}},{"kind":"Field","name":{"kind":"Name","value":"participantCount"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageIsDraft"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineThreadsWithTotalFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadsWithTotal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalNumberOfThreads"}},{"kind":"Field","name":{"kind":"Name","value":"relatedPersonIds"}},{"kind":"Field","name":{"kind":"Name","value":"timelineThreads"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineThreadFragment"}}]}}]}}]} as unknown as DocumentNode<GetTimelineThreadsFromObjectRecordQuery, GetTimelineThreadsFromObjectRecordQueryVariables>;
@@ -1560,6 +1873,11 @@ export const GetCoreWorkflowsDocument = {"kind":"Document","definitions":[{"kind
 export const GetCoreWorkflowsWithCurrentVersionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflowsWithCurrentVersions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CoreWorkflowsWithCurrentVersionsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowsWithCurrentVersions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflow"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"statuses"}},{"kind":"Field","name":{"kind":"Name","value":"lastPublishedCoreWorkflowVersionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"currentVersion"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"trigger"}},{"kind":"Field","name":{"kind":"Name","value":"steps"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowsWithCurrentVersionsQuery, GetCoreWorkflowsWithCurrentVersionsQueryVariables>;
 export const GetCoreWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowVersionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"coreWorkflowVersion"},"name":{"kind":"Name","value":"coreWorkflowVersionById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"coreWorkflowVersionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowVersionId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceWorkflowVersionId"}},{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"trigger"}},{"kind":"Field","name":{"kind":"Name","value":"steps"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowVersionQuery, GetCoreWorkflowVersionQueryVariables>;
 export const GetCoreWorkflowVersionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflowVersions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"coreWorkflowVersions"},"name":{"kind":"Name","value":"coreWorkflowVersionsByCoreWorkflowId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"coreWorkflowId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowVersionsQuery, GetCoreWorkflowVersionsQueryVariables>;
+export const GetInboxQueueSettingsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetInboxQueueSettings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"inboxQueueSettings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InboxQueueSettingsFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InboxQueueSettingsFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"InboxQueueSettings"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"roleIds"}}]}}]} as unknown as DocumentNode<GetInboxQueueSettingsQuery, GetInboxQueueSettingsQueryVariables>;
+export const CreateInboxQueueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInboxQueue"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateInboxQueueInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInboxQueue"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InboxQueueSettingsFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InboxQueueSettingsFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"InboxQueueSettings"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"roleIds"}}]}}]} as unknown as DocumentNode<CreateInboxQueueMutation, CreateInboxQueueMutationVariables>;
+export const UpdateInboxQueueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateInboxQueue"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateInboxQueueInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateInboxQueue"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InboxQueueSettingsFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InboxQueueSettingsFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"InboxQueueSettings"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"roleIds"}}]}}]} as unknown as DocumentNode<UpdateInboxQueueMutation, UpdateInboxQueueMutationVariables>;
+export const SetInboxQueueRolesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetInboxQueueRoles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SetInboxQueueRolesInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setInboxQueueRoles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"InboxQueueSettingsFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"InboxQueueSettingsFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"InboxQueueSettings"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"roleIds"}}]}}]} as unknown as DocumentNode<SetInboxQueueRolesMutation, SetInboxQueueRolesMutationVariables>;
+export const DeleteInboxQueueDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteInboxQueue"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"queueId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteInboxQueue"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"queueId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"queueId"}}}]}]}}]} as unknown as DocumentNode<DeleteInboxQueueMutation, DeleteInboxQueueMutationVariables>;
 export const ActivateWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ActivateWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activateWorkflowVersion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workflowVersionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}}}]}]}}]} as unknown as DocumentNode<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
 export const ComputeStepOutputSchemaDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ComputeStepOutputSchema"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ComputeStepOutputSchemaInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"computeStepOutputSchema"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>;
 export const CreateDraftFromWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateDraftFromWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateDraftFromWorkflowVersionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createDraftFromWorkflowVersion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"trigger"}},{"kind":"Field","name":{"kind":"Name","value":"steps"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;

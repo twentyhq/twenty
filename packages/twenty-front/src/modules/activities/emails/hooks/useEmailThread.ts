@@ -157,6 +157,7 @@ export const useEmailThread = (threadId: string | null) => {
     thread,
     messages: messagesWithSender,
     messageThreadExternalId,
+    lastMessageChannelId,
     connectedAccountId,
     connectedAccountHandle,
     connectedAccountProvider,

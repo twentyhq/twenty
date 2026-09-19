@@ -5,6 +5,7 @@ import {
   type workflowAiAgentActionSchema,
   type workflowCodeActionSchema,
   type workflowCreateCalendarEventActionSchema,
+  type workflowCreateInboxItemActionSchema,
   type workflowCreateRecordActionSchema,
   type workflowCronTriggerSchema,
   type workflowDatabaseEventTriggerSchema,
@@ -46,6 +47,10 @@ export type WorkflowDraftEmailAction = z.infer<
 export type WorkflowCreateCalendarEventAction = z.infer<
   typeof workflowCreateCalendarEventActionSchema
 >;
+
+export type WorkflowCreateInboxItemAction = z.infer<
+  typeof workflowCreateInboxItemActionSchema
+>;
 export type WorkflowCreateRecordAction = z.infer<
   typeof workflowCreateRecordActionSchema
 >;
@@ -83,6 +88,7 @@ export type WorkflowAction =
   | WorkflowSendEmailAction
   | WorkflowDraftEmailAction
   | WorkflowCreateCalendarEventAction
+  | WorkflowCreateInboxItemAction
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
   | WorkflowDeleteRecordAction

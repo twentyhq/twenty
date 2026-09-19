@@ -1,4 +1,7 @@
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { DEFAULT_INBOX_SECTION } from '@/inbox/constants/DefaultInboxSection';
+import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
+import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -18,12 +21,14 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   IconHome,
+  IconInbox,
   IconMessageCirclePlus,
   IconSearch,
 } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { isInboxPath } from '~/utils/isInboxPath';
 
-type MobileNavigationBarItemName = 'home' | 'search' | 'newAiChat';
+type MobileNavigationBarItemName = 'home' | 'inbox' | 'search' | 'newAiChat';
 
 type MobileNavigationBarItem = {
   name: MobileNavigationBarItemName;
@@ -47,6 +52,7 @@ export const useMobileNavigationBarItems = (): {
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const isInboxEnabled = useIsInboxEnabled();
 
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -70,8 +76,15 @@ export const useMobileNavigationBarItems = (): {
     setIsNavigationDrawerExpanded(false);
   };
 
+  const activeItemName: MobileNavigationBarItemName | '' =
+    pathname === AppPath.Home
+      ? 'home'
+      : isInboxEnabled && isInboxPath(pathname)
+        ? 'inbox'
+        : '';
+
   return {
-    activeItemName: pathname === AppPath.Home ? 'home' : '',
+    activeItemName,
     items: [
       {
         name: 'home',
@@ -86,6 +99,20 @@ export const useMobileNavigationBarItems = (): {
           navigate(AppPath.Home, { replace: isSettingsDrawer });
         },
       },
+      ...(isInboxEnabled
+        ? [
+            {
+              name: 'inbox' as const,
+              label: t`Inbox`,
+              Icon: IconInbox,
+              onClick: () => {
+                closeSidePanelMenu();
+                closeSettingsDrawer();
+                navigate(getInboxSectionPath(DEFAULT_INBOX_SECTION));
+              },
+            },
+          ]
+        : []),
       {
         name: 'search',
         label: t`Search`,

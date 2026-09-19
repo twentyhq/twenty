@@ -5,7 +5,7 @@ import {
   type ReplyContext,
   type ReplyContextReady,
 } from '@/activities/emails/types/ReplyContext';
-import { getReplyToRecipients } from '@/activities/emails/utils/getReplyToRecipients';
+import { getReplyDefaultsFromMessages } from '@/activities/emails/utils/getReplyDefaultsFromMessages';
 import { isDefined } from 'twenty-shared/utils';
 
 export type { ReplyContext, ReplyContextReady };
@@ -34,39 +34,18 @@ export const useReplyContext = (
       return null;
     }
 
-    const sentMessages = messages.filter((message) => !message.isDraft);
-    const lastSentMessage = sentMessages[sentMessages.length - 1];
-
-    if (!isDefined(lastSentMessage)) {
-      if (messages.length === 0) {
-        return null;
-      }
-
-      return {
-        loading: false,
-        to: '',
-        subject: '',
-        inReplyTo: '',
-        connectedAccountId,
-        connectedAccountProvider,
-      };
-    }
-
-    const replyTo = getReplyToRecipients({
-      message: lastSentMessage,
+    const replyDefaults = getReplyDefaultsFromMessages({
+      messages,
       connectedAccountHandle,
     });
 
-    const rawSubject = lastSentMessage.subject ?? '';
-    const subject = rawSubject.startsWith('Re: ')
-      ? rawSubject
-      : `Re: ${rawSubject}`;
+    if (!isDefined(replyDefaults)) {
+      return null;
+    }
 
     return {
       loading: false,
-      to: replyTo,
-      subject,
-      inReplyTo: lastSentMessage.headerMessageId ?? '',
+      ...replyDefaults,
       connectedAccountId,
       connectedAccountProvider,
     };

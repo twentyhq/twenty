@@ -31,6 +31,7 @@ import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-ch
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
+import { AgentChatInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
@@ -67,13 +68,17 @@ export class AgentChatStreamingService {
     private readonly fileUrlService: FileUrlService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly metricsService: MetricsService,
+    private readonly agentChatInboxService: AgentChatInboxService,
   ) {}
 
   async reapDeadStream({
     thread,
     workspaceId,
   }: {
-    thread: Pick<AgentChatThreadEntity, 'id' | 'activeStreamId'>;
+    thread: Pick<
+      AgentChatThreadEntity,
+      'id' | 'activeStreamId' | 'userWorkspaceId'
+    >;
     workspaceId: string;
   }): Promise<AgentChatThreadLastStreamError | null> {
     if (!isDefined(thread.activeStreamId)) {
@@ -121,6 +126,22 @@ export class AgentChatStreamingService {
         },
       })
       .catch(() => {});
+
+    // A reaped turn never reaches the job's failure path, so this is the only
+    // place its owner can be told about it. Routed last and swallowed on its
+    // own failure, as in the job: the interruption is what has to be reported.
+    await this.agentChatInboxService
+      .onTurnFailed({
+        threadId: thread.id,
+        workspaceId,
+        userWorkspaceId: thread.userWorkspaceId,
+        errorMessage: interruptedError.message,
+      })
+      .catch((inboxError) => {
+        this.logger.error(
+          `Failed to route the interrupted turn for thread ${thread.id} to the inbox: ${inboxError instanceof Error ? inboxError.message : String(inboxError)}`,
+        );
+      });
 
     return interruptedError;
   }
@@ -548,7 +569,7 @@ export class AgentChatStreamingService {
   }): Promise<{ streamId: string; turnId: string | null }> {
     const thread = await this.threadRepository.findOne(workspace.id, {
       where: { id: threadId },
-      select: ['id', 'activeStreamId'],
+      select: ['id', 'activeStreamId', 'userWorkspaceId'],
     });
 
     if (isDefined(thread)) {

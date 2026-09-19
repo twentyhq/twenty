@@ -30,6 +30,12 @@ export enum AppPath {
   WorkflowCoreIndexPage = '/workflow-core',
   WorkflowCoreShowPage = '/workflow-core/:coreWorkflowId',
 
+  InboxPage = '/inbox',
+  InboxSectionPage = '/inbox/:inboxSectionSlug',
+  InboxItemPage = '/inbox/:inboxSectionSlug/:inboxItemId',
+  InboxQueuePage = '/inbox/q/:inboxQueueName',
+  InboxQueueItemPage = '/inbox/q/:inboxQueueName/:inboxItemId',
+
   Settings = `settings`,
   SettingsCatchAll = `/${Settings}/*`,
   Developers = `developers`,

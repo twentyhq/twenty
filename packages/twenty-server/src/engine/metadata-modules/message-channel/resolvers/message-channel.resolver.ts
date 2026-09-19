@@ -245,6 +245,7 @@ export class MessageChannelResolver {
     return this.messageChannelMetadataService.updateEmailGroupChannel({
       id: input.id,
       displayName: input.displayName,
+      defaultInboxQueueId: input.defaultInboxQueueId,
       userWorkspaceId,
       workspaceId: workspace.id,
     });

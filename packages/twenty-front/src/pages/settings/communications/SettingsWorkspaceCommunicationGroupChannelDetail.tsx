@@ -1,5 +1,7 @@
+import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
+import { useInboxSettings } from '@/settings/inbox/hooks/useInboxSettings';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useUpdateEmailGroupChannel } from '@/settings/accounts/hooks/useUpdateEmailGroupChannel';
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
@@ -9,6 +11,7 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsEmailingDomainDnsRecords } from '@/settings/emailing-domains/components/SettingsEmailingDomainDnsRecords';
 import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
+import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -21,7 +24,7 @@ import { useParams } from 'react-router-dom';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
-import { IconCopy, IconTrash } from 'twenty-ui/icon';
+import { IconCopy, IconTrash, useIcons } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -31,6 +34,10 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
 
 const DELETE_EMAIL_GROUP_MODAL_ID = 'delete-email-group-channel-modal';
+
+// Null on the channel, which sends its mail wherever the routing for the kind
+// of work sends it.
+const DEFAULT_ROUTING_VALUE = 'default-routing';
 
 const StyledInputRow = styled.div`
   display: flex;
@@ -58,9 +65,12 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { enqueueToast } = useToast();
   const { deleteEmailGroupChannel, loading: deleting } =
     useDeleteEmailGroupChannel();
-  const { updateEmailGroupChannel, loading: updatingDisplayName } =
+  const { updateEmailGroupChannel, loading: isUpdatingChannel } =
     useUpdateEmailGroupChannel();
   const { data: emailingDomainsData } = useQuery(GetEmailingDomainsDocument);
+  const { getIcon } = useIcons();
+  const isInboxEnabled = useIsInboxEnabled();
+  const { inboxQueues } = useInboxSettings();
 
   const [displayNameDraft, setDisplayNameDraft] = useState<string | null>(null);
 
@@ -98,10 +108,9 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
     const nextDisplayName = displayNameDraft.trim();
 
     try {
-      await updateEmailGroupChannel(
-        channel.id,
-        isNonEmptyString(nextDisplayName) ? nextDisplayName : null,
-      );
+      await updateEmailGroupChannel(channel.id, {
+        displayName: isNonEmptyString(nextDisplayName) ? nextDisplayName : null,
+      });
     } catch {
       enqueueToast({
         variant: 'error',
@@ -109,6 +118,30 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       });
     } finally {
       setDisplayNameDraft(null);
+    }
+  };
+
+  const inboxQueueOptions = [
+    { value: DEFAULT_ROUTING_VALUE, label: t`Default routing` },
+    ...inboxQueues
+      .filter((inboxQueue) => !inboxQueue.isDefault)
+      .map((inboxQueue) => ({
+        value: inboxQueue.id,
+        label: inboxQueue.label,
+        Icon: getIcon(inboxQueue.icon),
+      })),
+  ];
+
+  const handleInboxQueueChange = async (value: string) => {
+    try {
+      await updateEmailGroupChannel(channel.id, {
+        defaultInboxQueueId: value === DEFAULT_ROUTING_VALUE ? null : value,
+      });
+    } catch {
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to update where this channel's mail lands.`,
+      });
     }
   };
 
@@ -132,7 +165,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
           instanceId="email-group-display-name"
           value={displayNameDraft ?? displayName}
           placeholder={t`Sender name`}
-          disabled={updatingDisplayName}
+          disabled={isUpdatingChannel}
           onChange={setDisplayNameDraft}
           onEnter={handleDisplayNameSave}
           onTab={handleDisplayNameSave}
@@ -200,6 +233,22 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
             >{t`Copy`}</Button>
           </StyledInputRow>
         </Section.Root>
+        {isInboxEnabled && (
+          <Section.Root>
+            <Section.Header
+              title={t`Shared inbox`}
+              description={t`Where mail forwarded to this address lands. Leave it on default routing to follow the rule for the kind of work instead.`}
+            />
+            <Select
+              dropdownId="email-group-inbox-queue"
+              value={channel.defaultInboxQueueId ?? DEFAULT_ROUTING_VALUE}
+              options={inboxQueueOptions}
+              disabled={isUpdatingChannel}
+              fullWidth
+              onChange={handleInboxQueueChange}
+            />
+          </Section.Root>
+        )}
         {isNonEmptyString(channel.displayName) && (
           <Section.Root>
             <Section.Header

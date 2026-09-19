@@ -7,14 +7,19 @@ type UpdateEmailGroupChannelResult = {
   updateEmailGroupChannel: {
     id: string;
     displayName: string | null;
+    defaultInboxQueueId: string | null;
   };
 };
 
+// An omitted field leaves the channel's current value untouched, so a caller
+// changing one setting cannot blank out the other.
+type UpdateEmailGroupChannelUpdates = {
+  displayName?: string | null;
+  defaultInboxQueueId?: string | null;
+};
+
 type UpdateEmailGroupChannelVariables = {
-  input: {
-    id: string;
-    displayName?: string | null;
-  };
+  input: { id: string } & UpdateEmailGroupChannelUpdates;
 };
 
 export const useUpdateEmailGroupChannel = () => {
@@ -25,8 +30,10 @@ export const useUpdateEmailGroupChannel = () => {
     refetchQueries: [{ query: GET_MY_MESSAGE_CHANNELS }],
   });
 
-  const updateEmailGroupChannel = (id: string, displayName: string | null) =>
-    mutate({ variables: { input: { id, displayName } } });
+  const updateEmailGroupChannel = (
+    id: string,
+    updates: UpdateEmailGroupChannelUpdates,
+  ) => mutate({ variables: { input: { id, ...updates } } });
 
   return { updateEmailGroupChannel, loading, error };
 };
