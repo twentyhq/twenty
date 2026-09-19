@@ -38,6 +38,7 @@ import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-m
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
 import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-manifest-to-universal-flat-view-filter.util';
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
+import { fromViewManifestToMissingUniversalFlatViewGroups } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-missing-universal-flat-view-groups.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
 import {
@@ -63,6 +64,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest,
     ownerFlatApplication,
     fromAllFlatEntityMaps,
+    existingAllFlatEntityMaps,
     isLogicFunctionPrebuiltModeEnabled,
     now,
     workspaceId,
@@ -70,6 +72,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
     fromAllFlatEntityMaps: AllFlatEntityMaps;
+    existingAllFlatEntityMaps: AllFlatEntityMaps;
     isLogicFunctionPrebuiltModeEnabled: boolean;
     now: string;
     workspaceId: string;
@@ -478,6 +481,39 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatViewGroupMaps,
         });
+      }
+
+      const mainGroupByFieldMetadataUniversalIdentifier =
+        viewManifest.mainGroupByFieldMetadataUniversalIdentifier;
+      const mainGroupByFieldMetadata = isDefined(
+        mainGroupByFieldMetadataUniversalIdentifier,
+      )
+        ? (allUniversalFlatEntityMaps.flatFieldMetadataMaps
+            .byUniversalIdentifier[
+            mainGroupByFieldMetadataUniversalIdentifier
+          ] ??
+          existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+            mainGroupByFieldMetadataUniversalIdentifier
+          ])
+        : undefined;
+
+      if (isDefined(mainGroupByFieldMetadata)) {
+        for (const missingUniversalFlatViewGroup of fromViewManifestToMissingUniversalFlatViewGroups(
+          {
+            viewManifest,
+            mainGroupByFieldMetadata,
+            applicationUniversalIdentifier,
+            now,
+          },
+        )) {
+          addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
+            {
+              universalFlatEntity: missingUniversalFlatViewGroup,
+              universalFlatEntityMapsToMutate:
+                allUniversalFlatEntityMaps.flatViewGroupMaps,
+            },
+          );
+        }
       }
 
       for (const viewSortManifest of viewManifest.sorts ?? []) {
