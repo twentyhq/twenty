@@ -1,6 +1,37 @@
 import { type StringFilter } from '@/types';
 import escapeRegExp from 'lodash.escaperegexp';
 
+// postgres LIKE treats a backslash as an escape for the next char (default
+// escape char), so an escaped % or _ is a literal and must not become a
+// wildcard, the walk parses escape sequences before the wildcard translation
+const translateLikeWildcards = (pattern: string): string => {
+  let translated = '';
+  let isEscaped = false;
+
+  for (const char of pattern) {
+    if (isEscaped) {
+      translated += escapeRegExp(char);
+      isEscaped = false;
+    } else if (char === '\\') {
+      isEscaped = true;
+    } else if (char === '%') {
+      translated += '[\\s\\S]*';
+    } else if (char === '_') {
+      translated += '[\\s\\S]';
+    } else {
+      translated += escapeRegExp(char);
+    }
+  }
+
+  // postgres rejects a LIKE pattern ending with a lone escape char, the mirror
+  // stays lenient and keeps it as a literal backslash
+  if (isEscaped) {
+    translated += escapeRegExp('\\');
+  }
+
+  return translated;
+};
+
 export const isMatchingStringFilter = ({
   stringFilter,
   value,
@@ -28,16 +59,17 @@ export const isMatchingStringFilter = ({
       return value <= stringFilter.lte;
     }
     case stringFilter.like !== undefined: {
-      const escapedPattern = escapeRegExp(stringFilter.like);
-      const regexPattern = escapedPattern.replace(/%/g, '.*');
-      const regexCaseSensitive = new RegExp(`^${regexPattern}$`);
+      // LIKE/ILIKE treat % and _ as wildcards, so the mirror has to too
+      // the u flag keeps both wildcards code-point based so postgres parity
+      // holds for newline and astral values (% and _ match a\nc / a😀c in postgres)
+      const regexPattern = translateLikeWildcards(stringFilter.like);
+      const regexCaseSensitive = new RegExp(`^${regexPattern}$`, 'u');
 
       return regexCaseSensitive.test(value);
     }
     case stringFilter.ilike !== undefined: {
-      const escapedPattern = escapeRegExp(stringFilter.ilike);
-      const regexPattern = escapedPattern.replace(/%/g, '.*');
-      const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'i');
+      const regexPattern = translateLikeWildcards(stringFilter.ilike);
+      const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'iu');
 
       return regexCaseInsensitive.test(value);
     }
