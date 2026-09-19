@@ -54,6 +54,7 @@ export const mockedClientConfig: ClientConfig = {
   },
   canManageFeatureFlags: true,
   publicFeatureFlags: [],
+  recordGroupPageSize: 8,
   isMicrosoftMessagingEnabled: true,
   isMicrosoftCalendarEnabled: true,
   isGoogleMessagingEnabled: true,

@@ -4324,6 +4324,9 @@ export default {
             "isOnboardingAiChatEnabled": [
                 8
             ],
+            "recordGroupPageSize": [
+                28
+            ],
             "enterpriseInstanceType": [
                 1
             ],

@@ -17,6 +17,7 @@ import {
   validateSync,
 } from 'class-validator';
 import {
+  DEFAULT_RECORD_GROUP_PAGE_SIZE,
   ENTERPRISE_INSTANCE_TYPE,
   type EnterpriseInstanceType,
 } from 'twenty-shared/constants';
@@ -253,6 +254,17 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   ALLOW_REQUESTS_TO_TWENTY_ICONS = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Number of records fetched per page in each group of a record table grouped by a field. Groups keep their "Load more" button, this only changes how many records one page holds.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsInt()
+  @IsOptional()
+  RECORD_GROUP_PAGE_SIZE = DEFAULT_RECORD_GROUP_PAGE_SIZE;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
