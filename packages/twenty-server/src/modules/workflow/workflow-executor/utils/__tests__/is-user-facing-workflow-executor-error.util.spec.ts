@@ -75,6 +75,9 @@ describe('isUserFacingWorkflowExecutorError', () => {
   // No retry conjures a model, and reporting these as system errors buries the
   // real ones, so a misconfigured classification step is the author's to fix.
   it.each([
+    // What an instance with no provider configured at all raises, through
+    // getDefaultModelForTier under the auto-select fallback.
+    AiExceptionCode.API_KEY_NOT_CONFIGURED,
     AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
     AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
     AiExceptionCode.INVALID_EVALUATION_REQUEST,
