@@ -13,6 +13,7 @@ import {
   buildEvaluationPrompt,
   EVALUATION_SYSTEM_PROMPT,
 } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/build-evaluation-prompt.util';
+import { assertQuestionsSuitALanguageModel } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/assert-questions-suit-a-language-model.util';
 import { buildEvaluationResponseSchema } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/build-evaluation-response-schema.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -36,6 +37,8 @@ export class LanguageModelEvaluationRunner {
       AiEvaluationRequest,
       'abortSignal'
     >): Promise<AiEvaluationRunnerOutput> {
+    assertQuestionsSuitALanguageModel(questions);
+
     const registeredModel = this.aiModelRegistryService.getModel(modelId);
 
     if (!isDefined(registeredModel)) {

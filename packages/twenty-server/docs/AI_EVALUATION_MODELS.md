@@ -84,21 +84,38 @@ type:
   so this runner reports no probabilities at all rather than reporting a number
   the model wrote about itself.
 
+  It therefore **refuses `boolean` questions**. The only field a boolean answer
+  has is a probability, so unlike `choice` and `score` there is nothing to
+  return with the probability left off — answering at all would mean publishing
+  a figure the model wrote for itself in a field everything downstream reads as
+  measured. A workspace with no evaluation provider can ask `choice` and
+  `score` questions; `boolean` needs one configured.
+
 Only the fallback builds a prompt, and the state it embeds is whatever a record
 or upstream step happened to contain. It is fenced with a per-call random tag so
 that text cannot close the block and have the rest of itself read as prompt, and
 the system prompt says the fenced content is data rather than instructions. The
 schema already bounds *what* an answer may be; this bounds what can steer it.
 
-Resolution order:
+Resolution depends on whether the step named a model, and the two mean
+different things:
 
-1. An explicit model id resolves against whichever registry holds it.
-2. Otherwise, the first non-deprecated evaluation model in the catalog.
-3. Otherwise, the workspace's default language model.
+- **A step that names one** gets that model or an error. Naming a model is a
+  decision about what a run costs, where the state is sent and whether answers
+  come back calibrated; substituting a different model would quietly change all
+  three. An id that is unknown, whose provider is unconfigured, or that an
+  administrator has withdrawn fails the run and says which.
+- **A step that names none** takes the first non-deprecated evaluation model
+  the instance can run, and the workspace's default language model when there
+  is none.
 
-This is what makes the feature safe to build on. A workspace with no evaluation
-provider configured still runs every classification step; configuring one makes
-those steps faster, cheaper and calibrated without touching a workflow.
+The second is what makes the feature safe to build on: a workspace with no
+evaluation provider still runs those steps, and configuring one makes them
+faster, cheaper and calibrated without touching a workflow. The first is what
+keeps that convenience from silently overriding a deliberate choice.
+
+Administrator-disabled models are excluded from both paths. A classification
+step is not a way around a model an administrator has withdrawn.
 
 Every result carries `runnerKind`, so a caller that branches on a probability can
 tell which kind of model produced it.

@@ -11,6 +11,7 @@ const resolve = (candidates: Partial<EvaluationModelCandidates> = {}) =>
     isRequestedRunnableEvaluationModel: false,
     isRequestedRunnableLanguageModel: false,
     isRequestedKnownEvaluationModel: false,
+    isRequestedAdminAllowed: true,
     getDefaultLanguageModelId: () => 'openai/gpt-5-nano',
     ...candidates,
   });
@@ -40,34 +41,53 @@ describe('resolveEvaluationModel', () => {
     });
   });
 
-  // The catalog ships Jev whether or not its SDK package is installed, so a
-  // pinned id the catalog knows and cannot run is the default state, not an
-  // edge case. Routing it natively would fail every such step.
-  it('should pass over a pinned model the catalog knows but cannot run', () => {
-    expect(
+  // Substituting a model changes what the step costs, where the data goes and
+  // whether an answer carries a calibrated probability. A step that named a
+  // model asked for those properties, so it fails rather than quietly getting
+  // different ones.
+  it('should refuse a pinned model the catalog knows but cannot run', () => {
+    expect(() =>
       resolve({
         requestedModelId: 'typesafe-ai/jev-latest',
         isRequestedKnownEvaluationModel: true,
       }),
-    ).toEqual({
-      modelId: 'openai/gpt-5-nano',
-      runnerKind: 'language-model',
-      skippedModelId: 'typesafe-ai/jev-latest',
-    });
+    ).toThrow(
+      expect.objectContaining({
+        code: AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
+      }),
+    );
   });
 
-  it('should prefer another runnable evaluation model over a language model', () => {
-    expect(
+  it('should refuse a pinned model even when another evaluation model could run', () => {
+    expect(() =>
       resolve({
         requestedModelId: 'typesafe-ai/jev-latest',
         isRequestedKnownEvaluationModel: true,
         defaultEvaluationModelId: 'other/evaluator',
       }),
-    ).toEqual({
-      modelId: 'other/evaluator',
-      runnerKind: 'evaluation-model',
-      skippedModelId: 'typesafe-ai/jev-latest',
-    });
+    ).toThrow(
+      expect.objectContaining({
+        code: AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
+      }),
+    );
+  });
+
+  // A step must not be a way around a model an administrator withdrew.
+  it.each([
+    ['an evaluation model', { isRequestedRunnableEvaluationModel: true }],
+    ['a language model', { isRequestedRunnableLanguageModel: true }],
+  ])('should refuse a pinned %s that is admin-disabled', (_label, runnable) => {
+    expect(() =>
+      resolve({
+        requestedModelId: 'typesafe-ai/jev-latest',
+        isRequestedAdminAllowed: false,
+        ...runnable,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
+      }),
+    );
   });
 
   it('should refuse a model id nothing knows', () => {

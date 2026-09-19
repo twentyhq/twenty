@@ -1,3 +1,4 @@
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { buildEvaluationResponseSchema } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/build-evaluation-response-schema.util';
 
 describe('buildEvaluationResponseSchema', () => {
@@ -50,26 +51,27 @@ describe('buildEvaluationResponseSchema', () => {
     ).toThrow();
   });
 
-  it('should bound a boolean probability to [0, 1]', () => {
-    const schema = buildEvaluationResponseSchema({
-      isSpam: { type: 'boolean', instructions: 'Is this spam?' },
-    });
-
-    expect(
-      schema.parse({
-        answers: { isSpam: { type: 'boolean', probability: 0.8 } },
-      }),
-    ).toEqual({ answers: { isSpam: { type: 'boolean', probability: 0.8 } } });
+  // The only field a boolean answer has is a probability, and this path cannot
+  // measure one, so the question is refused rather than answered with a guess.
+  it('should refuse to build a schema for a boolean question', () => {
     expect(() =>
-      schema.parse({
-        answers: { isSpam: { type: 'boolean', probability: 1.2 } },
+      buildEvaluationResponseSchema({
+        isSpam: { type: 'boolean', instructions: 'Is this spam?' },
       }),
-    ).toThrow();
+    ).toThrow(
+      expect.objectContaining({
+        code: AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
+      }),
+    );
   });
 
   it('should require an answer for every question asked', () => {
     const schema = buildEvaluationResponseSchema({
-      isSpam: { type: 'boolean', instructions: 'Is this spam?' },
+      intent: {
+        type: 'choice',
+        instructions: 'Which?',
+        criteria: { billing: null, technical: null },
+      },
       urgency: {
         type: 'score',
         instructions: 'How urgent is this?',
@@ -79,7 +81,7 @@ describe('buildEvaluationResponseSchema', () => {
 
     expect(() =>
       schema.parse({
-        answers: { isSpam: { type: 'boolean', probability: 0.1 } },
+        answers: { intent: { type: 'choice', choice: 'billing' } },
       }),
     ).toThrow();
   });

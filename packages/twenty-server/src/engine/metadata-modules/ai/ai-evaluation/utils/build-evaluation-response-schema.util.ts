@@ -36,17 +36,20 @@ const buildQuestionAnswerSchema = (question: AiEvaluationModelQuestion) => {
           .max(question.criteria.length - 1),
       });
     case 'boolean':
-      return z.object({
-        type: z.literal('boolean'),
-        probability: z.number().min(0).max(1),
-      });
+      // Unreachable: assertQuestionsSuitALanguageModel refuses the question
+      // before a schema is built, because the only field a boolean answer has
+      // is a probability and this model cannot measure one.
+      throw new AiException(
+        'A boolean question needs an evaluation model',
+        AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
+      );
   }
 };
 
 // The schema is the whole guarantee on this path: an evaluation model cannot
 // emit an off-menu value by construction, a language model only cannot because
-// structured output constrains it. Probabilities are deliberately absent — a
-// number a language model writes for itself is not a calibrated one, and
+// structured output constrains it. No probability is asked for anywhere here —
+// a number a language model writes for itself is not a calibrated one, and
 // reporting it as such would be worse than reporting none.
 export const buildEvaluationResponseSchema = (
   questions: Record<string, AiEvaluationModelQuestion>,

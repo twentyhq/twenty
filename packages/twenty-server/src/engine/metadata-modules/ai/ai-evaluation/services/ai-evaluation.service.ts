@@ -42,14 +42,7 @@ export class AiEvaluationService {
   }: AiEvaluationRequest): Promise<AiEvaluationResult> {
     assertEvaluationQuestionsAreWellFormed(questions);
 
-    const { modelId, runnerKind, skippedModelId } =
-      this.resolveModel(requestedModelId);
-
-    if (isNonEmptyString(skippedModelId)) {
-      this.logger.warn(
-        `Evaluation model ${skippedModelId} is in the catalog but not runnable; check its provider credentials and that its SDK package is installed. Classifying on ${modelId}.`,
-      );
-    }
+    const { modelId, runnerKind } = this.resolveModel(requestedModelId);
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
@@ -102,6 +95,9 @@ export class AiEvaluationService {
         isDefined(
           this.aiModelRegistryService.getEvaluationModelConfig(pinnedModelId),
         ),
+      isRequestedAdminAllowed:
+        !isDefined(pinnedModelId) ||
+        this.aiModelRegistryService.isModelAdminAllowed(pinnedModelId),
       defaultEvaluationModelId:
         this.aiModelRegistryService.getDefaultEvaluationModel()?.modelId,
       getDefaultLanguageModelId: () =>
