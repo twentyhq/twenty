@@ -87,8 +87,6 @@ export const useRecordTableHeaderDndKit = (): {
       return;
     }
 
-    // Sortable cells are the visible fields after the pinned first column, so
-    // resolve the drop against that same list.
     const sortableRecordFields = visibleRecordFields.slice(1);
 
     const destinationIndex = getDestinationIndex({

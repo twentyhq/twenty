@@ -16,8 +16,6 @@ export const useReorderVisibleRecordFields = (recordTableId: string) => {
 
   const { updateRecordField } = useUpdateRecordField(recordTableId);
 
-  // Callers resolve both fields from the list they rendered, so a drop is
-  // never re-interpreted against a differently shaped array.
   const reorderVisibleRecordFields = useCallback(
     ({
       recordFieldToMove,

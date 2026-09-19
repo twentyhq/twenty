@@ -72,8 +72,6 @@ export const ViewFieldsVisibleDropdownSection = () => {
     )
     .toSorted(sortByProperty('position'));
 
-  // Item indices are positions in draggableRecordFields, so the drop resolves
-  // against the exact list that was rendered.
   const handleDragEnd = (result: DraggableListDropResult) => {
     if (!isDefined(result.destination)) {
       return;
