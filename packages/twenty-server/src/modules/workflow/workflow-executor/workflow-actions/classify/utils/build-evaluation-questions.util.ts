@@ -7,6 +7,28 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type AiEvaluationModelQuestion } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 
+// Options key an object, so a repeat would overwrite the earlier one and hand
+// the model fewer choices than the step declares — losing one silently, which
+// is worse than refusing to run.
+const buildChoiceCriteria = (
+  question: WorkflowClassifyQuestion,
+): Record<string, string | null> => {
+  const criteria: Record<string, string | null> = {};
+
+  for (const criterion of question.criteria) {
+    if (criterion.name in criteria) {
+      throw new AiException(
+        `Question "${question.name}" lists the option "${criterion.name}" twice`,
+        AiExceptionCode.INVALID_EVALUATION_REQUEST,
+      );
+    }
+
+    criteria[criterion.name] = criterion.description ?? null;
+  }
+
+  return criteria;
+};
+
 const toEvaluationQuestion = (
   question: WorkflowClassifyQuestion,
 ): AiEvaluationModelQuestion => {
@@ -15,12 +37,7 @@ const toEvaluationQuestion = (
       return {
         type: 'choice',
         instructions: question.instructions,
-        criteria: Object.fromEntries(
-          question.criteria.map((criterion) => [
-            criterion.name,
-            criterion.description ?? null,
-          ]),
-        ),
+        criteria: buildChoiceCriteria(question),
       };
     case 'score':
       // A level's position is its score, so the editor's order is the rubric.

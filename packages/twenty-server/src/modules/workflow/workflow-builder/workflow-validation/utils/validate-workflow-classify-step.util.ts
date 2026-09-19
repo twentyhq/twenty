@@ -40,6 +40,19 @@ const getQuestionProblem = (
     return `has an unnamed option for "${question.name}"`;
   }
 
+  // Only for a choice: its options key a map, so a repeat drops one before the
+  // model ever sees it. Score levels are positional and keep their count.
+  if (question.type === 'choice') {
+    const optionNames = question.criteria.map((criterion) => criterion.name);
+    const duplicateName = optionNames.find(
+      (name, index) => optionNames.indexOf(name) !== index,
+    );
+
+    if (isNonEmptyString(duplicateName)) {
+      return `lists the option "${duplicateName}" twice for "${question.name}"`;
+    }
+  }
+
   return undefined;
 };
 

@@ -90,6 +90,55 @@ describe('buildEvaluationQuestions', () => {
     );
   });
 
+  // Options key a map, so a repeat would hand the model fewer choices than the
+  // step declares rather than failing.
+  it('should refuse a choice question listing the same option twice', () => {
+    expect(() =>
+      buildEvaluationQuestions([
+        {
+          id: '4ef0a3b8-1f4a-4b3e-9c2d-2a1f5b6c7d8e',
+          name: 'intent',
+          type: 'choice',
+          instructions: 'What does it ask for?',
+          criteria: [
+            { id: 'c1', name: 'pricing', description: 'First' },
+            { id: 'c2', name: 'support' },
+            { id: 'c3', name: 'pricing', description: 'Second' },
+          ],
+        },
+      ]),
+    ).toThrow(
+      expect.objectContaining({
+        code: AiExceptionCode.INVALID_EVALUATION_REQUEST,
+      }),
+    );
+  });
+
+  // Score levels are positional and keep their count, so a repeated label
+  // loses nothing.
+  it('should allow a score question repeating a level label', () => {
+    expect(
+      buildEvaluationQuestions([
+        {
+          id: '4ef0a3b8-1f4a-4b3e-9c2d-2a1f5b6c7d8e',
+          name: 'urgency',
+          type: 'score',
+          instructions: 'How urgent?',
+          criteria: [
+            { id: 'c1', name: 'Same', description: 'Low' },
+            { id: 'c2', name: 'Same', description: 'High' },
+          ],
+        },
+      ]),
+    ).toEqual({
+      urgency: {
+        type: 'score',
+        instructions: 'How urgent?',
+        criteria: ['Low', 'High'],
+      },
+    });
+  });
+
   it('should refuse an unnamed question', () => {
     expect(() =>
       buildEvaluationQuestions([

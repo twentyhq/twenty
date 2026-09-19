@@ -140,6 +140,25 @@ describe('validateWorkflowClassifyStep', () => {
     ).toEqual(['CLASSIFY_INCOMPLETE_QUESTION']);
   });
 
+  it('should refuse a choice question listing the same option twice', () => {
+    expect(
+      codesFor({
+        questions: [
+          {
+            id: 'q1',
+            name: 'intent',
+            type: 'choice',
+            instructions: 'Which?',
+            criteria: [
+              { id: 'c1', name: 'pricing' },
+              { id: 'c2', name: 'pricing' },
+            ],
+          },
+        ],
+      }),
+    ).toEqual(['CLASSIFY_INCOMPLETE_QUESTION']);
+  });
+
   it('should refuse two questions sharing an answer name', () => {
     expect(
       codesFor({
