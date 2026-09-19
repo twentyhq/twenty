@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { createAnthropic, type AnthropicProvider } from '@ai-sdk/anthropic';
@@ -26,22 +26,31 @@ import {
   AI_SDK_MISTRAL,
   AI_SDK_OPENAI,
   AI_SDK_OPENAI_COMPATIBLE,
+  AI_SDK_TYPESAFE_AI,
   AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { sanitizeGeminiToolResultRefsMiddleware } from 'src/engine/metadata-modules/ai/ai-models/middleware/sanitize-gemini-tool-result-refs.middleware';
+import { type AiEvaluationModel } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { getEvaluationModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-evaluation-model-factory.util';
+import { loadOptionalEvaluationProviderFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/load-optional-evaluation-provider.util';
 import { getTranscriptionModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-transcription-model-factory.util';
 
 export type AiSdkProviderInstance = {
-  createModel: (modelId: string) => LanguageModel;
+  // Absent on providers that serve no language model at all, such as an
+  // evaluation-only provider.
+  createModel?: (modelId: string) => LanguageModel;
   // Absent on providers with no speech-to-text API.
   createTranscriptionModel?: (modelId: string) => TranscriptionModel;
+  // Absent on providers with no evaluation API.
+  createEvaluationModel?: (modelId: string) => AiEvaluationModel;
   rawProvider: unknown;
   sdkPackage: AiSdkPackage;
 };
 
 @Injectable()
 export class SdkProviderFactoryService {
+  private readonly logger = new Logger(SdkProviderFactoryService.name);
   private readonly providerInstances = new Map<string, AiSdkProviderInstance>();
 
   createProvider(
@@ -96,13 +105,15 @@ export class SdkProviderFactoryService {
   private toProviderInstance(
     provider: unknown,
     sdkPackage: AiSdkPackage,
-    createModel: (modelId: string) => LanguageModel,
+    createModel?: (modelId: string) => LanguageModel,
   ): AiSdkProviderInstance {
     const createTranscriptionModel = getTranscriptionModelFactory(provider);
+    const createEvaluationModel = getEvaluationModelFactory(provider);
 
     return {
-      createModel,
+      ...(isDefined(createModel) && { createModel }),
       ...(isDefined(createTranscriptionModel) && { createTranscriptionModel }),
+      ...(isDefined(createEvaluationModel) && { createEvaluationModel }),
       rawProvider: provider,
       sdkPackage,
     };
@@ -130,6 +141,8 @@ export class SdkProviderFactoryService {
         return this.buildOpenAiCompatibleProvider(config);
       case AI_SDK_AZURE:
         return this.buildAzureProvider(config);
+      case AI_SDK_TYPESAFE_AI:
+        return this.buildTypeSafeAiProvider(config);
       default:
         throw new Error(`Unsupported SDK package: ${config.npm}`);
     }
@@ -221,6 +234,35 @@ export class SdkProviderFactoryService {
       AI_SDK_OPENAI_COMPATIBLE,
       (modelId: string) => provider(modelId),
     );
+  }
+
+  // Evaluation-only: the provider serves no language model, so the instance
+  // carries no createModel and the registry skips its models for chat.
+  private buildTypeSafeAiProvider(
+    config: AiProviderConfig,
+  ): AiSdkProviderInstance {
+    const createTypeSafeAi = loadOptionalEvaluationProviderFactory({
+      npm: AI_SDK_TYPESAFE_AI,
+      factoryName: 'createTypeSafeAi',
+    });
+
+    if (!isDefined(createTypeSafeAi)) {
+      this.logger.warn(
+        `${AI_SDK_TYPESAFE_AI} is not installed; its models stay in the catalog but cannot run.`,
+      );
+
+      return {
+        rawProvider: undefined,
+        sdkPackage: AI_SDK_TYPESAFE_AI,
+      };
+    }
+
+    const provider = createTypeSafeAi({
+      ...(config.apiKey && { apiKey: config.apiKey }),
+      ...(config.baseUrl && { baseURL: config.baseUrl }),
+    });
+
+    return this.toProviderInstance(provider, AI_SDK_TYPESAFE_AI);
   }
 
   private buildAzureProvider(config: AiProviderConfig): AiSdkProviderInstance {

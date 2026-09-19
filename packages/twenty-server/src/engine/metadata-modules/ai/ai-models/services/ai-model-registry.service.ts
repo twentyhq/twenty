@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type LanguageModel, type TranscriptionModel } from 'ai';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  AI_MODEL_TIERS,
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
   DEFAULT_AI_AGENT_MODEL_TIER,
   getAiModelTierFromModelId,
@@ -29,12 +28,18 @@ import {
   type AiSdkProviderInstance,
 } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { type AiEvaluationModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model-config.type';
+import { type AiEvaluationModel } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 import { type AiTranscriptionModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-transcription-model-config.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { DEFAULT_CONTEXT_WINDOW_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-context-window-tokens.const';
-import { isAutoSelectModelId, isDefined } from 'twenty-shared/utils';
+import {
+  isAutoSelectModelId,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
@@ -62,6 +67,13 @@ export type RegisteredAiTranscriptionModel = {
   providerName: string;
 };
 
+export type RegisteredAiEvaluationModel = {
+  modelId: string;
+  sdkPackage: AiSdkPackage;
+  model: AiEvaluationModel;
+  providerName: string;
+};
+
 @Injectable()
 export class AiModelRegistryService {
   private readonly logger = new Logger(AiModelRegistryService.name);
@@ -72,6 +84,13 @@ export class AiModelRegistryService {
   private transcriptionRegistry: Map<string, RegisteredAiTranscriptionModel> =
     new Map();
   private transcriptionConfigCache: Map<string, AiTranscriptionModelConfig> =
+    new Map();
+  // Kept apart for the same reason as transcription: an evaluation model has no
+  // context window and cannot answer a chat turn, so it must never surface in
+  // the model picker or reach language-model costing.
+  private evaluationRegistry: Map<string, RegisteredAiEvaluationModel> =
+    new Map();
+  private evaluationConfigCache: Map<string, AiEvaluationModelConfig> =
     new Map();
   private providerModelDefCache: Map<
     string,
@@ -119,6 +138,8 @@ export class AiModelRegistryService {
     this.modelConfigCache.clear();
     this.transcriptionRegistry.clear();
     this.transcriptionConfigCache.clear();
+    this.evaluationRegistry.clear();
+    this.evaluationConfigCache.clear();
     this.providerModelDefCache.clear();
 
     const providers = this.providerConfigService.getResolvedProviders({
@@ -163,6 +184,18 @@ export class AiModelRegistryService {
           continue;
         }
 
+        if (modelDef.kind === 'evaluation') {
+          this.registerEvaluationModel({
+            compositeId,
+            providerKey,
+            config,
+            modelDef,
+            sdkInstance,
+          });
+
+          continue;
+        }
+
         this.modelConfigCache.set(
           compositeId,
           this.toAiModelConfig(compositeId, config, modelDef),
@@ -173,11 +206,13 @@ export class AiModelRegistryService {
           modelDef,
         });
 
-        if (sdkInstance) {
+        const createModel = sdkInstance?.createModel;
+
+        if (isDefined(createModel)) {
           this.modelRegistry.set(compositeId, {
             modelId: compositeId,
             sdkPackage: config.npm,
-            model: sdkInstance.createModel(modelDef.name),
+            model: createModel(modelDef.name),
             supportsReasoning: modelDef.supportsReasoning,
             providerName: providerKey,
             modelsDevName: config.name,
@@ -353,6 +388,111 @@ export class AiModelRegistryService {
   // that every request without an explicit model id then fails to resolve.
   hasTranscriptionModel(): boolean {
     return isDefined(this.getDefaultTranscriptionModel());
+  }
+
+  private registerEvaluationModel({
+    compositeId,
+    providerKey,
+    config,
+    modelDef,
+    sdkInstance,
+  }: {
+    compositeId: string;
+    providerKey: string;
+    config: AiProviderConfig;
+    modelDef: AiProviderModelConfig;
+    sdkInstance: AiSdkProviderInstance | undefined;
+  }): void {
+    const { supportedQuestionTypes } = modelDef;
+
+    // The schema already requires these, but a custom provider merged in at
+    // runtime reaches here too, and a model with no declared question types
+    // would accept every node and fail at the provider instead.
+    if (!isNonEmptyArray(supportedQuestionTypes)) {
+      this.logger.error(
+        `Skipping evaluation model "${compositeId}": supportedQuestionTypes is required`,
+      );
+
+      return;
+    }
+
+    if (
+      !isDefined(modelDef.inputCostPerMillionTokens) ||
+      !isDefined(modelDef.outputCostPerMillionTokens)
+    ) {
+      this.logger.error(
+        `Skipping evaluation model "${compositeId}": token costs are required`,
+      );
+
+      return;
+    }
+
+    this.evaluationConfigCache.set(compositeId, {
+      modelId: compositeId,
+      sdkPackage: config.npm,
+      label: modelDef.label,
+      description: modelDef.description ?? compositeId,
+      inputCostPerMillionTokens: modelDef.inputCostPerMillionTokens,
+      outputCostPerMillionTokens: modelDef.outputCostPerMillionTokens,
+      supportedQuestionTypes: [...supportedQuestionTypes],
+      maxCriteriaPerQuestion: modelDef.maxCriteriaPerQuestion,
+      medianLatencyMs: modelDef.medianLatencyMs,
+      dataResidency: modelDef.dataResidency ?? config.dataResidency,
+      zeroDataRetention: modelDef.zeroDataRetention,
+      isDeprecated: modelDef.isDeprecated,
+    });
+
+    const createEvaluationModel = sdkInstance?.createEvaluationModel;
+
+    if (!isDefined(createEvaluationModel)) {
+      return;
+    }
+
+    this.evaluationRegistry.set(compositeId, {
+      modelId: compositeId,
+      sdkPackage: config.npm,
+      model: createEvaluationModel(modelDef.name),
+      providerName: providerKey,
+    });
+  }
+
+  getEvaluationModel(modelId: string): RegisteredAiEvaluationModel | undefined {
+    this.ensureFresh();
+
+    return this.evaluationRegistry.get(modelId);
+  }
+
+  getAvailableEvaluationModels(): RegisteredAiEvaluationModel[] {
+    this.ensureFresh();
+
+    return Array.from(this.evaluationRegistry.values());
+  }
+
+  // Registration order follows the provider config, so the first entry is the
+  // one an operator listed first.
+  getDefaultEvaluationModel(): RegisteredAiEvaluationModel | undefined {
+    return this.getAvailableEvaluationModels().find(
+      (model) =>
+        this.getEvaluationModelConfig(model.modelId)?.isDeprecated !== true,
+    );
+  }
+
+  getEvaluationModelConfig(
+    modelId: string,
+  ): AiEvaluationModelConfig | undefined {
+    this.ensureFresh();
+
+    return this.evaluationConfigCache.get(modelId);
+  }
+
+  getAvailableEvaluationModelConfigs(): AiEvaluationModelConfig[] {
+    this.ensureFresh();
+
+    return Array.from(this.evaluationConfigCache.values());
+  }
+
+  hasEvaluationModel(): boolean {
+    return isDefined(this.getDefaultEvaluationModel());
   }
 
   private toAiModelConfig(

@@ -45,6 +45,16 @@ describe('ai-providers.json integrity', () => {
     });
   });
 
+  // This file is projected from models.dev, which describes language models
+  // only. Anything else belongs in ai-evaluation-providers.json.
+  it('should carry language models only', () => {
+    Object.values(PROVIDERS).forEach((config) => {
+      (config.models ?? []).forEach((model) => {
+        expect(model.kind ?? 'language').toBe('language');
+      });
+    });
+  });
+
   it('should declare efforts only on reasoning models', () => {
     Object.values(PROVIDERS).forEach((config) => {
       (config.models ?? []).forEach((model) => {

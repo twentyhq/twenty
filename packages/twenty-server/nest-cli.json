@@ -61,6 +61,10 @@
         "outDir": "dist"
       },
       {
+        "include": "engine/metadata-modules/ai/ai-models/ai-evaluation-providers.json",
+        "outDir": "dist"
+      },
+      {
         "include": "engine/core-modules/dpa/constants/subprocessors.json",
         "outDir": "dist"
       }
