@@ -43,6 +43,7 @@ export const AiChatThreadFilterDropdown = ({
         <AiChatThreadFilterDropdownContent
           page={page}
           dropdownId={dropdownId}
+          surface={surface}
           onSelectPage={setPage}
           onBack={goToRoot}
         />

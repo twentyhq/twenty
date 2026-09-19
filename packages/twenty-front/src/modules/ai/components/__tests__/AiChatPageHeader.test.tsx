@@ -9,8 +9,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -18,13 +16,25 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import {
+  type AgentChatThread,
+  AgentChatThreadStatus,
+} from '~/generated-metadata/graphql';
 
 const switchToNewChat = jest.fn();
 const renameChatThread = jest.fn();
-const archiveChatThread = jest.fn();
-const unarchiveChatThread = jest.fn();
+const markChatThreadDone = jest.fn();
+const reopenChatThread = jest.fn();
+const snoozeChatThread = jest.fn();
+const assignChatThread = jest.fn();
 const deleteChatThread = jest.fn();
+
+const mockNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat }),
@@ -32,10 +42,12 @@ jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
 jest.mock('@/ai/hooks/useRenameChatThread', () => ({
   useRenameChatThread: () => ({ renameChatThread }),
 }));
-jest.mock('@/ai/hooks/useChatThreadArchiveActions', () => ({
-  useChatThreadArchiveActions: () => ({
-    archiveChatThread,
-    unarchiveChatThread,
+jest.mock('@/ai/hooks/useChatThreadInboxActions', () => ({
+  useChatThreadInboxActions: () => ({
+    markChatThreadDone,
+    reopenChatThread,
+    snoozeChatThread,
+    assignChatThread,
   }),
 }));
 jest.mock('@/ai/hooks/useDeleteChatThread', () => ({
@@ -52,6 +64,9 @@ const THREAD: AgentChatThread = {
   __typename: 'AgentChatThread',
   id: 'thread-1',
   title: 'Best leads',
+  ownerUserWorkspaceId: 'owner-user-workspace-id',
+  status: AgentChatThreadStatus.OPEN,
+  mentionedUserWorkspaceIds: [],
   createdAt: '2026-09-01T00:00:00.000Z',
   updatedAt: '2026-09-01T00:00:00.000Z',
   lastMessageAt: '2026-09-01T00:00:00.000Z',
@@ -106,16 +121,70 @@ describe('AiChatPageHeader', () => {
     },
   );
 
-  it('starts a new chat from the current conversation', async () => {
+  it('marks the current conversation done from the header', async () => {
     const user = userEvent.setup();
     render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     expect(screen.getByText('Best leads')).toBeVisible();
-    await user.click(screen.getByRole('button', { name: /^New chat/ }));
-    expect(switchToNewChat).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole('button', { name: 'Mark chat done' }));
+    expect(markChatThreadDone).toHaveBeenCalledWith(THREAD.id);
     expect(
       screen.queryByRole('button', { name: 'Collapse to side panel' }),
     ).toBeNull();
+  });
+
+  it('reopens a conversation that was marked done', async () => {
+    const user = userEvent.setup();
+
+    setThreads([{ ...THREAD, status: AgentChatThreadStatus.DONE }]);
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+    await user.click(screen.getByRole('button', { name: 'Reopen chat' }));
+    expect(reopenChatThread).toHaveBeenCalledWith(THREAD.id);
+  });
+
+  it('offers no snooze once a conversation is done', () => {
+    setThreads([{ ...THREAD, status: AgentChatThreadStatus.DONE }]);
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+    expect(screen.queryByRole('button', { name: 'Snooze chat' })).toBeNull();
+  });
+
+  it('snoozes the current conversation until a chosen time', async () => {
+    const user = userEvent.setup();
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+    await user.click(screen.getByRole('button', { name: 'Snooze chat' }));
+    await user.click(screen.getByText('Tomorrow morning'));
+
+    expect(snoozeChatThread).toHaveBeenCalledWith(THREAD.id, expect.any(Date));
+  });
+
+  it('leaves starting a new chat to the navigation drawer', () => {
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+    expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
+  });
+
+  it('links a workflow run conversation back to its run', async () => {
+    const user = userEvent.setup();
+    const runThread = {
+      ...THREAD,
+      workflowRunId: '4d2a7b9c-5e6f-4a1b-8c2d-3e4f5a6b7c8d',
+      workflowStepId: 'step-id',
+    };
+
+    setThreads([runThread]);
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+
+    const chip = screen.getByRole('button', { name: 'Workflow run' });
+
+    expect(chip).toBeVisible();
+    await user.click(chip);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      `/object/workflowRun/${runThread.workflowRunId}`,
+      undefined,
+    );
   });
 
   it('does not label an existing chat as new while its metadata loads', () => {
@@ -131,73 +200,13 @@ describe('AiChatPageHeader', () => {
     expect(screen.getByRole('button', { name: 'Chat actions' })).toBeVisible();
   });
 
-  it.each([0, 100])(
-    'keeps New chat hidden without messages regardless of token usage (%s)',
-    (conversationSize) => {
-      setThreads([{ ...THREAD, lastMessageAt: null, conversationSize }]);
-      render(<AiChatPageHeader />, { wrapper: Wrapper });
-
-      expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
-    },
-  );
-
-  it('shows New chat as soon as messages load without a last-message timestamp', () => {
-    setThreads([{ ...THREAD, lastMessageAt: null }]);
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD.id);
-    render(<AiChatPageHeader />, { wrapper: Wrapper });
-
-    expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
-
-    act(() => {
-      jotaiStore.set(
-        agentChatMessagesComponentFamilyState.atomFamily({
-          instanceId: 'ai-chat-header-test',
-          familyKey: { threadId: THREAD.id },
-        }),
-        [{ id: 'message-1', role: 'user', parts: [] }],
-      );
-    });
-
-    expect(screen.getByRole('button', { name: /^New chat/ })).toBeVisible();
-  });
-
-  it('checks the header thread for messages while a different conversation is displayed', () => {
-    setThreads([{ ...THREAD, lastMessageAt: null }]);
-    jotaiStore.set(agentChatDisplayedThreadState.atom, 'previous-thread');
-    jotaiStore.set(
-      agentChatMessagesComponentFamilyState.atomFamily({
-        instanceId: 'ai-chat-header-test',
-        familyKey: { threadId: 'previous-thread' },
-      }),
-      [{ id: 'previous-message', role: 'user', parts: [] }],
-    );
-    render(<AiChatPageHeader />, { wrapper: Wrapper });
-
-    expect(screen.queryByRole('button', { name: /^New chat/ })).toBeNull();
-
-    act(() => {
-      jotaiStore.set(
-        agentChatMessagesComponentFamilyState.atomFamily({
-          instanceId: 'ai-chat-header-test',
-          familyKey: { threadId: THREAD.id },
-        }),
-        [{ id: 'current-message', role: 'user', parts: [] }],
-      );
-    });
-
-    expect(screen.getByRole('button', { name: /^New chat/ })).toBeVisible();
-  });
-
   it('offers the standard conversation actions', async () => {
     const user = userEvent.setup();
     render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     expect(screen.getByText('Best leads')).toBeVisible();
-    await user.click(screen.getByRole('button', { name: /^New chat/ }));
-    expect(switchToNewChat).toHaveBeenCalledTimes(1);
     await user.click(screen.getByRole('button', { name: 'Chat actions' }));
     expect(screen.getByText('Rename')).toBeVisible();
-    expect(screen.getByText('Archive')).toBeVisible();
     expect(screen.getByText('Delete')).toBeVisible();
   });
 
@@ -235,20 +244,15 @@ describe('AiChatPageHeader', () => {
     expect(screen.queryByText('Generated title')).toBeNull();
   });
 
-  it('offers archive and unarchive even when the current chat is filtered out of the sidebar', async () => {
+  it('leaves archiving out of the menu now that done replaces it', async () => {
     const user = userEvent.setup();
     render(<AiChatPageHeader />, { wrapper: Wrapper });
 
     await user.click(screen.getByRole('button', { name: 'Chat actions' }));
-    await user.click(screen.getByText('Archive'));
-    expect(archiveChatThread).toHaveBeenCalledWith(THREAD.id);
 
-    act(() => setThreads([{ ...THREAD, deletedAt: '2026-09-07T00:00:00Z' }]));
-
-    expect(screen.getByText('Best leads')).toBeVisible();
-    await user.click(screen.getByRole('button', { name: 'Chat actions' }));
-    await user.click(screen.getByText('Unarchive'));
-    expect(unarchiveChatThread).toHaveBeenCalledWith(THREAD.id);
+    expect(screen.queryByText('Archive')).toBeNull();
+    expect(screen.queryByText('Unarchive')).toBeNull();
+    expect(screen.getByText('Delete')).toBeVisible();
   });
 
   it('opens the rename editor when clicking the title', async () => {
@@ -333,12 +337,12 @@ describe('AiChatPageHeader', () => {
     await user.click(screen.getByText('Rename'));
     await user.clear(screen.getByRole('textbox'));
     await user.type(screen.getByRole('textbox'), 'Qualified leads');
-    await user.click(screen.getByRole('button', { name: /^New chat/ }));
+    await user.click(screen.getByRole('button', { name: 'Mark chat done' }));
 
     expect(renameChatThread).toHaveBeenCalledTimes(1);
     expect(renameChatThread).toHaveBeenCalledWith(THREAD.id, 'Qualified leads');
     expect(screen.queryByRole('textbox')).toBeNull();
-    expect(switchToNewChat).toHaveBeenCalledTimes(1);
+    expect(markChatThreadDone).toHaveBeenCalledWith(THREAD.id);
   });
 
   it('discards the draft on Escape without saving', async () => {

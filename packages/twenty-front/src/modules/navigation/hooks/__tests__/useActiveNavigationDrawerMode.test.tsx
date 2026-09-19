@@ -47,6 +47,14 @@ describe('useActiveNavigationDrawerMode', () => {
     expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
   });
 
+  it('is the AI mode on a chat channel page', () => {
+    const { result } = renderActiveNavigationDrawerMode({
+      pathname: '/chat/channels/20202020-0687-4c41-b707-ed1bfca972a7',
+    });
+
+    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+  });
+
   it('is the AI mode when the chat history is open on another page', () => {
     const { result } = renderActiveNavigationDrawerMode({
       pathname: '/objects/people',

@@ -5,6 +5,10 @@ export const GET_CHAT_THREADS = gql`
     chatThreads {
       id
       title
+      channelId
+      workflowRunId
+      workflowStepId
+      ownerUserWorkspaceId
       totalCacheReadTokens
       totalInputTokens
       totalOutputTokens
@@ -12,8 +16,15 @@ export const GET_CHAT_THREADS = gql`
       conversationSize
       totalInputCredits
       totalOutputCredits
+      status
+      snoozedUntil
+      assigneeUserWorkspaceId
+      mentionedUserWorkspaceIds
       deletedAt
       lastMessageAt
+      lastMessagePreview
+      lastMessageRole
+      lastMessageAuthorUserWorkspaceId
       createdAt
       updatedAt
     }

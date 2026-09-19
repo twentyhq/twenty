@@ -10,4 +10,7 @@ export interface AgentExecutionResult {
   modelId?: string;
   totalCostInDollars?: number;
   creditsUsedMicro?: number;
+  // Set when the loop ended on a tool the caller asked to pause on; the
+  // result then holds no final answer.
+  pausedOnToolName?: string;
 }

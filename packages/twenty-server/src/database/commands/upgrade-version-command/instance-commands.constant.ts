@@ -194,6 +194,13 @@ import { AddWorkspaceWorkflowVersionIdToWorkflowVersionFastInstanceCommand } fro
 import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789373200000-add-readability-parent-fields-to-object-metadata';
 import { AddAppMessageChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789395506192-add-app-message-channel-type';
 import { AddAppMessageChannelUniqueHandleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789418882171-add-app-message-channel-unique-handle';
+import { AddAgentChatThreadParticipantsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789750766488-add-agent-chat-thread-participants';
+import { BackfillAgentChatThreadParticipantsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1789750766489-backfill-agent-chat-thread-participants';
+import { AddAgentChatChannelsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789750766490-add-agent-chat-channels';
+import { AddAgentChatChannelRolesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789750766491-add-agent-chat-channel-roles';
+import { AddAgentChatThreadWorkflowRunFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789750766492-add-agent-chat-thread-workflow-run';
+import { AddAgentChatThreadInboxStateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789750766493-add-agent-chat-thread-inbox-state';
+import { AddAgentChatThreadReadsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789750766494-add-agent-chat-thread-reads';
 import { AddWorkflowExecutionCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789719131000-add-workflow-execution-compatibility';
 import { CoreWorkflowCommandMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789730706712-core-workflow-command-menu-items';
 
@@ -394,4 +401,11 @@ export const INSTANCE_COMMANDS = [
   AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand,
   AddAppMessageChannelTypeFastInstanceCommand,
   AddAppMessageChannelUniqueHandleFastInstanceCommand,
+  AddAgentChatThreadParticipantsFastInstanceCommand,
+  BackfillAgentChatThreadParticipantsSlowInstanceCommand,
+  AddAgentChatChannelsFastInstanceCommand,
+  AddAgentChatChannelRolesFastInstanceCommand,
+  AddAgentChatThreadWorkflowRunFastInstanceCommand,
+  AddAgentChatThreadInboxStateFastInstanceCommand,
+  AddAgentChatThreadReadsFastInstanceCommand,
 ];

@@ -10,6 +10,8 @@ import {
   Relation,
 } from 'typeorm';
 
+import { ADD_AGENT_CHAT_THREAD_PARTICIPANTS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-agent-chat-thread-participants-upgrade-command-name.constant';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
@@ -70,6 +72,15 @@ export class AgentMessageEntity {
 
   @Column({ type: 'enum', enum: AgentMessageRole })
   role: AgentMessageRole;
+
+  // Who wrote a user message. Null for assistant and system messages and for
+  // user messages persisted before threads could be shared.
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AGENT_CHAT_THREAD_PARTICIPANTS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'uuid', nullable: true })
+  @Index('IDX_AGENT_MESSAGE_AUTHOR_USER_WORKSPACE_ID')
+  authorUserWorkspaceId: string | null;
 
   @Column({
     type: 'enum',

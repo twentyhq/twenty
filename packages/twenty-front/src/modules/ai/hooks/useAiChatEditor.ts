@@ -34,7 +34,9 @@ export const useAiChatEditor = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const [agentChatDraftsByThreadId, setAgentChatDraftsByThreadId] =
     useAtomState(agentChatDraftsByThreadIdState);
-  const { searchMentionRecords } = useMentionSearch();
+  const { searchMentionRecords } = useMentionSearch({
+    shouldIncludeWorkspaceMembers: true,
+  });
   const { searchSkills } = useSkillSuggestionSearch();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =

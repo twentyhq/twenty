@@ -1,10 +1,10 @@
 import { useLocation } from 'react-router-dom';
 
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isAiChatAreaPath } from '~/utils/isAiChatAreaPath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
 
 export const useIsLayoutCustomizationAllowedOnCurrentPage = () => {
   const { pathname } = useLocation();
 
-  return !isAiChatPath(pathname) && !isSettingsPath(pathname);
+  return !isAiChatAreaPath(pathname) && !isSettingsPath(pathname);
 };

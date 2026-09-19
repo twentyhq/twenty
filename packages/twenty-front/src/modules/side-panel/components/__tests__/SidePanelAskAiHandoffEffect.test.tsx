@@ -52,6 +52,10 @@ const RouterUnderTest = ({ initialPath }: { initialPath: string }) => (
       <Routes>
         <Route path="/chat/:threadId?" element={<ChatPageRoute />} />
         <Route
+          path="/chat/channels/:channelId"
+          element={<div>Channel page</div>}
+        />
+        <Route
           path="/objects/companies"
           element={<div>Companies homepage</div>}
         />
@@ -164,6 +168,18 @@ describe('SidePanelAskAiHandoffEffect', () => {
       expect(onContinueChatFromFullWidthMock).not.toHaveBeenCalled();
     },
   );
+
+  it('keeps the chat on the page when opening a channel page from a thread', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+
+    render(<RouterUnderTest initialPath="/chat/existing-thread" />);
+
+    act(() => navigateAwayFromChatPage?.('/chat/channels/channel-id'));
+
+    expect(screen.getByText('Channel page')).toBeInTheDocument();
+    expect(openAskAiPageMock).not.toHaveBeenCalled();
+    expect(onContinueChatFromFullWidthMock).not.toHaveBeenCalled();
+  });
 
   it('should do nothing away from the chat page when the marker is not set', () => {
     render(<RouterUnderTest initialPath="/objects/companies" />);

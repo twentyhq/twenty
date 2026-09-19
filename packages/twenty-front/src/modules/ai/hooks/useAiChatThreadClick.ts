@@ -6,7 +6,7 @@ import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/j
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
+import { isCurrentPathAiChatArea } from '~/utils/isCurrentPathAiChatArea';
 
 export type UseAiChatThreadClickOptions = {
   resetNavigationStack?: boolean;
@@ -38,7 +38,9 @@ export const useAiChatThreadClick = (
       thread.title ?? null,
     );
 
-    if (isCurrentPathAiChatPage()) {
+    // The chat page and the channel pages show the selected thread in place
+    // and mirror it in their URL.
+    if (isCurrentPathAiChatArea()) {
       return;
     }
 

@@ -2938,22 +2938,54 @@ export interface Skill {
     __typename: 'Skill'
 }
 
-export interface AgentMessage {
-    id: Scalars['UUID']
-    threadId: Scalars['UUID']
-    turnId?: Scalars['UUID']
-    agentId?: Scalars['UUID']
-    role: Scalars['String']
-    status: Scalars['String']
-    parts: AgentMessagePart[]
-    processedAt?: Scalars['DateTime']
-    createdAt: Scalars['DateTime']
-    __typename: 'AgentMessage'
+export interface AgentChatAssignableRole {
+    id: Scalars['ID']
+    label: Scalars['String']
+    icon?: Scalars['String']
+    __typename: 'AgentChatAssignableRole'
 }
+
+export interface AgentChatChannelMember {
+    id: Scalars['ID']
+    channelId: Scalars['UUID']
+    userWorkspaceId: Scalars['UUID']
+    role: AgentChatChannelMemberRole
+    createdAt: Scalars['DateTime']
+    __typename: 'AgentChatChannelMember'
+}
+
+export type AgentChatChannelMemberRole = 'ADMIN' | 'MEMBER'
+
+export interface AgentChatChannelRole {
+    id: Scalars['ID']
+    channelId: Scalars['UUID']
+    roleId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    __typename: 'AgentChatChannelRole'
+}
+
+export interface AgentChatChannel {
+    id: Scalars['ID']
+    name: Scalars['String']
+    visibility: AgentChatChannelVisibility
+    description?: Scalars['String']
+    targetObjectMetadataId?: Scalars['UUID']
+    targetRecordId?: Scalars['UUID']
+    createdByUserWorkspaceId?: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'AgentChatChannel'
+}
+
+export type AgentChatChannelVisibility = 'PUBLIC' | 'PRIVATE'
 
 export interface AgentChatThread {
     id: Scalars['ID']
     title?: Scalars['String']
+    channelId?: Scalars['UUID']
+    ownerUserWorkspaceId: Scalars['UUID']
+    workflowRunId?: Scalars['UUID']
+    workflowStepId?: Scalars['String']
     totalCacheReadTokens: Scalars['Int']
     totalInputTokens: Scalars['Int']
     totalOutputTokens: Scalars['Int']
@@ -2963,9 +2995,54 @@ export interface AgentChatThread {
     totalOutputCredits: Scalars['Float']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
+    status: AgentChatThreadStatus
+    snoozedUntil?: Scalars['DateTime']
+    assigneeUserWorkspaceId?: Scalars['UUID']
+    mentionedUserWorkspaceIds: Scalars['UUID'][]
+    assistantLastReadAt?: Scalars['DateTime']
+    assistantLastReadMessageId?: Scalars['UUID']
     deletedAt?: Scalars['DateTime']
     lastMessageAt?: Scalars['DateTime']
+    lastMessagePreview?: Scalars['String']
+    lastMessageRole?: Scalars['String']
+    lastMessageAuthorUserWorkspaceId?: Scalars['UUID']
     __typename: 'AgentChatThread'
+}
+
+export type AgentChatThreadStatus = 'OPEN' | 'SNOOZED' | 'DONE'
+
+export interface AgentMessage {
+    id: Scalars['UUID']
+    threadId: Scalars['UUID']
+    turnId?: Scalars['UUID']
+    agentId?: Scalars['UUID']
+    authorUserWorkspaceId?: Scalars['UUID']
+    role: Scalars['String']
+    status: Scalars['String']
+    parts: AgentMessagePart[]
+    processedAt?: Scalars['DateTime']
+    createdAt: Scalars['DateTime']
+    __typename: 'AgentMessage'
+}
+
+export interface AgentChatThreadParticipant {
+    id: Scalars['ID']
+    threadId: Scalars['UUID']
+    userWorkspaceId: Scalars['UUID']
+    role: AgentChatThreadParticipantRole
+    createdAt: Scalars['DateTime']
+    __typename: 'AgentChatThreadParticipant'
+}
+
+export type AgentChatThreadParticipantRole = 'OWNER' | 'MEMBER'
+
+export interface AgentChatThreadRead {
+    id: Scalars['ID']
+    threadId: Scalars['UUID']
+    userWorkspaceId: Scalars['UUID']
+    lastReadAt: Scalars['DateTime']
+    lastReadMessageId?: Scalars['UUID']
+    __typename: 'AgentChatThreadRead'
 }
 
 export interface AiSystemPromptSection {
@@ -3302,8 +3379,16 @@ export interface Query {
     chatThreads: AgentChatThread[]
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
+    chatThreadParticipants: AgentChatThreadParticipant[]
+    chatThreadReads: AgentChatThreadRead[]
+    unreadChatThreadIds: Scalars['UUID'][]
     chatStreamCatchupChunks: ChatStreamCatchupChunks
     getAiSystemPromptPreview: AiSystemPromptPreview
+    chatChannels: AgentChatChannel[]
+    chatChannelMembers: AgentChatChannelMember[]
+    chatChannelRoles: AgentChatChannelRole[]
+    chatChannelAssignableRoles: AgentChatAssignableRole[]
+    chatCurrentUserRoleIds: Scalars['UUID'][]
     skills: Skill[]
     skill?: Skill
     agentTurns: AgentTurn[]
@@ -3518,16 +3603,31 @@ export interface Mutation {
     enqueueJob: EnqueueJobResult
     enqueueJobs: EnqueueJobsResult
     reportAppConnectionAuthFailure: Scalars['Boolean']
+    markChatThreadRead: AgentChatThreadRead
+    addChatThreadParticipant: AgentChatThreadParticipant
+    removeChatThreadParticipant: Scalars['Boolean']
     createChatThread: AgentChatThread
     sendChatMessage: SendChatMessageResult
     retryChatMessage: SendChatMessageResult
     answerAgentChatQuestion: SendChatMessageResult
     stopAgentChatStream: Scalars['Boolean']
     renameChatThread: AgentChatThread
+    setChatThreadStatus: AgentChatThread
+    assignChatThread: AgentChatThread
     archiveChatThread: AgentChatThread
     unarchiveChatThread: AgentChatThread
     deleteChatThread: Scalars['Boolean']
     deleteQueuedChatMessage: Scalars['Boolean']
+    createChatChannel: AgentChatChannel
+    updateChatChannel: AgentChatChannel
+    deleteChatChannel: Scalars['Boolean']
+    joinChatChannel: AgentChatChannelMember
+    leaveChatChannel: Scalars['Boolean']
+    addChatChannelMember: AgentChatChannelMember
+    removeChatChannelMember: Scalars['Boolean']
+    addChatChannelRole: AgentChatChannelRole
+    removeChatChannelRole: Scalars['Boolean']
+    setChatThreadChannel: AgentChatThread
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     createSkill: Skill
     updateSkill: Skill
@@ -6678,16 +6778,43 @@ export interface SkillGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AgentMessageGenqlSelection{
+export interface AgentChatAssignableRoleGenqlSelection{
     id?: boolean | number
-    threadId?: boolean | number
-    turnId?: boolean | number
-    agentId?: boolean | number
+    label?: boolean | number
+    icon?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatChannelMemberGenqlSelection{
+    id?: boolean | number
+    channelId?: boolean | number
+    userWorkspaceId?: boolean | number
     role?: boolean | number
-    status?: boolean | number
-    parts?: AgentMessagePartGenqlSelection
-    processedAt?: boolean | number
     createdAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatChannelRoleGenqlSelection{
+    id?: boolean | number
+    channelId?: boolean | number
+    roleId?: boolean | number
+    createdAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatChannelGenqlSelection{
+    id?: boolean | number
+    name?: boolean | number
+    visibility?: boolean | number
+    description?: boolean | number
+    targetObjectMetadataId?: boolean | number
+    targetRecordId?: boolean | number
+    createdByUserWorkspaceId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6695,6 +6822,10 @@ export interface AgentMessageGenqlSelection{
 export interface AgentChatThreadGenqlSelection{
     id?: boolean | number
     title?: boolean | number
+    channelId?: boolean | number
+    ownerUserWorkspaceId?: boolean | number
+    workflowRunId?: boolean | number
+    workflowStepId?: boolean | number
     totalCacheReadTokens?: boolean | number
     totalInputTokens?: boolean | number
     totalOutputTokens?: boolean | number
@@ -6704,8 +6835,52 @@ export interface AgentChatThreadGenqlSelection{
     totalOutputCredits?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
+    status?: boolean | number
+    snoozedUntil?: boolean | number
+    assigneeUserWorkspaceId?: boolean | number
+    mentionedUserWorkspaceIds?: boolean | number
+    assistantLastReadAt?: boolean | number
+    assistantLastReadMessageId?: boolean | number
     deletedAt?: boolean | number
     lastMessageAt?: boolean | number
+    lastMessagePreview?: boolean | number
+    lastMessageRole?: boolean | number
+    lastMessageAuthorUserWorkspaceId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentMessageGenqlSelection{
+    id?: boolean | number
+    threadId?: boolean | number
+    turnId?: boolean | number
+    agentId?: boolean | number
+    authorUserWorkspaceId?: boolean | number
+    role?: boolean | number
+    status?: boolean | number
+    parts?: AgentMessagePartGenqlSelection
+    processedAt?: boolean | number
+    createdAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatThreadParticipantGenqlSelection{
+    id?: boolean | number
+    threadId?: boolean | number
+    userWorkspaceId?: boolean | number
+    role?: boolean | number
+    createdAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatThreadReadGenqlSelection{
+    id?: boolean | number
+    threadId?: boolean | number
+    userWorkspaceId?: boolean | number
+    lastReadAt?: boolean | number
+    lastReadMessageId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7057,8 +7232,16 @@ export interface QueryGenqlSelection{
     chatThreads?: AgentChatThreadGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    chatThreadParticipants?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    chatThreadReads?: (AgentChatThreadReadGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    unreadChatThreadIds?: { __args: {threadIds: Scalars['UUID'][]} }
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
+    chatChannels?: AgentChatChannelGenqlSelection
+    chatChannelMembers?: AgentChatChannelMemberGenqlSelection
+    chatChannelRoles?: AgentChatChannelRoleGenqlSelection
+    chatChannelAssignableRoles?: AgentChatAssignableRoleGenqlSelection
+    chatCurrentUserRoleIds?: boolean | number
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
@@ -7310,16 +7493,31 @@ export interface MutationGenqlSelection{
     enqueueJob?: (EnqueueJobResultGenqlSelection & { __args: {input: EnqueueJobInput} })
     enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
     reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
-    createChatThread?: AgentChatThreadGenqlSelection
+    markChatThreadRead?: (AgentChatThreadReadGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    addChatThreadParticipant?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID'], userWorkspaceId: Scalars['UUID']} })
+    removeChatThreadParticipant?: { __args: {threadId: Scalars['UUID'], userWorkspaceId: Scalars['UUID']} }
+    createChatThread?: (AgentChatThreadGenqlSelection & { __args?: {channelId?: (Scalars['UUID'] | null)} })
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
     retryChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], modelId?: (Scalars['String'] | null)} })
     answerAgentChatQuestion?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], messageId: Scalars['UUID'], answers: AgentChatQuestionAnswerInput[], modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     renameChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID'], title: Scalars['String']} })
+    setChatThreadStatus?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID'], status: AgentChatThreadStatus, snoozedUntil?: (Scalars['DateTime'] | null)} })
+    assignChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID'], assigneeUserWorkspaceId?: (Scalars['UUID'] | null)} })
     archiveChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     unarchiveChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteChatThread?: { __args: {id: Scalars['UUID']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
+    createChatChannel?: (AgentChatChannelGenqlSelection & { __args: {input: CreateAgentChatChannelInput} })
+    updateChatChannel?: (AgentChatChannelGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateAgentChatChannelInput} })
+    deleteChatChannel?: { __args: {id: Scalars['UUID']} }
+    joinChatChannel?: (AgentChatChannelMemberGenqlSelection & { __args: {id: Scalars['UUID']} })
+    leaveChatChannel?: { __args: {id: Scalars['UUID']} }
+    addChatChannelMember?: (AgentChatChannelMemberGenqlSelection & { __args: {channelId: Scalars['UUID'], userWorkspaceId: Scalars['UUID']} })
+    removeChatChannelMember?: { __args: {channelId: Scalars['UUID'], userWorkspaceId: Scalars['UUID']} }
+    addChatChannelRole?: (AgentChatChannelRoleGenqlSelection & { __args: {channelId: Scalars['UUID'], roleId: Scalars['UUID']} })
+    removeChatChannelRole?: { __args: {channelId: Scalars['UUID'], roleId: Scalars['UUID']} }
+    setChatThreadChannel?: (AgentChatThreadGenqlSelection & { __args: {threadId: Scalars['UUID'], channelId?: (Scalars['UUID'] | null)} })
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
@@ -7789,6 +7987,10 @@ export interface ReportAppConnectionAuthFailureInput {id: Scalars['ID'],reason?:
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
 
 export interface AgentChatQuestionAnswerInput {questionIndex: Scalars['Int'],selectedOptionIndices: Scalars['Int'][],freeText?: (Scalars['String'] | null)}
+
+export interface CreateAgentChatChannelInput {name: Scalars['String'],visibility?: (AgentChatChannelVisibility | null),description?: (Scalars['String'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null)}
+
+export interface UpdateAgentChatChannelInput {name?: (Scalars['String'] | null),visibility?: (AgentChatChannelVisibility | null),description?: (Scalars['String'] | null)}
 
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
@@ -10023,10 +10225,34 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
-    const AgentMessage_possibleTypes: string[] = ['AgentMessage']
-    export const isAgentMessage = (obj?: { __typename?: any } | null): obj is AgentMessage => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessage"')
-      return AgentMessage_possibleTypes.includes(obj.__typename)
+    const AgentChatAssignableRole_possibleTypes: string[] = ['AgentChatAssignableRole']
+    export const isAgentChatAssignableRole = (obj?: { __typename?: any } | null): obj is AgentChatAssignableRole => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatAssignableRole"')
+      return AgentChatAssignableRole_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatChannelMember_possibleTypes: string[] = ['AgentChatChannelMember']
+    export const isAgentChatChannelMember = (obj?: { __typename?: any } | null): obj is AgentChatChannelMember => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannelMember"')
+      return AgentChatChannelMember_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatChannelRole_possibleTypes: string[] = ['AgentChatChannelRole']
+    export const isAgentChatChannelRole = (obj?: { __typename?: any } | null): obj is AgentChatChannelRole => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannelRole"')
+      return AgentChatChannelRole_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatChannel_possibleTypes: string[] = ['AgentChatChannel']
+    export const isAgentChatChannel = (obj?: { __typename?: any } | null): obj is AgentChatChannel => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatChannel"')
+      return AgentChatChannel_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10035,6 +10261,30 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isAgentChatThread = (obj?: { __typename?: any } | null): obj is AgentChatThread => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThread"')
       return AgentChatThread_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentMessage_possibleTypes: string[] = ['AgentMessage']
+    export const isAgentMessage = (obj?: { __typename?: any } | null): obj is AgentMessage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessage"')
+      return AgentMessage_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatThreadParticipant_possibleTypes: string[] = ['AgentChatThreadParticipant']
+    export const isAgentChatThreadParticipant = (obj?: { __typename?: any } | null): obj is AgentChatThreadParticipant => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThreadParticipant"')
+      return AgentChatThreadParticipant_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatThreadRead_possibleTypes: string[] = ['AgentChatThreadRead']
+    export const isAgentChatThreadRead = (obj?: { __typename?: any } | null): obj is AgentChatThreadRead => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThreadRead"')
+      return AgentChatThreadRead_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10997,6 +11247,27 @@ export const enumMessageSuppressionSource = {
 export const enumUnsubscribeTopicVisibility = {
    PUBLIC: 'PUBLIC' as const,
    PRIVATE: 'PRIVATE' as const
+}
+
+export const enumAgentChatChannelMemberRole = {
+   ADMIN: 'ADMIN' as const,
+   MEMBER: 'MEMBER' as const
+}
+
+export const enumAgentChatChannelVisibility = {
+   PUBLIC: 'PUBLIC' as const,
+   PRIVATE: 'PRIVATE' as const
+}
+
+export const enumAgentChatThreadStatus = {
+   OPEN: 'OPEN' as const,
+   SNOOZED: 'SNOOZED' as const,
+   DONE: 'DONE' as const
+}
+
+export const enumAgentChatThreadParticipantRole = {
+   OWNER: 'OWNER' as const,
+   MEMBER: 'MEMBER' as const
 }
 
 export const enumWorkspaceSetupChatOutcome = {

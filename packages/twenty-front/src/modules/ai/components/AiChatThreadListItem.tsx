@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
@@ -9,6 +10,7 @@ import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
+import { useIsAiChatThreadUnread } from '@/ai/hooks/useIsAiChatThreadUnread';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -55,13 +57,24 @@ const StyledThreadContent = styled.div`
   min-width: 0;
 `;
 
-const StyledThreadTitle = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
+const StyledThreadTitle = styled.div<{ $isUnread: boolean }>`
+  color: ${({ $isUnread }) =>
+    $isUnread
+      ? themeCssVariables.font.color.primary
+      : themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
-  font-weight: 500;
+  font-weight: ${({ $isUnread }) => ($isUnread ? 600 : 500)};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledUnreadDot = styled.span`
+  background: ${themeCssVariables.color.blue};
+  border-radius: 50%;
+  flex-shrink: 0;
+  height: 6px;
+  width: 6px;
 `;
 
 const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
@@ -97,13 +110,14 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isArchived = Boolean(thread.deletedAt);
+  const isArchived = isDefined(thread.deletedAt);
+  const isUnread = useIsAiChatThreadUnread(thread.id);
   const ThreadIcon = isArchived ? IconArchive : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
-  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(
-    thread.id,
-    AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
-  );
+  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
+    threadId: thread.id,
+    surface: AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
+  });
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     itemMenuDropdownId,
@@ -146,9 +160,12 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
             aria-label={t`Rename chat`}
           />
         ) : (
-          <StyledThreadTitle>{displayTitle}</StyledThreadTitle>
+          <StyledThreadTitle $isUnread={isUnread}>
+            {displayTitle}
+          </StyledThreadTitle>
         )}
       </StyledThreadContent>
+      {isUnread && <StyledUnreadDot aria-label={t`Unread`} />}
       <StyledMenuTrigger
         $isDropdownOpen={isDropdownOpen}
         onClick={(event) => event.stopPropagation()}
@@ -156,7 +173,6 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
         <AiChatThreadItemMenu
           threadId={thread.id}
           threadTitle={displayTitle}
-          isArchived={isArchived}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
           onRenameRequested={startRename}
         />

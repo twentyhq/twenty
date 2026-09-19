@@ -235,7 +235,6 @@ export class StreamAgentChatJob {
         await this.agentChatStreamingService
           .flushNextQueuedMessage(
             data.threadId,
-            data.userWorkspaceId,
             data.workspaceId,
             data.hasTitle,
           )
@@ -340,6 +339,7 @@ export class StreamAgentChatJob {
             ),
           },
           workspaceId: data.workspaceId,
+          authorUserWorkspaceId: data.userWorkspaceId,
         });
 
     userMessagePromise.catch(() => {});
@@ -872,6 +872,11 @@ export class StreamAgentChatJob {
         workspaceId,
       });
     }
+
+    await this.agentChatService.reopenThreadOnAssistantMessage({
+      threadId,
+      workspaceId,
+    });
 
     const totalsUpdate = await this.threadRepository.update(
       workspaceId,

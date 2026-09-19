@@ -5,6 +5,7 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatDraftChannelIdState } from '@/ai/states/agentChatDraftChannelIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
@@ -19,7 +20,10 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 import { useMutation } from '@apollo/client/react';
-import { CreateChatThreadDocument } from '~/generated-metadata/graphql';
+import {
+  CreateChatThreadDocument,
+  AgentChatThreadStatus,
+} from '~/generated-metadata/graphql';
 
 export const useCreateAgentChatThread = () => {
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
@@ -32,13 +36,25 @@ export const useCreateAgentChatThread = () => {
   const store = useStore();
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
-  const [createChatThread] = useMutation(CreateChatThreadDocument, {
+  const [createChatThreadMutation] = useMutation(CreateChatThreadDocument, {
     onCompleted: (data) => {
+      store.set(agentChatDraftChannelIdState.atom, null);
+
       const newThread: FlatAgentChatThread = {
         id: data.createChatThread.id,
         title: data.createChatThread.title ?? null,
+        channelId: data.createChatThread.channelId ?? null,
+        workflowRunId: null,
+        workflowStepId: null,
+        ownerUserWorkspaceId: data.createChatThread.ownerUserWorkspaceId,
+        status: AgentChatThreadStatus.OPEN,
+        mentionedUserWorkspaceIds: [],
         createdAt: data.createChatThread.createdAt,
         updatedAt: data.createChatThread.updatedAt,
+        lastMessageAt: null,
+        lastMessagePreview: null,
+        lastMessageRole: null,
+        lastMessageAuthorUserWorkspaceId: null,
         conversationSize: 0,
         contextWindowTokens: null,
         totalInputTokens: 0,
@@ -88,6 +104,13 @@ export const useCreateAgentChatThread = () => {
       store.set(hasTriggeredCreateForDraftState.atom, false);
     },
   });
+
+  // The draft channel is read at call time so a chat started from a channel
+  // page lands in that channel whichever code path triggers the creation.
+  const createChatThread = () =>
+    createChatThreadMutation({
+      variables: { channelId: store.get(agentChatDraftChannelIdState.atom) },
+    });
 
   return { createChatThread };
 };

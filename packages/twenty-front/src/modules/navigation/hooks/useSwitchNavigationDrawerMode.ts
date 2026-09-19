@@ -22,7 +22,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isAiChatAreaPath } from '~/utils/isAiChatAreaPath';
 
 export const useSwitchNavigationDrawerMode = () => {
   const isMobile = useIsMobile();
@@ -33,7 +33,7 @@ export const useSwitchNavigationDrawerMode = () => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const isSettingsDrawer = useIsSettingsDrawer();
   const isSettingsPage = useIsSettingsPage();
-  const isAiChatPage = isAiChatPath(location.pathname);
+  const isAiChatPage = isAiChatAreaPath(location.pathname);
 
   const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
   const navigationDrawerExpandedMemorized = useAtomStateValue(

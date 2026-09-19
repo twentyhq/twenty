@@ -28,9 +28,18 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
+import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
+import { AgentChatChannelMemberEntity } from './entities/agent-chat-channel-member.entity';
+import { AgentChatChannelRoleEntity } from './entities/agent-chat-channel-role.entity';
+import { AgentChatChannelEntity } from './entities/agent-chat-channel.entity';
+import { AgentChatThreadParticipantEntity } from './entities/agent-chat-thread-participant.entity';
+import { AgentChatThreadReadEntity } from './entities/agent-chat-thread-read.entity';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { StreamAgentChatJob } from './jobs/stream-agent-chat.job';
+import { AgentChatChannelResolver } from './resolvers/agent-chat-channel.resolver';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
 import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
 import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
@@ -39,6 +48,10 @@ import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-s
 import { AgentChatEventPublisherService } from './services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from './services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
+import { AgentRunThreadService } from './services/agent-run-thread.service';
+import { AgentChatChannelService } from './services/agent-chat-channel.service';
+import { AgentChatThreadParticipantService } from './services/agent-chat-thread-participant.service';
+import { AgentChatThreadReadService } from './services/agent-chat-thread-read.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
 import { ChatExecutionService } from './services/chat-execution.service';
@@ -50,6 +63,13 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     UsageLimitModule,
     TypeOrmModule.forFeature([
       AgentChatThreadEntity,
+      AgentChatThreadParticipantEntity,
+      AgentChatThreadReadEntity,
+      AgentChatChannelEntity,
+      AgentChatChannelMemberEntity,
+      AgentChatChannelRoleEntity,
+      RoleEntity,
+      RoleTargetEntity,
       FileEntity,
       UserWorkspaceEntity,
       WorkspaceEntity,
@@ -70,6 +90,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     ToolProviderModule,
     DashboardToolsModule,
     WorkflowToolsModule,
+    WorkflowRunModule,
   ],
   providers: [
     AiChatUsageService,
@@ -78,10 +99,15 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatEventPublisherService,
     AgentChatStreamHeartbeatService,
     AgentChatResolver,
+    AgentChatChannelResolver,
     AgentChatSubscriptionResolver,
     WorkspaceSetupChatResolver,
     AgentChatService,
     AgentChatStreamingService,
+    AgentChatThreadParticipantService,
+    AgentChatThreadReadService,
+    AgentChatChannelService,
+    AgentRunThreadService,
     WorkspaceSetupChatService,
     AgentTitleGenerationService,
     ChatExecutionService,
@@ -90,14 +116,26 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     SystemPromptBuilderService,
     AiGraphqlApiExceptionInterceptor,
     provideWorkspaceScopedRepository(AgentChatThreadEntity),
+    provideWorkspaceScopedRepository(AgentChatThreadParticipantEntity),
+    provideWorkspaceScopedRepository(AgentChatThreadReadEntity),
+    provideWorkspaceScopedRepository(AgentChatChannelEntity),
+    provideWorkspaceScopedRepository(AgentChatChannelMemberEntity),
+    provideWorkspaceScopedRepository(AgentChatChannelRoleEntity),
+    provideWorkspaceScopedRepository(RoleEntity),
+    provideWorkspaceScopedRepository(RoleTargetEntity),
     provideWorkspaceScopedRepository(AgentTurnEntity),
     provideWorkspaceScopedRepository(AgentMessageEntity),
     provideWorkspaceScopedRepository(AgentMessagePartEntity),
     provideWorkspaceScopedRepository(FileEntity),
+    provideWorkspaceScopedRepository(UserWorkspaceEntity),
   ],
   exports: [
     AgentChatService,
     AgentChatStreamingService,
+    AgentChatThreadParticipantService,
+    AgentChatThreadReadService,
+    AgentChatChannelService,
+    AgentRunThreadService,
     TypeOrmModule.forFeature([AgentChatThreadEntity]),
   ],
 })

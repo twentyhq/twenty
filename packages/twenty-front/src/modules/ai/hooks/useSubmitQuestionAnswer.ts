@@ -25,6 +25,7 @@ import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { useToast } from 'twenty-ui/primitives/feedback';
+import { type AnswerAgentChatQuestionMutation } from '~/generated-metadata/graphql';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useSubmitQuestionAnswer = () => {
@@ -91,18 +92,26 @@ export const useSubmitQuestionAnswer = () => {
       store.set(agentChatUploadedFilesState.atom, []);
 
       try {
-        await apolloClient.mutate({
-          mutation: ANSWER_AGENT_CHAT_QUESTION,
-          variables: {
-            threadId,
-            messageId,
-            answers,
-            modelId: modelIdForRequest,
-            fileAttachments: isNonEmptyArray(fileAttachments)
-              ? fileAttachments
-              : undefined,
-          },
-        });
+        const { data } =
+          await apolloClient.mutate<AnswerAgentChatQuestionMutation>({
+            mutation: ANSWER_AGENT_CHAT_QUESTION,
+            variables: {
+              threadId,
+              messageId,
+              answers,
+              modelId: modelIdForRequest,
+              fileAttachments: isNonEmptyArray(fileAttachments)
+                ? fileAttachments
+                : undefined,
+            },
+          });
+
+        // A workflow run's question resumes the run instead of a chat
+        // stream: the agent's reply lands in the thread when the run gets
+        // to it, so there is no first chunk to wait for here.
+        if (!isDefined(data?.answerAgentChatQuestion.streamId)) {
+          store.set(isAwaitingFirstChunkAtom, false);
+        }
 
         dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
       } catch (error) {

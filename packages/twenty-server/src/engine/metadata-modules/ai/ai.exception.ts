@@ -11,12 +11,22 @@ export enum AiExceptionCode {
   AGENT_EXECUTION_FAILED = 'AGENT_EXECUTION_FAILED',
   INVALID_AGENT_INPUT = 'INVALID_AGENT_INPUT',
   THREAD_NOT_FOUND = 'THREAD_NOT_FOUND',
+  THREAD_PARTICIPANT_NOT_FOUND = 'THREAD_PARTICIPANT_NOT_FOUND',
+  THREAD_ACTION_NOT_ALLOWED = 'THREAD_ACTION_NOT_ALLOWED',
+  THREAD_NOT_JOINED = 'THREAD_NOT_JOINED',
+  CHANNEL_NOT_FOUND = 'CHANNEL_NOT_FOUND',
+  CHANNEL_MEMBER_NOT_FOUND = 'CHANNEL_MEMBER_NOT_FOUND',
+  CHANNEL_ROLE_NOT_FOUND = 'CHANNEL_ROLE_NOT_FOUND',
+  CHANNEL_ACTION_NOT_ALLOWED = 'CHANNEL_ACTION_NOT_ALLOWED',
+  CHANNEL_NAME_ALREADY_EXISTS = 'CHANNEL_NAME_ALREADY_EXISTS',
+  INVALID_CHANNEL_NAME = 'INVALID_CHANNEL_NAME',
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
   CONTEXT_WINDOW_EXCEEDED = 'CONTEXT_WINDOW_EXCEEDED',
   INVALID_CHAT_THREAD_TITLE = 'INVALID_CHAT_THREAD_TITLE',
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
   QUESTION_NOT_PENDING = 'QUESTION_NOT_PENDING',
   INVALID_QUESTION_ANSWER = 'INVALID_QUESTION_ANSWER',
+  INVALID_THREAD_SNOOZE = 'INVALID_THREAD_SNOOZE',
   API_KEY_NOT_CONFIGURED = 'API_KEY_NOT_CONFIGURED',
   USER_WORKSPACE_ID_NOT_FOUND = 'USER_WORKSPACE_ID_NOT_FOUND',
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
@@ -42,6 +52,24 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Invalid agent input.`;
     case AiExceptionCode.THREAD_NOT_FOUND:
       return msg`Chat thread not found.`;
+    case AiExceptionCode.THREAD_PARTICIPANT_NOT_FOUND:
+      return msg`This person is not part of the chat thread.`;
+    case AiExceptionCode.THREAD_ACTION_NOT_ALLOWED:
+      return msg`Only the owner of the chat thread can do this.`;
+    case AiExceptionCode.THREAD_NOT_JOINED:
+      return msg`Join this channel to work on its chats.`;
+    case AiExceptionCode.CHANNEL_NOT_FOUND:
+      return msg`Channel not found.`;
+    case AiExceptionCode.CHANNEL_MEMBER_NOT_FOUND:
+      return msg`This person is not a member of the channel.`;
+    case AiExceptionCode.CHANNEL_ROLE_NOT_FOUND:
+      return msg`This role is not part of the channel.`;
+    case AiExceptionCode.CHANNEL_ACTION_NOT_ALLOWED:
+      return msg`You are not allowed to do this in this channel.`;
+    case AiExceptionCode.CHANNEL_NAME_ALREADY_EXISTS:
+      return msg`A channel with this name already exists.`;
+    case AiExceptionCode.INVALID_CHANNEL_NAME:
+      return msg`Channel name cannot be empty.`;
     case AiExceptionCode.WORKSPACE_NOT_FOUND:
       return msg`Workspace not found.`;
     case AiExceptionCode.CONTEXT_WINDOW_EXCEEDED:
@@ -54,6 +82,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This question has already been answered.`;
     case AiExceptionCode.INVALID_QUESTION_ANSWER:
       return msg`Invalid answer for this question.`;
+    case AiExceptionCode.INVALID_THREAD_SNOOZE:
+      return msg`Pick a time in the future to snooze until.`;
     case AiExceptionCode.API_KEY_NOT_CONFIGURED:
       return msg`API key is not configured.`;
     case AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:

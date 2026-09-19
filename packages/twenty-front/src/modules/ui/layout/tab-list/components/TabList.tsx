@@ -74,6 +74,7 @@ export const TabList = ({
   onChangeTab,
   rightComponent,
   centerTabs = false,
+  alwaysScrollTabs = false,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
   const location = useLocation();
@@ -111,7 +112,7 @@ export const TabList = ({
     hasAddButton: false,
   });
 
-  const shouldScrollTabs = isMobile;
+  const shouldScrollTabs = isMobile || alwaysScrollTabs;
   const renderedTabs = shouldScrollTabs
     ? visibleTabs
     : visibleTabs.slice(0, visibleTabCount);

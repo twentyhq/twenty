@@ -5,7 +5,10 @@ import { type ReactNode } from 'react';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { clearMetadataStoreStorage } from '@/metadata-store/storage/metadataStoreStorage';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import {
+  type AgentChatThread,
+  AgentChatThreadStatus,
+} from '~/generated-metadata/graphql';
 
 const queryMock = jest.fn();
 
@@ -18,6 +21,9 @@ const buildThread = (id: string, title: string): AgentChatThread => ({
   __typename: 'AgentChatThread',
   id,
   title,
+  ownerUserWorkspaceId: 'owner-user-workspace-id',
+  status: AgentChatThreadStatus.OPEN,
+  mentionedUserWorkspaceIds: [],
   createdAt: '2026-09-07T00:00:00.000Z',
   updatedAt: '2026-09-07T00:00:00.000Z',
   lastMessageAt: '2026-09-07T00:00:00.000Z',

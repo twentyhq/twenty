@@ -86,32 +86,29 @@ const meta: Meta<typeof MainNavigationDrawerContent> = {
 export default meta;
 type Story = StoryObj<typeof MainNavigationDrawerContent>;
 
+// The drawer keeps the AI tab mounted while the sidebar is collapsed, so the
+// same nodes are still there when it opens again. It used to be checked on a
+// thread row and its hover menu; the sidebar lists the inbox rather than
+// individual chats now, so the inbox items stand in for them.
 export const KeepsAiContentWhenCollapsed: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole('button', { name: /Pipeline summary/ }),
-    ).toBeVisible();
-    const chatActions = await canvas.findByLabelText('Chat actions', {
-      selector: 'button',
-    });
-    chatActions.focus();
-    await expect(chatActions).toHaveFocus();
+    const inboxOpen = await canvas.findByRole('button', { name: /Open/ });
+    await expect(inboxOpen).toBeVisible();
+    inboxOpen.focus();
+    await expect(inboxOpen).toHaveFocus();
+
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Collapse sidebar' }),
     );
-    await expect(
-      await canvas.findByRole('button', { name: /Pipeline summary/ }),
-    ).toBeVisible();
-    chatActions.focus();
-    await expect(chatActions).not.toHaveFocus();
+    await expect(inboxOpen.isConnected).toBe(true);
+
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Expand sidebar' }),
     );
-    await expect(
-      await canvas.findByRole('button', { name: /Pipeline summary/ }),
-    ).toBeVisible();
-    chatActions.focus();
-    await expect(chatActions).toHaveFocus();
+    await expect(inboxOpen.isConnected).toBe(true);
+    await expect(inboxOpen).toBeVisible();
+    inboxOpen.focus();
+    await expect(inboxOpen).toHaveFocus();
   },
 };

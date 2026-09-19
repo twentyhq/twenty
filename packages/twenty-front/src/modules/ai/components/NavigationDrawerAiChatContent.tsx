@@ -1,20 +1,22 @@
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AiChatChannelDeleteConfirmationModal } from '@/ai/components/AiChatChannelDeleteConfirmationModal';
+import { AiChatChannelsMenu } from '@/ai/components/AiChatChannelsMenu';
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
+import { NavigationDrawerAiChatChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
+import { NavigationDrawerAiChatInboxSection } from '@/ai/components/NavigationDrawerAiChatInboxSection';
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
-import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
-import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { useChatChannels } from '@/ai/hooks/useChatChannels';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -46,27 +48,34 @@ const StyledEmptyState = styled.div`
   justify-content: center;
 `;
 
+const StyledNewChatItem = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledFetchMoreTrigger = styled.div`
   height: 1px;
   min-height: 1px;
   width: 100%;
 `;
 
-const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
+const AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
 
 export const NavigationDrawerAiChatContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { handleThreadClick } = useAiChatThreadClick({
-    resetNavigationStack: true,
+  const { switchToNewChat } = useSwitchToNewAiChat({
+    shouldOpenInFullPage: true,
   });
-  const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
+  const {
+    threads: allThreads,
+    hasNextPage,
+    loading,
+    fetchMoreRef,
+  } = useChatThreads();
+  const { joinedChannels } = useChatChannels();
 
-  const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
-
-  if (loading && threads.length === 0) {
+  if (loading && allThreads.length === 0) {
     return (
       <StyledContainer>
         {isExpanded && <AiChatSkeletonLoader />}
@@ -74,45 +83,43 @@ export const NavigationDrawerAiChatContent = () => {
     );
   }
 
-  const isGroupedByDate =
-    agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
-  const dateGroups = isGroupedByDate ? groupThreadsByDate(threads) : [];
-  const shouldRenderDateGroups = isGroupedByDate && dateGroups.length > 0;
-
-  const filterDropdown = (
-    <AiChatThreadFilterDropdown
-      surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-    />
-  );
-
   return (
     <StyledContainer>
       <StyledThreadList>
-        {shouldRenderDateGroups ? (
-          <StyledSectionsContainer>
-            {dateGroups.map((dateGroup, index) => (
-              <NavigationDrawerAiChatThreadSection
-                key={dateGroup.id}
-                sectionId={`AiChatDateGroup:${dateGroup.id}`}
-                title={dateGroup.title}
-                threads={dateGroup.threads}
-                currentThreadId={currentAiChatThread}
-                onThreadClick={handleThreadClick}
-                rightIcon={index === 0 ? filterDropdown : undefined}
+        <StyledNewChatItem>
+          <NavigationDrawerItem
+            Icon={IconPlus}
+            label={t`New chat`}
+            onClick={() => switchToNewChat()}
+          />
+        </StyledNewChatItem>
+        <NavigationDrawerAiChatInboxSection />
+        {/* The section is what carries the channels menu, and that menu holds
+            the only way to create a channel: hiding it until a channel exists
+            leaves a new workspace with no way to make its first one. */}
+        <StyledSectionsContainer>
+          <CollapsibleNavigationDrawerSection
+            sectionId={AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID}
+            label={t`Channels`}
+            rightIcon={
+              <>
+                <AiChatChannelsMenu />
+                <AiChatThreadFilterDropdown
+                  surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
+                />
+              </>
+            }
+            alwaysShowRightIcon={joinedChannels.length === 0}
+          >
+            {joinedChannels.map((channel) => (
+              <NavigationDrawerAiChatChannelItem
+                key={channel.id}
+                channel={channel}
               />
             ))}
-          </StyledSectionsContainer>
-        ) : (
-          <NavigationDrawerAiChatThreadSection
-            sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
-            title={t`Recents`}
-            threads={threads}
-            currentThreadId={currentAiChatThread}
-            onThreadClick={handleThreadClick}
-            rightIcon={filterDropdown}
-          />
-        )}
-        {threads.length === 0 && isExpanded ? (
+          </CollapsibleNavigationDrawerSection>
+        </StyledSectionsContainer>
+        {allThreads.length === 0 && isExpanded ? (
           <StyledEmptyState>{t`No chat`}</StyledEmptyState>
         ) : null}
         {hasNextPage ? <StyledFetchMoreTrigger ref={fetchMoreRef} /> : null}
@@ -120,6 +127,7 @@ export const NavigationDrawerAiChatContent = () => {
       <AiChatThreadDeleteConfirmationModal
         surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
       />
+      <AiChatChannelDeleteConfirmationModal />
     </StyledContainer>
   );
 };

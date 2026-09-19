@@ -7,7 +7,7 @@ import {
   NAVIGATION_DRAWER_TABS,
 } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isAiChatAreaPath } from '~/utils/isAiChatAreaPath';
 
 // Settings and the AI chat own a full page each, so the route decides those two
 // modes. The stored tab only has the final say when neither page is open, which
@@ -24,7 +24,7 @@ export const useActiveNavigationDrawerMode = (): NavigationDrawerActiveTab => {
   }
 
   if (
-    isAiChatPath(pathname) ||
+    isAiChatAreaPath(pathname) ||
     navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
   ) {
     return NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;

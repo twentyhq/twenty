@@ -26,6 +26,9 @@ import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatQuestionAnswerInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-question-answer.input';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
+import { AgentChatThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-status.enum';
+import { AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
+import { AgentChatThreadReadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-read.dto';
 import { FileAttachmentInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/file-attachment.input';
 import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
 import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-stream-catchup-chunks.dto';
@@ -33,8 +36,14 @@ import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
+import { AgentRunThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-run-thread.service';
+import { type AgentChatThreadLastMessageSummary } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-message-summary.type';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { AgentChatThreadReadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-read.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
+import { buildThreadWorkerWhere } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-thread-worker-where.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -52,6 +61,9 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
+type ThreadWithOptionalLastMessageSummary = AgentChatThreadEntity &
+  Partial<AgentChatThreadLastMessageSummary>;
+
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @UseFilters(
@@ -64,6 +76,10 @@ export class AgentChatResolver {
   constructor(
     private readonly agentChatService: AgentChatService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
+    private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
+    private readonly agentChatThreadReadService: AgentChatThreadReadService,
+    private readonly agentChatChannelService: AgentChatChannelService,
+    private readonly agentRunThreadService: AgentRunThreadService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
     private readonly aiBillingService: AiBillingService,
@@ -111,6 +127,102 @@ export class AgentChatResolver {
     });
   }
 
+  @Query(() => [AgentChatThreadParticipantDTO])
+  async chatThreadParticipants(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    return this.agentChatThreadParticipantService.getParticipantsForThread({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Query(() => [AgentChatThreadReadDTO])
+  async chatThreadReads(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    return this.agentChatThreadReadService.getReadsForThread({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  // One call for a whole list: the alternative is a cursor per thread, which
+  // is a query per row on every inbox render.
+  @Query(() => [UUIDScalarType])
+  async unreadChatThreadIds(
+    @Args('threadIds', { type: () => [UUIDScalarType] }) threadIds: string[],
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    return this.agentChatThreadReadService.getUnreadThreadIds({
+      threadIds,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadReadDTO)
+  async markChatThreadRead(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    const read = await this.agentChatThreadReadService.markThreadRead({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    // Everyone on the thread sees the tick move, the same way they see a new
+    // message: a receipt nobody else is told about is not a receipt.
+    await this.eventPublisherService.publish({
+      threadId,
+      workspaceId,
+      event: { type: 'reads-updated' },
+    });
+
+    return read;
+  }
+
+  @Mutation(() => AgentChatThreadParticipantDTO)
+  async addChatThreadParticipant(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @Args('userWorkspaceId', { type: () => UUIDScalarType })
+    userWorkspaceId: string,
+    @AuthUserWorkspaceId() actorUserWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    return this.agentChatThreadParticipantService.addParticipant({
+      threadId,
+      actorUserWorkspaceId,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => Boolean)
+  async removeChatThreadParticipant(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @Args('userWorkspaceId', { type: () => UUIDScalarType })
+    userWorkspaceId: string,
+    @AuthUserWorkspaceId() actorUserWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<boolean> {
+    return this.agentChatThreadParticipantService.removeParticipant({
+      threadId,
+      actorUserWorkspaceId,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
   @Query(() => ChatStreamCatchupChunksDTO)
   async chatStreamCatchupChunks(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
@@ -151,12 +263,23 @@ export class AgentChatResolver {
 
   @Mutation(() => AgentChatThreadDTO)
   async createChatThread(
+    @Args('channelId', { type: () => UUIDScalarType, nullable: true })
+    channelId: string | null,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
+    if (isDefined(channelId)) {
+      await this.agentChatChannelService.getAccessibleChannelById({
+        channelId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
+    }
+
     return this.agentChatService.createThread({
       userWorkspaceId,
       workspaceId: workspace.id,
+      channelId,
     });
   }
 
@@ -197,24 +320,47 @@ export class AgentChatResolver {
       spenders: { userWorkspaceId },
     });
 
+    // A public channel is readable by the whole workspace, but talking in one
+    // is joining the conversation, so writing takes the worker gate the same
+    // way status and assignment do. Joining the channel is one click.
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, userWorkspaceId },
+      where: buildThreadWorkerWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!isDefined(thread)) {
       throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
+        'Join this channel to work on its chats',
+        AiExceptionCode.THREAD_NOT_JOINED,
       );
     }
 
     if (isDefined(thread.deletedAt)) {
-      await this.agentChatService.unarchiveThread({
+      await this.agentChatService.restoreArchivedThread({
         threadId,
         userWorkspaceId,
         workspaceId: workspace.id,
       });
     }
+
+    // Recorded once the message exists, never before: a mention writes a
+    // participant row, and a send that fails after it would leave somebody
+    // named on a thread by a message nobody can read. The user message is
+    // persisted as the send starts rather than when the answer lands, so the
+    // thread still reaches their list while the assistant is still writing.
+    const recordMentions = async () => {
+      const mentionedUserWorkspaceIds =
+        await this.agentChatThreadParticipantService.recordMentionsFromMessage({
+          threadId,
+          text,
+          workspaceId: workspace.id,
+        });
+
+      if (mentionedUserWorkspaceIds.length > 0) {
+        await this.agentChatService.broadcastThreadUpdated(thread, [
+          'mentionedUserWorkspaceIds',
+        ]);
+      }
+    };
 
     if (isDefined(thread.activeStreamId)) {
       const interruptedError =
@@ -242,6 +388,8 @@ export class AgentChatResolver {
         userWorkspaceId,
       });
 
+      await recordMentions();
+
       await this.eventPublisherService.publish({
         threadId,
         workspaceId: workspace.id,
@@ -261,6 +409,8 @@ export class AgentChatResolver {
       messageId,
       fileAttachments: fileAttachments ?? undefined,
     });
+
+    await recordMentions();
 
     if (result.queued) {
       await this.eventPublisherService.publish({
@@ -348,6 +498,32 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
+    // Answering is writing into the conversation, so it takes the same gate as
+    // sending.
+    const thread = await this.threadRepository.findOne(workspace.id, {
+      where: buildThreadWorkerWhere({ id: threadId, userWorkspaceId }),
+    });
+
+    if (!isDefined(thread)) {
+      throw new AiException(
+        'Join this channel to work on its chats',
+        AiExceptionCode.THREAD_NOT_JOINED,
+      );
+    }
+
+    // A workflow run's question resumes the run, not a chat stream: the
+    // agent's own model and the workflow's credits apply, not the chat's.
+    if (isDefined(thread.workflowRunId)) {
+      const answer = await this.agentRunThreadService.answerRunQuestion({
+        thread,
+        messageId,
+        answers,
+        userWorkspaceId,
+      });
+
+      return { messageId: answer.messageId, queued: false };
+    }
+
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
         'No AI models are available. Configure at least one AI provider.',
@@ -367,17 +543,6 @@ export class AgentChatResolver {
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: { userWorkspaceId },
     });
-
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, userWorkspaceId },
-    });
-
-    if (!isDefined(thread)) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
 
     const { streamId, turnId } =
       await this.agentChatStreamingService.answerPendingQuestionAndResumeStream(
@@ -409,7 +574,7 @@ export class AgentChatResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId, userWorkspaceId },
+      where: buildThreadWorkerWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
@@ -425,7 +590,7 @@ export class AgentChatResolver {
 
     await this.threadRepository.update(
       workspaceId,
-      { id: threadId, userWorkspaceId, activeStreamId: thread.activeStreamId },
+      { id: threadId, activeStreamId: thread.activeStreamId },
       { activeStreamId: null },
     );
 
@@ -444,6 +609,44 @@ export class AgentChatResolver {
       userWorkspaceId,
       workspaceId,
       title,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadDTO)
+  async setChatThreadStatus(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @Args('status', { type: () => AgentChatThreadStatus })
+    status: AgentChatThreadStatus,
+    @Args('snoozedUntil', { type: () => Date, nullable: true })
+    snoozedUntil: Date | null,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentChatThreadEntity> {
+    return this.agentChatService.setThreadStatus({
+      threadId: id,
+      status,
+      snoozedUntil: snoozedUntil ?? null,
+      userWorkspaceId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadDTO)
+  async assignChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @Args('assigneeUserWorkspaceId', {
+      type: () => UUIDScalarType,
+      nullable: true,
+    })
+    assigneeUserWorkspaceId: string | null,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentChatThreadEntity> {
+    return this.agentChatService.assignThread({
+      threadId: id,
+      assigneeUserWorkspaceId: assigneeUserWorkspaceId ?? null,
+      userWorkspaceId,
+      workspaceId,
     });
   }
 
@@ -498,7 +701,7 @@ export class AgentChatResolver {
     workspaceId: string,
   ): Promise<void> {
     const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId, userWorkspaceId },
+      where: buildThreadWorkerWhere({ id: threadId, userWorkspaceId }),
     });
 
     if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
@@ -531,14 +734,20 @@ export class AgentChatResolver {
       );
     }
 
+    // Dropping somebody's queued message is a write on the thread, so it takes
+    // the same gate as status: a public channel is readable by the whole
+    // workspace, and a reader passing by is not working this queue.
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: message.threadId, userWorkspaceId },
+      where: buildThreadWorkerWhere({
+        id: message.threadId,
+        userWorkspaceId,
+      }),
     });
 
     if (!isDefined(thread)) {
       throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
+        'Join this channel to work on its chats',
+        AiExceptionCode.THREAD_NOT_JOINED,
       );
     }
 
@@ -570,6 +779,11 @@ export class AgentChatResolver {
     );
   }
 
+  @ResolveField(() => UUIDScalarType)
+  ownerUserWorkspaceId(@Parent() thread: AgentChatThreadEntity): string {
+    return thread.userWorkspaceId;
+  }
+
   @ResolveField(() => Float)
   totalInputCredits(@Parent() thread: AgentChatThreadEntity): number {
     return toDisplayCredits(thread.totalInputCredits);
@@ -582,14 +796,50 @@ export class AgentChatResolver {
 
   @ResolveField('lastMessageAt', () => Date, { nullable: true })
   async lastMessageAt(
-    @Parent()
-    thread: AgentChatThreadEntity & { lastMessageAt?: Date | null },
+    @Parent() thread: ThreadWithOptionalLastMessageSummary,
   ): Promise<Date | null> {
+    return (await this.getLastMessageSummary(thread)).lastMessageAt;
+  }
+
+  @ResolveField('lastMessagePreview', () => String, { nullable: true })
+  async lastMessagePreview(
+    @Parent() thread: ThreadWithOptionalLastMessageSummary,
+  ): Promise<string | null> {
+    return (await this.getLastMessageSummary(thread)).lastMessagePreview;
+  }
+
+  @ResolveField('lastMessageRole', () => String, { nullable: true })
+  async lastMessageRole(
+    @Parent() thread: ThreadWithOptionalLastMessageSummary,
+  ): Promise<string | null> {
+    return (await this.getLastMessageSummary(thread)).lastMessageRole;
+  }
+
+  @ResolveField('lastMessageAuthorUserWorkspaceId', () => UUIDScalarType, {
+    nullable: true,
+  })
+  async lastMessageAuthorUserWorkspaceId(
+    @Parent() thread: ThreadWithOptionalLastMessageSummary,
+  ): Promise<string | null> {
+    return (await this.getLastMessageSummary(thread))
+      .lastMessageAuthorUserWorkspaceId;
+  }
+
+  // Lists precompute the summary in one query; a single thread fetches it.
+  private async getLastMessageSummary(
+    thread: ThreadWithOptionalLastMessageSummary,
+  ): Promise<AgentChatThreadLastMessageSummary> {
     if (thread.lastMessageAt !== undefined) {
-      return thread.lastMessageAt;
+      return {
+        lastMessageAt: thread.lastMessageAt ?? null,
+        lastMessagePreview: thread.lastMessagePreview ?? null,
+        lastMessageRole: thread.lastMessageRole ?? null,
+        lastMessageAuthorUserWorkspaceId:
+          thread.lastMessageAuthorUserWorkspaceId ?? null,
+      };
     }
 
-    return this.agentChatService.getLastMessageAtForThread({
+    return this.agentChatService.getLastMessageSummaryForThread({
       threadId: thread.id,
       workspaceId: thread.workspaceId,
     });

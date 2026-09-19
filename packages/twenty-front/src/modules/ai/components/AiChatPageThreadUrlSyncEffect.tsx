@@ -11,7 +11,13 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const AiChatPageThreadUrlSyncEffect = () => {
+type AiChatPageThreadUrlSyncEffectProps = {
+  channelId?: string | null;
+};
+
+export const AiChatPageThreadUrlSyncEffect = ({
+  channelId = null,
+}: AiChatPageThreadUrlSyncEffectProps = {}) => {
   const { threadId } = useParams();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const currentAiChatThreadData = useAtomStateValue(
@@ -23,8 +29,11 @@ export const AiChatPageThreadUrlSyncEffect = () => {
   );
   const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
+  // A missing thread falls back to a new chat where the page is: on a
+  // channel page, a new chat of that channel.
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
+    channelId,
   });
 
   useLayoutEffect(() => {

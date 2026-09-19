@@ -1,7 +1,10 @@
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import {
+  type AgentChatThread,
+  AgentChatThreadStatus,
+} from '~/generated-metadata/graphql';
 import { act, render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
@@ -95,6 +98,9 @@ describe('AgentChatThreadInitializationEffect', () => {
             contextWindowTokens: 1000,
             totalInputCredits: 0.125,
             totalOutputCredits: 0.05,
+            ownerUserWorkspaceId: 'owner-user-workspace-id',
+            status: AgentChatThreadStatus.OPEN,
+            mentionedUserWorkspaceIds: [],
           } satisfies AgentChatThread,
         ],
       });

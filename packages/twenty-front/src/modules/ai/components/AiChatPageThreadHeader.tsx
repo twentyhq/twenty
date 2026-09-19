@@ -1,19 +1,24 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
-import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { IconArrowBackUp, IconCheck, IconDotsVertical } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AiChatThreadChannelChip } from '@/ai/components/AiChatThreadChannelChip';
+import { AiChatThreadWorkflowRunChip } from '@/ai/components/AiChatThreadWorkflowRunChip';
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
+import { AiChatThreadAssigneeDropdown } from '@/ai/components/AiChatThreadAssigneeDropdown';
+import { AiChatThreadParticipants } from '@/ai/components/AiChatThreadParticipants';
+import { AiChatThreadSnoozeDropdown } from '@/ai/components/AiChatThreadSnoozeDropdown';
+import { useCanWorkAiChatThread } from '@/ai/hooks/useCanWorkAiChatThread';
+import { AGENT_CHAT_THREAD_INBOX_STATE } from '@/ai/constants/AgentChatThreadInboxState';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
+import { getAgentChatThreadInboxState } from '@/ai/utils/getAgentChatThreadInboxState';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { useChatThreadInboxActions } from '@/ai/hooks/useChatThreadInboxActions';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
@@ -61,7 +66,10 @@ export const AiChatPageThreadHeader = ({
   thread,
 }: AiChatPageThreadHeaderProps) => {
   const { t } = useLingui();
-  const { switchToNewChat } = useSwitchToNewAiChat();
+  const { markChatThreadDone, reopenChatThread } = useChatThreadInboxActions();
+  const inboxState = getAgentChatThreadInboxState(thread);
+  const isDone = inboxState === AGENT_CHAT_THREAD_INBOX_STATE.DONE;
+  const canWorkThread = useCanWorkAiChatThread(thread.id);
   const currentAiChatThreadTitle = useAtomComponentFamilyStateValue(
     currentAiChatThreadTitleComponentFamilyState,
     { threadId: thread.id },
@@ -76,12 +84,6 @@ export const AiChatPageThreadHeader = ({
     commitRename,
   } = useAiChatThreadRename({ ...thread, title });
   const displayTitle = title || t`New chat`;
-  const agentChatMessages = useAtomComponentFamilyStateValue(
-    agentChatMessagesComponentFamilyState,
-    { threadId: thread.id },
-  );
-  const hasConversation =
-    agentChatMessages.length > 0 || isDefined(thread.lastMessageAt);
 
   return (
     <>
@@ -129,20 +131,35 @@ export const AiChatPageThreadHeader = ({
           </StyledTitleDisplay>
         )}
       </StyledTitle>
+      <AiChatThreadChannelChip
+        threadId={thread.id}
+        channelId={thread.channelId}
+      />
+      <AiChatThreadWorkflowRunChip workflowRunId={thread.workflowRunId} />
       <StyledActions>
-        {hasConversation && (
-          <Button
-            startIcon={<IconPlus />}
-            size="sm"
-            onClick={() => switchToNewChat()}
-            variant="solid"
-            color="accent"
-          >{t`New chat`}</Button>
+        <AiChatThreadParticipants threadId={thread.id} />
+        {canWorkThread && (
+          <>
+            <AiChatThreadAssigneeDropdown threadId={thread.id} />
+            {!isDone && <AiChatThreadSnoozeDropdown threadId={thread.id} />}
+            <IconButton
+              size="sm"
+              variant="outline"
+              aria-label={isDone ? t`Reopen chat` : t`Mark chat done`}
+              onClick={() =>
+                isDone
+                  ? reopenChatThread(thread.id)
+                  : markChatThreadDone(thread.id)
+              }
+            >
+              {isDone ? <IconArrowBackUp /> : <IconCheck />}
+            </IconButton>
+          </>
         )}
         <AiChatThreadItemMenu
           threadId={thread.id}
           threadTitle={displayTitle}
-          isArchived={Boolean(thread.deletedAt)}
+          channelId={thread.channelId}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.PAGE_HEADER}
           onRenameRequested={startRename}
           clickableComponent={

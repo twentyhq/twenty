@@ -19,6 +19,13 @@ const buildService = () => {
     {} as never,
     {} as never,
     {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
   );
 
   return { service, messageRepository };

@@ -1,9 +1,15 @@
 import uniqBy from 'lodash.uniqby';
 import { type QueryRunner } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import {
   AGENT_CHAT_THREAD_DATA_SEED_IDS,
+  AGENT_WORKFLOW_DATA_SEED_IDS,
+  AGENT_WORKFLOW_SEED_NAME,
+  AGENT_WORKFLOW_SEED_PROMPT,
+  AGENT_WORKFLOW_SEED_STEP_NAME,
+  APPLE_AGENT_CHAT_CHANNEL_SEEDS,
   APPLE_AGENT_CHAT_CONVERSATION_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/agent-chat-seeds.constant';
 import {
@@ -12,11 +18,19 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { AgentChatThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-status.enum';
+import { AgentChatChannelMemberRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-member-role.enum';
+import { AgentChatThreadParticipantRole } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-participant-role.enum';
 
 const agentChatThreadTableName = 'agentChatThread';
+const agentChatThreadParticipantTableName = 'agentChatThreadParticipant';
+const agentChatChannelTableName = 'agentChatChannel';
+const agentChatChannelMemberTableName = 'agentChatChannelMember';
+const agentChatChannelRoleTableName = 'agentChatChannelRole';
 const agentTurnTableName = 'agentTurn';
 const agentMessageTableName = 'agentMessage';
 const agentMessagePartTableName = 'agentMessagePart';
+const agentChatThreadReadTableName = 'agentChatThreadRead';
 
 export const AGENT_DATA_SEED_IDS = {
   APPLE_DEFAULT_AGENT: '20202020-0000-4000-8000-000000000001',
@@ -45,12 +59,14 @@ type SeedChatThreadsArgs = {
   queryRunner: QueryRunner;
   schemaName: string;
   workspaceId: string;
+  adminRoleId: string;
 };
 
 const seedChatThreads = async ({
   queryRunner,
   schemaName,
   workspaceId,
+  adminRoleId,
 }: SeedChatThreadsArgs) => {
   let threadId: string;
   let userWorkspaceId: string;
@@ -72,6 +88,16 @@ const seedChatThreads = async ({
     workspaceId === SEED_APPLE_WORKSPACE_ID
       ? 'Explore your workspace'
       : 'Portfolio performance';
+
+  if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
+    await seedChatChannels({
+      queryRunner,
+      schemaName,
+      workspaceId,
+      adminRoleId,
+      now,
+    });
+  }
 
   await queryRunner.manager
     .createQueryBuilder()
@@ -115,17 +141,38 @@ const seedChatThreads = async ({
       .into(`${schemaName}.${agentChatThreadTableName}`)
       .orIgnore()
       .values(
+        // One thread per inbox state, so a fresh workspace shows what the
+        // Open, Snoozed and Done lists are for without anyone having to
+        // produce the states by hand — and one left open and unassigned in
+        // the Sales channel, since that is the tab a channel opens on.
         [
+          {
+            id: AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_PRICING_THREAD,
+            title: 'Answer a pricing objection',
+            status: AgentChatThreadStatus.OPEN,
+            snoozedUntil: null,
+            assigneeUserWorkspaceId: null,
+          },
           {
             id: AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_IMPORT_THREAD,
             title: 'Prepare a company import',
+            status: AgentChatThreadStatus.SNOOZED,
+            snoozedUntil: addDaysToDate(now, 1),
+            assigneeUserWorkspaceId: null,
           },
           {
             id: AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_FOLLOW_UP_THREAD,
             title: 'Plan customer follow-ups',
+            status: AgentChatThreadStatus.DONE,
+            snoozedUntil: null,
+            assigneeUserWorkspaceId: userWorkspaceId,
           },
         ].map((thread) => ({
           ...thread,
+          channelId:
+            APPLE_AGENT_CHAT_CONVERSATION_SEEDS.find(
+              (conversation) => conversation.threadId === thread.id,
+            )?.channelId ?? null,
           workspaceId,
           userWorkspaceId,
           createdAt: now,
@@ -133,9 +180,471 @@ const seedChatThreads = async ({
         })),
       )
       .execute();
+
+    await seedRunThreads({ queryRunner, schemaName, workspaceId, now });
   }
 
-  return threadId;
+  await seedChatThreadParticipants({
+    queryRunner,
+    schemaName,
+    workspaceId,
+    ownerUserWorkspaceId: userWorkspaceId,
+    ownedThreadIds:
+      workspaceId === SEED_APPLE_WORKSPACE_ID
+        ? [
+            threadId,
+            AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_PRICING_THREAD,
+            AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_IMPORT_THREAD,
+            AGENT_CHAT_THREAD_DATA_SEED_IDS.APPLE_FOLLOW_UP_THREAD,
+            AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN_THREAD,
+            AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN_THREAD,
+          ]
+        : [threadId],
+    now,
+  });
+
+  return { threadId, ownerUserWorkspaceId: userWorkspaceId };
+};
+
+const addDaysToDate = (date: Date, days: number): Date => {
+  const result = new Date(date);
+
+  result.setDate(result.getDate() + days);
+
+  return result;
+};
+
+type SeedRunThreadsArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+  now: Date;
+};
+
+const RUN_THREAD_TURN_IDS = {
+  COMPLETED_RUN: '20202020-0000-4000-8000-000000000331',
+  WAITING_RUN: '20202020-0000-4000-8000-000000000332',
+};
+
+const RUN_THREAD_MESSAGE_IDS = {
+  COMPLETED_RUN_PROMPT: '20202020-0000-4000-8000-000000000341',
+  COMPLETED_RUN_ANSWER: '20202020-0000-4000-8000-000000000342',
+  WAITING_RUN_PROMPT: '20202020-0000-4000-8000-000000000343',
+  WAITING_RUN_QUESTION:
+    AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN_QUESTION_MESSAGE,
+};
+
+const WAITING_RUN_QUESTIONS = [
+  {
+    header: 'Send outreach',
+    question:
+      'The lead fits the profile and the email below is ready. Send it now?',
+    options: [
+      {
+        label: 'Send it',
+        description: 'Send the drafted email from your mailbox.',
+        isRecommended: true,
+      },
+      {
+        label: 'Hold for review',
+        description: 'Keep the draft in the conversation for you to edit.',
+      },
+      { label: 'Do not contact', description: 'Close the lead as not a fit.' },
+    ],
+  },
+];
+
+// The conversations of the seeded workflow runs: the completed run reads
+// like a finished chat, the waiting run ends on the question the agent
+// asked, exactly as the agent step would have left it.
+const seedRunThreads = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+  now,
+}: SeedRunThreadsArgs) => {
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+  const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const ownerUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM;
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentChatThreadTableName}`, [
+      'id',
+      'workspaceId',
+      'userWorkspaceId',
+      'title',
+      'workflowRunId',
+      'workflowStepId',
+      'pendingQuestionMessageId',
+      'createdAt',
+      'updatedAt',
+    ])
+    .orIgnore()
+    .values([
+      {
+        id: AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN_THREAD,
+        workspaceId,
+        userWorkspaceId: ownerUserWorkspaceId,
+        title: `#1 - ${AGENT_WORKFLOW_SEED_NAME} · ${AGENT_WORKFLOW_SEED_STEP_NAME}`,
+        workflowRunId: AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN,
+        workflowStepId: AGENT_WORKFLOW_DATA_SEED_IDS.QUALIFY_LEAD_STEP,
+        pendingQuestionMessageId: null,
+        createdAt: yesterday,
+        updatedAt: yesterday,
+      },
+      {
+        id: AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN_THREAD,
+        workspaceId,
+        userWorkspaceId: ownerUserWorkspaceId,
+        title: `#2 - ${AGENT_WORKFLOW_SEED_NAME} · ${AGENT_WORKFLOW_SEED_STEP_NAME}`,
+        workflowRunId: AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN,
+        workflowStepId: AGENT_WORKFLOW_DATA_SEED_IDS.QUALIFY_LEAD_STEP,
+        pendingQuestionMessageId: RUN_THREAD_MESSAGE_IDS.WAITING_RUN_QUESTION,
+        createdAt: oneHourAgo,
+        updatedAt: oneHourAgo,
+      },
+    ])
+    .execute();
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentTurnTableName}`, [
+      'id',
+      'workspaceId',
+      'threadId',
+      'createdAt',
+    ])
+    .orIgnore()
+    .values([
+      {
+        id: RUN_THREAD_TURN_IDS.COMPLETED_RUN,
+        workspaceId,
+        threadId: AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN_THREAD,
+        createdAt: yesterday,
+      },
+      {
+        id: RUN_THREAD_TURN_IDS.WAITING_RUN,
+        workspaceId,
+        threadId: AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN_THREAD,
+        createdAt: oneHourAgo,
+      },
+    ])
+    .execute();
+
+  const messages = [
+    {
+      id: RUN_THREAD_MESSAGE_IDS.COMPLETED_RUN_PROMPT,
+      threadId: AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN_THREAD,
+      turnId: RUN_THREAD_TURN_IDS.COMPLETED_RUN,
+      role: AgentMessageRole.USER,
+      createdAt: yesterday,
+    },
+    {
+      id: RUN_THREAD_MESSAGE_IDS.COMPLETED_RUN_ANSWER,
+      threadId: AGENT_WORKFLOW_DATA_SEED_IDS.COMPLETED_RUN_THREAD,
+      turnId: RUN_THREAD_TURN_IDS.COMPLETED_RUN,
+      role: AgentMessageRole.ASSISTANT,
+      createdAt: new Date(yesterday.getTime() + 1000),
+    },
+    {
+      id: RUN_THREAD_MESSAGE_IDS.WAITING_RUN_PROMPT,
+      threadId: AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN_THREAD,
+      turnId: RUN_THREAD_TURN_IDS.WAITING_RUN,
+      role: AgentMessageRole.USER,
+      createdAt: oneHourAgo,
+    },
+    {
+      id: RUN_THREAD_MESSAGE_IDS.WAITING_RUN_QUESTION,
+      threadId: AGENT_WORKFLOW_DATA_SEED_IDS.WAITING_RUN_THREAD,
+      turnId: RUN_THREAD_TURN_IDS.WAITING_RUN,
+      role: AgentMessageRole.ASSISTANT,
+      createdAt: new Date(oneHourAgo.getTime() + 1000),
+    },
+  ];
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentMessageTableName}`, [
+      'id',
+      'workspaceId',
+      'threadId',
+      'turnId',
+      'role',
+      'authorUserWorkspaceId',
+      'processedAt',
+      'createdAt',
+    ])
+    .orIgnore()
+    .values(
+      messages.map((message) => ({
+        ...message,
+        workspaceId,
+        authorUserWorkspaceId: null,
+        processedAt: message.createdAt,
+      })),
+    )
+    .execute();
+
+  const textPart = (
+    id: string,
+    messageId: string,
+    textContent: string,
+    createdAt: Date,
+  ) => ({
+    id,
+    workspaceId,
+    messageId,
+    orderIndex: 0,
+    type: 'text',
+    textContent,
+    toolName: null,
+    toolCallId: null,
+    toolInput: null,
+    toolOutput: null,
+    state: null,
+    createdAt,
+  });
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentMessagePartTableName}`, [
+      'id',
+      'workspaceId',
+      'messageId',
+      'orderIndex',
+      'type',
+      'textContent',
+      'toolName',
+      'toolCallId',
+      'toolInput',
+      'toolOutput',
+      'state',
+      'createdAt',
+    ])
+    .orIgnore()
+    .values([
+      textPart(
+        '20202020-0000-4000-8000-000000000351',
+        RUN_THREAD_MESSAGE_IDS.COMPLETED_RUN_PROMPT,
+        AGENT_WORKFLOW_SEED_PROMPT,
+        yesterday,
+      ),
+      textPart(
+        '20202020-0000-4000-8000-000000000352',
+        RUN_THREAD_MESSAGE_IDS.COMPLETED_RUN_ANSWER,
+        'Warm lead. Sarah Chen is VP Sales at Northwind (about 200 people, B2B SaaS), ' +
+          'which sits in our target segment, and she asked for pricing on the form. ' +
+          'You approved the outreach email and it went out from your mailbox.',
+        new Date(yesterday.getTime() + 1000),
+      ),
+      textPart(
+        '20202020-0000-4000-8000-000000000353',
+        RUN_THREAD_MESSAGE_IDS.WAITING_RUN_PROMPT,
+        AGENT_WORKFLOW_SEED_PROMPT,
+        oneHourAgo,
+      ),
+      textPart(
+        '20202020-0000-4000-8000-000000000354',
+        RUN_THREAD_MESSAGE_IDS.WAITING_RUN_QUESTION,
+        'Marcus Lee, Head of Operations at Contoso Logistics (about 80 people), fits the ' +
+          'profile: mid-market, hiring in sales ops, and he asked for a demo. Draft ready:\n\n' +
+          'Hi Marcus, thanks for reaching out. Twenty gives ops teams one place for pipeline, ' +
+          'people and automations. Would a 20-minute walkthrough on Thursday work?',
+        new Date(oneHourAgo.getTime() + 1000),
+      ),
+      {
+        id: '20202020-0000-4000-8000-000000000355',
+        workspaceId,
+        messageId: RUN_THREAD_MESSAGE_IDS.WAITING_RUN_QUESTION,
+        orderIndex: 1,
+        type: 'tool-ask_questions',
+        textContent: null,
+        toolName: 'ask_questions',
+        toolCallId: 'seed-ask-questions-1',
+        toolInput: { questions: WAITING_RUN_QUESTIONS },
+        toolOutput: {
+          success: true,
+          message: 'Questions presented to the user; awaiting their answer.',
+          result: { questions: WAITING_RUN_QUESTIONS, status: 'pending' },
+        },
+        state: 'output-available',
+        createdAt: new Date(oneHourAgo.getTime() + 1000),
+      },
+    ])
+    .execute();
+};
+
+type SeedChatChannelsArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+  adminRoleId: string;
+  now: Date;
+};
+
+const seedChatChannels = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+  adminRoleId,
+  now,
+}: SeedChatChannelsArgs) => {
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentChatChannelTableName}`, [
+      'id',
+      'workspaceId',
+      'name',
+      'description',
+      'visibility',
+      'createdByUserWorkspaceId',
+      'createdAt',
+      'updatedAt',
+    ])
+    .orIgnore()
+    .values(
+      APPLE_AGENT_CHAT_CHANNEL_SEEDS.map((channel) => ({
+        id: channel.id,
+        workspaceId,
+        name: channel.name,
+        description: channel.description,
+        visibility: channel.visibility,
+        createdByUserWorkspaceId: channel.adminUserWorkspaceId,
+        createdAt: now,
+        updatedAt: now,
+      })),
+    )
+    .execute();
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentChatChannelMemberTableName}`, [
+      'workspaceId',
+      'channelId',
+      'userWorkspaceId',
+      'role',
+      'createdAt',
+    ])
+    .orIgnore()
+    .values(
+      APPLE_AGENT_CHAT_CHANNEL_SEEDS.flatMap((channel) => [
+        {
+          workspaceId,
+          channelId: channel.id,
+          userWorkspaceId: channel.adminUserWorkspaceId,
+          role: AgentChatChannelMemberRole.ADMIN,
+          createdAt: now,
+        },
+        ...channel.memberUserWorkspaceIds.map((memberUserWorkspaceId) => ({
+          workspaceId,
+          channelId: channel.id,
+          userWorkspaceId: memberUserWorkspaceId,
+          role: AgentChatChannelMemberRole.MEMBER,
+          createdAt: now,
+        })),
+      ]),
+    )
+    .execute();
+
+  const channelRoles = APPLE_AGENT_CHAT_CHANNEL_SEEDS.filter(
+    (channel) => channel.isReadableByWorkspaceAdmins,
+  ).map((channel) => ({
+    workspaceId,
+    channelId: channel.id,
+    roleId: adminRoleId,
+    createdAt: now,
+  }));
+
+  if (channelRoles.length === 0) {
+    return;
+  }
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentChatChannelRoleTableName}`, [
+      'workspaceId',
+      'channelId',
+      'roleId',
+      'createdAt',
+    ])
+    .orIgnore()
+    .values(channelRoles)
+    .execute();
+};
+
+type SeedChatThreadParticipantsArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+  ownerUserWorkspaceId: string;
+  ownedThreadIds: string[];
+  now: Date;
+};
+
+// Every thread has its creator as owner; the Apple follow-up thread is also
+// shared with two members so the dev workspace shows a collaborative thread.
+const seedChatThreadParticipants = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+  ownerUserWorkspaceId,
+  ownedThreadIds,
+  now,
+}: SeedChatThreadParticipantsArgs) => {
+  const ownerParticipants = ownedThreadIds.map((ownedThreadId) => ({
+    threadId: ownedThreadId,
+    userWorkspaceId: ownerUserWorkspaceId,
+    role: AgentChatThreadParticipantRole.OWNER,
+  }));
+
+  const memberParticipants =
+    workspaceId === SEED_APPLE_WORKSPACE_ID
+      ? APPLE_AGENT_CHAT_CONVERSATION_SEEDS.flatMap((conversation) =>
+          (conversation.memberUserWorkspaceIds ?? []).map(
+            (memberUserWorkspaceId) => ({
+              threadId: conversation.threadId,
+              userWorkspaceId: memberUserWorkspaceId,
+              role: AgentChatThreadParticipantRole.MEMBER,
+            }),
+          ),
+        )
+      : [];
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentChatThreadParticipantTableName}`, [
+      'workspaceId',
+      'threadId',
+      'userWorkspaceId',
+      'role',
+      'createdAt',
+      'lastMentionedAt',
+    ])
+    .orIgnore()
+    .values(
+      [...ownerParticipants, ...memberParticipants].map((participant) => ({
+        ...participant,
+        workspaceId,
+        createdAt: now,
+        // The first member of a shared thread is seeded as having been named
+        // in it, so the Inbox shows a thread that reached someone by mention
+        // next to the ones they own.
+        lastMentionedAt:
+          participant.role === AgentChatThreadParticipantRole.MEMBER
+            ? now
+            : null,
+      })),
+    )
+    .execute();
 };
 
 type SeedChatMessagesArgs = {
@@ -143,6 +652,7 @@ type SeedChatMessagesArgs = {
   schemaName: string;
   workspaceId: string;
   threadId: string;
+  ownerUserWorkspaceId: string;
   chatReferenceIds: ChatReferenceIds;
 };
 
@@ -158,6 +668,7 @@ const seedChatMessages = async ({
   schemaName,
   workspaceId,
   threadId,
+  ownerUserWorkspaceId,
   chatReferenceIds,
 }: SeedChatMessagesArgs) => {
   let messageIds: string[];
@@ -168,6 +679,7 @@ const seedChatMessages = async ({
     threadId: string;
     turnId: string;
     role: AgentMessageRole;
+    authorUserWorkspaceId: string | null;
     createdAt: Date;
   }>;
   let messageParts: Array<{
@@ -200,6 +712,7 @@ const seedChatMessages = async ({
         threadId,
         turnId: turnIds[0],
         role: AgentMessageRole.USER,
+        authorUserWorkspaceId: ownerUserWorkspaceId,
         createdAt: new Date(baseTime.getTime()),
       },
       {
@@ -208,6 +721,7 @@ const seedChatMessages = async ({
         threadId,
         turnId: turnIds[0],
         role: AgentMessageRole.ASSISTANT,
+        authorUserWorkspaceId: null,
         createdAt: new Date(baseTime.getTime() + 5 * 60 * 1000),
       },
     ];
@@ -256,6 +770,7 @@ const seedChatMessages = async ({
         threadId,
         turnId: turnIds[0],
         role: AgentMessageRole.USER,
+        authorUserWorkspaceId: ownerUserWorkspaceId,
         createdAt: new Date(baseTime.getTime()),
       },
       {
@@ -264,6 +779,7 @@ const seedChatMessages = async ({
         threadId,
         turnId: turnIds[0],
         role: AgentMessageRole.ASSISTANT,
+        authorUserWorkspaceId: null,
         createdAt: new Date(baseTime.getTime() + 3 * 60 * 1000),
       },
       {
@@ -272,6 +788,7 @@ const seedChatMessages = async ({
         threadId,
         turnId: turnIds[1],
         role: AgentMessageRole.USER,
+        authorUserWorkspaceId: ownerUserWorkspaceId,
         createdAt: new Date(baseTime.getTime() + 8 * 60 * 1000),
       },
       {
@@ -280,6 +797,7 @@ const seedChatMessages = async ({
         threadId,
         turnId: turnIds[1],
         role: AgentMessageRole.ASSISTANT,
+        authorUserWorkspaceId: null,
         createdAt: new Date(baseTime.getTime() + 12 * 60 * 1000),
       },
     ];
@@ -335,8 +853,14 @@ const seedChatMessages = async ({
     let seedId = 100;
 
     for (const conversation of APPLE_AGENT_CHAT_CONVERSATION_SEEDS) {
-      for (const exchange of conversation.exchanges) {
+      for (const [
+        exchangeIndex,
+        exchange,
+      ] of conversation.exchanges.entries()) {
         const turnId = `20202020-0000-4000-8000-${String(seedId++).padStart(12, '0')}`;
+        const exchangeAuthorUserWorkspaceId =
+          conversation.exchangeAuthorUserWorkspaceIds?.[exchangeIndex] ??
+          ownerUserWorkspaceId;
 
         for (const [index, textContent] of exchange.entries()) {
           const messageId = `20202020-0000-4000-8000-${String(seedId++).padStart(12, '0')}`;
@@ -350,6 +874,8 @@ const seedChatMessages = async ({
             turnId,
             role:
               index === 0 ? AgentMessageRole.USER : AgentMessageRole.ASSISTANT,
+            authorUserWorkspaceId:
+              index === 0 ? exchangeAuthorUserWorkspaceId : null,
             createdAt,
           });
           messageParts.push({
@@ -395,6 +921,7 @@ const seedChatMessages = async ({
       'threadId',
       'turnId',
       'role',
+      'authorUserWorkspaceId',
       'createdAt',
     ])
     .orIgnore()
@@ -416,6 +943,76 @@ const seedChatMessages = async ({
     .orIgnore()
     .values(messageParts)
     .execute();
+
+  await seedChatThreadReads({ queryRunner, schemaName, workspaceId, messages });
+};
+
+type SeedChatThreadReadsArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+  messages: Array<{ id: string; threadId: string; createdAt: Date }>;
+};
+
+// Without a cursor every thread reads as never-opened, so a fresh workspace
+// shows the unread state of the chat and none of the read state. These put
+// some readers ahead of others: far enough to show a receipt naming them,
+// short enough elsewhere to leave a thread unread and a divider in it.
+const seedChatThreadReads = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+  messages,
+}: SeedChatThreadReadsArgs) => {
+  if (workspaceId !== SEED_APPLE_WORKSPACE_ID) {
+    return;
+  }
+
+  const threadReads = APPLE_AGENT_CHAT_CONVERSATION_SEEDS.flatMap(
+    (conversation) => {
+      const threadMessages = messages
+        .filter((message) => message.threadId === conversation.threadId)
+        .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
+      return Object.entries(
+        conversation.lastReadExchangeIndexByUserWorkspaceId ?? {},
+      ).flatMap(([userWorkspaceId, lastReadExchangeIndex]) => {
+        // An exchange is a message and the answer to it, so a reader who
+        // stopped on one has read as far as that answer.
+        const lastReadMessage = threadMessages[lastReadExchangeIndex * 2 + 1];
+
+        return isDefined(lastReadMessage)
+          ? [
+              {
+                workspaceId,
+                threadId: conversation.threadId,
+                userWorkspaceId,
+                lastReadAt: lastReadMessage.createdAt,
+                lastReadMessageId: lastReadMessage.id,
+              },
+            ]
+          : [];
+      });
+    },
+  );
+
+  if (threadReads.length === 0) {
+    return;
+  }
+
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${agentChatThreadReadTableName}`, [
+      'workspaceId',
+      'threadId',
+      'userWorkspaceId',
+      'lastReadAt',
+      'lastReadMessageId',
+    ])
+    .orIgnore()
+    .values(threadReads)
+    .execute();
 };
 
 type SeedAgentsArgs = {
@@ -431,10 +1028,11 @@ export const seedAgents = async ({
   workspaceId,
   chatReferenceIds,
 }: SeedAgentsArgs) => {
-  const threadId = await seedChatThreads({
+  const { threadId, ownerUserWorkspaceId } = await seedChatThreads({
     queryRunner,
     schemaName,
     workspaceId,
+    adminRoleId: chatReferenceIds.roleId,
   });
 
   await seedChatMessages({
@@ -442,6 +1040,7 @@ export const seedAgents = async ({
     schemaName,
     workspaceId,
     threadId,
+    ownerUserWorkspaceId,
     chatReferenceIds,
   });
 };

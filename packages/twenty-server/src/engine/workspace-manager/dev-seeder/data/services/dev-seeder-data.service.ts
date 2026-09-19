@@ -125,6 +125,8 @@ import {
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { prefillFrontComponentCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-command-menu-items.util';
 import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { seedAgentWorkflow } from 'src/engine/workspace-manager/dev-seeder/data/utils/seed-agent-workflow.util';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -381,6 +383,10 @@ export class DevSeederDataService {
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         );
+
+        if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
+          await seedAgentWorkflow({ entityManager, schemaName, workspaceId });
+        }
       },
     );
 

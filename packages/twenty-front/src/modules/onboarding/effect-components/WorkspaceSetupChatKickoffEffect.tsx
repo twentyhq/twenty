@@ -21,6 +21,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import {
   StartWorkspaceSetupChatDocument,
   WorkspaceSetupChatOutcome,
+  AgentChatThreadStatus,
 } from '~/generated-metadata/graphql';
 
 export const WorkspaceSetupChatKickoffEffect = () => {
@@ -89,6 +90,10 @@ export const WorkspaceSetupChatKickoffEffect = () => {
         const workspaceSetupThread: FlatAgentChatThread = {
           id: thread.id,
           title: thread.title ?? null,
+          channelId: thread.channelId ?? null,
+          ownerUserWorkspaceId: thread.ownerUserWorkspaceId,
+          status: AgentChatThreadStatus.OPEN,
+          mentionedUserWorkspaceIds: [],
           createdAt: thread.createdAt,
           updatedAt: thread.updatedAt,
           conversationSize: thread.conversationSize,

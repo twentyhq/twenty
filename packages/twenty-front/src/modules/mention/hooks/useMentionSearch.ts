@@ -4,6 +4,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useCallback, useMemo } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import {
   type SearchQuery,
   type SearchQueryVariables,
@@ -12,7 +13,9 @@ import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 
 const MENTION_SEARCH_LIMIT = 50;
 
-export const useMentionSearch = () => {
+export const useMentionSearch = ({
+  shouldIncludeWorkspaceMembers = false,
+}: { shouldIncludeWorkspaceMembers?: boolean } = {}) => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const apolloCoreClient = useApolloCoreClient();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -22,8 +25,21 @@ export const useMentionSearch = () => {
       filterReadableActiveObjectMetadataItems(
         activeObjectMetadataItems,
         objectPermissionsByObjectMetadataId,
-      ).filter((item) => !item.isSystem && item.isSearchable),
-    [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
+      ).filter(
+        (item) =>
+          item.isSearchable &&
+          // Workspace members are a system object, so they never turn up among
+          // records. Mentioning a colleague is a different act from mentioning
+          // a record, and only the surfaces that mean it ask for them.
+          (!item.isSystem ||
+            (shouldIncludeWorkspaceMembers &&
+              item.nameSingular === CoreObjectNameSingular.WorkspaceMember)),
+      ),
+    [
+      activeObjectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+      shouldIncludeWorkspaceMembers,
+    ],
   );
 
   const objectsToSearch = useMemo(

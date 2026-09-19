@@ -1,5 +1,8 @@
 import { Field, Float, HideField, ID, Int, ObjectType } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AgentChatThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-thread-status.enum';
+
 @ObjectType('AgentChatThread')
 export class AgentChatThreadDTO {
   @Field(() => ID)
@@ -7,6 +10,19 @@ export class AgentChatThreadDTO {
 
   @Field({ nullable: true })
   title: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  channelId: string | null;
+
+  // The creator keeps the owner role for the life of the thread.
+  @Field(() => UUIDScalarType)
+  ownerUserWorkspaceId: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  workflowRunId: string | null;
+
+  @Field(() => String, { nullable: true })
+  workflowStepId: string | null;
 
   @Field(() => Int)
   totalCacheReadTokens: number;
@@ -37,11 +53,41 @@ export class AgentChatThreadDTO {
   @Field()
   updatedAt: Date;
 
+  @Field(() => AgentChatThreadStatus)
+  status: AgentChatThreadStatus;
+
+  @Field(() => Date, { nullable: true })
+  snoozedUntil: Date | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  assigneeUserWorkspaceId: string | null;
+
+  @Field(() => [UUIDScalarType])
+  mentionedUserWorkspaceIds: string[];
+
+  // Where the assistant has read to. It moves when the conversation reaches
+  // the model, so a thread it took in and had nothing to add to still shows
+  // as seen rather than as ignored.
+  @Field(() => Date, { nullable: true })
+  assistantLastReadAt: Date | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  assistantLastReadMessageId: string | null;
+
   @Field(() => Date, { nullable: true })
   deletedAt: Date | null;
 
   @Field(() => Date, { nullable: true })
   lastMessageAt: Date | null;
+
+  @Field(() => String, { nullable: true })
+  lastMessagePreview: string | null;
+
+  @Field(() => String, { nullable: true })
+  lastMessageRole: string | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  lastMessageAuthorUserWorkspaceId: string | null;
 
   @HideField()
   userWorkspaceId: string;

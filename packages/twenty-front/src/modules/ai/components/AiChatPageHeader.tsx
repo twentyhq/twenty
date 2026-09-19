@@ -2,6 +2,8 @@ import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { IconButton } from 'twenty-ui/components';
+import { IconChevronLeft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -43,7 +45,17 @@ const StyledHeaderTitle = styled.div`
   white-space: nowrap;
 `;
 
-export const AiChatPageHeader = () => {
+type AiChatPageHeaderProps = {
+  showNavigationDrawerCollapseButton?: boolean;
+  // On a phone a channel page shows its list or its chat, so the chat header
+  // leads back to the list instead of closing the chat.
+  onBackToList?: () => void;
+};
+
+export const AiChatPageHeader = ({
+  showNavigationDrawerCollapseButton = true,
+  onBackToList,
+}: AiChatPageHeaderProps = {}) => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
@@ -57,8 +69,18 @@ export const AiChatPageHeader = () => {
 
   return (
     <StyledHeader>
-      {!isNavigationDrawerExpanded && !isMobile && (
-        <NavigationDrawerCollapseButton direction="right" />
+      {showNavigationDrawerCollapseButton &&
+        !isNavigationDrawerExpanded &&
+        !isMobile && <NavigationDrawerCollapseButton direction="right" />}
+      {isMobile && isDefined(onBackToList) && (
+        <IconButton
+          size="sm"
+          variant="outline"
+          aria-label={t`Back to the channel`}
+          onClick={onBackToList}
+        >
+          <IconChevronLeft />
+        </IconButton>
       )}
       {isDefined(currentAiChatThreadData) ? (
         <AiChatPageThreadHeader
@@ -68,7 +90,7 @@ export const AiChatPageHeader = () => {
       ) : (
         <StyledHeaderTitle>{isNewChat ? t`New chat` : null}</StyledHeaderTitle>
       )}
-      {isMobile && <AiChatCloseButton />}
+      {isMobile && !isDefined(onBackToList) && <AiChatCloseButton />}
       <AiChatThreadDeleteConfirmationModal
         surface={AI_CHAT_THREAD_ACTIONS_SURFACE.PAGE_HEADER}
       />

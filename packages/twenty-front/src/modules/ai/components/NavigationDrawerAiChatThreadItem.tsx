@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { IconMessage } from 'twenty-ui/icon';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useLingui } from '@lingui/react/macro';
@@ -34,12 +35,12 @@ export const NavigationDrawerAiChatThreadItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isArchived = Boolean(thread.deletedAt);
+  const isArchived = isDefined(thread.deletedAt);
   const displayLabel = thread.title || t`New chat`;
-  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(
-    thread.id,
-    AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER,
-  );
+  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
+    threadId: thread.id,
+    surface: AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER,
+  });
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     itemMenuDropdownId,
@@ -70,7 +71,7 @@ export const NavigationDrawerAiChatThreadItem = ({
         <AiChatThreadItemMenu
           threadId={thread.id}
           threadTitle={displayLabel}
-          isArchived={isArchived}
+          channelId={thread.channelId}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
           onRenameRequested={startRename}
         />

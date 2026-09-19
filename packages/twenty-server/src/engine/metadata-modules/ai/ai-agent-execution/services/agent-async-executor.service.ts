@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   generateText,
+  hasToolCall,
   jsonSchema,
   type LanguageModelUsage,
   Output,
@@ -269,6 +270,8 @@ export class AgentAsyncExecutorService {
     runAsRoleId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
+    extraTools = {},
+    pauseOnToolNames = [],
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
@@ -280,6 +283,11 @@ export class AgentAsyncExecutorService {
     runAsRoleId?: string;
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
+    // Tools the caller adds on top of the agent's own, and the ones whose
+    // call ends the loop so the caller can wait on something outside the
+    // model (a person's answer, for one).
+    extraTools?: ToolSet;
+    pauseOnToolNames?: string[];
   }): Promise<AgentExecutionResult> {
     if (!isNonEmptyArray(messages)) {
       throw new AiException(
@@ -317,7 +325,7 @@ export class AgentAsyncExecutorService {
 
       resolvedModelId = registeredModel.modelId;
 
-      let tools: ToolSet = {};
+      let tools: ToolSet = { ...extraTools };
       let toolCatalogSection = '';
       const providerOptions = getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
@@ -375,6 +383,7 @@ export class AgentAsyncExecutorService {
         tools = {
           ...registryTools,
           ...nativeTools,
+          ...extraTools,
         };
       }
 
@@ -396,9 +405,11 @@ export class AgentAsyncExecutorService {
         tools,
         model: registeredModel.model,
         messages: modelMessages,
-        stopWhen: (step) =>
-          isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
-          hasNoMoreAvailableCredits,
+        stopWhen: [
+          isStepCount(AGENT_CONFIG.MAX_STEPS),
+          ...pauseOnToolNames.map((toolName) => hasToolCall(toolName)),
+          () => hasNoMoreAvailableCredits,
+        ],
         providerOptions,
         ...buildAiTelemetry({
           functionId: 'agent-execution',
@@ -495,8 +506,14 @@ export class AgentAsyncExecutorService {
       );
       executionSteps = textResponse.steps;
 
+      const lastStep = textResponse.steps[textResponse.steps.length - 1];
+      const pausedOnToolName = pauseOnToolNames.find((toolName) =>
+        lastStep?.toolCalls.some((toolCall) => toolCall.toolName === toolName),
+      );
+
+      // A paused run has no final answer yet, so there is nothing to shape.
       const agentSchema =
-        agent?.responseFormat?.type === 'json'
+        agent?.responseFormat?.type === 'json' && !isDefined(pausedOnToolName)
           ? agent.responseFormat.schema
           : undefined;
 
@@ -579,6 +596,7 @@ export class AgentAsyncExecutorService {
         modelId: resolvedModelId,
         totalCostInDollars,
         creditsUsedMicro,
+        pausedOnToolName,
       };
     } catch (error) {
       if (error instanceof AiException) {

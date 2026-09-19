@@ -133,6 +133,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         queuedMessages: [
           {
             id: 'older-queued-id',
+            authorUserWorkspaceId: 'user-workspace-id',
             parts: [{ type: 'text', textContent: 'first in line' }],
           },
         ],

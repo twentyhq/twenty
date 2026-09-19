@@ -11,6 +11,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { AGENT_CHAT_REFETCH_PARTICIPANTS_EVENT_NAME } from '@/ai/constants/AgentChatRefetchParticipantsEventName';
+import { AGENT_CHAT_REFETCH_READS_EVENT_NAME } from '@/ai/constants/AgentChatRefetchReadsEventName';
 import { ON_AGENT_CHAT_EVENT } from '@/ai/graphql/subscriptions/OnAgentChatEvent';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatFirstLiveSeqComponentFamilyState } from '@/ai/states/agentChatFirstLiveSeqComponentFamilyState';
@@ -359,6 +361,16 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
         case 'queue-updated': {
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          break;
+        }
+
+        case 'participants-updated': {
+          dispatchBrowserEvent(AGENT_CHAT_REFETCH_PARTICIPANTS_EVENT_NAME);
+          break;
+        }
+
+        case 'reads-updated': {
+          dispatchBrowserEvent(AGENT_CHAT_REFETCH_READS_EVENT_NAME);
           break;
         }
 

@@ -5,6 +5,10 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
+import { AiChatMessageAuthor } from '@/ai/components/AiChatMessageAuthor';
+import { AiChatMessageReadReceipt } from '@/ai/components/AiChatMessageReadReceipt';
+import { AiChatUnreadDivider } from '@/ai/components/AiChatUnreadDivider';
+import { useAiChatUnreadDividerMessageId } from '@/ai/hooks/useAiChatUnreadDividerMessageId';
 import { agentChatMessageComponentFamilySelector } from '@/ai/states/selectors/agentChatMessageComponentFamilySelector';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
@@ -156,6 +160,7 @@ export const AiChatMessage = ({
   );
 
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
+  const unreadDividerMessageId = useAiChatUnreadDividerMessageId();
 
   if (!isDefined(agentChatMessage)) {
     return null;
@@ -169,42 +174,53 @@ export const AiChatMessage = ({
   const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
 
   return (
-    <StyledMessageBubble isUser={isUser}>
-      <StyledMessageContainer isUser={isUser}>
-        <StyledMessageText isUser={isUser}>
-          <AiChatAssistantMessageRenderer
-            isLastMessageStreaming={isLastMessageStreaming}
-            messageParts={agentChatMessage.parts}
-            hasError={shouldShowError}
-          />
-        </StyledMessageText>
-        {fileParts.length > 0 && (
-          <StyledFilesContainer>
-            {fileParts.map((file) => (
-              <AgentChatFilePreview key={file.filename} file={file} />
-            ))}
-          </StyledFilesContainer>
-        )}
-        {shouldShowError && isDefined(error) && (
-          <AiChatErrorRenderer error={error} onRetry={onRetry} />
-        )}
-      </StyledMessageContainer>
-      {agentChatMessage.parts.length > 0 && (
-        <StyledMessageFooter className="message-footer">
-          <StyledMessageTimestamp>
-            {beautifyPastDateRelativeToNow(
-              agentChatMessage.metadata?.createdAt ?? new Date(),
-              localeCatalog,
-            )}
-          </StyledMessageTimestamp>
-          <LightCopyIconButton
-            copyText={
-              agentChatMessage.parts.find((part) => part.type === 'text')
-                ?.text ?? ''
+    <>
+      {unreadDividerMessageId === messageId && <AiChatUnreadDivider />}
+      <StyledMessageBubble isUser={isUser}>
+        {isUser && (
+          <AiChatMessageAuthor
+            authorUserWorkspaceId={
+              agentChatMessage.metadata?.authorUserWorkspaceId
             }
           />
-        </StyledMessageFooter>
-      )}
-    </StyledMessageBubble>
+        )}
+        <StyledMessageContainer isUser={isUser}>
+          <StyledMessageText isUser={isUser}>
+            <AiChatAssistantMessageRenderer
+              isLastMessageStreaming={isLastMessageStreaming}
+              messageParts={agentChatMessage.parts}
+              hasError={shouldShowError}
+            />
+          </StyledMessageText>
+          {fileParts.length > 0 && (
+            <StyledFilesContainer>
+              {fileParts.map((file) => (
+                <AgentChatFilePreview key={file.filename} file={file} />
+              ))}
+            </StyledFilesContainer>
+          )}
+          {shouldShowError && isDefined(error) && (
+            <AiChatErrorRenderer error={error} onRetry={onRetry} />
+          )}
+        </StyledMessageContainer>
+        {isUser && <AiChatMessageReadReceipt messageId={messageId} />}
+        {agentChatMessage.parts.length > 0 && (
+          <StyledMessageFooter className="message-footer">
+            <StyledMessageTimestamp>
+              {beautifyPastDateRelativeToNow(
+                agentChatMessage.metadata?.createdAt ?? new Date(),
+                localeCatalog,
+              )}
+            </StyledMessageTimestamp>
+            <LightCopyIconButton
+              copyText={
+                agentChatMessage.parts.find((part) => part.type === 'text')
+                  ?.text ?? ''
+              }
+            />
+          </StyledMessageFooter>
+        )}
+      </StyledMessageBubble>
+    </>
   );
 };

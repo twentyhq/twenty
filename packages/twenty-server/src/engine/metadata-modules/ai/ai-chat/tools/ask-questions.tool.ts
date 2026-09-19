@@ -44,8 +44,7 @@ export const askQuestionsInputSchema = z.object({
           .max(4)
           .refine(
             (options) =>
-              options.filter((option) => option.isRecommended === true)
-                .length <= 1,
+              options.filter((option) => option.isRecommended).length <= 1,
             { message: 'At most one option can be marked as recommended.' },
           )
           .describe('2-4 mutually exclusive options.'),
@@ -80,14 +79,41 @@ const WORKSPACE_SETUP_DESCRIPTION =
   'mind. Do NOT use it for information you could look up with another tool. The user can ' +
   'always type a free-form answer instead of picking an option.';
 
-export const createAskQuestionsTool = ({
+const WORKFLOW_RUN_DESCRIPTION =
+  'Ask the person in charge of this workflow run one or more multiple-choice questions ' +
+  'when a decision is theirs to make: an approval before an action with consequences ' +
+  '(sending a message, changing records, spending money), or a choice you cannot infer ' +
+  'from the instructions. The run pauses until they answer, then continues with their ' +
+  'choice in mind. Do NOT use it for information you could look up with another tool. ' +
+  'The person can always type a free-form answer instead of picking an option.';
+
+const getAskQuestionsDescription = ({
   isWorkspaceSetupThread,
+  isWorkflowRun,
 }: {
   isWorkspaceSetupThread: boolean;
-}) => ({
-  description: isWorkspaceSetupThread
+  isWorkflowRun: boolean;
+}) => {
+  if (isWorkflowRun) {
+    return WORKFLOW_RUN_DESCRIPTION;
+  }
+
+  return isWorkspaceSetupThread
     ? WORKSPACE_SETUP_DESCRIPTION
-    : STANDARD_DESCRIPTION,
+    : STANDARD_DESCRIPTION;
+};
+
+export const createAskQuestionsTool = ({
+  isWorkspaceSetupThread,
+  isWorkflowRun = false,
+}: {
+  isWorkspaceSetupThread: boolean;
+  isWorkflowRun?: boolean;
+}) => ({
+  description: getAskQuestionsDescription({
+    isWorkspaceSetupThread,
+    isWorkflowRun,
+  }),
   inputSchema: askQuestionsInputSchema,
   execute: async (
     input: AskQuestionsToolInput,
