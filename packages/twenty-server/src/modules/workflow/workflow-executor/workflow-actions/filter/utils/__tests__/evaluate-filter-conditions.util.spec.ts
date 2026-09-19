@@ -513,6 +513,85 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(true);
       });
 
+      it('should return false when the selected value is a substring of an option (IS)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'INVALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when the selected value matches an option exactly (IS)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'VALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return true when the selected value is a substring of an option (IsNot)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'INVALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when the selected value matches an option exactly (IsNot)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'VALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should match scalar option values that are valid JSON (IS)', () => {
+        const filter = createFilter(ViewFilterOperand.IS, '1', '1', 'SELECT');
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should match scalar option values that are valid JSON (IsNot)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT,
+          '1',
+          '1',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should match options exactly when both operands are arrays', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          ['INVALID'],
+          ['VALID'],
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
       it('should return true when there are no values (IsEmpty)', () => {
         const filter = createFilter(
           ViewFilterOperand.IS_EMPTY,

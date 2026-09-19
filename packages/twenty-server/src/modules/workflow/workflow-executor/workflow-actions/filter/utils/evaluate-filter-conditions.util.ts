@@ -485,12 +485,47 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
   }
 }
 
+// Select options match by exact value: 'INVALID' must not satisfy a filter
+// for 'VALID' (a substring match would be wrong here).
+function isSelectedOptionValue(leftValue: unknown, rightValue: unknown): boolean {
+  if (Array.isArray(leftValue) && Array.isArray(rightValue)) {
+    return leftValue.some((item) => rightValue.includes(item));
+  }
+
+  if (
+    (Array.isArray(leftValue) || isString(leftValue)) &&
+    isString(rightValue)
+  ) {
+    try {
+      const parsedRightValue: unknown = JSON.parse(rightValue);
+
+      if (Array.isArray(parsedRightValue)) {
+        return parsedRightValue.some((item) =>
+          Array.isArray(leftValue) ? leftValue.includes(item) : leftValue === item,
+        );
+      }
+
+      // A scalar option value that is valid JSON (e.g. '1', 'true', 'null')
+      // changes type when parsed, so compare against the raw string too.
+      return Array.isArray(leftValue)
+        ? leftValue.includes(parsedRightValue) || leftValue.includes(rightValue)
+        : leftValue === parsedRightValue || leftValue === rightValue;
+    } catch {
+      return Array.isArray(leftValue)
+        ? leftValue.includes(rightValue)
+        : leftValue === rightValue;
+    }
+  }
+
+  return leftValue === rightValue;
+}
+
 function evaluateSelectFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
     case ViewFilterOperand.IS:
-      return contains(filter.leftOperand, filter.rightOperand);
+      return isSelectedOptionValue(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_NOT:
-      return !contains(filter.leftOperand, filter.rightOperand);
+      return !isSelectedOptionValue(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 
