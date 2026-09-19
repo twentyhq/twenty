@@ -1,0 +1,176 @@
+import { type WebClient } from '@slack/web-api';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { isDefined } from 'twenty-sdk/utils';
+
+import { SLACK_ASSISTANT_ATTACHMENT_DOWNLOAD_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-attachment-download-timeout-ms';
+import { SLACK_ASSISTANT_ATTACHMENT_UPLOAD_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-attachment-upload-timeout-ms';
+import { SLACK_ASSISTANT_MAX_ATTACHMENTS } from 'src/logic-functions/constants/slack-assistant-max-attachments';
+import { type ImportedSlackAttachments } from 'src/logic-functions/types/imported-slack-attachments.type';
+import { type SlackAttachmentCandidate } from 'src/logic-functions/types/slack-attachment-candidate.type';
+import { type SlackMessageFile } from 'src/logic-functions/types/slack-message-file.type';
+import { downloadSlackFile } from 'src/logic-functions/utils/download-slack-file';
+import { getSlackMessageFileNames } from 'src/logic-functions/utils/get-slack-message-file-names';
+import { isSlackAttachmentCandidate } from 'src/logic-functions/utils/is-slack-attachment-candidate';
+import { reportSlackConnectionAuthFailure } from 'src/logic-functions/utils/report-slack-connection-auth-failure';
+import { resolveSlackFileDetails } from 'src/logic-functions/utils/resolve-slack-file-details';
+import { uploadFileToAgentChat } from 'src/logic-functions/utils/upload-file-to-agent-chat';
+
+type ResolvedSlackFile = {
+  resolved: SlackMessageFile;
+  sourceFile: SlackMessageFile;
+  isFilesReadScopeMissing: boolean;
+};
+
+type ResolvedSlackAttachmentCandidate = ResolvedSlackFile & {
+  resolved: SlackAttachmentCandidate;
+};
+
+const isResolvedAttachmentCandidate = (
+  entry: ResolvedSlackFile,
+): entry is ResolvedSlackAttachmentCandidate =>
+  isSlackAttachmentCandidate(entry.resolved);
+
+const NO_ATTACHMENTS: ImportedSlackAttachments = {
+  attachments: [],
+  attachedFileNames: [],
+  attachedSourceFiles: [],
+};
+
+const FILES_READ_SCOPE_MISSING_REASON =
+  'Slack refused to serve a shared file, which means the stored bot token predates the files:read scope. Reconnect Slack so the assistant can read files shared with it.';
+
+// Every file failure degrades silently, so the connection is the only place
+// an admin can learn that reconnecting is what restores file reading
+const reportFilesReadScopeMissing = async ({
+  isFilesReadScopeMissing,
+  connectionId,
+}: {
+  isFilesReadScopeMissing: boolean;
+  connectionId: string | undefined;
+}): Promise<void> => {
+  if (!isFilesReadScopeMissing || !isNonEmptyString(connectionId)) {
+    return;
+  }
+
+  await reportSlackConnectionAuthFailure({
+    connectionId,
+    reason: FILES_READ_SCOPE_MISSING_REASON,
+  });
+};
+
+export const importSlackAssistantAttachments = async ({
+  client,
+  files,
+  botToken,
+  connectionId,
+  deadlineAtMs,
+}: {
+  client: WebClient | undefined;
+  files: SlackMessageFile[] | undefined;
+  botToken: string | undefined;
+  connectionId: string | undefined;
+  deadlineAtMs: number;
+}): Promise<ImportedSlackAttachments> => {
+  if (
+    !isNonEmptyArray(files) ||
+    !isDefined(client) ||
+    !isNonEmptyString(botToken) ||
+    deadlineAtMs - Date.now() <= 0
+  ) {
+    return NO_ATTACHMENTS;
+  }
+
+  const resolvedFiles = await Promise.all(
+    files.map(async (file): Promise<ResolvedSlackFile> => {
+      const { file: resolved, isFilesReadScopeMissing } =
+        await resolveSlackFileDetails({ client, file });
+
+      return { resolved, sourceFile: file, isFilesReadScopeMissing };
+    }),
+  );
+  const candidates = resolvedFiles.filter(isResolvedAttachmentCandidate);
+
+  let isFilesReadScopeMissing = resolvedFiles.some(
+    (resolvedFile) => resolvedFile.isFilesReadScopeMissing,
+  );
+
+  if (!isNonEmptyArray(candidates)) {
+    await reportFilesReadScopeMissing({
+      isFilesReadScopeMissing,
+      connectionId,
+    });
+
+    return NO_ATTACHMENTS;
+  }
+
+  const metadataClient = new MetadataApiClient({
+    signal: AbortSignal.timeout(Math.max(deadlineAtMs - Date.now(), 1)),
+  });
+  const imported: ImportedSlackAttachments = {
+    attachments: [],
+    attachedFileNames: [],
+    attachedSourceFiles: [],
+  };
+
+  for (const { resolved: candidate, sourceFile } of candidates) {
+    if (imported.attachments.length >= SLACK_ASSISTANT_MAX_ATTACHMENTS) {
+      break;
+    }
+
+    const remainingMs = deadlineAtMs - Date.now();
+
+    if (remainingMs <= 0) {
+      console.warn(
+        '[slack] attachment import ran out of time, the remaining files stay names in the prompt',
+      );
+
+      break;
+    }
+
+    const [fileName = ''] = getSlackMessageFileNames([candidate]);
+    const download = await downloadSlackFile({
+      urlPrivate: candidate.url_private,
+      mimeType: candidate.mimetype,
+      botToken,
+      timeoutMs: Math.min(
+        SLACK_ASSISTANT_ATTACHMENT_DOWNLOAD_TIMEOUT_MS,
+        remainingMs,
+      ),
+    });
+
+    if (!download.success) {
+      isFilesReadScopeMissing ||= download.reason === 'missing-scope';
+
+      console.warn(
+        `[slack] attachment "${fileName}" stays a name in the prompt: ${download.error}`,
+      );
+
+      continue;
+    }
+
+    try {
+      const fileId = await uploadFileToAgentChat({
+        metadataClient,
+        fileName,
+        bytes: download.bytes,
+        timeoutMs: Math.min(
+          SLACK_ASSISTANT_ATTACHMENT_UPLOAD_TIMEOUT_MS,
+          Math.max(deadlineAtMs - Date.now(), 1),
+        ),
+      });
+
+      imported.attachments.push({ fileId, filename: fileName });
+      imported.attachedFileNames.push(fileName);
+      imported.attachedSourceFiles.push(sourceFile);
+    } catch (error) {
+      console.warn(
+        `[slack] attachment "${fileName}" stays a name in the prompt: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  await reportFilesReadScopeMissing({ isFilesReadScopeMissing, connectionId });
+
+  return imported;
+};
