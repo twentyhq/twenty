@@ -30,10 +30,6 @@ export class AddAgentChatChannelRolesFastInstanceCommand implements FastInstance
     );
 
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_AGENT_CHAT_CHANNEL_ROLE_CHANNEL_ID" ON "core"."agentChatChannelRole" ("channelId")`,
-    );
-
-    await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "IDX_AGENT_CHAT_CHANNEL_ROLE_ROLE_ID" ON "core"."agentChatChannelRole" ("roleId")`,
     );
 

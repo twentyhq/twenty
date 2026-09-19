@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.42.0', 1789750766494)
-export class AddAgentChatThreadReadsFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddAgentChatThreadReadsFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `CREATE TABLE IF NOT EXISTS "core"."agentChatThreadRead" (
@@ -22,10 +20,6 @@ export class AddAgentChatThreadReadsFastInstanceCommand
 
     await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "IDX_AGENT_CHAT_THREAD_READ_WORKSPACE_ID" ON "core"."agentChatThreadRead" ("workspaceId")`,
-    );
-
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_AGENT_CHAT_THREAD_READ_THREAD_ID" ON "core"."agentChatThreadRead" ("threadId")`,
     );
 
     await queryRunner.query(
@@ -87,6 +81,8 @@ export class AddAgentChatThreadReadsFastInstanceCommand
       `ALTER TABLE "core"."agentChatThread" DROP COLUMN IF EXISTS "assistantLastReadAt"`,
     );
 
-    await queryRunner.query(`DROP TABLE IF EXISTS "core"."agentChatThreadRead"`);
+    await queryRunner.query(
+      `DROP TABLE IF EXISTS "core"."agentChatThreadRead"`,
+    );
   }
 }

@@ -72,10 +72,6 @@ export class AddAgentChatChannelsFastInstanceCommand implements FastInstanceComm
     );
 
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_AGENT_CHAT_CHANNEL_MEMBER_CHANNEL_ID" ON "core"."agentChatChannelMember" ("channelId")`,
-    );
-
-    await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "IDX_AGENT_CHAT_CHANNEL_MEMBER_USER_WORKSPACE_ID" ON "core"."agentChatChannelMember" ("userWorkspaceId")`,
     );
 

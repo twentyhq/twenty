@@ -40,7 +40,6 @@ export class AgentChatThreadReadEntity {
   workspace: EntityRelation<WorkspaceEntity>;
 
   @Column({ nullable: false, type: 'uuid' })
-  @Index('IDX_AGENT_CHAT_THREAD_READ_THREAD_ID')
   threadId: string;
 
   @ManyToOne(() => AgentChatThreadEntity, (thread) => thread.reads, {

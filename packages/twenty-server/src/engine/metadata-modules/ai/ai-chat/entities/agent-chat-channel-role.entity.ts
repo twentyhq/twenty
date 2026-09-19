@@ -40,7 +40,6 @@ export class AgentChatChannelRoleEntity {
   workspace: EntityRelation<WorkspaceEntity>;
 
   @Column({ nullable: false, type: 'uuid' })
-  @Index('IDX_AGENT_CHAT_CHANNEL_ROLE_CHANNEL_ID')
   channelId: string;
 
   @ManyToOne(() => AgentChatChannelEntity, (channel) => channel.roles, {

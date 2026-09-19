@@ -2,20 +2,18 @@ import { useQuery } from '@apollo/client/react';
 import { useEffect } from 'react';
 import { useStore } from 'jotai';
 
+import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { agentChatUnreadThreadIdsState } from '@/ai/states/agentChatUnreadThreadIdsState';
 import { GetUnreadChatThreadIdsDocument } from '~/generated-metadata/graphql';
 
-type AiChatUnreadThreadsEffectProps = {
-  threadIds: string[];
-};
-
-// One query for the whole list rather than a cursor per row. The ids are
-// joined into a key so the query re-runs when the list changes but not when it
-// is merely re-rendered in the same order.
-export const AiChatUnreadThreadsEffect = ({
-  threadIds,
-}: AiChatUnreadThreadsEffectProps) => {
+// Every thread the reader can see, not the ones one page happens to list: the
+// drawer counts unread threads across channels it is not showing, and a
+// narrower list would silently unread-mark whatever it left out.
+export const AiChatUnreadThreadsEffect = () => {
   const store = useStore();
+  const { threads } = useChatThreads();
+
+  const threadIds = threads.map((thread) => thread.id);
   const threadIdsKey = threadIds.join(',');
 
   const { data } = useQuery(GetUnreadChatThreadIdsDocument, {

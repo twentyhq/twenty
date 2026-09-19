@@ -7,6 +7,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ToastProvider } from 'twenty-ui/primitives/feedback';
 
 import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
+import { agentChatUnreadThreadIdsState } from '@/ai/states/agentChatUnreadThreadIdsState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -51,6 +52,9 @@ jest.mock('@/ai/components/AiChatThreadDeleteConfirmationModal', () => ({
 }));
 jest.mock('@/ai/components/AiChatChannelDeleteConfirmationModal', () => ({
   AiChatChannelDeleteConfirmationModal: () => null,
+}));
+jest.mock('@/ai/components/AiChatUnreadThreadsEffect', () => ({
+  AiChatUnreadThreadsEffect: () => null,
 }));
 jest.mock('@/ai/hooks/useRenameChatThread', () => ({
   useRenameChatThread: () => ({ renameChatThread: jest.fn() }),
@@ -131,16 +135,30 @@ describe('NavigationDrawerAiChatContent', () => {
     expect(screen.queryByText('Today')).toBeNull();
   });
 
-  it('counts only what is waiting, leaving done without a running total', () => {
+  it('counts the threads still waiting to be read, not every thread filed under a state', () => {
     threads = [
-      buildThread('t1', 'Waiting on me'),
-      buildThread('t2', 'Also waiting'),
-      buildThread('t3', 'Finished', { status: AgentChatThreadStatus.DONE }),
+      buildThread('t1', 'Unread'),
+      buildThread('t2', 'Already read'),
+      buildThread('t3', 'Also read'),
     ];
+    jotaiStore.set(agentChatUnreadThreadIdsState.atom, ['t1']);
 
     renderContent();
 
-    expect(screen.getByText('· 2')).toBeVisible();
-    expect(screen.queryByText('· 1')).toBeNull();
+    expect(screen.getByText('Open').parentElement).toHaveTextContent('· 1');
+    expect(screen.queryByText('· 3')).toBeNull();
+  });
+
+  it('badges a finished thread nobody has read yet', () => {
+    threads = [
+      buildThread('t1', 'Read and open'),
+      buildThread('t2', 'Finished', { status: AgentChatThreadStatus.DONE }),
+    ];
+    jotaiStore.set(agentChatUnreadThreadIdsState.atom, ['t2']);
+
+    renderContent();
+
+    expect(screen.getByText('Done').parentElement).toHaveTextContent('· 1');
+    expect(screen.getByText('Open').parentElement).not.toHaveTextContent('·');
   });
 });

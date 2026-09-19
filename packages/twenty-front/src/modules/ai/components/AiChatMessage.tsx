@@ -6,6 +6,7 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { AiChatMessageAuthor } from '@/ai/components/AiChatMessageAuthor';
+import { AiChatMessageReadReceipt } from '@/ai/components/AiChatMessageReadReceipt';
 import { agentChatMessageComponentFamilySelector } from '@/ai/states/selectors/agentChatMessageComponentFamilySelector';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
@@ -197,6 +198,7 @@ export const AiChatMessage = ({
           <AiChatErrorRenderer error={error} onRetry={onRetry} />
         )}
       </StyledMessageContainer>
+      {isUser && <AiChatMessageReadReceipt messageId={messageId} />}
       {agentChatMessage.parts.length > 0 && (
         <StyledMessageFooter className="message-footer">
           <StyledMessageTimestamp>

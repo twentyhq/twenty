@@ -138,12 +138,7 @@ export const AiChatInboxPage = () => {
           isThreadSelected={isDefined(threadId)}
         />
       )}
-      <AiChatUnreadThreadsEffect
-        threadIds={getThreadsForInboxStateAndTab(
-          agentChatInboxStateTab,
-          agentChatInboxTab,
-        ).map((thread) => thread.id)}
-      />
+      <AiChatUnreadThreadsEffect />
       <AiChatMarkThreadReadEffect threadId={threadId ?? null} />
       <CollapseNavigationDrawerWhileSidePanelOpenEffect />
       {/* Thread rows on this page use the side panel action surface. */}

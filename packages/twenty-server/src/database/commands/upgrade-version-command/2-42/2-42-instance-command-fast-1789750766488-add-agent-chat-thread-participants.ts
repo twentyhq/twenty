@@ -29,10 +29,6 @@ export class AddAgentChatThreadParticipantsFastInstanceCommand implements FastIn
     );
 
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_AGENT_CHAT_THREAD_PARTICIPANT_THREAD_ID" ON "core"."agentChatThreadParticipant" ("threadId")`,
-    );
-
-    await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "IDX_AGENT_CHAT_THREAD_PARTICIPANT_USER_WORKSPACE_ID" ON "core"."agentChatThreadParticipant" ("userWorkspaceId")`,
     );
 

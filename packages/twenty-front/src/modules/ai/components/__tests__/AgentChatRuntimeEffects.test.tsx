@@ -17,6 +17,9 @@ jest.mock('@/ai/components/AgentChatThreadParticipantsFetchEffect', () => ({
     <div data-testid="participants-fetch" />
   ),
 }));
+jest.mock('@/ai/components/AgentChatThreadReadsFetchEffect', () => ({
+  AgentChatThreadReadsFetchEffect: () => <div data-testid="reads-fetch" />,
+}));
 jest.mock('@/ai/components/AgentChatStreamSubscriptionEffect', () => ({
   AgentChatStreamSubscriptionEffect: () => (
     <div data-testid="stream-subscription" />
@@ -58,6 +61,7 @@ describe('AgentChatRuntimeEffects', () => {
 
     expect(getByTestId('messages-fetch')).toBeInTheDocument();
     expect(getByTestId('participants-fetch')).toBeInTheDocument();
+    expect(getByTestId('reads-fetch')).toBeInTheDocument();
     expect(getByTestId('stream-subscription')).toBeInTheDocument();
     expect(getByTestId('preprompt')).toBeInTheDocument();
     expect(getByTestId('keep-alive')).toBeInTheDocument();
