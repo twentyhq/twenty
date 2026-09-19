@@ -1540,7 +1540,7 @@ export class AgentChatService {
       }
 
       if (
-        question.allowMultiSelect !== true &&
+        !question.allowMultiSelect &&
         answer.selectedOptionIndices.length > 1
       ) {
         throw new AiException(

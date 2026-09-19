@@ -44,8 +44,7 @@ export const askQuestionsInputSchema = z.object({
           .max(4)
           .refine(
             (options) =>
-              options.filter((option) => option.isRecommended === true)
-                .length <= 1,
+              options.filter((option) => option.isRecommended).length <= 1,
             { message: 'At most one option can be marked as recommended.' },
           )
           .describe('2-4 mutually exclusive options.'),
