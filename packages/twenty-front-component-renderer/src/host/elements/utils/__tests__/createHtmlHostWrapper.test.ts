@@ -6,6 +6,8 @@ import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { jsx } from 'react/jsx-runtime';
 
+import { type HtmlCommonMethods } from '@/types/HtmlCommonMethods';
+
 import { createHtmlHostWrapper } from '../createHtmlHostWrapper';
 
 (
@@ -236,19 +238,35 @@ describe('createHtmlHostWrapper client events', () => {
     expect(handleFocusIn).toHaveBeenCalledTimes(1);
   });
 
-  it('should not pass the remote dom instance ref to the dom element', () => {
+  it('should expose only focus and blur through the remote dom instance ref', () => {
     const instanceRef = { current: null as unknown };
 
     act(() => {
       root.render(
-        createWrapperElement(createHtmlHostWrapper('div'), {
+        createWrapperElement(createHtmlHostWrapper('input'), {
           [REMOTE_ELEMENT_PROP]: { id: '7' },
           ref: instanceRef,
         }),
       );
     });
 
-    expect(instanceRef.current).toBeNull();
+    const node = container.firstElementChild as HTMLInputElement;
+    const instance = instanceRef.current as HtmlCommonMethods;
+
+    expect(instance).not.toBe(node);
+    expect(Object.keys(instance).sort()).toEqual(['blur', 'focus']);
+
+    act(() => {
+      instance.focus();
+    });
+
+    expect(document.activeElement).toBe(node);
+
+    act(() => {
+      instance.blur();
+    });
+
+    expect(document.activeElement).not.toBe(node);
   });
 
   it('should stop forwarding focusin after the handler prop is removed', () => {

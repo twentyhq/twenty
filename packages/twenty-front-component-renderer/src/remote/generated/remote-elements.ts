@@ -8,6 +8,8 @@ import {
 } from '@remote-dom/core/elements';
 import { applySerializedEventProperties } from '@/remote/elements/utils/applySerializedEventProperties';
 import { applySerializedEventTargetProperties } from '@/remote/elements/utils/applySerializedEventTargetProperties';
+import { HTML_COMMON_METHODS } from '@/constants/HtmlCommonMethods';
+import { type HtmlCommonMethods } from '@/types/HtmlCommonMethods';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export type HtmlCommonProperties = {
@@ -156,7 +158,7 @@ const HTML_COMMON_PROPERTIES_CONFIG = {
 };
 export const HtmlDivElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -164,10 +166,11 @@ export const HtmlDivElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlSpanElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -175,10 +178,11 @@ export const HtmlSpanElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlSectionElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -186,10 +190,11 @@ export const HtmlSectionElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlArticleElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -197,10 +202,11 @@ export const HtmlArticleElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlHeaderElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -208,10 +214,11 @@ export const HtmlHeaderElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlFooterElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -219,10 +226,11 @@ export const HtmlFooterElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlMainElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -230,10 +238,11 @@ export const HtmlMainElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlNavElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -241,10 +250,11 @@ export const HtmlNavElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlAsideElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -252,10 +262,11 @@ export const HtmlAsideElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlPElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -263,10 +274,11 @@ export const HtmlPElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlH1Element = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -274,10 +286,11 @@ export const HtmlH1Element = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlH2Element = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -285,10 +298,11 @@ export const HtmlH2Element = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlH3Element = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -296,10 +310,11 @@ export const HtmlH3Element = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlH4Element = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -307,10 +322,11 @@ export const HtmlH4Element = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlH5Element = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -318,10 +334,11 @@ export const HtmlH5Element = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlH6Element = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -329,10 +346,11 @@ export const HtmlH6Element = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlStrongElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -340,10 +358,11 @@ export const HtmlStrongElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlEmElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -351,10 +370,11 @@ export const HtmlEmElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlSmallElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -362,10 +382,11 @@ export const HtmlSmallElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlCodeElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -373,10 +394,11 @@ export const HtmlCodeElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlPreElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -384,10 +406,11 @@ export const HtmlPreElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlBlockquoteElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -395,6 +418,7 @@ export const HtmlBlockquoteElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlAProperties = HtmlCommonProperties & {
@@ -405,7 +429,7 @@ export type HtmlAProperties = HtmlCommonProperties & {
 
 export const HtmlAElement = createRemoteElement<
   HtmlAProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -418,6 +442,7 @@ export const HtmlAElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlImgProperties = HtmlCommonProperties & {
@@ -429,7 +454,7 @@ export type HtmlImgProperties = HtmlCommonProperties & {
 
 export const HtmlImgElement = createRemoteElement<
   HtmlImgProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents & {
     load(event: RemoteEvent<SerializedEventData>): void;
@@ -448,10 +473,11 @@ export const HtmlImgElement = createRemoteElement<
     load: createSerializedEventConfig('load'),
     error: createSerializedEventConfig('error'),
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlUlElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -459,10 +485,11 @@ export const HtmlUlElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlOlElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -470,10 +497,11 @@ export const HtmlOlElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlLiElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -481,6 +509,7 @@ export const HtmlLiElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlFormProperties = HtmlCommonProperties & {
@@ -490,7 +519,7 @@ export type HtmlFormProperties = HtmlCommonProperties & {
 
 export const HtmlFormElement = createRemoteElement<
   HtmlFormProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -502,6 +531,7 @@ export const HtmlFormElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlLabelProperties = HtmlCommonProperties & {
@@ -510,7 +540,7 @@ export type HtmlLabelProperties = HtmlCommonProperties & {
 
 export const HtmlLabelElement = createRemoteElement<
   HtmlLabelProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -521,6 +551,7 @@ export const HtmlLabelElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlInputProperties = HtmlCommonProperties & {
@@ -538,7 +569,7 @@ export type HtmlInputProperties = HtmlCommonProperties & {
 
 export const HtmlInputElement = createRemoteElement<
   HtmlInputProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents & {
     beforeinput(event: RemoteEvent<SerializedEventData>): void;
@@ -573,6 +604,7 @@ export const HtmlInputElement = createRemoteElement<
     paste: createSerializedEventConfig('paste'),
     cut: createSerializedEventConfig('cut'),
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlTextareaProperties = HtmlCommonProperties & {
@@ -587,7 +619,7 @@ export type HtmlTextareaProperties = HtmlCommonProperties & {
 
 export const HtmlTextareaElement = createRemoteElement<
   HtmlTextareaProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents & {
     beforeinput(event: RemoteEvent<SerializedEventData>): void;
@@ -619,6 +651,7 @@ export const HtmlTextareaElement = createRemoteElement<
     paste: createSerializedEventConfig('paste'),
     cut: createSerializedEventConfig('cut'),
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlSelectProperties = HtmlCommonProperties & {
@@ -630,7 +663,7 @@ export type HtmlSelectProperties = HtmlCommonProperties & {
 
 export const HtmlSelectElement = createRemoteElement<
   HtmlSelectProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -644,6 +677,7 @@ export const HtmlSelectElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlOptionProperties = HtmlCommonProperties & {
@@ -654,7 +688,7 @@ export type HtmlOptionProperties = HtmlCommonProperties & {
 
 export const HtmlOptionElement = createRemoteElement<
   HtmlOptionProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -667,6 +701,7 @@ export const HtmlOptionElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlButtonProperties = HtmlCommonProperties & {
@@ -676,7 +711,7 @@ export type HtmlButtonProperties = HtmlCommonProperties & {
 
 export const HtmlButtonElement = createRemoteElement<
   HtmlButtonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -688,10 +723,11 @@ export const HtmlButtonElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlTableElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -699,10 +735,11 @@ export const HtmlTableElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlTheadElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -710,10 +747,11 @@ export const HtmlTheadElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlTbodyElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -721,10 +759,11 @@ export const HtmlTbodyElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlTfootElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -732,10 +771,11 @@ export const HtmlTfootElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlTrElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -743,6 +783,7 @@ export const HtmlTrElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlThProperties = HtmlCommonProperties & {
@@ -752,7 +793,7 @@ export type HtmlThProperties = HtmlCommonProperties & {
 
 export const HtmlThElement = createRemoteElement<
   HtmlThProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -764,6 +805,7 @@ export const HtmlThElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlTdProperties = HtmlCommonProperties & {
@@ -773,7 +815,7 @@ export type HtmlTdProperties = HtmlCommonProperties & {
 
 export const HtmlTdElement = createRemoteElement<
   HtmlTdProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -785,10 +827,11 @@ export const HtmlTdElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlBrElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -796,10 +839,11 @@ export const HtmlBrElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlHrElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -807,6 +851,7 @@ export const HtmlHrElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlIframeProperties = HtmlCommonProperties & {
@@ -824,7 +869,7 @@ export type HtmlIframeProperties = HtmlCommonProperties & {
 
 export const HtmlIframeElement = createRemoteElement<
   HtmlIframeProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -844,6 +889,7 @@ export const HtmlIframeElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlVideoProperties = HtmlCommonProperties & {
@@ -864,7 +910,7 @@ export type HtmlVideoProperties = HtmlCommonProperties & {
 
 export const HtmlVideoElement = createRemoteElement<
   HtmlVideoProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents & {
     timeupdate(event: RemoteEvent<SerializedEventData>): void;
@@ -926,6 +972,7 @@ export const HtmlVideoElement = createRemoteElement<
     suspend: createSerializedEventConfig('suspend'),
     emptied: createSerializedEventConfig('emptied'),
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlAudioProperties = HtmlCommonProperties & {
@@ -940,7 +987,7 @@ export type HtmlAudioProperties = HtmlCommonProperties & {
 
 export const HtmlAudioElement = createRemoteElement<
   HtmlAudioProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents & {
     timeupdate(event: RemoteEvent<SerializedEventData>): void;
@@ -996,6 +1043,7 @@ export const HtmlAudioElement = createRemoteElement<
     suspend: createSerializedEventConfig('suspend'),
     emptied: createSerializedEventConfig('emptied'),
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlSourceProperties = HtmlCommonProperties & {
@@ -1010,7 +1058,7 @@ export type HtmlSourceProperties = HtmlCommonProperties & {
 
 export const HtmlSourceElement = createRemoteElement<
   HtmlSourceProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1027,10 +1075,11 @@ export const HtmlSourceElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlBElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1038,10 +1087,11 @@ export const HtmlBElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlIElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1049,10 +1099,11 @@ export const HtmlIElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlUElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1060,10 +1111,11 @@ export const HtmlUElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlSElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1071,10 +1123,11 @@ export const HtmlSElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlMarkElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1082,10 +1135,11 @@ export const HtmlMarkElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlSubElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1093,10 +1147,11 @@ export const HtmlSubElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlSupElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1104,10 +1159,11 @@ export const HtmlSupElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlAbbrElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1115,10 +1171,11 @@ export const HtmlAbbrElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlCiteElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1126,10 +1183,11 @@ export const HtmlCiteElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlKbdElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1137,10 +1195,11 @@ export const HtmlKbdElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlSampElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1148,10 +1207,11 @@ export const HtmlSampElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlVarElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1159,10 +1219,11 @@ export const HtmlVarElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlDfnElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1170,10 +1231,11 @@ export const HtmlDfnElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlBdiElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1181,6 +1243,7 @@ export const HtmlBdiElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlBdoProperties = HtmlCommonProperties & {
@@ -1189,7 +1252,7 @@ export type HtmlBdoProperties = HtmlCommonProperties & {
 
 export const HtmlBdoElement = createRemoteElement<
   HtmlBdoProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1200,6 +1263,7 @@ export const HtmlBdoElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlDataProperties = HtmlCommonProperties & {
@@ -1208,7 +1272,7 @@ export type HtmlDataProperties = HtmlCommonProperties & {
 
 export const HtmlDataElement = createRemoteElement<
   HtmlDataProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1219,6 +1283,7 @@ export const HtmlDataElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlDelProperties = HtmlCommonProperties & {
@@ -1228,7 +1293,7 @@ export type HtmlDelProperties = HtmlCommonProperties & {
 
 export const HtmlDelElement = createRemoteElement<
   HtmlDelProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1240,6 +1305,7 @@ export const HtmlDelElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlInsProperties = HtmlCommonProperties & {
@@ -1249,7 +1315,7 @@ export type HtmlInsProperties = HtmlCommonProperties & {
 
 export const HtmlInsElement = createRemoteElement<
   HtmlInsProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1261,6 +1327,7 @@ export const HtmlInsElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlQProperties = HtmlCommonProperties & {
@@ -1269,7 +1336,7 @@ export type HtmlQProperties = HtmlCommonProperties & {
 
 export const HtmlQElement = createRemoteElement<
   HtmlQProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1280,6 +1347,7 @@ export const HtmlQElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlTimeProperties = HtmlCommonProperties & {
@@ -1288,7 +1356,7 @@ export type HtmlTimeProperties = HtmlCommonProperties & {
 
 export const HtmlTimeElement = createRemoteElement<
   HtmlTimeProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1299,10 +1367,11 @@ export const HtmlTimeElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlRubyElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1310,10 +1379,11 @@ export const HtmlRubyElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlRtElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1321,10 +1391,11 @@ export const HtmlRtElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlRpElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1332,10 +1403,11 @@ export const HtmlRpElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlDlElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1343,10 +1415,11 @@ export const HtmlDlElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlDtElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1354,10 +1427,11 @@ export const HtmlDtElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlDdElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1365,10 +1439,11 @@ export const HtmlDdElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlFigureElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1376,10 +1451,11 @@ export const HtmlFigureElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlFigcaptionElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1387,6 +1463,7 @@ export const HtmlFigcaptionElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlDetailsProperties = HtmlCommonProperties & {
@@ -1395,7 +1472,7 @@ export type HtmlDetailsProperties = HtmlCommonProperties & {
 
 export const HtmlDetailsElement = createRemoteElement<
   HtmlDetailsProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents & { toggle(event: RemoteEvent<SerializedEventData>): void }
 >({
@@ -1407,10 +1484,11 @@ export const HtmlDetailsElement = createRemoteElement<
     ...HTML_COMMON_EVENTS_CONFIG,
     toggle: createSerializedEventConfig('toggle'),
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlSummaryElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1418,10 +1496,11 @@ export const HtmlSummaryElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlAddressElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1429,6 +1508,7 @@ export const HtmlAddressElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlDialogProperties = HtmlCommonProperties & {
@@ -1437,7 +1517,7 @@ export type HtmlDialogProperties = HtmlCommonProperties & {
 
 export const HtmlDialogElement = createRemoteElement<
   HtmlDialogProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents & { toggle(event: RemoteEvent<SerializedEventData>): void }
 >({
@@ -1449,10 +1529,11 @@ export const HtmlDialogElement = createRemoteElement<
     ...HTML_COMMON_EVENTS_CONFIG,
     toggle: createSerializedEventConfig('toggle'),
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlHgroupElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1460,10 +1541,11 @@ export const HtmlHgroupElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlSearchElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1471,10 +1553,11 @@ export const HtmlSearchElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlCaptionElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1482,6 +1565,7 @@ export const HtmlCaptionElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlColgroupProperties = HtmlCommonProperties & {
@@ -1490,7 +1574,7 @@ export type HtmlColgroupProperties = HtmlCommonProperties & {
 
 export const HtmlColgroupElement = createRemoteElement<
   HtmlColgroupProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1501,6 +1585,7 @@ export const HtmlColgroupElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlColProperties = HtmlCommonProperties & {
@@ -1509,7 +1594,7 @@ export type HtmlColProperties = HtmlCommonProperties & {
 
 export const HtmlColElement = createRemoteElement<
   HtmlColProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1520,6 +1605,7 @@ export const HtmlColElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlFieldsetProperties = HtmlCommonProperties & {
@@ -1529,7 +1615,7 @@ export type HtmlFieldsetProperties = HtmlCommonProperties & {
 
 export const HtmlFieldsetElement = createRemoteElement<
   HtmlFieldsetProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1541,10 +1627,11 @@ export const HtmlFieldsetElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlLegendElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1552,6 +1639,7 @@ export const HtmlLegendElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlOutputProperties = HtmlCommonProperties & {
@@ -1561,7 +1649,7 @@ export type HtmlOutputProperties = HtmlCommonProperties & {
 
 export const HtmlOutputElement = createRemoteElement<
   HtmlOutputProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1573,6 +1661,7 @@ export const HtmlOutputElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlProgressProperties = HtmlCommonProperties & {
@@ -1582,7 +1671,7 @@ export type HtmlProgressProperties = HtmlCommonProperties & {
 
 export const HtmlProgressElement = createRemoteElement<
   HtmlProgressProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1594,6 +1683,7 @@ export const HtmlProgressElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlMeterProperties = HtmlCommonProperties & {
@@ -1607,7 +1697,7 @@ export type HtmlMeterProperties = HtmlCommonProperties & {
 
 export const HtmlMeterElement = createRemoteElement<
   HtmlMeterProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1623,6 +1713,7 @@ export const HtmlMeterElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlOptgroupProperties = HtmlCommonProperties & {
@@ -1632,7 +1723,7 @@ export type HtmlOptgroupProperties = HtmlCommonProperties & {
 
 export const HtmlOptgroupElement = createRemoteElement<
   HtmlOptgroupProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1644,10 +1735,11 @@ export const HtmlOptgroupElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlDatalistElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1655,10 +1747,11 @@ export const HtmlDatalistElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlPictureElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1666,6 +1759,7 @@ export const HtmlPictureElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlTrackProperties = HtmlCommonProperties & {
@@ -1678,7 +1772,7 @@ export type HtmlTrackProperties = HtmlCommonProperties & {
 
 export const HtmlTrackElement = createRemoteElement<
   HtmlTrackProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1693,10 +1787,11 @@ export const HtmlTrackElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlWbrElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1704,10 +1799,11 @@ export const HtmlWbrElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlMenuElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1715,6 +1811,7 @@ export const HtmlMenuElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlSvgProperties = HtmlCommonProperties & {
@@ -1745,7 +1842,7 @@ export type HtmlSvgProperties = HtmlCommonProperties & {
 
 export const HtmlSvgElement = createRemoteElement<
   HtmlSvgProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1778,6 +1875,7 @@ export const HtmlSvgElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlGProperties = HtmlCommonProperties & {
@@ -1803,7 +1901,7 @@ export type HtmlGProperties = HtmlCommonProperties & {
 
 export const HtmlGElement = createRemoteElement<
   HtmlGProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1831,10 +1929,11 @@ export const HtmlGElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlDefsElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1842,6 +1941,7 @@ export const HtmlDefsElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlSymbolProperties = HtmlCommonProperties & {
@@ -1850,7 +1950,7 @@ export type HtmlSymbolProperties = HtmlCommonProperties & {
 
 export const HtmlSymbolElement = createRemoteElement<
   HtmlSymbolProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1861,6 +1961,7 @@ export const HtmlSymbolElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlUseProperties = HtmlCommonProperties & {
@@ -1873,7 +1974,7 @@ export type HtmlUseProperties = HtmlCommonProperties & {
 
 export const HtmlUseElement = createRemoteElement<
   HtmlUseProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1888,6 +1989,7 @@ export const HtmlUseElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlClipPathProperties = HtmlCommonProperties & {
@@ -1896,7 +1998,7 @@ export type HtmlClipPathProperties = HtmlCommonProperties & {
 
 export const HtmlClipPathElement = createRemoteElement<
   HtmlClipPathProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1907,6 +2009,7 @@ export const HtmlClipPathElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlMaskProperties = HtmlCommonProperties & {
@@ -1915,7 +2018,7 @@ export type HtmlMaskProperties = HtmlCommonProperties & {
 
 export const HtmlMaskElement = createRemoteElement<
   HtmlMaskProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1926,6 +2029,7 @@ export const HtmlMaskElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlCircleProperties = HtmlCommonProperties & {
@@ -1954,7 +2058,7 @@ export type HtmlCircleProperties = HtmlCommonProperties & {
 
 export const HtmlCircleElement = createRemoteElement<
   HtmlCircleProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -1985,6 +2089,7 @@ export const HtmlCircleElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlEllipseProperties = HtmlCommonProperties & {
@@ -2014,7 +2119,7 @@ export type HtmlEllipseProperties = HtmlCommonProperties & {
 
 export const HtmlEllipseElement = createRemoteElement<
   HtmlEllipseProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2046,6 +2151,7 @@ export const HtmlEllipseElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlRectProperties = HtmlCommonProperties & {
@@ -2077,7 +2183,7 @@ export type HtmlRectProperties = HtmlCommonProperties & {
 
 export const HtmlRectElement = createRemoteElement<
   HtmlRectProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2111,6 +2217,7 @@ export const HtmlRectElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlLineProperties = HtmlCommonProperties & {
@@ -2140,7 +2247,7 @@ export type HtmlLineProperties = HtmlCommonProperties & {
 
 export const HtmlLineElement = createRemoteElement<
   HtmlLineProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2172,6 +2279,7 @@ export const HtmlLineElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlPathProperties = HtmlCommonProperties & {
@@ -2198,7 +2306,7 @@ export type HtmlPathProperties = HtmlCommonProperties & {
 
 export const HtmlPathElement = createRemoteElement<
   HtmlPathProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2227,6 +2335,7 @@ export const HtmlPathElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlPolygonProperties = HtmlCommonProperties & {
@@ -2253,7 +2362,7 @@ export type HtmlPolygonProperties = HtmlCommonProperties & {
 
 export const HtmlPolygonElement = createRemoteElement<
   HtmlPolygonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2282,6 +2391,7 @@ export const HtmlPolygonElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlPolylineProperties = HtmlCommonProperties & {
@@ -2308,7 +2418,7 @@ export type HtmlPolylineProperties = HtmlCommonProperties & {
 
 export const HtmlPolylineElement = createRemoteElement<
   HtmlPolylineProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2337,6 +2447,7 @@ export const HtmlPolylineElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlTextProperties = HtmlCommonProperties & {
@@ -2368,7 +2479,7 @@ export type HtmlTextProperties = HtmlCommonProperties & {
 
 export const HtmlTextElement = createRemoteElement<
   HtmlTextProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2402,6 +2513,7 @@ export const HtmlTextElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlTspanProperties = HtmlCommonProperties & {
@@ -2431,7 +2543,7 @@ export type HtmlTspanProperties = HtmlCommonProperties & {
 
 export const HtmlTspanElement = createRemoteElement<
   HtmlTspanProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2463,6 +2575,7 @@ export const HtmlTspanElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlLinearGradientProperties = HtmlCommonProperties & {
@@ -2476,7 +2589,7 @@ export type HtmlLinearGradientProperties = HtmlCommonProperties & {
 
 export const HtmlLinearGradientElement = createRemoteElement<
   HtmlLinearGradientProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2492,6 +2605,7 @@ export const HtmlLinearGradientElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlRadialGradientProperties = HtmlCommonProperties & {
@@ -2506,7 +2620,7 @@ export type HtmlRadialGradientProperties = HtmlCommonProperties & {
 
 export const HtmlRadialGradientElement = createRemoteElement<
   HtmlRadialGradientProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2523,6 +2637,7 @@ export const HtmlRadialGradientElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlStopProperties = HtmlCommonProperties & {
@@ -2533,7 +2648,7 @@ export type HtmlStopProperties = HtmlCommonProperties & {
 
 export const HtmlStopElement = createRemoteElement<
   HtmlStopProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2546,6 +2661,7 @@ export const HtmlStopElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlPatternProperties = HtmlCommonProperties & {
@@ -2559,7 +2675,7 @@ export type HtmlPatternProperties = HtmlCommonProperties & {
 
 export const HtmlPatternElement = createRemoteElement<
   HtmlPatternProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2575,6 +2691,7 @@ export const HtmlPatternElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlImageProperties = HtmlCommonProperties & {
@@ -2588,7 +2705,7 @@ export type HtmlImageProperties = HtmlCommonProperties & {
 
 export const HtmlImageElement = createRemoteElement<
   HtmlImageProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2604,6 +2721,7 @@ export const HtmlImageElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlForeignObjectProperties = HtmlCommonProperties & {
@@ -2615,7 +2733,7 @@ export type HtmlForeignObjectProperties = HtmlCommonProperties & {
 
 export const HtmlForeignObjectElement = createRemoteElement<
   HtmlForeignObjectProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2629,6 +2747,7 @@ export const HtmlForeignObjectElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type HtmlMarkerProperties = HtmlCommonProperties & {
@@ -2642,7 +2761,7 @@ export type HtmlMarkerProperties = HtmlCommonProperties & {
 
 export const HtmlMarkerElement = createRemoteElement<
   HtmlMarkerProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2658,10 +2777,11 @@ export const HtmlMarkerElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 export const HtmlTitleElement = createRemoteElement<
   HtmlCommonProperties,
-  Record<string, never>,
+  HtmlCommonMethods,
   Record<string, never>,
   HtmlCommonEvents
 >({
@@ -2669,6 +2789,7 @@ export const HtmlTitleElement = createRemoteElement<
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },
+  methods: HTML_COMMON_METHODS,
 });
 
 export type RemoteStyleProperties = {

@@ -265,6 +265,10 @@ const generateElementDefinition = (
     eventsType = `{ ${customEventsInline} }`;
   }
 
+  const methodsType = isHtml
+    ? TYPE_NAMES.COMMON_METHODS
+    : TYPE_NAMES.EMPTY_RECORD;
+
   sourceFile.addVariableStatement({
     isExported: true,
     declarationKind: VariableDeclarationKind.Const,
@@ -276,14 +280,14 @@ const generateElementDefinition = (
           writer.newLine();
           writer.indent(() => {
             writer.writeLine(`${propsType},`);
-            writer.writeLine('Record<string, never>,');
+            writer.writeLine(`${methodsType},`);
             writer.writeLine(`${TYPE_NAMES.EMPTY_RECORD},`);
             writer.write(eventsType);
           });
           writer.newLine();
           writer.write('>');
 
-          const hasConfig = hasProps || hasEvents;
+          const hasConfig = hasProps || hasEvents || isHtml;
           if (!hasConfig) {
             writer.write('({})');
             return;
@@ -331,6 +335,9 @@ const generateElementDefinition = (
               });
               writer.write(',');
               writer.newLine();
+            }
+            if (isHtml) {
+              writer.writeLine(`methods: ${TYPE_NAMES.COMMON_METHODS_ARRAY},`);
             }
           });
           writer.write(')');
@@ -419,6 +426,16 @@ export const generateRemoteElements = (
     moduleSpecifier:
       '@/remote/elements/utils/applySerializedEventTargetProperties',
     namedImports: ['applySerializedEventTargetProperties'],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '@/constants/HtmlCommonMethods',
+    namedImports: [TYPE_NAMES.COMMON_METHODS_ARRAY],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '@/types/HtmlCommonMethods',
+    namedImports: [{ name: TYPE_NAMES.COMMON_METHODS, isTypeOnly: true }],
   });
 
   sourceFile.addImportDeclaration({

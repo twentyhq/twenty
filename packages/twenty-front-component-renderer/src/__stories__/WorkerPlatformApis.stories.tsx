@@ -101,6 +101,31 @@ const classListTest: Story['play'] = async ({ canvasElement }) => {
   expect(errorHandler).not.toHaveBeenCalled();
 };
 
+const imperativeFocusTest: Story['play'] = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  const focusButton = await canvas.findByRole(
+    'button',
+    { name: 'Focus input' },
+    { timeout: MOUNT_TIMEOUT },
+  );
+  const focusTarget = canvas.getByRole('textbox', { name: 'Focus target' });
+
+  await userEvent.click(focusButton);
+
+  await waitFor(() => expect(focusTarget).toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+
+  await userEvent.keyboard('{Escape}');
+
+  await waitFor(() => expect(focusTarget).not.toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+
+  expect(errorHandler).not.toHaveBeenCalled();
+};
+
 const createStory = ({
   name,
   play,
@@ -135,5 +160,14 @@ export const ClassListReact: Story = createStory({
 export const ClassListPreact: Story = createStory({
   name: 'class-list-example',
   play: classListTest,
+  runtime: 'preact',
+});
+export const ImperativeFocusReact: Story = createStory({
+  name: 'imperative-focus-example',
+  play: imperativeFocusTest,
+});
+export const ImperativeFocusPreact: Story = createStory({
+  name: 'imperative-focus-example',
+  play: imperativeFocusTest,
   runtime: 'preact',
 });

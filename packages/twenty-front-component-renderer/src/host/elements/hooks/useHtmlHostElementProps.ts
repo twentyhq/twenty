@@ -1,8 +1,9 @@
-import { useContext } from 'react';
+import { type Ref, useContext } from 'react';
 
 import { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
 import { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 import { useComposedElementRef } from '@/host/elements/hooks/useComposedElementRef';
+import { useHtmlCommonMethodsElementRef } from '@/host/elements/hooks/useHtmlCommonMethodsElementRef';
 import { useGeometryNodeRef } from '@/host/geometry/hooks/useGeometryNodeRef';
 import { useReactUnsupportedEventListenerRef } from '@/host/events/hooks/useReactUnsupportedEventListenerRef';
 import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
@@ -12,6 +13,7 @@ import { extractReactUnsupportedEventHandlers } from '@/host/events/utils/extrac
 import { getRemoteElementIdFromProps } from '@/host/elements/utils/getRemoteElementIdFromProps';
 import { preventDefaultThenForwardToRemote } from '@/host/events/utils/preventDefaultThenForwardToRemote';
 import { sanitizeIframeSandbox } from '@/host/elements/utils/sanitizeIframeSandbox';
+import { type HtmlCommonMethods } from '@/types/HtmlCommonMethods';
 
 type HtmlHostElementProps = {
   setEditableFocused: SetEditableFocused | null;
@@ -39,9 +41,14 @@ export const useHtmlHostElementProps = (
 
   const geometryNodeRef = useGeometryNodeRef(remoteElementId);
 
+  const htmlCommonMethodsElementRef = useHtmlCommonMethodsElementRef(
+    props.ref as Ref<HtmlCommonMethods> | undefined,
+  );
+
   const composedElementRef = useComposedElementRef([
     reactUnsupportedEventListenerRef,
     geometryNodeRef,
+    htmlCommonMethodsElementRef,
   ]);
 
   const hostEnforcedProps: Record<string, unknown> = {
