@@ -32,18 +32,18 @@ export const useAiChatOwnMessageReadReceipt = (
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const messages = useAtomComponentFamilyStateValue(
+  const agentChatMessages = useAtomComponentFamilyStateValue(
     agentChatMessagesComponentFamilyState,
     { threadId: agentChatDisplayedThread },
   );
-  const reads = useAtomComponentFamilyStateValue(
+  const agentChatThreadReads = useAtomComponentFamilyStateValue(
     agentChatThreadReadsComponentFamilyState,
     { threadId: agentChatDisplayedThread },
   );
 
   const currentUserWorkspaceId = currentWorkspaceMember?.userWorkspaceId;
 
-  const ownMessages = messages.filter(
+  const ownMessages = agentChatMessages.filter(
     (message) =>
       message.role === AgentMessageRole.USER &&
       isDefined(message.metadata?.authorUserWorkspaceId) &&
@@ -68,7 +68,7 @@ export const useAiChatOwnMessageReadReceipt = (
 
   const messageCreatedAtTime = new Date(messageCreatedAt).getTime();
 
-  const readers = reads.flatMap((read) => {
+  const readers = agentChatThreadReads.flatMap((read) => {
     if (
       read.userWorkspaceId === currentUserWorkspaceId ||
       new Date(read.lastReadAt).getTime() < messageCreatedAtTime

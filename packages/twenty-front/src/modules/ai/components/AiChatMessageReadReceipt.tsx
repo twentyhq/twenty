@@ -11,9 +11,7 @@ const MAX_NAMED_READERS = 2;
 const StyledReceiptRow = styled.div<{ isRead: boolean }>`
   align-items: center;
   color: ${({ isRead }) =>
-    isRead
-      ? themeCssVariables.color.blue
-      : themeCssVariables.font.color.light};
+    isRead ? themeCssVariables.color.blue : themeCssVariables.font.color.light};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
