@@ -1,39 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { MessageChannelSyncStage } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
-
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-sync-retry-initial-delay-ms.constant';
+import { WEBHOOK_SYNC_RETRY_JITTER } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-sync-retry-jitter.constant';
+import { WEBHOOK_SYNC_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-sync-retry-limit.constant';
 import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
 import { CalendarEventWebhookSyncJob } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/jobs/calendar-event-webhook-sync.job';
 import { type CalendarEventWebhookSyncJobData } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/types/calendar-event-webhook-sync-job-data.type';
-import { CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-debounce-ms.constant';
-import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-initial-delay-ms.constant';
-import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_JITTER } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-jitter.constant';
-import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-limit.constant';
-import {
-  MessagingMessageListFetchJob,
-  type MessagingMessageListFetchJobData,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { MessagingMessageWebhookSyncJob } from 'src/modules/connected-account-sync-webhooks/messaging-message-webhook-sync/jobs/messaging-message-webhook-sync.job';
+import { type MessagingMessageWebhookSyncJobData } from 'src/modules/connected-account-sync-webhooks/messaging-message-webhook-sync/types/messaging-message-webhook-sync-job-data.type';
 
 @Injectable()
 export class WebhookSyncTriggerService {
   constructor(
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messagingQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.connectedAccountSyncWebhookQueue)
     private readonly connectedAccountSyncWebhookQueueService: MessageQueueService,
-    @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
-    private readonly cacheStorage: CacheStorageService,
-    @InjectRepository(MessageChannelEntity)
-    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly workspaceActivationService: WorkspaceActivationService,
   ) {}
 
@@ -50,46 +33,22 @@ export class WebhookSyncTriggerService {
       return;
     }
 
-    const updateResult = await this.messageChannelRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-        syncStageStartedAt: new Date(),
-      })
-      .where({
-        id: messageChannelId,
-        workspaceId,
-        isSyncEnabled: true,
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-      })
-      .returning('id')
-      .execute();
-
-    if (updateResult.raw.length === 0) {
-      return;
-    }
-
-    try {
-      await this.messagingQueueService.add<MessagingMessageListFetchJobData>(
-        MessagingMessageListFetchJob.name,
-        { workspaceId, messageChannelId },
-      );
-    } catch (error) {
-      await this.messageChannelRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-        })
-        .where({
-          id: messageChannelId,
-          workspaceId,
-        })
-        .execute();
-
-      throw error;
-    }
+    await this.connectedAccountSyncWebhookQueueService.add<MessagingMessageWebhookSyncJobData>(
+      MessagingMessageWebhookSyncJob.name,
+      { workspaceId, messageChannelId },
+      {
+        deduplication: {
+          id: `messaging-message-webhook-sync:${workspaceId}:${messageChannelId}`,
+          keepLastIfActive: true,
+        },
+        retryLimit: WEBHOOK_SYNC_RETRY_LIMIT,
+        backoff: {
+          strategy: 'exponential',
+          initialDelayMilliseconds: WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
+          jitter: WEBHOOK_SYNC_RETRY_JITTER,
+        },
+      },
+    );
   }
 
   async triggerCalendarSync(
@@ -105,37 +64,21 @@ export class WebhookSyncTriggerService {
       return;
     }
 
-    const debounceCacheKey = `calendar-event-webhook-sync-debounce:${workspaceId}:${calendarChannelId}`;
-
-    const hasOpenedDebounceWindow = await this.cacheStorage.setIfAbsent(
-      debounceCacheKey,
-      true,
-      CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS,
-    );
-
-    if (!hasOpenedDebounceWindow) {
-      return;
-    }
-
-    try {
-      await this.connectedAccountSyncWebhookQueueService.add<CalendarEventWebhookSyncJobData>(
-        CalendarEventWebhookSyncJob.name,
-        { workspaceId, calendarChannelId },
-        {
-          delay: CALENDAR_EVENT_WEBHOOK_SYNC_DEBOUNCE_MS,
-          retryLimit: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT,
-          backoff: {
-            strategy: 'exponential',
-            initialDelayMilliseconds:
-              CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
-            jitter: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_JITTER,
-          },
+    await this.connectedAccountSyncWebhookQueueService.add<CalendarEventWebhookSyncJobData>(
+      CalendarEventWebhookSyncJob.name,
+      { workspaceId, calendarChannelId },
+      {
+        deduplication: {
+          id: `calendar-event-webhook-sync:${workspaceId}:${calendarChannelId}`,
+          keepLastIfActive: true,
         },
-      );
-    } catch (error) {
-      await this.cacheStorage.del(debounceCacheKey);
-
-      throw error;
-    }
+        retryLimit: WEBHOOK_SYNC_RETRY_LIMIT,
+        backoff: {
+          strategy: 'exponential',
+          initialDelayMilliseconds: WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
+          jitter: WEBHOOK_SYNC_RETRY_JITTER,
+        },
+      },
+    );
   }
 }
