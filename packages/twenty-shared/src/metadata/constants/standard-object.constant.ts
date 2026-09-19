@@ -715,6 +715,24 @@ export const STANDARD_OBJECTS = {
           'createdAt',
         ],
       }),
+      messageRecordPageFields: buildStandardObjectRecordPageFieldsView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message,
+        fields: STANDARD_OBJECT_FIELDS.message,
+        viewFieldNames: [
+          'messageThread',
+          'messageParticipants',
+          'receivedAt',
+          'text',
+          'headerMessageId',
+          'createdAt',
+          'createdBy',
+        ],
+        viewFieldGroupNames: {
+          general: 'General',
+          system: 'System',
+        },
+      }),
     },
   },
   note: {

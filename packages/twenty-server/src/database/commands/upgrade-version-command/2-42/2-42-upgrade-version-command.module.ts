@@ -8,6 +8,8 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { UnpinCreationCommandsOnRecordSelectionCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789634112046-unpin-creation-commands-on-record-selection.command';
 import { BackfillMissingSystemRelationIndexesCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789663454000-backfill-missing-system-relation-indexes.command';
 import { RelinkWorkflowVersionsToCoreWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789645879295-relink-workflow-versions-to-core-workflows.command';
+import { SyncMessageRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789757500000-sync-message-record-page.command';
+import { SetMessageTextDisplayedMaxRowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789757500001-set-message-text-displayed-max-rows.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -33,6 +35,8 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     MakeWorkflowRunProjectionRelationsNullableCommand,
     BackfillMissingSystemRelationIndexesCommand,
     PurgeSoftDeletedViewsCommand,
+    SyncMessageRecordPageCommand,
+    SetMessageTextDisplayedMaxRowsCommand,
   ],
   exports: [RelinkWorkflowVersionsToCoreWorkflowsCommand],
 })
