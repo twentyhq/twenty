@@ -168,10 +168,15 @@ describe('BullMQDriver retention', () => {
 
     await driver.add(MessageQueue.workspaceQueue, 'job', {});
 
-    const opts = mockAdd.mock.calls[0][2];
-
-    expect(opts.removeOnComplete).toEqual({ age: 60, count: 0 });
-    expect(opts.removeOnFail).toEqual({ age: 604800, count: 1000 });
+    expect(mockAdd).toHaveBeenCalledTimes(1);
+    expect(mockAdd).toHaveBeenCalledWith(
+      'job',
+      {},
+      expect.objectContaining({
+        removeOnComplete: { age: 60, count: 0 },
+        removeOnFail: { age: 604800, count: 1000 },
+      }),
+    );
   });
 });
 
