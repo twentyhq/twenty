@@ -436,6 +436,7 @@ export class AiModelRegistryService {
       outputCostPerMillionTokens: modelDef.outputCostPerMillionTokens,
       supportedQuestionTypes: [...supportedQuestionTypes],
       maxCriteriaPerQuestion: modelDef.maxCriteriaPerQuestion,
+      maxScoreLevels: modelDef.maxScoreLevels,
       medianLatencyMs: modelDef.medianLatencyMs,
       dataResidency: modelDef.dataResidency ?? config.dataResidency,
       zeroDataRetention: modelDef.zeroDataRetention,
