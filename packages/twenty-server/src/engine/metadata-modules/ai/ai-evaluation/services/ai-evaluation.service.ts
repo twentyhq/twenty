@@ -5,25 +5,17 @@ import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { LanguageModelEvaluationRunner } from 'src/engine/metadata-modules/ai/ai-evaluation/services/language-model-evaluation.runner';
 import { NativeEvaluationRunner } from 'src/engine/metadata-modules/ai/ai-evaluation/services/native-evaluation.runner';
 import { type AiEvaluationRequest } from 'src/engine/metadata-modules/ai/ai-evaluation/types/ai-evaluation-request.type';
-import {
-  type AiEvaluationResult,
-  type AiEvaluationRunnerKind,
-} from 'src/engine/metadata-modules/ai/ai-evaluation/types/ai-evaluation-result.type';
+import { type AiEvaluationResult } from 'src/engine/metadata-modules/ai/ai-evaluation/types/ai-evaluation-result.type';
 import { assertEvaluationQuestionsAreWellFormed } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/assert-evaluation-questions-are-well-formed.util';
+import {
+  resolveEvaluationModel,
+  type ResolvedEvaluationModel,
+} from 'src/engine/metadata-modules/ai/ai-evaluation/utils/resolve-evaluation-model.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-
-type ResolvedEvaluationModel = {
-  modelId: string;
-  runnerKind: AiEvaluationRunnerKind;
-};
 
 // The one entry point for asking a model to decide something. Callers name a
 // model or nothing at all; which kind of model answers is resolved here, so a
@@ -49,7 +41,14 @@ export class AiEvaluationService {
   }: AiEvaluationRequest): Promise<AiEvaluationResult> {
     assertEvaluationQuestionsAreWellFormed(questions);
 
-    const { modelId, runnerKind } = this.resolveModel(requestedModelId);
+    const { modelId, runnerKind, skippedModelId } =
+      this.resolveModel(requestedModelId);
+
+    if (isNonEmptyString(skippedModelId)) {
+      this.logger.warn(
+        `Evaluation model ${skippedModelId} is in the catalog but not runnable; check its provider credentials and that its SDK package is installed. Classifying on ${modelId}.`,
+      );
+    }
 
     const runner =
       runnerKind === 'evaluation-model'
@@ -73,74 +72,33 @@ export class AiEvaluationService {
     return { modelId, runnerKind, answers, usage };
   }
 
-  // An explicit id decides the runner on its own: whichever registry holds it
-  // is the kind of model the operator picked.
+  // Gathers what the registries know, then hands the decision to the util.
   private resolveModel(requestedModelId?: string): ResolvedEvaluationModel {
-    if (
-      !isNonEmptyString(requestedModelId) ||
-      requestedModelId === AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID
-    ) {
-      return this.resolveDefaultModel();
-    }
+    const pinnedModelId = isNonEmptyString(requestedModelId)
+      ? requestedModelId
+      : undefined;
 
-    // Asked of the registry, not the config cache: a catalog entry whose
-    // provider is unconfigured or whose SDK package is absent has a config and
-    // no runnable model, and routing on the config would hand the native runner
-    // an id it cannot resolve.
-    if (
-      isDefined(
-        this.aiModelRegistryService.getEvaluationModel(requestedModelId),
-      )
-    ) {
-      return { modelId: requestedModelId, runnerKind: 'evaluation-model' };
-    }
-
-    if (isDefined(this.aiModelRegistryService.getModel(requestedModelId))) {
-      return { modelId: requestedModelId, runnerKind: 'language-model' };
-    }
-
-    // A typo names nothing at all and stays an error. A model the catalog knows
-    // but cannot run degrades like an unpinned step instead of failing the run,
-    // and runnerKind reports whatever ends up answering.
-    if (
-      !isDefined(
-        this.aiModelRegistryService.getEvaluationModelConfig(requestedModelId),
-      )
-    ) {
-      throw new AiException(
-        `Model ${requestedModelId} is not available for classification.`,
-        AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
-      );
-    }
-
-    this.logger.warn(
-      `Evaluation model ${requestedModelId} is in the catalog but not runnable; check its provider credentials and that its SDK package is installed.`,
-    );
-
-    return this.resolveDefaultModel();
-  }
-
-  private resolveDefaultModel(): ResolvedEvaluationModel {
-    const defaultEvaluationModel =
-      this.aiModelRegistryService.getDefaultEvaluationModel();
-
-    if (isDefined(defaultEvaluationModel)) {
-      return {
-        modelId: defaultEvaluationModel.modelId,
-        runnerKind: 'evaluation-model',
-      };
-    }
-
-    // No evaluation provider configured: the step still runs, on the model the
-    // instance already uses for everything else.
-    const fallbackModel = this.aiModelRegistryService.getEffectiveModelConfig(
-      AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
-    );
-
-    this.logger.log(
-      `No evaluation model configured; classifying on ${fallbackModel.modelId}.`,
-    );
-
-    return { modelId: fallbackModel.modelId, runnerKind: 'language-model' };
+    return resolveEvaluationModel({
+      requestedModelId: pinnedModelId,
+      isRequestedRunnableEvaluationModel:
+        isDefined(pinnedModelId) &&
+        isDefined(
+          this.aiModelRegistryService.getEvaluationModel(pinnedModelId),
+        ),
+      isRequestedRunnableLanguageModel:
+        isDefined(pinnedModelId) &&
+        isDefined(this.aiModelRegistryService.getModel(pinnedModelId)),
+      isRequestedKnownEvaluationModel:
+        isDefined(pinnedModelId) &&
+        isDefined(
+          this.aiModelRegistryService.getEvaluationModelConfig(pinnedModelId),
+        ),
+      defaultEvaluationModelId:
+        this.aiModelRegistryService.getDefaultEvaluationModel()?.modelId,
+      getDefaultLanguageModelId: () =>
+        this.aiModelRegistryService.getEffectiveModelConfig(
+          AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+        ).modelId,
+    });
   }
 }
