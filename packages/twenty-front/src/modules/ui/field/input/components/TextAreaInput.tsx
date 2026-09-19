@@ -26,6 +26,8 @@ export type TextAreaInputProps = {
 };
 
 const StyledTextAreaContainer = styled.div`
+  width: 100%;
+
   > textarea {
     align-items: center;
     background-color: transparent;
