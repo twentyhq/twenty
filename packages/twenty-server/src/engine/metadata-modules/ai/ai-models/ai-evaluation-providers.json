@@ -13,6 +13,7 @@
         "outputCostPerMillionTokens": 0,
         "supportedQuestionTypes": ["choice", "score", "boolean"],
         "maxCriteriaPerQuestion": 255,
+        "maxScoreLevels": 10,
         "medianLatencyMs": 200
       }
     ]

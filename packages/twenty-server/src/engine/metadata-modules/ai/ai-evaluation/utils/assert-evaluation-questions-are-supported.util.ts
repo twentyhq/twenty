@@ -7,14 +7,30 @@ import {
 import { type AiEvaluationModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model-config.type';
 import { type AiEvaluationModelQuestion } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 
-const countCriteria = (question: AiEvaluationModelQuestion): number => {
+// A choice menu and a score rubric are capped differently, so each question
+// type is measured against the limit that applies to it.
+const getCriteriaLimit = ({
+  question,
+  modelConfig,
+}: {
+  question: AiEvaluationModelQuestion;
+  modelConfig: AiEvaluationModelConfig;
+}): { count: number; limit: number | undefined; noun: string } => {
   switch (question.type) {
     case 'choice':
-      return Object.keys(question.criteria).length;
+      return {
+        count: Object.keys(question.criteria).length,
+        limit: modelConfig.maxCriteriaPerQuestion,
+        noun: 'options',
+      };
     case 'score':
-      return question.criteria.length;
+      return {
+        count: question.criteria.length,
+        limit: modelConfig.maxScoreLevels,
+        noun: 'levels',
+      };
     case 'boolean':
-      return 0;
+      return { count: 0, limit: undefined, noun: 'criteria' };
   }
 };
 
@@ -35,14 +51,11 @@ export const assertEvaluationQuestionsAreSupported = ({
       );
     }
 
-    const { maxCriteriaPerQuestion } = modelConfig;
+    const { count, limit, noun } = getCriteriaLimit({ question, modelConfig });
 
-    if (
-      isDefined(maxCriteriaPerQuestion) &&
-      countCriteria(question) > maxCriteriaPerQuestion
-    ) {
+    if (isDefined(limit) && count > limit) {
       throw new AiException(
-        `Question "${questionId}" carries more than the ${maxCriteriaPerQuestion} criteria ${modelConfig.modelId} accepts`,
+        `Question "${questionId}" carries ${count} ${noun}, more than the ${limit} ${modelConfig.modelId} accepts`,
         AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
       );
     }

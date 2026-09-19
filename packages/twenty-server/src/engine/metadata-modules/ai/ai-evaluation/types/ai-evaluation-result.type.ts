@@ -19,6 +19,10 @@ export type AiEvaluationUsage = {
 export type AiEvaluationRunnerOutput = {
   answers: Record<string, AiEvaluationModelAnswer>;
   usage: AiEvaluationUsage;
+  // How concentrated the provider's distribution is, per question id. TypeSafe
+  // reports this separately from the distribution itself, and it is not a
+  // probability: a confident answer and a likely answer are different claims.
+  confidenceByQuestionId?: Record<string, number>;
 };
 
 export type AiEvaluationResult = AiEvaluationRunnerOutput & {

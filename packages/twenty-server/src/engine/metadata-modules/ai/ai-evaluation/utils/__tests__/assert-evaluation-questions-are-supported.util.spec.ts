@@ -13,6 +13,7 @@ const buildModelConfig = (
   outputCostPerMillionTokens: 0,
   supportedQuestionTypes: ['choice', 'score', 'boolean'],
   maxCriteriaPerQuestion: 255,
+  maxScoreLevels: 10,
   ...overrides,
 });
 
@@ -83,6 +84,66 @@ describe('assertEvaluationQuestionsAreSupported', () => {
           },
         },
         modelConfig: buildModelConfig({ maxCriteriaPerQuestion: undefined }),
+      }),
+    ).not.toThrow();
+  });
+
+  it('should measure a score rubric against the level cap, not the option cap', () => {
+    expect(() =>
+      assertEvaluationQuestionsAreSupported({
+        questions: {
+          urgency: {
+            type: 'score',
+            instructions: 'How urgent?',
+            criteria: Array.from(
+              { length: 11 },
+              (_, index) => `level ${index}`,
+            ),
+          },
+        },
+        modelConfig: buildModelConfig(),
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
+      }),
+    );
+  });
+
+  it('should allow a score rubric at the level cap', () => {
+    expect(() =>
+      assertEvaluationQuestionsAreSupported({
+        questions: {
+          urgency: {
+            type: 'score',
+            instructions: 'How urgent?',
+            criteria: Array.from(
+              { length: 10 },
+              (_, index) => `level ${index}`,
+            ),
+          },
+        },
+        modelConfig: buildModelConfig(),
+      }),
+    ).not.toThrow();
+  });
+
+  it('should still allow a choice question with more options than the level cap', () => {
+    expect(() =>
+      assertEvaluationQuestionsAreSupported({
+        questions: {
+          intent: {
+            type: 'choice',
+            instructions: 'Which?',
+            criteria: Object.fromEntries(
+              Array.from({ length: 40 }, (_, index) => [
+                `option-${index}`,
+                null,
+              ]),
+            ),
+          },
+        },
+        modelConfig: buildModelConfig(),
       }),
     ).not.toThrow();
   });

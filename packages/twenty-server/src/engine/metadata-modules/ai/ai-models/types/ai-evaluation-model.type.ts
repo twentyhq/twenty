@@ -1,91 +1,31 @@
-import { type AiEvaluationQuestionType } from 'twenty-shared/ai';
+import {
+  type Experimental_EvaluationAnswer,
+  type Experimental_EvaluationModel,
+  type Experimental_EvaluationQuestion,
+} from 'ai';
 
-// Twenty's contract for an evaluation model, restating the AI SDK's
-// `EvaluationModelV4` specification field for field.
-//
-// It is declared here rather than imported so the engine depends on the shape a
-// provider must have, not on an experimental SDK export that changes in patch
-// releases. Any provider object satisfying it plugs in unchanged — the TypeSafe
-// provider, a gateway proxying several evaluation models, or an in-house one.
+// Local names for the AI SDK's evaluation spec. These are aliases, not a
+// restatement: the SDK owns the shape, so a spec change breaks the build here
+// instead of drifting silently. The prefix the SDK uses while the API is
+// experimental is kept out of the engine's own code.
 
-export type AiEvaluationModelInput =
-  | string
-  | Readonly<Record<string, unknown>>
-  | readonly unknown[];
+export type AiEvaluationModel = Experimental_EvaluationModel;
 
-export type AiEvaluationModelQuestion =
-  | {
-      readonly type: 'choice';
-      readonly instructions: AiEvaluationModelInput;
-      // Option names mapped to what each one means. Null means no description.
-      readonly criteria: Readonly<
-        Record<string, AiEvaluationModelInput | null>
-      >;
-    }
-  | {
-      readonly type: 'score';
-      readonly instructions: AiEvaluationModelInput;
-      // At least two ordered levels; a level's index is the score it scores.
-      readonly criteria: readonly (AiEvaluationModelInput | null)[];
-    }
-  | {
-      readonly type: 'boolean';
-      readonly instructions: AiEvaluationModelInput;
-      readonly criteria?: {
-        readonly true?: AiEvaluationModelInput | null;
-        readonly false?: AiEvaluationModelInput | null;
-      };
-    };
+export type AiEvaluationModelQuestion = Experimental_EvaluationQuestion;
 
+// Distributes over the question union, so this is the union of every answer
+// shape rather than one of them.
 export type AiEvaluationModelAnswer =
-  | {
-      type: 'choice';
-      choice: string;
-      probabilities?: Record<string, number>;
-    }
-  | {
-      type: 'score';
-      // Fractional position in [0, levels - 1].
-      score: number;
-      // Keyed by zero-based level index as a string.
-      probabilities?: Record<string, number>;
-    }
-  | {
-      type: 'boolean';
-      // P(true), not confidence in whichever side won.
-      probability: number;
-    };
+  Experimental_EvaluationAnswer<Experimental_EvaluationQuestion>;
 
-export type AiEvaluationModelCallOptions = {
-  state: AiEvaluationModelInput;
-  questions: Readonly<Record<string, AiEvaluationModelQuestion>>;
-  abortSignal?: AbortSignal;
-  headers?: Record<string, string | undefined>;
-  providerOptions?: Record<string, Record<string, unknown>>;
-};
+// The SDK exports the call and result shapes only through the model, so they
+// are read back off it.
+export type AiEvaluationModelCallOptions = Parameters<
+  AiEvaluationModel['doEvaluate']
+>[0];
 
-export type AiEvaluationModelResult = {
-  answers: Record<string, AiEvaluationModelAnswer>;
-  usage?: {
-    inputTokens?: number;
-    outputTokens?: number;
-  };
-  warnings?: unknown[];
-  providerMetadata?: Record<string, Record<string, unknown>>;
-  response?: {
-    id?: string;
-    modelId?: string;
-    timestamp?: Date;
-  };
-};
+export type AiEvaluationModelResult = Awaited<
+  ReturnType<AiEvaluationModel['doEvaluate']>
+>;
 
-export type AiEvaluationModel = {
-  readonly specificationVersion: 'v4';
-  readonly provider: string;
-  readonly modelId: string;
-  readonly supportedQuestionTypes: readonly AiEvaluationQuestionType[];
-  // Every question is answered against the same state, or none is.
-  doEvaluate(
-    options: AiEvaluationModelCallOptions,
-  ): PromiseLike<AiEvaluationModelResult>;
-};
+export type AiEvaluationModelInput = AiEvaluationModelCallOptions['state'];

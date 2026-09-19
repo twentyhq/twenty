@@ -50,6 +50,7 @@ export const aiProviderModelConfigSchema = z
       .nonempty()
       .optional(),
     maxCriteriaPerQuestion: z.number().int().positive().optional(),
+    maxScoreLevels: z.number().int().min(2).optional(),
     medianLatencyMs: z.number().positive().optional(),
     isDeprecated: z.boolean().optional(),
   })

@@ -33,27 +33,24 @@ schema refuses a model that declares fields its kind cannot use.
 
 ## The provider contract
 
-`AiEvaluationModel` (in `ai-models/types/ai-evaluation-model.type.ts`) restates
-the AI SDK's `EvaluationModelV4` specification field for field:
+The contract is the AI SDK's, imported rather than restated.
+`ai-models/types/ai-evaluation-model.type.ts` is a handful of aliases:
 
 ```ts
-type AiEvaluationModel = {
-  readonly specificationVersion: 'v4';
-  readonly provider: string;
-  readonly modelId: string;
-  readonly supportedQuestionTypes: readonly AiEvaluationQuestionType[];
-  doEvaluate(options: AiEvaluationModelCallOptions): PromiseLike<AiEvaluationModelResult>;
-};
+export type AiEvaluationModel = Experimental_EvaluationModel;
+export type AiEvaluationModelQuestion = Experimental_EvaluationQuestion;
+export type AiEvaluationModelAnswer =
+  Experimental_EvaluationAnswer<Experimental_EvaluationQuestion>;
 ```
 
-It is declared rather than imported on purpose. The SDK exports this shape only
-under `Experimental_` names that change in patch releases, and the engine should
-depend on the shape a provider must have, not on which release names it. Nothing
-in Twenty imports an experimental SDK symbol.
+The aliases exist only so the `Experimental_` prefix stays out of the engine's
+own code. Because they are aliases and not copies, a change to the spec breaks
+the build here instead of drifting silently.
 
 Providers are discovered structurally: `getEvaluationModelFactory` accepts any
-provider object exposing an `evaluationModel(modelId)` factory. A gateway
-proxying several evaluation models qualifies without a line of code here.
+provider object exposing an `evaluationModel(modelId)` factory — which is the
+shape the SDK's own providers have. A gateway proxying several evaluation models
+qualifies without a line of code here.
 
 ### Question types
 
@@ -73,9 +70,14 @@ Three, matching the specification:
 runner, and the two runners answer the same questions through the same result
 type:
 
-- **`NativeEvaluationRunner`** — calls `doEvaluate` on a registered evaluation
-  model. The provider constrains the answer, so an off-menu value is impossible
-  and calibrated probabilities come back with it.
+- **`NativeEvaluationRunner`** — calls the SDK's `experimental_evaluate` on a
+  registered evaluation model. The provider constrains the answer, so an
+  off-menu value is impossible and calibrated probabilities come back with it.
+  Going through `evaluate` rather than the provider's `doEvaluate` directly buys
+  the SDK's own result validation: an answer naming an option that was not
+  offered, or a distribution that does not sum to one, is rejected before a
+  workflow can branch on it. Retries are left to the workflow step
+  (`maxRetries: 0`).
 - **`LanguageModelEvaluationRunner`** — asks an ordinary language model for
   structured output matching a schema built from the same questions. Answers
   stay on-menu because the schema constrains them. They are **not** calibrated,
@@ -100,6 +102,11 @@ those steps faster, cheaper and calibrated without touching a workflow.
 
 Every result carries `runnerKind`, so a caller that branches on a probability can
 tell which kind of model produced it.
+
+TypeSafe also reports how concentrated each distribution is, under its own
+provider-metadata key. That statistic is *not* a probability — "confident" and
+"likely" are different claims — so it is read out separately into
+`confidenceByQuestionId` rather than folded into an answer.
 
 ## Adding an evaluation model
 
@@ -129,41 +136,33 @@ merges the two:
 }
 ```
 
-`supportedQuestionTypes` and `maxCriteriaPerQuestion` are capabilities, not
-documentation: a request that exceeds either is refused before any network call.
+`supportedQuestionTypes`, `maxCriteriaPerQuestion` and `maxScoreLevels` are
+capabilities, not documentation: a request that exceeds any of them is refused
+before any network call. A choice menu and a score rubric are capped very
+differently — Jev takes 255 options but only 10 levels — so they are declared
+and checked separately.
 Both token costs are required for the same reason transcription requires
 `costPerMinute` — an omitted price bills nothing while the provider still
 charges, so free output has to say so with an explicit `0`.
 
-## Installing a provider package
+## Turning Jev on
 
-Evaluation provider packages are **optional peers**. An instance that never
-classifies anything should not carry the dependency, and a catalog entry whose
-package is absent stays visible but cannot run: `SdkProviderFactoryService`
-resolves the factory at call time and logs a warning instead of failing boot.
+`@ai-sdk/typesafe-ai` ships as an ordinary dependency, wired through
+`SdkProviderFactoryService` exactly like every other provider. Nothing is
+resolved at call time and nothing is optional; the only thing an operator does
+is set `TYPESAFE_AI_API_KEY`.
 
-To turn Jev on:
+Evaluation support needs `ai` at 7.0.103 or newer, which is why this landed with
+a bump from 7.0.93 across `twenty-server`, `twenty-shared` and `twenty-front`.
+The three move together on purpose: `twenty-shared` re-exports SDK types that
+cross package boundaries, so a version split makes structurally identical types
+fail to assign. A `resolutions` entry keeps the transitive `@ai-sdk/provider`
+copies on one version for the same reason.
 
-```bash
-yarn workspace twenty-server add @ai-sdk/typesafe-ai
-```
-
-then set `TYPESAFE_AI_API_KEY`.
-
-> At the time of writing, `@ai-sdk/typesafe-ai` and the `ai` releases carrying
-> `experimental_evaluate` are both younger than this repository's
-> `npmMinimalAgeGate: 3d` supply-chain gate, so neither is in `yarn.lock` yet.
-> Nothing in the engine depends on them; the gate clearing is the only thing
-> between here and a working Jev.
-
-## Using `experimental_evaluate` later
-
-`NativeEvaluationRunner` calls `doEvaluate` directly. The AI SDK's
-`experimental_evaluate` wraps the same call with model-id resolution, retries and
-result validation. Adopting it is a change to that one file — the runner's
-signature, the result type and every caller stay as they are. It is worth doing
-once the API loses its `experimental_` prefix; until then, workflow steps already
-carry their own retry policy.
+Jev can also be reached through the AI Gateway, either as the plain model id
+`typesafe-ai/jev` (needs `ai` 7.0.105+) or via `gateway.evaluationModel(...)`.
+Twenty does not use the Gateway today, so the direct provider is the path that
+fits the existing architecture: one package, one API key, no OIDC.
 
 ## Billing
 

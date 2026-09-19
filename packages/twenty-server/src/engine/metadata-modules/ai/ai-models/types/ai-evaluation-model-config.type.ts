@@ -15,9 +15,12 @@ export type AiEvaluationModelConfig = {
   inputCostPerMillionTokens: number;
   outputCostPerMillionTokens: number;
   supportedQuestionTypes: AiEvaluationQuestionType[];
-  // Providers cap how many options one question may carry; a node that exceeds
-  // it is rejected before any network call.
+  // Providers cap how many options one choice question may carry; a node that
+  // exceeds it is rejected before any network call.
   maxCriteriaPerQuestion?: number;
+  // A score rubric is capped far lower than a choice menu, so it is declared
+  // separately rather than sharing the option cap.
+  maxScoreLevels?: number;
   medianLatencyMs?: number;
   dataResidency?: DataResidency;
   zeroDataRetention?: boolean;

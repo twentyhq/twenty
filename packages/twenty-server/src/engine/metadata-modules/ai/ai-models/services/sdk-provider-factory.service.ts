@@ -7,6 +7,7 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
+import { createTypeSafeAi } from '@ai-sdk/typesafe-ai';
 import { createXai, type XaiProvider } from '@ai-sdk/xai';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import {
@@ -33,7 +34,6 @@ import { sanitizeGeminiToolResultRefsMiddleware } from 'src/engine/metadata-modu
 import { type AiEvaluationModel } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { getEvaluationModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-evaluation-model-factory.util';
-import { loadOptionalEvaluationProviderFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/load-optional-evaluation-provider.util';
 import { getTranscriptionModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-transcription-model-factory.util';
 
 export type AiSdkProviderInstance = {
@@ -241,22 +241,6 @@ export class SdkProviderFactoryService {
   private buildTypeSafeAiProvider(
     config: AiProviderConfig,
   ): AiSdkProviderInstance {
-    const createTypeSafeAi = loadOptionalEvaluationProviderFactory({
-      npm: AI_SDK_TYPESAFE_AI,
-      factoryName: 'createTypeSafeAi',
-    });
-
-    if (!isDefined(createTypeSafeAi)) {
-      this.logger.warn(
-        `${AI_SDK_TYPESAFE_AI} is not installed; its models stay in the catalog but cannot run.`,
-      );
-
-      return {
-        rawProvider: undefined,
-        sdkPackage: AI_SDK_TYPESAFE_AI,
-      };
-    }
-
     const provider = createTypeSafeAi({
       ...(config.apiKey && { apiKey: config.apiKey }),
       ...(config.baseUrl && { baseURL: config.baseUrl }),
