@@ -2314,5 +2314,23 @@
         }
       }
     ]
+  },
+  "typesafe-ai": {
+    "npm": "@ai-sdk/typesafe-ai",
+    "label": "TypeSafe AI",
+    "apiKey": "{{TYPESAFE_AI_API_KEY}}",
+    "models": [
+      {
+        "name": "jev-latest",
+        "label": "Jev",
+        "kind": "evaluation",
+        "description": "Structured decisions in one round trip: classification, routing, scoring and verification. Returns calibrated probabilities instead of text.",
+        "inputCostPerMillionTokens": 0.042,
+        "outputCostPerMillionTokens": 0,
+        "supportedQuestionTypes": ["choice", "score", "boolean"],
+        "maxCriteriaPerQuestion": 255,
+        "medianLatencyMs": 200
+      }
+    ]
   }
 }

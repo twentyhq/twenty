@@ -39,9 +39,32 @@ describe('ai-providers.json integrity', () => {
         expect(model.label).toBeDefined();
         expect(model.inputCostPerMillionTokens).toBeDefined();
         expect(model.outputCostPerMillionTokens).toBeDefined();
-        expect(model.contextWindowTokens).toBeGreaterThan(0);
-        expect(model.maxOutputTokens).toBeGreaterThan(0);
       });
+    });
+  });
+
+  // A model that emits no text has no context window and no output ceiling, so
+  // the fields are asserted only where they mean something.
+  it('should size the context window only on language models', () => {
+    Object.values(PROVIDERS).forEach((config) => {
+      (config.models ?? [])
+        .filter((model) => (model.kind ?? 'language') === 'language')
+        .forEach((model) => {
+          expect(model.contextWindowTokens).toBeGreaterThan(0);
+          expect(model.maxOutputTokens).toBeGreaterThan(0);
+        });
+    });
+  });
+
+  it('should declare the question types every evaluation model answers', () => {
+    Object.values(PROVIDERS).forEach((config) => {
+      (config.models ?? [])
+        .filter((model) => model.kind === 'evaluation')
+        .forEach((model) => {
+          expect(model.supportedQuestionTypes?.length ?? 0).toBeGreaterThan(0);
+          expect(model.contextWindowTokens).toBeUndefined();
+          expect(model.maxOutputTokens).toBeUndefined();
+        });
     });
   });
 
