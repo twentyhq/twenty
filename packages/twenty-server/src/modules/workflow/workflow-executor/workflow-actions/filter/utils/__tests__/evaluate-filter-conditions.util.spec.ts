@@ -477,10 +477,10 @@ describe('evaluateFilterConditions', () => {
     });
 
     describe('Select filter operands', () => {
-      it('should return true when there are common values (SELECT)', () => {
+      it('should return true when the option is in the selected set (SELECT)', () => {
         const filter = createFilter(
           ViewFilterOperand.IS,
-          ['John'],
+          'John',
           ['John', 'Jane'],
           'SELECT',
         );
@@ -489,10 +489,10 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(true);
       });
 
-      it('should return false when there are no common values (SELECT)', () => {
+      it('should return false when the option is not in the selected set (SELECT)', () => {
         const filter = createFilter(
           ViewFilterOperand.IS,
-          ['John'],
+          'John',
           ['Jane'],
           'SELECT',
         );
@@ -501,10 +501,72 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(false);
       });
 
-      it('should return true when there are no common values (IsNot)', () => {
+      it('should match exactly and not by substring for Is (SELECT)', () => {
+        const validMatch = createFilter(
+          ViewFilterOperand.IS,
+          'VALID',
+          ['VALID'],
+          'SELECT',
+        );
+        const invalidShouldNotMatch = createFilter(
+          ViewFilterOperand.IS,
+          'INVALID',
+          ['VALID'],
+          'SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [validMatch] })).toBe(true);
+        expect(
+          evaluateFilterConditions({ filters: [invalidShouldNotMatch] }),
+        ).toBe(false);
+      });
+
+      it('should match exactly when the right operand is a JSON-encoded array (SELECT)', () => {
+        const validMatch = createFilter(
+          ViewFilterOperand.IS,
+          'VALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const invalidShouldNotMatch = createFilter(
+          ViewFilterOperand.IS,
+          'INVALID',
+          '["VALID"]',
+          'SELECT',
+        );
+
+        expect(evaluateFilterConditions({ filters: [validMatch] })).toBe(true);
+        expect(
+          evaluateFilterConditions({ filters: [invalidShouldNotMatch] }),
+        ).toBe(false);
+      });
+
+      it('should not match a substring option for IsNot (SELECT)', () => {
+        const invalidShouldMatch = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'INVALID',
+          ['VALID'],
+          'SELECT',
+        );
+        const validShouldNotMatch = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'VALID',
+          ['VALID'],
+          'SELECT',
+        );
+
+        expect(
+          evaluateFilterConditions({ filters: [invalidShouldMatch] }),
+        ).toBe(true);
+        expect(
+          evaluateFilterConditions({ filters: [validShouldNotMatch] }),
+        ).toBe(false);
+      });
+
+      it('should return true when the option is not in the selected set (IsNot)', () => {
         const filter = createFilter(
           ViewFilterOperand.IS_NOT,
-          ['John'],
+          'John',
           ['Jane'],
           'SELECT',
         );
@@ -513,10 +575,10 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(true);
       });
 
-      it('should return true when there are no values (IsEmpty)', () => {
+      it('should return true when there is no value (IsEmpty)', () => {
         const filter = createFilter(
           ViewFilterOperand.IS_EMPTY,
-          [],
+          '',
           '',
           'SELECT',
         );
@@ -528,7 +590,7 @@ describe('evaluateFilterConditions', () => {
       it('should return false when there is a value (IsEmpty)', () => {
         const filter = createFilter(
           ViewFilterOperand.IS_EMPTY,
-          ['John'],
+          'John',
           '',
           'SELECT',
         );
@@ -537,10 +599,10 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(false);
       });
 
-      it('should return true when there are values (IsNotEmpty)', () => {
+      it('should return true when there is a value (IsNotEmpty)', () => {
         const filter = createFilter(
           ViewFilterOperand.IS_NOT_EMPTY,
-          ['John'],
+          'John',
           '',
           'SELECT',
         );

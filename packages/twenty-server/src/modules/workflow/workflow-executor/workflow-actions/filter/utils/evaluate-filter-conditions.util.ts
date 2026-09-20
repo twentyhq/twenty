@@ -485,12 +485,44 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
   }
 }
 
+function parseSelectRightOperandToArray(rightValue: unknown): unknown[] {
+  if (Array.isArray(rightValue)) {
+    return rightValue;
+  }
+
+  if (isString(rightValue)) {
+    try {
+      const parsedRightValue = JSON.parse(rightValue);
+
+      return Array.isArray(parsedRightValue)
+        ? parsedRightValue
+        : [parsedRightValue];
+    } catch {
+      return [rightValue];
+    }
+  }
+
+  return [rightValue];
+}
+
+function selectValueMatchesExactly(
+  leftValue: unknown,
+  rightValue: unknown,
+): boolean {
+  return parseSelectRightOperandToArray(rightValue).some((candidate) =>
+    isEqual(candidate, leftValue),
+  );
+}
+
 function evaluateSelectFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
     case ViewFilterOperand.IS:
-      return contains(filter.leftOperand, filter.rightOperand);
+      return selectValueMatchesExactly(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_NOT:
-      return !contains(filter.leftOperand, filter.rightOperand);
+      return !selectValueMatchesExactly(
+        filter.leftOperand,
+        filter.rightOperand,
+      );
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 
