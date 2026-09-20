@@ -37,6 +37,7 @@ export { baseWorkflowActionSettingsSchema } from './schemas/base-workflow-action
 export { workflowClassifyActionSchema } from './schemas/classify-action-schema';
 export {
   CLASSIFY_ANSWER_NAME_PATTERN,
+  CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER,
   workflowClassifyCriterionSchema,
   workflowClassifyQuestionSchema,
   workflowClassifyActionSettingsSchema,

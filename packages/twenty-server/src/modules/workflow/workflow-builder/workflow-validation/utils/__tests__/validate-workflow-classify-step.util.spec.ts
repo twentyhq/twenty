@@ -184,6 +184,68 @@ describe('validateWorkflowClassifyStep', () => {
 
   // A step should report every reason it cannot activate at once; otherwise an
   // author fixes one problem only to be told about the next.
+  // An option keys its probability, so a dot in it advertises
+  // {{step.answers.intent.probabilities.v1.2}}, which the resolver walks as two
+  // keys. A space survives, because escapePathSegment brackets it.
+  it('should refuse a choice option whose name cannot be read back', () => {
+    expect(
+      codesFor({
+        questions: [
+          {
+            id: 'q1',
+            name: 'intent',
+            type: 'choice',
+            instructions: 'Which release?',
+            criteria: [
+              { id: 'c1', name: 'v1.2' },
+              { id: 'c2', name: 'main' },
+            ],
+          },
+        ],
+      }),
+    ).toEqual(['CLASSIFY_INCOMPLETE_QUESTION']);
+  });
+
+  it('should accept a choice option name with spaces', () => {
+    expect(
+      codesFor({
+        questions: [
+          {
+            id: 'q1',
+            name: 'intent',
+            type: 'choice',
+            instructions: 'Which team?',
+            criteria: [
+              { id: 'c1', name: 'High priority' },
+              { id: 'c2', name: 'Can wait' },
+            ],
+          },
+        ],
+      }),
+    ).toEqual([]);
+  });
+
+  // Score probabilities are keyed by level index, so a label never becomes a
+  // path segment and stays free text.
+  it('should accept a score level label containing a dot', () => {
+    expect(
+      codesFor({
+        questions: [
+          {
+            id: 'q1',
+            name: 'urgency',
+            type: 'score',
+            instructions: 'How urgent?',
+            criteria: [
+              { id: 'c1', name: 'v1.2 and earlier' },
+              { id: 'c2', name: 'later' },
+            ],
+          },
+        ],
+      }),
+    ).toEqual([]);
+  });
+
   it('should report a duplicate name even when the first question is also incomplete', () => {
     const issues = validateWorkflowClassifyStep(
       buildStep({

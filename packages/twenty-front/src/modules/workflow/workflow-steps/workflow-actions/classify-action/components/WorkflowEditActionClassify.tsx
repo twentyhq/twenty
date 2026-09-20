@@ -138,13 +138,32 @@ export const WorkflowEditActionClassify = ({
     return t`Returns a calibrated probability for every answer.`;
   };
 
-  const questionTypeOptions = AI_EVALUATION_QUESTION_TYPES.map(
-    (questionType) => ({
-      label: questionTypeLabels[questionType],
-      value: questionType,
-      Icon: questionTypeIcons[questionType],
-    }),
+  // Only an evaluation model can answer a question whose answer IS a
+  // probability, so offering one where none would take the run builds a step
+  // that activates and then fails. choice and score survive the language-model
+  // fallback, which answers them without a distribution.
+  const modelsThatCouldRun = isDefined(selectedModel)
+    ? [selectedModel]
+    : aiEvaluationModels.filter((evaluationModel) => evaluationModel.isAvailable);
+
+  const runnableQuestionTypes = new Set(
+    modelsThatCouldRun.flatMap(
+      (evaluationModel) => evaluationModel.supportedQuestionTypes,
+    ),
   );
+
+  const questionTypeOptions = AI_EVALUATION_QUESTION_TYPES.filter(
+    (questionType) =>
+      questionType !== 'boolean' ||
+      runnableQuestionTypes.has('boolean') ||
+      // A step that already asks one keeps the option, so opening it does not
+      // silently rewrite the question to another type.
+      questions.some((question) => question.type === 'boolean'),
+  ).map((questionType) => ({
+    label: questionTypeLabels[questionType],
+    value: questionType,
+    Icon: questionTypeIcons[questionType],
+  }));
 
   const updateInput = (
     input: Partial<WorkflowClassifyAction['settings']['input']>,

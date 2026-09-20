@@ -1,6 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import {
   CLASSIFY_ANSWER_NAME_PATTERN,
+  CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER,
   type WorkflowClassifyQuestion,
   type WorkflowValidationIssue,
 } from 'twenty-shared/workflow';
@@ -38,6 +40,19 @@ const getQuestionProblem = (
     question.criteria.some((criterion) => !isNonEmptyString(criterion.name))
   ) {
     return `has an unnamed option for "${question.name}"`;
+  }
+
+  // Only for a choice: its options key the probability map, so an option named
+  // this way advertises a variable the resolver reads as two keys. Score levels
+  // are keyed by index, so their labels stay free.
+  if (question.type === 'choice') {
+    const unreachableOption = question.criteria.find((criterion) =>
+      criterion.name.includes(CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER),
+    );
+
+    if (isDefined(unreachableOption)) {
+      return `names an option "${unreachableOption.name}" for "${question.name}" that cannot be read back, because "${CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER}" separates a variable path`;
+    }
   }
 
   // Only for a choice: its options key a map, so a repeat drops one before the

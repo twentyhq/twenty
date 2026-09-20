@@ -9,6 +9,13 @@ import { baseWorkflowActionSettingsSchema } from './base-workflow-action-setting
 // resolver, so the output the picker advertises would never resolve.
 export const CLASSIFY_ANSWER_NAME_PATTERN = /^[a-zA-Z0-9_-]{1,64}$/;
 
+// A choice option's name keys its probability, so it is a path segment too:
+// {{stepId.answers.<name>.probabilities.<option>}}. It stays free text because
+// the model reads it as the label it is, and a segment with spaces or brackets
+// survives the round trip through escapePathSegment. A dot does not: nothing
+// escapes it, so the resolver would walk it as two keys.
+export const CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER = '.';
+
 export const workflowClassifyCriterionSchema = z.object({
   id: z.uuid().describe('Stable identifier for this criterion row.'),
   name: z
