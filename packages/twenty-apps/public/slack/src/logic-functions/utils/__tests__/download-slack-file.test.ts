@@ -111,6 +111,21 @@ describe('downloadSlackFile', () => {
     });
   });
 
+  it.each([401, 403])(
+    'should name the missing scope when Slack refuses the download with a %i',
+    async (status) => {
+      mockFetchResponse({ ok: false, status });
+
+      const result = await downloadPngFile();
+
+      expect(result).toMatchObject({ success: false, reason: 'missing-scope' });
+      expect(result).toHaveProperty(
+        'error',
+        expect.stringContaining('files:read'),
+      );
+    },
+  );
+
   it('should fail when the fetch itself throws', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('timed out')));
 

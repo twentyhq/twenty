@@ -13,6 +13,10 @@ type DownloadSlackFileResult =
 
 const TOO_LARGE_ERROR = `file is over the ${SLACK_ASSISTANT_MAX_ATTACHMENT_SIZE_BYTES} byte limit`;
 
+// Slack refuses an under-scoped bot token on files-pri either with the sign-in
+// page under a 200 or with a bare 401/403, and only the first is a body to read
+const AUTH_REFUSAL_STATUSES = new Set([401, 403]);
+
 const parseContentLengthBytes = (
   headerValue: string | null,
 ): number | undefined => {
@@ -94,6 +98,14 @@ export const downloadSlackFile = async ({
   }
 
   if (!response.ok) {
+    if (AUTH_REFUSAL_STATUSES.has(response.status)) {
+      return {
+        success: false,
+        error: `Slack refused the download with status ${response.status}, which usually means the bot token predates the files:read scope`,
+        reason: 'missing-scope',
+      };
+    }
+
     return {
       success: false,
       error: `status ${response.status}`,
