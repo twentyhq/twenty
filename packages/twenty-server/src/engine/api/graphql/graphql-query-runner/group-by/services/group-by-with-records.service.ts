@@ -62,16 +62,6 @@ export class GroupByWithRecordsService {
     offsetForRecords?: number;
     nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
   }): Promise<CommonGroupByOutputItem[]> {
-    const effectiveGroupLimit = getGroupLimit(groupLimit);
-
-    const groupsResult = await queryBuilderWithGroupBy
-      .limit(effectiveGroupLimit)
-      .getRawMany();
-
-    if (groupsResult.length === 0) {
-      return [];
-    }
-
     const {
       authContext,
       rolePermissionConfig,
@@ -87,6 +77,30 @@ export class GroupByWithRecordsService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });
+
+    const objectAlias = getObjectAlias(flatObjectMetadata);
+
+    queryBuilderWithFiltersAndWithoutGroupBy.select([]);
+
+    for (const columnName of Object.keys(columnsToSelect)) {
+      queryBuilderWithFiltersAndWithoutGroupBy.addSelect(
+        `"${objectAlias}"."${columnName}"`,
+        `${SUB_QUERY_PREFIX}${columnName}`,
+      );
+    }
+
+    // Validate field-level read permissions upfront to prevent authorization side-channel oracle (Issue #25911)
+    queryBuilderWithFiltersAndWithoutGroupBy.applyPermissions();
+
+    const effectiveGroupLimit = getGroupLimit(groupLimit);
+
+    const groupsResult = await queryBuilderWithGroupBy
+      .limit(effectiveGroupLimit)
+      .getRawMany();
+
+    if (groupsResult.length === 0) {
+      return [];
+    }
 
     const { sql, parameters } = this.buildRankedRecordsStatement({
       subQueryBuilder: queryBuilderWithFiltersAndWithoutGroupBy,
@@ -168,17 +182,6 @@ export class GroupByWithRecordsService {
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     offsetForRecords: number;
   }): { sql: string; parameters: Record<string, unknown> } {
-    const objectAlias = getObjectAlias(flatObjectMetadata);
-
-    subQueryBuilder.select([]);
-
-    for (const columnName of Object.keys(columnsToSelect)) {
-      subQueryBuilder.addSelect(
-        `"${objectAlias}"."${columnName}"`,
-        `${SUB_QUERY_PREFIX}${columnName}`,
-      );
-    }
-
     for (const groupByDefinition of groupByDefinitions) {
       subQueryBuilder.addSelect(
         groupByDefinition.expression,
@@ -204,7 +207,8 @@ export class GroupByWithRecordsService {
       'record_row_number',
     );
 
-    subQueryBuilder.applyRowLevelPermissions();
+    // Apply permissions and validate order-by expressions before raw SQL generation (Issue #25911)
+    subQueryBuilder.applyPermissions();
 
     const groupByAliases = groupByDefinitions
       .map((groupByDefinition) => `"${groupByDefinition.alias}"`)

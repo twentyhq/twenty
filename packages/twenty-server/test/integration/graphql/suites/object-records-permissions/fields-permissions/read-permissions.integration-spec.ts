@@ -528,6 +528,113 @@ describe('Field permissions restrictions', () => {
     expectNoGraphQLErrors(response);
   });
 
+  it('should reject group by query with records when a field without read permission is requested even if no records match filter', async () => {
+    await upsertFieldPermissions({
+      roleId: customRoleId,
+      fieldPermissions: [
+        {
+          objectMetadataId: companyObjectId,
+          fieldMetadataId: restrictedCompanyFieldId,
+          canReadFieldValue: false,
+          canUpdateFieldValue: null,
+        },
+      ],
+    });
+
+    const graphqlOperation = groupByOperationFactory({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      groupBy: [{ name: true }],
+      filter: { name: { eq: 'non-existent-company-uuid' } },
+      gqlFields: `
+        edges {
+          node {
+            id
+            name
+            position
+          }
+        }
+      `,
+    });
+
+    const response =
+      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+
+    expectPermissionDeniedError(response);
+  });
+
+  it('should reject group by query with records when a field without read permission is requested in records', async () => {
+    await upsertFieldPermissions({
+      roleId: customRoleId,
+      fieldPermissions: [
+        {
+          objectMetadataId: companyObjectId,
+          fieldMetadataId: restrictedCompanyFieldId,
+          canReadFieldValue: false,
+          canUpdateFieldValue: null,
+        },
+      ],
+    });
+
+    const graphqlOperation = groupByOperationFactory({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      groupBy: [{ name: true }],
+      gqlFields: `
+        edges {
+          node {
+            id
+            name
+            position
+          }
+        }
+      `,
+    });
+
+    const response =
+      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+
+    expectPermissionDeniedError(response);
+  });
+
+  it('should allow group by query with records when restricted fields exist but only readable fields are requested', async () => {
+    await upsertFieldPermissions({
+      roleId: customRoleId,
+      fieldPermissions: [
+        {
+          objectMetadataId: companyObjectId,
+          fieldMetadataId: restrictedCompanyFieldId,
+          canReadFieldValue: false,
+          canUpdateFieldValue: null,
+        },
+      ],
+    });
+
+    const graphqlOperation = groupByOperationFactory({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      groupBy: [{ name: true }],
+      gqlFields: `
+        edges {
+          node {
+            id
+            name
+          }
+        }
+      `,
+    });
+
+    const response =
+      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+
+    expectNoGraphQLErrors(response);
+    expect(response.body.data.companiesGroupBy).toBeDefined();
+    expect(response.body.data.companiesGroupBy.length).toBeGreaterThan(0);
+    expect(
+      response.body.data.companiesGroupBy[0].edges[0].node.name,
+    ).toBeDefined();
+  });
+
   describe('Aggregate operations', () => {
     it('1. should allow aggregate over a restricted field', async () => {
       await restrictAccessToCompanyEmployee(

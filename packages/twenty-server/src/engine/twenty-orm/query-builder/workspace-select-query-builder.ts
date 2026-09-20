@@ -630,10 +630,15 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return rows as T[];
   }
 
-  applyRowLevelPermissions(): this {
+  // Trigger repository lifecycle hooks to apply row-level permissions and validate field/object read permissions (Issue #25911)
+  applyPermissions(): this {
     this.context.onBeforeExecute(this);
 
     return this;
+  }
+
+  applyRowLevelPermissions(): this {
+    return this.applyPermissions();
   }
 
   async getCount(): Promise<number> {
