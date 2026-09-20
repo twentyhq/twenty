@@ -163,7 +163,7 @@ export const SettingsAiModelsTab = () => {
               <SettingsOptionCardContentSelect
                 Icon={IconListCheck}
                 title={t`Evaluation model`}
-                description={t`Returns a calibrated probability for every answer. Without one, Classify steps fall back to a language model and return no probabilities.`}
+                description={t`Returns a calibrated probability for every answer`}
               >
                 <Select
                   dropdownId="models-tab-evaluation-model-select"

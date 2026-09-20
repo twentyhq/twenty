@@ -202,7 +202,7 @@ export const WorkflowEditActionClassify = ({
           label={t`State`}
           multiline
           defaultValue={action.settings.input.state}
-          placeholder={t`What the model should read, such as {{trigger.record.notes}}`}
+          placeholder={t`What the model should read`}
           readonly={readonly}
           VariablePicker={WorkflowVariablePicker}
           onChange={(state) => updateInput({ state })}
