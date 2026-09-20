@@ -5,6 +5,7 @@ import {
   buildCoreWorkflowVisibilitySqlPredicate,
   buildCoreWorkflowVisibilityWhere,
   canChangeCoreWorkflowVisibility,
+  canChangeCoreWorkflowVisibilitySelectExpression,
 } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-where.util';
 
 const READER_USER_WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
@@ -84,5 +85,18 @@ describe('canChangeCoreWorkflowVisibility', () => {
         userWorkspaceId: undefined,
       }),
     ).toBe(false);
+  });
+});
+
+describe('canChangeCoreWorkflowVisibilitySelectExpression', () => {
+  it('should never project NULL, which the predicate does for an API key', () => {
+    expect(
+      canChangeCoreWorkflowVisibilitySelectExpression({
+        tableAlias: 'c',
+        userWorkspaceIdParameter: '$2',
+      }),
+    ).toBe(
+      `coalesce((c."createdByUserWorkspaceId" IS NULL OR c."createdByUserWorkspaceId" = $2::uuid), false)`,
+    );
   });
 });

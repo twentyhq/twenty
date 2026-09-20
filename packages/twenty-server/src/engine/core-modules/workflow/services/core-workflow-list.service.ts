@@ -22,7 +22,7 @@ import {
   buildCoreWorkflowVisibilitySqlPredicate,
   buildCoreWorkflowVisibilityWhere,
   canChangeCoreWorkflowVisibility,
-  canChangeCoreWorkflowVisibilitySqlPredicate,
+  canChangeCoreWorkflowVisibilitySelectExpression,
 } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-where.util';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
 import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
@@ -92,7 +92,7 @@ const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
          c."lastPublishedVersionId", c."lastPublishedCoreWorkflowVersionId",
          c."applicationId",
          c."visibility",
-         ${canChangeCoreWorkflowVisibilitySqlPredicate({ tableAlias: 'c', userWorkspaceIdParameter: READER_PARAMETER })} AS "canChangeVisibility",
+         ${canChangeCoreWorkflowVisibilitySelectExpression({ tableAlias: 'c', userWorkspaceIdParameter: READER_PARAMETER })} AS "canChangeVisibility",
          c."createdAt",
          c."updatedAt",
          coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion",
