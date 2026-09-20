@@ -21,6 +21,8 @@ import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workfl
 import {
   buildCoreWorkflowVisibilitySqlPredicate,
   buildCoreWorkflowVisibilityWhere,
+  canChangeCoreWorkflowVisibility,
+  canChangeCoreWorkflowVisibilitySqlPredicate,
 } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-where.util';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
 import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
@@ -90,7 +92,7 @@ const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
          c."lastPublishedVersionId", c."lastPublishedCoreWorkflowVersionId",
          c."applicationId",
          c."visibility",
-         coalesce(c."createdByUserWorkspaceId" = ${READER_PARAMETER}::uuid, true) AS "canChangeVisibility",
+         ${canChangeCoreWorkflowVisibilitySqlPredicate({ tableAlias: 'c', userWorkspaceIdParameter: READER_PARAMETER })} AS "canChangeVisibility",
          c."createdAt",
          c."updatedAt",
          coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion",
@@ -277,9 +279,10 @@ export class CoreWorkflowListService {
             applicationId: workflow.applicationId,
             workspaceWorkflowId: workflow.workspaceWorkflowId,
             visibility: workflow.visibility,
-            canChangeVisibility:
-              !isDefined(workflow.createdByUserWorkspaceId) ||
-              workflow.createdByUserWorkspaceId === userWorkspaceId,
+            canChangeVisibility: canChangeCoreWorkflowVisibility({
+              createdByUserWorkspaceId: workflow.createdByUserWorkspaceId,
+              userWorkspaceId,
+            }),
             createdAt: workflow.createdAt.toISOString(),
             updatedAt: workflow.updatedAt.toISOString(),
           },

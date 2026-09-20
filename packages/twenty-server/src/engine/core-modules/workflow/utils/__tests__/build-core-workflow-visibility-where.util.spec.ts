@@ -1,14 +1,16 @@
 import { WorkflowVisibility } from 'twenty-shared/types';
+import { IsNull } from 'typeorm';
 
 import {
   buildCoreWorkflowVisibilitySqlPredicate,
   buildCoreWorkflowVisibilityWhere,
+  canChangeCoreWorkflowVisibility,
 } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-where.util';
 
 const READER_USER_WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 
 describe('buildCoreWorkflowVisibilityWhere', () => {
-  it('should let a reader see workspace workflows and their own', () => {
+  it('should let a reader see workspace workflows, their own and ownerless ones', () => {
     expect(
       buildCoreWorkflowVisibilityWhere({
         userWorkspaceId: READER_USER_WORKSPACE_ID,
@@ -16,6 +18,7 @@ describe('buildCoreWorkflowVisibilityWhere', () => {
     ).toEqual([
       { visibility: WorkflowVisibility.WORKSPACE },
       { createdByUserWorkspaceId: READER_USER_WORKSPACE_ID },
+      { createdByUserWorkspaceId: IsNull() },
     ]);
   });
 
@@ -25,9 +28,11 @@ describe('buildCoreWorkflowVisibilityWhere', () => {
       applicationId: 'an-application-id',
     });
 
-    expect(where).toHaveLength(2);
-    expect(where[0]).toMatchObject({ applicationId: 'an-application-id' });
-    expect(where[1]).toMatchObject({ applicationId: 'an-application-id' });
+    expect(where).toHaveLength(3);
+
+    for (const clause of where) {
+      expect(clause).toMatchObject({ applicationId: 'an-application-id' });
+    }
   });
 });
 
@@ -39,7 +44,30 @@ describe('buildCoreWorkflowVisibilitySqlPredicate', () => {
         userWorkspaceIdParameter: '$2',
       }),
     ).toBe(
-      `(c."visibility" = 'WORKSPACE' OR c."createdByUserWorkspaceId" = $2::uuid)`,
+      `(c."visibility" = 'WORKSPACE' OR coalesce(c."createdByUserWorkspaceId" = $2::uuid, true))`,
     );
+  });
+});
+
+describe('canChangeCoreWorkflowVisibility', () => {
+  it('should allow the creator and anyone when nobody owns it', () => {
+    expect(
+      canChangeCoreWorkflowVisibility({
+        createdByUserWorkspaceId: READER_USER_WORKSPACE_ID,
+        userWorkspaceId: READER_USER_WORKSPACE_ID,
+      }),
+    ).toBe(true);
+    expect(
+      canChangeCoreWorkflowVisibility({
+        createdByUserWorkspaceId: null,
+        userWorkspaceId: READER_USER_WORKSPACE_ID,
+      }),
+    ).toBe(true);
+    expect(
+      canChangeCoreWorkflowVisibility({
+        createdByUserWorkspaceId: 'someone-else',
+        userWorkspaceId: READER_USER_WORKSPACE_ID,
+      }),
+    ).toBe(false);
   });
 });

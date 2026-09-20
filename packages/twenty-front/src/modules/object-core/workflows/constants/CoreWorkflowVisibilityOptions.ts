@@ -15,7 +15,6 @@ export type CoreWorkflowVisibilityOption = {
   Icon: IconComponent;
 };
 
-// Mirrors how a view announces its visibility so the two controls read the same
 export const CORE_WORKFLOW_VISIBILITY_OPTIONS: CoreWorkflowVisibilityOption[] =
   [
     {

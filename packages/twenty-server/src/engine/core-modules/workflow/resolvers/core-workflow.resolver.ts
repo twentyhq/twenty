@@ -221,10 +221,12 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowVersionDTO])
   async coreWorkflowVersions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args() { workspaceWorkflowId }: CoreWorkflowVersionsArgs,
   ): Promise<CoreWorkflowVersionDTO[]> {
     return this.coreWorkflowVersionListService.findManyByWorkspaceWorkflowId({
       workspaceId,
+      userWorkspaceId,
       workspaceWorkflowId,
     });
   }
@@ -232,11 +234,13 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowVersionDTO, { nullable: true })
   async coreWorkflowVersion(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args() { workspaceWorkflowVersionId }: CoreWorkflowVersionArgs,
   ): Promise<CoreWorkflowVersionDTO | null> {
     return this.coreWorkflowVersionListService.findOneByWorkspaceWorkflowVersionId(
       {
         workspaceId,
+        userWorkspaceId,
         workspaceWorkflowVersionId,
       },
     );
@@ -245,10 +249,12 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowVersionDTO])
   async coreWorkflowVersionsByCoreWorkflowId(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args() { coreWorkflowId }: CoreWorkflowVersionsByCoreWorkflowIdArgs,
   ): Promise<CoreWorkflowVersionDTO[]> {
     return this.coreWorkflowVersionListService.findManyByCoreWorkflowId({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowId,
     });
   }
@@ -256,10 +262,12 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowVersionDTO, { nullable: true })
   async coreWorkflowVersionById(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args() { coreWorkflowVersionId }: CoreWorkflowVersionByIdArgs,
   ): Promise<CoreWorkflowVersionDTO | null> {
     return this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowVersionId,
     });
   }

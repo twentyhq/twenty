@@ -18,6 +18,7 @@ import { RecordPositionModule } from 'src/engine/core-modules/record-position/re
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
@@ -79,6 +80,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     CoreWorkflowVersionMutationResolver,
     CoreWorkflowIdResolutionService,
     CoreWorkflowLifecycleWorkspaceService,
+    CoreWorkflowAccessService,
     CoreWorkflowListService,
     CoreWorkflowMutationWorkspaceService,
     CoreWorkflowVersionMutationWorkspaceService,

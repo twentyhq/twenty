@@ -26,9 +26,11 @@ export const CoreWorkflowVisibilitySelect = ({
       value={visibility}
       disabled={disabled || isUpdatingVisibility}
       showIconInControl
+      showContextualTextInControl
       options={CORE_WORKFLOW_VISIBILITY_OPTIONS.map((option) => ({
         value: option.value,
         label: t(option.label),
+        contextualText: t(option.contextualText),
         Icon: option.Icon,
       }))}
       onChange={updateVisibility}
