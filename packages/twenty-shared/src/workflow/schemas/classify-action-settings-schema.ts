@@ -33,7 +33,10 @@ export const workflowClassifyQuestionSchema = z.object({
   id: z.uuid().describe('Stable identifier for this question row.'),
   name: z
     .string()
-    .regex(CLASSIFY_ANSWER_NAME_PATTERN)
+    .regex(
+      CLASSIFY_ANSWER_NAME_PATTERN,
+      'Answer name is required, and must be 1 to 64 characters using only letters, digits, underscores and dashes',
+    )
     .describe(
       'Answer key for this question, made of letters, digits, underscores and dashes. Downstream steps read {{stepId.answers.<name>}}.',
     ),
