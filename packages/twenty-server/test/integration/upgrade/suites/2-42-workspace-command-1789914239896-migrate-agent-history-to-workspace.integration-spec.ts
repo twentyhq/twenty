@@ -126,6 +126,82 @@ describe('versioned agent history upgrade (integration)', () => {
     ]);
   });
 
+  it('skips absent schemas only when no history or migration state exists', async () => {
+    const workspaceId = randomUUID();
+    const ownerId = randomUUID();
+    const legacyThreadId = randomUUID();
+    const args = {
+      workspaceId,
+      dataSource,
+      index: 0,
+      total: 1,
+      options: {},
+    };
+    await dataSource.query(
+      `INSERT INTO core."workspace" (id, "activationStatus", "databaseSchema", "subdomain", "workspaceCustomApplicationId", "defaultRoleId")
+       SELECT $1::uuid, 'CREATED', $2, $1::text, "workspaceCustomApplicationId", "defaultRoleId"
+       FROM core."workspace" WHERE id = $3`,
+      [workspaceId, getWorkspaceSchemaName(workspaceId), WORKSPACE_ID],
+    );
+    try {
+      await expect(command.up(args)).resolves.toBeUndefined();
+      expect(
+        await dataSource.query(
+          'SELECT 1 FROM core."keyValuePair" WHERE "workspaceId" = $1 AND key = $2',
+          [workspaceId, AGENT_HISTORY_STORAGE_KEY],
+        ),
+      ).toHaveLength(0);
+      expect(
+        await dataSource.query(
+          'SELECT 1 FROM core."objectMetadata" WHERE "workspaceId" = $1',
+          [workspaceId],
+        ),
+      ).toHaveLength(0);
+      await dataSource.transaction(async (manager) => {
+        await storage.writeState(manager.queryRunner!, workspaceId, {
+          storage: 'workspace',
+        });
+      });
+      await expect(command.up(args)).rejects.toThrow(/schema is missing/i);
+      await dataSource.transaction(async (manager) => {
+        await storage.writeState(manager.queryRunner!, workspaceId, {
+          storage: 'core',
+          migration: {
+            phase: 'copying',
+            target: 'workspace',
+            tableIndex: 0,
+            lastId: null,
+          },
+        });
+      });
+      await expect(command.up(args)).rejects.toThrow(/schema is missing/i);
+      await dataSource.query(
+        'DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND key = $2',
+        [workspaceId, AGENT_HISTORY_STORAGE_KEY],
+      );
+      await dataSource.query(
+        `INSERT INTO core."userWorkspace" (id, "workspaceId", "userId")
+         SELECT $1, $2, "userId" FROM core."userWorkspace" WHERE "workspaceId" = $3 LIMIT 1`,
+        [ownerId, workspaceId, WORKSPACE_ID],
+      );
+      await dataSource.query(
+        'INSERT INTO core."agentChatThread" (id, "workspaceId", "userWorkspaceId") VALUES ($1, $2, $3)',
+        [legacyThreadId, workspaceId, ownerId],
+      );
+      await expect(command.up(args)).rejects.toThrow(/schema is missing/i);
+      expect(
+        await dataSource.query(
+          'SELECT id FROM core."agentChatThread" WHERE id = $1',
+          [legacyThreadId],
+        ),
+      ).toEqual([{ id: legacyThreadId }]);
+    } finally {
+      await dataSource.query('DELETE FROM core."workspace" WHERE id = $1', [
+        workspaceId,
+      ]);
+    }
+  });
+
   it('is discovered by upgrade, prepares missing objects, preserves live streams, recovers interrupted streams and supports reverse copy', async () => {
     await expect(runCommand('up', true)).rejects.toThrow(/stream/i);
     expect(

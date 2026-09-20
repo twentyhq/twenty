@@ -1,4 +1,3 @@
-import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { Command } from 'nest-commander';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IsNull, MoreThan, Not } from 'typeorm';
@@ -10,10 +9,12 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { type AgentHistoryStorageState } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-state.type';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @RegisteredWorkspaceCommand('2.42.0', 1789914239896)
 @Command({
@@ -55,11 +56,6 @@ export class MigrateAgentHistoryToWorkspaceCommand extends ProvisionedWorkspaceC
     target: AgentHistoryStorageState['storage'];
   }): Promise<void> {
     const dryRun = options.dryRun ?? false;
-    await this.schema.prepare(workspaceId, dryRun);
-    if (dryRun) {
-      await this.migration.inspect(workspaceId);
-      return;
-    }
     if (!isDefined(dataSource)) {
       throw new Error('Agent history upgrade requires a workspace data source');
     }
@@ -68,8 +64,34 @@ export class MigrateAgentHistoryToWorkspaceCommand extends ProvisionedWorkspaceC
     try {
       await runner.connect();
       state = await this.storage.readState(runner, workspaceId);
+      if (!(await runner.hasSchema(getWorkspaceSchemaName(workspaceId)))) {
+        const history = await runner.query(
+          'SELECT 1 FROM core."agentChatThread" WHERE "workspaceId" = $1 LIMIT 1',
+          [workspaceId],
+        );
+        if (
+          isNonEmptyArray(history) ||
+          state.storage === 'workspace' ||
+          isDefined(state.migration)
+        ) {
+          throw new Error(
+            `Workspace schema is missing for ${workspaceId} with existing agent history or migration state`,
+          );
+        }
+        // Older installations can retain empty workspace records without a
+        // physical schema. Normal provisioning will initialize their route.
+        this.logger.log(
+          `Skipping agent history upgrade for workspace ${workspaceId}: schema is absent and history is empty`,
+        );
+        return;
+      }
     } finally {
       await runner.release();
+    }
+    await this.schema.prepare(workspaceId, dryRun);
+    if (dryRun) {
+      await this.migration.inspect(workspaceId);
+      return;
     }
     // An interrupted copy already fences repository access; resume its durable
     // cursor without trying to reap streams through the fenced repository.
