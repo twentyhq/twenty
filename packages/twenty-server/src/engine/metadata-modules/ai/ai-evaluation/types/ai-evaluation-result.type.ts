@@ -1,3 +1,4 @@
+import { type BillingTokenUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/billing-token-usage.type';
 import { type AiEvaluationModelAnswer } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 
 // Which kind of model answered. Callers that read probabilities need this: an
@@ -11,19 +12,11 @@ export const AI_EVALUATION_RUNNER_KINDS = [
 export type AiEvaluationRunnerKind =
   (typeof AI_EVALUATION_RUNNER_KINDS)[number];
 
-// Mirrors BillingTokenUsage: an evaluation model reports token counts and
-// nothing else, but a language model reports how many of its input tokens were
-// cached, and billing charges those at the cached rate.
-export type AiEvaluationUsage = {
-  inputTokens?: number;
-  outputTokens?: number;
-  inputTokenDetails?: {
-    cacheReadTokens?: number;
-  };
-  outputTokenDetails?: {
-    reasoningTokens?: number;
-  };
-};
+// What a runner reports goes straight to calculateAndBillUsage, so it is the
+// billing shape rather than a copy of it: an evaluation model fills the totals
+// only, while a language model also reports the cached input tokens billing
+// charges at the cached rate.
+export type AiEvaluationUsage = BillingTokenUsage;
 
 export type AiEvaluationRunnerOutput = {
   answers: Record<string, AiEvaluationModelAnswer>;

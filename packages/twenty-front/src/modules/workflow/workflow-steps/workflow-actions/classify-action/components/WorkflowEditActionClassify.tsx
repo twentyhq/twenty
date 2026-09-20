@@ -144,7 +144,9 @@ export const WorkflowEditActionClassify = ({
   // fallback, which answers them without a distribution.
   const modelsThatCouldRun = isDefined(selectedModel)
     ? [selectedModel]
-    : aiEvaluationModels.filter((evaluationModel) => evaluationModel.isAvailable);
+    : aiEvaluationModels.filter(
+        (evaluationModel) => evaluationModel.isAvailable,
+      );
 
   const runnableQuestionTypes = new Set(
     modelsThatCouldRun.flatMap(
