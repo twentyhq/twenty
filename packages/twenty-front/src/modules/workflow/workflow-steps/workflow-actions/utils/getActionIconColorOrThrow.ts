@@ -29,6 +29,7 @@ export const getActionIconColorOrThrow = (
     case 'DELAY':
       return themeCssVariables.color.green12;
     case 'AI_AGENT':
+    case 'CLASSIFY':
       return themeCssVariables.color.pink;
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);

@@ -7,6 +7,10 @@ import {
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
+import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
@@ -26,6 +30,18 @@ const USER_FACING_USAGE_LIMIT_EXCEPTION_CODES = [
   UsageLimitExceptionCode.QUOTA_EXHAUSTED,
 ];
 
+// A step asking for a model the instance does not serve, or asking it something
+// it cannot answer, is a configuration the author has to change: no retry will
+// produce a model, and reporting it as a system error buries real ones.
+// API_KEY_NOT_CONFIGURED is the one an instance with no provider at all raises,
+// from getDefaultModelForTier under the auto-select fallback.
+const USER_FACING_AI_EXCEPTION_CODES = [
+  AiExceptionCode.API_KEY_NOT_CONFIGURED,
+  AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
+  AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
+  AiExceptionCode.INVALID_EVALUATION_REQUEST,
+];
+
 export const isUserFacingWorkflowExecutorError = (error: unknown): boolean => {
   if (error instanceof WorkflowStepExecutorException) {
     return USER_FACING_STEP_EXECUTOR_EXCEPTION_CODES.includes(error.code);
@@ -37,6 +53,10 @@ export const isUserFacingWorkflowExecutorError = (error: unknown): boolean => {
 
   if (error instanceof UsageLimitException) {
     return USER_FACING_USAGE_LIMIT_EXCEPTION_CODES.includes(error.code);
+  }
+
+  if (error instanceof AiException) {
+    return USER_FACING_AI_EXCEPTION_CODES.includes(error.code);
   }
 
   return false;

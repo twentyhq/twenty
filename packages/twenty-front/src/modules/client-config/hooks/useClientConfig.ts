@@ -1,4 +1,5 @@
 import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
+import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
@@ -54,6 +55,7 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setDomainConfiguration = useSetAtomState(domainConfigurationState);
   const setAuthProviders = useSetAtomState(authProvidersState);
   const setAiModels = useSetAtomState(aiModelsState);
+  const setAiEvaluationModels = useSetAtomState(aiEvaluationModelsState);
   const setAiModelTiers = useSetAtomState(aiModelTiersState);
 
   const setIsDeveloperDefaultSignInPrefilled = useSetAtomState(
@@ -181,6 +183,7 @@ export const useClientConfig = (): UseClientConfigResult => {
         sso: clientConfig.authProviders.sso,
       });
       setAiModels(clientConfig.aiModels ?? []);
+      setAiEvaluationModels(clientConfig.aiEvaluationModels ?? []);
       setAiModelTiers(clientConfig.aiModelTiers ?? []);
       setIsAnalyticsEnabled(clientConfig.analyticsEnabled);
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
@@ -261,6 +264,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     }
   }, [
     setAiModels,
+    setAiEvaluationModels,
     setAiModelTiers,
     setApiConfig,
     setOnboardingConfig,

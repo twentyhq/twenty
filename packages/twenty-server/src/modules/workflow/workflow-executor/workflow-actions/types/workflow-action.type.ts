@@ -1,6 +1,7 @@
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type WorkflowAiAgentActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-settings.type';
+import { type WorkflowClassifyActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/types/workflow-classify-action-settings.type';
 import { type WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
 import { type WorkflowCreateCalendarEventActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/create-calendar-event/types/workflow-create-calendar-event-action-settings.type';
 import { type WorkflowDelayActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/workflow-delay-action-settings.type';
@@ -114,6 +115,11 @@ export type WorkflowAiAgentAction = BaseWorkflowAction & {
   settings: WorkflowAiAgentActionSettings;
 };
 
+export type WorkflowClassifyAction = BaseWorkflowAction & {
+  type: WorkflowActionType.CLASSIFY;
+  settings: WorkflowClassifyActionSettings;
+};
+
 export type WorkflowIteratorAction = BaseWorkflowAction & {
   type: WorkflowActionType.ITERATOR;
   settings: WorkflowIteratorActionSettings;
@@ -145,6 +151,7 @@ export type WorkflowAction =
   | WorkflowIfElseAction
   | WorkflowHttpRequestAction
   | WorkflowAiAgentAction
+  | WorkflowClassifyAction
   | WorkflowIteratorAction
   | WorkflowEmptyAction
   | WorkflowDelayAction;
