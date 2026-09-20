@@ -1,4 +1,6 @@
 **/**/.env
+/ops/secrets/
+/jai-os-docs/JAI-OS-Commercial-Implementation-Agreement.html
 .DS_Store
 /.idea
 .claude/*
