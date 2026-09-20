@@ -10,7 +10,9 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
+import { findCommandMenuItems } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-items.util';
 import { pollWorkflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/poll-workflow-graphql-request.util';
+import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -63,6 +65,12 @@ const CORE_WORKFLOW_VERSION_QUERY = `
       id
       steps
     }
+  }
+`;
+
+const COMPUTE_STEP_OUTPUT_SCHEMA_MUTATION = `
+  mutation ComputeStepOutputSchema($input: ComputeStepOutputSchemaInput!) {
+    computeStepOutputSchema(input: $input)
   }
 `;
 
@@ -335,6 +343,31 @@ describe('core workflow visibility (e2e)', () => {
         canChangeVisibility: false,
       });
     });
+
+    // The claim is the UPDATE's own WHERE rather than a preceding read, so this
+    // is what keeps two simultaneous claims from both passing.
+    it('refuses a second claim even though the workflow is still workspace-visible', async () => {
+      const secondClaim = await workflowGraphqlRequest(
+        UPDATE_VISIBILITY_MUTATION,
+        {
+          input: {
+            coreWorkflowId: ownerlessCoreWorkflowId,
+            visibility: WorkflowVisibility.PRIVATE,
+          },
+        },
+      );
+
+      expect(secondClaim.body.errors).toBeDefined();
+
+      const stillShared = await asOtherMember(CORE_WORKFLOW_BY_ID_QUERY, {
+        coreWorkflowId: ownerlessCoreWorkflowId,
+      });
+
+      expect(stillShared.body.data.coreWorkflowById).toMatchObject({
+        visibility: 'WORKSPACE',
+        canChangeVisibility: true,
+      });
+    });
   });
 
   describe('once its creator makes it private', () => {
@@ -390,6 +423,24 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.data?.coreWorkflowVersion ?? null).toBeNull();
     });
 
+    // The builder resolver reads a version's content straight from its id to
+    // compute a schema, so it hands out the whole definition unless it answers
+    // to the same rule.
+    it('refuses to compute a step output schema from its version for another member', async () => {
+      const response = await asOtherMember(
+        COMPUTE_STEP_OUTPUT_SCHEMA_MUTATION,
+        {
+          input: {
+            step: { type: 'MANUAL', settings: { outputSchema: {} } },
+            workflowVersionId: workspaceWorkflowVersionId,
+          },
+        },
+      );
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.data?.computeStepOutputSchema ?? null).toBeNull();
+    });
+
     // The legacy resolver is keyed by the workspace mirror's ids and never
     // passes through CoreWorkflowIdResolutionService, so it needs the rule
     // reached from the other side or a held id still launches the workflow.
@@ -432,6 +483,146 @@ describe('core workflow visibility (e2e)', () => {
       expect(stillPrivate.body.data.coreWorkflowById).toMatchObject({
         visibility: 'PRIVATE',
       });
+    });
+  });
+
+  // Activating a manual trigger writes a workspace-wide command menu item
+  // carrying the workflow name, so the command menu is a second way to reach
+  // the workflow and has to answer to the same rule.
+  describe('a workflow with an active manual trigger', () => {
+    let manualWorkspaceWorkflowId: string;
+    let manualCoreWorkflowId: string;
+    let manualWorkspaceWorkflowVersionId: string;
+
+    const listCommandMenuItemWorkflowVersionIds = async (token: string) => {
+      const { data } = await findCommandMenuItems({
+        expectToFail: false,
+        gqlFields: 'id workflowVersionId',
+        input: undefined,
+        token,
+      });
+
+      return data.commandMenuItems.map(
+        ({ workflowVersionId }) => workflowVersionId,
+      );
+    };
+
+    beforeAll(async () => {
+      const createResponse = await workflowGraphqlRequest(
+        CREATE_CORE_WORKFLOW_MUTATION,
+        { input: { name: 'Manual Trigger Workflow' } },
+      );
+
+      expect(createResponse.body.errors).toBeUndefined();
+      manualCoreWorkflowId = createResponse.body.data.createCoreWorkflow.id;
+      manualWorkspaceWorkflowId =
+        createResponse.body.data.createCoreWorkflow.workspaceWorkflowId;
+
+      const versions = await pollWorkflowGraphqlRequest<
+        {
+          coreWorkflowVersions: { workspaceWorkflowVersionId: string | null }[];
+        },
+        { workspaceWorkflowVersionId: string | null }[] | undefined
+      >({
+        query: `
+          query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
+            coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
+              workspaceWorkflowVersionId
+            }
+          }
+        `,
+        variables: { workspaceWorkflowId: manualWorkspaceWorkflowId },
+        extract: (data) => data?.coreWorkflowVersions,
+        until: (coreWorkflowVersions) =>
+          isDefined(coreWorkflowVersions?.[0]?.workspaceWorkflowVersionId),
+      });
+
+      manualWorkspaceWorkflowVersionId =
+        versions![0].workspaceWorkflowVersionId!;
+
+      await updateWorkflowVersionTrigger({
+        workflowVersionId: manualWorkspaceWorkflowVersionId,
+        trigger: {
+          name: 'Manual Trigger',
+          type: 'MANUAL',
+          settings: { outputSchema: {} },
+          nextStepIds: [],
+          position: { x: 0, y: 0 },
+        },
+      });
+
+      const stepResponse = await workflowGraphqlRequest(
+        `
+          mutation CreateWorkflowVersionStep(
+            $input: CreateWorkflowVersionStepInput!
+          ) {
+            createWorkflowVersionStep(input: $input) {
+              stepsDiff
+            }
+          }
+        `,
+        {
+          input: {
+            workflowVersionId: manualWorkspaceWorkflowVersionId,
+            stepType: 'FIND_RECORDS',
+            parentStepId: 'trigger',
+            position: { x: 200, y: 0 },
+          },
+        },
+      );
+
+      expect(stepResponse.body.errors).toBeUndefined();
+
+      const activateResponse = await workflowGraphqlRequest(
+        ACTIVATE_VERSION_MUTATION,
+        { workflowVersionId: manualWorkspaceWorkflowVersionId },
+      );
+
+      expect(activateResponse.body.errors).toBeUndefined();
+    });
+
+    afterAll(async () => {
+      if (isDefined(manualWorkspaceWorkflowId)) {
+        await setVisibility(manualCoreWorkflowId, WorkflowVisibility.WORKSPACE);
+        await workflowGraphqlRequest(
+          `
+            mutation DestroyWorkflow($id: UUID!) {
+              destroyWorkflow(id: $id) {
+                id
+              }
+            }
+          `,
+          { id: manualWorkspaceWorkflowId },
+        );
+      }
+    });
+
+    it('puts its command menu item in every member command menu', async () => {
+      expect(
+        await listCommandMenuItemWorkflowVersionIds(
+          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        ),
+      ).toContain(manualWorkspaceWorkflowVersionId);
+    });
+
+    it('takes the item out of the other member command menu once private, and leaves it in its creator one', async () => {
+      const response = await setVisibility(
+        manualCoreWorkflowId,
+        WorkflowVisibility.PRIVATE,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      expect(
+        await listCommandMenuItemWorkflowVersionIds(
+          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        ),
+      ).not.toContain(manualWorkspaceWorkflowVersionId);
+      expect(
+        await listCommandMenuItemWorkflowVersionIds(
+          APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        ),
+      ).toContain(manualWorkspaceWorkflowVersionId);
     });
   });
 });

@@ -7,7 +7,7 @@ import { In } from 'typeorm';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-where.util';
+import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -156,6 +156,61 @@ export class CoreWorkflowAccessService {
     });
   }
 
+  // The command menu lists every member's manual triggers in one read, so the
+  // rule has to come back as a filter rather than a deny.
+  async findInaccessibleWorkspaceWorkflowVersionIds({
+    workspaceId,
+    userWorkspaceId,
+    workspaceWorkflowVersionIds,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    workspaceWorkflowVersionIds: string[];
+  }): Promise<Set<string>> {
+    if (workspaceWorkflowVersionIds.length === 0) {
+      return new Set();
+    }
+
+    const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
+      workspaceId,
+      {
+        where: { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
+        select: {
+          id: true,
+          coreWorkflowId: true,
+          workspaceWorkflowVersionId: true,
+        },
+      },
+    );
+
+    const inaccessibleCoreWorkflows = await this.findInaccessibleCoreWorkflows({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [
+        ...new Set(
+          coreWorkflowVersions
+            .map(({ coreWorkflowId }) => coreWorkflowId)
+            .filter(isDefined),
+        ),
+      ],
+    });
+
+    const inaccessibleCoreWorkflowIds = new Set(
+      inaccessibleCoreWorkflows.map(({ id }) => id),
+    );
+
+    return new Set(
+      coreWorkflowVersions.flatMap(
+        ({ coreWorkflowId, workspaceWorkflowVersionId }) =>
+          isDefined(coreWorkflowId) &&
+          isDefined(workspaceWorkflowVersionId) &&
+          inaccessibleCoreWorkflowIds.has(coreWorkflowId)
+            ? [workspaceWorkflowVersionId]
+            : [],
+      ),
+    );
+  }
+
   async isCoreWorkflowAccessible({
     workspaceId,
     userWorkspaceId,
@@ -183,6 +238,26 @@ export class CoreWorkflowAccessService {
     userWorkspaceId: string | undefined;
     coreWorkflowIds: string[];
   }): Promise<WorkflowEntity | undefined> {
+    const [inaccessibleCoreWorkflow] = await this.findInaccessibleCoreWorkflows(
+      { workspaceId, userWorkspaceId, coreWorkflowIds },
+    );
+
+    return inaccessibleCoreWorkflow;
+  }
+
+  private async findInaccessibleCoreWorkflows({
+    workspaceId,
+    userWorkspaceId,
+    coreWorkflowIds,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    coreWorkflowIds: string[];
+  }): Promise<WorkflowEntity[]> {
+    if (coreWorkflowIds.length === 0) {
+      return [];
+    }
+
     const coreWorkflows = await this.coreWorkflowRepository.find(workspaceId, {
       where: { id: In(coreWorkflowIds) },
       select: {
@@ -194,7 +269,7 @@ export class CoreWorkflowAccessService {
 
     // An id nobody owns keeps behaving exactly as it did before, so an unknown
     // or already deleted workflow is still a no-op rather than a refusal.
-    return coreWorkflows.find(
+    return coreWorkflows.filter(
       (coreWorkflow) =>
         coreWorkflow.visibility === WorkflowVisibility.PRIVATE &&
         !canChangeCoreWorkflowVisibility({
