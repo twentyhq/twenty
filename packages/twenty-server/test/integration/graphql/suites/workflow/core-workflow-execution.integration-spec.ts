@@ -850,69 +850,51 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     ]);
   });
 
-  // A canceled Ask is not an answered one: a failed run can be retried, and the
-  // retried form step has to be answerable again or the Ask has turned a
-  // recoverable run into a permanently stuck one.
-  it('reopens the canceled Ask when a failed run is retried, and answers it', async () => {
-    const finalStep = emptyStep();
-    const form = formStep([finalStep.id]);
-    const failingStep: WorkflowAction = {
+  // Every iteration of a loop re-executes the same step id in the same run, so
+  // the Ask keyed on (workflowRunId, stepId) is reused. Without reopening it,
+  // the first iteration's answer would stand for the second and the run would
+  // park on a question nobody could answer.
+  it('reopens the Ask for each iteration of a form inside a loop', async () => {
+    const afterLoop = emptyStep();
+    const form = formStep([]);
+    const iterator: WorkflowAction = {
       ...emptyStep(),
-      type: WorkflowActionType.DELAY,
+      type: WorkflowActionType.ITERATOR,
       settings: {
         ...settings,
         input: {
-          delayType: 'SCHEDULED_DATE',
-          scheduledDateTime: '2000-01-01T00:00:00.000Z',
+          items: ['first', 'second'],
+          initialLoopStepIds: [form.id],
         },
       },
+      nextStepIds: [afterLoop.id],
     };
-    const fanOut: WorkflowAction = {
-      ...emptyStep(),
-      nextStepIds: [form.id, failingStep.id],
-    };
+
+    form.nextStepIds = [iterator.id];
+
     const fixture = await createFixture({
       mirrorless: true,
-      steps: [fanOut, form, failingStep, finalStep],
+      steps: [iterator, form, afterLoop],
     });
     const runId = await runFixture(fixture);
+
+    const submit = (answer: string) =>
+      workflowGraphqlRequest(
+        'mutation Submit($input: SubmitFormStepInput!) { submitFormStep(input: $input) }',
+        {
+          input: { workflowRunId: runId, stepId: form.id, response: { answer } },
+        },
+      );
 
     await waitForStep(runId, form.id, 'PENDING');
     expect(await getInputAsks(runId)).toMatchObject([{ status: 'PENDING' }]);
 
-    await waitForRun(runId, 'FAILED');
-    expect(await getInputAsks(runId)).toMatchObject([{ status: 'CANCELED' }]);
+    const first = await submit('First item');
 
-    // A retry re-runs the captured snapshot, so the branch that failed would
-    // fail again and end the run a second time before anyone could answer.
-    // Moving its date just ahead lets it pass this time, leaving the retried
-    // form as the only thing the run is still waiting on.
-    await global.testDataSource.query(
-      `UPDATE "${schema}"."workflowRun"
-       SET state = jsonb_set(
-         state,
-         '{flow,steps}',
-         (
-           SELECT jsonb_agg(
-             CASE
-               WHEN step->>'id' = $2
-               THEN jsonb_set(step, '{settings,input,scheduledDateTime}', to_jsonb($3::text))
-               ELSE step
-             END
-           )
-           FROM jsonb_array_elements(state->'flow'->'steps') AS step
-         )
-       )
-       WHERE id = $1`,
-      [runId, failingStep.id, new Date(Date.now() + 2000).toISOString()],
-    );
+    expect(first.body.errors).toBeUndefined();
 
-    const retried = await workflowGraphqlRequest(
-      'mutation Retry($id: UUID!) { retryWorkflowRun(workflowRunId: $id) { id status } }',
-      { id: runId },
-    );
-
-    expect(retried.body.errors).toBeUndefined();
+    // The same row comes back to PENDING rather than a second one appearing:
+    // the unique index on (workflowRunId, stepId) leaves no other option.
     await waitForStep(runId, form.id, 'PENDING');
 
     const reopenedInputAsks = await getInputAsks(runId);
@@ -925,20 +907,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       answeredAt: null,
     });
 
-    const submitted = await workflowGraphqlRequest(
-      'mutation Submit($input: SubmitFormStepInput!) { submitFormStep(input: $input) }',
-      {
-        input: {
-          workflowRunId: runId,
-          stepId: form.id,
-          response: { answer: 'Approved after retry' },
-        },
-      },
-    );
+    const second = await submit('Second item');
 
-    expect(submitted.body.errors).toBeUndefined();
+    expect(second.body.errors).toBeUndefined();
+    await waitForRun(runId, 'COMPLETED');
     expect(await getInputAsks(runId)).toMatchObject([
-      { status: 'ANSWERED', response: { answer: 'Approved after retry' } },
+      { status: 'ANSWERED', response: { answer: 'Second item' } },
     ]);
   });
 
