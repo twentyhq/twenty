@@ -6,7 +6,9 @@ import {
 
 const APP_SITE_HREF = 'https://twenty.com';
 
-export const getSiteUrl = (locale: string, page: string): string => {
+type SitePage = 'terms' | 'privacy-policy';
+
+export const getSiteUrl = (locale: string, page: SitePage): string => {
   const language = new Intl.Locale(locale).language;
 
   const isLocalizedWebsitePath =
