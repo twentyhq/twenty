@@ -15,9 +15,10 @@ import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-gro
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
-// Must match ReconcileStandardRecordPageCommand's @Command name.
+// The upgradeMigration row is keyed on the registry-computed
+// `${version}_${className}_${timestamp}` name, not the CLI @Command name.
 const RECONCILE_STANDARD_RECORD_PAGE_COMMAND_NAME =
-  'upgrade:2-31:reconcile-standard-record-page';
+  '2.31.0_ReconcileStandardRecordPageCommand_1786437481000';
 
 const REACTIVATION_BATCH_SIZE = 200;
 
