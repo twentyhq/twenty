@@ -109,6 +109,67 @@ export class CoreWorkflowAccessService {
     });
   }
 
+  // The legacy resolvers are keyed by the workspace mirror's ids rather than
+  // the core ones, so they need the same rule reached from the other side.
+  async assertWorkspaceWorkflowVersionsAreAccessibleOrThrow({
+    workspaceId,
+    userWorkspaceId,
+    workspaceWorkflowVersionIds,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    workspaceWorkflowVersionIds: string[];
+  }): Promise<void> {
+    if (workspaceWorkflowVersionIds.length === 0) {
+      return;
+    }
+
+    const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
+      workspaceId,
+      {
+        where: { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
+        select: { id: true, coreWorkflowId: true },
+      },
+    );
+
+    await this.assertCoreWorkflowsAreAccessibleOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [
+        ...new Set(
+          coreWorkflowVersions
+            .map(({ coreWorkflowId }) => coreWorkflowId)
+            .filter(isDefined),
+        ),
+      ],
+    });
+  }
+
+  async assertWorkspaceWorkflowsAreAccessibleOrThrow({
+    workspaceId,
+    userWorkspaceId,
+    workspaceWorkflowIds,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    workspaceWorkflowIds: string[];
+  }): Promise<void> {
+    if (workspaceWorkflowIds.length === 0) {
+      return;
+    }
+
+    const coreWorkflows = await this.coreWorkflowRepository.find(workspaceId, {
+      where: { workspaceWorkflowId: In(workspaceWorkflowIds) },
+      select: { id: true },
+    });
+
+    await this.assertCoreWorkflowsAreAccessibleOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: coreWorkflows.map(({ id }) => id),
+    });
+  }
+
   async isCoreWorkflowAccessible({
     workspaceId,
     userWorkspaceId,
