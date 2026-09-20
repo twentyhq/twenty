@@ -632,4 +632,31 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  asks: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'asks',
+      label: i18nLabel(
+        msg({ message: `Asks`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Asks`, context: 'fieldMetadata.description' }),
+      ),
+      icon: 'IconHelpCircle',
+      isNullable: false,
+      isUIEditable: false,
+      targetObjectName: 'ask',
+      targetFieldName: 'workflowRun',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

@@ -1,0 +1,6 @@
+export enum AskStatus {
+  PENDING = 'PENDING',
+  ANSWERED = 'ANSWERED',
+  CANCELED = 'CANCELED',
+  EXPIRED = 'EXPIRED',
+}

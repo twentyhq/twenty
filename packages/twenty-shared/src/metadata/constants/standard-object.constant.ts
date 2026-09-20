@@ -313,6 +313,40 @@ export const STANDARD_OBJECTS = {
       }),
     },
   },
+  ask: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.ask,
+    fields: STANDARD_OBJECT_FIELDS.ask,
+    indexes: {
+      assigneeStatusIndex: {
+        universalIdentifier: '255cba21-0107-4c31-b497-9c4081114da8',
+      },
+      workflowRunIdIndex: {
+        universalIdentifier: '5ef5fbb9-5322-49b1-8340-3ce81a8a8a8f',
+      },
+    },
+    views: {
+      allAsks: buildStandardObjectIndexView({
+        objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.ask,
+        fields: STANDARD_OBJECT_FIELDS.ask,
+        viewFieldNames: ['name', 'status', 'assignee', 'createdAt'],
+      }),
+      askRecordPageFields: buildStandardObjectRecordPageFieldsView({
+        objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.ask,
+        fields: STANDARD_OBJECT_FIELDS.ask,
+        viewFieldNames: [
+          'name',
+          'status',
+          'assignee',
+          'answeredAt',
+          'source',
+          'workflowRun',
+        ],
+        viewFieldGroupNames: {
+          general: 'General',
+        },
+      }),
+    },
+  },
   company: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
     fields: STANDARD_OBJECT_FIELDS.company,
