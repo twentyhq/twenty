@@ -46,8 +46,6 @@ export const resolveSlackFileDetails = async ({
       `[slack] files.info failed for ${file.id}, the file stays a name in the prompt: ${error instanceof Error ? error.message : String(error)}`,
     );
 
-    // A stub Slack refuses to describe never reaches the download that checks
-    // the content type, so this is the only place its missing scope surfaces
     return {
       file,
       isFilesReadScopeMissing:

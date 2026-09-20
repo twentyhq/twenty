@@ -40,8 +40,6 @@ const NO_ATTACHMENTS: ImportedSlackAttachments = {
 const FILES_READ_SCOPE_MISSING_REASON =
   'Slack refused to serve a shared file, which means the stored bot token predates the files:read scope. Reconnect Slack so the assistant can read files shared with it.';
 
-// Every file failure degrades silently, so the connection is the only place
-// an admin can learn that reconnecting is what restores file reading
 const reportFilesReadScopeMissing = async ({
   isFilesReadScopeMissing,
   connectionId,
