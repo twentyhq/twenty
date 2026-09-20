@@ -1129,8 +1129,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       }
     });
 
-    it('applies the instance default only to empty newly initialized workspaces', async () => {
-      await lifecycle.setNewWorkspaceDefault('workspace');
+    it('defaults new empty workspaces to workspace storage without moving legacy history', async () => {
       await lifecycle.initializeWorkspace(WORKSPACE_ID);
       await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
         expect(selected).toBe('core'),
@@ -1149,6 +1148,16 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await lifecycle.initializeWorkspace(WORKSPACE_ID);
       await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
         expect(selected).toBe('workspace'),
+      );
+    });
+
+    it('honors an explicit core default for a new empty workspace', async () => {
+      for (const table of [...AGENT_HISTORY_TABLES].reverse())
+        await dataSource.query(`DELETE FROM core."${table.name}"`);
+      await lifecycle.setNewWorkspaceDefault('core');
+      await lifecycle.initializeWorkspace(WORKSPACE_ID);
+      await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
+        expect(selected).toBe('core'),
       );
     });
     it('does not allow copy to resume after an interrupted abort', async () => {

@@ -1,5 +1,6 @@
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { AgentHistoryLifecycleService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-lifecycle.service';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
@@ -61,6 +62,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class DevSeederService {
   constructor(
+    private readonly agentHistoryLifecycleService: AgentHistoryLifecycleService,
     private readonly agentHistoryStorageService: AgentHistoryStorageService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -133,6 +135,8 @@ export class DevSeederService {
         workspaceId,
       },
     );
+
+    await this.agentHistoryLifecycleService.initializeWorkspace(workspaceId);
 
     await this.sdkClientGenerationService.generateSdkClientForApplication({
       workspaceId,

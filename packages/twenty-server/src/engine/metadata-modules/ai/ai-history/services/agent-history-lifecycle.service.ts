@@ -108,7 +108,7 @@ export class AgentHistoryLifecycleService {
         `SELECT value FROM core."keyValuePair" WHERE "key" = $1 AND "workspaceId" IS NULL AND "userId" IS NULL AND "applicationId" IS NULL AND type = 'CONFIG_VARIABLE'`,
         [AGENT_HISTORY_DEFAULT_STORAGE_KEY],
       );
-      const selected = defaults[0]?.value?.storage ?? 'core';
+      const selected = defaults[0]?.value?.storage ?? 'workspace';
       if (selected !== 'core' && selected !== 'workspace') {
         throw new Error('Invalid default agent history storage');
       }
