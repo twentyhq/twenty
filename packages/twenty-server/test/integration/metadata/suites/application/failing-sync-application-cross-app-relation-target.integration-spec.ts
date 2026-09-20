@@ -3,7 +3,10 @@ import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/app
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { type ObjectManifest } from 'twenty-shared/application';
+import {
+  type FieldManifest,
+  type ObjectManifest,
+} from 'twenty-shared/application';
 import {
   FieldMetadataType,
   RelationOnDeleteAction,
@@ -22,10 +25,11 @@ const APP_B_ROLE_ID = uuidv4();
 const APP_B_OBJECT_ID = uuidv4();
 const WIDGET_NAME_FIELD_ID = uuidv4();
 const WIDGET_TARGET_RELATION_FIELD_ID = uuidv4();
-// Not actually installed on App A's object: the exclusion this test proves
-// happens before any inverse-field lookup is reached (see
-// validateMorphOrRelationFlatFieldMetadata, which returns as soon as the
-// relation's target OBJECT is unresolved, never checking the target field).
+// App B's manifest also declares this inverse field directly on App A's
+// (pre-existing) object, in the same batch as the forward field — this
+// mirrors how same-app bidirectional relations are declared together, and
+// is what actually exercises the cross-app exclusion: App B's app-scoped
+// flatObjectMetadataMaps has no way to resolve App A's object at all.
 const APP_A_OBJECT_BACK_RELATION_FIELD_ID = uuidv4();
 
 const APP_A_NAME_FIELD: ObjectManifest['fields'][number] = {
@@ -40,6 +44,24 @@ const WIDGET_NAME_FIELD: ObjectManifest['fields'][number] = {
   type: FieldMetadataType.TEXT,
   name: 'name',
   label: 'Name',
+};
+
+// Declared as a top-level manifest field (not nested under App A's object)
+// because it targets an object owned by a different app, mirroring how
+// successful-sync-application-cross-app-view-field.integration-spec.ts lets
+// App B contribute a field to an object it does not own.
+const APP_A_BACK_RELATION_FIELD: FieldManifest = {
+  universalIdentifier: APP_A_OBJECT_BACK_RELATION_FIELD_ID,
+  type: FieldMetadataType.RELATION,
+  name: 'widgets',
+  label: 'Widgets',
+  objectUniversalIdentifier: APP_A_OBJECT_ID,
+  relationTargetFieldMetadataUniversalIdentifier:
+    WIDGET_TARGET_RELATION_FIELD_ID,
+  relationTargetObjectMetadataUniversalIdentifier: APP_B_OBJECT_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
 };
 
 describe('Sync application should fail when a RELATION field targets another app custom object', () => {
@@ -76,10 +98,10 @@ describe('Sync application should fail when a RELATION field targets another app
             buildDefaultObjectManifest({
               applicationUniversalIdentifier: APP_A_ID,
               universalIdentifier: APP_A_OBJECT_ID,
-              nameSingular: 'targetThing',
-              namePlural: 'targetThings',
-              labelSingular: 'Target Thing',
-              labelPlural: 'Target Things',
+              nameSingular: 'crossAppTarget',
+              namePlural: 'crossAppTargets',
+              labelSingular: 'Cross App Target',
+              labelPlural: 'Cross App Targets',
               labelIdentifierFieldMetadataUniversalIdentifier:
                 APP_A_NAME_FIELD_ID,
               additionalFields: [APP_A_NAME_FIELD],
@@ -98,7 +120,7 @@ describe('Sync application should fail when a RELATION field targets another app
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: APP_A_ID,
     });
-  });
+  }, 60000);
 
   it("fails to sync App B when its RELATION field targets App A's custom object", async () => {
     const { errors } = await syncApplication({
@@ -113,6 +135,7 @@ describe('Sync application should fail when a RELATION field targets another app
               description: 'Role owned by App B',
             },
           ],
+          fields: [APP_A_BACK_RELATION_FIELD],
           objects: [
             buildDefaultObjectManifest({
               applicationUniversalIdentifier: APP_B_ID,
@@ -148,8 +171,15 @@ describe('Sync application should fail when a RELATION field targets another app
       expectToFail: true,
     });
 
-    // TODO(DIAG-06): tighten to the exact confirmed error message once Task 3 captures evidence
+    // Confirmed via captured runtime evidence (06-DIAGNOSIS.md): the throw
+    // site is ObjectMetadataWithRelationsGqlObjectTypeGenerator.generateFields
+    // (GraphQL-schema-build time), not the field-type validator — the
+    // validator's own flatObjectMetadataMaps resolves the cross-app target
+    // fine, but the app-scoped schema/SDK-generation map does not.
     expect(isDefined(errors)).toBe(true);
     expect(errors!.length).toBeGreaterThan(0);
+    expect(JSON.stringify(errors)).toMatch(
+      /has no relation target object metadata/,
+    );
   }, 60000);
 });

@@ -115,10 +115,6 @@ export class ObjectMetadataWithRelationsGqlObjectTypeGenerator {
       });
 
       if (!isDefined(objectMetadataTarget)) {
-        this.logger.debug(
-          `[DIAG-06] relationTargetObjectMetadataId=${flatFieldMetadata.relationTargetObjectMetadataId} flatFieldMetadataId=${flatFieldMetadata.id} flatObjectMetadataMapsKeys=${JSON.stringify(Object.keys(context.flatObjectMetadataMaps.byUniversalIdentifier ?? {}))}`,
-        );
-
         throw new Error(
           `Field Metadata of type RELATION or MORPH_RELATION with id ${flatFieldMetadata.id} has no relation target object metadata`,
         );

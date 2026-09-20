@@ -1,5 +1,3 @@
-import { Logger } from '@nestjs/common';
-
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,8 +12,6 @@ import { validateMorphOrRelationFlatFieldJoinColumName } from 'src/engine/metada
 import { validateMorphOrRelationFlatFieldOnDelete } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util';
 import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-
-const diagLogger = new Logger('DIAG-06');
 
 type ValidateMorphOrRelationFlatFieldMetadataUpdatesArgs = Omit<
   FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>,
@@ -133,10 +129,6 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
     universalIdentifier: relationTargetObjectMetadataUniversalIdentifier,
     flatEntityMaps: flatObjectMetadataMaps,
   });
-
-  diagLogger.debug(
-    `[DIAG-06] relationTargetObjectMetadataUniversalIdentifier=${relationTargetObjectMetadataUniversalIdentifier} targetFlatObjectMetadataDefined=${isDefined(targetFlatObjectMetadata)} flatObjectMetadataMapsKeys=${JSON.stringify(Object.keys(flatObjectMetadataMaps.byUniversalIdentifier ?? {}))}`,
-  );
 
   const targetFlatFieldMetadata =
     (remainingFlatEntityMapsToValidate
