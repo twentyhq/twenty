@@ -33,4 +33,27 @@ describe('hasEditorExtension', () => {
 
     expect(hasEditorExtension(destroyedEditor, 'bold')).toBe(false);
   });
+
+  it('should return false when the editor is null or undefined', () => {
+    expect(hasEditorExtension(null, 'bold')).toBe(false);
+    expect(hasEditorExtension(undefined, 'bold')).toBe(false);
+  });
+
+  it('should return false when the extension manager is missing', () => {
+    const editorWithoutExtensionManager = {
+      extensionManager: null,
+    } as unknown as Editor;
+
+    expect(hasEditorExtension(editorWithoutExtensionManager, 'bold')).toBe(
+      false,
+    );
+  });
+
+  it('should return false when the extensions are not an array', () => {
+    const editorWithInvalidExtensions = {
+      extensionManager: { extensions: null },
+    } as unknown as Editor;
+
+    expect(hasEditorExtension(editorWithInvalidExtensions, 'bold')).toBe(false);
+  });
 });
