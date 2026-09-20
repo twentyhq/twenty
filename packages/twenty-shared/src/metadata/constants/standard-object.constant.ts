@@ -320,9 +320,6 @@ export const STANDARD_OBJECTS = {
       assigneeStatusIndex: {
         universalIdentifier: '255cba21-0107-4c31-b497-9c4081114da8',
       },
-      workflowRunIdIndex: {
-        universalIdentifier: '5ef5fbb9-5322-49b1-8340-3ce81a8a8a8f',
-      },
       toolCallIdIndex: {
         universalIdentifier: '3f82b376-a028-49cf-8be9-7d880c23eb22',
       },

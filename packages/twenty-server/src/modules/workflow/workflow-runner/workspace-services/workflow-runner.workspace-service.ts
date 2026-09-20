@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus } from 'twenty-shared/workflow';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -147,41 +146,41 @@ export class WorkflowRunnerWorkspaceService {
         },
       );
 
-    // The Ask's PENDING filter is the only exactly-once gate on this path:
+    // The step's own PENDING → SUCCESS transition is the exactly-once gate:
     // without it two submissions both write the step result and both enqueue a
-    // resume, so downstream steps run twice on whichever answer lands last.
-    const answerResult =
-      await this.inputAskWorkspaceService.answerForWorkflowRunStep({
+    // resume, so downstream steps run twice on whichever answer lands last. It
+    // has to come before the Ask, not after — a premature ANSWERED Ask would
+    // make a submission that failed here unretryable, while a stale PENDING one
+    // is picked up by the next open or cancel.
+    const hasCompletedStep =
+      await this.workflowRunWorkspaceService.completePendingFormStep({
+        stepId,
+        result: enrichedResponse,
         workspaceId,
         workflowRunId,
-        stepId,
-        response: enrichedResponse,
       });
 
-    if (answerResult === 'already-answered') {
+    if (!hasCompletedStep) {
       throw new WorkflowVersionStepException(
-        'Form has already been submitted',
+        'Form is no longer awaiting a submission',
         WorkflowVersionStepExceptionCode.INVALID_REQUEST,
         {
-          userFriendlyMessage: msg`This form has already been submitted`,
+          userFriendlyMessage: msg`This form is no longer awaiting a submission`,
         },
       );
     }
-
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-      stepId,
-      stepInfo: {
-        status: StepStatus.SUCCESS,
-        result: enrichedResponse,
-      },
-      workspaceId,
-      workflowRunId,
-    });
 
     await this.resume({
       workspaceId,
       workflowRunId,
       lastExecutedStepId: stepId,
+    });
+
+    await this.inputAskWorkspaceService.answerForWorkflowRunStep({
+      workspaceId,
+      workflowRunId,
+      stepId,
+      response: enrichedResponse,
     });
   }
 

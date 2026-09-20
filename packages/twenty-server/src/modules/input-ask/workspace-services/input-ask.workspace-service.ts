@@ -2,16 +2,25 @@ import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import { Not } from 'typeorm';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import {
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { InputAskSource } from 'src/modules/input-ask/enums/input-ask-source.enum';
 import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enum';
 import { type InputAskWorkspaceEntity } from 'src/modules/input-ask/standard-objects/input-ask.workspace-entity';
 import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
+
+const isDuplicateEntry = (error: unknown): boolean =>
+  error instanceof TwentyOrmException &&
+  error.code === TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED;
 
 @Injectable()
 export class InputAskWorkspaceService {
@@ -21,9 +30,13 @@ export class InputAskWorkspaceService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // A run can re-enter a pending step — a retry, a resumed worker — so the Ask
-  // is keyed on the step rather than created per execution, or a member would
-  // find the same question waiting for them several times over.
+  // A run can re-enter a step it already asked about — a retried worker, a
+  // retried run, the next item of an iterator — and the unique key is the step,
+  // so the row is reused rather than duplicated. A row that is no longer
+  // PENDING is reopened: the previous answer belonged to the previous
+  // execution, and leaving it would park the run on a question nobody can
+  // answer. A row already PENDING is left exactly as it is, so a resumed worker
+  // does not rewrite a question someone is looking at.
   async openForWorkflowRunStep({
     workspaceId,
     workflowRunId,
@@ -42,6 +55,21 @@ export class InputAskWorkspaceService {
     }
 
     await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
+      const reopenResult = await inputAskRepository.update(
+        { workflowRunId, stepId, status: Not(InputAskStatus.PENDING) },
+        {
+          name: stepName,
+          status: InputAskStatus.PENDING,
+          form: { fields },
+          response: null,
+          answeredAt: null,
+        },
+      );
+
+      if ((reopenResult.affected ?? 0) > 0) {
+        return;
+      }
+
       const existingInputAsk = await inputAskRepository.findOne({
         where: { workflowRunId, stepId },
       });
@@ -56,21 +84,30 @@ export class InputAskWorkspaceService {
         workspaceId,
       });
 
-      await inputAskRepository.insert({
-        name: stepName,
-        status: InputAskStatus.PENDING,
-        source: InputAskSource.WORKFLOW_RUN_STEP,
-        form: { fields },
-        workflowRunId,
-        stepId,
-        position,
-      });
+      try {
+        await inputAskRepository.insert({
+          name: stepName,
+          status: InputAskStatus.PENDING,
+          source: InputAskSource.WORKFLOW_RUN_STEP,
+          form: { fields },
+          workflowRunId,
+          stepId,
+          position,
+        });
+      } catch (error) {
+        // Two workers can clear the read above at the same time, and the loser
+        // of that race wants the winner's row rather than a failed step.
+        if (!isDuplicateEntry(error)) {
+          throw error;
+        }
+      }
     });
   }
 
-  // The PENDING filter is the exactly-once gate, so the caller needs to know
-  // which of the three happened: it resumes the run only on 'answered', and
-  // 'no-ask' keeps a run that predates this object answerable.
+  // Records the answer the run has already accepted. The run's own step
+  // transition is what refuses a second submission, so nothing here gates
+  // anything: a row that is missing, canceled or already answered simply has
+  // nothing left to record.
   async answerForWorkflowRunStep({
     workspaceId,
     workflowRunId,
@@ -81,13 +118,13 @@ export class InputAskWorkspaceService {
     workflowRunId: string;
     stepId: string;
     response: Record<string, unknown>;
-  }): Promise<'answered' | 'already-answered' | 'no-ask'> {
+  }): Promise<void> {
     if (!(await this.hasInputAskObject(workspaceId))) {
-      return 'no-ask';
+      return;
     }
 
-    return this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      const answerResult = await inputAskRepository.update(
+    await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
+      await inputAskRepository.update(
         { workflowRunId, stepId, status: InputAskStatus.PENDING },
         {
           status: InputAskStatus.ANSWERED,
@@ -95,16 +132,6 @@ export class InputAskWorkspaceService {
           answeredAt: new Date().toISOString(),
         },
       );
-
-      if ((answerResult.affected ?? 0) > 0) {
-        return 'answered';
-      }
-
-      const existingInputAsk = await inputAskRepository.findOne({
-        where: { workflowRunId, stepId },
-      });
-
-      return isDefined(existingInputAsk) ? 'already-answered' : 'no-ask';
     });
   }
 

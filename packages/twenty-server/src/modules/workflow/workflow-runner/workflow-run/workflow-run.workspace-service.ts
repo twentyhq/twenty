@@ -214,6 +214,54 @@ export class WorkflowRunWorkspaceService {
     }
   }
 
+  // The run, not the Ask, is the exactly-once gate on a form submission. This
+  // shares updateWorkflowRunStepInfo's lock, so two submissions serialize and
+  // the second finds the step no longer PENDING; endWorkflowRun turns a pending
+  // step into FAILED, so a submission racing a stop is refused here too.
+  @WithLock('workflowRunId')
+  async completePendingFormStep({
+    stepId,
+    result,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    result: object;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    const stepInfo = workflowRunToUpdate.state?.stepInfos?.[stepId];
+
+    if (stepInfo?.status !== StepStatus.PENDING) {
+      return false;
+    }
+
+    await this.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate: {
+        state: {
+          ...workflowRunToUpdate.state,
+          stepInfos: {
+            ...workflowRunToUpdate.state?.stepInfos,
+            [stepId]: {
+              ...stepInfo,
+              result,
+              status: StepStatus.SUCCESS,
+            },
+          },
+        },
+      },
+    });
+
+    return true;
+  }
+
   @WithLock('workflowRunId')
   async updateWorkflowRunStepInfo({
     stepId,

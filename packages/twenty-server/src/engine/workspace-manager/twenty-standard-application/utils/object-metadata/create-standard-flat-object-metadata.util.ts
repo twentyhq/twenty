@@ -318,6 +318,11 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        // An Ask is the gate on a parked run, so a user token deleting the row
+        // or patching status/response would strand that run. This is the same
+        // reason the object is not a kind of task.
+        writability: MetadataWritability.SYSTEM,
+        isUIEditable: false,
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,

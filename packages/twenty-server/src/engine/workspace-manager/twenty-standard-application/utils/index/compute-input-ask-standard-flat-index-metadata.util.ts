@@ -29,21 +29,12 @@ export const buildInputAskStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  workflowRunIdIndex: createStandardIndexFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      indexName: 'workflowRunIdIndex',
-      relatedFieldNames: ['workflowRun'],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   // One Ask per run step, enforced here rather than by the read that precedes
   // the insert: a retried or concurrently resumed step would otherwise pass
-  // that read twice and ask the same question twice.
+  // that read twice and ask the same question twice. Its leading column also
+  // serves the lookups by run alone, so those need no index of their own.
+  // Partial, or a soft-deleted row would hold the key against a reopen that
+  // cannot see it.
   workflowRunStepUniqueIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
@@ -51,6 +42,7 @@ export const buildInputAskStandardFlatIndexMetadatas = ({
       indexName: 'workflowRunStepUniqueIndex',
       relatedFieldNames: ['workflowRun', 'stepId'],
       isUnique: true,
+      indexWhereClause: '"deletedAt" IS NULL',
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

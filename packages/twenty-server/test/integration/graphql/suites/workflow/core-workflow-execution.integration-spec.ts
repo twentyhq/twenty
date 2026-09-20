@@ -850,6 +850,135 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     ]);
   });
 
+  // A canceled Ask is not an answered one: a failed run can be retried, and the
+  // retried form step has to be answerable again or the Ask has turned a
+  // recoverable run into a permanently stuck one.
+  it('reopens the canceled Ask when a failed run is retried, and answers it', async () => {
+    const finalStep = emptyStep();
+    const form = formStep([finalStep.id]);
+    const failingStep: WorkflowAction = {
+      ...emptyStep(),
+      type: WorkflowActionType.DELAY,
+      settings: {
+        ...settings,
+        input: {
+          delayType: 'SCHEDULED_DATE',
+          scheduledDateTime: '2000-01-01T00:00:00.000Z',
+        },
+      },
+    };
+    const fanOut: WorkflowAction = {
+      ...emptyStep(),
+      nextStepIds: [form.id, failingStep.id],
+    };
+    const fixture = await createFixture({
+      mirrorless: true,
+      steps: [fanOut, form, failingStep, finalStep],
+    });
+    const runId = await runFixture(fixture);
+
+    await waitForStep(runId, form.id, 'PENDING');
+    expect(await getInputAsks(runId)).toMatchObject([{ status: 'PENDING' }]);
+
+    await waitForRun(runId, 'FAILED');
+    expect(await getInputAsks(runId)).toMatchObject([{ status: 'CANCELED' }]);
+
+    // A retry re-runs the captured snapshot, so the branch that failed would
+    // fail again and end the run a second time before anyone could answer.
+    // Moving its date just ahead lets it pass this time, leaving the retried
+    // form as the only thing the run is still waiting on.
+    await global.testDataSource.query(
+      `UPDATE "${schema}"."workflowRun"
+       SET state = jsonb_set(
+         state,
+         '{flow,steps}',
+         (
+           SELECT jsonb_agg(
+             CASE
+               WHEN step->>'id' = $2
+               THEN jsonb_set(step, '{settings,input,scheduledDateTime}', to_jsonb($3::text))
+               ELSE step
+             END
+           )
+           FROM jsonb_array_elements(state->'flow'->'steps') AS step
+         )
+       )
+       WHERE id = $1`,
+      [runId, failingStep.id, new Date(Date.now() + 2000).toISOString()],
+    );
+
+    const retried = await workflowGraphqlRequest(
+      'mutation Retry($id: UUID!) { retryWorkflowRun(workflowRunId: $id) { id status } }',
+      { id: runId },
+    );
+
+    expect(retried.body.errors).toBeUndefined();
+    await waitForStep(runId, form.id, 'PENDING');
+
+    const reopenedInputAsks = await getInputAsks(runId);
+
+    expect(reopenedInputAsks).toHaveLength(1);
+    expect(reopenedInputAsks[0]).toMatchObject({
+      stepId: form.id,
+      status: 'PENDING',
+      response: null,
+      answeredAt: null,
+    });
+
+    const submitted = await workflowGraphqlRequest(
+      'mutation Submit($input: SubmitFormStepInput!) { submitFormStep(input: $input) }',
+      {
+        input: {
+          workflowRunId: runId,
+          stepId: form.id,
+          response: { answer: 'Approved after retry' },
+        },
+      },
+    );
+
+    expect(submitted.body.errors).toBeUndefined();
+    expect(await getInputAsks(runId)).toMatchObject([
+      { status: 'ANSWERED', response: { answer: 'Approved after retry' } },
+    ]);
+  });
+
+  // The run's step transition is the gate, not the Ask, so a submission that
+  // arrives after the run has ended is refused on the step rather than on a
+  // row whose status says canceled.
+  it('refuses a submission once its run has ended', async () => {
+    const finalStep = emptyStep();
+    const form = formStep([finalStep.id]);
+    const fixture = await createFixture({
+      mirrorless: true,
+      steps: [form, finalStep],
+    });
+    const runId = await runFixture(fixture);
+
+    await waitForStep(runId, form.id, 'PENDING');
+
+    await workflowGraphqlRequest(
+      'mutation Stop($id: UUID!) { stopWorkflowRun(workflowRunId: $id) { id status } }',
+      { id: runId },
+    );
+    await waitForRun(runId, 'STOPPED');
+
+    const response = await workflowGraphqlRequest(
+      'mutation Submit($input: SubmitFormStepInput!) { submitFormStep(input: $input) }',
+      {
+        input: {
+          workflowRunId: runId,
+          stepId: form.id,
+          response: { answer: 'Too late' },
+        },
+      },
+    );
+
+    expect(response.body.errors).toBeDefined();
+    expect(await getInputAsks(runId)).toMatchObject([
+      { status: 'CANCELED', response: null },
+    ]);
+  });
+
   it('cancels the Ask when its run ends before anyone answers', async () => {
     const finalStep = emptyStep();
     const form = formStep([finalStep.id]);

@@ -1113,9 +1113,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "toolCallIdIndex": {
         "universalIdentifier": "3f82b376-a028-49cf-8be9-7d880c23eb22",
       },
-      "workflowRunIdIndex": {
-        "universalIdentifier": "5ef5fbb9-5322-49b1-8340-3ce81a8a8a8f",
-      },
       "workflowRunStepUniqueIndex": {
         "universalIdentifier": "c6c2c67e-2f2e-4a1e-9c0b-1b3d5e7a9f41",
       },
