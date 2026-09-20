@@ -173,6 +173,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     return fixture;
   };
 
+  const getInputAsks = async (runId: string) =>
+    global.testDataSource.query(
+      `SELECT name, "stepId", status, form, response, "answeredAt" FROM "${schema}"."inputAsk" WHERE "workflowRunId" = $1`,
+      [runId],
+    );
+
   const getRun = async (runId: string) => {
     const [run] = await global.testDataSource.query(
       `SELECT * FROM "${schema}"."workflowRun" WHERE id = $1`,
@@ -742,6 +748,94 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(run.state.stepInfos[finalStep.id].status).toBe('SUCCESS');
     },
   );
+
+  const formStep = (nextStepIds: string[]): WorkflowAction => ({
+    ...emptyStep(),
+    name: 'Approve the discount',
+    type: WorkflowActionType.FORM,
+    nextStepIds,
+    settings: {
+      ...settings,
+      input: [
+        {
+          id: randomUUID(),
+          name: 'answer',
+          label: 'Answer',
+          type: FieldMetadataType.TEXT,
+        },
+      ],
+    },
+  });
+
+  it('opens an Ask while the form waits and answers it on submit', async () => {
+    const finalStep = emptyStep();
+    const form = formStep([finalStep.id]);
+    const fixture = await createFixture({
+      mirrorless: true,
+      steps: [form, finalStep],
+    });
+    const runId = await runFixture(fixture);
+
+    await waitForStep(runId, form.id, 'PENDING');
+
+    const [pendingInputAsk] = await getInputAsks(runId);
+
+    expect(pendingInputAsk).toMatchObject({
+      name: 'Approve the discount',
+      stepId: form.id,
+      status: 'PENDING',
+      response: null,
+      answeredAt: null,
+    });
+    expect(pendingInputAsk.form).toEqual({ fields: form.settings.input });
+
+    const response = await workflowGraphqlRequest(
+      'mutation Submit($input: SubmitFormStepInput!) { submitFormStep(input: $input) }',
+      {
+        input: {
+          workflowRunId: runId,
+          stepId: form.id,
+          response: { answer: 'Approved' },
+        },
+      },
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    await waitForRun(runId, 'COMPLETED');
+
+    const answeredInputAsks = await getInputAsks(runId);
+
+    expect(answeredInputAsks).toHaveLength(1);
+    expect(answeredInputAsks[0]).toMatchObject({
+      stepId: form.id,
+      status: 'ANSWERED',
+      response: { answer: 'Approved' },
+    });
+    expect(answeredInputAsks[0].answeredAt).not.toBeNull();
+  });
+
+  it('cancels the Ask when its run ends before anyone answers', async () => {
+    const finalStep = emptyStep();
+    const form = formStep([finalStep.id]);
+    const fixture = await createFixture({
+      mirrorless: true,
+      steps: [form, finalStep],
+    });
+    const runId = await runFixture(fixture);
+
+    await waitForStep(runId, form.id, 'PENDING');
+    expect(await getInputAsks(runId)).toMatchObject([{ status: 'PENDING' }]);
+
+    const response = await workflowGraphqlRequest(
+      'mutation Stop($id: UUID!) { stopWorkflowRun(workflowRunId: $id) { id status } }',
+      { id: runId },
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    await waitForRun(runId, 'STOPPED');
+
+    expect(await getInputAsks(runId)).toMatchObject([{ status: 'CANCELED' }]);
+  });
 
   it('stops a pending delay and ignores its later resume job', async () => {
     const finalStep = emptyStep();

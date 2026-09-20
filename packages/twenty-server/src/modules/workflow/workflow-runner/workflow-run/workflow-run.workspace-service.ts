@@ -10,6 +10,7 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowRunStatus,
@@ -30,6 +31,7 @@ export class WorkflowRunWorkspaceService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
+    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
   ) {}
 
   async createCoreWorkflowRun({
@@ -183,6 +185,13 @@ export class WorkflowRunWorkspaceService {
     };
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
+
+    // A run that ends can no longer consume an answer, so any Ask still waiting
+    // on one stops being actionable here rather than outliving its own run.
+    await this.inputAskWorkspaceService.cancelPendingForWorkflowRun({
+      workspaceId,
+      workflowRunId,
+    });
 
     const metricKey =
       status === WorkflowRunStatus.COMPLETED

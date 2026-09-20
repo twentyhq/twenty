@@ -15,6 +15,7 @@ import {
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import {
@@ -41,6 +42,7 @@ export class WorkflowRunnerWorkspaceService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
   ) {}
 
   async run({
@@ -144,6 +146,13 @@ export class WorkflowRunnerWorkspaceService {
           response,
         },
       );
+
+    await this.inputAskWorkspaceService.answerForWorkflowRunStep({
+      workspaceId,
+      workflowRunId,
+      stepId,
+      response: enrichedResponse,
+    });
 
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
       stepId,
