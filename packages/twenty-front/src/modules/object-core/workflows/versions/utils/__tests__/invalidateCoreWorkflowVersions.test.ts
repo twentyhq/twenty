@@ -27,6 +27,8 @@ describe('invalidateCoreWorkflowVersions', () => {
                     statuses: ['DRAFT'],
                     lastPublishedCoreWorkflowVersionId: null,
                     workspaceWorkflowId: null,
+                    visibility: 'WORKSPACE',
+                    canChangeVisibility: true,
                     createdAt: '2026-09-17T00:00:00Z',
                     updatedAt: '2026-09-17T00:00:00Z',
                   },

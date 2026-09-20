@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { In } from 'typeorm';
 import { msg } from '@lingui/core/macro';
+import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,6 +12,7 @@ import { RecordPositionService } from 'src/engine/core-modules/record-position/s
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
 import { type DeletedCoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/deleted-core-workflow.dto';
 import { type DiscardCoreWorkflowDraftInput } from 'src/engine/core-modules/workflow/dtos/discard-core-workflow-draft.input';
+import { type UpdateCoreWorkflowVisibilityInput } from 'src/engine/core-modules/workflow/dtos/update-core-workflow-visibility.input';
 import {
   WorkflowVersionEntity,
   WorkflowVersionStatus as CoreWorkflowVersionStatus,
@@ -68,15 +70,23 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async duplicateWorkflow({
     workspaceId,
+    userWorkspaceId,
     user,
     coreWorkflowIdToDuplicate,
     coreWorkflowVersionIdToCopy,
   }: {
     workspaceId: string;
+    userWorkspaceId: string;
     user: AuthContextUser;
     coreWorkflowIdToDuplicate: string;
     coreWorkflowVersionIdToCopy: string;
   }): Promise<CoreWorkflowDTO> {
+    await this.assertCoreWorkflowsAreAccessibleOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreWorkflowIdToDuplicate],
+    });
+
     const { coreWorkflow: sourceCoreWorkflow } =
       await this.coreWorkflowIdResolutionService.resolveWorkspaceWorkflowIdOrThrow(
         { workspaceId, coreWorkflowId: coreWorkflowIdToDuplicate },
@@ -111,20 +121,28 @@ export class CoreWorkflowMutationWorkspaceService {
         steps: sourceVersion.steps ?? [],
       });
 
-    const duplicatedWorkflow = await this.createWorkflow(workspaceId, user, {
-      name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
-    });
+    const duplicatedWorkflow = await this.createWorkflow(
+      workspaceId,
+      userWorkspaceId,
+      user,
+      {
+        name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
+        // duplicating a private workflow must not publish it to the workspace
+        visibility: sourceCoreWorkflow.visibility,
+      },
+    );
 
     try {
       return await this.writeDuplicatedContentAndReturn({
         workspaceId,
+        userWorkspaceId,
         duplicatedCoreWorkflowId: duplicatedWorkflow.id,
         trigger: remappedTrigger,
         steps: remappedSteps,
       });
     } catch (error) {
       try {
-        await this.deleteWorkflows(workspaceId, {
+        await this.deleteWorkflows(workspaceId, userWorkspaceId, {
           coreWorkflowIds: [duplicatedWorkflow.id],
         });
       } catch (cleanupError) {
@@ -137,11 +155,13 @@ export class CoreWorkflowMutationWorkspaceService {
 
   private async writeDuplicatedContentAndReturn({
     workspaceId,
+    userWorkspaceId,
     duplicatedCoreWorkflowId,
     trigger,
     steps,
   }: {
     workspaceId: string;
+    userWorkspaceId: string;
     duplicatedCoreWorkflowId: string;
     trigger: NonNullable<WorkflowVersionEntity['triggers']>[number];
     steps: WorkflowAction[];
@@ -177,6 +197,7 @@ export class CoreWorkflowMutationWorkspaceService {
     const duplicatedCoreWorkflow =
       await this.coreWorkflowListService.findOneById({
         workspaceId,
+        userWorkspaceId,
         coreWorkflowId: duplicatedCoreWorkflowId,
       });
 
@@ -228,8 +249,15 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async updateWorkflow(
     workspaceId: string,
+    userWorkspaceId: string,
     { coreWorkflowId, name }: { coreWorkflowId: string; name: string },
   ): Promise<void> {
+    await this.assertCoreWorkflowsAreAccessibleOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreWorkflowId],
+    });
+
     const { workspaceWorkflowId } =
       await this.coreWorkflowIdResolutionService.resolveWorkspaceWorkflowIdOrThrow(
         { workspaceId, coreWorkflowId },
@@ -310,8 +338,9 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async createWorkflow(
     workspaceId: string,
+    userWorkspaceId: string,
     user: AuthContextUser,
-    { name }: { name?: string },
+    { name, visibility }: { name?: string; visibility?: WorkflowVisibility },
   ): Promise<CoreWorkflowDTO> {
     const applicationId =
       await this.workflowCoreSyncService.getCustomApplicationIdOrThrow(
@@ -343,6 +372,8 @@ export class CoreWorkflowMutationWorkspaceService {
         universalIdentifier: uuidv4(),
         applicationId,
         workspaceWorkflowId,
+        visibility: visibility ?? WorkflowVisibility.WORKSPACE,
+        createdByUserWorkspaceId: userWorkspaceId,
       },
     );
 
@@ -403,6 +434,8 @@ export class CoreWorkflowMutationWorkspaceService {
       lastPublishedVersionId: null,
       applicationId,
       workspaceWorkflowId,
+      visibility: coreWorkflow.visibility,
+      canChangeVisibility: true,
       createdAt: coreWorkflow.createdAt.toISOString(),
       updatedAt: coreWorkflow.updatedAt.toISOString(),
     };
@@ -410,8 +443,15 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async deleteWorkflows(
     workspaceId: string,
+    userWorkspaceId: string,
     { coreWorkflowIds }: { coreWorkflowIds: string[] },
   ): Promise<DeletedCoreWorkflowDTO[]> {
+    await this.assertCoreWorkflowsAreAccessibleOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds,
+    });
+
     const coreWorkflowsToDelete = await this.coreWorkflowRepository.find(
       workspaceId,
       {
@@ -500,6 +540,7 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async discardDraftVersion(
     workspaceId: string,
+    userWorkspaceId: string,
     {
       workspaceWorkflowVersionId,
       coreWorkflowVersionId,
@@ -555,6 +596,12 @@ export class CoreWorkflowMutationWorkspaceService {
         },
       );
     }
+
+    await this.assertCoreWorkflowsAreAccessibleOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreVersion.coreWorkflowId],
+    });
 
     const siblingCount = await this.coreWorkflowVersionRepository.count(
       workspaceId,
@@ -652,6 +699,99 @@ export class CoreWorkflowMutationWorkspaceService {
 
       return workspaceVersion.coreWorkflowVersionId;
     }, buildSystemAuthContext(workspaceId));
+  }
+
+  // Every write path funnels through here so a private workflow has one deny
+  // rule, and an id nobody owns keeps behaving exactly as it did before.
+  private async assertCoreWorkflowsAreAccessibleOrThrow({
+    workspaceId,
+    userWorkspaceId,
+    coreWorkflowIds,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    coreWorkflowIds: string[];
+  }): Promise<void> {
+    const coreWorkflows = await this.coreWorkflowRepository.find(workspaceId, {
+      where: { id: In(coreWorkflowIds) },
+      select: {
+        id: true,
+        visibility: true,
+        createdByUserWorkspaceId: true,
+      },
+    });
+
+    const inaccessibleCoreWorkflow = coreWorkflows.find(
+      (coreWorkflow) =>
+        coreWorkflow.visibility === WorkflowVisibility.PRIVATE &&
+        coreWorkflow.createdByUserWorkspaceId !== userWorkspaceId,
+    );
+
+    if (isDefined(inaccessibleCoreWorkflow)) {
+      throw new WorkflowQueryValidationException(
+        `Core workflow '${inaccessibleCoreWorkflow.id}' is private to another member`,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        {
+          // the same message a missing workflow gets, so a private one does not
+          // announce that it exists
+          userFriendlyMessage: msg`Workflow not found`,
+        },
+      );
+    }
+  }
+
+  async updateWorkflowVisibility(
+    workspaceId: string,
+    userWorkspaceId: string,
+    { coreWorkflowId, visibility }: UpdateCoreWorkflowVisibilityInput,
+  ): Promise<CoreWorkflowDTO | null> {
+    await this.assertCoreWorkflowsAreAccessibleOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreWorkflowId],
+    });
+
+    const coreWorkflow = await this.coreWorkflowRepository.findOne(
+      workspaceId,
+      {
+        where: { id: coreWorkflowId },
+        select: { id: true, createdByUserWorkspaceId: true },
+      },
+    );
+
+    if (!isDefined(coreWorkflow)) {
+      return null;
+    }
+
+    const ownerUserWorkspaceId = coreWorkflow.createdByUserWorkspaceId;
+
+    if (
+      isDefined(ownerUserWorkspaceId) &&
+      ownerUserWorkspaceId !== userWorkspaceId
+    ) {
+      throw new WorkflowQueryValidationException(
+        `Core workflow '${coreWorkflowId}' can only have its visibility changed by its creator`,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Only the person who created this workflow can change who sees it`,
+        },
+      );
+    }
+
+    // Workflows that predate this column have no owner. A workspace-visible
+    // workflow is already editable and deletable by every member, so claiming
+    // one here grants no access the claimer did not already have.
+    await this.coreWorkflowRepository.update(
+      workspaceId,
+      { id: coreWorkflowId },
+      { visibility, createdByUserWorkspaceId: userWorkspaceId },
+    );
+
+    return this.coreWorkflowListService.findOneById({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowId,
+    });
   }
 
   private async rollbackCreatedWorkflow(
