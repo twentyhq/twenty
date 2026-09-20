@@ -1,3 +1,5 @@
+import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
@@ -59,6 +61,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class DevSeederService {
   constructor(
+    private readonly agentHistoryStorageService: AgentHistoryStorageService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceSchemaService: WorkspaceSchemaService,
@@ -239,26 +242,18 @@ export class DevSeederService {
     workspaceId: SeededWorkspacesIds;
     chatReferenceIds: ChatReferenceIds;
   }) {
-    const queryRunner = this.coreDataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      await seedAgents({
-        queryRunner,
-        schemaName: 'core',
-        workspaceId,
-        chatReferenceIds,
-      });
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
+    await this.agentHistoryStorageService.run(
+      workspaceId,
+      async ({ manager, storage }) => {
+        await seedAgents({
+          queryRunner: manager.queryRunner!,
+          schemaName:
+            storage === 'core' ? 'core' : getWorkspaceSchemaName(workspaceId),
+          workspaceId,
+          chatReferenceIds,
+        });
+      },
+    );
   }
 
   private async seedCoreSchema({
