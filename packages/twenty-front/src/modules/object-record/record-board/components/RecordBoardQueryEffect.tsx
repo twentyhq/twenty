@@ -84,6 +84,12 @@ export const RecordBoardQueryEffect = () => {
   );
 
   useEffect(() => {
+    return () => {
+      setLastRecordBoardQueryIdentifier('');
+    };
+  }, [setLastRecordBoardQueryIdentifier]);
+
+  useEffect(() => {
     if (isDraggingRecord) {
       return;
     }
