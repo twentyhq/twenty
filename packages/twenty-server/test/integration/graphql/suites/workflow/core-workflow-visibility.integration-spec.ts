@@ -66,6 +66,12 @@ const CORE_WORKFLOW_VERSION_QUERY = `
   }
 `;
 
+const COMPUTE_STEP_OUTPUT_SCHEMA_MUTATION = `
+  mutation ComputeStepOutputSchema($input: ComputeStepOutputSchemaInput!) {
+    computeStepOutputSchema(input: $input)
+  }
+`;
+
 const UPDATE_VISIBILITY_MUTATION = `
   mutation UpdateCoreWorkflowVisibility(
     $input: UpdateCoreWorkflowVisibilityInput!
@@ -388,6 +394,24 @@ describe('core workflow visibility (e2e)', () => {
       });
 
       expect(response.body.data?.coreWorkflowVersion ?? null).toBeNull();
+    });
+
+    // The builder resolver reads a version's content straight from its id to
+    // compute a schema, so it hands out the whole definition unless it answers
+    // to the same rule.
+    it('refuses to compute a step output schema from its version for another member', async () => {
+      const response = await asOtherMember(
+        COMPUTE_STEP_OUTPUT_SCHEMA_MUTATION,
+        {
+          input: {
+            step: { type: 'MANUAL', settings: { outputSchema: {} } },
+            workflowVersionId: workspaceWorkflowVersionId,
+          },
+        },
+      );
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.data?.computeStepOutputSchema ?? null).toBeNull();
     });
 
     // The legacy resolver is keyed by the workspace mirror's ids and never
