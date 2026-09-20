@@ -13,6 +13,16 @@ describe('validateAndReturnIndexWhereClause', () => {
     );
   });
 
+  it('accepts only the exact live kickoff predicate', () => {
+    const clause = '"isHidden" = true AND "deletedAt" IS NULL';
+    expect(validateAndReturnIndexWhereClause(clause)).toBe(clause);
+    for (const suffix of [' OR true', '; DROP TABLE users;', ' --']) {
+      expect(() => validateAndReturnIndexWhereClause(clause + suffix)).toThrow(
+        'Unsupported index WHERE clause',
+      );
+    }
+  });
+
   it('should throw for clauses not in the allowlist', () => {
     expect(() =>
       validateAndReturnIndexWhereClause('1=1; DROP TABLE users;'),
