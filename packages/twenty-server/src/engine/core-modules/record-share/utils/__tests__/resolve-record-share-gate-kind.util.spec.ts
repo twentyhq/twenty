@@ -5,6 +5,20 @@ import { MetadataReadability } from 'twenty-shared/types';
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 
 describe('resolveRecordShareGateKind', () => {
+  it.each(Object.values(MetadataReadability))(
+    'enforces %s without the sharing entitlement',
+    (readability) => {
+      for (const isOwningApplication of [true, false]) {
+        expect(
+          resolveRecordShareGateKind({
+            readability,
+            isOwningApplication,
+            isRecordSharingEnabled: false,
+          }),
+        ).toBe(readability === MetadataReadability.SYSTEM ? 'deny' : 'open');
+      }
+    },
+  );
   it.each([
     {
       readability: MetadataReadability.OPEN,
@@ -60,7 +74,11 @@ describe('resolveRecordShareGateKind', () => {
     'should resolve $expected for $readability readability when isOwningApplication is $isOwningApplication',
     ({ readability, isOwningApplication, expected }) => {
       expect(
-        resolveRecordShareGateKind({ readability, isOwningApplication }),
+        resolveRecordShareGateKind({
+          readability,
+          isOwningApplication,
+          isRecordSharingEnabled: true,
+        }),
       ).toBe(expected);
     },
   );
