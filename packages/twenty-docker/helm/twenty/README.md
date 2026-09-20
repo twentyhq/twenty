@@ -92,3 +92,4 @@ helm install my-twenty ./packages/twenty-docker/helm/twenty -f values-secrets.ya
       eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/twenty-role   # AWS IRSA
       # iam.gke.io/gcp-service-account: twenty@my-project.iam.gserviceaccount.com  # GCP Workload Identity
   ```
+  Set `serviceAccount.automount=false` to skip mounting the Kubernetes API token; the server and worker never call the API, and IRSA / Workload Identity keep working.

@@ -10,7 +10,8 @@ fullnameOverride: ""
 # ServiceAccount used by the server and worker pods
 serviceAccount:
   create: false  # set true to create a dedicated ServiceAccount instead of using the namespace's "default"
-  name: ""  # defaults to the chart fullname if not set
+  name: ""  # when create is false, this ServiceAccount must already exist in the namespace; defaults to the chart fullname when create is true
+  automount: true  # set false to skip mounting the Kubernetes API token (server and worker do not call the API; IRSA/Workload Identity are unaffected)
   annotations: {}
   # eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/twenty-role
   # iam.gke.io/gcp-service-account: twenty@my-project.iam.gserviceaccount.com

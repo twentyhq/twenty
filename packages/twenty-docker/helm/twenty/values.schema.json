@@ -69,6 +69,7 @@
       "properties": {
         "create": { "type": "boolean" },
         "name": { "type": "string" },
+        "automount": { "type": "boolean" },
         "annotations": {
           "type": "object",
           "additionalProperties": { "type": "string" }
