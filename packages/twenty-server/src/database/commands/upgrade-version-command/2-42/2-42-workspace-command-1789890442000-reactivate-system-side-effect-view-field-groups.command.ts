@@ -22,9 +22,9 @@ const RECONCILE_STANDARD_RECORD_PAGE_COMMAND_NAME =
 
 const REACTIVATION_BATCH_SIZE = 200;
 
-@RegisteredWorkspaceCommand('2.40.0', 1788902177727)
+@RegisteredWorkspaceCommand('2.42.0', 1789890442000)
 @Command({
-  name: 'upgrade:2-40:reactivate-system-side-effect-view-field-groups',
+  name: 'upgrade:2-42:reactivate-system-side-effect-view-field-groups',
   description:
     'Reactivate isSystemSideEffect view field groups left isActive=false since before the 2-31 record-page reconcile ran, without touching groups deactivated on purpose afterward through the fields widget',
 })

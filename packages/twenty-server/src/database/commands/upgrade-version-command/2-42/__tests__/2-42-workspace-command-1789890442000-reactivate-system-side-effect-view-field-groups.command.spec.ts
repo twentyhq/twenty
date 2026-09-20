@@ -1,7 +1,7 @@
 import { type Repository } from 'typeorm';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { ReactivateSystemSideEffectViewFieldGroupsCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-workspace-command-1788902177727-reactivate-system-side-effect-view-field-groups.command';
+import { ReactivateSystemSideEffectViewFieldGroupsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789890442000-reactivate-system-side-effect-view-field-groups.command';
 import { type UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { type ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
