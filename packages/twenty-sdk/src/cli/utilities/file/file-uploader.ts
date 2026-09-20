@@ -2,6 +2,7 @@ import { ApiService } from '@/cli/utilities/api/api-service';
 import { type ApplicationFileUploadRequest } from '@/cli/utilities/api/file-api';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { putFileToUploadUrl } from '@/cli/utilities/file/put-file-to-upload-url';
+import { toPosixPath } from '@/cli/utilities/string/to-posix-path';
 import * as fs from 'fs';
 import path, { relative } from 'path';
 import {
@@ -21,9 +22,6 @@ export type FileUploadFailure = {
 };
 
 const DIRECT_UPLOAD_CONCURRENCY = 10;
-
-// resource paths are sent to the server, which rejects backslashes (Windows path.relative output)
-const toPosixPath = (value: string): string => value.split('\\').join('/');
 
 const isMissingDirectUploadMutationError = (error: unknown): boolean => {
   const message = serializeError(error);

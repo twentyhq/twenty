@@ -8,6 +8,7 @@ import { capFileBaseName } from '@/cli/utilities/pull/pull-file-base-name';
 import { type ScannedSourceFile } from '@/cli/utilities/pull/scan-project-source-files';
 import { writeDefineFile } from '@/cli/utilities/pull/write-define-file';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
+import { toPosixPath } from '@/cli/utilities/string/to-posix-path';
 import { dirname, posix } from 'node:path';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -51,8 +52,6 @@ const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   navigationMenuItem: ManifestEntityKey.NavigationMenuItems,
   pageLayoutWidget: ManifestEntityKey.PageLayoutWidgets,
 };
-
-const toPosixPath = (value: string): string => value.split('\\').join('/');
 
 const findExistingFolderForKind = ({
   scannedFiles,

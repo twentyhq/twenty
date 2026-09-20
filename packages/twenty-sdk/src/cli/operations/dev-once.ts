@@ -348,8 +348,7 @@ const innerAppDevOnce = async (
     onPlan?.(formatSyncActionsPlan(syncResult.data.actions));
   }
 
-  // metadata is applied above even when some files fail to upload, so objects/fields/views are never silently skipped;
-  // the plan is rendered first so destructive actions are visible even when this return follows
+  // returned after syncing so metadata still applies and the plan (incl. destructive actions) stays visible when uploads fail
   if (uploadFailures.length > 0) {
     return {
       success: false,
