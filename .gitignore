@@ -1,5 +1,7 @@
 **/**/.env
 /ops/secrets/
+/ops/backups/
+/ops/logs/
 /jai-os-docs/JAI-OS-Commercial-Implementation-Agreement.html
 .DS_Store
 /.idea
