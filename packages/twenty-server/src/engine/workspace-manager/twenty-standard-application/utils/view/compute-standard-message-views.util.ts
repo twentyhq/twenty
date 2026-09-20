@@ -23,5 +23,17 @@ export const computeStandardMessageViews = (
         icon: 'IconTable',
       },
     }),
+    messageRecordPageFields: createStandardViewFlatMetadata({
+      ...args,
+      objectName: 'message',
+      context: {
+        viewName: 'messageRecordPageFields',
+        name: 'Message Record Page Fields',
+        type: ViewType.FIELDS_WIDGET,
+        key: null,
+        position: 0,
+        icon: 'IconListDetails',
+      },
+    }),
   };
 };

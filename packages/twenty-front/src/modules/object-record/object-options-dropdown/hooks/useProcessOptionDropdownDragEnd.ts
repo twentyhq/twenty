@@ -1,6 +1,5 @@
-import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
-
 import { useReorderVisibleRecordFields } from '@/object-record/record-field/hooks/useReorderVisibleRecordFields';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
 
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
@@ -13,18 +12,16 @@ export const useProcessOptionDropdownDragEnd = (recordTableId: string) => {
   const { saveViewFields } = useSaveCurrentViewFields();
 
   const processOptionDropdownDragEnd = useCallback(
-    async (result: DraggableListDropResult) => {
-      if (
-        !result.destination ||
-        result.destination.index === 1 ||
-        result.source.index === 1
-      ) {
-        return;
-      }
-
+    ({
+      recordFieldToMove,
+      targetRecordField,
+    }: {
+      recordFieldToMove: Pick<RecordField, 'id' | 'fieldMetadataItemId'>;
+      targetRecordField: Pick<RecordField, 'id'>;
+    }) => {
       const updatedRecordField = reorderVisibleRecordFields({
-        fromIndex: result.source.index - 1,
-        toIndex: result.destination.index - 1,
+        recordFieldToMove,
+        targetRecordField,
       });
 
       saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);

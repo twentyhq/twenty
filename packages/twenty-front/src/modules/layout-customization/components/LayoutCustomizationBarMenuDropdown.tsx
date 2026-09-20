@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconReload } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -13,7 +13,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 
 const StyledInvertedIconButtonWrapper = styled.span`
   align-items: center;
@@ -31,11 +31,11 @@ const StyledInvertedIconButtonWrapper = styled.span`
 export const LayoutCustomizationBarMenuDropdown = () => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const handleResetClick = () => {
     closeDropdown(LAYOUT_CUSTOMIZATION_BAR_DROPDOWN_ID);
-    openModal(RESET_RECORD_PAGE_LAYOUT_MODAL_ID);
+    openDialog(RESET_RECORD_PAGE_LAYOUT_MODAL_ID);
   };
 
   return (
@@ -45,10 +45,11 @@ export const LayoutCustomizationBarMenuDropdown = () => {
       clickableComponent={
         <StyledInvertedIconButtonWrapper>
           <LightIconButton
-            Icon={IconDotsVertical}
-            accent="tertiary"
+            emphasis="subtle"
             aria-label={t`Layout customization menu`}
-          />
+          >
+            <IconDotsVertical />
+          </LightIconButton>
         </StyledInvertedIconButtonWrapper>
       }
       dropdownComponents={

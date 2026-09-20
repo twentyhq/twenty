@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent, useContext, useMemo, useState } from 'react';
 import { type AskQuestionAnswer, type AskQuestionItem } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
   IconArrowUp,
   IconChevronLeft,
@@ -20,7 +20,8 @@ import {
   IconSquareNumber8,
   IconSquareNumber9,
 } from 'twenty-ui/icon';
-import { LightIconButton, RoundedIconButton } from 'twenty-ui/primitives/input';
+import { IconButton, LightIconButton } from 'twenty-ui/components';
+
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
@@ -31,6 +32,7 @@ import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { useSubmitQuestionAnswer } from '@/ai/hooks/useSubmitQuestionAnswer';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const NUMBER_ICONS: IconComponent[] = [
@@ -384,26 +386,30 @@ export const AiChatQuestionCard = ({
           {hasMultipleQuestions && (
             <StyledPager>
               <LightIconButton
-                Icon={IconChevronLeft}
-                size="small"
+                size="sm"
                 disabled={currentIndex === 0}
                 onClick={() =>
                   setCurrentIndex((index) => Math.max(0, index - 1))
                 }
-              />
+                aria-label={t`Previous`}
+              >
+                <IconChevronLeft />
+              </LightIconButton>
               <StyledPagerLabel>
                 {currentIndex + 1}/{questions.length}
               </StyledPagerLabel>
               <LightIconButton
-                Icon={IconChevronRightPipe}
-                size="small"
+                size="sm"
                 disabled={isLastQuestion}
                 onClick={() =>
                   setCurrentIndex((index) =>
                     Math.min(questions.length - 1, index + 1),
                   )
                 }
-              />
+                aria-label={t`Next question`}
+              >
+                <IconChevronRightPipe />
+              </LightIconButton>
             </StyledPager>
           )}
         </StyledQuestionHeaderRow>
@@ -454,24 +460,24 @@ export const AiChatQuestionCard = ({
                   )}
                 </StyledOptionLeft>
                 {isDefined(option.description) && (
-                  <>
+                  <Tooltip
+                    content={option.description}
+                    delay={TooltipDelay.shortDelay}
+                    side="left"
+                  >
                     <span
                       id={tooltipId}
                       onClick={(event) => event.stopPropagation()}
                     >
                       <LightIconButton
-                        Icon={IconInfoCircle}
-                        size="small"
-                        accent="tertiary"
-                      />
+                        size="sm"
+                        emphasis="subtle"
+                        aria-label={t`Information`}
+                      >
+                        <IconInfoCircle />
+                      </LightIconButton>
                     </span>
-                    <AppTooltip
-                      anchorSelect={`#${tooltipId}`}
-                      title={option.description}
-                      delay={TooltipDelay.shortDelay}
-                      place="left"
-                    />
-                  </>
+                  </Tooltip>
                 )}
               </StyledOptionRow>
             );
@@ -503,12 +509,17 @@ export const AiChatQuestionCard = ({
               dropdownId="ai-chat-question-model-tier-dropdown"
               disabled={hasNoEnabledModels}
             />
-            <RoundedIconButton
-              Icon={IconArrowUp}
-              size="medium"
+            <IconButton
+              variant="solid"
+              color="accent"
+              shape="round"
+              aria-label={t`Send message`}
+              size="sm"
               onClick={handleSend}
               disabled={!allQuestionsAnswered || isSubmitting}
-            />
+            >
+              <IconArrowUp />
+            </IconButton>
           </StyledRightActions>
         </StyledActionsRow>
       </StyledComposerSection>

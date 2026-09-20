@@ -63,6 +63,7 @@ there, since Slack validates the set:
 | `users:read` | list the Slack roster for the email sweep, and look up a requester's display name |
 | `users:read.email` | match a Slack account to a workspace member by confirmed email |
 | `assistant:write` | agent surface: `assistant.threads.*` (statuses, titles, suggested prompts) |
+| `files:read` | assistant: download files shared with a request so the agent can read them |
 
 Adding or removing scopes later means existing installs must re-authorize:
 disconnect and **Add connection** again.
@@ -164,7 +165,10 @@ mentions and DMs, at the cost of un-mentioned thread follow-ups.
 > hand as well (see Record link previews). Upgrading from any version before
 > 0.9.0 adds the `slack#/entities/task` entity type, which has to be selected
 > under Work Object Previews by hand; until it is, task links stop rendering a
-> card at all. No new scopes or events, so no reconnect.
+> card at all. No new scopes or events, so no reconnect. Upgrading from any
+> version before 1.4.0 adds the `files:read` scope so the assistant can read
+> files shared with it; that needs a reconnect, and until then shared files
+> reach the assistant as names only, exactly as they did before. No new events.
 
 ### Interactivity
 

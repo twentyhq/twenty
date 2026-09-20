@@ -2,14 +2,10 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type McpSetupCard } from '@/settings/mcp-and-apis/types/McpSetup';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { Pill } from 'twenty-ui/primitives/data-display';
 import { IconExternalLink } from 'twenty-ui/icon';
-import {
-  AppTooltip,
-  Card,
-  CardContent,
-  TooltipDelay,
-} from 'twenty-ui/primitives/surfaces';
+import { Tooltip, Card, CardContent } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 const StyledCardContent = styled(CardContent)`
@@ -107,7 +103,15 @@ const SettingsMcpSetupCardAction = ({
 
   if (card.isDisabled === true) {
     return (
-      <>
+      <Tooltip
+        content={card.disabledTooltip}
+        delay={TooltipDelay.shortDelay}
+        side="bottom"
+        positionMethod="fixed"
+        disabled={
+          !(isDefined(card.disabledTooltip) && isDefined(card.tooltipId))
+        }
+      >
         <StyledInstallAction
           as="span"
           aria-disabled="true"
@@ -116,17 +120,7 @@ const SettingsMcpSetupCardAction = ({
           <IconExternalLink size={theme.icon.size.sm} />
           {card.ctaLabel}
         </StyledInstallAction>
-        {isDefined(card.disabledTooltip) && isDefined(card.tooltipId) && (
-          <AppTooltip
-            anchorSelect={`[data-tooltip-id='${card.tooltipId}']`}
-            title={card.disabledTooltip}
-            delay={TooltipDelay.shortDelay}
-            noArrow
-            place="bottom"
-            positionStrategy="fixed"
-          />
-        )}
-      </>
+      </Tooltip>
     );
   }
 

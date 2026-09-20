@@ -26,11 +26,11 @@ export class PendingFileCleanupCronJob {
   async handle(): Promise<void> {
     try {
       const deletedCount =
-        await this.pendingFileCleanupService.cleanupStalePendingFiles();
+        await this.pendingFileCleanupService.cleanupStaleFiles();
 
       if (deletedCount > 0) {
         this.logger.log(
-          `Pending file cleanup completed: ${deletedCount} stale file(s) deleted`,
+          `File cleanup completed: ${deletedCount} stale file(s) deleted`,
         );
       }
     } catch (error) {

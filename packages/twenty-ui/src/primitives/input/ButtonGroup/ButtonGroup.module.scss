@@ -1,14 +1,45 @@
 .container {
-  --tw-button-border-end-end-radius: var(--t-border-radius-md);
-  --tw-button-border-end-start-radius: var(--t-border-radius-md);
-  --tw-button-border-start-end-radius: var(--t-border-radius-md);
-  --tw-button-border-start-start-radius: var(--t-border-radius-md);
+  --tw-button-border-end-end-radius: var(
+    --tw-button-radius,
+    var(--t-border-radius-md)
+  );
+  --tw-button-border-end-start-radius: var(
+    --tw-button-radius,
+    var(--t-border-radius-md)
+  );
+  --tw-button-border-start-end-radius: var(
+    --tw-button-radius,
+    var(--t-border-radius-md)
+  );
+  --tw-button-border-start-start-radius: var(
+    --tw-button-radius,
+    var(--t-border-radius-md)
+  );
 
   border-radius: var(--t-border-radius-md);
   display: inline-flex;
   max-inline-size: 100%;
 
-  & > :not(:first-child) {
+  &[data-framed] {
+    --tw-button-radius: calc(
+      var(--t-border-radius-sm) - var(--t-spacing-0_5) - 1px
+    );
+
+    align-items: flex-start;
+    backdrop-filter: blur(20px);
+    background-color: var(--t-background-transparent-lighter);
+    border: 1px solid var(--t-border-color-strong);
+    border-radius: var(--t-border-radius-sm);
+    padding: var(--t-spacing-0_5);
+
+    @include hover-capable {
+      &:hover {
+        box-shadow: var(--t-box-shadow-light);
+      }
+    }
+  }
+
+  &[data-attached] > :not(:first-child) {
     --tw-button-border-start-start-radius: 0;
     --tw-button-border-end-start-radius: 0;
 
@@ -16,14 +47,18 @@
     border-end-start-radius: 0;
     margin-inline-start: -1px;
   }
-  & > :not(:last-child) {
+  &[data-attached] > :not(:last-child) {
     --tw-button-border-start-end-radius: 0;
     --tw-button-border-end-end-radius: 0;
 
     border-start-end-radius: 0;
     border-end-end-radius: 0;
   }
-  & > :focus-within {
+  &:not([data-attached]) {
+    gap: var(--t-spacing-0_5);
+  }
+
+  & > :where(*):focus-within {
     z-index: 1;
   }
 }

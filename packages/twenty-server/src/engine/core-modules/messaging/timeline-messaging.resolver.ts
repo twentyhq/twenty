@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UseFilters } from '@nestjs/common';
 import { Args, ArgsType, Field, Int, Mutation, Query } from '@nestjs/graphql';
 
 import { Max } from 'class-validator';
@@ -13,6 +13,7 @@ import { TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/d
 import { GetMessagesService } from 'src/engine/core-modules/messaging/services/get-messages.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -79,6 +80,7 @@ class GetTimelineThreadsFromOpportunityIdArgs {
 
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, CustomPermissionGuard)
 @CoreResolver(() => TimelineThreadsWithTotalDTO)
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class TimelineMessagingResolver {
   constructor(
     private readonly getMessagesFromPersonIdsService: GetMessagesService,

@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import { LightIconButton } from 'twenty-ui/components';
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { IconTrash } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
@@ -23,18 +25,6 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
   const isDisabled = isEnabled && !showDeleteButton;
   const showTrashButton = isEnabled && showDeleteButton;
 
-  const iconButtons = showTrashButton
-    ? [
-        {
-          Icon: IconTrash,
-          onClick: (event: React.MouseEvent) => {
-            event.stopPropagation();
-            onDelete?.();
-          },
-        },
-      ]
-    : undefined;
-
   return (
     <MenuItem
       LeftIcon={permission.Icon}
@@ -42,7 +32,19 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
       text={permission.name}
       onClick={isClickable ? onAdd : undefined}
       disabled={isDisabled}
-      iconButtons={iconButtons}
+      iconButtons={
+        showTrashButton && (
+          <LightIconButton
+            aria-label={t`Remove permission`}
+            onClick={(event) => {
+              event.stopPropagation();
+              onDelete?.();
+            }}
+          >
+            <IconTrash />
+          </LightIconButton>
+        )
+      }
     />
   );
 };

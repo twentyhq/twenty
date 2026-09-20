@@ -1,3 +1,5 @@
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { NavigationMenuItemIconWithOverlay } from '@/navigation-menu-item/display/components/NavigationMenuItemIconWithOverlay';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -5,9 +7,12 @@ import {
   Avatar,
   getIconTileColorShades,
 } from 'twenty-ui/primitives/data-display';
-import { IconLink, IconWorld, useIcons } from 'twenty-ui/icon';
+import { IconLink, IconPerspective, IconWorld, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  type NavigationMenuItem,
+} from '~/generated-metadata/graphql';
 
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
@@ -21,6 +26,7 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const NavigationMenuItemIcon = ({
@@ -29,8 +35,14 @@ export const NavigationMenuItemIcon = ({
   navigationMenuItem: NavigationMenuItem;
 }) => {
   const { getIcon } = useIcons();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+  );
 
   const objectNameSingular =
     getNavigationMenuItemObjectNameSingular(
@@ -81,11 +93,9 @@ export const NavigationMenuItemIcon = ({
     const pageLayoutColor = getNavigationMenuItemColor(navigationMenuItem);
     const pageLayoutIconStyle = getIconTileColorShades(pageLayoutColor);
 
-    if (isDefined(PageLayoutIcon)) {
-      return <ColoredIcon Icon={PageLayoutIcon} color={pageLayoutColor} />;
-    }
-
-    return (
+    const pageIcon = isDefined(PageLayoutIcon) ? (
+      <ColoredIcon Icon={PageLayoutIcon} color={pageLayoutColor} />
+    ) : (
       <Avatar
         size="md"
         shape="rounded-square"
@@ -94,6 +104,14 @@ export const NavigationMenuItemIcon = ({
         backgroundColor={pageLayoutIconStyle.backgroundColor}
       />
     );
+
+    return isLayoutCustomizationModeEnabled ? (
+      <NavigationMenuItemIconWithOverlay OverlayIcon={IconPerspective}>
+        {pageIcon}
+      </NavigationMenuItemIconWithOverlay>
+    ) : (
+      pageIcon
+    );
   }
 
   if (navigationMenuItem.type === NavigationMenuItemType.LINK) {
@@ -101,6 +119,7 @@ export const NavigationMenuItemIcon = ({
       item: navigationMenuItem,
       objectMetadataItems,
       views,
+      isInitialObjectViewEnabled,
     });
     return (
       <LinkIconWithLinkOverlay

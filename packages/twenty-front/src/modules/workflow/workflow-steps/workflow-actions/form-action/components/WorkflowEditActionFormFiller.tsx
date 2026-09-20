@@ -76,6 +76,8 @@ export const WorkflowEditActionFormFiller = ({
   }, 1_000);
 
   const onSubmit = async () => {
+    await saveAction.flush();
+
     const response = formData.reduce(
       (acc, field) => {
         acc[field.name] = field.value;

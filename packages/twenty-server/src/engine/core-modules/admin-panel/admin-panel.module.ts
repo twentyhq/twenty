@@ -1,3 +1,4 @@
+import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -56,6 +57,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
   imports: [
+    AgentHistoryModule,
     TypeOrmModule.forFeature([
       UserEntity,
       WorkspaceEntity,
@@ -112,7 +114,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     WorkerHealthIndicator,
     ConnectedAccountHealth,
     AppHealthIndicator,
-    provideWorkspaceScopedRepository(AgentMessageEntity),
     provideWorkspaceScopedRepository(FeatureFlagEntity),
     provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],

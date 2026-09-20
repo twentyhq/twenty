@@ -1,8 +1,5 @@
+import { Section } from '@ui/components/Section/Section';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
-import {
-  H1Title,
-  H1TitleFontColor,
-} from '@ui/primitives/typography/H1Title/H1Title';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { i18n } from '@lingui/core';
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -44,16 +41,17 @@ export const RecordingControls = ({
           size="xl"
           shape="rounded-square"
         />
-        <div className="grow">
-          <H1Title
-            className="live-title"
-            title={active.title}
-            fontColor={H1TitleFontColor.Primary}
-          />
-          <span className="small muted" role="status">
-            {label} · <RecordingTimer recording={active} />
-          </span>
-        </div>
+        <Section.Header
+          className="grow live-section-header"
+          title={active.title}
+          level={2}
+          size="lg"
+          description={
+            <div className="small muted" role="status">
+              {label} · <RecordingTimer recording={active} />
+            </div>
+          }
+        />
       </div>
       <div className="live-actions">
         <Button

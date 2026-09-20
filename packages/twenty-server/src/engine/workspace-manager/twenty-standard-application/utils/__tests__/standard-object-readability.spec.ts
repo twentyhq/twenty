@@ -62,6 +62,12 @@ describe('Standard object readability', () => {
   ) as (keyof typeof INHERITED_STANDARD_OBJECT_PARENT_FIELDS)[];
 
   const nonOpenObjectUniversalIdentifiers: string[] = [
+    STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    STANDARD_OBJECTS.agentMessage.universalIdentifier,
+    STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
+    STANDARD_OBJECTS.agentTurn.universalIdentifier,
+    STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
+
     STANDARD_OBJECTS.recordShare.universalIdentifier,
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,

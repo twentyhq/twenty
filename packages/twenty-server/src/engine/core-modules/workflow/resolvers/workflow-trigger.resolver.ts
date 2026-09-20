@@ -2,18 +2,13 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import {
-  WORKFLOW_TRIGGER_METADATA_KEY,
-  WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY,
-  WORKFLOW_TRIGGER_PAYLOAD_KEY,
-} from 'twenty-shared/workflow';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { RunWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-workflow-version.input';
 import { RunWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/run-workflow-version.dto';
 import { WorkflowRunDTO } from 'src/engine/core-modules/workflow/dtos/workflow-run.dto';
@@ -21,6 +16,7 @@ import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-module
 import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -28,6 +24,8 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { buildWorkflowRunTriggerContext } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-trigger-context.util';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -42,19 +40,31 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   WorkflowVersionValidationGraphqlApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 export class WorkflowTriggerResolver {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
+    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
   ) {}
 
   @Mutation(() => Boolean)
   async activateWorkflowVersion(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ) {
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId: workspace.id,
+        userWorkspaceId,
+        workspaceWorkflowVersionIds: [workflowVersionId],
+      },
+    );
+
     return this.workflowTriggerWorkspaceService.activateWorkflowVersion(
       workflowVersionId,
       workspace.id,
@@ -63,10 +73,20 @@ export class WorkflowTriggerResolver {
 
   @Mutation(() => Boolean)
   async deactivateWorkflowVersion(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ) {
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId: workspace.id,
+        userWorkspaceId,
+        workspaceWorkflowVersionIds: [workflowVersionId],
+      },
+    );
+
     return this.workflowTriggerWorkspaceService.deactivateWorkflowVersion(
       workflowVersionId,
       workspace.id,
@@ -76,11 +96,21 @@ export class WorkflowTriggerResolver {
   @Mutation(() => RunWorkflowVersionDTO)
   @UseGuards(UserAuthGuard)
   async runWorkflowVersion(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input')
     { workflowVersionId, workflowRunId, payload }: RunWorkflowVersionInput,
   ) {
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId: workspace.id,
+        userWorkspaceId,
+        workspaceWorkflowVersionIds: [workflowVersionId],
+      },
+    );
+
     const authContext = buildSystemAuthContext(workspace.id);
 
     const workspaceMember =
@@ -98,24 +128,14 @@ export class WorkflowTriggerResolver {
         });
       }, authContext);
 
+    const { payload: triggerPayload, createdBy } =
+      buildWorkflowRunTriggerContext({ workspaceMember, payload });
+
     return this.workflowTriggerWorkspaceService.runWorkflowVersion({
       workflowVersionId,
       workflowRunId: workflowRunId ?? undefined,
-      payload: {
-        ...(payload ?? {}),
-        [WORKFLOW_TRIGGER_PAYLOAD_KEY]: { ...(payload ?? {}) },
-        [WORKFLOW_TRIGGER_METADATA_KEY]: {
-          [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]:
-            workspaceMember.id,
-        },
-      },
-      createdBy: buildCreatedByFromFullNameMetadata({
-        fullNameMetadata: {
-          firstName: workspaceMember.name.firstName,
-          lastName: workspaceMember.name.lastName,
-        },
-        workspaceMemberId: workspaceMember.id,
-      }),
+      payload: triggerPayload,
+      createdBy,
       workspaceId: workspace.id,
     });
   }

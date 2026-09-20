@@ -19,10 +19,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { Section } from 'twenty-ui/components';
 import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
@@ -149,57 +148,57 @@ export const SettingsSecuritySettings = () => {
       <SettingsRolesQueryEffect />
       <StyledMainContent>
         <StyledSectionContainer>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`SSO`}
               description={t`Configure an SSO connection`}
               adornment={<OrganizationAdornment />}
             />
             <SettingsSsoIdentitiesProvidersListCard />
-          </Section>
+          </Section.Root>
         </StyledSectionContainer>
 
-        <Section>
+        <Section.Root>
           <StyledContainer>
-            <H2Title
+            <Section.Header
               title={t`Authentication`}
               description={t`Customize your workspace security`}
             />
             <SettingsSecurityAuthProvidersOptionsList />
           </StyledContainer>
-        </Section>
-        <Section>
+        </Section.Root>
+        <Section.Root>
           <StyledContainer>
-            <H2Title
+            <Section.Header
               title={t`Editable Profile Fields`}
               description={t`Choose which profile fields users with the Edit Profile permission can modify`}
             />
             <SettingsSecurityEditableProfileFields />
           </StyledContainer>
-        </Section>
+        </Section.Root>
         <SettingsRoleDefaultRole roles={roles} />
         {shouldShowBypassSection && (
-          <Section>
+          <Section.Root>
             <StyledContainer>
-              <H2Title
+              <Section.Header
                 title={t`SSO Bypass`}
                 description={t`Configure fallback login methods for users with SSO bypass permissions`}
               />
               <SettingsSecurityAuthBypassOptionsList />
             </StyledContainer>
-          </Section>
+          </Section.Root>
         )}
         {isMultiWorkspaceEnabled && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Support`}
               description={t`Manage support access settings`}
             />
             <ImpersonationSwitch />
-          </Section>
+          </Section.Root>
         )}
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Audit Logs`}
             description={t`Configure how long audit logs are retained`}
             adornment={<OrganizationAdornment />}
@@ -232,9 +231,12 @@ export const SettingsSecuritySettings = () => {
               buttonTitle={t`Activate`}
             />
           )}
-        </Section>
-        <Section>
-          <H2Title title={t`Other`} description={t`Other security settings`} />
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
+            title={t`Other`}
+            description={t`Other security settings`}
+          />
           <Card rounded>
             <SettingsOptionCardContentCounter
               Icon={IconTrash}
@@ -246,7 +248,7 @@ export const SettingsSecuritySettings = () => {
               showButtons={false}
             />
           </Card>
-        </Section>
+        </Section.Root>
       </StyledMainContent>
     </>
   );

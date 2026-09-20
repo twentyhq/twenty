@@ -11,9 +11,10 @@ import { useOpenReplaceWidgetPicker } from '@/side-panel/pages/page-layout/hooks
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -25,7 +26,7 @@ import {
   IconSwitchHorizontal,
   IconTrash,
 } from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
 const RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID =
@@ -56,7 +57,7 @@ export const WidgetSettingsManageSection = ({
 
   const { openReplaceWidgetPicker } = useOpenReplaceWidgetPicker(pageLayoutId);
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const visibilityLabel = useTranslatedVisibilityLabel(
     widgetInEditMode?.conditionalAvailabilityExpression,
@@ -75,7 +76,7 @@ export const WidgetSettingsManageSection = ({
     if (isResetToDefaultDisabled) {
       return;
     }
-    openModal(RESET_WIDGET_TO_DEFAULT_MODAL_ID);
+    openDialog(RESET_WIDGET_TO_DEFAULT_MODAL_ID);
   };
 
   const handleConfirmReset = () => {
@@ -109,28 +110,28 @@ export const WidgetSettingsManageSection = ({
             contextualTextPosition="right"
           />
         </SelectableListItem>
-        <div id={RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID}>
-          <SelectableListItem
-            itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-            onEnter={handleResetToDefault}
-          >
-            <CommandMenuItem
-              id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-              Icon={IconRefreshDot}
-              label={t`Reset to default`}
-              onClick={handleResetToDefault}
-              disabled={isResetToDefaultDisabled}
-            />
-          </SelectableListItem>
-        </div>
-        {isResetToDefaultDisabled && (
-          <AppTooltip
-            anchorSelect={`#${RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID}`}
-            title={t`No default configuration available for this widget`}
-            noArrow
-            place="bottom"
-          />
-        )}
+        <Tooltip
+          delay={TooltipDelay.mediumDelay}
+          content={t`No default configuration available for this widget`}
+          side="bottom"
+          disabled={!isResetToDefaultDisabled}
+        >
+          <div id={RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID}>
+            <SelectableListItem
+              itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+              onEnter={handleResetToDefault}
+            >
+              <CommandMenuItem
+                id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+                Icon={IconRefreshDot}
+                label={t`Reset to default`}
+                onClick={handleResetToDefault}
+                disabled={isResetToDefaultDisabled}
+              />
+            </SelectableListItem>
+          </div>
+        </Tooltip>
+
         <SelectableListItem
           itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET}
           onEnter={openReplaceWidgetPicker}
@@ -155,8 +156,8 @@ export const WidgetSettingsManageSection = ({
           />
         </SelectableListItem>
       </SidePanelGroup>
-      <ConfirmationModal
-        modalInstanceId={RESET_WIDGET_TO_DEFAULT_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={RESET_WIDGET_TO_DEFAULT_MODAL_ID}
         title={t`Reset to default`}
         subtitle={t`This will cancel all modifications done on the widget. This action cannot be undone.`}
         onConfirmClick={handleConfirmReset}

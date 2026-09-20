@@ -136,6 +136,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'commandMenuItemUniversalIdentifiers',
     },
+    navigationMenuItems: {
+      metadataName: 'navigationMenuItem',
+      flatEntityForeignKeyAggregator: 'navigationMenuItemIds',
+      universalFlatEntityForeignKeyAggregator:
+        'navigationMenuItemUniversalIdentifiers',
+    },
   },
   view: {
     viewFields: {
@@ -169,6 +175,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       metadataName: 'viewSort',
       flatEntityForeignKeyAggregator: 'viewSortIds',
       universalFlatEntityForeignKeyAggregator: 'viewSortUniversalIdentifiers',
+    },
+    navigationMenuItems: {
+      metadataName: 'navigationMenuItem',
+      flatEntityForeignKeyAggregator: 'navigationMenuItemIds',
+      universalFlatEntityForeignKeyAggregator:
+        'navigationMenuItemUniversalIdentifiers',
     },
   },
   viewField: {},
@@ -239,6 +251,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       metadataName: 'pageLayoutTab',
       flatEntityForeignKeyAggregator: 'tabIds',
       universalFlatEntityForeignKeyAggregator: 'tabUniversalIdentifiers',
+    },
+    navigationMenuItems: {
+      metadataName: 'navigationMenuItem',
+      flatEntityForeignKeyAggregator: 'navigationMenuItemIds',
+      universalFlatEntityForeignKeyAggregator:
+        'navigationMenuItemUniversalIdentifiers',
     },
   },
   pageLayoutTab: {

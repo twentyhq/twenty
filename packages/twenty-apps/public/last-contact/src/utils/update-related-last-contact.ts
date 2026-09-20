@@ -3,6 +3,10 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { chunk } from 'src/utils/chunk';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
 import { type InteractionKind } from 'src/utils/update-person-last-contact';
+import {
+  type RecordUpsert,
+  upsertRecordsInBatches,
+} from 'src/utils/upsert-records-in-batches';
 
 const PAGE_SIZE = 200;
 
@@ -12,12 +16,16 @@ export type RelatedInteraction = {
   kind: InteractionKind;
 };
 
-const recencyGuard = (occurredAt: string) => ({
-  or: [
-    { lastContactAt: { is: 'NULL' } },
-    { lastContactAt: { lt: occurredAt } },
-  ],
-});
+type OpportunityLink = {
+  opportunityId: string;
+  pointOfContactId: string;
+  lastContactAt: string | null;
+};
+
+const isNewer = (
+  candidate: string,
+  current: string | null | undefined,
+): boolean => !current || current < candidate;
 
 const buildData = ({
   occurredAt,
@@ -66,11 +74,48 @@ const collectCompanyIdByPersonId = async (
   return companyIdByPersonId;
 };
 
-const collectPointOfContactIds = async (
+const collectCompanyLastContactAt = async (
+  client: CoreApiClient,
+  companyIds: string[],
+): Promise<Map<string, string | null>> => {
+  const lastContactAtByCompanyId = new Map<string, string | null>();
+
+  for (const ids of chunk(companyIds, PAGE_SIZE)) {
+    let after: string | undefined;
+
+    do {
+      const { companies } = await executeWithRetry(() =>
+        client.query({
+          companies: {
+            __args: { filter: { id: { in: ids } }, first: PAGE_SIZE, after },
+            edges: { node: { id: true, lastContactAt: true } },
+            pageInfo: { hasNextPage: true, endCursor: true },
+          },
+        }),
+      );
+
+      for (const edge of companies?.edges ?? []) {
+        const { id, lastContactAt } = edge.node;
+
+        if (id) {
+          lastContactAtByCompanyId.set(id, lastContactAt ?? null);
+        }
+      }
+
+      after = companies?.pageInfo.hasNextPage
+        ? (companies.pageInfo.endCursor ?? undefined)
+        : undefined;
+    } while (after);
+  }
+
+  return lastContactAtByCompanyId;
+};
+
+const collectOpportunityLinks = async (
   client: CoreApiClient,
   personIds: string[],
-): Promise<Set<string>> => {
-  const pointOfContactIds = new Set<string>();
+): Promise<OpportunityLink[]> => {
+  const links: OpportunityLink[] = [];
 
   for (const ids of chunk(personIds, PAGE_SIZE)) {
     let after: string | undefined;
@@ -84,17 +129,27 @@ const collectPointOfContactIds = async (
               first: PAGE_SIZE,
               after,
             },
-            edges: { node: { id: true, pointOfContactId: true } },
+            edges: {
+              node: {
+                id: true,
+                pointOfContactId: true,
+                lastContactAt: true,
+              },
+            },
             pageInfo: { hasNextPage: true, endCursor: true },
           },
         }),
       );
 
       for (const edge of opportunities?.edges ?? []) {
-        const { pointOfContactId } = edge.node;
+        const { id, pointOfContactId, lastContactAt } = edge.node;
 
-        if (pointOfContactId) {
-          pointOfContactIds.add(pointOfContactId);
+        if (id && pointOfContactId) {
+          links.push({
+            opportunityId: id,
+            pointOfContactId,
+            lastContactAt: lastContactAt ?? null,
+          });
         }
       }
 
@@ -104,7 +159,7 @@ const collectPointOfContactIds = async (
     } while (after);
   }
 
-  return pointOfContactIds;
+  return links;
 };
 
 // Companies and opportunities surface emails and meetings from their related
@@ -140,49 +195,40 @@ export const updateRelatedLastContactForPeople = async (
     }
   }
 
+  const lastContactAtByCompanyId = await collectCompanyLastContactAt(
+    client,
+    [...contactByCompanyId.keys()],
+  );
+  const companyUpserts: RecordUpsert[] = [];
+
   for (const [companyId, contact] of contactByCompanyId) {
-    await executeWithRetry(() =>
-      client.mutation({
-        updateCompanies: {
-          __args: {
-            data: buildData(contact),
-            filter: {
-              and: [
-                { id: { eq: companyId } },
-                recencyGuard(contact.occurredAt),
-              ],
-            },
-          },
-          id: true,
-        },
-      }),
-    );
-  }
-
-  const pointOfContactIds = await collectPointOfContactIds(client, personIds);
-
-  for (const personId of pointOfContactIds) {
-    const contact = contactByPersonId.get(personId);
-
-    if (!contact) {
+    if (!lastContactAtByCompanyId.has(companyId)) {
       continue;
     }
 
-    await executeWithRetry(() =>
-      client.mutation({
-        updateOpportunities: {
-          __args: {
-            data: buildData(contact),
-            filter: {
-              and: [
-                { pointOfContactId: { eq: personId } },
-                recencyGuard(contact.occurredAt),
-              ],
-            },
-          },
-          id: true,
-        },
-      }),
-    );
+    if (isNewer(contact.occurredAt, lastContactAtByCompanyId.get(companyId))) {
+      companyUpserts.push({ id: companyId, ...buildData(contact) });
+    }
   }
+
+  await upsertRecordsInBatches(client, 'createCompanies', companyUpserts);
+
+  const opportunityLinks = await collectOpportunityLinks(client, personIds);
+  const opportunityUpserts: RecordUpsert[] = [];
+
+  for (const { opportunityId, pointOfContactId, lastContactAt } of opportunityLinks) {
+    const contact = contactByPersonId.get(pointOfContactId);
+
+    if (!contact || !isNewer(contact.occurredAt, lastContactAt)) {
+      continue;
+    }
+
+    opportunityUpserts.push({ id: opportunityId, ...buildData(contact) });
+  }
+
+  await upsertRecordsInBatches(
+    client,
+    'createOpportunities',
+    opportunityUpserts,
+  );
 };

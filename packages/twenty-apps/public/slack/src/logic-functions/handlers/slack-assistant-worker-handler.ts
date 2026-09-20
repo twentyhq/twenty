@@ -26,6 +26,7 @@ import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-s
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
+import { resolveSlackAssistantAttachments } from 'src/logic-functions/utils/resolve-slack-assistant-attachments';
 import { resolveSlackChannelAccessPolicy } from 'src/logic-functions/utils/resolve-slack-channel-access-policy';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
@@ -89,7 +90,7 @@ export const slackAssistantWorkerHandler = async (
     const [
       {
         conversationMessages,
-        sharedFileNames,
+        sharedFiles,
         requesterName,
         requesterIdentity,
         requestMessage,
@@ -203,6 +204,14 @@ export const slackAssistantWorkerHandler = async (
       return { done: true, declined: true };
     }
 
+    const { attachments, attachedFileNames, namesOnlyFileNames } =
+      await resolveSlackAssistantAttachments({
+        slackClient,
+        requestFiles: requestMessage?.files,
+        sharedFiles,
+        agentDeadlineAtMs,
+      });
+
     const resolvedMentions = await resolveSlackAssistantMentions({
       requestText,
       conversationMessages,
@@ -227,7 +236,9 @@ export const slackAssistantWorkerHandler = async (
         timeoutSeconds: agentBudgetRemainingSeconds,
         workspaceBaseUrl: workspaceBaseUrls[0],
         hasMentionedUsers: resolvedMentions.hasMentionedUsers,
-        sharedFileNames,
+        attachments,
+        attachedFileNames,
+        namesOnlyFileNames,
       }),
       deadlineAtMs: agentDeadlineAtMs,
     }).finally(() => stopStatusUpdates());
