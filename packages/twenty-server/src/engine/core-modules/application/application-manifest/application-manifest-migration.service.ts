@@ -206,6 +206,11 @@ export class ApplicationManifestMigrationService {
       fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
 
+    this.logger.debug?.(
+      `[DIAG-06] syncMetadataFromManifest applicationIds=${JSON.stringify([ownerFlatApplication.id])} flatObjectMetadataMaps keys=${JSON.stringify(Object.keys(fromAllFlatEntityMaps.flatObjectMetadataMaps?.byUniversalIdentifier ?? {}))}`,
+      ApplicationManifestMigrationService.name,
+    );
+
     const toAllUniversalFlatEntityMaps =
       this.computeManifestFlatEntityMapsService.compute({
         manifest,
