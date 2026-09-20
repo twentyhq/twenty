@@ -62,7 +62,7 @@ export class CoreWorkflowVersionWriteService {
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<ValidatedDraftCoreWorkflowVersion> {
     await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(

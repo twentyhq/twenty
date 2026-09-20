@@ -17,7 +17,16 @@ describe('buildCoreWorkflowVisibilityWhere', () => {
       }),
     ).toEqual([
       { visibility: WorkflowVisibility.WORKSPACE },
+      { createdByUserWorkspaceId: IsNull() },
       { createdByUserWorkspaceId: READER_USER_WORKSPACE_ID },
+    ]);
+  });
+
+  it('should keep an API key out of everyone private workflows', () => {
+    expect(
+      buildCoreWorkflowVisibilityWhere({ userWorkspaceId: undefined }),
+    ).toEqual([
+      { visibility: WorkflowVisibility.WORKSPACE },
       { createdByUserWorkspaceId: IsNull() },
     ]);
   });
@@ -44,7 +53,7 @@ describe('buildCoreWorkflowVisibilitySqlPredicate', () => {
         userWorkspaceIdParameter: '$2',
       }),
     ).toBe(
-      `(c."visibility" = 'WORKSPACE' OR coalesce(c."createdByUserWorkspaceId" = $2::uuid, true))`,
+      `(c."visibility" = 'WORKSPACE' OR (c."createdByUserWorkspaceId" IS NULL OR c."createdByUserWorkspaceId" = $2::uuid))`,
     );
   });
 });
@@ -67,6 +76,12 @@ describe('canChangeCoreWorkflowVisibility', () => {
       canChangeCoreWorkflowVisibility({
         createdByUserWorkspaceId: 'someone-else',
         userWorkspaceId: READER_USER_WORKSPACE_ID,
+      }),
+    ).toBe(false);
+    expect(
+      canChangeCoreWorkflowVisibility({
+        createdByUserWorkspaceId: 'someone-else',
+        userWorkspaceId: undefined,
       }),
     ).toBe(false);
   });

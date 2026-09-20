@@ -29,7 +29,7 @@ export class CoreWorkflowIdResolutionService {
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<{
     coreWorkflowVersion: WorkflowVersionEntity;
@@ -62,7 +62,7 @@ export class CoreWorkflowIdResolutionService {
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<{
     coreWorkflowVersion: WorkflowVersionEntity;
@@ -110,7 +110,7 @@ export class CoreWorkflowIdResolutionService {
     coreWorkflowId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowId: string;
   }): Promise<{
     coreWorkflow: WorkflowEntity;

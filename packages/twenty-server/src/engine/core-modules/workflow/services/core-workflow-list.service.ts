@@ -139,7 +139,7 @@ export class CoreWorkflowListService {
     coreWorkflowIds,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowIds: string[];
   }): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
     const [coreWorkflows, coreWorkflowVersions] = await Promise.all([
@@ -295,7 +295,7 @@ export class CoreWorkflowListService {
 
   async findManyByWorkspaceId(
     workspaceId: string,
-    userWorkspaceId: string,
+    userWorkspaceId: string | undefined,
     { first, after, orderBy, orderByDirection, filter }: CoreWorkflowsArgs,
   ): Promise<CoreWorkflowConnectionDTO> {
     const { column, cursorExpression, nullable, cast } =
@@ -305,7 +305,7 @@ export class CoreWorkflowListService {
     const direction = isAscending ? 'ASC' : 'DESC';
     const nullsClause = nullable ? ' NULLS LAST' : '';
 
-    const parameters: unknown[] = [workspaceId, userWorkspaceId];
+    const parameters: unknown[] = [workspaceId, userWorkspaceId ?? null];
 
     const { predicate: filterPredicate, parameters: filterParameters } =
       buildCoreWorkflowFilterPredicate({
@@ -397,7 +397,7 @@ export class CoreWorkflowListService {
     coreWorkflowId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowId: string;
   }): Promise<CoreWorkflowDTO | null> {
     return this.findOneByFilterExpression({
@@ -414,7 +414,7 @@ export class CoreWorkflowListService {
     workspaceWorkflowId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowDTO | null> {
     return this.findOneByFilterExpression({
@@ -432,7 +432,7 @@ export class CoreWorkflowListService {
     filterParameter,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     filterExpression: string;
     filterParameter: string;
   }): Promise<CoreWorkflowDTO | null> {
@@ -448,7 +448,7 @@ export class CoreWorkflowListService {
          AND ${VISIBILITY_PREDICATE}
          AND ${filterExpression}
        GROUP BY ${GROUP_BY_CLAUSE}`,
-      [workspaceId, userWorkspaceId, filterParameter],
+      [workspaceId, userWorkspaceId ?? null, filterParameter],
     );
 
     const [row] = rows;
@@ -467,11 +467,11 @@ export class CoreWorkflowListService {
     filterParameters,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     filterPredicate?: string;
     filterParameters: unknown[];
   }): Promise<number> {
-    const parameters: unknown[] = [workspaceId, userWorkspaceId];
+    const parameters: unknown[] = [workspaceId, userWorkspaceId ?? null];
 
     if (!isDefined(filterPredicate)) {
       const [{ totalCount }]: [{ totalCount: number }] =

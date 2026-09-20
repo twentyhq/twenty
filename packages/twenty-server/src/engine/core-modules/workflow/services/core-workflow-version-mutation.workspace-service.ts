@@ -70,7 +70,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     input,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     input: CreateCoreWorkflowVersionStepInput;
   }): Promise<WorkflowVersionStepChangesDTO> {
     const {
@@ -140,7 +140,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     stepId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     stepId: string;
   }): Promise<WorkflowVersionStepChangesDTO> {
@@ -198,7 +198,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     step,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     step: WorkflowAction;
   }): Promise<WorkflowActionDTO> {
@@ -301,7 +301,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     trigger,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     trigger: WorkflowTrigger;
   }): Promise<WorkflowVersionTriggerDTO> {
@@ -328,7 +328,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     stepIdToDelete,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     stepIdToDelete: string;
   }): Promise<WorkflowVersionStepChangesDTO> {
@@ -406,7 +406,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     sourceConnectionOptions,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     source: string;
     target: string;
@@ -509,7 +509,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     sourceConnectionOptions,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     source: string;
     target: string;
@@ -619,7 +619,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     positions,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     positions: WorkflowStepPositionUpdateInput[];
   }): Promise<void> {
@@ -664,7 +664,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     coreWorkflowVersionIdToCopy,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowId: string;
     coreWorkflowVersionIdToCopy: string;
   }): Promise<CoreWorkflowVersionDTO> {
@@ -807,7 +807,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     target,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     target: string;
   }) {
@@ -855,7 +855,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<CoreWorkflowVersionDTO> {
     const coreWorkflowVersion =

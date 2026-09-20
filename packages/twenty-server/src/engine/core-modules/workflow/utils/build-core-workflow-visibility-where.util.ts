@@ -1,4 +1,5 @@
 import { WorkflowVisibility } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull, type FindOptionsWhere } from 'typeorm';
 
 import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
@@ -10,21 +11,29 @@ import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/w
 // still running. Every read and write path goes through one of these builders
 // so there is a single place to audit.
 //
+// The reader is absent for an API key, which authenticates a workspace rather
+// than a person: it reaches everything the workspace shares and nobody's
+// private workflow.
+//
 // The clauses are OR-ed by TypeORM, so any extra condition has to be repeated
 // in each of them.
 export const buildCoreWorkflowVisibilityWhere = ({
   userWorkspaceId,
   ...where
 }: FindOptionsWhere<WorkflowEntity> & {
-  userWorkspaceId: string;
+  userWorkspaceId: string | undefined;
 }): FindOptionsWhere<WorkflowEntity>[] => [
   { ...where, visibility: WorkflowVisibility.WORKSPACE },
-  { ...where, createdByUserWorkspaceId: userWorkspaceId },
   { ...where, createdByUserWorkspaceId: IsNull() },
+  ...(isDefined(userWorkspaceId)
+    ? [{ ...where, createdByUserWorkspaceId: userWorkspaceId }]
+    : []),
 ];
 
 // The list query is raw SQL on a keyset index, so it needs the same rule as a
-// fragment. The caller binds its own parameter for the reader.
+// fragment. The caller binds its own parameter for the reader, which is null
+// for an API key — hence the explicit IS NULL rather than a coalesce, which
+// would read a null reader as matching a null owner.
 export const buildCoreWorkflowVisibilitySqlPredicate = ({
   tableAlias,
   userWorkspaceIdParameter,
@@ -42,10 +51,10 @@ export const canChangeCoreWorkflowVisibility = ({
   userWorkspaceId,
 }: {
   createdByUserWorkspaceId: string | null;
-  userWorkspaceId: string;
+  userWorkspaceId: string | undefined;
 }): boolean =>
   createdByUserWorkspaceId === null ||
-  createdByUserWorkspaceId === userWorkspaceId;
+  (isDefined(userWorkspaceId) && createdByUserWorkspaceId === userWorkspaceId);
 
 export const canChangeCoreWorkflowVisibilitySqlPredicate = ({
   tableAlias,
@@ -54,4 +63,4 @@ export const canChangeCoreWorkflowVisibilitySqlPredicate = ({
   tableAlias: string;
   userWorkspaceIdParameter: string;
 }): string =>
-  `coalesce(${tableAlias}."createdByUserWorkspaceId" = ${userWorkspaceIdParameter}::uuid, true)`;
+  `(${tableAlias}."createdByUserWorkspaceId" IS NULL OR ${tableAlias}."createdByUserWorkspaceId" = ${userWorkspaceIdParameter}::uuid)`;

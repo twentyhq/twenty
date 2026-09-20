@@ -78,7 +78,7 @@ export class CoreWorkflowMutationWorkspaceService {
     coreWorkflowVersionIdToCopy,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     user: AuthContextUser;
     coreWorkflowIdToDuplicate: string;
     coreWorkflowVersionIdToCopy: string;
@@ -169,7 +169,7 @@ export class CoreWorkflowMutationWorkspaceService {
     steps,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     duplicatedCoreWorkflowId: string;
     trigger: NonNullable<WorkflowVersionEntity['triggers']>[number];
     steps: WorkflowAction[];
@@ -257,7 +257,7 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async updateWorkflow(
     workspaceId: string,
-    userWorkspaceId: string,
+    userWorkspaceId: string | undefined,
     { coreWorkflowId, name }: { coreWorkflowId: string; name: string },
   ): Promise<void> {
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
@@ -348,7 +348,7 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async createWorkflow(
     workspaceId: string,
-    userWorkspaceId: string,
+    userWorkspaceId: string | undefined,
     user: AuthContextUser,
     { name, visibility }: { name?: string; visibility?: WorkflowVisibility },
   ): Promise<CoreWorkflowDTO> {
@@ -453,7 +453,7 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async deleteWorkflows(
     workspaceId: string,
-    userWorkspaceId: string,
+    userWorkspaceId: string | undefined,
     { coreWorkflowIds }: { coreWorkflowIds: string[] },
   ): Promise<DeletedCoreWorkflowDTO[]> {
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
@@ -552,7 +552,7 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async discardDraftVersion(
     workspaceId: string,
-    userWorkspaceId: string,
+    userWorkspaceId: string | undefined,
     {
       workspaceWorkflowVersionId,
       coreWorkflowVersionId,

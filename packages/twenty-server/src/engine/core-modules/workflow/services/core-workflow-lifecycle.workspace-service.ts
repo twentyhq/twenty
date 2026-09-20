@@ -100,7 +100,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<boolean> {
     // this one reads the version straight from the repository rather than
@@ -145,7 +145,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<boolean> {
     const resolved = await this.resolveCoreVersionWithWorkflowOrThrow({
@@ -374,7 +374,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<boolean> {
     const resolved = await this.resolveCoreVersionWithWorkflowOrThrow({
@@ -431,7 +431,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     workflowRunId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     payload: object;
     createdBy: ActorMetadata;
@@ -457,7 +457,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<ResolvedCoreVersion> {
     const { coreWorkflowVersion, workspaceWorkflowVersionId } =

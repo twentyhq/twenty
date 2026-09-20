@@ -65,7 +65,8 @@ export class CoreWorkflowResolver {
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
   async updateCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args('input') input: UpdateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO | null> {
     await this.coreWorkflowMutationWorkspaceService.updateWorkflow(
@@ -97,7 +98,8 @@ export class CoreWorkflowResolver {
   @Mutation(() => CoreWorkflowDTO)
   async duplicateCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthUser() user: AuthContextUser,
     @Args('input')
     {
@@ -117,7 +119,8 @@ export class CoreWorkflowResolver {
   @Mutation(() => CoreWorkflowDTO)
   async createCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthUser() user: AuthContextUser,
     @Args('input') input: CreateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO> {
@@ -132,7 +135,8 @@ export class CoreWorkflowResolver {
   @Mutation(() => [DeletedCoreWorkflowDTO])
   async deleteCoreWorkflows(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args('input') input: DeleteCoreWorkflowsInput,
   ): Promise<DeletedCoreWorkflowDTO[]> {
     return this.coreWorkflowMutationWorkspaceService.deleteWorkflows(
@@ -145,7 +149,8 @@ export class CoreWorkflowResolver {
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
   async discardCoreWorkflowDraft(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args('input') input: DiscardCoreWorkflowDraftInput,
   ): Promise<CoreWorkflowDTO | null> {
     const coreWorkflowId =
@@ -169,7 +174,8 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowConnectionDTO)
   async coreWorkflows(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() coreWorkflowsArgs: CoreWorkflowsArgs,
   ): Promise<CoreWorkflowConnectionDTO> {
     return this.coreWorkflowListService.findManyByWorkspaceId(
@@ -182,7 +188,8 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowDTO, { nullable: true })
   async coreWorkflowById(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() { coreWorkflowId }: CoreWorkflowByIdArgs,
   ): Promise<CoreWorkflowDTO | null> {
     return this.coreWorkflowListService.findOneById({
@@ -195,7 +202,8 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowWithCurrentVersionDTO])
   async coreWorkflowsWithCurrentVersions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args('input') { coreWorkflowIds }: CoreWorkflowsWithCurrentVersionsInput,
   ): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
     return this.coreWorkflowListService.findManyWithCurrentVersions({
@@ -208,7 +216,8 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowDTO, { nullable: true })
   async coreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() { workspaceWorkflowId }: CoreWorkflowArgs,
   ): Promise<CoreWorkflowDTO | null> {
     return this.coreWorkflowListService.findOneByWorkspaceWorkflowId({
@@ -221,7 +230,8 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowVersionDTO])
   async coreWorkflowVersions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() { workspaceWorkflowId }: CoreWorkflowVersionsArgs,
   ): Promise<CoreWorkflowVersionDTO[]> {
     return this.coreWorkflowVersionListService.findManyByWorkspaceWorkflowId({
@@ -234,7 +244,8 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowVersionDTO, { nullable: true })
   async coreWorkflowVersion(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() { workspaceWorkflowVersionId }: CoreWorkflowVersionArgs,
   ): Promise<CoreWorkflowVersionDTO | null> {
     return this.coreWorkflowVersionListService.findOneByWorkspaceWorkflowVersionId(
@@ -249,7 +260,8 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowVersionDTO])
   async coreWorkflowVersionsByCoreWorkflowId(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() { coreWorkflowId }: CoreWorkflowVersionsByCoreWorkflowIdArgs,
   ): Promise<CoreWorkflowVersionDTO[]> {
     return this.coreWorkflowVersionListService.findManyByCoreWorkflowId({
@@ -262,7 +274,8 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowVersionDTO, { nullable: true })
   async coreWorkflowVersionById(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() { coreWorkflowVersionId }: CoreWorkflowVersionByIdArgs,
   ): Promise<CoreWorkflowVersionDTO | null> {
     return this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({

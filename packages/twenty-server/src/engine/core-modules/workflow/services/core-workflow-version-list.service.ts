@@ -30,7 +30,7 @@ export class CoreWorkflowVersionListService {
     workspaceWorkflowId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowVersionDTO[]> {
     const parentCoreWorkflow = await this.coreWorkflowRepository.findOne(
@@ -88,7 +88,7 @@ export class CoreWorkflowVersionListService {
     workspaceWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     workspaceWorkflowVersionId: string;
   }): Promise<CoreWorkflowVersionDTO | null> {
     const coreWorkflowVersion =
@@ -114,7 +114,7 @@ export class CoreWorkflowVersionListService {
     coreWorkflowId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowId: string;
   }): Promise<CoreWorkflowVersionDTO[]> {
     const coreWorkflow = await this.coreWorkflowRepository.findOne(
@@ -172,7 +172,7 @@ export class CoreWorkflowVersionListService {
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<CoreWorkflowVersionDTO | null> {
     const coreWorkflowVersion =

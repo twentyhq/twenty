@@ -77,7 +77,10 @@ export class WorkflowEntity extends SyncableEntity {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  @JoinColumn({ name: 'createdByUserWorkspaceId' })
+  @JoinColumn({
+    name: 'createdByUserWorkspaceId',
+    foreignKeyConstraintName: 'FK_WORKFLOW_CREATED_BY_USER_WORKSPACE',
+  })
   createdBy: Relation<UserWorkspaceEntity> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })

@@ -33,7 +33,7 @@ export class CoreWorkflowAccessService {
     coreWorkflowIds,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowIds: string[];
   }): Promise<void> {
     if (coreWorkflowIds.length === 0) {
@@ -79,7 +79,7 @@ export class CoreWorkflowAccessService {
     coreWorkflowVersionIds,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionIds: string[];
   }): Promise<void> {
     if (coreWorkflowVersionIds.length === 0) {
@@ -115,7 +115,7 @@ export class CoreWorkflowAccessService {
     coreWorkflowId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowId: string;
   }): Promise<boolean> {
     try {
