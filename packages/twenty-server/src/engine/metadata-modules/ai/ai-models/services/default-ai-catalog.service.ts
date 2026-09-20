@@ -2,7 +2,6 @@ import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import defaultAiEvaluationProviders from 'src/engine/metadata-modules/ai/ai-models/ai-evaluation-providers.json';
 import defaultAiProviders from 'src/engine/metadata-modules/ai/ai-models/ai-providers.json';
 import { aiProvidersConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.schema';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
@@ -13,15 +12,9 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 @Injectable()
 export class DefaultAiCatalogService implements OnModuleInit {
   private readonly logger = new Logger(DefaultAiCatalogService.name);
-  // ai-providers.json is projected from models.dev every day, and models.dev
-  // describes language models only — it has no notion of an evaluation model,
-  // and the sync filters on tool calling besides. So evaluation providers are
-  // declared in their own committed file and merged in here, where a rebuild of
-  // the generated catalog cannot drop them.
-  private readonly builtInCatalog: AiProvidersConfig = {
-    ...normalizeAiProviders(defaultAiProviders as AiProvidersConfig),
-    ...normalizeAiProviders(defaultAiEvaluationProviders as AiProvidersConfig),
-  };
+  private readonly builtInCatalog: AiProvidersConfig = normalizeAiProviders(
+    defaultAiProviders as AiProvidersConfig,
+  );
   private catalog: AiProvidersConfig = this.builtInCatalog;
 
   constructor(

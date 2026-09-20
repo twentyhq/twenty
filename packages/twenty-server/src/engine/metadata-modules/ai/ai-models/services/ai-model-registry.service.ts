@@ -429,6 +429,8 @@ export class AiModelRegistryService {
 
     this.evaluationConfigCache.set(compositeId, {
       modelId: compositeId,
+      providerName: providerKey,
+      name: modelDef.name,
       sdkPackage: config.npm,
       label: modelDef.label,
       description: modelDef.description ?? compositeId,
@@ -793,8 +795,29 @@ export class AiModelRegistryService {
       });
   }
 
+  // Evaluation models are cached apart from language models so nothing that
+  // resolves a chat or an agent can reach them, which also keeps them out of
+  // getAllModelsWithStatus. The admin panel lists both, so it asks separately.
+  getAllEvaluationModelsWithStatus(): Array<{
+    modelConfig: AiEvaluationModelConfig;
+    isAvailable: boolean;
+    isAdminEnabled: boolean;
+  }> {
+    this.ensureFresh();
+
+    return Array.from(this.evaluationConfigCache.values()).map(
+      (modelConfig) => ({
+        modelConfig,
+        isAvailable: isDefined(
+          this.evaluationRegistry.get(modelConfig.modelId),
+        ),
+        isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
+      }),
+    );
+  }
+
   async setModelAdminEnabled(modelId: string, enabled: boolean): Promise<void> {
-    this.validateModelInRegistry(modelId);
+    this.validateModelIsKnown(modelId);
     await this.preferencesService.setModelAdminEnabled(modelId, enabled);
   }
 
@@ -802,16 +825,16 @@ export class AiModelRegistryService {
     modelIds: string[],
     enabled: boolean,
   ): Promise<void> {
-    modelIds.forEach((id) => this.validateModelInRegistry(id));
+    modelIds.forEach((id) => this.validateModelIsKnown(id));
     await this.preferencesService.setModelsAdminEnabled(modelIds, enabled);
   }
 
   async setDefaultModel(tier: AiModelTier, modelId: string): Promise<void> {
-    this.validateModelInRegistry(modelId);
+    this.validateLanguageModelIsKnown(modelId);
     await this.preferencesService.setDefaultModel(tier, modelId);
   }
 
-  private validateModelInRegistry(modelId: string): void {
+  private validateLanguageModelIsKnown(modelId: string): void {
     this.ensureFresh();
 
     if (
@@ -823,6 +846,18 @@ export class AiModelRegistryService {
         AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
+  }
+
+  // Enabling and disabling reaches every kind, unlike a tier default, which
+  // only a language model can serve.
+  private validateModelIsKnown(modelId: string): void {
+    this.ensureFresh();
+
+    if (this.evaluationConfigCache.has(modelId)) {
+      return;
+    }
+
+    this.validateLanguageModelIsKnown(modelId);
   }
 
   getResolvedProvidersForAdmin(): AiProvidersConfig {

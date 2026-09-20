@@ -9,6 +9,10 @@ import {
 // on input tokens like a language model, which is why the cost fields match.
 export type AiEvaluationModelConfig = {
   modelId: string;
+  // The provider key and the bare SDK model name the composite id is built
+  // from, kept here so a reader does not have to split the id back apart.
+  providerName: string;
+  name: string;
   sdkPackage: AiSdkPackage;
   label: string;
   description: string;

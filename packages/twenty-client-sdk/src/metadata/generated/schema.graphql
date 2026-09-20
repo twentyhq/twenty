@@ -851,6 +851,7 @@ type Workspace {
   aiAgentModelTier: AiModelTier!
   isAutoModelSelectionEnabled: Boolean!
   aiModelIdByTier: JSON!
+  aiEvaluationModelId: String
   aiAdditionalInstructions: String
   workspaceCustomApplication: Application
   featureFlags: [FeatureFlag!]
@@ -4915,6 +4916,7 @@ input UpdateWorkspaceInput {
   aiAgentModelTier: AiModelTier
   isAutoModelSelectionEnabled: Boolean
   aiModelIdByTier: JSON
+  aiEvaluationModelId: String
   aiAdditionalInstructions: String
   editableProfileFields: [String!]
   isInternalMessagesImportEnabled: Boolean

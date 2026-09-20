@@ -6,9 +6,9 @@ over them.
 | File | What it is |
 | --- | --- |
 | `ai-models.json` | What every model is: identity, pricing, limits, modalities, efforts, benchmarks. No routes, no credentials. Synced daily. |
-| `ai-self-host-spec.json` | What a self-hosted deployment serves: the five direct routes and their key templates. Hand-maintained. |
-| `ai-providers.json` | The catalog the server bundles. Generated from the two above; a test fails if it is hand-edited. |
-| `ai-evaluation-providers.json` | Evaluation models and their routes. Hand-maintained, and outside this pipeline: models.dev describes language models only, so the sync can neither add these nor keep them. Merged into the bundled catalog by `DefaultAiCatalogService`. |
+| `ai-evaluation-models.json` | What every evaluation model is, in the same shape. Hand-maintained: models.dev describes language models only, so the sync can neither add these nor keep them. Folded into `ai-models.json` on every run. |
+| `ai-self-host-spec.json` | What a self-hosted deployment serves: the direct routes and their key templates. Hand-maintained. |
+| `ai-providers.json` | The catalog the server bundles. Generated from the above; a test fails if it is hand-edited. |
 
 Cloud works the same way, from a private spec in twenty-infra, so a deployment
 catalog is always a projection rather than a second copy of the truth.
@@ -17,10 +17,18 @@ catalog is always a projection rather than a second copy of the truth.
 
 Run daily by `.github/workflows/ci-ai-catalog-sync.yaml`. Reads models.dev for
 model identity, pricing, context windows and availability, overlays Artificial
-Analysis for intelligence, speed and cost per task, and writes `ai-models.json`
-and `ai-model-benchmarks.json`, then projects the self-host spec over the first
-to write `ai-providers.json`. Hand-maintained fields (`efforts`,
-`dataResidency`, `zeroDataRetention`) survive the rebuild.
+Analysis for intelligence, speed and cost per task, folds in
+`ai-evaluation-models.json`, and writes `ai-models.json` and
+`ai-model-benchmarks.json`, then projects the self-host spec over the first to
+write `ai-providers.json`. Hand-maintained fields (`efforts`, `dataResidency`,
+`zeroDataRetention`) survive the rebuild.
+
+Evaluation models are merged per model, not per vendor, so the day a provider
+the sync already fetches ships one, it is a single entry in
+`ai-evaluation-models.json` under that vendor and its language models stay as
+fetched. A vendor that serves nothing else is listed in the spec by model name
+rather than by `vendor`, because `readVendors` would otherwise ask models.dev
+for a vendor it does not carry and the payload assertion would refuse the run.
 
 ```bash
 npx nx run twenty-server:ts-node-no-deps-transpile-only -- \

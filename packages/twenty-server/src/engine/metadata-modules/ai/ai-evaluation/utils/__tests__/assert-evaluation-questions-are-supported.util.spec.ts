@@ -6,6 +6,8 @@ const buildModelConfig = (
   overrides: Partial<AiEvaluationModelConfig> = {},
 ): AiEvaluationModelConfig => ({
   modelId: 'typesafe-ai/jev-latest',
+  providerName: 'typesafe-ai',
+  name: 'jev-latest',
   sdkPackage: '@ai-sdk/typesafe-ai',
   label: 'Jev',
   description: 'Jev',

@@ -14,6 +14,7 @@ const EXPECTED_PROVIDER_NAMES = [
   'google',
   'xai',
   'mistral',
+  'typesafe-ai',
 ];
 
 describe('ai-providers.json integrity', () => {
@@ -32,26 +33,40 @@ describe('ai-providers.json integrity', () => {
     });
   });
 
-  it('should have all required fields for each model', () => {
+  it('should identify and price every model', () => {
     Object.values(PROVIDERS).forEach((config) => {
       (config.models ?? []).forEach((model) => {
         expect(model.name).toBeDefined();
         expect(model.label).toBeDefined();
         expect(model.inputCostPerMillionTokens).toBeDefined();
         expect(model.outputCostPerMillionTokens).toBeDefined();
-        expect(model.contextWindowTokens).toBeGreaterThan(0);
-        expect(model.maxOutputTokens).toBeGreaterThan(0);
       });
     });
   });
 
-  // This file is projected from models.dev, which describes language models
-  // only. Anything else belongs in ai-evaluation-providers.json.
-  it('should carry language models only', () => {
+  it('should size the window of every language model', () => {
     Object.values(PROVIDERS).forEach((config) => {
-      (config.models ?? []).forEach((model) => {
-        expect(model.kind ?? 'language').toBe('language');
-      });
+      (config.models ?? [])
+        .filter((model) => (model.kind ?? 'language') === 'language')
+        .forEach((model) => {
+          expect(model.contextWindowTokens).toBeGreaterThan(0);
+          expect(model.maxOutputTokens).toBeGreaterThan(0);
+        });
+    });
+  });
+
+  // An evaluation model answers questions against a state it is handed whole,
+  // so it has no window to size and no output to cap; what it does have is the
+  // set of question types it can answer.
+  it('should declare the question types of every evaluation model, and no window', () => {
+    Object.values(PROVIDERS).forEach((config) => {
+      (config.models ?? [])
+        .filter((model) => model.kind === 'evaluation')
+        .forEach((model) => {
+          expect(model.supportedQuestionTypes?.length ?? 0).toBeGreaterThan(0);
+          expect(model.contextWindowTokens).toBeUndefined();
+          expect(model.maxOutputTokens).toBeUndefined();
+        });
     });
   });
 

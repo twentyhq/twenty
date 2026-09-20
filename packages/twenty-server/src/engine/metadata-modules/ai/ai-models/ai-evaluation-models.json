@@ -1,8 +1,5 @@
 {
   "typesafe-ai": {
-    "npm": "@ai-sdk/typesafe-ai",
-    "label": "TypeSafe AI",
-    "apiKey": "{{TYPESAFE_AI_API_KEY}}",
     "models": [
       {
         "name": "jev-latest",

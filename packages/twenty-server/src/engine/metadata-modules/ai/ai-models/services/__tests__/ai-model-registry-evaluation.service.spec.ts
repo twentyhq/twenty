@@ -12,6 +12,7 @@ import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-mod
 // inert, and every check reading it passes for the wrong reason.
 describe('AiModelRegistryService evaluation catalog', () => {
   let registry: AiModelRegistryService;
+  const setModelAdminEnabledMock = jest.fn();
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -62,6 +63,7 @@ describe('AiModelRegistryService evaluation catalog', () => {
           useValue: {
             getDisabledModelIds: () => [],
             getDefaultModelIdsForTier: () => [],
+            setModelAdminEnabled: setModelAdminEnabledMock,
           },
         },
         {
@@ -104,5 +106,42 @@ describe('AiModelRegistryService evaluation catalog', () => {
 
   it('registers the model as runnable when the provider is configured', () => {
     expect(registry.getEvaluationModel('typesafe-ai/jev-latest')).toBeDefined();
+  });
+
+  it('carries the route identity so a caller need not split the id apart', () => {
+    expect(
+      registry.getEvaluationModelConfig('typesafe-ai/jev-latest'),
+    ).toMatchObject({ providerName: 'typesafe-ai', name: 'jev-latest' });
+  });
+
+  // The admin panel lists every kind; an evaluation model absent from this is
+  // a provider page with an empty table and no way to turn the model off.
+  it('reports evaluation models to the admin panel with their status', () => {
+    expect(registry.getAllEvaluationModelsWithStatus()).toEqual([
+      expect.objectContaining({
+        isAvailable: true,
+        isAdminEnabled: true,
+        modelConfig: expect.objectContaining({
+          modelId: 'typesafe-ai/jev-latest',
+        }),
+      }),
+    ]);
+  });
+
+  it('should let an administrator disable an evaluation model', async () => {
+    await expect(
+      registry.setModelAdminEnabled('typesafe-ai/jev-latest', false),
+    ).resolves.not.toThrow();
+
+    expect(setModelAdminEnabledMock).toHaveBeenCalledWith(
+      'typesafe-ai/jev-latest',
+      false,
+    );
+  });
+
+  it('should refuse to toggle a model no provider declares', async () => {
+    await expect(
+      registry.setModelAdminEnabled('typesafe-ai/nope', false),
+    ).rejects.toThrow();
   });
 });
