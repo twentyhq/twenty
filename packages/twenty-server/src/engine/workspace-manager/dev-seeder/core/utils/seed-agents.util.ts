@@ -117,7 +117,14 @@ const seedChatThreads = async ({
     await queryRunner.manager
       .createQueryBuilder()
       .insert()
-      .into(`${schemaName}.${agentChatThreadTableName}`)
+      .into(`${schemaName}.${agentChatThreadTableName}`, [
+        'id',
+        ...(schemaName === 'core' ? ['workspaceId'] : []),
+        'userWorkspaceId',
+        'title',
+        'createdAt',
+        'updatedAt',
+      ])
       .orIgnore()
       .values(
         [
@@ -130,9 +137,10 @@ const seedChatThreads = async ({
             title: 'Plan customer follow-ups',
           },
         ].map((thread) => ({
-          ...thread,
+          id: thread.id,
           ...(schemaName === 'core' ? { workspaceId } : {}),
           userWorkspaceId,
+          title: thread.title,
           createdAt: now,
           updatedAt: now,
         })),

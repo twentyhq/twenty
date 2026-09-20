@@ -1,3 +1,4 @@
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Injectable, Logger } from '@nestjs/common';
@@ -69,6 +70,7 @@ export class AgentChatStreamingService {
     private readonly fileUrlService: FileUrlService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly metricsService: MetricsService,
+    private readonly streamRecoveryService: AgentChatStreamRecoveryService,
   ) {}
 
   async reapDeadStream({
@@ -78,53 +80,10 @@ export class AgentChatStreamingService {
     thread: Pick<AgentChatThreadEntity, 'id' | 'activeStreamId'>;
     workspaceId: string;
   }): Promise<AgentChatThreadLastStreamError | null> {
-    if (!isDefined(thread.activeStreamId)) {
-      return null;
-    }
-
-    if (await this.streamHeartbeatService.isAlive(thread.activeStreamId)) {
-      return null;
-    }
-
-    const interruptedError: AgentChatThreadLastStreamError = {
-      code: AiExceptionCode.STREAM_INTERRUPTED,
-      message: 'The response was interrupted before it could finish.',
-      failedAt: new Date().toISOString(),
-    };
-
-    const reap = await this.threadRepository.update(
+    return this.streamRecoveryService.reapDeadStream({
+      thread,
       workspaceId,
-      { id: thread.id, activeStreamId: thread.activeStreamId },
-      { activeStreamId: null, lastStreamError: interruptedError },
-    );
-
-    if (!reap.affected) {
-      return null;
-    }
-
-    this.metricsService.incrementCounterBy({
-      key: MetricsKeys.AiChatTurnFailed,
-      amount: 1,
-      attributes: {
-        failure_phase: 'interrupted',
-        error_code: interruptedError.code,
-      },
     });
-
-    await this.eventPublisherService.resetStreamState(thread.id);
-    await this.eventPublisherService
-      .publish({
-        threadId: thread.id,
-        workspaceId,
-        event: {
-          type: 'stream-error',
-          code: interruptedError.code,
-          message: interruptedError.message,
-        },
-      })
-      .catch(() => {});
-
-    return interruptedError;
   }
 
   private async tryClaimStream({
