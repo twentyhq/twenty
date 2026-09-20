@@ -10,5 +10,5 @@ export const canChangeCoreWorkflowVisibility = ({
   createdByUserWorkspaceId: string | null;
   userWorkspaceId: string | undefined;
 }): boolean =>
-  createdByUserWorkspaceId === null ||
+  !isDefined(createdByUserWorkspaceId) ||
   (isDefined(userWorkspaceId) && createdByUserWorkspaceId === userWorkspaceId);

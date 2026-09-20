@@ -343,6 +343,31 @@ describe('core workflow visibility (e2e)', () => {
         canChangeVisibility: false,
       });
     });
+
+    // The claim is the UPDATE's own WHERE rather than a preceding read, so this
+    // is what keeps two simultaneous claims from both passing.
+    it('refuses a second claim even though the workflow is still workspace-visible', async () => {
+      const secondClaim = await workflowGraphqlRequest(
+        UPDATE_VISIBILITY_MUTATION,
+        {
+          input: {
+            coreWorkflowId: ownerlessCoreWorkflowId,
+            visibility: WorkflowVisibility.PRIVATE,
+          },
+        },
+      );
+
+      expect(secondClaim.body.errors).toBeDefined();
+
+      const stillShared = await asOtherMember(CORE_WORKFLOW_BY_ID_QUERY, {
+        coreWorkflowId: ownerlessCoreWorkflowId,
+      });
+
+      expect(stillShared.body.data.coreWorkflowById).toMatchObject({
+        visibility: 'WORKSPACE',
+        canChangeVisibility: true,
+      });
+    });
   });
 
   describe('once its creator makes it private', () => {
