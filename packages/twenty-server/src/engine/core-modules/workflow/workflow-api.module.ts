@@ -16,9 +16,9 @@ import { WorkflowVersionStepResolver } from 'src/engine/core-modules/workflow/re
 import { WorkflowVersionResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version.resolver';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
-import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
@@ -52,6 +52,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     CacheLockModule,
     CacheStorageModule,
     CommandMenuItemModule,
+    CoreWorkflowAccessModule,
     WorkflowCoreModule,
     WorkflowTriggerModule,
     WorkflowBuilderModule,
@@ -80,7 +81,6 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     CoreWorkflowVersionMutationResolver,
     CoreWorkflowIdResolutionService,
     CoreWorkflowLifecycleWorkspaceService,
-    CoreWorkflowAccessService,
     CoreWorkflowListService,
     CoreWorkflowMutationWorkspaceService,
     CoreWorkflowVersionMutationWorkspaceService,
