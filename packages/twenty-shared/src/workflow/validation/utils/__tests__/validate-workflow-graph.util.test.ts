@@ -190,4 +190,50 @@ describe('validateWorkflowGraph', () => {
 
     expect(getCodes(workflow)).toContain('ITERATOR_MISSING_LOOP_BODY');
   });
+
+  it('should flag an iterator whose loop body is also listed in nextStepIds', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: { type: 'MANUAL', nextStepIds: ['iterator'] },
+      steps: [
+        {
+          id: 'iterator',
+          type: WorkflowActionType.ITERATOR,
+          nextStepIds: ['body'],
+          settings: {
+            input: {
+              items: '{{trigger.items}}',
+              initialLoopStepIds: ['body'],
+            },
+          },
+        },
+        { id: 'body', type: 'CODE', nextStepIds: ['iterator'] },
+      ],
+    };
+
+    expect(getCodes(workflow)).toContain('ITERATOR_LOOP_BODY_IN_NEXT_STEPS');
+  });
+
+  it('should not flag an iterator whose loop body is only in initialLoopStepIds', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: { type: 'MANUAL', nextStepIds: ['iterator'] },
+      steps: [
+        {
+          id: 'iterator',
+          type: WorkflowActionType.ITERATOR,
+          nextStepIds: [],
+          settings: {
+            input: {
+              items: '{{trigger.items}}',
+              initialLoopStepIds: ['body'],
+            },
+          },
+        },
+        { id: 'body', type: 'CODE', nextStepIds: ['iterator'] },
+      ],
+    };
+
+    expect(getCodes(workflow)).not.toContain(
+      'ITERATOR_LOOP_BODY_IN_NEXT_STEPS',
+    );
+  });
 });

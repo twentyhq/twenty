@@ -158,6 +158,24 @@ const validateBranchingStep = (
         stepId: step.id,
       });
     }
+
+    const nextStepIds = step.nextStepIds ?? [];
+    const loopBodyInNextSteps = (
+      Array.isArray(initialLoopStepIds) ? initialLoopStepIds : []
+    ).filter((loopStepId) => nextStepIds.includes(loopStepId));
+
+    if (loopBodyInNextSteps.length > 0) {
+      issues.push({
+        severity: 'error',
+        code: 'ITERATOR_LOOP_BODY_IN_NEXT_STEPS',
+        message: `Iterator step "${step.name ?? step.id}" lists its loop body step(s) ${loopBodyInNextSteps
+          .map((loopStepId) => `"${loopStepId}"`)
+          .join(
+            ', ',
+          )} in both initialLoopStepIds and nextStepIds. A loop body step must not also be a post-loop step, otherwise the loop never starts.`,
+        stepId: step.id,
+      });
+    }
   }
 
   return issues;
