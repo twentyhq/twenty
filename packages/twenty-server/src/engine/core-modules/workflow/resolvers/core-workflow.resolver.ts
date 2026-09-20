@@ -178,11 +178,11 @@ export class CoreWorkflowResolver {
     userWorkspaceId: string | undefined,
     @Args() coreWorkflowsArgs: CoreWorkflowsArgs,
   ): Promise<CoreWorkflowConnectionDTO> {
-    return this.coreWorkflowListService.findManyByWorkspaceId(
+    return this.coreWorkflowListService.findManyByWorkspaceId({
       workspaceId,
       userWorkspaceId,
-      coreWorkflowsArgs,
-    );
+      ...coreWorkflowsArgs,
+    });
   }
 
   @Query(() => CoreWorkflowDTO, { nullable: true })

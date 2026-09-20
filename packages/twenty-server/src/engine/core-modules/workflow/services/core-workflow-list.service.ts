@@ -293,11 +293,18 @@ export class CoreWorkflowListService {
     });
   }
 
-  async findManyByWorkspaceId(
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-    { first, after, orderBy, orderByDirection, filter }: CoreWorkflowsArgs,
-  ): Promise<CoreWorkflowConnectionDTO> {
+  async findManyByWorkspaceId({
+    workspaceId,
+    userWorkspaceId,
+    first,
+    after,
+    orderBy,
+    orderByDirection,
+    filter,
+  }: CoreWorkflowsArgs & {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<CoreWorkflowConnectionDTO> {
     const { column, cursorExpression, nullable, cast } =
       SORT_COLUMN_BY_FIELD[orderBy];
     const isAscending = orderByDirection === CoreWorkflowOrderByDirection.ASC;

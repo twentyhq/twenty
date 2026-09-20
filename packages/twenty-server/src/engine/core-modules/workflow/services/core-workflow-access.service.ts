@@ -40,25 +40,11 @@ export class CoreWorkflowAccessService {
       return;
     }
 
-    const coreWorkflows = await this.coreWorkflowRepository.find(workspaceId, {
-      where: { id: In(coreWorkflowIds) },
-      select: {
-        id: true,
-        visibility: true,
-        createdByUserWorkspaceId: true,
-      },
+    const inaccessibleCoreWorkflow = await this.findInaccessibleCoreWorkflow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds,
     });
-
-    // An id nobody owns keeps behaving exactly as it did before, so an unknown
-    // or already deleted workflow is still a no-op rather than a refusal.
-    const inaccessibleCoreWorkflow = coreWorkflows.find(
-      (coreWorkflow) =>
-        coreWorkflow.visibility === WorkflowVisibility.PRIVATE &&
-        !canChangeCoreWorkflowVisibility({
-          createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
-          userWorkspaceId,
-        }),
-    );
 
     if (isDefined(inaccessibleCoreWorkflow)) {
       throw new WorkflowQueryValidationException(
@@ -179,16 +165,42 @@ export class CoreWorkflowAccessService {
     userWorkspaceId: string | undefined;
     coreWorkflowId: string;
   }): Promise<boolean> {
-    try {
-      await this.assertCoreWorkflowsAreAccessibleOrThrow({
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowIds: [coreWorkflowId],
-      });
+    const inaccessibleCoreWorkflow = await this.findInaccessibleCoreWorkflow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreWorkflowId],
+    });
 
-      return true;
-    } catch {
-      return false;
-    }
+    return !isDefined(inaccessibleCoreWorkflow);
+  }
+
+  private async findInaccessibleCoreWorkflow({
+    workspaceId,
+    userWorkspaceId,
+    coreWorkflowIds,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    coreWorkflowIds: string[];
+  }): Promise<WorkflowEntity | undefined> {
+    const coreWorkflows = await this.coreWorkflowRepository.find(workspaceId, {
+      where: { id: In(coreWorkflowIds) },
+      select: {
+        id: true,
+        visibility: true,
+        createdByUserWorkspaceId: true,
+      },
+    });
+
+    // An id nobody owns keeps behaving exactly as it did before, so an unknown
+    // or already deleted workflow is still a no-op rather than a refusal.
+    return coreWorkflows.find(
+      (coreWorkflow) =>
+        coreWorkflow.visibility === WorkflowVisibility.PRIVATE &&
+        !canChangeCoreWorkflowVisibility({
+          createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
+          userWorkspaceId,
+        }),
+    );
   }
 }
