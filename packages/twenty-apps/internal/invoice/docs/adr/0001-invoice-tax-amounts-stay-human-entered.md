@@ -1,0 +1,3 @@
+# Invoice tax amounts stay human-entered; only tax type is derived
+
+Tax type (Intra-state vs. Inter-state) is derived automatically from Seller state vs. Place of supply, but `cgstAmount`, `sgstAmount`, and `igstAmount` are plain human-entered fields, not computed from `taxableValue`. GST rates vary by HSN/SAC code (5/12/18/28%), and building a rate lookup table was out of scope for "the custom Invoice object with GST fields" (the Phase 1 build-phase scope) — that's a computation engine, not a schema. Revisit if a rate table becomes a real requirement later; until then, don't "fix" the amount fields to auto-compute from Tax type alone, since a rate is still missing.
