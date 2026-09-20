@@ -4,16 +4,12 @@ import { type SerializedEventData } from '@/types/SerializedEventData';
 
 type PreventableEvent = { preventDefault?: () => void };
 
-/**
- * A front component's handler runs on the other side of the thread boundary, so
- * the event it receives is serialized data and not the event itself. Calling
- * `preventDefault()` there reaches nothing: by then the host has returned and
- * the browser has already run the default action.
- *
- * `preventDefaultOn` closes that gap declaratively. The rules travel with the
- * element, the host reads them synchronously while it still holds the real
- * event, and the guest keeps saying what it wants rather than how to get it.
- */
+// A front component's handler runs across the thread boundary and only ever
+// sees serialized data, so a `preventDefault()` there reaches nothing: the host
+// has already returned and the browser has run the default action. The host
+// instead reads the element's `preventDefaultOn` rules synchronously here, while
+// it still holds the real event, so the guest can suppress the default
+// declaratively without touching the event itself.
 export const wrapEventHandler =
   (
     handler: (detail: SerializedEventData) => void,

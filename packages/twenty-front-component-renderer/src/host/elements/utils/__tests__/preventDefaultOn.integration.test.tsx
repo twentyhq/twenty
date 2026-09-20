@@ -3,12 +3,10 @@ import { render } from '@testing-library/react';
 
 import { buildHostReactPropsFromRemoteProps } from '../buildHostReactPropsFromRemoteProps';
 
-/**
- * The unit tests call the wrapped handler directly. These render the element
- * React actually renders and dispatch the event the browser actually
- * dispatches, because that is the part the guest cannot reach: whether the
- * default is still suppressible by the time the host sees the event.
- */
+// The unit tests call the wrapped handler directly. These render the element
+// React actually renders and dispatch the event the browser actually
+// dispatches, because that is the part the guest cannot reach: whether the
+// default is still suppressible by the time the host sees the event.
 describe('preventDefaultOn, through React and the DOM', () => {
   const renderTextarea = (remoteProps: Record<string, unknown>) => {
     const hostProps = buildHostReactPropsFromRemoteProps(
