@@ -286,20 +286,22 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  ask: ({
+  inputAsk: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
-  }: Omit<CreateStandardObjectArgs<'ask'>, 'context' | 'objectName'>) =>
+  }: Omit<CreateStandardObjectArgs<'inputAsk'>, 'context' | 'objectName'>) =>
     createStandardObjectFlatMetadata({
-      objectName: 'ask',
+      objectName: 'inputAsk',
       dependencyFlatEntityMaps,
       context: {
-        universalIdentifier: STANDARD_OBJECTS.ask.universalIdentifier,
-        nameSingular: 'ask',
-        namePlural: 'asks',
+        universalIdentifier: STANDARD_OBJECTS.inputAsk.universalIdentifier,
+        // The code name is deliberately longer than the label: `ask` alone is
+        // unsearchable in a codebase, while the label is what anyone reads.
+        nameSingular: 'inputAsk',
+        namePlural: 'inputAsks',
         labelSingular: i18nLabel(
           msg({ message: `Ask`, context: 'objectMetadata.labelSingular' }),
         ),

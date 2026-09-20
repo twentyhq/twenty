@@ -432,9 +432,9 @@ export const STANDARD_OBJECT_FIELDS = {
       universalIdentifier: '49e64b28-bd98-4775-80ea-4781bdd45e35',
     },
   },
-  ask: {
+  inputAsk: {
     ...buildStandardObjectSystemFields(
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.ask,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
     ),
     name: { universalIdentifier: 'f8d3b0ed-f134-420a-9194-ca0f96345642' },
     status: { universalIdentifier: '919f0339-ee8e-4197-8b6a-b57bbd31035b' },
@@ -1174,7 +1174,9 @@ export const STANDARD_OBJECT_FIELDS = {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
     ),
-    asks: { universalIdentifier: 'f3b2f310-9aa4-40da-82bb-3388d26e7cde' },
+    inputAsks: {
+      universalIdentifier: 'f3b2f310-9aa4-40da-82bb-3388d26e7cde',
+    },
     name: { universalIdentifier: '20202020-b840-4253-aef9-4e5013694587' },
     workflowVersion: {
       universalIdentifier: '20202020-2f52-4ba8-8dc4-d0d6adb9578d',
@@ -1245,7 +1247,9 @@ export const STANDARD_OBJECT_FIELDS = {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember,
     ),
-    asks: { universalIdentifier: '552a26c5-21fd-4e3a-ad0d-2f561c96b7d4' },
+    inputAsks: {
+      universalIdentifier: '552a26c5-21fd-4e3a-ad0d-2f561c96b7d4',
+    },
     name: { universalIdentifier: '20202020-e914-43a6-9c26-3603c59065f4' },
     colorScheme: {
       universalIdentifier: '20202020-66bc-47f2-adac-f2ef7c598b63',

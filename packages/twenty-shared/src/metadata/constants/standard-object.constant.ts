@@ -313,9 +313,9 @@ export const STANDARD_OBJECTS = {
       }),
     },
   },
-  ask: {
-    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.ask,
-    fields: STANDARD_OBJECT_FIELDS.ask,
+  inputAsk: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
+    fields: STANDARD_OBJECT_FIELDS.inputAsk,
     indexes: {
       assigneeStatusIndex: {
         universalIdentifier: '255cba21-0107-4c31-b497-9c4081114da8',
@@ -325,14 +325,16 @@ export const STANDARD_OBJECTS = {
       },
     },
     views: {
-      allAsks: buildStandardObjectIndexView({
-        objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.ask,
-        fields: STANDARD_OBJECT_FIELDS.ask,
+      allInputAsks: buildStandardObjectIndexView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
+        fields: STANDARD_OBJECT_FIELDS.inputAsk,
         viewFieldNames: ['name', 'status', 'assignee', 'createdAt'],
       }),
-      askRecordPageFields: buildStandardObjectRecordPageFieldsView({
-        objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.ask,
-        fields: STANDARD_OBJECT_FIELDS.ask,
+      inputAskRecordPageFields: buildStandardObjectRecordPageFieldsView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
+        fields: STANDARD_OBJECT_FIELDS.inputAsk,
         viewFieldNames: [
           'name',
           'status',

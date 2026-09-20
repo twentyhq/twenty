@@ -12,7 +12,7 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   calendarEvent: [{ name: 'title', type: FieldMetadataType.TEXT }],
   calendarEventTarget: [{ name: 'id', type: FieldMetadataType.UUID }],
   calendarEventParticipant: [{ name: 'handle', type: FieldMetadataType.TEXT }],
-  ask: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  inputAsk: [{ name: 'name', type: FieldMetadataType.TEXT }],
   callRecording: [{ name: 'title', type: FieldMetadataType.TEXT }],
   company: [
     { name: 'name', type: FieldMetadataType.TEXT },

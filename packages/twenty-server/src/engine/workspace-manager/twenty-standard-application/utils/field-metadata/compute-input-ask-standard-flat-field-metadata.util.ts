@@ -14,20 +14,20 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { AskSource } from 'src/modules/ask/enums/ask-source.enum';
-import { AskStatus } from 'src/modules/ask/enums/ask-status.enum';
+import { InputAskSource } from 'src/modules/input-ask/enums/input-ask-source.enum';
+import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enum';
 
-export const buildAskStandardFlatFieldMetadatas = ({
+export const buildInputAskStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'ask', FieldMetadataType>, 'context'>): Record<
-  AllStandardObjectFieldName<'ask'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'inputAsk', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'inputAsk'>, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -282,7 +282,7 @@ export const buildAskStandardFlatFieldMetadatas = ({
       options: [
         {
           id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c1d01',
-          value: AskStatus.PENDING,
+          value: InputAskStatus.PENDING,
           label: i18nLabel(
             msg({ message: `Pending`, context: 'fieldMetadata.label' }),
           ),
@@ -291,7 +291,7 @@ export const buildAskStandardFlatFieldMetadatas = ({
         },
         {
           id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c1d02',
-          value: AskStatus.ANSWERED,
+          value: InputAskStatus.ANSWERED,
           label: i18nLabel(
             msg({ message: `Answered`, context: 'fieldMetadata.label' }),
           ),
@@ -300,7 +300,7 @@ export const buildAskStandardFlatFieldMetadatas = ({
         },
         {
           id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c1d03',
-          value: AskStatus.CANCELED,
+          value: InputAskStatus.CANCELED,
           label: i18nLabel(
             msg({ message: `Canceled`, context: 'fieldMetadata.label' }),
           ),
@@ -309,7 +309,7 @@ export const buildAskStandardFlatFieldMetadatas = ({
         },
         {
           id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c1d04',
-          value: AskStatus.EXPIRED,
+          value: InputAskStatus.EXPIRED,
           label: i18nLabel(
             msg({ message: `Expired`, context: 'fieldMetadata.label' }),
           ),
@@ -345,7 +345,7 @@ export const buildAskStandardFlatFieldMetadatas = ({
       options: [
         {
           id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c2d01',
-          value: AskSource.WORKFLOW_RUN_STEP,
+          value: InputAskSource.WORKFLOW_RUN_STEP,
           label: i18nLabel(
             msg({ message: `Workflow`, context: 'fieldMetadata.label' }),
           ),
@@ -354,7 +354,7 @@ export const buildAskStandardFlatFieldMetadatas = ({
         },
         {
           id: 'a1f9a9b6-0e2a-4f0c-9d37-8b4a6b7c2d02',
-          value: AskSource.AGENT_CHAT,
+          value: InputAskSource.AGENT_CHAT,
           label: i18nLabel(
             msg({ message: `Chat`, context: 'fieldMetadata.label' }),
           ),
@@ -486,7 +486,7 @@ export const buildAskStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIEditable: false,
       targetObjectName: 'workspaceMember',
-      targetFieldName: 'asks',
+      targetFieldName: 'inputAsks',
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.SET_NULL,
@@ -518,7 +518,7 @@ export const buildAskStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIEditable: false,
       targetObjectName: 'workflowRun',
-      targetFieldName: 'asks',
+      targetFieldName: 'inputAsks',
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,

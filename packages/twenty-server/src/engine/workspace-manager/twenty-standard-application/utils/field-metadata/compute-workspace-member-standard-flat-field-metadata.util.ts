@@ -941,13 +941,13 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  asks: createStandardRelationFieldFlatMetadata({
+  inputAsks: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       type: FieldMetadataType.RELATION,
       morphId: null,
-      fieldName: 'asks',
+      fieldName: 'inputAsks',
       label: i18nLabel(
         msg({ message: `Asks`, context: 'fieldMetadata.label' }),
       ),
@@ -957,7 +957,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       icon: 'IconHelpCircle',
       isNullable: false,
       isUIEditable: false,
-      targetObjectName: 'ask',
+      targetObjectName: 'inputAsk',
       targetFieldName: 'assignee',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
