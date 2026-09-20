@@ -1,19 +1,8 @@
-import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import {
-  IconCircle,
-  IconCircleDashed,
-  type IconComponent,
-} from 'twenty-ui/icon';
+import { IconCircle, IconCircleDashed } from 'twenty-ui/icon';
 
+import { type CoreWorkflowVisibilityOption } from '@/object-core/workflows/types/CoreWorkflowVisibilityOption';
 import { WorkflowVisibility } from '~/generated/graphql';
-
-export type CoreWorkflowVisibilityOption = {
-  value: WorkflowVisibility;
-  label: MessageDescriptor;
-  contextualText: MessageDescriptor;
-  Icon: IconComponent;
-};
 
 export const CORE_WORKFLOW_VISIBILITY_OPTIONS: CoreWorkflowVisibilityOption[] =
   [

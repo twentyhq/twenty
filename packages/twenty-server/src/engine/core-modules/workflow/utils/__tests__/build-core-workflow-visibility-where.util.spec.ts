@@ -1,12 +1,10 @@
 import { WorkflowVisibility } from 'twenty-shared/types';
 import { IsNull } from 'typeorm';
 
-import {
-  buildCoreWorkflowVisibilitySqlPredicate,
-  buildCoreWorkflowVisibilityWhere,
-  canChangeCoreWorkflowVisibility,
-  canChangeCoreWorkflowVisibilitySelectExpression,
-} from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-where.util';
+import { buildCoreWorkflowVisibilitySqlPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-sql-predicate.util';
+import { buildCoreWorkflowVisibilityWhere } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-where.util';
+import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
+import { canChangeCoreWorkflowVisibilitySelectExpression } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility-select-expression.util';
 
 const READER_USER_WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 
