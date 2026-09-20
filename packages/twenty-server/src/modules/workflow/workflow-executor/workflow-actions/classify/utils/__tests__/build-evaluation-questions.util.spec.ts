@@ -49,6 +49,31 @@ describe('buildEvaluationQuestions', () => {
     });
   });
 
+  // The editor seeds every added level with description: '', so this is the
+  // shape the UI actually sends, not an omitted field.
+  it('should fall back to the level label when the editor left the description empty', () => {
+    expect(
+      buildEvaluationQuestions([
+        {
+          id: '4ef0a3b8-1f4a-4b3e-9c2d-2a1f5b6c7d8e',
+          name: 'urgency',
+          type: 'score',
+          instructions: 'How urgent?',
+          criteria: [
+            { id: 'c1', name: 'Low', description: '' },
+            { id: 'c2', name: 'High', description: '' },
+          ],
+        },
+      ]),
+    ).toEqual({
+      urgency: {
+        type: 'score',
+        instructions: 'How urgent?',
+        criteria: ['Low', 'High'],
+      },
+    });
+  });
+
   it('should drop criteria on a boolean question', () => {
     expect(
       buildEvaluationQuestions([

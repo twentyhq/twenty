@@ -53,6 +53,9 @@ export class LanguageModelEvaluationRunner {
       schema: buildEvaluationResponseSchema(questions),
       system: EVALUATION_SYSTEM_PROMPT,
       prompt: buildEvaluationPrompt({ state, questions }),
+      // The workflow step owns retries, as it does on the native runner, so a
+      // failure surfaces to it instead of being spent silently here.
+      maxRetries: 0,
       ...(isDefined(abortSignal) && { abortSignal }),
     });
 
@@ -61,6 +64,17 @@ export class LanguageModelEvaluationRunner {
       usage: {
         inputTokens: usage.inputTokens,
         outputTokens: usage.outputTokens,
+        // Dropping these would bill every cached input token at the full rate.
+        ...(isDefined(usage.inputTokenDetails) && {
+          inputTokenDetails: {
+            cacheReadTokens: usage.inputTokenDetails.cacheReadTokens,
+          },
+        }),
+        ...(isDefined(usage.outputTokenDetails) && {
+          outputTokenDetails: {
+            reasoningTokens: usage.outputTokenDetails.reasoningTokens,
+          },
+        }),
       },
     };
   }

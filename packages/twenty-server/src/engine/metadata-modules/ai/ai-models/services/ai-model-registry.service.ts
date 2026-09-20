@@ -472,10 +472,15 @@ export class AiModelRegistryService {
   }
 
   // Registration order follows the provider config, so the first entry is the
-  // one an operator listed first.
+  // one an operator listed first. Admin-disabled models are skipped the way
+  // getFirstAvailableModelFromList skips them for language tiers: withdrawing
+  // the only evaluation model has to send unpinned steps to the language
+  // fallback, not keep running them on the model that was withdrawn.
   getDefaultEvaluationModel(): RegisteredAiEvaluationModel | undefined {
     return this.getAvailableEvaluationModels().find(
-      (model) => !this.getEvaluationModelConfig(model.modelId)?.isDeprecated,
+      (model) =>
+        !this.getEvaluationModelConfig(model.modelId)?.isDeprecated &&
+        this.isModelAdminAllowed(model.modelId),
     );
   }
 

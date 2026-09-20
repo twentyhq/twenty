@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import {
   type BaseOutputSchemaV2,
   type Node,
@@ -49,7 +51,7 @@ const buildAnswerSchema = (
         },
         probabilities: buildProbabilitiesNode(
           question.criteria
-            .filter((criterion) => criterion.name.length > 0)
+            .filter((criterion) => isNonEmptyString(criterion.name))
             .map((criterion) => criterion.name),
         ),
       };
@@ -92,7 +94,7 @@ export const generateClassifyOutputSchema = (
     label: 'Answers',
     value: Object.fromEntries(
       questions
-        .filter((question) => question.name.length > 0)
+        .filter((question) => isNonEmptyString(question.name))
         .map((question) => [
           question.name,
           {

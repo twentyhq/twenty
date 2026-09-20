@@ -239,6 +239,46 @@ export class WorkspaceService {
     }
   }
 
+  // Same contract as a tier pin: stored as given, so an id that names nothing
+  // this instance can run must be refused here rather than stored and silently
+  // ignored at run time. A pin already stored is left alone so the rest of the
+  // form stays editable after an administrator withdraws the model.
+  private validateAiEvaluationModelId({
+    aiEvaluationModelId,
+    storedAiEvaluationModelId,
+  }: {
+    aiEvaluationModelId: string | null;
+    storedAiEvaluationModelId: string | null;
+  }): void {
+    if (!isNonEmptyString(aiEvaluationModelId)) {
+      return;
+    }
+
+    if (aiEvaluationModelId === storedAiEvaluationModelId) {
+      return;
+    }
+
+    if (
+      !isDefined(
+        this.aiModelRegistryService.getEvaluationModelConfig(
+          aiEvaluationModelId,
+        ),
+      )
+    ) {
+      throw new WorkspaceException(
+        `Model "${aiEvaluationModelId}" is not an evaluation model in this instance's catalog`,
+        WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+      );
+    }
+
+    if (!this.aiModelRegistryService.isModelAdminAllowed(aiEvaluationModelId)) {
+      throw new WorkspaceException(
+        'Selected model has been disabled by the administrator',
+        WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+      );
+    }
+  }
+
   async updateWorkspaceById({
     payload,
     userWorkspaceId,
@@ -344,6 +384,13 @@ export class WorkspaceService {
       this.validateAiModelIdByTier({
         aiModelIdByTier: payload.aiModelIdByTier,
         storedAiModelIdByTier: workspace.aiModelIdByTier,
+      });
+    }
+
+    if (isDefined(payload.aiEvaluationModelId)) {
+      this.validateAiEvaluationModelId({
+        aiEvaluationModelId: payload.aiEvaluationModelId,
+        storedAiEvaluationModelId: workspace.aiEvaluationModelId,
       });
     }
 

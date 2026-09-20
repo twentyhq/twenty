@@ -13,8 +13,11 @@ import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-mod
 describe('AiModelRegistryService evaluation catalog', () => {
   let registry: AiModelRegistryService;
   const setModelAdminEnabledMock = jest.fn();
+  let disabledModelIds: string[] = [];
 
   beforeEach(async () => {
+    disabledModelIds = [];
+
     const module = await Test.createTestingModule({
       providers: [
         AiModelRegistryService,
@@ -61,7 +64,7 @@ describe('AiModelRegistryService evaluation catalog', () => {
         {
           provide: AiModelPreferencesService,
           useValue: {
-            getDisabledModelIds: () => [],
+            getDisabledModelIds: () => disabledModelIds,
             getDefaultModelIdsForTier: () => [],
             setModelAdminEnabled: setModelAdminEnabledMock,
           },
@@ -137,6 +140,20 @@ describe('AiModelRegistryService evaluation catalog', () => {
       'typesafe-ai/jev-latest',
       false,
     );
+  });
+
+  // An administrator withdrawing the only evaluation model has to send
+  // unpinned Classify steps to the language fallback, not keep running them on
+  // the model that was withdrawn.
+  it('should not offer an admin-disabled model as the instance default', () => {
+    expect(registry.getDefaultEvaluationModel()?.modelId).toBe(
+      'typesafe-ai/jev-latest',
+    );
+
+    disabledModelIds = ['typesafe-ai/jev-latest'];
+
+    expect(registry.getDefaultEvaluationModel()).toBeUndefined();
+    expect(registry.hasEvaluationModel()).toBe(false);
   });
 
   it('should refuse to toggle a model no provider declares', async () => {

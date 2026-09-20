@@ -11,9 +11,18 @@ export const AI_EVALUATION_RUNNER_KINDS = [
 export type AiEvaluationRunnerKind =
   (typeof AI_EVALUATION_RUNNER_KINDS)[number];
 
+// Mirrors BillingTokenUsage: an evaluation model reports token counts and
+// nothing else, but a language model reports how many of its input tokens were
+// cached, and billing charges those at the cached rate.
 export type AiEvaluationUsage = {
   inputTokens?: number;
   outputTokens?: number;
+  inputTokenDetails?: {
+    cacheReadTokens?: number;
+  };
+  outputTokenDetails?: {
+    reasoningTokens?: number;
+  };
 };
 
 export type AiEvaluationRunnerOutput = {

@@ -42,12 +42,15 @@ const toEvaluationQuestion = (
     case 'score':
       // A level's position is its score, so the editor's order is the rubric.
       // The label stands in when no description was written, since an unnamed
-      // level tells the model nothing.
+      // level tells the model nothing. The editor seeds description with an
+      // empty string, so this cannot be a nullish fallback.
       return {
         type: 'score',
         instructions: question.instructions,
-        criteria: question.criteria.map(
-          (criterion) => criterion.description ?? criterion.name,
+        criteria: question.criteria.map((criterion) =>
+          isNonEmptyString(criterion.description)
+            ? criterion.description
+            : criterion.name,
         ),
       };
     case 'boolean':
