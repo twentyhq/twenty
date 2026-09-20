@@ -149,9 +149,8 @@ export class WorkflowRunnerWorkspaceService {
     // The step's own PENDING → SUCCESS transition is the exactly-once gate:
     // without it two submissions both write the step result and both enqueue a
     // resume, so downstream steps run twice on whichever answer lands last. It
-    // has to come before the Ask, not after — a premature ANSWERED Ask would
-    // make a submission that failed here unretryable, while a stale PENDING one
-    // is picked up by the next open or cancel.
+    // comes before the Ask, so a submission that fails after it is refused by
+    // the step rather than by a row that says answered.
     const hasCompletedStep =
       await this.workflowRunWorkspaceService.completePendingFormStep({
         stepId,
@@ -170,17 +169,21 @@ export class WorkflowRunnerWorkspaceService {
       );
     }
 
-    await this.resume({
-      workspaceId,
-      workflowRunId,
-      lastExecutedStepId: stepId,
-    });
-
+    // Recorded before the run is resumed: the resumed run can reach its end,
+    // and endWorkflowRun cancels whatever is still PENDING, so an Ask answered
+    // afterwards would lose to that cancel and read as canceled on a form
+    // somebody did answer.
     await this.inputAskWorkspaceService.answerForWorkflowRunStep({
       workspaceId,
       workflowRunId,
       stepId,
       response: enrichedResponse,
+    });
+
+    await this.resume({
+      workspaceId,
+      workflowRunId,
+      lastExecutedStepId: stepId,
     });
   }
 

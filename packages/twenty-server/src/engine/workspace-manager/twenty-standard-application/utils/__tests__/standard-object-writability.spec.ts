@@ -8,10 +8,12 @@ const TWENTY_STANDARD_APPLICATION_ID = '20202020-2222-4222-8222-222222222222';
 const NOW = '2024-01-01T00:00:00.000Z';
 
 // Records of these objects are only ever written by the platform itself:
-// sync bookkeeping rows and workflow trigger registrations. timelineActivity
-// stays OPEN because merging records reparents its rows under the caller.
+// sync bookkeeping rows, workflow trigger registrations, and the Asks that
+// gate a parked run. timelineActivity stays OPEN because merging records
+// reparents its rows under the caller.
 const SYSTEM_WRITABILITY_STANDARD_OBJECT_NAMES = [
   'calendarChannelEventAssociation',
+  'inputAsk',
   'messageChannelMessageAssociation',
   'messageChannelMessageAssociationMessageFolder',
   'recordShare',
