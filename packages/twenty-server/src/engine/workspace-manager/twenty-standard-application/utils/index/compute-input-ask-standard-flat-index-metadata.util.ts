@@ -41,4 +41,18 @@ export const buildInputAskStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  // How a proposed tool call finds its Ask, the way a run step finds its own
+  // through workflowRunId.
+  toolCallIdIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'toolCallIdIndex',
+      relatedFieldNames: ['toolCallId'],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

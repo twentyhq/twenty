@@ -361,6 +361,15 @@ export const buildInputAskStandardFlatFieldMetadatas = ({
           position: 1,
           color: 'purple',
         },
+        {
+          id: 'ef00cb9f-d455-4096-a095-8a9567597157',
+          value: InputAskSource.TOOL_CALL,
+          label: i18nLabel(
+            msg({ message: `Tool call`, context: 'fieldMetadata.label' }),
+          ),
+          position: 2,
+          color: 'green',
+        },
       ],
     },
     standardObjectMetadataRelatedEntityIds,
@@ -453,6 +462,60 @@ export const buildInputAskStandardFlatFieldMetadatas = ({
       description: i18nLabel(
         msg({
           message: `Which step of the run is waiting`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'Icon123',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  toolCallId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'toolCallId',
+      // Text rather than UUID: a tool call id comes from the model provider
+      // and is only unique within its message, not a uuid we mint.
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(
+        msg({ message: `Tool call ID`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Which proposed tool call is waiting`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconTool',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  threadId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      // The chat thread lives in the core schema, so this is a plain id rather
+      // than a relation: a workspace object cannot point at a core row.
+      fieldName: 'threadId',
+      type: FieldMetadataType.UUID,
+      label: i18nLabel(
+        msg({ message: `Thread ID`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Which conversation the question was asked in`,
           context: 'fieldMetadata.description',
         }),
       ),

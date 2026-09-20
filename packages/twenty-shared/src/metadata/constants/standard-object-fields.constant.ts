@@ -447,6 +447,10 @@ export const STANDARD_OBJECT_FIELDS = {
       universalIdentifier: 'cf2d5592-f51c-4dca-a6f2-cb4f7d1fcc80',
     },
     stepId: { universalIdentifier: '334c8abb-6ebe-4e08-a746-0098425ef421' },
+    toolCallId: {
+      universalIdentifier: 'f353edad-fe7e-4efc-ab0d-e21a0ee16262',
+    },
+    threadId: { universalIdentifier: '76ff31ec-096c-45bc-bf22-742d7b723e0c' },
   },
   company: {
     ...buildStandardObjectSystemFields(

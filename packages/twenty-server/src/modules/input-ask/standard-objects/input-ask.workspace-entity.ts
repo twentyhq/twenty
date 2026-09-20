@@ -16,6 +16,8 @@ export class InputAskWorkspaceEntity extends BaseWorkspaceEntity {
   answeredAt: string | null;
   source: InputAskSource;
   stepId: string | null;
+  toolCallId: string | null;
+  threadId: string | null;
   assignee: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   assigneeId: string | null;
   workflowRun: EntityRelation<WorkflowRunWorkspaceEntity> | null;
