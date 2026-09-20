@@ -83,7 +83,8 @@ export class WorkspaceFlatViewMapCacheService extends MetadataFlatEntityMapsCach
         ...(viewSorts.byViewId.get(viewEntity.id) || []),
       ].sort((firstViewSort, secondViewSort) => {
         const createdAtComparison =
-          firstViewSort.createdAt.getTime() - secondViewSort.createdAt.getTime();
+          firstViewSort.createdAt.getTime() -
+          secondViewSort.createdAt.getTime();
 
         return createdAtComparison !== 0
           ? createdAtComparison
