@@ -15,6 +15,7 @@ import {
   WorkflowVersionStatus as CoreWorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { assertExactlyOneMirrorRowWasWritten } from 'src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
@@ -79,6 +80,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     private readonly coreWorkflowIdResolutionService: CoreWorkflowIdResolutionService,
+    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
@@ -94,11 +96,23 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
   async validateCoreWorkflowVersion({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<boolean> {
+    // this one reads the version straight from the repository rather than
+    // through the id resolver, so it needs the rule applied by hand
+    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowVersionIds: [coreWorkflowVersionId],
+      },
+    );
+
     const coreWorkflowVersion =
       await this.coreWorkflowVersionRepository.findOne(workspaceId, {
         where: { id: coreWorkflowVersionId },
@@ -127,13 +141,16 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
   async activateCoreWorkflowVersion({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<boolean> {
     const resolved = await this.resolveCoreVersionWithWorkflowOrThrow({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowVersionId,
     });
 
@@ -259,6 +276,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
             previousResolved = await this.resolveCoreVersionWithWorkflowOrThrow(
               {
                 workspaceId,
+                userWorkspaceId,
                 coreWorkflowVersionId: previousCoreWorkflowVersionId,
               },
             );
@@ -352,13 +370,16 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
   async deactivateCoreWorkflowVersion({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<boolean> {
     const resolved = await this.resolveCoreVersionWithWorkflowOrThrow({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowVersionId,
     });
 
@@ -403,12 +424,14 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
   async runCoreWorkflowVersion({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
     payload,
     createdBy,
     workflowRunId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     payload: object;
     createdBy: ActorMetadata;
@@ -416,7 +439,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
   }): Promise<{ workflowRunId: string }> {
     const { workspaceWorkflowVersionId } =
       await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
-        { workspaceId, coreWorkflowVersionId },
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
     return this.workflowRunnerWorkspaceService.run({
@@ -430,14 +453,16 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
   private async resolveCoreVersionWithWorkflowOrThrow({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<ResolvedCoreVersion> {
     const { coreWorkflowVersion, workspaceWorkflowVersionId } =
       await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
-        { workspaceId, coreWorkflowVersionId },
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
     if (!isDefined(coreWorkflowVersion.coreWorkflowId)) {
@@ -452,7 +477,11 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
     const { coreWorkflow, workspaceWorkflowId } =
       await this.coreWorkflowIdResolutionService.resolveWorkspaceWorkflowIdOrThrow(
-        { workspaceId, coreWorkflowId: coreWorkflowVersion.coreWorkflowId },
+        {
+          workspaceId,
+          userWorkspaceId,
+          coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
+        },
       );
 
     return {

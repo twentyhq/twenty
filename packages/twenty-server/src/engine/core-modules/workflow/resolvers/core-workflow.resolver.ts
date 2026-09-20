@@ -24,6 +24,7 @@ import { CoreWorkflowByIdArgs } from 'src/engine/core-modules/workflow/dtos/core
 import { CoreWorkflowArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow.input';
 import { DuplicateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/duplicate-core-workflow.input';
 import { UpdateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/update-core-workflow.input';
+import { UpdateCoreWorkflowVisibilityInput } from 'src/engine/core-modules/workflow/dtos/update-core-workflow-visibility.input';
 import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
@@ -32,6 +33,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -63,22 +65,41 @@ export class CoreWorkflowResolver {
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
   async updateCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args('input') input: UpdateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO | null> {
-    await this.coreWorkflowMutationWorkspaceService.updateWorkflow(
+    await this.coreWorkflowMutationWorkspaceService.updateWorkflow({
       workspaceId,
-      input,
-    );
+      userWorkspaceId,
+      ...input,
+    });
 
     return this.coreWorkflowListService.findOneById({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowId: input.coreWorkflowId,
+    });
+  }
+
+  @Mutation(() => CoreWorkflowDTO, { nullable: true })
+  async updateCoreWorkflowVisibility(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('input') input: UpdateCoreWorkflowVisibilityInput,
+  ): Promise<CoreWorkflowDTO | null> {
+    return this.coreWorkflowMutationWorkspaceService.updateWorkflowVisibility({
+      workspaceId,
+      userWorkspaceId,
+      ...input,
     });
   }
 
   @Mutation(() => CoreWorkflowDTO)
   async duplicateCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthUser() user: AuthContextUser,
     @Args('input')
     {
@@ -88,6 +109,7 @@ export class CoreWorkflowResolver {
   ): Promise<CoreWorkflowDTO> {
     return this.coreWorkflowMutationWorkspaceService.duplicateWorkflow({
       workspaceId,
+      userWorkspaceId,
       user,
       coreWorkflowIdToDuplicate,
       coreWorkflowVersionIdToCopy,
@@ -97,37 +119,46 @@ export class CoreWorkflowResolver {
   @Mutation(() => CoreWorkflowDTO)
   async createCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthUser() user: AuthContextUser,
     @Args('input') input: CreateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO> {
-    return this.coreWorkflowMutationWorkspaceService.createWorkflow(
+    return this.coreWorkflowMutationWorkspaceService.createWorkflow({
       workspaceId,
+      userWorkspaceId,
       user,
-      input,
-    );
+      ...input,
+    });
   }
 
   @Mutation(() => [DeletedCoreWorkflowDTO])
   async deleteCoreWorkflows(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args('input') input: DeleteCoreWorkflowsInput,
   ): Promise<DeletedCoreWorkflowDTO[]> {
-    return this.coreWorkflowMutationWorkspaceService.deleteWorkflows(
+    return this.coreWorkflowMutationWorkspaceService.deleteWorkflows({
       workspaceId,
-      input,
-    );
+      userWorkspaceId,
+      ...input,
+    });
   }
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
   async discardCoreWorkflowDraft(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args('input') input: DiscardCoreWorkflowDraftInput,
   ): Promise<CoreWorkflowDTO | null> {
     const coreWorkflowId =
-      await this.coreWorkflowMutationWorkspaceService.discardDraftVersion(
+      await this.coreWorkflowMutationWorkspaceService.discardDraftVersion({
         workspaceId,
-        input,
-      );
+        userWorkspaceId,
+        ...input,
+      });
 
     if (!isDefined(coreWorkflowId)) {
       return null;
@@ -135,6 +166,7 @@ export class CoreWorkflowResolver {
 
     return this.coreWorkflowListService.findOneById({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowId,
     });
   }
@@ -142,21 +174,27 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowConnectionDTO)
   async coreWorkflows(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() coreWorkflowsArgs: CoreWorkflowsArgs,
   ): Promise<CoreWorkflowConnectionDTO> {
-    return this.coreWorkflowListService.findManyByWorkspaceId(
+    return this.coreWorkflowListService.findManyByWorkspaceId({
       workspaceId,
-      coreWorkflowsArgs,
-    );
+      userWorkspaceId,
+      ...coreWorkflowsArgs,
+    });
   }
 
   @Query(() => CoreWorkflowDTO, { nullable: true })
   async coreWorkflowById(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() { coreWorkflowId }: CoreWorkflowByIdArgs,
   ): Promise<CoreWorkflowDTO | null> {
     return this.coreWorkflowListService.findOneById({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowId,
     });
   }
@@ -164,10 +202,13 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowWithCurrentVersionDTO])
   async coreWorkflowsWithCurrentVersions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args('input') { coreWorkflowIds }: CoreWorkflowsWithCurrentVersionsInput,
   ): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
     return this.coreWorkflowListService.findManyWithCurrentVersions({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowIds,
     });
   }
@@ -175,10 +216,13 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowDTO, { nullable: true })
   async coreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() { workspaceWorkflowId }: CoreWorkflowArgs,
   ): Promise<CoreWorkflowDTO | null> {
     return this.coreWorkflowListService.findOneByWorkspaceWorkflowId({
       workspaceId,
+      userWorkspaceId,
       workspaceWorkflowId,
     });
   }
@@ -186,10 +230,13 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowVersionDTO])
   async coreWorkflowVersions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() { workspaceWorkflowId }: CoreWorkflowVersionsArgs,
   ): Promise<CoreWorkflowVersionDTO[]> {
     return this.coreWorkflowVersionListService.findManyByWorkspaceWorkflowId({
       workspaceId,
+      userWorkspaceId,
       workspaceWorkflowId,
     });
   }
@@ -197,11 +244,14 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowVersionDTO, { nullable: true })
   async coreWorkflowVersion(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() { workspaceWorkflowVersionId }: CoreWorkflowVersionArgs,
   ): Promise<CoreWorkflowVersionDTO | null> {
     return this.coreWorkflowVersionListService.findOneByWorkspaceWorkflowVersionId(
       {
         workspaceId,
+        userWorkspaceId,
         workspaceWorkflowVersionId,
       },
     );
@@ -210,10 +260,13 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowVersionDTO])
   async coreWorkflowVersionsByCoreWorkflowId(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() { coreWorkflowId }: CoreWorkflowVersionsByCoreWorkflowIdArgs,
   ): Promise<CoreWorkflowVersionDTO[]> {
     return this.coreWorkflowVersionListService.findManyByCoreWorkflowId({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowId,
     });
   }
@@ -221,10 +274,13 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowVersionDTO, { nullable: true })
   async coreWorkflowVersionById(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Args() { coreWorkflowVersionId }: CoreWorkflowVersionByIdArgs,
   ): Promise<CoreWorkflowVersionDTO | null> {
     return this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowVersionId,
     });
   }
