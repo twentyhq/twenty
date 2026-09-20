@@ -10,6 +10,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
+import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
@@ -66,7 +67,10 @@ export class MigrateAgentHistoryToWorkspaceCommand extends ProvisionedWorkspaceC
       state = await this.storage.readState(runner, workspaceId);
       if (!(await runner.hasSchema(getWorkspaceSchemaName(workspaceId)))) {
         const history = await runner.query(
-          'SELECT 1 FROM core."agentChatThread" WHERE "workspaceId" = $1 LIMIT 1',
+          `SELECT 1 WHERE ${AGENT_HISTORY_OBJECT_NAMES.map(
+            (name) =>
+              `EXISTS (SELECT 1 FROM core."${name}" WHERE "workspaceId" = $1)`,
+          ).join(' OR ')}`,
           [workspaceId],
         );
         if (

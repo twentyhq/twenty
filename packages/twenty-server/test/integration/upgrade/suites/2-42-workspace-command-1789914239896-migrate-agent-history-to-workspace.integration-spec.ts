@@ -195,6 +195,16 @@ describe('versioned agent history upgrade (integration)', () => {
           [legacyThreadId],
         ),
       ).toEqual([{ id: legacyThreadId }]);
+      await dataSource.query(
+        'DELETE FROM core."agentChatThread" WHERE id = $1',
+        [legacyThreadId],
+      );
+      // Legacy foreign keys do not enforce matching workspace IDs on children.
+      await dataSource.query(
+        'INSERT INTO core."agentTurn" (id, "workspaceId", "threadId") VALUES ($1, $2, $3)',
+        [randomUUID(), workspaceId, threadId],
+      );
+      await expect(command.up(args)).rejects.toThrow(/schema is missing/i);
     } finally {
       await dataSource.query('DELETE FROM core."workspace" WHERE id = $1', [
         workspaceId,
