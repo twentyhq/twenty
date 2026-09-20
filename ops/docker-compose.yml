@@ -1,0 +1,120 @@
+name: jai-os
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-twenty-environment: &twenty-environment
+  PG_DATABASE_URL: postgres://${PG_DATABASE_USER:?}:${PG_DATABASE_PASSWORD:?}@db:5432/${PG_DATABASE_NAME:?}
+  SERVER_URL: ${SERVER_URL:?}
+  REDIS_URL: redis://redis:6379
+  STORAGE_TYPE: local
+  ENCRYPTION_KEY: ${ENCRYPTION_KEY:?}
+
+services:
+  caddy:
+    image: caddy:2.11.4
+    restart: always
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    environment:
+      DOMAIN: ${DOMAIN:?}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [web]
+    depends_on:
+      server:
+        condition: service_healthy
+    mem_limit: 128m
+    logging: *logging
+
+  server:
+    image: twentycrm/twenty:${TAG:?}
+    restart: always
+    volumes:
+      - server-local-data:/app/packages/twenty-server/.local-storage
+    environment:
+      <<: *twenty-environment
+      NODE_PORT: 3000
+    healthcheck:
+      test: curl --fail http://localhost:3000/healthz
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks: [web, private]
+    mem_limit: 2g
+    cpus: 1.5
+    logging: *logging
+
+  worker:
+    image: twentycrm/twenty:${TAG:?}
+    restart: always
+    command: ["yarn", "worker:prod"]
+    volumes:
+      - server-local-data:/app/packages/twenty-server/.local-storage
+    environment:
+      <<: *twenty-environment
+      DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_CRON_JOBS_REGISTRATION: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+    networks: [web, private]
+    mem_limit: 1g
+    cpus: 1
+    logging: *logging
+
+  db:
+    image: postgres:16.15
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${PG_DATABASE_NAME:?}
+      POSTGRES_USER: ${PG_DATABASE_USER:?}
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:?}
+    healthcheck:
+      test: pg_isready -U ${PG_DATABASE_USER} -h localhost -d ${PG_DATABASE_NAME}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [private]
+    mem_limit: 1g
+    cpus: 1
+    logging: *logging
+
+  redis:
+    image: redis:7.4.11
+    restart: always
+    command: ["--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [private]
+    mem_limit: 512m
+    logging: *logging
+
+networks:
+  web:
+  private:
+    internal: true
+
+volumes:
+  db-data:
+  server-local-data:
+  caddy-data:
+  caddy-config:
