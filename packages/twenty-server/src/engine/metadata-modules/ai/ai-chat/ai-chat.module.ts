@@ -1,3 +1,4 @@
+import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { AiChatUsageService } from 'src/engine/metadata-modules/ai/ai-chat/services/ai-chat-usage.service';
@@ -34,8 +35,6 @@ import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscripti
 import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
 import { WorkspaceSetupChatService } from './services/workspace-setup-chat.service';
 import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-subscriber.service';
-import { AgentChatEventPublisherService } from './services/agent-chat-event-publisher.service';
-import { AgentChatStreamHeartbeatService } from './services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
@@ -45,6 +44,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
 
 @Module({
   imports: [
+    AgentChatStreamStateModule,
     AgentHistoryModule,
     UsageLimitModule,
     TypeOrmModule.forFeature([
@@ -74,8 +74,6 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AiChatUsageService,
     AiChatUsageResolver,
     AgentChatCancelSubscriberService,
-    AgentChatEventPublisherService,
-    AgentChatStreamHeartbeatService,
     AgentChatResolver,
     AgentChatSubscriptionResolver,
     WorkspaceSetupChatResolver,

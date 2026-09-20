@@ -1,3 +1,4 @@
+import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -12,6 +13,7 @@ import { TwentyStandardApplicationService } from './services/twenty-standard-app
 @Module({
   providers: [TwentyStandardApplicationService],
   imports: [
+    AgentHistoryModule,
     ApplicationModule,
     TwentyConfigModule,
     WorkspaceCacheModule,

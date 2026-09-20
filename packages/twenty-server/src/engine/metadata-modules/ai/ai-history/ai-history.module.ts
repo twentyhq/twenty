@@ -1,6 +1,7 @@
 import { type EntityTarget } from 'typeorm';
 import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
+import { AgentHistoryLifecycleService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-lifecycle.service';
 import { Module } from '@nestjs/common';
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -39,7 +40,15 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
 }));
 
 @Module({
-  providers: [AgentHistoryStorageService, ...REPOSITORY_PROVIDERS],
-  exports: [AgentHistoryStorageService, ...REPOSITORY_PROVIDERS],
+  providers: [
+    AgentHistoryStorageService,
+    AgentHistoryLifecycleService,
+    ...REPOSITORY_PROVIDERS,
+  ],
+  exports: [
+    AgentHistoryStorageService,
+    AgentHistoryLifecycleService,
+    ...REPOSITORY_PROVIDERS,
+  ],
 })
 export class AgentHistoryModule {}
