@@ -129,16 +129,14 @@ export class CoreWorkflowMutationWorkspaceService {
         steps: sourceVersion.steps ?? [],
       });
 
-    const duplicatedWorkflow = await this.createWorkflow(
+    const duplicatedWorkflow = await this.createWorkflow({
       workspaceId,
       userWorkspaceId,
       user,
-      {
-        name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
-        // duplicating a private workflow must not publish it to the workspace
-        visibility: sourceCoreWorkflow.visibility,
-      },
-    );
+      name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
+      // duplicating a private workflow must not publish it to the workspace
+      visibility: sourceCoreWorkflow.visibility,
+    });
 
     try {
       return await this.writeDuplicatedContentAndReturn({
@@ -150,7 +148,9 @@ export class CoreWorkflowMutationWorkspaceService {
       });
     } catch (error) {
       try {
-        await this.deleteWorkflows(workspaceId, userWorkspaceId, {
+        await this.deleteWorkflows({
+          workspaceId,
+          userWorkspaceId,
           coreWorkflowIds: [duplicatedWorkflow.id],
         });
       } catch (cleanupError) {
@@ -255,11 +255,17 @@ export class CoreWorkflowMutationWorkspaceService {
     });
   }
 
-  async updateWorkflow(
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-    { coreWorkflowId, name }: { coreWorkflowId: string; name: string },
-  ): Promise<void> {
+  async updateWorkflow({
+    workspaceId,
+    userWorkspaceId,
+    coreWorkflowId,
+    name,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    coreWorkflowId: string;
+    name: string;
+  }): Promise<void> {
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
       {
         workspaceId,
@@ -346,12 +352,19 @@ export class CoreWorkflowMutationWorkspaceService {
     );
   }
 
-  async createWorkflow(
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-    user: AuthContextUser,
-    { name, visibility }: { name?: string; visibility?: WorkflowVisibility },
-  ): Promise<CoreWorkflowDTO> {
+  async createWorkflow({
+    workspaceId,
+    userWorkspaceId,
+    user,
+    name,
+    visibility,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    user: AuthContextUser;
+    name?: string;
+    visibility?: WorkflowVisibility;
+  }): Promise<CoreWorkflowDTO> {
     const applicationId =
       await this.workflowCoreSyncService.getCustomApplicationIdOrThrow(
         workspaceId,
@@ -451,11 +464,15 @@ export class CoreWorkflowMutationWorkspaceService {
     };
   }
 
-  async deleteWorkflows(
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-    { coreWorkflowIds }: { coreWorkflowIds: string[] },
-  ): Promise<DeletedCoreWorkflowDTO[]> {
+  async deleteWorkflows({
+    workspaceId,
+    userWorkspaceId,
+    coreWorkflowIds,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    coreWorkflowIds: string[];
+  }): Promise<DeletedCoreWorkflowDTO[]> {
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
       {
         workspaceId,
@@ -550,14 +567,15 @@ export class CoreWorkflowMutationWorkspaceService {
     );
   }
 
-  async discardDraftVersion(
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-    {
-      workspaceWorkflowVersionId,
-      coreWorkflowVersionId,
-    }: DiscardCoreWorkflowDraftInput,
-  ): Promise<string | null> {
+  async discardDraftVersion({
+    workspaceId,
+    userWorkspaceId,
+    workspaceWorkflowVersionId,
+    coreWorkflowVersionId,
+  }: DiscardCoreWorkflowDraftInput & {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<string | null> {
     if (
       isDefined(workspaceWorkflowVersionId) &&
       isDefined(coreWorkflowVersionId)
@@ -715,11 +733,16 @@ export class CoreWorkflowMutationWorkspaceService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  async updateWorkflowVisibility(
-    workspaceId: string,
-    userWorkspaceId: string,
-    { coreWorkflowId, visibility }: UpdateCoreWorkflowVisibilityInput,
-  ): Promise<CoreWorkflowDTO | null> {
+  // Owning a workflow means being a person, so this one keeps a strict reader
+  async updateWorkflowVisibility({
+    workspaceId,
+    userWorkspaceId,
+    coreWorkflowId,
+    visibility,
+  }: UpdateCoreWorkflowVisibilityInput & {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<CoreWorkflowDTO | null> {
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
       {
         workspaceId,

@@ -54,9 +54,9 @@ export class WorkflowEntity extends SyncableEntity {
   @Column({ type: 'uuid', nullable: true })
   lastPublishedCoreWorkflowVersionId: string | null;
 
-  // PRIVATE currently covers the workflow itself: its list entries and its own
-  // read and write endpoints. The version endpoints still resolve by id, so
-  // this is as strong as an unlisted view, not yet a hard deny.
+  // Enforced where ids are resolved rather than at each endpoint, so a workflow
+  // private to someone else stops resolving at all and its versions and steps
+  // are unreachable too. See CoreWorkflowIdResolutionService.
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME,
   })

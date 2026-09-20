@@ -69,11 +69,11 @@ export class CoreWorkflowResolver {
     userWorkspaceId: string | undefined,
     @Args('input') input: UpdateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO | null> {
-    await this.coreWorkflowMutationWorkspaceService.updateWorkflow(
+    await this.coreWorkflowMutationWorkspaceService.updateWorkflow({
       workspaceId,
       userWorkspaceId,
-      input,
-    );
+      ...input,
+    });
 
     return this.coreWorkflowListService.findOneById({
       workspaceId,
@@ -88,11 +88,11 @@ export class CoreWorkflowResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('input') input: UpdateCoreWorkflowVisibilityInput,
   ): Promise<CoreWorkflowDTO | null> {
-    return this.coreWorkflowMutationWorkspaceService.updateWorkflowVisibility(
+    return this.coreWorkflowMutationWorkspaceService.updateWorkflowVisibility({
       workspaceId,
       userWorkspaceId,
-      input,
-    );
+      ...input,
+    });
   }
 
   @Mutation(() => CoreWorkflowDTO)
@@ -124,12 +124,12 @@ export class CoreWorkflowResolver {
     @AuthUser() user: AuthContextUser,
     @Args('input') input: CreateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO> {
-    return this.coreWorkflowMutationWorkspaceService.createWorkflow(
+    return this.coreWorkflowMutationWorkspaceService.createWorkflow({
       workspaceId,
       userWorkspaceId,
       user,
-      input,
-    );
+      ...input,
+    });
   }
 
   @Mutation(() => [DeletedCoreWorkflowDTO])
@@ -139,11 +139,11 @@ export class CoreWorkflowResolver {
     userWorkspaceId: string | undefined,
     @Args('input') input: DeleteCoreWorkflowsInput,
   ): Promise<DeletedCoreWorkflowDTO[]> {
-    return this.coreWorkflowMutationWorkspaceService.deleteWorkflows(
+    return this.coreWorkflowMutationWorkspaceService.deleteWorkflows({
       workspaceId,
       userWorkspaceId,
-      input,
-    );
+      ...input,
+    });
   }
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
@@ -154,11 +154,11 @@ export class CoreWorkflowResolver {
     @Args('input') input: DiscardCoreWorkflowDraftInput,
   ): Promise<CoreWorkflowDTO | null> {
     const coreWorkflowId =
-      await this.coreWorkflowMutationWorkspaceService.discardDraftVersion(
+      await this.coreWorkflowMutationWorkspaceService.discardDraftVersion({
         workspaceId,
         userWorkspaceId,
-        input,
-      );
+        ...input,
+      });
 
     if (!isDefined(coreWorkflowId)) {
       return null;
