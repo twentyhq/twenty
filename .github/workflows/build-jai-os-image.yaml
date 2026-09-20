@@ -1,0 +1,43 @@
+name: Build JAI OS Twenty image
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch or tag to build (upstream release plus our patches)
+        default: jai-twenty-v2.41.0
+      tag:
+        description: Image tag to publish
+        default: v2.41.0-jai.1
+      app_version:
+        description: Upstream Twenty version this build is based on
+        default: 2.41.0
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/twenty-docker/twenty/Dockerfile
+          target: twenty
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/twenty:${{ inputs.tag }}
+          build-args: APP_VERSION=${{ inputs.app_version }}
+          labels: org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

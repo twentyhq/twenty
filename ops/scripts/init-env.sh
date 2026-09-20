@@ -14,7 +14,7 @@ server_url="https://${domain}"
 
 umask 077
 cat > "$env_file" <<EOF
-TAG=v2.41.0
+TAG=v2.41.0-jai.1
 DOMAIN=${domain}
 HTTP_PORT=$([ "$https_port" = "443" ] && echo 80 || echo 8080)
 HTTPS_PORT=${https_port}

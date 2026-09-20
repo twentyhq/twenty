@@ -34,7 +34,7 @@ services:
     logging: *logging
 
   server:
-    image: twentycrm/twenty:${TAG:?}
+    image: ghcr.io/codaswin/twenty:${TAG:?}
     restart: always
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
@@ -57,7 +57,7 @@ services:
     logging: *logging
 
   worker:
-    image: twentycrm/twenty:${TAG:?}
+    image: ghcr.io/codaswin/twenty:${TAG:?}
     restart: always
     command: ["yarn", "worker:prod"]
     volumes:
