@@ -41,6 +41,22 @@ export const buildInputAskStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  // One Ask per run step, enforced here rather than by the read that precedes
+  // the insert: a retried or concurrently resumed step would otherwise pass
+  // that read twice and ask the same question twice.
+  workflowRunStepUniqueIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'workflowRunStepUniqueIndex',
+      relatedFieldNames: ['workflowRun', 'stepId'],
+      isUnique: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   // How a proposed tool call finds its Ask, the way a run step finds its own
   // through workflowRunId.
   toolCallIdIndex: createStandardIndexFlatMetadata({

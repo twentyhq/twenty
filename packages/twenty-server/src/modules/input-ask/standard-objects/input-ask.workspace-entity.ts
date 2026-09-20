@@ -6,6 +6,7 @@ import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/sta
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class InputAskWorkspaceEntity extends BaseWorkspaceEntity {
+  position: number;
   name: string | null;
   status: InputAskStatus;
   // The questions are snapshotted rather than read back from the step: a

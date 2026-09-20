@@ -197,7 +197,7 @@ export const buildInputAskStandardFlatFieldMetadatas = ({
       ),
       description: i18nLabel(
         msg({
-          message: `Call recording record position`,
+          message: `Ask record position`,
           context: 'fieldMetadata.description',
         }),
       ),

@@ -326,6 +326,9 @@ export const STANDARD_OBJECTS = {
       toolCallIdIndex: {
         universalIdentifier: '3f82b376-a028-49cf-8be9-7d880c23eb22',
       },
+      workflowRunStepUniqueIndex: {
+        universalIdentifier: 'c6c2c67e-2f2e-4a1e-9c0b-1b3d5e7a9f41',
+      },
     },
     views: {
       allInputAsks: buildStandardObjectIndexView({

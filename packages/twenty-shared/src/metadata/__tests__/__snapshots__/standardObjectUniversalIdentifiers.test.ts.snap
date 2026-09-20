@@ -1116,6 +1116,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "workflowRunIdIndex": {
         "universalIdentifier": "5ef5fbb9-5322-49b1-8340-3ce81a8a8a8f",
       },
+      "workflowRunStepUniqueIndex": {
+        "universalIdentifier": "c6c2c67e-2f2e-4a1e-9c0b-1b3d5e7a9f41",
+      },
     },
     "universalIdentifier": "c9069340-a894-4f33-9da3-3b9631d3144c",
     "views": {

@@ -147,12 +147,26 @@ export class WorkflowRunnerWorkspaceService {
         },
       );
 
-    await this.inputAskWorkspaceService.answerForWorkflowRunStep({
-      workspaceId,
-      workflowRunId,
-      stepId,
-      response: enrichedResponse,
-    });
+    // The Ask's PENDING filter is the only exactly-once gate on this path:
+    // without it two submissions both write the step result and both enqueue a
+    // resume, so downstream steps run twice on whichever answer lands last.
+    const answerResult =
+      await this.inputAskWorkspaceService.answerForWorkflowRunStep({
+        workspaceId,
+        workflowRunId,
+        stepId,
+        response: enrichedResponse,
+      });
+
+    if (answerResult === 'already-answered') {
+      throw new WorkflowVersionStepException(
+        'Form has already been submitted',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        {
+          userFriendlyMessage: msg`This form has already been submitted`,
+        },
+      );
+    }
 
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
       stepId,

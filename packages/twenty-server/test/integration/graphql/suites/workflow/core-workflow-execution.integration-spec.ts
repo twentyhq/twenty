@@ -814,6 +814,42 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(answeredInputAsks[0].answeredAt).not.toBeNull();
   });
 
+  it('refuses a second submission of the same form and resumes once', async () => {
+    const finalStep = emptyStep();
+    const form = formStep([finalStep.id]);
+    const fixture = await createFixture({
+      mirrorless: true,
+      steps: [form, finalStep],
+    });
+    const runId = await runFixture(fixture);
+
+    await waitForStep(runId, form.id, 'PENDING');
+
+    const submit = (answer: string) =>
+      workflowGraphqlRequest(
+        'mutation Submit($input: SubmitFormStepInput!) { submitFormStep(input: $input) }',
+        {
+          input: { workflowRunId: runId, stepId: form.id, response: { answer } },
+        },
+      );
+
+    const first = await submit('Approved');
+
+    expect(first.body.errors).toBeUndefined();
+    await waitForRun(runId, 'COMPLETED');
+
+    const second = await submit('Approved again');
+
+    expect(second.body.errors).toBeDefined();
+
+    const run = await getRun(runId);
+
+    expect(run.state.stepInfos[form.id].result).toEqual({ answer: 'Approved' });
+    expect(await getInputAsks(runId)).toMatchObject([
+      { status: 'ANSWERED', response: { answer: 'Approved' } },
+    ]);
+  });
+
   it('cancels the Ask when its run ends before anyone answers', async () => {
     const finalStep = emptyStep();
     const form = formStep([finalStep.id]);
