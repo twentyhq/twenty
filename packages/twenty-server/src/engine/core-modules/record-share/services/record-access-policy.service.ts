@@ -46,6 +46,7 @@ type SnapshotEvaluation = {
   subject: RowAccessPolicySubject;
   depth: number;
   maps?: ReadabilityMaps;
+  isRecordSharingEnabled?: boolean;
 };
 
 type SnapshotEvaluationInContext = SnapshotEvaluation & {
@@ -98,12 +99,15 @@ export class RecordAccessPolicyService {
           return new Set();
         }
 
-        if (!(await fetchIsRecordSharingEnabled())) {
-          return new Set(snapshots.map((snapshot) => snapshot.id));
-        }
-
         return this.resolveSnapshotIdsAdmittedByRecordShareGate(
-          { workspaceId, objectMetadata, snapshots, subject, depth: 0 },
+          {
+            workspaceId,
+            objectMetadata,
+            snapshots,
+            subject,
+            depth: 0,
+            isRecordSharingEnabled: await fetchIsRecordSharingEnabled(),
+          },
           fetchRecordShares,
         );
       },
@@ -166,8 +170,14 @@ export class RecordAccessPolicyService {
     fetchRecordShares: FetchRecordShares,
   ): Promise<Set<string>> {
     const { objectMetadata, snapshots, subject } = evaluation;
+    const resolvedIsRecordSharingEnabled =
+      evaluation.isRecordSharingEnabled ??
+      (await this.recordSharingFeatureService.isRecordSharingEnabled(
+        evaluation.workspaceId,
+      ));
     const gateKind = resolveRecordShareGateKind({
       readability: objectMetadata.readability,
+      isRecordSharingEnabled: resolvedIsRecordSharingEnabled,
       isOwningApplication: subject.isOwningApplication(objectMetadata),
     });
 
@@ -187,7 +197,10 @@ export class RecordAccessPolicyService {
             evaluation,
             fetchRecordShares,
           )),
-          ...(await this.resolveSnapshotIdsReadableThroughParents(evaluation)),
+          ...(await this.resolveSnapshotIdsReadableThroughParents({
+            ...evaluation,
+            isRecordSharingEnabled: resolvedIsRecordSharingEnabled,
+          })),
         ]);
       default:
         return assertUnreachable(gateKind);
@@ -301,6 +314,7 @@ export class RecordAccessPolicyService {
     depth,
     maps,
     parent,
+    isRecordSharingEnabled,
   }: SnapshotEvaluationInContext & {
     parent: InheritedReadabilityChildrenParent;
   }): Promise<Set<string>> {
@@ -360,6 +374,7 @@ export class RecordAccessPolicyService {
       workspaceId,
       objectMetadata: parent.childFlatObjectMetadata,
       snapshots: [...capturedChildSnapshotsBySnapshotId.values()].flat(),
+      isRecordSharingEnabled,
       subject,
       depth: depth + 1,
       maps,

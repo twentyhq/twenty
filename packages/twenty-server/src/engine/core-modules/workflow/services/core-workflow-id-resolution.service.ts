@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -19,13 +20,16 @@ export class CoreWorkflowIdResolutionService {
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
+    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
   ) {}
 
   async resolveWorkspaceVersionIdOrThrow({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<{
     coreWorkflowVersion: WorkflowVersionEntity;
@@ -33,6 +37,7 @@ export class CoreWorkflowIdResolutionService {
   }> {
     const resolved = await this.resolveWorkspaceVersionIdIfCoreVersionExists({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowVersionId,
     });
 
@@ -49,11 +54,15 @@ export class CoreWorkflowIdResolutionService {
     return resolved;
   }
 
+  // Everything that reaches a workflow by id comes through here, so this is
+  // where a workflow private to someone else stops being resolvable at all.
   async resolveWorkspaceVersionIdIfCoreVersionExists({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<{
     coreWorkflowVersion: WorkflowVersionEntity;
@@ -67,6 +76,14 @@ export class CoreWorkflowIdResolutionService {
     if (!isDefined(coreWorkflowVersion)) {
       return null;
     }
+
+    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowVersionIds: [coreWorkflowVersion.id],
+      },
+    );
 
     const workspaceWorkflowVersionId =
       coreWorkflowVersion.workspaceWorkflowVersionId;
@@ -89,9 +106,11 @@ export class CoreWorkflowIdResolutionService {
 
   async resolveWorkspaceWorkflowIdOrThrow({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowId: string;
   }): Promise<{
     coreWorkflow: WorkflowEntity;
@@ -111,6 +130,10 @@ export class CoreWorkflowIdResolutionService {
         },
       );
     }
+
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
+      { workspaceId, userWorkspaceId, coreWorkflowIds: [coreWorkflow.id] },
+    );
 
     const workspaceWorkflowId = coreWorkflow.workspaceWorkflowId;
 

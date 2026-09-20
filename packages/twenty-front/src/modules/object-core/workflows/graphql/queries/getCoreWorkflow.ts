@@ -8,6 +8,8 @@ export const GET_CORE_WORKFLOW = gql`
       statuses
       lastPublishedCoreWorkflowVersionId
       workspaceWorkflowId
+      visibility
+      canChangeVisibility
       createdAt
       updatedAt
     }
