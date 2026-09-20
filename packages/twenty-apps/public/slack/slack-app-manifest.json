@@ -41,7 +41,8 @@
         "links:write",
         "users:read",
         "users:read.email",
-        "assistant:write"
+        "assistant:write",
+        "files:read"
       ]
     }
   },
