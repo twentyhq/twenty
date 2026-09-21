@@ -381,16 +381,19 @@ export const WorkflowEditActionClassify = ({
         ))}
 
         {!readonly && (
-          <Button
-            startIcon={<IconPlus />}
-            onClick={() =>
-              updateInput({
-                questions: [...questions, buildEmptyQuestion()],
-              })
-            }
-          >
-            {t`Add question`}
-          </Button>
+          <>
+            <HorizontalSeparator noMargin />
+            <Button
+              startIcon={<IconPlus />}
+              onClick={() =>
+                updateInput({
+                  questions: [...questions, buildEmptyQuestion()],
+                })
+              }
+            >
+              {t`Add question`}
+            </Button>
+          </>
         )}
       </WorkflowStepBody>
 
