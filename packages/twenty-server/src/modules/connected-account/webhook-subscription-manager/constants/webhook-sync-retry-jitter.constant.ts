@@ -1,1 +1,0 @@
-export const WEBHOOK_SYNC_RETRY_JITTER = 0.5;
