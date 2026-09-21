@@ -181,14 +181,15 @@ export const reconstructPageLayoutsManifest = ({
     });
 
     if (decision === 'nested') {
+      const nestedFlatPageLayoutWidgets =
+        nestedFlatPageLayoutWidgetsByPageLayoutTabUniversalIdentifier.get(
+          flatPageLayoutWidget.pageLayoutTabUniversalIdentifier,
+        ) ?? [];
+
+      nestedFlatPageLayoutWidgets.push(flatPageLayoutWidget);
       nestedFlatPageLayoutWidgetsByPageLayoutTabUniversalIdentifier.set(
         flatPageLayoutWidget.pageLayoutTabUniversalIdentifier,
-        [
-          ...(nestedFlatPageLayoutWidgetsByPageLayoutTabUniversalIdentifier.get(
-            flatPageLayoutWidget.pageLayoutTabUniversalIdentifier,
-          ) ?? []),
-          flatPageLayoutWidget,
-        ],
+        nestedFlatPageLayoutWidgets,
       );
     } else if (
       decision === 'standalone' &&
