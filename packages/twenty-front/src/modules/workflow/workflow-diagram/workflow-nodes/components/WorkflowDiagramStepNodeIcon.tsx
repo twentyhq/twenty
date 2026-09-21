@@ -1,8 +1,7 @@
+import { getActionIconStrokeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconStrokeOrThrow';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { WorkflowDiagramStepNodeLogicFunctionIcon } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeLogicFunctionIcon';
-import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/CoreActions';
-import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { useIcons } from 'twenty-ui/icon';
@@ -30,11 +29,10 @@ export const WorkflowDiagramStepNodeIcon = ({
     );
   }
 
-  const usesSmallStroke =
-    data.nodeType === 'action' &&
-    (CORE_ACTIONS.some((action) => action.type === data.actionType) ||
-      RECORD_ACTIONS.some((action) => action.type === data.actionType) ||
-      data.actionType === 'IF_ELSE');
+  const stroke =
+    data.nodeType === 'action'
+      ? getActionIconStrokeOrThrow(data.actionType)
+      : undefined;
 
   return (
     <Icon
@@ -44,7 +42,7 @@ export const WorkflowDiagramStepNodeIcon = ({
           ? getTriggerIconColor(data.triggerType)
           : getActionIconColorOrThrow(data.actionType)
       }
-      stroke={usesSmallStroke ? theme.icon.stroke.sm : undefined}
+      stroke={stroke === undefined ? undefined : theme.icon.stroke[stroke]}
     />
   );
 };
