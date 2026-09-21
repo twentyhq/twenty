@@ -1,11 +1,24 @@
 import { type AxiosError } from 'axios';
 
+import { isObject, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-// The endpoint reports failures as `{ error: "..." }`, not `{ message: "..." }`,
-// so reading only `message` dropped the reason and left the caller with a bare
-// "Request failed with status code 429". Keep the status, and prefer whatever
-// explanation the endpoint actually gave.
+const readErrorReason = (data: unknown): string | undefined => {
+  if (!isObject(data)) {
+    return undefined;
+  }
+
+  if ('message' in data && isString(data.message)) {
+    return data.message;
+  }
+
+  if ('error' in data && isString(data.error)) {
+    return data.error;
+  }
+
+  return undefined;
+};
+
 export const buildHelpCenterErrorDetail = (error: AxiosError): string => {
   const response = error.response;
 
@@ -13,16 +26,5 @@ export const buildHelpCenterErrorDetail = (error: AxiosError): string => {
     return error.message;
   }
 
-  const data = response.data as
-    | { message?: unknown; error?: unknown }
-    | undefined;
-
-  const reason =
-    typeof data?.message === 'string'
-      ? data.message
-      : typeof data?.error === 'string'
-        ? data.error
-        : error.message;
-
-  return `${reason} (HTTP ${response.status})`;
+  return `${readErrorReason(response.data) ?? error.message} (HTTP ${response.status})`;
 };

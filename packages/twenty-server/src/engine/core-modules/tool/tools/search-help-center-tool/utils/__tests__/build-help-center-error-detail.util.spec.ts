@@ -28,8 +28,6 @@ const buildAxiosError = ({
 
 describe('buildHelpCenterErrorDetail', () => {
   it("keeps the endpoint's own reason when it uses an error field", () => {
-    // The live endpoint answers `{ error: "..." }`, which the previous
-    // `data?.message` lookup dropped entirely.
     const error = buildAxiosError({
       message: 'Request failed with status code 429',
       response: {

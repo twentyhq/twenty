@@ -12,9 +12,6 @@ import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/to
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-// Without an API key the tool falls back to a search proxy shared by every
-// self-hosted instance, which rate-limits and resets connections under load.
-// An unbounded request there leaves the agent waiting indefinitely.
 const HELP_CENTER_REQUEST_TIMEOUT_MS = 10_000;
 const HELP_CENTER_REQUEST_RETRIES = 2;
 

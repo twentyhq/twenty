@@ -31,8 +31,6 @@ describe('extractHelpCenterResults', () => {
   });
 
   it('reports an unrecognized payload as unreadable rather than empty', () => {
-    // Collapsing these to `[]` would present an operational failure as a
-    // successful search that simply found nothing.
     for (const payload of [
       { error: 'Rate limit exceeded' },
       { results: 'not-an-array' },
