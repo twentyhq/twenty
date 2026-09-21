@@ -1,4 +1,5 @@
-import { type ConnectedAccountOperation } from 'twenty-shared/types';
+import { ConnectedAccountOperation } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -81,6 +82,21 @@ const extractRecipientsField = (output: ToolOutput, key: string): unknown => {
   return (output.result as Record<string, unknown>)[key];
 };
 
+const getStepLogMode = (
+  operation: ConnectedAccountOperation,
+): 'SEND' | 'DRAFT' => {
+  switch (operation) {
+    case ConnectedAccountOperation.SEND_EMAIL:
+      return 'SEND';
+    case ConnectedAccountOperation.DRAFT_EMAIL:
+      return 'DRAFT';
+    case ConnectedAccountOperation.CREATE_CALENDAR_EVENT:
+      throw new Error('Calendar events are not logged as email steps');
+    default:
+      return assertUnreachable(operation);
+  }
+};
+
 export const buildEmailStepLog = ({
   mode,
   input,
@@ -119,7 +135,7 @@ export const buildEmailStepLog = ({
   return {
     details: {
       type: 'EMAIL',
-      mode,
+      mode: getStepLogMode(mode),
       status: output.success ? 'SUCCESS' : 'ERROR',
       recipients: {
         to,

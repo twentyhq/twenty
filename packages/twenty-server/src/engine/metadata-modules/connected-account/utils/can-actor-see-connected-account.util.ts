@@ -21,11 +21,9 @@ export const canActorSeeConnectedAccount = ({
         userWorkspaceId: authContext.userWorkspaceId,
       });
     case 'application':
-      return (
-        connectedAccount.visibility === 'workspace' ||
-        (isDefined(connectedAccount.applicationId) &&
-          connectedAccount.applicationId === authContext.application.id)
-      );
+      return isDefined(connectedAccount.applicationId)
+        ? connectedAccount.applicationId === authContext.application.id
+        : connectedAccount.visibility === 'workspace';
     case 'apiKey':
       return connectedAccount.visibility === 'workspace';
     case 'system':

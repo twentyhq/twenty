@@ -1,10 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import {
-  ConnectedAccountProvider,
-  ConnectedAccountOperation,
-} from 'twenty-shared/types';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -71,9 +68,9 @@ describe('DraftEmailWorkflowAction', () => {
         {
           provide: WorkflowExecutionContextService,
           useValue: {
-            getExecutionContext: jest
+            getWorkflowApplicationAuthContext: jest
               .fn()
-              .mockResolvedValue({ authContext: { type: 'application' } }),
+              .mockResolvedValue({ type: 'application' }),
           },
         },
         {
@@ -141,7 +138,7 @@ describe('DraftEmailWorkflowAction', () => {
         stepLog: expect.objectContaining({
           details: expect.objectContaining({
             type: 'EMAIL',
-            mode: ConnectedAccountOperation.DRAFT_EMAIL,
+            mode: 'DRAFT',
           }),
         }),
       }),
@@ -205,7 +202,7 @@ describe('DraftEmailWorkflowAction', () => {
       connectedAccountRepository.find.mockResolvedValue([]);
 
       await expect(executeWithSender(WORKSPACE_MEMBER_ID)).rejects.toThrow(
-        `Workspace member '${WORKSPACE_MEMBER_ID}' has no connected account that can draft email`,
+        `Workspace member '${WORKSPACE_MEMBER_ID}' has no connected account that can perform DRAFT_EMAIL`,
       );
       expect(mockDraftEmailTool.execute).not.toHaveBeenCalled();
     });

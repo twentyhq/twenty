@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { ConnectedAccountOperation } from 'twenty-shared/types';
 
 import { FindConnectedAccountsToolInputZodSchema } from 'src/engine/core-modules/tool/tools/email-tool/find-connected-accounts-tool.schema';
 import { type FindConnectedAccountsToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/find-connected-accounts-tool-input.type';
@@ -28,7 +29,7 @@ export class FindConnectedAccountsTool implements Tool {
     const mailboxAccounts =
       await this.connectedAccountAccessService.listVisibleConnectedAccounts({
         authContext: getToolAuthContextOrThrow(context),
-        capability: 'SEND_EMAIL',
+        operation: ConnectedAccountOperation.SEND_EMAIL,
       });
 
     const matchingAccounts = isNonEmptyString(handle)

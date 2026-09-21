@@ -1,3 +1,5 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { canActorActAsConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/can-actor-act-as-connected-account.util';
 
@@ -22,10 +24,13 @@ const buildUserAuthContext = () =>
     userWorkspaceId: USER_WORKSPACE_ID,
   }) as WorkspaceAuthContext;
 
-const buildApplicationAuthContext = (applicationId: string) =>
+const buildApplicationAuthContext = (
+  applicationId: string,
+  universalIdentifier = 'third-party-application',
+) =>
   ({
     type: 'application',
-    application: { id: applicationId },
+    application: { id: applicationId, universalIdentifier },
   }) as WorkspaceAuthContext;
 
 describe('canActorActAsConnectedAccount', () => {
@@ -69,11 +74,32 @@ describe('canActorActAsConnectedAccount', () => {
     ).toBe(true);
   });
 
-  it('lets an application act as an account no application owns', () => {
+  it("lets Twenty's own application act as a member's private account", () => {
+    expect(
+      canActorActAsConnectedAccount({
+        authContext: buildApplicationAuthContext(
+          APPLICATION_ID,
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        ),
+        connectedAccount: buildConnectedAccount({}),
+      }),
+    ).toBe(true);
+  });
+
+  it("refuses a third-party application acting as a member's private account", () => {
     expect(
       canActorActAsConnectedAccount({
         authContext: buildApplicationAuthContext(APPLICATION_ID),
         connectedAccount: buildConnectedAccount({}),
+      }),
+    ).toBe(false);
+  });
+
+  it('lets a third-party application act as an account shared with the workspace', () => {
+    expect(
+      canActorActAsConnectedAccount({
+        authContext: buildApplicationAuthContext(APPLICATION_ID),
+        connectedAccount: buildConnectedAccount({ visibility: 'workspace' }),
       }),
     ).toBe(true);
   });

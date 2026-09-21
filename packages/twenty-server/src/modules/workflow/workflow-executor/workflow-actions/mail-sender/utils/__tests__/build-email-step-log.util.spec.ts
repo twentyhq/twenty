@@ -37,7 +37,7 @@ describe('buildEmailStepLog', () => {
       throw new Error('Expected EMAIL details');
     }
 
-    expect(stepLog.details.mode).toBe(ConnectedAccountOperation.SEND_EMAIL);
+    expect(stepLog.details.mode).toBe('SEND');
     expect(stepLog.details.status).toBe('SUCCESS');
     expect(stepLog.details.recipients.to).toEqual([
       'alice@example.com',
@@ -71,7 +71,7 @@ describe('buildEmailStepLog', () => {
       throw new Error('Expected EMAIL details');
     }
 
-    expect(stepLog.details.mode).toBe(ConnectedAccountOperation.DRAFT_EMAIL);
+    expect(stepLog.details.mode).toBe('DRAFT');
     expect(stepLog.details.status).toBe('ERROR');
     expect(stepLog.details.recipients.to).toEqual([
       'alice@example.com',

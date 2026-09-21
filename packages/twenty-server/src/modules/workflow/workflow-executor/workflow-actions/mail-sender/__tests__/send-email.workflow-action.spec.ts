@@ -72,9 +72,9 @@ describe('SendEmailWorkflowAction', () => {
         {
           provide: WorkflowExecutionContextService,
           useValue: {
-            getExecutionContext: jest
+            getWorkflowApplicationAuthContext: jest
               .fn()
-              .mockResolvedValue({ authContext: { type: 'application' } }),
+              .mockResolvedValue({ type: 'application' }),
           },
         },
         {
@@ -475,7 +475,7 @@ describe('SendEmailWorkflowAction', () => {
       connectedAccountRepository.find.mockResolvedValue([]);
 
       await expect(executeWithSender(WORKSPACE_MEMBER_ID)).rejects.toThrow(
-        `Workspace member '${WORKSPACE_MEMBER_ID}' has no connected account that can send email`,
+        `Workspace member '${WORKSPACE_MEMBER_ID}' has no connected account that can perform SEND_EMAIL`,
       );
       expect(mockSendEmailTool.execute).not.toHaveBeenCalled();
     });

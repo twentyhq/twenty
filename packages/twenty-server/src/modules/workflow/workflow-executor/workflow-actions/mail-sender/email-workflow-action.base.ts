@@ -128,7 +128,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
       if (!isDefined(connectedAccountId)) {
         throw new WorkflowStepExecutorException(
-          `Workspace member '${senderId}' has no connected account that can ${this.getMode().toLowerCase()} email`,
+          `Workspace member '${senderId}' has no connected account that can perform ${this.getMode()}`,
           WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
         );
       }

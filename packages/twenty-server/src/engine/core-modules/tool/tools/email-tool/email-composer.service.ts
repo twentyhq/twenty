@@ -8,10 +8,7 @@ import {
   type EmailAttachment,
   ConnectedAccountOperation,
 } from 'twenty-shared/types';
-import {
-  getConnectedAccountOperationForConnectedAccountOperation,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { In, LessThanOrEqual, type Repository } from 'typeorm';
 import { z } from 'zod';
 
@@ -73,8 +70,7 @@ export class EmailComposerService {
       {
         authContext,
         connectedAccountId,
-        operation:
-          getConnectedAccountOperationForConnectedAccountOperation(operation),
+        operation: operation,
         relations: {
           messageChannels: {
             messageFolders: true,
@@ -331,10 +327,7 @@ export class EmailComposerService {
       : await this.connectedAccountAccessService.selectDefaultConnectedAccountOrThrow(
           {
             authContext,
-            operation:
-              getConnectedAccountOperationForConnectedAccountOperation(
-                operation,
-              ),
+            operation: operation,
             relations: {
               messageChannels: {
                 messageFolders: true,
