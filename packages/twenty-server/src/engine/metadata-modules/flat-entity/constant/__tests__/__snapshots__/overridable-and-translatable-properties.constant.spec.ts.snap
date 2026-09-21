@@ -137,6 +137,9 @@ exports[`registry-derived override property maps derives the translatable proper
   "pageLayoutWidget": [
     "title",
   ],
+  "settingPage": [
+    "title",
+  ],
   "timelineActivityType": [
     "label",
   ],

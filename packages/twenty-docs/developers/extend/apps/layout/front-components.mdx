@@ -118,7 +118,7 @@ Declare as many pages as you need. Twenty's own **General** page — auto-upgrad
 
 `position` is a decimal, so a page can be slotted between two existing ones without renumbering. Pages sort by ascending `position`, ties broken on `universalIdentifier` so the order is the same in every workspace. Two pages of one app cannot share a position in the same scope — the sync refuses it rather than letting install order decide which renders first.
 
-### Workspace and workspace member scope
+### Workspace and user scope
 
 `scope` says who a page is configured by:
 
@@ -128,7 +128,7 @@ Declare as many pages as you need. Twenty's own **General** page — auto-upgrad
 A `USER` page runs as the member viewing it. Note that `applicationVariables` are workspace-wide: one value shared by everyone. A page that stores something per person should persist it through the app's own objects rather than a variable, otherwise one member's value overwrites another's.
 
 <Note>
-`defineSettingsFrontComponent()` is deprecated in favor of `defineSettingPage()`. An app still using it keeps working — its component is treated as a single **Variables** page — but it can only ever declare one, which is what `defineSettingPage()` exists to lift.
+`defineSettingsFrontComponent()` is deprecated in favor of `defineSettingPage()`. An app still using it keeps working — its component is treated as a single **Settings** page — but it can only ever declare one, which is what `defineSettingPage()` exists to lift.
 </Note>
 
 ## Headless vs non-headless
@@ -471,7 +471,7 @@ Secret variables (`isSecret: true`) are **not** exposed to front components. The
 
 ### Reading and updating variables at runtime
 
-`getApplicationVariable` returns the values injected when the component loaded, so a value written afterwards only shows up on the next load. To read the stored values, or to write one (what a [custom settings component](#custom-settings-component) does when it saves what the user typed), go through `MetadataApiClient`:
+`getApplicationVariable` returns the values injected when the component loaded, so a value written afterwards only shows up on the next load. To read the stored values, or to write one (what a [settings page](#settings-pages) does when it saves what the user typed), go through `MetadataApiClient`:
 
 ```tsx src/front-components/app-settings.tsx
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';

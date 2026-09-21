@@ -1,3 +1,5 @@
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { computeOrderedMigrationActions } from 'src/engine/workspace-manager/workspace-migration/utils/compute-ordered-migration-actions.util';
 import { type UniversalCreatePageLayoutTabAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
@@ -70,5 +72,35 @@ describe('computeOrderedMigrationActions', () => {
     expect(orderedActions.indexOf(pageLayoutCreateAction)).toBeLessThan(
       orderedActions.indexOf(pageLayoutTabCreateAction),
     );
+  });
+
+  // The ordered list is written by hand and OrchestratorActionsReport is a
+  // mapped type, so reading fewer keys than it holds type-checks: a metadata
+  // name left out here has its actions built, validated, then silently dropped
+  // before the runner ever sees them.
+  it('should emit the actions of every metadata name', () => {
+    const orchestratorActionsReport = createEmptyOrchestratorActionsReport();
+    const sentinelByKey = new Map<string, object>();
+
+    for (const metadataName of Object.values(ALL_METADATA_NAME)) {
+      for (const actionType of ['create', 'update', 'delete'] as const) {
+        const sentinel = { type: actionType, metadataName };
+
+        sentinelByKey.set(`${metadataName}.${actionType}`, sentinel);
+        (orchestratorActionsReport[metadataName][actionType] as object[]).push(
+          sentinel,
+        );
+      }
+    }
+
+    const orderedActions = computeOrderedMigrationActions(
+      orchestratorActionsReport,
+    );
+
+    const droppedKeys = [...sentinelByKey.entries()]
+      .filter(([, sentinel]) => !orderedActions.includes(sentinel as never))
+      .map(([key]) => key);
+
+    expect(droppedKeys).toEqual([]);
   });
 });
