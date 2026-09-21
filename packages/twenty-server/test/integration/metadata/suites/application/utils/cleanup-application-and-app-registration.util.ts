@@ -28,6 +28,33 @@ export const cleanupApplicationAndAppRegistration = async ({
     [applicationUniversalIdentifier],
   );
 
+  // View/ViewField rows an app contributes to a shared standard object (e.g.
+  // Person) aren't scoped to the app's own object rows and aren't
+  // cascade-cleaned by this raw-SQL fallback path (used when the real
+  // uninstallApplication mutation fails, e.g. sync itself never succeeded) -
+  // without this, orphaned rows accumulate indefinitely in the shared test
+  // workspace and can corrupt fixed-value lookups in unrelated specs.
+  // Delete viewField before view (children before parent) to avoid any
+  // future FK-ordering surprise.
+  await globalThis.testDataSource.query(
+    `DELETE FROM core."viewField" WHERE "applicationId" IN (
+      SELECT id FROM core."application" WHERE "universalIdentifier" = $1
+    )`,
+    [applicationUniversalIdentifier],
+  );
+
+  await globalThis.testDataSource.query(
+    `DELETE FROM core."view" WHERE "applicationId" IN (
+      SELECT id FROM core."application" WHERE "universalIdentifier" = $1
+    )`,
+    [applicationUniversalIdentifier],
+  );
+
+  // FieldMetadata rows are deliberately not deleted here: unlike View/
+  // ViewField, a FieldMetadata row backs an actual column on the workspace's
+  // physical data schema, so raw-deleting it without a companion
+  // column-drop migration would leave a dangling, untracked column.
+
   await globalThis.testDataSource.query(
     `DELETE FROM core."application"
      WHERE "universalIdentifier" = $1`,
