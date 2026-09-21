@@ -8,7 +8,7 @@ describe('computeRequestActor', () => {
         application: { id: 'application-id' },
         user: { id: 'user-id' },
       } as Parameters<typeof computeRequestActor>[0]),
-    ).toBe('apiKey:api-key-id');
+    ).toEqual({ kind: 'apiKey', id: 'api-key-id' });
   });
 
   it('should prefer the application over the user', () => {
@@ -17,7 +17,7 @@ describe('computeRequestActor', () => {
         application: { id: 'application-id' },
         user: { id: 'user-id' },
       } as Parameters<typeof computeRequestActor>[0]),
-    ).toBe('application:application-id');
+    ).toEqual({ kind: 'application', id: 'application-id' });
   });
 
   it('should fall back to the user', () => {
@@ -25,7 +25,7 @@ describe('computeRequestActor', () => {
       computeRequestActor({
         user: { id: 'user-id' },
       } as Parameters<typeof computeRequestActor>[0]),
-    ).toBe('user:user-id');
+    ).toEqual({ kind: 'user', id: 'user-id' });
   });
 
   it('should return undefined when nothing authenticated the request', () => {

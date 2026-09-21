@@ -31,18 +31,26 @@ describe('ApiAccessLogMiddleware', () => {
     }) as unknown as Request;
 
   const buildResponse = () => {
-    const listeners: (() => void)[] = [];
+    const listenersByEvent = new Map<string, (() => void)[]>();
 
     const response = {
       statusCode: 200,
       once: jest.fn((event: string, listener: () => void) => {
-        if (event === 'finish') {
-          listeners.push(listener);
-        }
+        listenersByEvent.set(event, [
+          ...(listenersByEvent.get(event) ?? []),
+          listener,
+        ]);
       }),
     } as unknown as Response;
 
-    return { response, finish: () => listeners.forEach((l) => l()) };
+    const emit = (event: string) =>
+      (listenersByEvent.get(event) ?? []).forEach((listener) => listener());
+
+    return {
+      response,
+      finish: () => emit('finish'),
+      close: () => emit('close'),
+    };
   };
 
   const runAndCaptureLine = (request: Request): string => {
@@ -204,6 +212,47 @@ describe('ApiAccessLogMiddleware', () => {
 
     expect(line).not.toContain('trace_id=');
     expect(line).not.toContain('span_id=');
+  });
+
+  it('should log an aborted request, where finish never fires', () => {
+    const { response, close } = buildResponse();
+
+    middleware.use(buildRequest(), response, next);
+    close();
+
+    expect(logSpy).toHaveBeenCalledTimes(1);
+    expect(logSpy.mock.calls[0][0]).toContain('url_path=/rest/people/ba91bdfb');
+  });
+
+  it('should log a request once when both finish and close fire', () => {
+    const { response, finish, close } = buildResponse();
+
+    middleware.use(buildRequest(), response, next);
+    finish();
+    close();
+
+    expect(logSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should never let a failure to build the line escape the handler', () => {
+    const warnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation();
+    const request = buildRequest();
+
+    Object.defineProperty(request, 'originalUrl', {
+      get: () => {
+        throw new Error('boom');
+      },
+    });
+
+    const { response, finish } = buildResponse();
+
+    middleware.use(request, response, next);
+
+    expect(() => finish()).not.toThrow();
+    expect(logSpy).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Failed to build the access log line'),
+    );
   });
 
   it('should log the impersonator', () => {

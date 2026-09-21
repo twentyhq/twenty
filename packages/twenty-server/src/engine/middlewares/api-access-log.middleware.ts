@@ -27,13 +27,31 @@ export class ApiAccessLogMiddleware implements NestMiddleware {
     // Captured here rather than on finish: the active span is gone by then.
     const traceContext = computeRequestTraceContext();
 
-    // The auth context is bound by a later middleware or guard, so the actor is
-    // only knowable once the response is done.
-    response.once('finish', () => {
-      this.logger.log(
-        this.buildLine(request, response, startedAtMs, traceContext),
-      );
-    });
+    let logged = false;
+    // 'close' covers the client aborting mid response, where 'finish' never
+    // fires: an unlogged request is the one an attacker would aim for.
+    const log = () => {
+      if (logged) {
+        return;
+      }
+
+      logged = true;
+
+      try {
+        this.logger.log(
+          this.buildLine(request, response, startedAtMs, traceContext),
+        );
+      } catch (error) {
+        // Thrown from a response event handler this would be uncaught and take
+        // the process down, so recording a request can never do that.
+        this.logger.warn(
+          `Failed to build the access log line: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    };
+
+    response.once('finish', log);
+    response.once('close', log);
 
     next();
   }
@@ -44,7 +62,7 @@ export class ApiAccessLogMiddleware implements NestMiddleware {
     startedAtMs: number,
     traceContext: ReturnType<typeof computeRequestTraceContext>,
   ): string {
-    const [urlPath] = request.originalUrl.split('?');
+    const [urlPath] = (request.originalUrl ?? '').split('?');
 
     return this.toLogfmt({
       method: request.method,
@@ -60,7 +78,7 @@ export class ApiAccessLogMiddleware implements NestMiddleware {
       impersonator_user_workspace_id:
         request.impersonationContext?.impersonatorUserWorkspaceId,
       client_ip: request.ip,
-      request_id: this.formatHeader(request.headers['x-request-id']),
+      request_id: this.formatHeader(request.headers?.['x-request-id']),
       trace_id: traceContext?.traceId,
       span_id: traceContext?.spanId,
       trace_sampled: traceContext?.sampled,
@@ -70,13 +88,9 @@ export class ApiAccessLogMiddleware implements NestMiddleware {
   private formatActor(request: Request): Record<string, string | undefined> {
     const actor = computeRequestActor(request);
 
-    if (!isDefined(actor)) {
-      return { actor: 'anonymous' };
-    }
-
-    const [kind, id] = actor.split(':');
-
-    return { actor: kind, actor_id: id };
+    return isDefined(actor)
+      ? { actor: actor.kind, actor_id: actor.id }
+      : { actor: 'anonymous' };
   }
 
   private formatHeader(value: string | string[] | undefined) {
@@ -119,7 +133,7 @@ export class ApiAccessLogMiddleware implements NestMiddleware {
   }
 
   private quote(value: string): string {
-    return isNonEmptyString(value) && !/[\s"]/.test(value)
+    return isNonEmptyString(value) && !/[\s"=]/.test(value)
       ? value
       : `"${value.replace(/"/g, '\\"')}"`;
   }

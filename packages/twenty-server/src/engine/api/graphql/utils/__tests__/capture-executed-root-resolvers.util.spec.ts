@@ -1,72 +1,62 @@
 import { type Request } from 'express';
 import { parse } from 'graphql';
 
-import { captureExecutedRootResolvers } from 'src/engine/api/graphql/utils/capture-executed-root-resolvers.util';
+import {
+  captureExecutedRootResolvers,
+  extractTopLevelFieldsSafely,
+} from 'src/engine/api/graphql/utils/capture-executed-root-resolvers.util';
 
-describe('captureExecutedRootResolvers', () => {
-  const capture = (
-    query: string,
-    operationName?: string,
-  ): string[] | undefined => {
-    const request = {} as Request;
-
-    captureExecutedRootResolvers({
-      request,
-      document: parse(query),
-      operationName,
-    });
-
-    return request.executedRootResolvers;
-  };
-
-  const MULTI_OPERATION_QUERY = `
-    query ReadPeople {
-      findManyPeople {
-        id
-      }
+const MULTI_OPERATION_QUERY = `
+  query ReadPeople {
+    findManyPeople {
+      id
     }
-    mutation WipePeople {
-      deleteManyPeople {
-        id
-      }
+  }
+  mutation WipePeople {
+    deleteManyPeople {
+      id
     }
-  `;
+  }
+`;
 
-  it('should capture the root resolvers of a single operation', () => {
-    expect(capture('mutation { createOneCompany { id } }')).toEqual([
-      'createOneCompany',
-    ]);
-  });
+describe('extractTopLevelFieldsSafely', () => {
+  const names = (query: string, operationName?: string): string[] =>
+    extractTopLevelFieldsSafely(parse(query), operationName).map(
+      (field) => field.name.value,
+    );
 
-  it('should capture every root resolver of the operation', () => {
+  it('should extract every root field of a single operation', () => {
     expect(
-      capture('mutation { createOneCompany { id } deleteManyPeople { id } }'),
+      names('mutation { createOneCompany { id } deleteManyPeople { id } }'),
     ).toEqual(['createOneCompany', 'deleteManyPeople']);
   });
 
-  it('should capture only the operation selected by operationName', () => {
-    expect(capture(MULTI_OPERATION_QUERY, 'ReadPeople')).toEqual([
+  it('should extract only the operation selected by operationName', () => {
+    expect(names(MULTI_OPERATION_QUERY, 'ReadPeople')).toEqual([
       'findManyPeople',
     ]);
-    expect(capture(MULTI_OPERATION_QUERY, 'WipePeople')).toEqual([
+    expect(names(MULTI_OPERATION_QUERY, 'WipePeople')).toEqual([
       'deleteManyPeople',
     ]);
   });
 
   it('should not depend on the client supplied operation name', () => {
-    expect(
-      capture('mutation LooksHarmless { deleteManyPeople { id } }'),
-    ).toEqual(['deleteManyPeople']);
+    expect(names('mutation LooksHarmless { deleteManyPeople { id } }')).toEqual(
+      ['deleteManyPeople'],
+    );
   });
 
-  it('should capture nothing when operationName selects no operation', () => {
-    expect(capture(MULTI_OPERATION_QUERY, 'Unknown')).toEqual([]);
-    expect(capture(MULTI_OPERATION_QUERY)).toEqual([]);
+  it('should extract nothing when operationName selects no operation', () => {
+    expect(names(MULTI_OPERATION_QUERY, 'Unknown')).toEqual([]);
   });
 
-  it('should capture root resolvers reached through a fragment spread', () => {
+  it('should not throw when the document is ambiguous', () => {
+    expect(names(MULTI_OPERATION_QUERY)).toEqual([]);
+  });
+
+  it('should follow a fragment spread at the root', () => {
     expect(
-      capture(`
+      names(`
         query ReadPeople {
           ...RootFields
         }
@@ -77,6 +67,34 @@ describe('captureExecutedRootResolvers', () => {
         }
       `),
     ).toEqual(['findManyPeople']);
+  });
+});
+
+describe('captureExecutedRootResolvers', () => {
+  const capture = (
+    query: string,
+    operationName?: string,
+  ): string[] | undefined => {
+    const request = {} as Request;
+
+    captureExecutedRootResolvers({
+      request,
+      topLevelFields: extractTopLevelFieldsSafely(parse(query), operationName),
+    });
+
+    return request.executedRootResolvers;
+  };
+
+  it('should record the executed root resolvers', () => {
+    expect(capture('mutation { createOneCompany { id } }')).toEqual([
+      'createOneCompany',
+    ]);
+  });
+
+  it('should record only the operation selected by operationName', () => {
+    expect(capture(MULTI_OPERATION_QUERY, 'WipePeople')).toEqual([
+      'deleteManyPeople',
+    ]);
   });
 
   it('should skip introspection fields', () => {
@@ -90,8 +108,10 @@ describe('captureExecutedRootResolvers', () => {
 
     captureExecutedRootResolvers({
       request,
-      document: parse('mutation { deleteManyPeople { id } }'),
-      operationName: undefined,
+      topLevelFields: extractTopLevelFieldsSafely(
+        parse('mutation { deleteManyPeople { id } }'),
+        undefined,
+      ),
     });
 
     expect(request.executedRootResolvers).toEqual(['companies']);
@@ -101,8 +121,7 @@ describe('captureExecutedRootResolvers', () => {
     expect(() =>
       captureExecutedRootResolvers({
         request: undefined,
-        document: parse('query { findManyPeople { id } }'),
-        operationName: undefined,
+        topLevelFields: [],
       }),
     ).not.toThrow();
   });

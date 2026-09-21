@@ -6,7 +6,10 @@ import { type Plugin } from 'graphql-yoga';
 import { isNull } from '@sniptt/guards';
 import { type DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
 import { classifyTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/classify-top-level-fields.util';
-import { captureExecutedRootResolvers } from 'src/engine/api/graphql/utils/capture-executed-root-resolvers.util';
+import {
+  captureExecutedRootResolvers,
+  extractTopLevelFieldsSafely,
+} from 'src/engine/api/graphql/utils/capture-executed-root-resolvers.util';
 import { findOperationDefinition } from 'src/engine/api/graphql/direct-execution/utils/find-operation-definition.util';
 import { isSubscriptionOperation } from 'src/engine/api/graphql/direct-execution/utils/is-subscription-operation.util';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -38,7 +41,12 @@ export function useDirectExecution(
         return;
       }
 
-      captureExecutedRootResolvers({ request: req, document, operationName });
+      const topLevelFields = extractTopLevelFieldsSafely(
+        document,
+        operationName,
+      );
+
+      captureExecutedRootResolvers({ request: req, topLevelFields });
 
       const operationDefinition = findOperationDefinition(
         document,
@@ -62,7 +70,7 @@ export function useDirectExecution(
       }
 
       const { hasIntrospectionFields, hasWorkspaceFields, hasCoreFields } =
-        classifyTopLevelFields(document, operationName, workspaceResolverNames);
+        classifyTopLevelFields(topLevelFields, workspaceResolverNames);
 
       if (hasCoreFields && hasWorkspaceFields) {
         const error = new UserInputError(

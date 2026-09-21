@@ -11,7 +11,10 @@ import { type Request } from 'express';
 import { type Plugin } from 'graphql-yoga';
 import { isDefined } from 'twenty-shared/utils';
 
-import { captureExecutedRootResolvers } from 'src/engine/api/graphql/utils/capture-executed-root-resolvers.util';
+import {
+  captureExecutedRootResolvers,
+  extractTopLevelFieldsSafely,
+} from 'src/engine/api/graphql/utils/capture-executed-root-resolvers.util';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 type FragmentMetadata = {
@@ -51,8 +54,10 @@ export const useValidateGraphqlQueryComplexity = ({
       // asking too much is exactly the one worth attributing afterwards.
       captureExecutedRootResolvers({
         request: extractRequest(context),
-        document,
-        operationName: extractOperationName(context),
+        topLevelFields: extractTopLevelFieldsSafely(
+          document,
+          extractOperationName(context),
+        ),
       });
 
       const analysis = analyzeDocument(
