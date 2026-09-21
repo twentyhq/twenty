@@ -62,41 +62,38 @@ The tooltip defaults to the bottom, with a 1000ms delay and a 5px offset. Use `t
 
 Your application supplies `loading` and `disabled`. Both prevent activation. Loading preserves the square dimensions and accessible label. The button does not track a selected value or set loading automatically after a click. Native keyboard focus follows the browser; use `aria-pressed` when your application owns a toggle state.
 
-## Surface, shadow, and blur
+## Elevated actions
 
-Control the surface and elevation independently:
+Use `elevated` to add a shadow and backdrop blur. The default neutral outline button also gains a bordered surface with matching icon and interaction colors. Other variants and semantic colors keep their existing palette.
 
-- `variant="surface"` supplies the background, border, icon, and interaction colors for a bordered surface.
-- `elevated` adds a shadow and blurs the content behind the button where its background is transparent.
-
-`elevated` defaults to `false` and works with every variant. These props do not change positioning, visibility, or size. The size remains `md` (32px) by default; set `size="sm"` for a 24px control.
+`elevated` defaults to `false`. It does not change positioning, visibility, or size. The size remains `md` (32px) by default; set `size="sm"` for a 24px control.
 
 ```tsx
 import { IconButton } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 
 export const AddWidgetButton = () => (
-  <IconButton variant="surface" elevated size="sm" aria-label="Add widget">
+  <IconButton elevated size="sm" aria-label="Add widget">
     <IconPlus />
   </IconButton>
 );
 ```
 
 <StoryEmbed
-  title="Icon action with surface, shadow, and blur"
-  storyId="ui-components-iconbutton--surface"
+  title="Elevated icon action"
+  storyId="ui-components-iconbutton--elevated"
   height={180}
 />
 
-Omit `elevated` to keep the surface without shadow or blur. Use `elevated` on its own to retain the default outline colors. All combinations support the same tooltips, loading states, links, and keyboard interactions.
+Omit `elevated` or set it to `false` to restore the standard appearance. Elevated buttons support the same tooltips, loading states, links, and keyboard interactions.
 
 <StoryEmbed
-  title="Surface icon action with tooltip"
-  storyId="ui-components-iconbutton--surface-tooltip"
+  title="Elevated icon action with tooltip"
+  storyId="ui-components-iconbutton--elevated-tooltip"
   height={180}
 />
 
-Replace existing `FloatingIconButton` controls with `IconButton variant="surface" elevated`. Pass the icon as children, use native `aria-label`, and map `small` to `sm` and `medium` to `md`. Supply `size="sm"` when the previous control used its default size. Native focus and `aria-pressed` replace synthetic focus and active flags.
+Replace existing `FloatingIconButton` controls with `IconButton elevated`. Pass the icon as children, use native `aria-label`, and map `small` to `sm` and `medium` to `md`. Supply `size="sm"` when the previous control used its default size. Native focus and `aria-pressed` replace synthetic focus and active flags.
 
 `FloatingIconButtonGroup` is removed. Compose ButtonGroup with IconButton for grouped actions, and keep any shared floating surface in your layout.
 

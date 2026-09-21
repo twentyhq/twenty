@@ -26,42 +26,42 @@ type Story = StoryObj<typeof IconButton>;
 
 export const Default: Story = { decorators: [ComponentDecorator] };
 
-export const Surface: Story = {
+export const Elevated: Story = {
   ...Default,
-  args: { variant: 'surface', elevated: true, size: 'sm' },
+  args: { elevated: true, size: 'sm' },
 };
 
-export const SurfaceTooltip: Story = {
-  ...Surface,
-  args: { ...Surface.args, tooltip: 'Search records', tooltipDelay: 0 },
+export const ElevatedTooltip: Story = {
+  ...Elevated,
+  args: { ...Elevated.args, tooltip: 'Search records', tooltipDelay: 0 },
 };
 
-export const AppearanceEffects: Story = {
+export const ElevatedAppearance: Story = {
   ...Default,
   args: { onClick: fn() },
   render: (args) => (
     <>
       <IconButton {...args} aria-label="Regular action" />
       <IconButton {...args} elevated aria-label="Elevated action" />
-      <IconButton {...args} variant="surface" aria-label="Surface only" />
+      <IconButton {...args} elevated size="sm" aria-label="Compact action" />
       <IconButton
         {...args}
-        variant="surface"
-        elevated
-        aria-label="Combined effects"
-      />
-      <IconButton
-        {...args}
-        variant="surface"
-        elevated
-        size="sm"
-        aria-label="Compact action"
-      />
-      <IconButton
-        {...args}
-        variant="surface"
         href="#search"
-        aria-label="Surface link without elevation"
+        aria-label="Link without elevation"
+      />
+      <IconButton {...args} variant="solid" aria-label="Solid action" />
+      <IconButton
+        {...args}
+        variant="solid"
+        elevated
+        aria-label="Elevated solid action"
+      />
+      <IconButton {...args} color="accent" aria-label="Accent action" />
+      <IconButton
+        {...args}
+        color="accent"
+        elevated
+        aria-label="Elevated accent action"
       />
     </>
   ),
@@ -69,45 +69,24 @@ export const AppearanceEffects: Story = {
     const canvas = within(canvasElement);
     const regular = canvas.getByRole('button', { name: 'Regular action' });
     const elevated = canvas.getByRole('button', { name: 'Elevated action' });
-    const surface = canvas.getByRole('button', { name: 'Surface only' });
-    const combined = canvas.getByRole('button', { name: 'Combined effects' });
-    const compact = canvas.getByRole('button', {
-      name: 'Compact action',
-    });
-    const link = canvas.getByRole('link', {
-      name: 'Surface link without elevation',
-    });
+    const compact = canvas.getByRole('button', { name: 'Compact action' });
+    const link = canvas.getByRole('link', { name: 'Link without elevation' });
 
     await expect(regular.getBoundingClientRect().width).toBe(32);
     await expect(getComputedStyle(regular).boxShadow).toBe('none');
     await expect(getComputedStyle(regular).backdropFilter).toBe('none');
-    await expect(getComputedStyle(elevated).boxShadow).not.toBe('none');
-    await expect(getComputedStyle(elevated).backdropFilter).not.toBe('none');
-    await expect(getComputedStyle(surface).boxShadow).toBe('none');
-    await expect(getComputedStyle(surface).backdropFilter).toBe('none');
-    await expect(getComputedStyle(surface).backgroundColor).not.toBe(
+    await expect(getComputedStyle(elevated).backgroundColor).not.toBe(
       getComputedStyle(regular).backgroundColor,
     );
-
-    for (const property of [
-      'backgroundColor',
-      'borderColor',
-      'color',
-    ] as const) {
-      await expect(getComputedStyle(elevated)[property]).toBe(
-        getComputedStyle(regular)[property],
-      );
-      await expect(getComputedStyle(combined)[property]).toBe(
-        getComputedStyle(surface)[property],
-      );
-    }
-
-    await expect(combined.getBoundingClientRect().width).toBe(32);
-    await expect(combined).toHaveAttribute('type', 'button');
+    await expect(getComputedStyle(elevated).borderColor).not.toBe(
+      getComputedStyle(regular).borderColor,
+    );
+    await expect(elevated.getBoundingClientRect().width).toBe(32);
+    await expect(elevated).toHaveAttribute('type', 'button');
     await expect(compact.getBoundingClientRect().width).toBe(24);
     await expect(compact.getBoundingClientRect().height).toBe(24);
 
-    for (const button of [combined, compact]) {
+    for (const button of [elevated, compact]) {
       await expect(getComputedStyle(button).boxShadow).not.toBe('none');
       await expect(getComputedStyle(button).backdropFilter).not.toBe('none');
       await expect(
@@ -115,7 +94,29 @@ export const AppearanceEffects: Story = {
       ).toBe(16);
     }
 
-    combined.focus();
+    for (const [regularName, elevatedName] of [
+      ['Solid action', 'Elevated solid action'],
+      ['Accent action', 'Elevated accent action'],
+    ]) {
+      const regularButton = canvas.getByRole('button', { name: regularName });
+      const elevatedButton = canvas.getByRole('button', { name: elevatedName });
+
+      for (const property of [
+        'backgroundColor',
+        'borderColor',
+        'color',
+      ] as const) {
+        await expect(getComputedStyle(elevatedButton)[property]).toBe(
+          getComputedStyle(regularButton)[property],
+        );
+      }
+      await expect(getComputedStyle(elevatedButton).boxShadow).not.toBe('none');
+      await expect(getComputedStyle(elevatedButton).backdropFilter).not.toBe(
+        'none',
+      );
+    }
+
+    elevated.focus();
     await userEvent.keyboard('{Enter} ');
     await expect(args.onClick).toHaveBeenCalledTimes(2);
     await expect(link).toHaveAttribute('href', '#search');
@@ -124,8 +125,8 @@ export const AppearanceEffects: Story = {
   },
 };
 
-export const AppearanceEffectsDark: Story = {
-  ...AppearanceEffects,
+export const ElevatedAppearanceDark: Story = {
+  ...ElevatedAppearance,
   globals: { colorScheme: 'dark' },
 };
 
@@ -318,7 +319,7 @@ export const Catalog: CatalogStory<Story, typeof IconButton> = {
         },
         {
           name: 'variant',
-          values: ['solid', 'outline', 'soft', 'ghost', 'surface'],
+          values: ['solid', 'outline', 'soft', 'ghost'],
           props: (variant: ButtonVariant) => ({ variant }),
         },
       ],

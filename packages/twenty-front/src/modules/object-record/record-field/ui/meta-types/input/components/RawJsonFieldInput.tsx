@@ -181,7 +181,6 @@ export const RawJsonFieldInput = () => {
           {showEditingButton && (
             <StyledSwitchModeButtonContainer>
               <IconButton
-                variant="surface"
                 elevated
                 size="sm"
                 onClick={handleStartEditing}

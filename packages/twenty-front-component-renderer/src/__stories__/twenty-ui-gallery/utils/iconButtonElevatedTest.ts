@@ -2,7 +2,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
-export const iconButtonEffectsTest: TwentyUiGalleryPlayFunction = async ({
+export const iconButtonElevatedTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {
   const canvas = within(canvasElement);
@@ -48,21 +48,14 @@ export const iconButtonEffectsTest: TwentyUiGalleryPlayFunction = async ({
   await expect(getComputedStyle(link).backdropFilter).toBe('none');
 
   const elevated = canvas.getByRole('button', { name: 'Elevated action' });
-  const surface = canvas.getByRole('button', { name: 'Surface only' });
 
   await expect(getComputedStyle(elevated).boxShadow).not.toBe('none');
   await expect(getComputedStyle(elevated).backdropFilter).not.toBe('none');
-  await expect(getComputedStyle(surface).boxShadow).toBe('none');
-  await expect(getComputedStyle(surface).backdropFilter).toBe('none');
 
   await userEvent.unhover(elevated);
   await waitFor(() => {
-    for (const property of [
-      'backgroundColor',
-      'borderColor',
-      'color',
-    ] as const) {
-      expect(getComputedStyle(elevated)[property]).toBe(
+    for (const property of ['backgroundColor', 'borderColor'] as const) {
+      expect(getComputedStyle(elevated)[property]).not.toBe(
         getComputedStyle(link)[property],
       );
     }

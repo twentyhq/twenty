@@ -1,7 +1,7 @@
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
-import { iconButtonEffectsTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonEffectsTest';
+import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { type Meta } from '@storybook/react-vite';
@@ -463,14 +463,14 @@ export const ChipControlsPreact: Story = createGalleryStory({
   play: chipControlsTest,
 });
 
-export const IconButtonEffectsReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-icon-button-effects',
+export const IconButtonElevatedReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-icon-button-elevated',
   runtime: 'react',
-  play: iconButtonEffectsTest,
+  play: iconButtonElevatedTest,
 });
 
-export const IconButtonEffectsPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-icon-button-effects',
+export const IconButtonElevatedPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-icon-button-elevated',
   runtime: 'preact',
-  play: iconButtonEffectsTest,
+  play: iconButtonElevatedTest,
 });

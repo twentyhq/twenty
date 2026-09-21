@@ -66,7 +66,7 @@ export const CreateRecord = () => (
 );
 ```
 
-Choose `solid`, `outline`, `soft`, `ghost`, or `surface` independently of the `neutral`, `accent`, `danger`, or `success` color. The `surface` variant uses a bordered background with transparent interaction colors. Sizes are `sm` and `md`; the defaults are `outline`, `neutral`, and `md`. `fullWidth` fills the available width. `startIcon` and `endIcon` accept elements and are decorative. `elevated` adds a shadow and blurs content behind transparent parts of the background. It defaults to `false` and works with every variant. `hotkeys` displays keyboard hints on larger screens; bind the shortcuts in your application.
+Choose `solid`, `outline`, `soft`, or `ghost` independently of the `neutral`, `accent`, `danger`, or `success` color. Sizes are `sm` and `md`; the defaults are `outline`, `neutral`, and `md`. `fullWidth` fills the available width. `startIcon` and `endIcon` accept elements and are decorative. `elevated` adds a shadow and backdrop blur. Neutral outline buttons also gain a bordered surface with matching text and interaction colors. Other variants and semantic colors keep their existing palette. It defaults to `false` and does not change size or position. `hotkeys` displays keyboard hints on larger screens; bind the shortcuts in your application.
 
 `disabled`, `loading`, and `soon` prevent activation. Loading keeps the label accessible and preserves the button's width while showing a spinner. Customize the upcoming-feature label with `soonLabel`.
 

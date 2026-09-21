@@ -8,7 +8,7 @@ export const BUTTON_PROP_DESCRIPTIONS = {
   loading:
     'Shows a loading indicator and disables activation while preserving the button width.',
   elevated:
-    'Adds a shadow and backdrop blur without changing the button colors.',
+    'Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors.',
   startIcon: 'Decorative content displayed before the label.',
   endIcon: 'Decorative content displayed after the label.',
   hotkeys: 'Keyboard shortcut hints displayed on non-mobile screens.',

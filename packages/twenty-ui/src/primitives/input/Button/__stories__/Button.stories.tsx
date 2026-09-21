@@ -193,7 +193,7 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
         },
         {
           name: 'variant',
-          values: ['solid', 'outline', 'soft', 'ghost', 'surface'],
+          values: ['solid', 'outline', 'soft', 'ghost'],
           props: (variant: ButtonVariant) => ({ variant }),
         },
       ],

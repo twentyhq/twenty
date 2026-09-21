@@ -119,9 +119,9 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'IconButton (surface effects)',
+    name: 'IconButton (elevated)',
     node: (
-      <IconButton variant="surface" elevated size="sm" aria-label="Search">
+      <IconButton elevated size="sm" aria-label="Search">
         <IconSearch />
       </IconButton>
     ),

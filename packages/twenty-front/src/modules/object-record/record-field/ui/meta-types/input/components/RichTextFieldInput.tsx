@@ -133,7 +133,6 @@ export const RichTextFieldInput = () => {
       </StyledEditorScroll>
       <StyledCollapseButton>
         <IconButton
-          variant="surface"
           elevated
           size="sm"
           onClick={() => {

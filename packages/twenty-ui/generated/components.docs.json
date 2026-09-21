@@ -37,7 +37,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Adds a shadow and backdrop blur without changing the button colors."
+        "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
       },
       {
         "name": "emphasis",
@@ -118,7 +118,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\" | \"surface\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
         "description": "Visual treatment of the button surface."
@@ -163,7 +163,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Adds a shadow and backdrop blur without changing the button colors."
+        "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
       },
       {
         "name": "focusableWhenDisabled",
@@ -237,7 +237,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\" | \"surface\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
         "description": "Visual treatment of the button surface."
@@ -268,7 +268,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "true",
-        "description": "Adds a shadow and backdrop blur without changing the button colors."
+        "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
       },
       {
         "name": "endIcon",
@@ -349,7 +349,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\" | \"surface\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "solid",
         "description": "Visual treatment of the button surface."
@@ -380,7 +380,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Adds a shadow and backdrop blur without changing the button colors."
+        "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
       },
       {
         "name": "emphasis",
@@ -468,7 +468,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\" | \"surface\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
         "description": "Visual treatment of the button surface."
@@ -499,7 +499,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Adds a shadow and backdrop blur without changing the button colors."
+        "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
       },
       {
         "name": "endIcon",
@@ -580,7 +580,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\" | \"surface\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "outline",
         "description": "Visual treatment of the button surface."
@@ -629,7 +629,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\" | \"surface\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
         "description": "Shared surface treatment that overrides the variant of buttons in the group."
