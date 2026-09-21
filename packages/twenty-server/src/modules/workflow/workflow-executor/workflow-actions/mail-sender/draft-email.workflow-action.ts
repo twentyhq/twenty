@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EmailOperation } from 'twenty-shared/types';
+import { ConnectedAccountOperation } from 'twenty-shared/types';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
@@ -45,8 +45,8 @@ export class DraftEmailWorkflowAction extends EmailWorkflowActionBase {
     return this.draftEmailTool;
   }
 
-  protected getMode(): EmailOperation {
-    return EmailOperation.DRAFT;
+  protected getMode(): ConnectedAccountOperation {
+    return ConnectedAccountOperation.DRAFT_EMAIL;
   }
 
   protected assertStep(step: WorkflowAction): void {

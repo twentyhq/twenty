@@ -71,8 +71,11 @@ export class UserWorkspaceService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async findById(id: string): Promise<UserWorkspaceEntity | null> {
-    return this.userWorkspaceRepository.findOne({ where: { id } });
+  async findById(
+    id: string,
+    relations?: string[],
+  ): Promise<UserWorkspaceEntity | null> {
+    return this.userWorkspaceRepository.findOne({ where: { id }, relations });
   }
 
   async isWorkspaceCreator({

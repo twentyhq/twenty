@@ -13,11 +13,11 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { CreateCalendarEventOutputDTO } from 'src/modules/calendar/calendar-event-creation-manager/dtos/create-calendar-event-output.dto';
 import { CreateCalendarEventInput } from 'src/modules/calendar/calendar-event-creation-manager/dtos/create-calendar-event.input';
 import { CalendarEventComposerService } from 'src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service';
@@ -28,13 +28,13 @@ import { CreateCalendarEventService } from 'src/modules/calendar/calendar-event-
 @UseFilters(AuthGraphqlApiExceptionFilter)
 @UseGuards(
   WorkspaceAuthGuard,
+  UserAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL),
 )
 export class CreateCalendarEventResolver {
   private readonly logger = new Logger(CreateCalendarEventResolver.name);
 
   constructor(
-    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly calendarEventComposerService: CalendarEventComposerService,
     private readonly createCalendarEventService: CreateCalendarEventService,
   ) {}
@@ -43,15 +43,8 @@ export class CreateCalendarEventResolver {
   async createCalendarEvent(
     @Args('input') input: CreateCalendarEventInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<CreateCalendarEventOutputDTO> {
     try {
-      await this.connectedAccountMetadataService.verifyUsableByCaller({
-        id: input.connectedAccountId,
-        userWorkspaceId,
-        workspaceId: workspace.id,
-      });
-
       const result =
         await this.calendarEventComposerService.composeCalendarEvent(
           {
@@ -67,7 +60,7 @@ export class CreateCalendarEventResolver {
             sendInvitations: input.sendInvitations,
             addConferencing: input.addConferencing,
           },
-          workspace.id,
+          getWorkspaceAuthContext(),
         );
 
       if (!result.success) {

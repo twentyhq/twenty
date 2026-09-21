@@ -1,4 +1,3 @@
-import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { useResolveDefaultEmailRecipient } from '@/activities/emails/hooks/useResolveDefaultEmailRecipient';
 import { isCalendarCreationEnabledForAccount } from '@/activities/calendar/utils/isCalendarCreationEnabledForAccount';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -6,8 +5,8 @@ import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnected
 import { useOpenComposeCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenComposeCalendarEventInSidePanel';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { isNonEmptyString } from '@sniptt/guards';
-import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { ConnectedAccountOperation, SettingsPath } from 'twenty-shared/types';
+import { getMissingScopesForOperation, isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useComposeCalendarEventForTargetRecord = (
@@ -32,7 +31,11 @@ export const useComposeCalendarEventForTargetRecord = (
 
   const preferredAccount =
     calendarAccounts.find(
-      (account) => getMissingCreateCalendarEventScopes(account).length === 0,
+      (account) =>
+        getMissingScopesForOperation({
+          connectedAccount: account,
+          operation: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
+        }).length === 0,
     ) ?? calendarAccounts[0];
 
   const openComposer = () => {

@@ -74,8 +74,9 @@ jest.mock(
   }),
 );
 
-jest.mock('@/accounts/utils/hasMissingCreateCalendarEventScopes', () => ({
-  getMissingCreateCalendarEventScopes: () => [],
+jest.mock('twenty-shared/utils', () => ({
+  ...jest.requireActual('twenty-shared/utils'),
+  getMissingScopesForOperation: () => [],
 }));
 
 describe('useCalendarEventComposer', () => {

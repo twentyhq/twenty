@@ -1,11 +1,11 @@
-import { EmailOperation } from 'twenty-shared/types';
+import { ConnectedAccountOperation } from 'twenty-shared/types';
 import { useQuery } from '@apollo/client/react';
 import { useContext } from 'react';
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
-  canConnectedAccountPerformEmailOperation,
+  canConnectedAccountPerformOperation,
   getSendableEmailHandles,
   isDefined,
 } from 'twenty-shared/utils';
@@ -126,9 +126,9 @@ export const EmailComposerFields = ({
 
   const sendableAccounts = (accountsData?.myConnectedAccounts ?? []).filter(
     (connectedAccount) =>
-      canConnectedAccountPerformEmailOperation({
+      canConnectedAccountPerformOperation({
         connectedAccount,
-        operation: EmailOperation.SEND,
+        operation: ConnectedAccountOperation.SEND_EMAIL,
       }),
   );
 

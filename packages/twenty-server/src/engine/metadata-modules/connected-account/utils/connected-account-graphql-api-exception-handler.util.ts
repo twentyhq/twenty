@@ -19,6 +19,8 @@ export const connectedAccountGraphqlApiExceptionHandler = (error: Error) => {
         throw new UserInputError(error);
       case ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION:
         throw new ForbiddenError(error);
+      case ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_CANNOT_PERFORM_OPERATION:
+        throw new UserInputError(error);
       default: {
         return assertUnreachable(error.code);
       }

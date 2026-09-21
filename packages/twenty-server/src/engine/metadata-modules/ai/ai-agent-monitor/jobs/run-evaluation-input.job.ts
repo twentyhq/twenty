@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -60,6 +61,7 @@ export class RunEvaluationInputJob {
       baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
       workspaceId: data.workspaceId,
       userWorkspaceId: null,
+      authContext: buildSystemAuthContext(data.workspaceId),
     });
 
     await this.agentChatService.addMessage({

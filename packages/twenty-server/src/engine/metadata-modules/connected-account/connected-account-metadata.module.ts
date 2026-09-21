@@ -6,6 +6,7 @@ import { AppOAuthRefreshModule } from 'src/engine/core-modules/application/conne
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { ConnectedAccountAccessService } from 'src/engine/metadata-modules/connected-account/connected-account-access.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/connected-account/interceptors/connected-account-graphql-api-exception.interceptor';
@@ -34,12 +35,14 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [
+    ConnectedAccountAccessService,
     ConnectedAccountMetadataService,
     ConnectedAccountOwnershipTransferService,
     ConnectedAccountResolver,
     ConnectedAccountGraphqlApiExceptionInterceptor,
   ],
   exports: [
+    ConnectedAccountAccessService,
     ConnectedAccountMetadataService,
     ConnectedAccountOwnershipTransferService,
   ],

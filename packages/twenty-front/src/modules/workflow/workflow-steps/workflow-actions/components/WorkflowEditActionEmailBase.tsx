@@ -31,11 +31,11 @@ import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import {
   ConnectedAccountProvider,
-  EmailOperation,
+  ConnectedAccountOperation,
   SettingsPath,
 } from 'twenty-shared/types';
 import {
-  canConnectedAccountPerformEmailOperation,
+  canConnectedAccountPerformOperation,
   getSendableEmailHandles,
   isDefined,
 } from 'twenty-shared/utils';
@@ -172,9 +172,9 @@ export const WorkflowEditActionEmailBase = ({
 
   const sendableAccounts = [
     ...myAccounts.filter((connectedAccount) =>
-      canConnectedAccountPerformEmailOperation({
+      canConnectedAccountPerformOperation({
         connectedAccount,
-        operation: EmailOperation.SEND,
+        operation: ConnectedAccountOperation.SEND_EMAIL,
       }),
     ),
     ...(isDefined(otherAccount) ? [otherAccount] : []),

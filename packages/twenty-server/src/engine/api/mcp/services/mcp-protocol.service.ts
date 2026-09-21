@@ -30,6 +30,8 @@ import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
@@ -291,11 +293,13 @@ export class McpProtocolService {
       userId,
       userWorkspaceId,
       apiKey,
+      application,
     }: {
       workspace: FlatWorkspace;
       userId?: string;
       userWorkspaceId?: string;
       apiKey: FlatApiKey | undefined;
+      application?: FlatApplication;
     },
     sseWriter?: (data: Record<string, unknown>) => void,
   ): Promise<Record<string, unknown> | null> {
@@ -345,7 +349,9 @@ export class McpProtocolService {
 
       const authContext = isDefined(apiKey)
         ? buildApiKeyAuthContext({ workspace, apiKey })
-        : undefined;
+        : isDefined(application)
+          ? buildApplicationAuthContext({ workspace, application })
+          : undefined;
 
       const toolSet = await this.buildMcpToolSet(workspace, roleId, {
         authContext,

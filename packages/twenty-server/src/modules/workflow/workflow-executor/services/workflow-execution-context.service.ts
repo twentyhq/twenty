@@ -28,6 +28,23 @@ export class WorkflowExecutionContextService {
     private readonly roleService: RoleService,
   ) {}
 
+  async getWorkflowApplicationAuthContext(runInfo: {
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<WorkspaceAuthContext> {
+    const workflowRun = await this.workflowRunService.getWorkflowRunOrFail({
+      workflowRunId: runInfo.workflowRunId,
+      workspaceId: runInfo.workspaceId,
+    });
+
+    const { authContext } = await this.buildApplicationExecutionContext(
+      workflowRun,
+      runInfo.workspaceId,
+    );
+
+    return authContext;
+  }
+
   async getExecutionContext(runInfo: {
     workflowRunId: string;
     workspaceId: string;

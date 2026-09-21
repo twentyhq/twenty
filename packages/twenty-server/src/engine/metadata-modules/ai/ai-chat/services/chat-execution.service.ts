@@ -151,7 +151,7 @@ export class ChatExecutionService {
     abortSignal,
     conversationSizeTokens,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
-    const { actorContext, roleId, userId, userContext } =
+    const { actorContext, authContext, roleId, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspace.id,
@@ -163,6 +163,7 @@ export class ChatExecutionService {
       workspaceId: workspace.id,
       roleId,
       actorContext,
+      authContext,
       userId,
       userWorkspaceId,
       threadId,

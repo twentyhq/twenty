@@ -1,4 +1,3 @@
-import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { isCalendarCreationEnabledForAccount } from '@/activities/calendar/utils/isCalendarCreationEnabledForAccount';
 import { FormBooleanFieldSwitchInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldSwitchInput';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
@@ -18,8 +17,8 @@ import { useCalendarEventForm } from '@/workflow/workflow-steps/workflow-actions
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
-import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { ConnectedAccountOperation, SettingsPath } from 'twenty-shared/types';
+import { getMissingScopesForOperation, isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/primitives/feedback';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { IconPlus } from 'twenty-ui/icon';
@@ -70,7 +69,10 @@ export const WorkflowEditActionCreateCalendarEvent = ({
 
   const missingScopes =
     isDefined(selectedAccount) &&
-    getMissingCreateCalendarEventScopes(selectedAccount).length > 0
+    getMissingScopesForOperation({
+      connectedAccount: selectedAccount,
+      operation: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
+    }).length > 0
       ? {
           provider: selectedAccount.provider,
           loginHint: selectedAccount.handle,

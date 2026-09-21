@@ -1,4 +1,3 @@
-import { EmailOperation } from 'twenty-shared/types';
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -9,7 +8,8 @@ import { filterConnectedAccountsByHandle } from 'src/engine/core-modules/tool/to
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { getToolAuthContextOrThrow } from 'src/engine/core-modules/tool/utils/get-tool-auth-context-or-throw.util';
+import { ConnectedAccountAccessService } from 'src/engine/metadata-modules/connected-account/connected-account-access.service';
 
 @Injectable()
 export class FindConnectedAccountsTool implements Tool {
@@ -18,18 +18,17 @@ export class FindConnectedAccountsTool implements Tool {
   inputSchema = FindConnectedAccountsToolInputZodSchema;
 
   constructor(
-    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    private readonly connectedAccountAccessService: ConnectedAccountAccessService,
   ) {}
 
   async execute(
     { handle }: FindConnectedAccountsToolInput,
-    { workspaceId, userWorkspaceId }: ToolExecutionContext,
+    context: ToolExecutionContext,
   ): Promise<ToolOutput> {
     const mailboxAccounts =
-      await this.connectedAccountMetadataService.findMailboxesUsableByCaller({
-        workspaceId,
-        userWorkspaceId,
-        operation: EmailOperation.SEND,
+      await this.connectedAccountAccessService.listVisibleConnectedAccounts({
+        authContext: getToolAuthContextOrThrow(context),
+        capability: 'SEND_EMAIL',
       });
 
     const matchingAccounts = isNonEmptyString(handle)

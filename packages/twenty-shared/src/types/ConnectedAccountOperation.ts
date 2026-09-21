@@ -1,0 +1,5 @@
+export enum ConnectedAccountOperation {
+  SEND_EMAIL = 'SEND_EMAIL',
+  DRAFT_EMAIL = 'DRAFT_EMAIL',
+  CREATE_CALENDAR_EVENT = 'CREATE_CALENDAR_EVENT',
+}

@@ -30,6 +30,12 @@ export { evaluateConditionalAvailabilityExpression } from './command-menu-items/
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { canConnectedAccountCreateCalendarEvent } from './connected-account/canConnectedAccountCreateCalendarEvent';
+export { canConnectedAccountDraftEmail } from './connected-account/canConnectedAccountDraftEmail';
+export { canConnectedAccountPerformOperation } from './connected-account/canConnectedAccountPerformOperation';
+export { canConnectedAccountSendEmail } from './connected-account/canConnectedAccountSendEmail';
+export { getMissingCalendarEventScopes } from './connected-account/getMissingCalendarEventScopes';
+export { getMissingScopesForOperation } from './connected-account/getMissingScopesForOperation';
 export { formatValueForCSV } from './csv/formatValueForCSV';
 export { sanitizeValueForCSVExport } from './csv/sanitizeValueForCSVExport';
 export {
@@ -52,9 +58,7 @@ export { turnJSDateToPlainDate } from './date/turnJSDateToPlainDate';
 export { turnPlainDateIntoUserTimeZoneInstantString } from './date/turnPlainDateIntoUserTimeZoneInstantString';
 export { turnPlainDateToShiftedDateInSystemTimeZone } from './date/turnPlainDateToShiftedDateInSystemTimeZone';
 export { deepMerge } from './deepMerge';
-export { canConnectedAccountPerformEmailOperation } from './email/canConnectedAccountPerformEmailOperation';
 export { formatEmailAddress } from './email/formatEmailAddress';
-export { getEmailProvidersForOperation } from './email/getEmailProvidersForOperation';
 export { getSendableEmailHandles } from './email/getSendableEmailHandles';
 export type { ParsedEmailAddress } from './email/parseEmailAddressList';
 export { parseEmailAddressList } from './email/parseEmailAddressList';

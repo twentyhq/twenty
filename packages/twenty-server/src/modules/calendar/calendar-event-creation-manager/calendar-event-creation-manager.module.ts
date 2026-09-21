@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { CalDavCreateEventService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/caldav/services/caldav-create-event.service';
 import { GoogleCalendarCreateEventService } from 'src/modules/calendar/calendar-event-creation-manager/drivers/google-calendar/services/google-calendar-create-event.service';
@@ -15,6 +16,7 @@ import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-
 @Module({
   imports: [
     TypeOrmModule.forFeature([ConnectedAccountEntity, CalendarChannelEntity]),
+    ConnectedAccountMetadataModule,
     OAuth2ClientManagerModule,
     CalendarEventImportManagerModule,
     CalDavDriverModule,

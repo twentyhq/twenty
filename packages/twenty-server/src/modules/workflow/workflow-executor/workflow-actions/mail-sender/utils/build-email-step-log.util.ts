@@ -1,4 +1,4 @@
-import { type EmailOperation } from 'twenty-shared/types';
+import { type ConnectedAccountOperation } from 'twenty-shared/types';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -87,7 +87,7 @@ export const buildEmailStepLog = ({
   output,
   durationMs,
 }: {
-  mode: EmailOperation;
+  mode: ConnectedAccountOperation;
   input: WorkflowSendEmailActionInput;
   output: ToolOutput;
   durationMs: number;

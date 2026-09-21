@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -32,6 +34,7 @@ export type UserContext = {
 
 export type AgentActorContext = {
   actorContext: ActorMetadata;
+  authContext: WorkspaceAuthContext;
   roleId: string;
   userId: string;
   userWorkspaceId: string;
@@ -53,8 +56,10 @@ export class AgentActorContextService {
   ): Promise<AgentActorContext> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const userWorkspace =
-      await this.userWorkspaceService.findById(userWorkspaceId);
+    const userWorkspace = await this.userWorkspaceService.findById(
+      userWorkspaceId,
+      ['workspace', 'user'],
+    );
 
     if (!userWorkspace) {
       throw new AiException(
@@ -66,9 +71,10 @@ export class AgentActorContextService {
     const workspaceMember =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository('workspaceMember', {
-            shouldBypassPermissionChecks: true,
-          });
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
 
         return workspaceMemberRepository.findOne({
           where: {
@@ -112,6 +118,13 @@ export class AgentActorContextService {
 
     return {
       actorContext,
+      authContext: buildUserAuthContext({
+        workspace: fromWorkspaceEntityToFlat(userWorkspace.workspace),
+        userWorkspaceId,
+        user: fromUserEntityToFlat(userWorkspace.user),
+        workspaceMemberId: workspaceMember.id,
+        workspaceMember,
+      }),
       roleId,
       userId: userWorkspace.userId,
       userWorkspaceId,

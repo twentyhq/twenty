@@ -5,6 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { CreateCalendarEventToolInputZodSchema } from 'src/engine/core-modules/tool/tools/calendar-tool/calendar-tool.schema';
 import { type CreateCalendarEventToolInput } from 'src/engine/core-modules/tool/tools/calendar-tool/types/create-calendar-event-tool-input.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
+import { getToolAuthContextOrThrow } from 'src/engine/core-modules/tool/utils/get-tool-auth-context-or-throw.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { CalendarEventCreationException } from 'src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception';
@@ -33,7 +34,7 @@ export class CreateCalendarEventTool implements Tool {
       const result =
         await this.calendarEventComposerService.composeCalendarEvent(
           parameters,
-          context.workspaceId,
+          getToolAuthContextOrThrow(context),
         );
 
       if (!result.success) {
