@@ -10,10 +10,12 @@ const StyledEditor = styled.div<{
   box-sizing: border-box;
   display: flex;
   height: 100%;
+  min-width: 0;
   padding-right: ${({ multiline }) =>
     multiline ? themeCssVariables.spacing[8] : '0'};
   width: 100%;
   .editor-content {
+    min-width: 0;
     width: 100%;
   }
 
@@ -44,10 +46,12 @@ const StyledEditor = styled.div<{
       float: left;
       height: 0;
       pointer-events: none;
+      white-space: ${({ multiline }) => (multiline ? 'normal' : 'nowrap')};
     }
 
     p {
       margin: 0;
+      min-width: ${({ multiline }) => (multiline ? '0' : 'auto')};
     }
 
     .variable-tag {
