@@ -45,6 +45,7 @@ type ApplicationVariable {
   label: String!
   isSecret: Boolean!
   isDeprecated: Boolean!
+  isRequired: Boolean!
   type: String!
   options: JSON
 }
@@ -851,6 +852,7 @@ type Workspace {
   aiAgentModelTier: AiModelTier!
   isAutoModelSelectionEnabled: Boolean!
   aiModelIdByTier: JSON!
+  aiEvaluationModelId: String
   aiAdditionalInstructions: String
   workspaceCustomApplication: Application
   featureFlags: [FeatureFlag!]
@@ -1594,6 +1596,7 @@ enum UsageResourceType {
   LOGIC_FUNCTION
   EMAIL
   WEBHOOK
+  RECORD
 }
 
 enum UsageOperationType {
@@ -1608,6 +1611,7 @@ enum UsageOperationType {
   API_REQUEST
   WEBHOOK_CALL
   STORAGE_FILE
+  RECORD_WRITE
   SUBSCRIPTION
 }
 
@@ -1987,7 +1991,6 @@ type FeatureFlag {
 
 enum FeatureFlagKey {
   IS_ASYNC_CSV_EXPORT_ENABLED
-  IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_JSON_FILTER_ENABLED
@@ -2124,6 +2127,21 @@ enum ModelFamily {
   GROK
 }
 
+type ClientAiEvaluationModelConfig {
+  modelId: String!
+  label: String!
+  description: String
+  providerLabel: String
+  isAvailable: Boolean!
+  supportedQuestionTypes: [String!]!
+  maxCriteriaPerQuestion: Float
+  maxScoreLevels: Float
+  medianLatencyMs: Float
+  inputCostPerMillionTokens: Float
+  outputCostPerMillionTokens: Float
+  isDeprecated: Boolean
+}
+
 type ClientAiModelTierConfig {
   tier: AiModelTier!
   modelId: String!
@@ -2190,6 +2208,7 @@ type ClientConfig {
   authProviders: AuthProviders!
   billing: Billing!
   aiModels: [ClientAiModelConfig!]!
+  aiEvaluationModels: [ClientAiEvaluationModelConfig!]!
   aiModelTiers: [ClientAiModelTierConfig!]!
   signInPrefilled: Boolean!
   isMultiWorkspaceEnabled: Boolean!
@@ -4003,6 +4022,7 @@ type Mutation {
   createOneObject(input: CreateOneObjectInput!): Object!
   deleteOneObject(input: DeleteOneObjectInput!): Object!
   updateOneObject(input: UpdateOneObjectInput!): Object!
+  updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
   createOneIndex(input: CreateOneIndexInput!): Index!
   deleteOneIndex(input: DeleteOneIndexInput!): Index!
   deleteOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
@@ -4899,6 +4919,7 @@ input UpdateWorkspaceInput {
   aiAgentModelTier: AiModelTier
   isAutoModelSelectionEnabled: Boolean
   aiModelIdByTier: JSON
+  aiEvaluationModelId: String
   aiAdditionalInstructions: String
   editableProfileFields: [String!]
   isInternalMessagesImportEnabled: Boolean

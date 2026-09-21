@@ -1,3 +1,4 @@
+import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -8,21 +9,17 @@ import { AiWorkspaceStatsService } from 'src/engine/metadata-modules/ai/ai-works
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
+    AgentHistoryModule,
     TypeOrmModule.forFeature([AgentChatThreadEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     PermissionsModule,
     ToolProviderModule,
     UserRoleModule,
   ],
-  providers: [
-    AiWorkspaceStatsResolver,
-    AiWorkspaceStatsService,
-    provideWorkspaceScopedRepository(AgentChatThreadEntity),
-  ],
+  providers: [AiWorkspaceStatsResolver, AiWorkspaceStatsService],
   exports: [AiWorkspaceStatsService],
 })
 export class AiWorkspaceStatsModule {}

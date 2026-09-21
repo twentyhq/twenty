@@ -18,6 +18,10 @@ export default defineApplication({
   termsUrl: 'https://www.twenty.com/terms',
   emailSupport: 'contact@twenty.com',
   issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+  galleryImages: [
+    'public/gallery/granola-cover-image-1.png',
+    'public/gallery/granola-cover-image-2.png',
+  ],
   applicationVariables: {
     [GRANOLA_API_KEY_ENV_VAR_NAME]: {
       universalIdentifier: GRANOLA_API_KEY_VARIABLE_UNIVERSAL_IDENTIFIER,

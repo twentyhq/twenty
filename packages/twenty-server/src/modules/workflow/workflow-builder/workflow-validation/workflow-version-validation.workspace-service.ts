@@ -16,6 +16,7 @@ import {
 } from 'src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception';
 import { getWorkflowRecordStepMetadataIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-workflow-record-step-metadata-issues.util';
 import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
+import { validateWorkflowClassifyStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-classify-step.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -70,11 +71,17 @@ export class WorkflowVersionValidationWorkspaceService {
   }): Promise<WorkflowValidationIssue[]> {
     const structureResult = validateWorkflowStructure({ trigger, steps });
 
-    const stepTypeIssues = steps.flatMap((step) =>
-      step.type === WorkflowActionType.AI_AGENT
-        ? validateWorkflowAiAgentStep(step)
-        : [],
-    );
+    const stepTypeIssues = steps.flatMap((step) => {
+      if (step.type === WorkflowActionType.AI_AGENT) {
+        return validateWorkflowAiAgentStep(step);
+      }
+
+      if (step.type === WorkflowActionType.CLASSIFY) {
+        return validateWorkflowClassifyStep(step);
+      }
+
+      return [];
+    });
 
     const metadataIssues = await this.validateWorkspaceMetadata({
       workspaceId,

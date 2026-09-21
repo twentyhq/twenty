@@ -1,7 +1,8 @@
 // The subset of the server's UsageOperationType an app may bill under, so a
 // manifest can name a category without importing server code. API_REQUEST,
-// STORAGE_FILE and SUBSCRIPTION are left out on purpose: the platform raises
-// all three itself, and API_REQUEST rows feed the workspace's API rate limit.
+// STORAGE_FILE, RECORD_WRITE and SUBSCRIPTION are left out on purpose: the
+// platform raises all four itself, and API_REQUEST rows feed the workspace's
+// API rate limit.
 export const USAGE_OPERATION_TYPES = [
   'AI_CHAT_TOKEN',
   'AI_WORKFLOW_TOKEN',

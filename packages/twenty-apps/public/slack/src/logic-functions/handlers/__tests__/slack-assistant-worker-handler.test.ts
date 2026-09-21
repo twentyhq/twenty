@@ -130,6 +130,7 @@ const REQUESTER_IDENTITY = {
 
 const SLACK_CONTEXT = {
   conversationMessages: [],
+  sharedFiles: [],
   requesterName: 'Ada',
   requesterIdentity: undefined,
   requestMessage: undefined,
