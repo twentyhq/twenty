@@ -72,7 +72,7 @@ export class ApplicationHealthCheckService {
       })
       .catch((error) => {
         this.logger.warn(
-          `Health check ${healthCheckLogicFunctionId} threw: ${error instanceof Error ? error.message : String(error)}`,
+          `Health check ${healthCheckLogicFunctionId} for workspace ${workspaceId} threw: ${error instanceof Error ? error.message : String(error)}`,
         );
 
         return null;
@@ -89,7 +89,7 @@ export class ApplicationHealthCheckService {
 
     if (!isApplicationHealthCheckResult(data)) {
       this.logger.warn(
-        `Health check ${healthCheckLogicFunctionId} returned an unreadable result`,
+        `Health check ${healthCheckLogicFunctionId} for workspace ${workspaceId} returned an unreadable result`,
       );
 
       return UNKNOWN_HEALTH;
