@@ -69,16 +69,9 @@ export class WorkflowTriggerJob {
       );
 
     if (!isDefined(coreWorkflowVersion)) {
-      const diagnostic = await this.describeMissingCoreVersion({
-        workspaceId,
-        workflowId,
-        workspaceWorkflowVersionId,
-      });
-
       this.captureDroppedDispatch(
-        `Core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}. ${diagnostic}`,
+        `Core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}`,
       );
-
       return;
     }
 
@@ -155,42 +148,6 @@ export class WorkflowTriggerJob {
       workspaceWorkflowVersionId: data.workspaceWorkflowVersionId ?? undefined,
       payload: data.payload,
     });
-  }
-
-  private async describeMissingCoreVersion({
-    workspaceId,
-    workflowId,
-    workspaceWorkflowVersionId,
-  }: {
-    workspaceId: string;
-    workflowId: string;
-    workspaceWorkflowVersionId?: string;
-  }): Promise<string> {
-    const coreWorkflow =
-      await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
-        workspaceId,
-        workflowId,
-      );
-
-    if (!isDefined(coreWorkflow)) {
-      return 'Core workflow not found either';
-    }
-
-    const publishedCoreWorkflowVersionId =
-      coreWorkflow.lastPublishedCoreWorkflowVersionId;
-
-    if (!isDefined(publishedCoreWorkflowVersionId)) {
-      return `Core workflow ${coreWorkflow.id} publishes no version, dispatched workspace version ${workspaceWorkflowVersionId ?? 'none'}`;
-    }
-
-    const publishedVersionExists = isDefined(
-      await this.workflowVersionCoreSyncService.findCoreVersionById(
-        workspaceId,
-        publishedCoreWorkflowVersionId,
-      ),
-    );
-
-    return `Core workflow ${coreWorkflow.id} publishes ${publishedCoreWorkflowVersionId} which ${publishedVersionExists ? 'exists' : 'is missing too'}, dispatched workspace version ${workspaceWorkflowVersionId ?? 'none'}`;
   }
 
   private captureDroppedDispatch(message: string): void {
