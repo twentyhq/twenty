@@ -455,6 +455,8 @@ export class CoreWorkflowMutationWorkspaceService {
       createdByUserWorkspaceId: userWorkspaceId ?? null,
       lastPublishedVersionId: null,
       lastPublishedCoreWorkflowVersionId: null,
+      createdAt,
+      updatedAt: createdAt,
     };
 
     const { workspaceCustomFlatApplication } =
@@ -473,8 +475,6 @@ export class CoreWorkflowMutationWorkspaceService {
               ...coreWorkflow,
               applicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,
-              createdAt,
-              updatedAt: createdAt,
             },
           ],
           flatEntityToDelete: [],
@@ -542,8 +542,8 @@ export class CoreWorkflowMutationWorkspaceService {
       workspaceWorkflowId,
       visibility: coreWorkflow.visibility,
       canChangeVisibility: true,
-      createdAt: coreWorkflow.createdAt.toISOString(),
-      updatedAt: coreWorkflow.updatedAt.toISOString(),
+      createdAt: coreWorkflow.createdAt,
+      updatedAt: coreWorkflow.updatedAt,
     };
   }
 
