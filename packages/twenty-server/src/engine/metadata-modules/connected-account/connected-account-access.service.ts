@@ -12,6 +12,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
   ConnectedAccountException,
   ConnectedAccountExceptionCode,
@@ -21,12 +22,18 @@ import { buildUnsupportedOperationMessage } from 'src/engine/metadata-modules/co
 import { canActorActAsConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/can-actor-act-as-connected-account.util';
 import { canActorSeeConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/can-actor-see-connected-account.util';
 import { selectDefaultConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/select-default-connected-account.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class ConnectedAccountAccessService {
   constructor(
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async listVisibleConnectedAccounts({
@@ -63,24 +70,53 @@ export class ConnectedAccountAccessService {
     );
   }
 
-  async findFirstOwnedConnectedAccount({
+  private async findWorkspaceMemberConnectedAccountId({
     workspaceId,
-    userWorkspaceId,
+    senderId,
     operation,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    senderId: string;
     operation: ConnectedAccountOperation;
-  }): Promise<ConnectedAccountEntity | undefined> {
+  }): Promise<string> {
+    const workspaceMember =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager
+            .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
+              shouldBypassPermissionChecks: true,
+            })
+            .findOne({ where: { id: senderId } }),
+        buildSystemAuthContext(workspaceId),
+      );
+
+    if (!isDefined(workspaceMember)) {
+      return senderId;
+    }
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId: workspaceMember.userId, workspaceId },
+    });
+
     const connectedAccounts = await this.findConnectedAccountsForOperation({
       workspaceId,
       operation,
     });
 
-    return connectedAccounts.find(
+    const ownedConnectedAccount = connectedAccounts.find(
       (connectedAccount) =>
-        connectedAccount.userWorkspaceId === userWorkspaceId,
+        isDefined(userWorkspace) &&
+        connectedAccount.userWorkspaceId === userWorkspace.id,
     );
+
+    if (!isDefined(ownedConnectedAccount)) {
+      throw new ConnectedAccountException(
+        `Workspace member '${senderId}' has no connected account that can perform ${operation}`,
+        ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_CANNOT_PERFORM_OPERATION,
+      );
+    }
+
+    return ownedConnectedAccount.id;
   }
 
   private async findConnectedAccountsForOperation({
@@ -183,7 +219,13 @@ export class ConnectedAccountAccessService {
     if (isNonEmptyString(connectedAccountId)) {
       return this.getActableConnectedAccountOrThrow({
         authContext,
-        connectedAccountId,
+        connectedAccountId: isValidUuid(connectedAccountId)
+          ? await this.findWorkspaceMemberConnectedAccountId({
+              workspaceId: authContext.workspace.id,
+              senderId: connectedAccountId,
+              operation,
+            })
+          : connectedAccountId,
         operation,
         relations,
       });

@@ -1,11 +1,8 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
@@ -21,8 +18,6 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     UserRoleModule,
     UserWorkspaceModule,
     WorkflowRunModule,
-    ConnectedAccountMetadataModule,
-    TypeOrmModule.forFeature([UserWorkspaceEntity]),
   ],
   providers: [
     WorkflowExecutionContextService,

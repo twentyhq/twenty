@@ -8,6 +8,7 @@ const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 const PHIL_USER_WORKSPACE_ID = '20202020-7169-42cf-bc47-1cfef15264b1';
 const PHIL_CONNECTED_ACCOUNT_ID = '20202020-cafc-4323-908d-e5b42ad69fdf';
+const PHIL_WORKSPACE_MEMBER_ID = '20202020-1553-45c6-a028-5a9064cce07f';
 
 const JONY_CONNECTED_ACCOUNT_ID = '20202020-0cc8-4d60-a3a4-803245698908';
 
@@ -277,6 +278,62 @@ describe('EmailComposerService connected account resolution (integration)', () =
         ).rejects.toThrow('No connected account found for id');
       } finally {
         await setArchivedAt(JONY_CONNECTED_ACCOUNT_ID, archivedAt);
+      }
+    });
+  });
+
+  describe('when the caller names a workspace member', () => {
+    it("sends from the member's own mailbox in a workflow run", async () => {
+      const result = await service.composeEmail({
+        parameters: {
+          ...baseParams,
+          connectedAccountId: PHIL_WORKSPACE_MEMBER_ID,
+        },
+        context: buildAutomationContext(),
+        operation: ConnectedAccountOperation.SEND_EMAIL,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.success && result.data.connectedAccount.id).toBe(
+        PHIL_CONNECTED_ACCOUNT_ID,
+      );
+    });
+
+    it("refuses a teammate's private mailbox named through the member", async () => {
+      await expect(
+        service.composeEmail({
+          parameters: {
+            ...baseParams,
+            connectedAccountId: PHIL_WORKSPACE_MEMBER_ID,
+          },
+          context: buildUserContext(UNKNOWN_USER_WORKSPACE_ID),
+          operation: ConnectedAccountOperation.SEND_EMAIL,
+        }),
+      ).rejects.toThrow('is not usable by this caller');
+    });
+
+    it('throws when the member has no mailbox that can send', async () => {
+      const { archivedAt } = await readConnectedAccountState(
+        PHIL_CONNECTED_ACCOUNT_ID,
+      );
+
+      await setArchivedAt(PHIL_CONNECTED_ACCOUNT_ID, new Date().toISOString());
+
+      try {
+        await expect(
+          service.composeEmail({
+            parameters: {
+              ...baseParams,
+              connectedAccountId: PHIL_WORKSPACE_MEMBER_ID,
+            },
+            context: buildAutomationContext(),
+            operation: ConnectedAccountOperation.SEND_EMAIL,
+          }),
+        ).rejects.toThrow(
+          `Workspace member '${PHIL_WORKSPACE_MEMBER_ID}' has no connected account that can perform SEND_EMAIL`,
+        );
+      } finally {
+        await setArchivedAt(PHIL_CONNECTED_ACCOUNT_ID, archivedAt);
       }
     });
   });
