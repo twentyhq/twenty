@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { DataSource, In, Not } from 'typeorm';
 import { type PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
@@ -10,6 +10,10 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { DEFERRED_SCHEMA_OPERATION_MAX_ATTEMPTS } from 'src/engine/metadata-modules/deferred-schema-operation/constants/deferred-schema-operation-max-attempts.constant';
 import { DeferredSchemaOperationEntity } from 'src/engine/metadata-modules/deferred-schema-operation/deferred-schema-operation.entity';
+import {
+  DeferredSchemaOperationException,
+  DeferredSchemaOperationExceptionCode,
+} from 'src/engine/metadata-modules/deferred-schema-operation/deferred-schema-operation.exception';
 import {
   PROCESS_DEFERRED_SCHEMA_OPERATIONS_JOB_NAME,
   type ProcessDeferredSchemaOperationsJobData,
@@ -84,8 +88,9 @@ export class DeferredSchemaOperationService {
     }
 
     if (failedOperationIds.length > 0) {
-      throw new Error(
+      throw new DeferredSchemaOperationException(
         `${failedOperationIds.length} deferred schema operation(s) failed for workspace ${workspaceId}: ${failedOperationIds.join(', ')}`,
+        DeferredSchemaOperationExceptionCode.OPERATIONS_FAILED,
       );
     }
   }
@@ -101,7 +106,9 @@ export class DeferredSchemaOperationService {
       await this.deferredSchemaOperationRepository.findOne(workspaceId, {
         where: {
           status: 'PENDING',
-          id: Not(In(attemptedOperationIds)),
+          ...(isNonEmptyArray(attemptedOperationIds) && {
+            id: Not(In(attemptedOperationIds)),
+          }),
         },
         order: { createdAt: 'ASC' },
       });
@@ -202,7 +209,10 @@ export class DeferredSchemaOperationService {
       : undefined;
 
     if (!isDefined(flatIndexMetadata) || !isDefined(flatObjectMetadata)) {
-      return;
+      throw new DeferredSchemaOperationException(
+        `Index metadata ${operation.indexMetadataId} or its object is missing from the workspace cache`,
+        DeferredSchemaOperationExceptionCode.INDEX_METADATA_NOT_FOUND_IN_CACHE,
+      );
     }
 
     const queryRunner = schemaOperationDataSource.createQueryRunner();

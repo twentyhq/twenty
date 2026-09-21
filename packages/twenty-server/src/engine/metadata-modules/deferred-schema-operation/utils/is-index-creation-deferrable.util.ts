@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { RelationType } from 'twenty-shared/types';
 
@@ -20,7 +21,10 @@ export const isIndexCreationDeferrable = ({
   indexedFlatFieldMetadatas: FlatFieldMetadata[];
   createdObjectMetadataUniversalIdentifiers: ReadonlySet<string>;
 }): boolean => {
-  if (flatIndexMetadata.isUnique || flatIndexMetadata.indexWhereClause) {
+  if (
+    flatIndexMetadata.isUnique ||
+    isNonEmptyString(flatIndexMetadata.indexWhereClause)
+  ) {
     return false;
   }
 

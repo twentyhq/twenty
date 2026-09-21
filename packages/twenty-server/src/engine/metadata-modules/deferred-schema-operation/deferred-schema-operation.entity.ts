@@ -24,10 +24,10 @@ export class DeferredSchemaOperationEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar' })
   type: DeferredSchemaOperationType;
 
-  @Column({ type: 'text', default: 'PENDING' })
+  @Column({ type: 'varchar', default: 'PENDING' })
   status: DeferredSchemaOperationStatus;
 
   @Index('IDX_DEFERRED_SCHEMA_OPERATION_INDEX_METADATA_ID_UNIQUE', {
