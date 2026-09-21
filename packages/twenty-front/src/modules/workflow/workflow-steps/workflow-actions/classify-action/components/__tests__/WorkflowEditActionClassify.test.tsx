@@ -185,7 +185,7 @@ describe('WorkflowEditActionClassify', () => {
     const user = userEvent.setup();
     const onUpdate = renderEditor();
     expect(
-      screen.getByText(/Choose a language model to continue/),
+      screen.getByText(/Choose a model to continue/),
     ).toBeVisible();
     await user.selectOptions(
       screen.getByRole('combobox', { name: /Model/ }),
@@ -208,7 +208,7 @@ describe('WorkflowEditActionClassify', () => {
     const user = userEvent.setup();
     renderEditor(true);
     expect(
-      screen.getByRole('option', { name: 'Jev (workspace setting)' }),
+      screen.getByRole('option', { name: 'Jev (default)' }),
     ).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Add question' }));
     expect(

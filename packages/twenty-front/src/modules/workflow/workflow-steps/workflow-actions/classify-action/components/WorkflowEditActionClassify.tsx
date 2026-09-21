@@ -146,12 +146,11 @@ export const WorkflowEditActionClassify = ({
     {
       label:
         (isDefined(defaultEvaluationModel)
-          ? t`${defaultEvaluationModel.label} (workspace setting)`
+          ? t`${defaultEvaluationModel.label} (default)`
           : undefined) ??
         (action.settings.input.allowLanguageModelFallback === false
           ? t`Choose a model`
           : (defaultLanguageModel?.label ?? t`Language model`)),
-      contextualText: t`Follows classification settings`,
       value: '',
     },
     ...aiEvaluationModels
@@ -163,8 +162,8 @@ export const WorkflowEditActionClassify = ({
         value: model.modelId,
         disabled: !model.isAvailable,
         contextualText: model.isAvailable
-          ? t`Use this model`
-          : t`Provider is not configured`,
+          ? undefined
+          : t`Not configured`,
       })),
     ...aiModels
       .filter(
@@ -173,7 +172,6 @@ export const WorkflowEditActionClassify = ({
       .map((model) => ({
         label: model.label,
         value: model.modelId,
-        contextualText: t`Language model · No probabilities`,
       })),
   ];
 
@@ -193,15 +191,15 @@ export const WorkflowEditActionClassify = ({
     effectiveEvaluationModel.supportedQuestionTypes.includes('boolean');
   const getModelDescription = () => {
     if (needsModelChoice)
-      return t`Choose a language model to continue without probabilities, or configure an evaluation model in Settings → AI → Classification.`;
+      return t`Choose a model to continue.`;
     if (isDefined(effectiveEvaluationModel)) {
       return effectiveEvaluationModel.isAvailable
-        ? t`Returns probabilities for each answer.`
-        : t`This provider is not configured. Configure it in Settings → AI before running this step.`;
+        ? undefined
+        : t`Configure this provider in Settings → AI.`;
     }
     if (!isDefined(effectiveLanguageModel))
-      return t`Model unavailable. Choose another model or configure a provider in Settings → AI.`;
-    return t`Categories and scores are available. Probabilities are not available. Usage is billed at this language model's rates.`;
+      return t`Model unavailable. Choose another model.`;
+    return t`Probabilities unavailable with this model.`;
   };
 
   const questionTypeOptions = AI_EVALUATION_QUESTION_TYPES.map(
@@ -281,7 +279,7 @@ export const WorkflowEditActionClassify = ({
             readonly
               ? undefined
               : {
-                  text: t`Configure classification models`,
+                  text: t`Model settings`,
                   onClick: () =>
                     navigate(
                       getSettingsPath(
