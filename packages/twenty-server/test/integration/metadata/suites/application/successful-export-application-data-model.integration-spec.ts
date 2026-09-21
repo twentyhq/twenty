@@ -1384,6 +1384,21 @@ describe('Application export - data model', () => {
 
       expect(dryRun.errors).toBeUndefined();
       expect(dryRun.data.syncApplication.actions).toEqual([]);
+
+      const deletionInferringDryRun = await syncApplication({
+        manifest: data.exportApplication.manifest,
+        dryRun: true,
+        expectToFail: false,
+      });
+
+      expect(deletionInferringDryRun.errors).toBeUndefined();
+      expect(
+        deletionInferringDryRun.data.syncApplication.actions.filter(
+          ({ metadataName }) =>
+            metadataName === 'rowLevelPermissionPredicate' ||
+            metadataName === 'rowLevelPermissionPredicateGroup',
+        ),
+      ).toEqual([]);
     } finally {
       await upsertRowLevelPermissionPredicates({
         expectToFail: false,

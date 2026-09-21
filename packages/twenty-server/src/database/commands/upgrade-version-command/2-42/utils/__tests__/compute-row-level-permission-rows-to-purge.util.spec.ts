@@ -119,14 +119,18 @@ describe('computeRowLevelPermissionRowsToPurge', () => {
     });
   });
 
-  it('should terminate and purge every group of a cycle reachable from a soft-deleted group', () => {
+  it('should terminate and purge every group of a cycle that contains a soft-deleted group', () => {
     expect(
       purge({
         groups: [
-          { id: 'deleted-root', deletedAt: DELETED_AT },
+          {
+            id: 'cyclic-deleted',
+            parentRowLevelPermissionPredicateGroupId: 'cyclic-second',
+            deletedAt: DELETED_AT,
+          },
           {
             id: 'cyclic-first',
-            parentRowLevelPermissionPredicateGroupId: 'deleted-root',
+            parentRowLevelPermissionPredicateGroupId: 'cyclic-deleted',
           },
           {
             id: 'cyclic-second',
@@ -134,7 +138,7 @@ describe('computeRowLevelPermissionRowsToPurge', () => {
           },
         ],
       }).groupIds,
-    ).toEqual(['cyclic-first', 'cyclic-second', 'deleted-root']);
+    ).toEqual(['cyclic-deleted', 'cyclic-first', 'cyclic-second']);
   });
 
   it('should leave a cycle untouched when no group in it is soft-deleted', () => {

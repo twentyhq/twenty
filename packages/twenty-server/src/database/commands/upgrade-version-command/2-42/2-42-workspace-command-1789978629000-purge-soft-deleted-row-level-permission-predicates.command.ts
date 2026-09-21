@@ -7,6 +7,7 @@ import { computeRowLevelPermissionRowsToPurge } from 'src/database/commands/upgr
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @RegisteredWorkspaceCommand('2.42.0', 1789978629000)
@@ -67,8 +68,7 @@ export class PurgeSoftDeletedRowLevelPermissionPredicatesCommand extends Provisi
       );
 
     // Purged rows can belong to any application; this is only the runner's existence gate and the
-    // builder's dependency-slice anchor, not a scope filter. One bundled build also keeps children
-    // deleted before their group, which one build per application would not guarantee.
+    // builder's dependency-slice anchor, not a scope filter.
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -92,12 +92,9 @@ export class PurgeSoftDeletedRowLevelPermissionPredicatesCommand extends Provisi
       );
 
     if (validateAndBuildResult.status === 'fail') {
-      throw new Error(
-        `Failed to purge soft-deleted row-level permission predicates for workspace ${workspaceId}: ${JSON.stringify(
-          validateAndBuildResult,
-          null,
-          2,
-        )}`,
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        `Failed to purge soft-deleted row-level permission predicates for workspace ${workspaceId}`,
       );
     }
 
