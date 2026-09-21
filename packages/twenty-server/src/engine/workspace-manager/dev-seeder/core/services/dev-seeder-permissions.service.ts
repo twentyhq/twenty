@@ -16,6 +16,7 @@ import { RolePermissionFlagService } from 'src/engine/metadata-modules/role-perm
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -192,12 +193,12 @@ export class DevSeederPermissionsService {
       where: { label: MEMBER_ROLE_LABEL },
     });
 
-    const memberRole =
-      existingMemberRole ??
-      (await this.roleService.createMemberRole({
-        workspaceId,
-        ownerFlatApplication: workspaceCustomFlatApplication,
-      }));
+    const memberRole = existingMemberRole
+      ? fromRoleEntityToRoleDto(existingMemberRole)
+      : await this.roleService.createMemberRole({
+          workspaceId,
+          ownerFlatApplication: workspaceCustomFlatApplication,
+        });
 
     await this.coreDataSource
       .getRepository(WorkspaceEntity)

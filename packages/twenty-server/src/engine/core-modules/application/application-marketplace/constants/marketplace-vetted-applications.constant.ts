@@ -35,10 +35,12 @@ export const MARKETPLACE_VETTED_APPLICATIONS: {
   // future upstream insert cannot silently re-associate an identifier.
   {
     universalIdentifier: 'e003bed6-c04d-41b7-b09e-22bdd3397888', // Zalo OA
+    sourcePackage: '@crove/zalo-oa',
     position: 6,
   },
   {
     universalIdentifier: 'a1b2c3d4-e5f6-4a1b-8c2d-3e4f5a6b7c8d', // Commerce
+    sourcePackage: '@crove/commerce',
     position: 7,
   },
 ];
