@@ -38,10 +38,8 @@ export class ClassifyWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { modelId, state, questions } = resolveInput(
-      step.settings.input,
-      context,
-    ) as WorkflowClassifyActionInput;
+    const { modelId, state, questions, allowLanguageModelFallback } =
+      resolveInput(step.settings.input, context) as WorkflowClassifyActionInput;
 
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
@@ -59,6 +57,7 @@ export class ClassifyWorkflowAction implements WorkflowAction {
       workspaceId: runInfo.workspaceId,
       userWorkspaceId,
       modelId,
+      allowLanguageModelFallback,
       state,
       questions: buildEvaluationQuestions(questions),
     });

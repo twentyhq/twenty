@@ -58,6 +58,7 @@ export const workflowClassifyQuestionSchema = z.object({
 export const workflowClassifyActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
+      allowLanguageModelFallback: z.boolean().optional(),
       modelId: z
         .string()
         .optional()

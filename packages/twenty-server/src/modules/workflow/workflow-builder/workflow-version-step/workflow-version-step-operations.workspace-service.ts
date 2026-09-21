@@ -591,6 +591,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               ...BASE_STEP_DEFINITION,
               input: {
                 state: '',
+                allowLanguageModelFallback: false,
                 questions: [
                   {
                     id: v4(),

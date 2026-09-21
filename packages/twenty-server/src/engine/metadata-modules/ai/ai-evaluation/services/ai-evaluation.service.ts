@@ -42,6 +42,7 @@ export class AiEvaluationService {
     workspaceId,
     userWorkspaceId,
     modelId: requestedModelId,
+    allowLanguageModelFallback,
     state,
     questions,
     abortSignal,
@@ -51,6 +52,7 @@ export class AiEvaluationService {
     const { modelId, runnerKind } = await this.resolveModel({
       requestedModelId,
       workspaceId,
+      allowLanguageModelFallback,
     });
 
     await this.aiBillingService.assertAiExecutionAllowed({
@@ -87,8 +89,10 @@ export class AiEvaluationService {
   private async resolveModel({
     requestedModelId,
     workspaceId,
+    allowLanguageModelFallback,
   }: {
     requestedModelId?: string;
+    allowLanguageModelFallback?: boolean;
     workspaceId: string;
   }): Promise<ResolvedEvaluationModel> {
     const pinnedModelId = isNonEmptyString(requestedModelId)
@@ -97,6 +101,7 @@ export class AiEvaluationService {
 
     return resolveEvaluationModel({
       requestedModelId: pinnedModelId,
+      allowLanguageModelFallback,
       isRequestedRunnableEvaluationModel:
         isDefined(pinnedModelId) &&
         isDefined(

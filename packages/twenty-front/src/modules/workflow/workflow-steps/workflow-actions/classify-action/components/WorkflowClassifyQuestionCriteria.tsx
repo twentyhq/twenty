@@ -2,9 +2,12 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { type WorkflowClassifyCriterion } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
-import { IconPlus, IconTrash } from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
+import { IconTrash } from 'twenty-ui/icon';
 import { Button, InputLabel } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -14,96 +17,150 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledCriterionRow = styled.div<{ readonly: boolean }>`
-  display: grid;
+const StyledRow = styled.div`
+  align-items: flex-start;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: ${({ readonly }) =>
-    readonly
-      ? 'minmax(0, 1fr) minmax(0, 2fr)'
-      : `minmax(0, 1fr) minmax(0, 2fr) ${themeCssVariables.spacing[8]}`};
+`;
+
+const StyledFields = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
 `;
 
 type WorkflowClassifyQuestionCriteriaProps = {
   criteria: WorkflowClassifyCriterion[];
-  // Options are an unordered menu; levels are a ladder whose position is the
-  // score. Same editor, different meaning, so the labels differ.
   variant: 'options' | 'levels';
   readonly: boolean;
+  maxCriteria?: number;
   onChange: (criteria: WorkflowClassifyCriterion[]) => void;
 };
+
+const createEmptyCriterion = (): WorkflowClassifyCriterion => ({
+  id: v4(),
+  name: '',
+  description: '',
+});
+
+const hasContent = (criterion: WorkflowClassifyCriterion) =>
+  isNonEmptyString(criterion.name.trim()) ||
+  isNonEmptyString(criterion.description?.trim());
 
 export const WorkflowClassifyQuestionCriteria = ({
   criteria,
   variant,
   readonly,
+  maxCriteria,
   onChange,
 }: WorkflowClassifyQuestionCriteriaProps) => {
   const { t } = useLingui();
+  const [rows, setRows] = useState(() => [...criteria, createEmptyCriterion()]);
+  const [expandedDescriptions, setExpandedDescriptions] = useState<string[]>(
+    [],
+  );
 
-  const handleCriterionChange = (
-    index: number,
-    field: 'name' | 'description',
-    value: string,
+  const updateRows = (updatedRows: WorkflowClassifyCriterion[]) => {
+    const filledRows = updatedRows.filter(hasContent);
+    const trailingRow = updatedRows[updatedRows.length - 1];
+    setRows([
+      ...updatedRows,
+      ...(isDefined(trailingRow) && !hasContent(trailingRow)
+        ? []
+        : [createEmptyCriterion()]),
+    ]);
+    onChange(filledRows);
+  };
+
+  const changeCriterion = (
+    id: string,
+    update: Partial<WorkflowClassifyCriterion>,
   ) => {
-    onChange(
-      criteria.map((criterion, criterionIndex) =>
-        criterionIndex === index ? { ...criterion, [field]: value } : criterion,
-      ),
+    updateRows(
+      rows.map((row) => (row.id === id ? { ...row, ...update } : row)),
     );
   };
 
-  const handleRemoveCriterion = (criterionId: string) => {
-    onChange(criteria.filter((criterion) => criterion.id !== criterionId));
-  };
-
-  const handleAddCriterion = () => {
-    onChange([...criteria, { id: v4(), name: '', description: '' }]);
-  };
+  const visibleRows = readonly
+    ? criteria
+    : rows.filter(
+        (row, index) => hasContent(row) || index < (maxCriteria ?? Infinity),
+      );
 
   return (
     <StyledContainer>
       <InputLabel>
         {variant === 'options' ? t`Options` : t`Levels, lowest first`}
       </InputLabel>
-
-      {criteria.map((criterion, index) => (
-        <StyledCriterionRow
-          // Keyed by id, not position: these inputs read defaultValue once, so
-          // removing a row would leave every later one showing the value it
-          // held before the shift.
-          key={criterion.id}
-          readonly={readonly}
-        >
-          <FormTextFieldInput
-            defaultValue={criterion.name}
-            placeholder={variant === 'options' ? t`Name` : t`Label`}
-            readonly={readonly}
-            onChange={(value) => handleCriterionChange(index, 'name', value)}
-          />
-          <FormTextFieldInput
-            defaultValue={criterion.description ?? ''}
-            placeholder={t`What this means`}
-            readonly={readonly}
-            VariablePicker={WorkflowVariablePicker}
-            onChange={(value) =>
-              handleCriterionChange(index, 'description', value)
-            }
-          />
-          {!readonly && (
-            <Button
-              startIcon={<IconTrash />}
-              aria-label={t`Delete`}
-              onClick={() => handleRemoveCriterion(criterion.id)}
+      {visibleRows.map((criterion, index) => (
+        <StyledRow key={criterion.id}>
+          {variant === 'levels' && <InputLabel>{index}</InputLabel>}
+          <StyledFields>
+            <FormTextFieldInput
+              defaultValue={
+                variant === 'levels'
+                  ? criterion.description || criterion.name
+                  : criterion.name
+              }
+              placeholder={
+                variant === 'options' ? t`Option` : t`Describe this level`
+              }
+              readonly={readonly}
+              VariablePicker={
+                variant === 'levels' ? WorkflowVariablePicker : undefined
+              }
+              onChange={(value) =>
+                changeCriterion(
+                  criterion.id,
+                  variant === 'levels'
+                    ? { name: value, description: value }
+                    : { name: value },
+                )
+              }
             />
-          )}
-        </StyledCriterionRow>
+            {variant === 'options' &&
+              (isNonEmptyString(criterion.description) ||
+              expandedDescriptions.includes(criterion.id) ? (
+                <FormTextFieldInput
+                  defaultValue={criterion.description ?? ''}
+                  placeholder={t`When should this option be chosen?`}
+                  readonly={readonly}
+                  VariablePicker={WorkflowVariablePicker}
+                  onChange={(description) =>
+                    changeCriterion(criterion.id, { description })
+                  }
+                />
+              ) : (
+                !readonly &&
+                hasContent(criterion) && (
+                  <Button
+                    variant="ghost"
+                    onClick={() =>
+                      setExpandedDescriptions((previous) => [
+                        ...previous,
+                        criterion.id,
+                      ])
+                    }
+                  >{t`Add description`}</Button>
+                )
+              ))}
+          </StyledFields>
+          {!readonly &&
+            (hasContent(criterion) || index < visibleRows.length - 1) && (
+              <Button
+                startIcon={<IconTrash />}
+                aria-label={
+                  variant === 'options' ? t`Delete option` : t`Delete level`
+                }
+                onClick={() =>
+                  updateRows(rows.filter((row) => row.id !== criterion.id))
+                }
+              />
+            )}
+        </StyledRow>
       ))}
-
-      {!readonly && (
-        <Button startIcon={<IconPlus />} onClick={handleAddCriterion}>
-          {variant === 'options' ? t`Add option` : t`Add level`}
-        </Button>
-      )}
     </StyledContainer>
   );
 };

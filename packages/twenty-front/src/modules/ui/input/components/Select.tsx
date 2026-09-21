@@ -166,7 +166,9 @@ export const Select = <Value extends SelectValue>({
       ? selectContainerRef.current?.clientWidth
       : dropdownWidth;
 
-  const selectableItemIdArray = filteredOptions.map((option) => option.label);
+  const selectableItemIdArray = filteredOptions
+    .filter((option) => !option.disabled)
+    .map((option) => option.label);
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
@@ -293,6 +295,7 @@ export const Select = <Value extends SelectValue>({
                   >
                     {filteredOptions.map((option) => {
                       const handleSelectOption = () => {
+                        if (option.disabled) return;
                         onChange?.(option.value);
                         onBlur?.();
                         closeDropdown(dropdownId);
@@ -306,6 +309,7 @@ export const Select = <Value extends SelectValue>({
                         >
                           {renderAsTag && isDefined(option.color) ? (
                             <ListItem
+                              disabled={option.disabled}
                               focused={selectedItemId === option.label}
                               onClick={handleSelectOption}
                               role="option"
@@ -327,6 +331,7 @@ export const Select = <Value extends SelectValue>({
                             </ListItem>
                           ) : (
                             <ListItem
+                              disabled={option.disabled}
                               focused={selectedItemId === option.label}
                               onClick={handleSelectOption}
                               role="option"

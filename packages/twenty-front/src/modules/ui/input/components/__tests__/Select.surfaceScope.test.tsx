@@ -35,6 +35,12 @@ const renderSelect = (surface?: WorkspaceSurfaceContextValue) => {
       dropdownId="select-dropdown"
       options={[
         { label: 'Option A', value: 'a' },
+        {
+          label: 'Unavailable',
+          value: 'disabled',
+          disabled: true,
+          contextualText: 'Requires an evaluation model',
+        },
         { label: 'Option B', value: 'b' },
       ]}
       value="a"
@@ -47,6 +53,15 @@ const renderSelect = (surface?: WorkspaceSurfaceContextValue) => {
 };
 
 describe('Select on a side panel surface', () => {
+  it('shows disabled options and their explanation without selecting them', async () => {
+    const user = userEvent.setup();
+    const { onChange } = renderSelect();
+    await user.click(screen.getByText('Option A'));
+    await user.click(await screen.findByText('Unavailable'));
+    expect(screen.getByText('Requires an evaluation model')).toBeVisible();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it.each([
     ['main', undefined],
     ['side-panel', SIDE_PANEL_SURFACE],

@@ -1,3 +1,10 @@
+import { useNavigate } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
+import { useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
@@ -13,8 +20,9 @@ import { useLingui } from '@lingui/react/macro';
 import {
   type AiEvaluationQuestionType,
   AI_EVALUATION_QUESTION_TYPES,
+  DEFAULT_AI_AGENT_MODEL_TIER,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type WorkflowClassifyQuestion } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 import {
@@ -82,6 +90,7 @@ export const WorkflowEditActionClassify = ({
   actionOptions,
 }: WorkflowEditActionClassifyProps) => {
   const { t } = useLingui();
+  const navigate = useNavigate();
 
   const readonly = actionOptions.readonly === true;
   const questions = action.settings.input.questions;
@@ -100,72 +109,111 @@ export const WorkflowEditActionClassify = ({
 
   const aiEvaluationModels = useAtomStateValue(aiEvaluationModelsState);
 
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const aiModels = useAtomStateValue(aiModelsState);
+  const aiModelTiers = useAtomStateValue(aiModelTiersState);
+  const [exampleVersion, setExampleVersion] = useState(0);
   const selectedModelId = action.settings.input.modelId;
+  const defaultEvaluationModel =
+    aiEvaluationModels.find(
+      (model) =>
+        model.modelId === currentWorkspace?.aiEvaluationModelId &&
+        model.isAvailable,
+    ) ??
+    aiEvaluationModels.find(
+      (model) => model.isAvailable && !model.isDeprecated,
+    );
+  const defaultLanguageModel = aiModels.find(
+    (model) =>
+      model.modelId ===
+      aiModelTiers.find((tier) => tier.tier === DEFAULT_AI_AGENT_MODEL_TIER)
+        ?.modelId,
+  );
+  const effectiveEvaluationModel = isNonEmptyString(selectedModelId)
+    ? aiEvaluationModels.find((model) => model.modelId === selectedModelId)
+    : defaultEvaluationModel;
+  const effectiveLanguageModel = isNonEmptyString(selectedModelId)
+    ? aiModels.find((model) => model.modelId === selectedModelId)
+    : defaultLanguageModel;
+  const needsModelChoice =
+    !isDefined(effectiveEvaluationModel) &&
+    !isNonEmptyString(selectedModelId) &&
+    action.settings.input.allowLanguageModelFallback === false;
 
-  // The workspace default is the point of the node: a workflow built before an
-  // evaluation provider existed starts using one the moment it is configured,
-  // with no edit. Naming a model pins that choice instead.
   const modelOptions = [
     {
-      label: t`Workspace default`,
+      label:
+        (isDefined(defaultEvaluationModel)
+          ? t`${defaultEvaluationModel.label} (workspace setting)`
+          : undefined) ??
+        (action.settings.input.allowLanguageModelFallback === false
+          ? t`Choose a model`
+          : (defaultLanguageModel?.label ?? t`Language model`)),
+      contextualText: t`Follows classification settings`,
       value: '',
     },
     ...aiEvaluationModels
       .filter(
-        (evaluationModel) =>
-          !evaluationModel.isDeprecated ||
-          evaluationModel.modelId === selectedModelId,
+        (model) => !model.isDeprecated || model.modelId === selectedModelId,
       )
-      .map((evaluationModel) => ({
-        label: evaluationModel.label,
-        value: evaluationModel.modelId,
+      .map((model) => ({
+        label: model.label,
+        value: model.modelId,
+        disabled: !model.isAvailable,
+        contextualText: model.isAvailable
+          ? t`Use this model`
+          : t`Provider is not configured`,
+      })),
+    ...aiModels
+      .filter(
+        (model) => !model.isDeprecated || model.modelId === selectedModelId,
+      )
+      .map((model) => ({
+        label: model.label,
+        value: model.modelId,
+        contextualText: t`Language model · No probabilities`,
       })),
   ];
 
-  const selectedModel = aiEvaluationModels.find(
-    (evaluationModel) => evaluationModel.modelId === selectedModelId,
-  );
+  if (
+    isNonEmptyString(selectedModelId) &&
+    !modelOptions.some((option) => option.value === selectedModelId)
+  ) {
+    modelOptions.push({
+      label: selectedModelId,
+      value: selectedModelId,
+      contextualText: t`Model unavailable`,
+    });
+  }
 
+  const probabilityAvailable =
+    effectiveEvaluationModel?.isAvailable === true &&
+    effectiveEvaluationModel.supportedQuestionTypes.includes('boolean');
   const getModelDescription = () => {
-    if (!isDefined(selectedModel)) {
-      return t`Runs on the workspace's evaluation model, or its language model when none is configured. Probabilities are only returned by an evaluation model.`;
+    if (needsModelChoice)
+      return t`Choose a language model to continue without probabilities, or configure an evaluation model in Settings → AI → Classification.`;
+    if (isDefined(effectiveEvaluationModel)) {
+      return effectiveEvaluationModel.isAvailable
+        ? t`Returns probabilities for each answer.`
+        : t`This provider is not configured. Configure it in Settings → AI before running this step.`;
     }
-
-    if (!selectedModel.isAvailable) {
-      return t`This model is in the catalog but its provider is not configured, so runs will fail until someone sets its API key.`;
-    }
-
-    return t`Returns a calibrated probability for every answer.`;
+    if (!isDefined(effectiveLanguageModel))
+      return t`Model unavailable. Choose another model or configure a provider in Settings → AI.`;
+    return t`Categories and scores are available. Probabilities are not available. Usage is billed at this language model's rates.`;
   };
 
-  // Only an evaluation model can answer a question whose answer IS a
-  // probability, so offering one where none would take the run builds a step
-  // that activates and then fails. choice and score survive the language-model
-  // fallback, which answers them without a distribution.
-  const modelsThatCouldRun = isDefined(selectedModel)
-    ? [selectedModel]
-    : aiEvaluationModels.filter(
-        (evaluationModel) => evaluationModel.isAvailable,
-      );
-
-  const runnableQuestionTypes = new Set(
-    modelsThatCouldRun.flatMap(
-      (evaluationModel) => evaluationModel.supportedQuestionTypes,
-    ),
+  const questionTypeOptions = AI_EVALUATION_QUESTION_TYPES.map(
+    (questionType) => ({
+      label: questionTypeLabels[questionType],
+      value: questionType,
+      Icon: questionTypeIcons[questionType],
+      disabled: questionType === 'boolean' && !probabilityAvailable,
+      contextualText:
+        questionType === 'boolean' && !probabilityAvailable
+          ? t`Requires an evaluation model such as Jev`
+          : undefined,
+    }),
   );
-
-  const questionTypeOptions = AI_EVALUATION_QUESTION_TYPES.filter(
-    (questionType) =>
-      questionType !== 'boolean' ||
-      runnableQuestionTypes.has('boolean') ||
-      // A step that already asks one keeps the option, so opening it does not
-      // silently rewrite the question to another type.
-      questions.some((question) => question.type === 'boolean'),
-  ).map((questionType) => ({
-    label: questionTypeLabels[questionType],
-    value: questionType,
-    Icon: questionTypeIcons[questionType],
-  }));
 
   const updateInput = (
     input: Partial<WorkflowClassifyAction['settings']['input']>,
@@ -212,22 +260,106 @@ export const WorkflowEditActionClassify = ({
           label={t`Model`}
           value={selectedModelId ?? ''}
           options={modelOptions}
+          withSearchInput
+          callToActionButton={
+            readonly
+              ? undefined
+              : {
+                  text: t`Configure classification models`,
+                  onClick: () =>
+                    navigate(
+                      getSettingsPath(
+                        SettingsPath.AI,
+                        undefined,
+                        undefined,
+                        'models',
+                      ),
+                    ),
+                }
+          }
           onChange={(modelId) =>
-            updateInput({ modelId: modelId === '' ? undefined : modelId })
+            updateInput({
+              modelId: modelId === '' ? undefined : modelId,
+              allowLanguageModelFallback:
+                modelId === ''
+                  ? false
+                  : action.settings.input.allowLanguageModelFallback,
+            })
           }
           disabled={actionOptions.readonly}
           description={getModelDescription()}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
         <FormTextFieldInput
-          label={t`State`}
+          key={`context-${exampleVersion}`}
+          label={t`Context`}
           multiline
           defaultValue={action.settings.input.state}
-          placeholder={t`What the model should read`}
+          placeholder={t`Content to analyze: an email, a profile, meeting notes…`}
           readonly={readonly}
           VariablePicker={WorkflowVariablePicker}
           onChange={(state) => updateInput({ state })}
         />
+
+        {!readonly &&
+          !isNonEmptyString(action.settings.input.state.trim()) &&
+          questions.every(
+            (question) =>
+              !isNonEmptyString(question.instructions.trim()) &&
+              question.criteria.length === 0,
+          ) && (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                updateInput({
+                  state: t`Alex is a software engineer with five years of experience. Alex has used React and TypeScript daily for the past three years. Previously, Alex worked on Python backend services.`,
+                  questions: [
+                    {
+                      id: v4(),
+                      name: 'profession',
+                      type: 'choice',
+                      instructions: t`What is this person's current profession, based on the profile?`,
+                      criteria: [
+                        {
+                          id: v4(),
+                          name: 'lawyer',
+                          description: t`Provides legal advice or represents clients in legal matters`,
+                        },
+                        {
+                          id: v4(),
+                          name: 'engineer',
+                          description: t`Designs, builds, or maintains software or other technical systems`,
+                        },
+                        {
+                          id: v4(),
+                          name: 'other',
+                          description: t`Another profession, or insufficient information to identify one`,
+                        },
+                      ],
+                    },
+                    {
+                      id: v4(),
+                      name: 'react_experience',
+                      type: 'score',
+                      instructions: t`Assess the React experience explicitly described in the profile. Use the highest level whose requirements are met.`,
+                      criteria: [
+                        { id: v4(), name: t`No React experience mentioned` },
+                        {
+                          id: v4(),
+                          name: t`React experience mentioned, but less than two years or duration unknown`,
+                        },
+                        {
+                          id: v4(),
+                          name: t`At least two years of regular React use`,
+                        },
+                      ],
+                    },
+                  ],
+                });
+                setExampleVersion((version) => version + 1);
+              }}
+            >{t`Use an example`}</Button>
+          )}
 
         {questions.map((question) => (
           <StyledQuestion key={question.id}>
@@ -235,7 +367,8 @@ export const WorkflowEditActionClassify = ({
 
             <StyledQuestionHeader>
               <FormTextFieldInput
-                label={t`Answer name`}
+                label={t`Result name`}
+                hint={t`Find this result in later steps, for example: profession`}
                 defaultValue={question.name}
                 placeholder={t`category`}
                 readonly={readonly}
@@ -258,21 +391,26 @@ export const WorkflowEditActionClassify = ({
 
             <Select
               dropdownId={`workflow-classify-question-type-${question.id}`}
-              label={t`Decision`}
+              label={t`Response type`}
               options={questionTypeOptions}
               dropdownWidth={GenericDropdownContentWidth.Large}
               value={question.type}
               disabled={readonly}
+              description={
+                question.type === 'boolean' && !probabilityAvailable
+                  ? t`This question requires a compatible evaluation model. Choose one before running this step.`
+                  : undefined
+              }
               onChange={(questionType) =>
                 handleQuestionTypeChange(question.id, questionType)
               }
             />
 
             <FormTextFieldInput
-              label={t`Instructions`}
+              label={t`Question`}
               multiline
               defaultValue={question.instructions}
-              placeholder={t`What should the model decide?`}
+              placeholder={t`What should be determined from the context?`}
               readonly={readonly}
               VariablePicker={WorkflowVariablePicker}
               onChange={(instructions) =>
@@ -282,7 +420,13 @@ export const WorkflowEditActionClassify = ({
 
             {question.type !== 'boolean' && (
               <WorkflowClassifyQuestionCriteria
+                key={question.type}
                 criteria={question.criteria}
+                maxCriteria={
+                  question.type === 'score'
+                    ? (effectiveEvaluationModel?.maxScoreLevels ?? 10)
+                    : (effectiveEvaluationModel?.maxCriteriaPerQuestion ?? 255)
+                }
                 variant={question.type === 'choice' ? 'options' : 'levels'}
                 readonly={readonly}
                 onChange={(criteria) =>

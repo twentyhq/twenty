@@ -17,6 +17,34 @@ const resolve = (candidates: Partial<EvaluationModelCandidates> = {}) =>
   });
 
 describe('resolveEvaluationModel', () => {
+  it('requires an explicit model when fallback is disabled', () => {
+    expect(() => resolve({ allowLanguageModelFallback: false })).toThrow(
+      'Choose a language model explicitly',
+    );
+  });
+
+  it('allows an explicitly chosen language model without automatic fallback', () => {
+    expect(
+      resolve({
+        allowLanguageModelFallback: false,
+        requestedModelId: 'openai/gpt-5-nano',
+        isRequestedRunnableLanguageModel: true,
+      }),
+    ).toEqual({ modelId: 'openai/gpt-5-nano', runnerKind: 'language-model' });
+  });
+
+  it('uses the evaluation default with fallback disabled', () => {
+    expect(
+      resolve({
+        allowLanguageModelFallback: false,
+        defaultEvaluationModelId: 'typesafe-ai/jev-latest',
+      }),
+    ).toEqual({
+      modelId: 'typesafe-ai/jev-latest',
+      runnerKind: 'evaluation-model',
+    });
+  });
+
   it('should run a pinned evaluation model natively', () => {
     expect(
       resolve({

@@ -9,6 +9,7 @@ import { type AiEvaluationRunnerKind } from 'src/engine/metadata-modules/ai/ai-e
 
 export type EvaluationModelCandidates = {
   requestedModelId?: string;
+  allowLanguageModelFallback?: boolean;
   // Whether the requested id names a model that can actually run, as opposed to
   // one the catalog merely declares.
   isRequestedRunnableEvaluationModel: boolean;
@@ -39,6 +40,7 @@ export type ResolvedEvaluationModel = {
 // workflow written before any evaluation provider existed start using one.
 export const resolveEvaluationModel = ({
   requestedModelId,
+  allowLanguageModelFallback = true,
   isRequestedRunnableEvaluationModel,
   isRequestedRunnableLanguageModel,
   isRequestedKnownEvaluationModel,
@@ -50,6 +52,16 @@ export const resolveEvaluationModel = ({
     !isNonEmptyString(requestedModelId) ||
     requestedModelId === AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID
   ) {
+    if (
+      !isNonEmptyString(defaultEvaluationModelId) &&
+      !allowLanguageModelFallback
+    ) {
+      throw new AiException(
+        'Choose a language model explicitly or configure an evaluation model for this Classify step.',
+        AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
+      );
+    }
+
     return isNonEmptyString(defaultEvaluationModelId)
       ? { modelId: defaultEvaluationModelId, runnerKind: 'evaluation-model' }
       : { modelId: getDefaultLanguageModelId(), runnerKind: 'language-model' };
