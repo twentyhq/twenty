@@ -84,9 +84,9 @@ describe('ApplicationHealthCheckService', () => {
 
   it('should map a reported warning to WARNING', async () => {
     const { service } = buildService({
-      execute: jest
-        .fn()
-        .mockResolvedValue({ data: { status: 'warning', message: 'Expiring' } }),
+      execute: jest.fn().mockResolvedValue({
+        data: { status: 'warning', message: 'Expiring' },
+      }),
     });
 
     expect(await run(service)).toBe(ApplicationHealthStatus.WARNING);
