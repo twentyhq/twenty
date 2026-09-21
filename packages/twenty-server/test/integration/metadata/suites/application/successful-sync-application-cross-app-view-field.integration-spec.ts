@@ -88,7 +88,10 @@ describe('Sync application should succeed when extending another app view with a
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: APP_A_ID,
     });
-  });
+    // Two sequential cleanup calls, each now also deleting View/ViewField
+    // rows, can exceed the default 20s hook timeout under DB contention;
+    // match the 60s budget already used by this file's beforeAll/it blocks.
+  }, 60000);
 
   it('accepts a standalone view field from App B targeting an App A view', async () => {
     const { errors } = await syncApplication({
