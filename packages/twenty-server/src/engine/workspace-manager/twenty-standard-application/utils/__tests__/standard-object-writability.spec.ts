@@ -17,7 +17,6 @@ const SYSTEM_WRITABILITY_STANDARD_OBJECT_NAMES = [
   'agentMessagePart',
   'agentTurn',
   'agentTurnEvaluation',
-
   'calendarChannelEventAssociation',
   'inputAsk',
   'messageChannelMessageAssociation',
