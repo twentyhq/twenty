@@ -247,6 +247,30 @@ describe('workflow MCP tools on core identities (integration)', () => {
       ).toBe(true);
     });
 
+    it('should list the workflow when filtering by status', async () => {
+      const listed = await callWorkflowTool<{
+        success: boolean;
+        workflows: { coreWorkflowId: string }[];
+      }>('list_workflows', { limit: 100, status: 'DRAFT' });
+
+      expect(listed.success).toBe(true);
+      expect(
+        listed.workflows.some(
+          (workflow) => workflow.coreWorkflowId === coreWorkflowId,
+        ),
+      ).toBe(true);
+    });
+
+    it('should list the workflow when no limit is passed', async () => {
+      const listed = await callWorkflowTool<{
+        success: boolean;
+        workflows: { coreWorkflowId: string }[];
+      }>('list_workflows', {});
+
+      expect(listed.success).toBe(true);
+      expect(listed.workflows.length).toBeGreaterThan(0);
+    });
+
     it('should write an edit through the shared writer so the rollback mirror follows', async () => {
       const renamedStepName = `Renamed ${randomUUID()}`;
       const coreVersion = await readCoreVersionRow(coreWorkflowVersionId);

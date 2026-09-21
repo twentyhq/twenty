@@ -1,7 +1,9 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -28,11 +30,15 @@ import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/wo
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { CoreWorkflowActorWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-actor.workspace-service';
+import { buildActorMetadataFromPrincipal } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-principal.util';
+import {
+  WorkflowQueryValidationException,
+  WorkflowQueryValidationExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspaceMember } from 'src/engine/decorators/auth/auth-workspace-member.decorator';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -59,8 +65,26 @@ export class CoreWorkflowResolver {
     private readonly coreWorkflowListService: CoreWorkflowListService,
     private readonly coreWorkflowMutationWorkspaceService: CoreWorkflowMutationWorkspaceService,
     private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
-    private readonly coreWorkflowActorWorkspaceService: CoreWorkflowActorWorkspaceService,
   ) {}
+
+  private resolveCreatedByOrThrow(principal: {
+    workspaceMember?: WorkspaceMemberWorkspaceEntity;
+    application?: FlatApplication;
+  }): ActorMetadata {
+    const createdBy = buildActorMetadataFromPrincipal(principal);
+
+    if (!isDefined(createdBy)) {
+      throw new WorkflowQueryValidationException(
+        'No authenticated actor to attribute the workflow to',
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Authentication is required to perform this action`,
+        },
+      );
+    }
+
+    return createdBy;
+  }
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
   async updateCoreWorkflow(
@@ -81,7 +105,9 @@ export class CoreWorkflowResolver {
   @Mutation(() => CoreWorkflowDTO)
   async duplicateCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
+    @AuthWorkspaceMember() workspaceMember:
+      | WorkspaceMemberWorkspaceEntity
+      | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
     @Args('input')
@@ -92,12 +118,7 @@ export class CoreWorkflowResolver {
   ): Promise<CoreWorkflowDTO> {
     return this.coreWorkflowMutationWorkspaceService.duplicateWorkflow({
       workspaceId,
-      createdBy:
-        await this.coreWorkflowActorWorkspaceService.resolveActorOrThrow({
-          workspaceId,
-          userId: user?.id,
-          application,
-        }),
+      createdBy: this.resolveCreatedByOrThrow({ workspaceMember, application }),
       coreWorkflowIdToDuplicate,
       coreWorkflowVersionIdToCopy,
     });
@@ -106,19 +127,16 @@ export class CoreWorkflowResolver {
   @Mutation(() => CoreWorkflowDTO)
   async createCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
+    @AuthWorkspaceMember() workspaceMember:
+      | WorkspaceMemberWorkspaceEntity
+      | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
     @Args('input') input: CreateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO> {
     return this.coreWorkflowMutationWorkspaceService.createWorkflow({
       workspaceId,
-      createdBy:
-        await this.coreWorkflowActorWorkspaceService.resolveActorOrThrow({
-          workspaceId,
-          userId: user?.id,
-          application,
-        }),
+      createdBy: this.resolveCreatedByOrThrow({ workspaceMember, application }),
       name: input.name,
     });
   }

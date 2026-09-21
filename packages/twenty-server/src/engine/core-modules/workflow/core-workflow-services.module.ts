@@ -6,7 +6,6 @@ import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { CoreWorkflowActorWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-actor.workspace-service';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
@@ -45,7 +44,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     WorkflowVersionValidationModule,
   ],
   providers: [
-    CoreWorkflowActorWorkspaceService,
     CoreWorkflowIdResolutionService,
     CoreWorkflowLifecycleWorkspaceService,
     CoreWorkflowListService,
@@ -57,7 +55,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     provideWorkspaceScopedRepository(WorkflowEntity),
   ],
   exports: [
-    CoreWorkflowActorWorkspaceService,
     CoreWorkflowIdResolutionService,
     CoreWorkflowLifecycleWorkspaceService,
     CoreWorkflowListService,
