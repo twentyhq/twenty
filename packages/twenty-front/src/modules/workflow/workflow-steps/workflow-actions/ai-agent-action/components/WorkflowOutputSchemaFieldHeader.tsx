@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components';
 import { IconChevronDown, IconVariable, IconX } from 'twenty-ui/icon';
@@ -100,7 +101,9 @@ export const WorkflowOutputSchemaFieldHeader = ({
       <StyledToggle type="button" aria-expanded={isExpanded} onClick={onToggle}>
         <StyledTitle>
           <IconVariable size={theme.icon.size.sm} aria-hidden />
-          <StyledName>{name || t`Untitled field`}</StyledName>
+          <StyledName>
+            {isNonEmptyString(name) ? name : t`Untitled field`}
+          </StyledName>
         </StyledTitle>
         <StyledChevron data-expanded={isExpanded} aria-hidden>
           <IconChevronDown size={theme.icon.size.sm} />
