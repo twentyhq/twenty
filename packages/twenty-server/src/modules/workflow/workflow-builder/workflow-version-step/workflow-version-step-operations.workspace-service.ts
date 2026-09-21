@@ -1,8 +1,10 @@
+import { msg } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   FieldMetadataType,
   StepLogicalOperator,
@@ -19,6 +21,8 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
@@ -72,6 +76,7 @@ const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
 @Injectable()
 export class WorkflowVersionStepOperationsWorkspaceService {
   constructor(
+    private readonly i18nService: I18nService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly codeStepBuildService: CodeStepBuildService,
@@ -582,6 +587,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.CLASSIFY: {
+        const authContext = getWorkspaceAuthContext();
+        const locale =
+          authContext.type === 'user' ? authContext.user.locale : SOURCE_LOCALE;
+        const i18n = this.i18nService.getI18nInstance(locale);
+
         return {
           builtStep: {
             ...baseStep,
@@ -594,10 +604,18 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 questions: [
                   {
                     id: v4(),
-                    name: 'category',
+                    name: '',
                     type: 'choice',
                     instructions: '',
-                    criteria: [],
+                    criteria: [
+                      {
+                        id: v4(),
+                        name: i18n._(msg`Lawyer`),
+                        description: i18n._(
+                          msg`Advises clients on legal matters`,
+                        ),
+                      },
+                    ],
                   },
                 ],
               },

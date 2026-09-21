@@ -1,6 +1,34 @@
 import { generateClassifyOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema';
 
 describe('generateClassifyOutputSchema', () => {
+  it('does not advertise unresolved option labels as probability paths', () => {
+    const output = generateClassifyOutputSchema([
+      {
+        id: 'question',
+        name: 'category',
+        type: 'choice',
+        instructions: 'Choose a category',
+        criteria: [
+          { id: 'dynamic', name: '{{trigger.category}}' },
+          { id: 'static', name: 'Other' },
+        ],
+      },
+    ]);
+    expect(output.answers).toMatchObject({
+      value: {
+        category: {
+          value: {
+            choice: { type: 'string' },
+            probabilities: { value: { Other: { type: 'number' } } },
+          },
+        },
+      },
+    });
+    expect(JSON.stringify(output.answers)).not.toContain(
+      '"{{trigger.category}}":',
+    );
+  });
+
   it('should key answers by question name so variables stay readable', () => {
     const outputSchema = generateClassifyOutputSchema([
       {
@@ -40,7 +68,7 @@ describe('generateClassifyOutputSchema', () => {
             probabilities: {
               isLeaf: false,
               type: 'object',
-              label: 'Probabilities (evaluation models only)',
+              label: 'Probabilities',
               value: {
                 pricing: {
                   isLeaf: true,
@@ -85,7 +113,7 @@ describe('generateClassifyOutputSchema', () => {
       probabilities: {
         isLeaf: false,
         type: 'object',
-        label: 'Probabilities (evaluation models only)',
+        label: 'Probabilities',
         value: {
           '0': { isLeaf: true, type: 'number', label: '0', value: 0 },
           '1': { isLeaf: true, type: 'number', label: '1', value: 0 },
