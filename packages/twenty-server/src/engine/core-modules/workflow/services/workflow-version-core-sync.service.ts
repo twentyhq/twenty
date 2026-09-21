@@ -161,7 +161,7 @@ export class WorkflowVersionCoreSyncService {
       workspaceId,
       {
         where: { id: In(coreWorkflowVersionIds) },
-        select: { id: true, coreWorkflowId: true },
+        select: { id: true, coreWorkflowId: true, status: true },
       },
     );
 
@@ -170,15 +170,20 @@ export class WorkflowVersionCoreSyncService {
     });
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
-    await this.evictCronTriggerCacheEntries(
-      deletedVersions.map((version) => version.coreWorkflowId),
-    );
+    await this.evictCronTriggerCacheEntries(deletedVersions);
   }
 
   private async evictCronTriggerCacheEntries(
-    coreWorkflowIds: (string | null)[],
+    deletedVersions: Pick<WorkflowVersionEntity, 'coreWorkflowId' | 'status'>[],
   ): Promise<void> {
-    const fields = [...new Set(coreWorkflowIds.filter(isNonEmptyString))];
+    const fields = [
+      ...new Set(
+        deletedVersions
+          .filter((version) => version.status === WorkflowVersionStatus.ACTIVE)
+          .map((version) => version.coreWorkflowId)
+          .filter(isNonEmptyString),
+      ),
+    ];
 
     for (const field of fields) {
       await this.cacheStorageService.hashDelete({
@@ -584,7 +589,7 @@ export class WorkflowVersionCoreSyncService {
       workspaceId,
       {
         where: { workflowId: In(workflowIds) },
-        select: { id: true, coreWorkflowId: true },
+        select: { id: true, coreWorkflowId: true, status: true },
       },
     );
 
@@ -593,9 +598,7 @@ export class WorkflowVersionCoreSyncService {
     });
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
-    await this.evictCronTriggerCacheEntries(
-      deletedVersions.map((version) => version.coreWorkflowId),
-    );
+    await this.evictCronTriggerCacheEntries(deletedVersions);
   }
 
   async deleteCoreVersionsByWorkspaceVersionIds(
