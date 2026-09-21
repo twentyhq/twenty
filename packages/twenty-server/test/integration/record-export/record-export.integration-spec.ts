@@ -161,6 +161,14 @@ describe('record export lifecycle (integration)', () => {
   });
   const fileExists = (file: { id: string }) =>
     storage.checkFileExists(fileResource(`${file.id}.csv`));
+  const fileRowExists = async (file: { id: string }): Promise<boolean> => {
+    const rows = await globalThis.testDataSource.query(
+      'SELECT id FROM core.file WHERE id = $1',
+      [file.id],
+    );
+
+    return rows.length > 0;
+  };
   const authorization = (
     recordExport: RecordExportDTO,
   ): Promise<RecordExportDownloadTokenJwtPayload> =>
@@ -875,12 +883,7 @@ describe('record export lifecycle (integration)', () => {
     expect(recordExport.downloadUrl).toBeNull();
     expect(partialFilePath).toBeDefined();
     expect(pendingFile).toMatchObject({ status: 'PENDING' });
-    expect(
-      await globalThis.testDataSource.query(
-        'SELECT id FROM core.file WHERE id = $1',
-        [pendingFile!.id],
-      ),
-    ).toEqual([]);
+    expect(await fileRowExists(pendingFile!)).toBe(false);
     expect(await storage.checkFileExists(fileResource(partialFilePath!))).toBe(
       false,
     );
@@ -899,14 +902,7 @@ describe('record export lifecycle (integration)', () => {
     );
     await expect(download(recordExport)).rejects.toThrow();
     await waitUntil(async () => !(await fileExists(stored)));
-    await waitUntil(async () => {
-      const rows = await globalThis.testDataSource.query(
-        'SELECT id FROM core.file WHERE id = $1',
-        [stored.id],
-      );
-
-      return rows.length === 0;
-    });
+    await waitUntil(async () => !(await fileRowExists(stored)));
     await expect(getExport(stored.id)).rejects.toThrow('Export not found');
   });
 
