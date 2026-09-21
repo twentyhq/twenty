@@ -6,17 +6,25 @@ import { THEME_LIGHT } from 'twenty-ui/theme';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
 
+// Collapsed, the product stacks the modes as square icon buttons
+// (NavigationDrawerCollapsedButtonSize); expanded, it lays them out as a
+// labelled row above the menu's rule.
+const COLLAPSED_BUTTON_SIZE_PX = 32;
+
 const Root = styled.div`
-  display: none;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  row-gap: 2px;
 
   ${mediaUp('md')} {
     [data-desktop-mode='expanded'] & {
-      align-items: center;
       border-bottom: 1px solid ${THEME_LIGHT.border.color.light};
       box-sizing: border-box;
       column-gap: 2px;
-      display: flex;
+      flex-direction: row;
       height: ${APP_PREVIEW_CHROME.spacingBasePx * 10}px;
+      row-gap: 0;
     }
   }
 `;
@@ -25,23 +33,44 @@ const Mode = styled.div<{ $selected?: boolean }>`
   align-items: center;
   background: ${({ $selected }) =>
     $selected ? THEME_LIGHT.background.transparent.light : 'transparent'};
-  border-radius: ${THEME_LIGHT.border.radius.smRound};
+  border-radius: ${THEME_LIGHT.border.radius.mdRound};
   color: ${({ $selected }) =>
     $selected
       ? THEME_LIGHT.font.color.primary
       : THEME_LIGHT.font.color.tertiary};
-  column-gap: ${({ $selected }) => ($selected ? '4px' : '0')};
   display: flex;
-  height: ${APP_PREVIEW_CHROME.spacingBasePx * 7}px;
-  padding: 0 6px;
+  flex-shrink: 0;
+  height: ${COLLAPSED_BUTTON_SIZE_PX}px;
+  justify-content: center;
+  width: ${COLLAPSED_BUTTON_SIZE_PX}px;
+
+  ${mediaUp('md')} {
+    [data-desktop-mode='expanded'] & {
+      border-radius: ${THEME_LIGHT.border.radius.smRound};
+      column-gap: ${({ $selected }) => ($selected ? '4px' : '0')};
+      height: ${APP_PREVIEW_CHROME.spacingBasePx * 7}px;
+      justify-content: flex-start;
+      padding: 0 6px;
+      width: auto;
+    }
+  }
 `;
 
+// Collapsed the modes are icon-only, so the active mode's label is an
+// expanded-drawer affordance.
 const ModeLabel = styled.span`
-  font-family: var(--font-product), sans-serif;
-  font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
-  font-weight: ${THEME_LIGHT.font.weight.medium};
-  line-height: 1.4;
-  white-space: nowrap;
+  display: none;
+
+  ${mediaUp('md')} {
+    [data-desktop-mode='expanded'] & {
+      display: block;
+      font-family: var(--font-product), sans-serif;
+      font-size: ${previewFontSize(THEME_LIGHT.font.size.md)};
+      font-weight: ${THEME_LIGHT.font.weight.medium};
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+  }
 `;
 
 // Only the active mode carries its label, as the product's switcher does.
