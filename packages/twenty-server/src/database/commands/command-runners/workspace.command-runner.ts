@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { CommandRunner, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource } from 'typeorm';
@@ -30,7 +31,10 @@ export abstract class WorkspaceCommandRunner<
   protected logger: CommandLogger;
 
   constructor(
-    protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    protected readonly workspaceIteratorService: Pick<
+      WorkspaceIteratorService,
+      'listenToShutdownSignals' | 'iterate'
+    >,
     protected readonly activationStatuses: WorkspaceActivationStatus[],
   ) {
     super();
@@ -139,11 +143,17 @@ export abstract class WorkspaceCommandRunner<
             'Command interrupted before processing every workspace. Rerun it to process the remaining ones.',
           ),
         );
-
-        return;
       }
 
-      this.logger.log(chalk.blue('Command completed!'));
+      if (isNonEmptyArray(report.fail)) {
+        throw new Error(
+          `Command failed for ${report.fail.length} workspace(s). See the workspace errors above.`,
+        );
+      }
+
+      if (!report.interrupted) {
+        this.logger.log(chalk.blue('Command completed!'));
+      }
     } catch (error) {
       this.logger.error(chalk.red(`Command failed`));
       throw error;

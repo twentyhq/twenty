@@ -89,7 +89,7 @@ Beyond commands, you can embed a front component directly into a record page by 
 
 To replace the auto-generated variable configuration UI with your own component, define it with `defineSettingsFrontComponent` instead of `defineFrontComponent`. It takes the same [configuration fields](#configuration-fields) (except `isHeadless`, which is not accepted since a settings component always renders visible UI) and additionally marks the component as the app's settings UI.
 
-The component is the whole content of a dedicated **Settings** tab, and it replaces the auto-generated **Variables** tab: your app is expected to render its own variables. Twenty's system-managed sections — auto-upgrade, App URL, and connections — live in the app's **General** tab and cannot be overridden by the app.
+The component is the whole content of a dedicated **Settings** tab, and it replaces the auto-generated **Variables** tab: your app is expected to render its own variables. Twenty's system-managed sections — auto-upgrade, App URL, and connections — live in the app's **General** tab and cannot be overridden by the app. App URL only shows with **Advanced mode** on.
 
 ```tsx src/front-components/app-settings.tsx
 import { defineSettingsFrontComponent } from 'twenty-sdk/define';

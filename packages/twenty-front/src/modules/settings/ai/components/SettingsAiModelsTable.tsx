@@ -42,6 +42,17 @@ const StyledDeprecatedSuffix = styled.span`
   color: ${themeCssVariables.font.color.light};
 `;
 
+// An evaluation model cannot be chatted with or given to an agent, so a row
+// that looks like every other row would read as interchangeable with them.
+const StyledKindBadge = styled.span`
+  background: ${themeCssVariables.background.transparent.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.xs};
+  padding: 0 ${themeCssVariables.spacing[1]};
+`;
+
 const hoverCardTooltipClass = css`
   border-radius: ${themeCssVariables.border.radius.rounded} !important;
   corner-shape: round;
@@ -171,6 +182,11 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
                       }
                     />
                     <StyledModelLabel>{model.label}</StyledModelLabel>
+                    {model.kind === 'evaluation' && (
+                      <StyledKindBadge>
+                        <Trans>Evaluation</Trans>
+                      </StyledKindBadge>
+                    )}
                     {disabled && model.isDeprecated && (
                       <StyledDeprecatedSuffix>
                         · <Trans>Deprecated</Trans>

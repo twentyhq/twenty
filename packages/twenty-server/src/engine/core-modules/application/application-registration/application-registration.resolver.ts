@@ -8,6 +8,7 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
+import { type Request } from 'express';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
@@ -364,12 +365,21 @@ export class ApplicationRegistrationResolver {
     @Args() { applicationRegistrationId }: ApplicationRegistrationClaimInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+    @Context() context: { req: Request },
   ): Promise<string> {
+    if (!isDefined(context.req.res)) {
+      throw new ApplicationRegistrationException(
+        'Cannot start a GitHub claim without a response to bind it to',
+        ApplicationRegistrationExceptionCode.CLAIM_STATE_MISMATCH,
+      );
+    }
+
     return this.applicationRegistrationClaimService.buildGithubAuthorizationUrl(
       {
         applicationRegistrationId,
         workspaceId,
         userId: user?.id ?? null,
+        response: context.req.res,
       },
     );
   }
