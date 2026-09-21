@@ -1,3 +1,5 @@
+import { isNonEmptyString, isObject } from '@sniptt/guards';
+
 export const APPLICATION_HEALTH_CHECK_REPORTED_STATUSES = [
   'ok',
   'info',
@@ -23,7 +25,7 @@ export type ApplicationHealthCheckResult =
 export const isApplicationHealthCheckResult = (
   value: unknown,
 ): value is ApplicationHealthCheckResult => {
-  if (typeof value !== 'object' || value === null) {
+  if (!isObject(value)) {
     return false;
   }
 
@@ -37,7 +39,7 @@ export const isApplicationHealthCheckResult = (
     return false;
   }
 
-  if (typeof message !== 'string' || message.length === 0) {
+  if (!isNonEmptyString(message)) {
     return false;
   }
 
@@ -45,19 +47,15 @@ export const isApplicationHealthCheckResult = (
     return true;
   }
 
-  if (typeof action !== 'object' || action === null) {
+  if (!isObject(action)) {
     return false;
   }
 
   const { label, location } = action as Record<string, unknown>;
 
-  if (typeof label !== 'string' || label.length === 0) {
+  if (!isNonEmptyString(label)) {
     return false;
   }
 
-  if (location === undefined) {
-    return true;
-  }
-
-  return typeof location === 'string' && location.length > 0;
+  return location === undefined || isNonEmptyString(location);
 };
