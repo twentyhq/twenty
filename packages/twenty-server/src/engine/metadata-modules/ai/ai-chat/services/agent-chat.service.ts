@@ -1,3 +1,4 @@
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Injectable, Logger } from '@nestjs/common';
@@ -44,6 +45,7 @@ const serializeThreadForBroadcast = (
   lastMessageAt: Date | null,
 ) => ({
   id: thread.id,
+  canManage: true,
   title: thread.title,
   totalInputTokens: thread.totalInputTokens,
   totalOutputTokens: thread.totalOutputTokens,
@@ -77,6 +79,7 @@ export class AgentChatService {
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly codeInterpreterService: CodeInterpreterService,
+    private readonly sharingService: AgentChatSharingService,
   ) {}
 
   async createThread({
@@ -166,6 +169,10 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
+    const sharedThreadIds = await this.sharingService.getSharedThreadIds({
+      workspaceId,
+      userWorkspaceId,
+    });
     const rankedThreads = await this.threadRepository.query(
       workspaceId,
       ({ manager, table, storage }) =>
@@ -173,11 +180,11 @@ export class AgentChatService {
           `SELECT thread.id, MAX(message."createdAt") AS last_message_at
        FROM ${table('agentChatThread')} thread
        LEFT JOIN ${table('agentMessage')} message ON message."threadId" = thread.id AND message."isHidden" = false
-       WHERE thread."userWorkspaceId" = $1 ${storage === 'core' ? 'AND thread."workspaceId" = $2' : ''}
+       WHERE (thread."userWorkspaceId" = $1 OR thread.id = ANY($2::uuid[])) ${storage === 'core' ? 'AND thread."workspaceId" = $3' : ''}
        GROUP BY thread.id ORDER BY last_message_at DESC NULLS LAST, thread."updatedAt" DESC`,
           storage === 'core'
-            ? [userWorkspaceId, workspaceId]
-            : [userWorkspaceId],
+            ? [userWorkspaceId, sharedThreadIds, workspaceId]
+            : [userWorkspaceId, sharedThreadIds],
         ),
     );
 
@@ -190,7 +197,7 @@ export class AgentChatService {
     );
 
     const threads = await this.threadRepository.find(workspaceId, {
-      where: { id: In(rankedThreadIds), userWorkspaceId },
+      where: { id: In(rankedThreadIds) },
     });
 
     const threadById = new Map(threads.map((thread) => [thread.id, thread]));
@@ -199,7 +206,13 @@ export class AgentChatService {
       const thread = threadById.get(rankedThread.id);
 
       return thread
-        ? [{ ...thread, lastMessageAt: rankedThread.last_message_at ?? null }]
+        ? [
+            {
+              ...thread,
+              canManage: thread.userWorkspaceId === userWorkspaceId,
+              lastMessageAt: rankedThread.last_message_at ?? null,
+            },
+          ]
         : [];
     });
   }
@@ -415,9 +428,15 @@ export class AgentChatService {
     workspaceId: string;
     includeHidden?: boolean;
   }) {
-    // getThreadById enforces ownership; messages then scoped by both
-    // threadId and workspaceId.
-    await this.getThreadById({ threadId, userWorkspaceId, workspaceId });
+    if (includeHidden) {
+      await this.getThreadById({ threadId, userWorkspaceId, workspaceId });
+    } else {
+      await this.sharingService.getReadableThread({
+        threadId,
+        userWorkspaceId,
+        workspaceId,
+      });
+    }
 
     return this.messageRepository.find(workspaceId, {
       where: { threadId, ...(includeHidden ? {} : { isHidden: false }) },
@@ -1036,6 +1055,8 @@ export class AgentChatService {
 
       return;
     }
+
+    await this.sharingService.deleteThreadShares(workspaceId, threadId);
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: thread.workspaceId,

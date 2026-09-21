@@ -43,6 +43,9 @@ export class AgentChatThreadDTO {
   @Field(() => Date, { nullable: true })
   lastMessageAt: Date | null;
 
+  @Field(() => Boolean)
+  canManage: boolean;
+
   @HideField()
   userWorkspaceId: string;
 }

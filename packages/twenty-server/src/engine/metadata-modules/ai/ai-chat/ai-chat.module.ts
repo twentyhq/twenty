@@ -1,3 +1,7 @@
+import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
+import { RecordSharingFeatureModule } from 'src/engine/core-modules/record-share/record-sharing-feature.module';
+import { AgentChatSharingService } from './services/agent-chat-sharing.service';
+import { AgentChatSharingResolver } from './resolvers/agent-chat-sharing.resolver';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
@@ -44,6 +48,8 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
 
 @Module({
   imports: [
+    RecordShareModule,
+    RecordSharingFeatureModule,
     AgentChatStreamStateModule,
     AgentHistoryModule,
     UsageLimitModule,
@@ -71,6 +77,8 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     WorkflowToolsModule,
   ],
   providers: [
+    AgentChatSharingService,
+    AgentChatSharingResolver,
     AiChatUsageService,
     AiChatUsageResolver,
     AgentChatCancelSubscriberService,

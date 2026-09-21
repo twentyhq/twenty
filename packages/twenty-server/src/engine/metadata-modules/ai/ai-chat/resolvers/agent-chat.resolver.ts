@@ -1,3 +1,5 @@
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
@@ -52,7 +54,11 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
-@UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
+@UseGuards(
+  WorkspaceAuthGuard,
+  UserAuthGuard,
+  SettingsPermissionGuard(PermissionFlagType.AI),
+)
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
@@ -63,6 +69,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 export class AgentChatResolver {
   constructor(
     private readonly agentChatService: AgentChatService,
+    private readonly sharingService: AgentChatSharingService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
@@ -72,6 +79,14 @@ export class AgentChatResolver {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
   ) {}
+
+  @ResolveField(() => Boolean)
+  canManage(
+    @Parent() thread: AgentChatThreadEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): boolean {
+    return thread.userWorkspaceId === userWorkspaceId;
+  }
 
   @Query(() => [AgentChatThreadDTO])
   @AllowSuspendedWorkspace()
@@ -91,7 +106,7 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    return this.agentChatService.getThreadById({
+    return this.sharingService.getReadableThread({
       threadId: id,
       userWorkspaceId,
       workspaceId,
@@ -117,7 +132,7 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    const thread = await this.agentChatService.getThreadById({
+    const thread = await this.sharingService.getReadableThread({
       threadId,
       userWorkspaceId,
       workspaceId,
