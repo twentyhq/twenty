@@ -19,6 +19,7 @@ import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spen
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-scoped.util';
+import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock-limit.util';
 import { validateUsageLimitAgainstDefinition } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-definition.util';
 import { validateUsageLimitAgainstKindRule } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-kind-rule.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -135,7 +136,7 @@ export class UsageLimitService {
       { where: { id: usageLimit.id } },
     );
 
-    // counters are keyed by scope, so a scope change leaves two of them to rewarm
+    // counters are keyed by scope and value, so an edit leaves two of them behind
     await this.dropCounter(usageLimit);
     await this.dropCounter(updatedUsageLimit);
 
@@ -241,13 +242,15 @@ export class UsageLimitService {
   }
 
   private async dropCounter(usageLimit: UsageLimitEntity): Promise<void> {
-    if (usageLimit.limitKind === 'stock') {
+    if (isStockLimit(usageLimit)) {
       return this.usageLimitStockService.dropStockCounters({
         workspaceId: usageLimit.workspaceId,
         resourceType: usageLimit.resourceType,
         operationType: usageLimit.operationType,
         spenderType: usageLimit.spenderType,
         spenderId: usageLimit.spenderId,
+        meter: usageLimit.meter,
+        limitValue: usageLimit.limitValue,
       });
     }
 
