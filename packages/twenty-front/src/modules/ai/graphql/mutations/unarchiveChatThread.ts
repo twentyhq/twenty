@@ -4,6 +4,7 @@ export const UNARCHIVE_CHAT_THREAD = gql`
   mutation UnarchiveChatThread($id: UUID!) {
     unarchiveChatThread(id: $id) {
       id
+      canManage
       deletedAt
       updatedAt
     }

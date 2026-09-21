@@ -89,6 +89,7 @@ describe('AgentChatThreadInitializationEffect', () => {
             createdAt: '2026-08-01',
             updatedAt: '2026-09-01',
             conversationSize: 120,
+            canManage: true,
             totalInputTokens: 250,
             totalOutputTokens: 30,
             totalCacheReadTokens: 80,

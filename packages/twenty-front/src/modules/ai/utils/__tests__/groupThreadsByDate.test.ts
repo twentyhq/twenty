@@ -23,6 +23,7 @@ describe('groupThreadsByDate', () => {
   > = {
     title: 'Test Thread',
     createdAt: twoDaysAgo.toISOString(),
+    canManage: true,
     totalInputTokens: 0,
     totalOutputTokens: 0,
     totalCacheReadTokens: 0,

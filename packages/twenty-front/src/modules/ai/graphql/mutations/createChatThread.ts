@@ -4,6 +4,7 @@ export const CREATE_CHAT_THREAD = gql`
   mutation CreateChatThread {
     createChatThread {
       id
+      canManage
       title
       createdAt
       updatedAt

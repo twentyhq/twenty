@@ -51,6 +51,7 @@ jest.mock('@/ai/components/AiChatCloseButton', () => ({
 const THREAD: AgentChatThread = {
   __typename: 'AgentChatThread',
   id: 'thread-1',
+  canManage: true,
   title: 'Best leads',
   createdAt: '2026-09-01T00:00:00.000Z',
   updatedAt: '2026-09-01T00:00:00.000Z',

@@ -3334,6 +3334,24 @@ type RecordExport {
   downloadUrl: String
 }
 
+type ChatThreadShareDTO {
+  id: ID!
+  principalType: String!
+  principalId: UUID!
+}
+
+type ChatThreadSharingRoleDTO {
+  id: UUID!
+  label: String!
+}
+
+type ChatThreadSharingDTO {
+  canManage: Boolean!
+  isEnabled: Boolean!
+  roles: [ChatThreadSharingRoleDTO!]!
+  shares: [ChatThreadShareDTO!]!
+}
+
 type AiChatUsage {
   limitValue: BigInt!
   consumedValue: BigInt
@@ -3381,6 +3399,7 @@ type AgentChatThread {
   updatedAt: DateTime!
   deletedAt: DateTime
   lastMessageAt: DateTime
+  canManage: Boolean!
 }
 
 type AiSystemPromptSection {
@@ -3779,6 +3798,7 @@ type Query {
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
+  chatThreadSharing(threadId: UUID!): ChatThreadSharingDTO!
   aiChatUsage: AiChatUsage
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
@@ -4111,6 +4131,7 @@ type Mutation {
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
+  setChatThreadShare(threadId: UUID!, target: ChatThreadShareTargetInput!, enabled: Boolean!): ChatThreadSharingDTO!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -5389,6 +5410,12 @@ input EnqueueJobItemInput {
 input ReportAppConnectionAuthFailureInput {
   id: ID!
   reason: String
+}
+
+input ChatThreadShareTargetInput {
+  workspaceMemberId: UUID
+  roleId: UUID
+  everyone: Boolean
 }
 
 input FileAttachmentInput {

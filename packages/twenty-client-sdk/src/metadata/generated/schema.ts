@@ -2934,6 +2934,27 @@ export interface RecordExport {
     __typename: 'RecordExport'
 }
 
+export interface ChatThreadShareDTO {
+    id: Scalars['ID']
+    principalType: Scalars['String']
+    principalId: Scalars['UUID']
+    __typename: 'ChatThreadShareDTO'
+}
+
+export interface ChatThreadSharingRoleDTO {
+    id: Scalars['UUID']
+    label: Scalars['String']
+    __typename: 'ChatThreadSharingRoleDTO'
+}
+
+export interface ChatThreadSharingDTO {
+    canManage: Scalars['Boolean']
+    isEnabled: Scalars['Boolean']
+    roles: ChatThreadSharingRoleDTO[]
+    shares: ChatThreadShareDTO[]
+    __typename: 'ChatThreadSharingDTO'
+}
+
 export interface AiChatUsage {
     limitValue: Scalars['BigInt']
     consumedValue?: Scalars['BigInt']
@@ -2984,6 +3005,7 @@ export interface AgentChatThread {
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
     lastMessageAt?: Scalars['DateTime']
+    canManage: Scalars['Boolean']
     __typename: 'AgentChatThread'
 }
 
@@ -3317,6 +3339,7 @@ export interface Query {
     appConnections: AppConnection[]
     appConnection: AppConnection
     findWorkspaceAiStats: WorkspaceAiStats
+    chatThreadSharing: ChatThreadSharingDTO
     aiChatUsage?: AiChatUsage
     chatThreads: AgentChatThread[]
     chatThread: AgentChatThread
@@ -3538,6 +3561,7 @@ export interface Mutation {
     enqueueJob: EnqueueJobResult
     enqueueJobs: EnqueueJobsResult
     reportAppConnectionAuthFailure: Scalars['Boolean']
+    setChatThreadShare: ChatThreadSharingDTO
     createChatThread: AgentChatThread
     sendChatMessage: SendChatMessageResult
     retryChatMessage: SendChatMessageResult
@@ -6693,6 +6717,30 @@ export interface RecordExportGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ChatThreadShareDTOGenqlSelection{
+    id?: boolean | number
+    principalType?: boolean | number
+    principalId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ChatThreadSharingRoleDTOGenqlSelection{
+    id?: boolean | number
+    label?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ChatThreadSharingDTOGenqlSelection{
+    canManage?: boolean | number
+    isEnabled?: boolean | number
+    roles?: ChatThreadSharingRoleDTOGenqlSelection
+    shares?: ChatThreadShareDTOGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AiChatUsageGenqlSelection{
     limitValue?: boolean | number
     consumedValue?: boolean | number
@@ -6746,6 +6794,7 @@ export interface AgentChatThreadGenqlSelection{
     updatedAt?: boolean | number
     deletedAt?: boolean | number
     lastMessageAt?: boolean | number
+    canManage?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7093,6 +7142,7 @@ export interface QueryGenqlSelection{
     appConnections?: (AppConnectionGenqlSelection & { __args?: {filter?: (ListAppConnectionsInput | null)} })
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection
+    chatThreadSharing?: (ChatThreadSharingDTOGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     aiChatUsage?: AiChatUsageGenqlSelection
     chatThreads?: AgentChatThreadGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -7351,6 +7401,7 @@ export interface MutationGenqlSelection{
     enqueueJob?: (EnqueueJobResultGenqlSelection & { __args: {input: EnqueueJobInput} })
     enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
     reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
+    setChatThreadShare?: (ChatThreadSharingDTOGenqlSelection & { __args: {threadId: Scalars['UUID'], target: ChatThreadShareTargetInput, enabled: Scalars['Boolean']} })
     createChatThread?: AgentChatThreadGenqlSelection
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
     retryChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], modelId?: (Scalars['String'] | null)} })
@@ -7826,6 +7877,8 @@ export interface EnqueueJobsInput {logicFunctionUniversalIdentifier: Scalars['St
 export interface EnqueueJobItemInput {payload?: (Scalars['JSON'] | null),jobId?: (Scalars['String'] | null)}
 
 export interface ReportAppConnectionAuthFailureInput {id: Scalars['ID'],reason?: (Scalars['String'] | null)}
+
+export interface ChatThreadShareTargetInput {workspaceMemberId?: (Scalars['UUID'] | null),roleId?: (Scalars['UUID'] | null),everyone?: (Scalars['Boolean'] | null)}
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
 
@@ -10052,6 +10105,30 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isRecordExport = (obj?: { __typename?: any } | null): obj is RecordExport => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordExport"')
       return RecordExport_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ChatThreadShareDTO_possibleTypes: string[] = ['ChatThreadShareDTO']
+    export const isChatThreadShareDTO = (obj?: { __typename?: any } | null): obj is ChatThreadShareDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isChatThreadShareDTO"')
+      return ChatThreadShareDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ChatThreadSharingRoleDTO_possibleTypes: string[] = ['ChatThreadSharingRoleDTO']
+    export const isChatThreadSharingRoleDTO = (obj?: { __typename?: any } | null): obj is ChatThreadSharingRoleDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isChatThreadSharingRoleDTO"')
+      return ChatThreadSharingRoleDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ChatThreadSharingDTO_possibleTypes: string[] = ['ChatThreadSharingDTO']
+    export const isChatThreadSharingDTO = (obj?: { __typename?: any } | null): obj is ChatThreadSharingDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isChatThreadSharingDTO"')
+      return ChatThreadSharingDTO_possibleTypes.includes(obj.__typename)
     }
     
 
