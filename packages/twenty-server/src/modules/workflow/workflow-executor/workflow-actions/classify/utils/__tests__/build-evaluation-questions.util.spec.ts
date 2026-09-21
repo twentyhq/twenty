@@ -2,6 +2,20 @@ import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { buildEvaluationQuestions } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/utils/build-evaluation-questions.util';
 
 describe('buildEvaluationQuestions', () => {
+  it('rejects a resolved choice label containing a variable path separator', () => {
+    expect(() =>
+      buildEvaluationQuestions([
+        {
+          id: 'question',
+          name: 'profession',
+          type: 'choice',
+          instructions: 'Choose a profession',
+          criteria: [{ id: 'option', name: 'Dr. Lawyer' }],
+        },
+      ]),
+    ).toThrow('separates a variable path');
+  });
+
   it('should key answers by question name', () => {
     expect(
       buildEvaluationQuestions([

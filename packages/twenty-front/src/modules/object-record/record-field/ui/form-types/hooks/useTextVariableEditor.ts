@@ -1,3 +1,4 @@
+import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
 import { WorkflowVariableTag } from '@/workflow/workflow-variables/extensions/WorkflowVariableTag';
 import Document from '@tiptap/extension-document';
@@ -9,7 +10,7 @@ import { UndoRedo } from '@tiptap/extensions/undo-redo';
 import { Slice } from '@tiptap/pm/model';
 
 import { type Editor, useEditor } from '@tiptap/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 
@@ -132,6 +133,18 @@ export const useTextVariableEditor = ({
     enablePasteRules: false,
     injectCSS: false,
   });
+
+  useLayoutEffect(() => {
+    if (
+      isDefined(editor) &&
+      !editor.isDestroyed &&
+      parseEditorContent(editor.getJSON()) !== (defaultValue ?? '')
+    ) {
+      editor.commands.setContent(getInitialEditorContent(defaultValue ?? ''), {
+        emitUpdate: false,
+      });
+    }
+  }, [editor, defaultValue]);
 
   useEffect(() => {
     editor?.setEditable(!readonly, false);
