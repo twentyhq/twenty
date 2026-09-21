@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { styled } from '@linaria/react';
@@ -250,7 +250,7 @@ export const Select = <Value extends SelectValue>({
               )}
               {isDefined(pinnedOption) && (
                 <DropdownMenuItemsContainer scrollable={false}>
-                  <DropdownListItem
+                  <ListItem
                     onClick={() => {
                       onChange?.(pinnedOption.value);
                       onBlur?.();
@@ -277,7 +277,7 @@ export const Select = <Value extends SelectValue>({
                     }
                   >
                     {pinnedOption.label}
-                  </DropdownListItem>
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               )}
               {isDefined(pinnedOption) && isNonEmptyArray(filteredOptions) && (
@@ -304,7 +304,7 @@ export const Select = <Value extends SelectValue>({
                           onEnter={handleSelectOption}
                         >
                           {renderAsTag && isDefined(option.color) ? (
-                            <DropdownListItem
+                            <ListItem
                               focused={selectedItemId === option.label}
                               onClick={handleSelectOption}
                               role="option"
@@ -323,9 +323,9 @@ export const Select = <Value extends SelectValue>({
                               >
                                 {option.label}
                               </Tag>
-                            </DropdownListItem>
+                            </ListItem>
                           ) : (
-                            <DropdownListItem
+                            <ListItem
                               focused={selectedItemId === option.label}
                               onClick={handleSelectOption}
                               role="option"
@@ -349,7 +349,7 @@ export const Select = <Value extends SelectValue>({
                               }
                             >
                               {option.label}
-                            </DropdownListItem>
+                            </ListItem>
                           )}
                         </SelectableListItem>
                       );
@@ -361,14 +361,14 @@ export const Select = <Value extends SelectValue>({
                 isNonEmptyArray(filteredOptions) && <DropdownMenuSeparator />}
               {isDefined(callToActionButton) && (
                 <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-                  <DropdownListItem
+                  <ListItem
                     onClick={callToActionButton.onClick}
                     startIcon={
                       <SelectOptionIcon Icon={callToActionButton.Icon} />
                     }
                   >
                     {callToActionButton.text}
-                  </DropdownListItem>
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               )}
             </DropdownContent>

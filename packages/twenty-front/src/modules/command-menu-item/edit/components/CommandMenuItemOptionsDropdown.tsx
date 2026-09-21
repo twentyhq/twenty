@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useResetCommandMenuItemToDefault } from '@/command-menu-item/edit/hooks/useResetCommandMenuItemToDefault';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -69,10 +69,10 @@ export const CommandMenuItemOptionsDropdown = ({
               checked={isLabelHidden || hasNoShortLabel}
               onCheckedChange={handleHiddenLabelChange}
             >{t`Hide label`}</SettingsRow>
-            <DropdownListItem
+            <ListItem
               startIcon={<IconRefresh />}
               onClick={handleResetToDefault}
-            >{t`Reset to default`}</DropdownListItem>
+            >{t`Reset to default`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

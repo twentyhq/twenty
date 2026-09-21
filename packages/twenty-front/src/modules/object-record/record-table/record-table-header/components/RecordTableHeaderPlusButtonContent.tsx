@@ -1,4 +1,3 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useCallback, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -20,7 +19,7 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSettings, useIcons } from 'twenty-ui/icon';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();
@@ -96,7 +95,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
       <DropdownMenuItemsContainer>
         {filteredFieldMetadataItems.length > 0 ? (
           filteredFieldMetadataItems.map((fieldMetadataItem) => (
-            <DropdownListItem
+            <ListItem
               key={fieldMetadataItem.id}
               onClick={() =>
                 handleFieldMetadataItemMenuItemClick(fieldMetadataItem)
@@ -106,14 +105,14 @@ export const RecordTableHeaderPlusButtonContent = () => {
               }
             >
               {fieldMetadataItem.label}
-            </DropdownListItem>
+            </ListItem>
           ))
         ) : (
-          <DropdownListItem disabled>
+          <ListItem disabled>
             {hasAvailableFields
               ? t`No results`
               : t`All fields are already visible`}
-          </DropdownListItem>
+          </ListItem>
         )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
@@ -127,9 +126,9 @@ export const RecordTableHeaderPlusButtonContent = () => {
             setNavigationMemorizedUrl(location.pathname + location.search);
           }}
         >
-          <DropdownListItem
+          <ListItem
             startIcon={<IconSettings />}
-          >{t`Customize fields`}</DropdownListItem>
+          >{t`Customize fields`}</ListItem>
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </DropdownContent>

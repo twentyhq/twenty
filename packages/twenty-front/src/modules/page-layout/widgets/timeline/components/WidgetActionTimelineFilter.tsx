@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useTimelineActivityTypeFilter } from '@/activities/timeline-activities/hooks/useTimelineActivityTypeFilter';
 import { timelineActivityTypeUniversalIdentifiersFilterFamilyState } from '@/activities/timeline-activities/states/timelineActivityTypeUniversalIdentifiersFilterFamilyState';
@@ -87,7 +87,7 @@ export const WidgetActionTimelineFilter = () => {
           <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
             {isNonEmptyArray(filteredTimelineActivityTypes) ? (
               filteredTimelineActivityTypes.map((timelineActivityType) => (
-                <DropdownListItem
+                <ListItem
                   render={<button type="button" />}
                   key={timelineActivityType.universalIdentifier}
                   role="option"
@@ -117,22 +117,22 @@ export const WidgetActionTimelineFilter = () => {
                   }
                 >
                   {timelineActivityType.label}
-                </DropdownListItem>
+                </ListItem>
               ))
             ) : (
-              <DropdownListItem disabled>{t`No results`}</DropdownListItem>
+              <ListItem disabled>{t`No results`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
           {isNonEmptyArray(timelineActivityTypeUniversalIdentifiersFilter) && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer scrollable={false}>
-                <DropdownListItem
+                <ListItem
                   startIcon={<IconFilterOff />}
                   onClick={() =>
                     setTimelineActivityTypeUniversalIdentifiersFilter([])
                   }
-                >{t`Clear filter`}</DropdownListItem>
+                >{t`Clear filter`}</ListItem>
               </DropdownMenuItemsContainer>
             </>
           )}

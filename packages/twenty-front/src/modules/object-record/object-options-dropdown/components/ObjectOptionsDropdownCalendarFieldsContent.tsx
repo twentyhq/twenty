@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
@@ -81,7 +81,7 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {filteredCalendarFields.map((fieldMetadataItem) => (
-          <DropdownListItem
+          <ListItem
             key={fieldMetadataItem.id}
             onClick={() => handleCalendarFieldChange(fieldMetadataItem)}
             role="option"
@@ -93,18 +93,18 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
             }
           >
             {fieldMetadataItem.label}
-          </DropdownListItem>
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>
-        <DropdownListItem
+        <ListItem
           startIcon={<IconSettings />}
           onClick={() => {
             navigateToDateFieldSettings();
             closeDropdown();
           }}
-        >{t`Create date field`}</DropdownListItem>
+        >{t`Create date field`}</ListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

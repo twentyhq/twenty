@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useEffect } from 'react';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
@@ -138,7 +138,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                   onContentChange('recordGroupFields')
                 }
               >
-                <DropdownListItem
+                <ListItem
                   focused={selectedItemId === 'GroupBy'}
                   disabled={isGroupByFieldPickerDisabled}
                   onClick={() => onContentChange('recordGroupFields')}
@@ -146,20 +146,20 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                   description={recordIndexGroupFieldMetadataItem?.label}
                   descriptionPlacement="end"
                   hasSubmenu
-                >{t`Group by`}</DropdownListItem>
+                >{t`Group by`}</ListItem>
               </SelectableListItem>
               <SelectableListItem
                 itemId="Sort"
                 onEnter={() => onContentChange('recordGroupSort')}
               >
-                <DropdownListItem
+                <ListItem
                   focused={selectedItemId === 'Sort'}
                   onClick={() => onContentChange('recordGroupSort')}
                   startIcon={<IconArrowsSort />}
                   description={recordIndexRecordGroupSort}
                   descriptionPlacement="end"
                   hasSubmenu
-                >{t`Sort`}</DropdownListItem>
+                >{t`Sort`}</ListItem>
               </SelectableListItem>
             </>
           )}
@@ -193,10 +193,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
-            <DropdownListItem
+            <ListItem
               onClick={() => onContentChange('addRecordGroup')}
               startIcon={<IconPlus />}
-            >{t`New group`}</DropdownListItem>
+            >{t`New group`}</ListItem>
           </DropdownMenuItemsContainer>
         </>
       )}
@@ -213,12 +213,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 itemId="HiddenGroups"
                 onEnter={() => onContentChange('hiddenRecordGroups')}
               >
-                <DropdownListItem
+                <ListItem
                   onClick={() => onContentChange('hiddenRecordGroups')}
                   startIcon={<IconEyeOff />}
                   render={<button type="button" />}
                   hasSubmenu
-                >{`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}</DropdownListItem>
+                >{`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}</ListItem>
               </SelectableListItem>
             </SelectableList>
           </DropdownMenuItemsContainer>

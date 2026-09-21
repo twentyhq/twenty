@@ -1,4 +1,3 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useLocation } from 'react-router-dom';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -16,7 +15,7 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings } from 'twenty-ui/icon';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   const { t } = useLingui();
@@ -58,9 +57,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
         }}
       >
         <DropdownMenuItemsContainer scrollable={false}>
-          <DropdownListItem
-            startIcon={<IconSettings />}
-          >{t`Edit Fields`}</DropdownListItem>
+          <ListItem startIcon={<IconSettings />}>{t`Edit Fields`}</ListItem>
         </DropdownMenuItemsContainer>
       </UndecoratedLink>
     </DropdownContent>

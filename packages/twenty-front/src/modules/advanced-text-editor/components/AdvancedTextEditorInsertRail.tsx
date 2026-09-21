@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -274,39 +274,39 @@ export const AdvancedTextEditorInsertRail = ({
       {openMenu === 'variables' && (
         <StyledPopover>
           {variables.map(({ label, value }) => (
-            <DropdownListItem
+            <ListItem
               key={value}
               description={label}
               onClick={() => insertVariable(value)}
             >
               <StyledVariableLiteral>{value}</StyledVariableLiteral>
-            </DropdownListItem>
+            </ListItem>
           ))}
         </StyledPopover>
       )}
       {openMenu === 'text' && (
         <StyledPopover>
           {textItems.map(({ Icon, label, content }) => (
-            <DropdownListItem
+            <ListItem
               key={label}
               startIcon={<SelectOptionIcon Icon={Icon} />}
               onClick={() => insertAtEnd(content)}
             >
               {label}
-            </DropdownListItem>
+            </ListItem>
           ))}
         </StyledPopover>
       )}
       {openMenu === 'blocks' && (
         <StyledPopover>
           {blockItems.map(({ Icon, id, label, content }) => (
-            <DropdownListItem
+            <ListItem
               key={id}
               startIcon={<SelectOptionIcon Icon={Icon} />}
               onClick={() => insertAtEnd(content)}
             >
               {label}
-            </DropdownListItem>
+            </ListItem>
           ))}
         </StyledPopover>
       )}

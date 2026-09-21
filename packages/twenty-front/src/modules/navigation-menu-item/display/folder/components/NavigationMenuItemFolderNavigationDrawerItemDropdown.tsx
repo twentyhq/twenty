@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconDotsVertical,
@@ -42,25 +42,25 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
       renderMenu={({ onClose, onAdd }) => (
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               startIcon={<IconEdit />}
               onClick={() => {
                 onClose();
                 onEdit();
               }}
-            >{t`Edit`}</DropdownListItem>
-            <DropdownListItem
+            >{t`Edit`}</ListItem>
+            <ListItem
               startIcon={<IconPlus />}
               onClick={() => onAdd({ folderId, position: itemCount })}
-            >{t`Add menu item`}</DropdownListItem>
-            <DropdownListItem
+            >{t`Add menu item`}</ListItem>
+            <ListItem
               startIcon={<IconTrash />}
               onClick={() => {
                 onClose();
                 onDelete();
               }}
               color="danger"
-            >{t`Remove from sidebar`}</DropdownListItem>
+            >{t`Remove from sidebar`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       )}

@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { NavigationMenuItemInsertionPreviewEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemInsertionPreviewEffect';
 import {
@@ -220,9 +220,7 @@ export const NavigationMenuItemAddDropdownContent = ({
                 ))}
               </Fragment>
             ))}
-          {items.length === 0 && (
-            <DropdownListItem disabled>{emptyMessage}</DropdownListItem>
-          )}
+          {items.length === 0 && <ListItem disabled>{emptyMessage}</ListItem>}
         </DropdownMenuItemsContainer>
       </SelectableList>
     </DropdownContent>

@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { AppMenuItem } from '@/applications/components/AppMenuItem';
@@ -180,7 +180,7 @@ const CommandMenuItemSelectableRenderer = ({
 
   return (
     <SelectableListItem itemId={item.id} onEnter={onItemClick}>
-      <DropdownListItem
+      <ListItem
         focused={isSelectedItemId}
         startIcon={<Icon />}
         onClick={onItemClick}
@@ -188,7 +188,7 @@ const CommandMenuItemSelectableRenderer = ({
         disabled={disabled}
       >
         {label}
-      </DropdownListItem>
+      </ListItem>
     </SelectableListItem>
   );
 };

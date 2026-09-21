@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
@@ -275,7 +275,7 @@ export const SettingsMorphRelationMultiSelect = ({
                             closeDropdown(dropdownId);
                           }}
                         >
-                          <DropdownListItem
+                          <ListItem
                             className=""
                             focused={selectedItemId === option.objectMetadataId}
                             role="option"
@@ -310,7 +310,7 @@ export const SettingsMorphRelationMultiSelect = ({
                             }
                           >
                             {option.label}
-                          </DropdownListItem>
+                          </ListItem>
                         </SelectableListItem>
                       </Fragment>
                     ))}
@@ -322,14 +322,14 @@ export const SettingsMorphRelationMultiSelect = ({
               )}
               {!!callToActionButton && (
                 <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-                  <DropdownListItem
+                  <ListItem
                     onClick={callToActionButton.onClick}
                     startIcon={
                       <SelectOptionIcon Icon={callToActionButton.Icon} />
                     }
                   >
                     {callToActionButton.text}
-                  </DropdownListItem>
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               )}
             </DropdownContent>

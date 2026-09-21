@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -380,7 +380,7 @@ export const SettingsDataModelFieldSelectForm = ({
                           widthInPixels={GenericDropdownContentWidth.Narrow}
                         >
                           <DropdownMenuItemsContainer>
-                            <DropdownListItem
+                            <ListItem
                               startIcon={<IconPencil />}
                               onClick={() => {
                                 if (!isBulkInputMode) {
@@ -395,15 +395,15 @@ export const SettingsDataModelFieldSelectForm = ({
                               }}
                             >
                               {isBulkInputMode ? t`Single edit` : t`Bulk edit`}
-                            </DropdownListItem>
-                            <DropdownListItem
+                            </ListItem>
+                            <ListItem
                               color="danger"
                               startIcon={<IconTrash />}
                               onClick={() => {
                                 onChange([]);
                                 closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
                               }}
-                            >{t`Remove all`}</DropdownListItem>
+                            >{t`Remove all`}</ListItem>
                           </DropdownMenuItemsContainer>
                         </DropdownContent>
                       }

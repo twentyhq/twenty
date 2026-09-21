@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
@@ -76,10 +76,10 @@ export const PageLayoutTabListNewTabDropdownContent = ({
     <DropdownContent>
       <DropdownMenuHeader>{t`New tab`}</DropdownMenuHeader>
       <DropdownMenuItemsContainer>
-        <DropdownListItem
+        <ListItem
           startIcon={<IconPlus />}
           onClick={handleCreateEmptyTab}
-        >{t`Empty tab`}</DropdownListItem>
+        >{t`Empty tab`}</ListItem>
       </DropdownMenuItemsContainer>
       {inactiveTabs.length > 0 && (
         <>
@@ -87,7 +87,7 @@ export const PageLayoutTabListNewTabDropdownContent = ({
           <DropdownMenuSectionLabel label={t`Disabled`} />
           <DropdownMenuItemsContainer>
             {inactiveTabs.map((tab) => (
-              <DropdownListItem
+              <ListItem
                 key={tab.id}
                 startIcon={
                   <SelectOptionIcon
@@ -97,7 +97,7 @@ export const PageLayoutTabListNewTabDropdownContent = ({
                 onClick={() => handleReactivateTab(tab.id)}
               >
                 {tab.title}
-              </DropdownListItem>
+              </ListItem>
             ))}
           </DropdownMenuItemsContainer>
         </>

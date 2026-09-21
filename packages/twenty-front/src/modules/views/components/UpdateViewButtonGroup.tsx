@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -126,10 +126,10 @@ export const UpdateViewButtonGroup = () => {
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <DropdownListItem
+                  <ListItem
                     onClick={handleCreateViewClick}
                     startIcon={<IconPlus />}
-                  >{t`Create view`}</DropdownListItem>
+                  >{t`Create view`}</ListItem>
                 </DropdownMenuItemsContainer>
               </DropdownContent>
             }

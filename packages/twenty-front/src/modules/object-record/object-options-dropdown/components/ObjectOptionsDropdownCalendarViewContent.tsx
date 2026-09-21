@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
@@ -95,9 +94,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               selected={recordIndexCalendarLayout === ViewCalendarLayout.DAY}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconCalendarEvent} />}
-            >
-              <OverflowingTextWithTooltip text={t`Day`} />
-            </ListItem>
+            >{t`Day`}</ListItem>
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewCalendarLayout.WEEK}
@@ -113,9 +110,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               selected={recordIndexCalendarLayout === ViewCalendarLayout.WEEK}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconCalendarWeek} />}
-            >
-              <OverflowingTextWithTooltip text={t`Week`} />
-            </ListItem>
+            >{t`Week`}</ListItem>
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewCalendarLayout.MONTH}
@@ -131,9 +126,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               selected={recordIndexCalendarLayout === ViewCalendarLayout.MONTH}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconCalendarMonth} />}
-            >
-              <OverflowingTextWithTooltip text={t`Month`} />
-            </ListItem>
+            >{t`Month`}</ListItem>
           </SelectableListItem>
           <SelectableListItem itemId={RECORD_CALENDAR_TIMELINE_VIEW_ID}>
             <ListItem
@@ -146,9 +139,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
               description={<Pill label={t`Soon`} />}
               descriptionPlacement={'end'}
               startIcon={<SelectOptionIcon Icon={IconTimelineEvent} />}
-            >
-              <OverflowingTextWithTooltip text={t`Timeline`} />
-            </ListItem>
+            >{t`Timeline`}</ListItem>
           </SelectableListItem>
         </SelectableList>
       </DropdownMenuItemsContainer>

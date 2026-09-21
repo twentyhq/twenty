@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type SingleRecordPickerMenuItemsWithSearchProps } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerMenuItemsWithSearchProps';
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -90,10 +90,10 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           {isDefined(onCreate) && canCreateRecords && (
             <>
               <DropdownMenuItemsContainer scrollable={false}>
-                <DropdownListItem
+                <ListItem
                   onClick={handleCreateNew}
                   startIcon={<IconPlus />}
-                >{t`Add New`}</DropdownListItem>
+                >{t`Add New`}</ListItem>
               </DropdownMenuItemsContainer>
               <DropdownMenuSeparator />
             </>
@@ -138,10 +138,10 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer scrollable={false}>
-                <DropdownListItem
+                <ListItem
                   onClick={handleCreateNew}
                   startIcon={<IconPlus />}
-                >{t`Add New`}</DropdownListItem>
+                >{t`Add New`}</ListItem>
               </DropdownMenuItemsContainer>
             </>
           )}

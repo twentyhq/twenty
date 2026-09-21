@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -101,7 +101,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
               disabled={!!hasViewsPermission}
             >
               <div id="workspace-visibility-option">
-                <DropdownListItem
+                <ListItem
                   focused={selectedItemId === ViewVisibility.WORKSPACE}
                   onClick={() =>
                     handleVisibilityChange(ViewVisibility.WORKSPACE)
@@ -113,7 +113,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
                   indicator="check"
                   description={t`Everyone`}
                   startIcon={<IconCircle />}
-                >{t`Workspace`}</DropdownListItem>
+                >{t`Workspace`}</ListItem>
               </div>
             </Tooltip>
           </SelectableListItem>
@@ -124,7 +124,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
               handleVisibilityChange(ViewVisibility.UNLISTED)
             }
           >
-            <DropdownListItem
+            <ListItem
               focused={selectedItemId === ViewVisibility.UNLISTED}
               onClick={() => handleVisibilityChange(ViewVisibility.UNLISTED)}
               disabled={!canPersistChanges}
@@ -134,7 +134,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
               indicator="check"
               description={t`Visible to you`}
               startIcon={<IconCircleDashed />}
-            >{t`Unlisted`}</DropdownListItem>
+            >{t`Unlisted`}</ListItem>
           </SelectableListItem>
           {currentVisibility === ViewVisibility.WORKSPACE && (
             <>
@@ -143,11 +143,11 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
                 itemId="Copy view link"
                 onEnter={handleCopyLink}
               >
-                <DropdownListItem
+                <ListItem
                   focused={selectedItemId === 'Copy view link'}
                   onClick={handleCopyLink}
                   startIcon={<IconCopy />}
-                >{t`Copy view link`}</DropdownListItem>
+                >{t`Copy view link`}</ListItem>
               </SelectableListItem>
             </>
           )}

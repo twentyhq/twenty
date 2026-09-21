@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useRecordGroupActions } from '@/object-record/record-group/hooks/useRecordGroupActions';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -14,13 +14,13 @@ export const RecordBoardColumnDropdownMenu = () => {
     <DropdownContent selectDisabled>
       <DropdownMenuItemsContainer>
         {recordGroupActions.map((action) => (
-          <DropdownListItem
+          <ListItem
             key={action.id}
             onClick={action.callback}
             startIcon={<SelectOptionIcon Icon={action.icon} />}
           >
             {action.label}
-          </DropdownListItem>
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>

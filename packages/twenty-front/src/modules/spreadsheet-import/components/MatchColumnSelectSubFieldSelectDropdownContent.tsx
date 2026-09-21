@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
@@ -74,14 +74,14 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
       <DropdownMenuItemsContainer hasMaxHeight>
         {subFieldOptions.map(
           ({ value, shortLabelForNestedField, Icon, disabled }) => (
-            <DropdownListItem
+            <ListItem
               key={value}
               onClick={() => handleSubFieldSelect(value)}
               startIcon={<SelectOptionIcon Icon={Icon} />}
               disabled={disabled}
             >
               {shortLabelForNestedField}
-            </DropdownListItem>
+            </ListItem>
           ),
         )}
       </DropdownMenuItemsContainer>

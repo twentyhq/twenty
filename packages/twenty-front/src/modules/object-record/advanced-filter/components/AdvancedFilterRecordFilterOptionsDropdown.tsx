@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-filter-group/hooks/useRemoveRootRecordFilterGroupIfEmpty';
@@ -75,11 +75,11 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               onClick={handleRemove}
               startIcon={<IconTrash />}
               color="danger"
-            >{t`Remove rule`}</DropdownListItem>
+            >{t`Remove rule`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

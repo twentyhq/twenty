@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 /* @license Enterprise */
 
@@ -304,7 +304,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
         />
         <DropdownMenuItemsContainer>
           {filteredMenuItems.map((item) => (
-            <DropdownListItem
+            <ListItem
               key={item.id}
               startIcon={
                 <SelectOptionIcon
@@ -316,12 +316,10 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
               }
             >
               {item.label}
-            </DropdownListItem>
+            </ListItem>
           ))}
           {filteredMenuItems.length === 0 && (
-            <DropdownListItem
-              disabled
-            >{t`No compatible fields`}</DropdownListItem>
+            <ListItem disabled>{t`No compatible fields`}</ListItem>
           )}
         </DropdownMenuItemsContainer>
       </DropdownContent>

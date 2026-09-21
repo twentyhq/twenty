@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -42,13 +42,13 @@ export const ViewBarFilterDropdownFieldSelectMenuItem = ({
       itemId={fieldMetadataItemToSelect.id}
       onEnter={handleClick}
     >
-      <DropdownListItem
+      <ListItem
         focused={isSelectedItemId}
         onClick={handleClick}
         startIcon={<SelectOptionIcon Icon={Icon} />}
       >
         {fieldMetadataItemToSelect.label}
-      </DropdownListItem>
+      </ListItem>
     </SelectableListItem>
   );
 };

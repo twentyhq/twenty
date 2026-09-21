@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { RUN_EVALUATION_INPUT } from '@/ai/graphql/mutations/runEvaluationInput';
 import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
@@ -177,15 +177,15 @@ export const SettingsAgentEvalsTab = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <DropdownListItem
+                      <ListItem
                         startIcon={<IconPlayerPlay />}
                         onClick={() => handleRunInput(item.text, item.id)}
-                      >{t`Run`}</DropdownListItem>
-                      <DropdownListItem
+                      >{t`Run`}</ListItem>
+                      <ListItem
                         color="danger"
                         startIcon={<IconTrash />}
                         onClick={() => openDeleteModal(item.id)}
-                      >{t`Delete`}</DropdownListItem>
+                      >{t`Delete`}</ListItem>
                     </DropdownMenuItemsContainer>
                   </DropdownContent>
                 }

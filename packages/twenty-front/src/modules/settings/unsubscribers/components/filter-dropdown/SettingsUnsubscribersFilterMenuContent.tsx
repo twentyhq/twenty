@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useLingui } from '@lingui/react/macro';
 import { IconMailCog, IconStatusChange, IconTrash } from 'twenty-ui/icon';
 
@@ -27,28 +27,28 @@ export const SettingsUnsubscribersFilterMenuContent = ({
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        <DropdownListItem
+        <ListItem
           startIcon={<IconStatusChange />}
           description={reasonLabel}
           descriptionPlacement="end"
           hasSubmenu
           onClick={() => onContentChange('reason')}
-        >{t`Reason`}</DropdownListItem>
-        <DropdownListItem
+        >{t`Reason`}</ListItem>
+        <ListItem
           startIcon={<IconMailCog />}
           description={topicLabel}
           descriptionPlacement="end"
           hasSubmenu
           onClick={() => onContentChange('topic')}
-        >{t`Topic`}</DropdownListItem>
+        >{t`Topic`}</ListItem>
         {hasActiveFilters && (
           <>
             <DropdownMenuSeparator />
-            <DropdownListItem
+            <ListItem
               color="danger"
               startIcon={<IconTrash />}
               onClick={onClear}
-            >{t`Clear filters`}</DropdownListItem>
+            >{t`Clear filters`}</ListItem>
           </>
         )}
       </DropdownMenuItemsContainer>

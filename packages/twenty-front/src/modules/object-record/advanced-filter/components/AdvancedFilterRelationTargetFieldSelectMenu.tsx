@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -149,7 +149,7 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
                 itemId={RELATION_RECORD_SELECTABLE_ITEM_ID}
                 onEnter={handleSelectRelationRecord}
               >
-                <DropdownListItem
+                <ListItem
                   focused={
                     selectedItemId === RELATION_RECORD_SELECTABLE_ITEM_ID
                   }
@@ -158,7 +158,7 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
                   startIcon={<IconUserCircle />}
                 >
                   {workspaceMemberObjectMetadataItem.labelSingular}
-                </DropdownListItem>
+                </ListItem>
               </SelectableListItem>
               <DropdownMenuSeparator />
             </>
@@ -171,7 +171,7 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
                 handleSelectTargetField(targetField);
               }}
             >
-              <DropdownListItem
+              <ListItem
                 focused={selectedItemId === targetField.id}
                 key={`select-filter-relation-${index}`}
                 data-testid={`select-filter-relation-${index}`}
@@ -183,7 +183,7 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
                 }
               >
                 {targetField.label}
-              </DropdownListItem>
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
@@ -243,7 +243,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                             itemId={option.value}
                             onEnter={() => handleOptionClick(option.value)}
                           >
-                            <DropdownListItem
+                            <ListItem
                               focused={selectedItemId === option.value}
                               startIcon={
                                 <SelectOptionIcon Icon={option.Icon} />
@@ -251,7 +251,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                               onClick={() => handleOptionClick(option.value)}
                             >
                               {option.label}
-                            </DropdownListItem>
+                            </ListItem>
                           </SelectableListItem>
                         ))}
                       </SelectableList>

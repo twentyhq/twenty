@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconClock,
@@ -64,7 +64,7 @@ export const AiChatThreadFilterDropdownRootMenu = ({
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        <DropdownListItem
+        <ListItem
           startIcon={<IconStatusChange />}
           description={t(
             AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[agentChatThreadFilterStatus],
@@ -74,8 +74,8 @@ export const AiChatThreadFilterDropdownRootMenu = ({
           onClick={() =>
             onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.STATUS)
           }
-        >{t`Status`}</DropdownListItem>
-        <DropdownListItem
+        >{t`Status`}</ListItem>
+        <ListItem
           startIcon={<IconLayoutList />}
           description={t(
             AGENT_CHAT_THREAD_GROUP_BY_LABELS[agentChatThreadGroupBy],
@@ -85,8 +85,8 @@ export const AiChatThreadFilterDropdownRootMenu = ({
           onClick={() =>
             onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.GROUP_BY)
           }
-        >{t`Group by`}</DropdownListItem>
-        <DropdownListItem
+        >{t`Group by`}</ListItem>
+        <ListItem
           startIcon={<IconClock />}
           description={t(
             AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS[
@@ -98,15 +98,15 @@ export const AiChatThreadFilterDropdownRootMenu = ({
           onClick={() =>
             onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.LAST_ACTIVITY)
           }
-        >{t`Last activity`}</DropdownListItem>
+        >{t`Last activity`}</ListItem>
         {!isAtDefaults && (
           <>
             <DropdownMenuSeparator />
-            <DropdownListItem
+            <ListItem
               color="danger"
               startIcon={<IconTrash />}
               onClick={handleClearFilters}
-            >{t`Clear filters`}</DropdownListItem>
+            >{t`Clear filters`}</ListItem>
           </>
         )}
       </DropdownMenuItemsContainer>

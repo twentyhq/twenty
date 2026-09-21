@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -36,11 +36,11 @@ export const WorkflowStepFilterGroupOptionsDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               startIcon={<IconTrash />}
               onClick={() => removeStepFilterGroup(stepFilterGroupId)}
               color="danger"
-            >{t`Delete group`}</DropdownListItem>
+            >{t`Delete group`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

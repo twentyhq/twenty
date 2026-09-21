@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -101,15 +101,15 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               startIcon={<IconPlus />}
               onClick={handleAddFilter}
-            >{t`Add rule`}</DropdownListItem>
+            >{t`Add rule`}</ListItem>
             {isFilterRuleGroupOptionVisible && (
-              <DropdownListItem
+              <ListItem
                 startIcon={<IconLibraryPlus />}
                 onClick={handleAddFilterGroup}
-              >{t`Add rule group`}</DropdownListItem>
+              >{t`Add rule group`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

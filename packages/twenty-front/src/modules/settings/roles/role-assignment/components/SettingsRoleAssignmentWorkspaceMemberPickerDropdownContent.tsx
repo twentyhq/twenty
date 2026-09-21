@@ -1,8 +1,7 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemAvatar } from 'twenty-ui/primitives/navigation';
+import { ListItem, MenuItemAvatar } from 'twenty-ui/primitives/navigation';
 import { type SearchRecord } from '~/generated/graphql';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -29,7 +28,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
   }
 
   if (!filteredWorkspaceMembers.length && searchFilter.length > 0) {
-    return <DropdownListItem disabled>{t`No Results`}</DropdownListItem>;
+    return <ListItem disabled>{t`No Results`}</ListItem>;
   }
 
   const enrichedWorkspaceMembers = filteredWorkspaceMembers

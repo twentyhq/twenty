@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
@@ -277,7 +277,7 @@ export const SettingsObjectSearchSection = ({
                     const FieldIcon = getIcon(field.icon);
 
                     return (
-                      <DropdownListItem
+                      <ListItem
                         key={field.id}
                         startIcon={<SelectOptionIcon Icon={FieldIcon} />}
                         onClick={() => {
@@ -286,7 +286,7 @@ export const SettingsObjectSearchSection = ({
                         }}
                       >
                         {field.label}
-                      </DropdownListItem>
+                      </ListItem>
                     );
                   })}
                 </DropdownMenuItemsContainer>

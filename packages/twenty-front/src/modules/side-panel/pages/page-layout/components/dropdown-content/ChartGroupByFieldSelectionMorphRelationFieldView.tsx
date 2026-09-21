@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -129,9 +129,7 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {availableTargets.length === 0 ? (
-          <DropdownListItem
-            disabled
-          >{t`No targets available`}</DropdownListItem>
+          <ListItem disabled>{t`No targets available`}</ListItem>
         ) : (
           <SelectableList
             selectableListInstanceId={dropdownId}
@@ -148,7 +146,7 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
                   setSelectedTarget(target);
                 }}
               >
-                <DropdownListItem
+                <ListItem
                   focused={selectedItemId === target.perTargetFieldId}
                   startIcon={
                     <SelectOptionIcon
@@ -165,7 +163,7 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
                   }}
                 >
                   {target.label}
-                </DropdownListItem>
+                </ListItem>
               </SelectableListItem>
             ))}
           </SelectableList>

@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
@@ -33,14 +33,14 @@ export const SettingsAdminWorkspaceCreditGrantRowDropdownMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               color="danger"
               startIcon={<IconTrash />}
               onClick={() => {
                 onRevoke();
                 closeDropdown(dropdownId);
               }}
-            >{t`Revoke`}</DropdownListItem>
+            >{t`Revoke`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

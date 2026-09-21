@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -33,7 +33,7 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {colorSchemeList.map((theme) => (
-          <DropdownListItem
+          <ListItem
             key={theme.id}
             startIcon={<SelectOptionIcon Icon={theme.icon} />}
             onClick={() => setColorScheme(theme.id)}
@@ -47,7 +47,7 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
               : theme.id === 'Dark'
                 ? t`Dark`
                 : t`Light`}
-          </DropdownListItem>
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>

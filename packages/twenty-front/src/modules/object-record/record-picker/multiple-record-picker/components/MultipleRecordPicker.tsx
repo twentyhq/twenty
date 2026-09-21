@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useCallback, useRef, useState } from 'react';
 import { useStore } from 'jotai';
 
@@ -224,12 +224,12 @@ export const MultipleRecordPicker = ({
   const createNewButtonSection =
     creatableObjectMetadataItems.length > 0 ? (
       <DropdownMenuItemsContainer scrollable={false}>
-        <DropdownListItem
+        <ListItem
           onClick={handleCreateNewButtonClick}
           disabled={isCreatePending}
           startIcon={<IconPlus />}
           hasSubmenu={creatableObjectMetadataItems.length > 1}
-        >{t`Add New`}</DropdownListItem>
+        >{t`Add New`}</ListItem>
       </DropdownMenuItemsContainer>
     ) : null;
 

@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -70,24 +70,24 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               startIcon={isCustomField ? <IconPencil /> : <IconEye />}
               onClick={handleEdit}
             >
               {isCustomField && !readonly ? t`Edit` : t`View`}
-            </DropdownListItem>
+            </ListItem>
             {!readonly && (
-              <DropdownListItem
+              <ListItem
                 startIcon={<IconArchiveOff />}
                 onClick={handleActivate}
-              >{t`Activate`}</DropdownListItem>
+              >{t`Activate`}</ListItem>
             )}
             {isDeletable && !readonly && (
-              <DropdownListItem
+              <ListItem
                 color="danger"
                 startIcon={<IconTrash />}
                 onClick={handleDelete}
-              >{t`Delete`}</DropdownListItem>
+              >{t`Delete`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

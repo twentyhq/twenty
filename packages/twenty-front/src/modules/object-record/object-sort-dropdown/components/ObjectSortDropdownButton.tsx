@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -231,7 +231,7 @@ export const ObjectSortDropdownButton = () => {
                         itemId={visibleFieldMetadataItem.id}
                         onEnter={() => handleAddSort(visibleFieldMetadataItem)}
                       >
-                        <DropdownListItem
+                        <ListItem
                           focused={
                             selectedItemId === visibleFieldMetadataItem.id
                           }
@@ -246,7 +246,7 @@ export const ObjectSortDropdownButton = () => {
                           }
                         >
                           {visibleFieldMetadataItem.label}
-                        </DropdownListItem>
+                        </ListItem>
                       </SelectableListItem>
                     ),
                   )}
@@ -265,7 +265,7 @@ export const ObjectSortDropdownButton = () => {
                         itemId={hiddenFieldMetadataItem.id}
                         onEnter={() => handleAddSort(hiddenFieldMetadataItem)}
                       >
-                        <DropdownListItem
+                        <ListItem
                           focused={
                             selectedItemId === hiddenFieldMetadataItem.id
                           }
@@ -278,7 +278,7 @@ export const ObjectSortDropdownButton = () => {
                           }
                         >
                           {hiddenFieldMetadataItem.label}
-                        </DropdownListItem>
+                        </ListItem>
                       </SelectableListItem>
                     ),
                   )}

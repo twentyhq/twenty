@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
@@ -246,17 +246,17 @@ export const RecordDetailRelationRecordsListItem = ({
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <DropdownListItem
+                  <ListItem
                     startIcon={<IconUnlink />}
                     onClick={handleDetach}
-                  >{t`Detach`}</DropdownListItem>
+                  >{t`Detach`}</ListItem>
                   {!isAccountOwnerRelation &&
                     relationObjectPermissions.canSoftDeleteObjectRecords && (
-                      <DropdownListItem
+                      <ListItem
                         startIcon={<IconTrash />}
                         color="danger"
                         onClick={handleDelete}
-                      >{t`Delete`}</DropdownListItem>
+                      >{t`Delete`}</ListItem>
                     )}
                 </DropdownMenuItemsContainer>
               </DropdownContent>

@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { AppChip } from '@/applications/components/AppChip';
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { styled } from '@linaria/react';
@@ -34,7 +34,7 @@ export const AppMenuItem = ({
   });
 
   return (
-    <DropdownListItem
+    <ListItem
       startIcon={
         <StyledAppIconContainer>
           <AppChip applicationId={applicationId} size="md" chipOnly />
@@ -47,6 +47,6 @@ export const AppMenuItem = ({
       endIcon={RightComponent}
     >
       {text}
-    </DropdownListItem>
+    </ListItem>
   );
 };

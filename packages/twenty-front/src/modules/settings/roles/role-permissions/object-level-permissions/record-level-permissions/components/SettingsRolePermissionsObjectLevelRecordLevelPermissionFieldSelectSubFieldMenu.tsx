@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 /* @license Enterprise */
 
@@ -157,7 +157,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
                     );
                   }}
                 >
-                  <DropdownListItem
+                  <ListItem
                     focused={selectedItemId === subFieldName}
                     key={`select-filter-${index}`}
                     data-testid={`select-filter-${index}`}
@@ -182,7 +182,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
                       objectFilterDropdownSubMenuFieldType,
                       subFieldName,
                     )}
-                  </DropdownListItem>
+                  </ListItem>
                 </SelectableListItem>
               ))}
           </SelectableList>

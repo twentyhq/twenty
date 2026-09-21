@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -64,9 +63,7 @@ const Render = ({ onEnter, shouldPreselectFirstItem }: RenderProps) => {
           itemId={itemLabel}
           onEnter={() => onEnter(itemLabel)}
         >
-          <ListItem>
-            <OverflowingTextWithTooltip text={itemLabel} />
-          </ListItem>
+          <ListItem>{itemLabel}</ListItem>
         </SelectableListItem>
       ))}
     </SelectableList>

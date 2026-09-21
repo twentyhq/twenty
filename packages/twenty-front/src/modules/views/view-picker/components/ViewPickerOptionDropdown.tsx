@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -133,27 +133,27 @@ export const ViewPickerOptionDropdown = ({
         dropdownContent={
           <DropdownContent>
             <DropdownMenuItemsContainer>
-              <DropdownListItem
+              <ListItem
                 startIcon={isFavorite ? <IconHeartOff /> : <IconHeart />}
                 onClick={handleToggleFavorite}
               >
                 {isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
-              </DropdownListItem>
+              </ListItem>
               {!isIndexView && canEditView && (
                 <>
-                  <DropdownListItem
+                  <ListItem
                     startIcon={<IconPencil />}
                     onClick={(event) => {
                       onEdit(event, view.id);
                       closeDropdown(dropdownId);
                     }}
-                  >{t`Edit`}</DropdownListItem>
+                  >{t`Edit`}</ListItem>
                   {!isLastView && (
-                    <DropdownListItem
+                    <ListItem
                       startIcon={<IconTrash />}
                       onClick={handleDelete}
                       color="danger"
-                    >{t`Delete`}</DropdownListItem>
+                    >{t`Delete`}</ListItem>
                   )}
                 </>
               )}

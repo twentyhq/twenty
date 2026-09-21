@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
 import { type RecordGroupAggregateDropdownContextValue } from '@/object-record/record-group/types/RecordGroupAggregateDropdownContextValue';
@@ -20,30 +20,30 @@ export const RecordGroupAggregateDropdownMenuContent = () => {
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        <DropdownListItem
+        <ListItem
           onClick={() => {
             onContentChange('countAggregateOperationsOptions');
           }}
           hasSubmenu
-        >{t`Count`}</DropdownListItem>
-        <DropdownListItem
+        >{t`Count`}</ListItem>
+        <ListItem
           onClick={() => {
             onContentChange('percentAggregateOperationsOptions');
           }}
           hasSubmenu
-        >{t`Percent`}</DropdownListItem>
-        <DropdownListItem
+        >{t`Percent`}</ListItem>
+        <ListItem
           onClick={() => {
             onContentChange('datesAggregateOperationOptions');
           }}
           hasSubmenu
-        >{t`Date`}</DropdownListItem>
-        <DropdownListItem
+        >{t`Date`}</ListItem>
+        <ListItem
           onClick={() => {
             onContentChange('moreAggregateOperationOptions');
           }}
           hasSubmenu
-        >{t`More options`}</DropdownListItem>
+        >{t`More options`}</ListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

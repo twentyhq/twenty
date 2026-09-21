@@ -1,10 +1,9 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
-import { MenuItemAvatar } from 'twenty-ui/primitives/navigation';
+import { ListItem, MenuItemAvatar } from 'twenty-ui/primitives/navigation';
 
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
@@ -130,29 +129,29 @@ export const EmailRecipientChipMenuContent = ({
                 contextualText={recipient.address}
               />
             ) : (
-              <DropdownListItem
+              <ListItem
                 startIcon={<IconUserPlus />}
                 onClick={handleAddAsPerson}
-              >{t`Add as person`}</DropdownListItem>
+              >{t`Add as person`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
         </>
       )}
       <DropdownMenuItemsContainer>
-        <DropdownListItem
+        <ListItem
           startIcon={<IconCopy />}
           onClick={handleCopy}
-        >{t`Copy email`}</DropdownListItem>
-        <DropdownListItem
+        >{t`Copy email`}</ListItem>
+        <ListItem
           startIcon={<IconPencil />}
           onClick={handleEdit}
-        >{t`Edit`}</DropdownListItem>
-        <DropdownListItem
+        >{t`Edit`}</ListItem>
+        <ListItem
           color="danger"
           startIcon={<IconTrash />}
           onClick={handleRemove}
-        >{t`Remove`}</DropdownListItem>
+        >{t`Remove`}</ListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

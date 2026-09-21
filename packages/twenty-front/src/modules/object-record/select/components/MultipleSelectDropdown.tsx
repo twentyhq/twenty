@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Key } from 'ts-key-enum';
 
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -97,7 +97,7 @@ export const MultipleSelectDropdown = ({
                 handleItemSelectChange(item, !item.isSelected);
               }}
             >
-              <DropdownListItem
+              <ListItem
                 key={item.id}
                 focused={item.id === selectedItemId}
                 role="option"
@@ -119,13 +119,11 @@ export const MultipleSelectDropdown = ({
                 }
               >
                 {item.name}
-              </DropdownListItem>
+              </ListItem>
             </SelectableListItem>
           );
         })}
-        {showNoResult && (
-          <DropdownListItem disabled>{t`No results`}</DropdownListItem>
-        )}
+        {showNoResult && <ListItem disabled>{t`No results`}</ListItem>}
         {loadingItems && <DropdownMenuSkeletonItem />}
       </DropdownMenuItemsContainer>
     </SelectableList>

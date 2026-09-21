@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -33,12 +33,12 @@ export const ViewBarFilterDropdownAnyFieldSearchButtonMenuItem = ({
       itemId={VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH}
       onEnter={onClick}
     >
-      <DropdownListItem
+      <ListItem
         focused={isSelectedItemId}
         onClick={onClick}
         startIcon={<IconSearch />}
         description={objectFilterDropdownSearchInput}
-      >{t`Search any field`}</DropdownListItem>
+      >{t`Search any field`}</ListItem>
     </SelectableListItem>
   );
 };

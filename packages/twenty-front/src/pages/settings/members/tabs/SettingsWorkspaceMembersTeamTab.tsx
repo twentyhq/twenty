@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -189,7 +189,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <DropdownListItem
+                <ListItem
                   startIcon={<IconListDetails />}
                   onClick={() => {
                     navigateApp(AppPath.RecordIndexPage, {
@@ -197,8 +197,8 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                     });
                     closeDropdown('workspace-members-open-dropdown');
                   }}
-                >{t`See records`}</DropdownListItem>
-                <DropdownListItem
+                >{t`See records`}</ListItem>
+                <ListItem
                   startIcon={<IconHierarchy />}
                   onClick={() => {
                     navigateSettings(SettingsPath.ObjectDetail, {
@@ -206,7 +206,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                     });
                     closeDropdown('workspace-members-open-dropdown');
                   }}
-                >{t`See data model settings`}</DropdownListItem>
+                >{t`See data model settings`}</ListItem>
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }

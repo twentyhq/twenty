@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -60,20 +60,20 @@ export const AttachmentDropdown = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
             {hasDownloadPermission && (
-              <DropdownListItem
+              <ListItem
                 startIcon={<IconDownload />}
                 onClick={handleDownload}
-              >{t`Download`}</DropdownListItem>
+              >{t`Download`}</ListItem>
             )}
-            <DropdownListItem
+            <ListItem
               startIcon={<IconPencil />}
               onClick={handleRename}
-            >{t`Rename`}</DropdownListItem>
-            <DropdownListItem
+            >{t`Rename`}</ListItem>
+            <ListItem
               color="danger"
               startIcon={<IconTrash />}
               onClick={handleDelete}
-            >{t`Delete`}</DropdownListItem>
+            >{t`Delete`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

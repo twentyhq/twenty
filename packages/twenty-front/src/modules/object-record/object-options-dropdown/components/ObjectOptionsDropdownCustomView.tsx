@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { ObjectOptionsDropdownMenuViewName } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuViewName';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
@@ -149,7 +149,7 @@ export const ObjectOptionsDropdownCustomView = ({
             itemId="Layout"
             onEnter={() => onContentChange('layout')}
           >
-            <DropdownListItem
+            <ListItem
               focused={selectedItemId === 'Layout'}
               onClick={() => onContentChange('layout')}
               startIcon={
@@ -162,13 +162,13 @@ export const ObjectOptionsDropdownCustomView = ({
               description={t(getViewTypeLabel(customViewData.type))}
               descriptionPlacement="end"
               hasSubmenu
-            >{t`Layout`}</DropdownListItem>
+            >{t`Layout`}</ListItem>
           </SelectableListItem>
           <SelectableListItem
             itemId="Visibility"
             onEnter={() => onContentChange('visibility')}
           >
-            <DropdownListItem
+            <ListItem
               focused={selectedItemId === 'Visibility'}
               onClick={() => onContentChange('visibility')}
               startIcon={<IconShare />}
@@ -179,7 +179,7 @@ export const ObjectOptionsDropdownCustomView = ({
               }
               descriptionPlacement="end"
               hasSubmenu
-            >{t`Visibility`}</DropdownListItem>
+            >{t`Visibility`}</ListItem>
           </SelectableListItem>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
@@ -191,7 +191,7 @@ export const ObjectOptionsDropdownCustomView = ({
                   itemId="CalendarDateField"
                   onEnter={() => onContentChange('calendarFields')}
                 >
-                  <DropdownListItem
+                  <ListItem
                     focused={selectedItemId === 'CalendarDateField'}
                     onClick={() => onContentChange('calendarFields')}
                     startIcon={<IconCalendar />}
@@ -203,14 +203,14 @@ export const ObjectOptionsDropdownCustomView = ({
                     descriptionPlacement="end"
                     hasSubmenu
                     disabled={isDefaultView}
-                  >{t`Date field`}</DropdownListItem>
+                  >{t`Date field`}</ListItem>
                 </SelectableListItem>
               </div>
               <SelectableListItem
                 itemId="CalendarView"
                 onEnter={() => onContentChange('calendarView')}
               >
-                <DropdownListItem
+                <ListItem
                   focused={selectedItemId === 'CalendarView'}
                   onClick={() => onContentChange('calendarView')}
                   startIcon={<IconCalendarWeek />}
@@ -222,7 +222,7 @@ export const ObjectOptionsDropdownCustomView = ({
                         : t`Day`
                   }
                   descriptionPlacement="end"
-                >{t`Calendar view`}</DropdownListItem>
+                >{t`Calendar view`}</ListItem>
               </SelectableListItem>
             </>
           )}
@@ -230,14 +230,14 @@ export const ObjectOptionsDropdownCustomView = ({
             itemId="Fields"
             onEnter={() => onContentChange('fields')}
           >
-            <DropdownListItem
+            <ListItem
               focused={selectedItemId === 'Fields'}
               onClick={() => onContentChange('fields')}
               startIcon={<IconListDetails />}
               description={t`${visibleFieldsCount} selected`}
               descriptionPlacement="end"
               hasSubmenu
-            >{t`Fields`}</DropdownListItem>
+            >{t`Fields`}</ListItem>
           </SelectableListItem>
           {customViewData?.type !== ViewType.CALENDAR && (
             <Tooltip
@@ -256,7 +256,7 @@ export const ObjectOptionsDropdownCustomView = ({
                       : onContentChange('recordGroupFields')
                   }
                 >
-                  <DropdownListItem
+                  <ListItem
                     focused={selectedItemId === 'Group'}
                     onClick={() =>
                       isDefined(recordIndexGroupFieldMetadataItem)
@@ -272,7 +272,7 @@ export const ObjectOptionsDropdownCustomView = ({
                     descriptionPlacement="end"
                     hasSubmenu
                     disabled={isDefaultView}
-                  >{t`Group`}</DropdownListItem>
+                  >{t`Group`}</ListItem>
                 </SelectableListItem>
               </div>
             </Tooltip>
@@ -296,13 +296,13 @@ export const ObjectOptionsDropdownCustomView = ({
                 itemId="Delete view"
                 onEnter={() => handleDelete()}
               >
-                <DropdownListItem
+                <ListItem
                   focused={selectedItemId === 'Delete view'}
                   onClick={() => handleDelete()}
                   startIcon={<IconTrash />}
                   disabled={isDefaultView || isLastView}
                   color="danger"
-                >{t`Delete view`}</DropdownListItem>
+                >{t`Delete view`}</ListItem>
               </SelectableListItem>
             </div>
           </Tooltip>

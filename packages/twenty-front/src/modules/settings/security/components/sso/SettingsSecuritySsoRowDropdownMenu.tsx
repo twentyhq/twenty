@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useDeleteSsoIdentityProvider } from '@/settings/security/hooks/useDeleteSsoIdentityProvider';
 import { useUpdateSsoIdentityProvider } from '@/settings/security/hooks/useUpdateSsoIdentityProvider';
 import { type SsoIdentityProvider } from '@/settings/security/types/SsoIdentityProvider';
@@ -77,7 +77,7 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               startIcon={<IconArchive />}
               onClick={() => {
                 toggleSsoIdentityProviderStatus(ssoIdp.id);
@@ -85,15 +85,15 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
               }}
             >
               {ssoIdp.status === 'Active' ? t`Deactivate` : t`Activate`}
-            </DropdownListItem>
-            <DropdownListItem
+            </ListItem>
+            <ListItem
               color="danger"
               startIcon={<IconTrash />}
               onClick={() => {
                 handleDeleteSsoIdentityProvider(ssoIdp.id);
                 closeDropdown(dropdownId);
               }}
-            >{t`Delete`}</DropdownListItem>
+            >{t`Delete`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

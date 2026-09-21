@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import {
@@ -87,21 +87,21 @@ export const AiChatThreadItemMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               startIcon={<IconPencil />}
               onClick={handleRename}
-            >{t`Rename`}</DropdownListItem>
-            <DropdownListItem
+            >{t`Rename`}</ListItem>
+            <ListItem
               startIcon={isArchived ? <IconArchiveOff /> : <IconArchive />}
               onClick={handleArchive}
             >
               {isArchived ? t`Unarchive` : t`Archive`}
-            </DropdownListItem>
-            <DropdownListItem
+            </ListItem>
+            <ListItem
               color="danger"
               startIcon={<IconTrash />}
               onClick={handleDelete}
-            >{t`Delete`}</DropdownListItem>
+            >{t`Delete`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

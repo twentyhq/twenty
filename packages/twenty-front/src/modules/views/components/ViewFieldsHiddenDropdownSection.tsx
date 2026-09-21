@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { t } from '@lingui/core/macro';
 import { LightIconButton } from 'twenty-ui/components';
@@ -59,7 +59,7 @@ export const ViewFieldsHiddenDropdownSection = () => {
         {availableFieldMetadataItemsToShow.length > 0 &&
           availableFieldMetadataItemsToShow.map((fieldMetadataItem) => {
             return (
-              <DropdownListItem
+              <ListItem
                 key={fieldMetadataItem.id}
                 startIcon={
                   <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
@@ -79,7 +79,7 @@ export const ViewFieldsHiddenDropdownSection = () => {
                 }
               >
                 {fieldMetadataItem.label}
-              </DropdownListItem>
+              </ListItem>
             );
           })}
       </DropdownMenuItemsContainer>

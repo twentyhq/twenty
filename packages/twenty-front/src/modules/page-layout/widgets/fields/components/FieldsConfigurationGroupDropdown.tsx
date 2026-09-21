@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconDotsVertical,
@@ -61,19 +61,19 @@ export const FieldsConfigurationGroupDropdown = ({
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               startIcon={<IconPencil />}
               onClick={handleRename}
-            >{t`Rename`}</DropdownListItem>
-            <DropdownListItem
+            >{t`Rename`}</ListItem>
+            <ListItem
               startIcon={<IconTrash />}
               onClick={handleDelete}
               color="danger"
-            >{t`Delete`}</DropdownListItem>
-            <DropdownListItem
+            >{t`Delete`}</ListItem>
+            <ListItem
               startIcon={<IconNewSection />}
               onClick={handleAddGroup}
-            >{t`Add a Group`}</DropdownListItem>
+            >{t`Add a Group`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

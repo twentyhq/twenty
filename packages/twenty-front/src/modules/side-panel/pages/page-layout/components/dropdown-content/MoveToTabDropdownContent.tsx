@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useMoveWidgetToTab } from '@/page-layout/hooks/useMoveWidgetToTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -56,7 +56,7 @@ export const MoveToTabDropdownContent = () => {
   if (eligibleTabs.length === 0) {
     return (
       <DropdownMenuItemsContainer>
-        <DropdownListItem disabled>{t`No available tabs`}</DropdownListItem>
+        <ListItem disabled>{t`No available tabs`}</ListItem>
       </DropdownMenuItemsContainer>
     );
   }
@@ -64,7 +64,7 @@ export const MoveToTabDropdownContent = () => {
   return (
     <DropdownMenuItemsContainer>
       {eligibleTabs.map((tab) => (
-        <DropdownListItem
+        <ListItem
           key={tab.id}
           onClick={() => {
             moveWidgetToTab(pageLayoutEditingWidgetId, tab.id);
@@ -72,7 +72,7 @@ export const MoveToTabDropdownContent = () => {
           }}
         >
           {tab.title ?? ''}
-        </DropdownListItem>
+        </ListItem>
       ))}
     </DropdownMenuItemsContainer>
   );

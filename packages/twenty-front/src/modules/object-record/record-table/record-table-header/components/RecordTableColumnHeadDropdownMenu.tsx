@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
@@ -135,35 +135,35 @@ export const RecordTableColumnHeadDropdownMenu = ({
       <StyledDropdownMenuItemsContainerWrapper>
         <DropdownMenuItemsContainer>
           {isFilterable && (
-            <DropdownListItem
+            <ListItem
               startIcon={<IconFilter />}
               onClick={handleFilterClick}
-            >{t`Filter`}</DropdownListItem>
+            >{t`Filter`}</ListItem>
           )}
           {isSortable && (
-            <DropdownListItem
+            <ListItem
               startIcon={<IconArrowsSort />}
               onClick={handleSortClick}
-            >{t`Sort`}</DropdownListItem>
+            >{t`Sort`}</ListItem>
           )}
           {showSeparator && <DropdownMenuSeparator />}
           {canMoveLeft && (
-            <DropdownListItem
+            <ListItem
               startIcon={<IconArrowLeft />}
               onClick={handleColumnMoveLeft}
-            >{t`Move left`}</DropdownListItem>
+            >{t`Move left`}</ListItem>
           )}
           {canMoveRight && (
-            <DropdownListItem
+            <ListItem
               startIcon={<IconArrowRight />}
               onClick={handleColumnMoveRight}
-            >{t`Move right`}</DropdownListItem>
+            >{t`Move right`}</ListItem>
           )}
           {canHide && (
-            <DropdownListItem
+            <ListItem
               startIcon={<IconEyeOff />}
               onClick={handleColumnVisibility}
-            >{t`Hide`}</DropdownListItem>
+            >{t`Hide`}</ListItem>
           )}
         </DropdownMenuItemsContainer>
       </StyledDropdownMenuItemsContainerWrapper>

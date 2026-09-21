@@ -1,4 +1,3 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
@@ -19,7 +18,7 @@ import {
   IconX,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { type ColorLabels } from 'twenty-ui/primitives/navigation';
+import { ListItem, type ColorLabels } from 'twenty-ui/primitives/navigation';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
@@ -169,7 +168,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           <DropdownContent>
             <DropdownMenuItemsContainer>
               {MAIN_COLOR_NAMES.map((colorName) => (
-                <DropdownListItem
+                <ListItem
                   key={colorName}
                   onClick={() => {
                     onChange({ ...option, color: colorName });
@@ -182,7 +181,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
                   startIcon={<ColorSample colorName={colorName} />}
                 >
                   {colorLabels[colorName]}
-                </DropdownListItem>
+                </ListItem>
               ))}
             </DropdownMenuItemsContainer>
           </DropdownContent>
@@ -230,31 +229,31 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
             <DropdownContent>
               <DropdownMenuItemsContainer>
                 {isDefault ? (
-                  <DropdownListItem
+                  <ListItem
                     startIcon={<IconX />}
                     onClick={() => {
                       onRemoveAsDefault?.();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
                     }}
-                  >{t`Remove as default`}</DropdownListItem>
+                  >{t`Remove as default`}</ListItem>
                 ) : (
-                  <DropdownListItem
+                  <ListItem
                     startIcon={<IconCheck />}
                     onClick={() => {
                       onSetAsDefault?.();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
                     }}
-                  >{t`Set as default`}</DropdownListItem>
+                  >{t`Set as default`}</ListItem>
                 )}
                 {!!onRemove && !isDefault && (
-                  <DropdownListItem
+                  <ListItem
                     color="danger"
                     startIcon={<IconTrash />}
                     onClick={() => {
                       onRemove();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
                     }}
-                  >{t`Remove option`}</DropdownListItem>
+                  >{t`Remove option`}</ListItem>
                 )}
               </DropdownMenuItemsContainer>
             </DropdownContent>

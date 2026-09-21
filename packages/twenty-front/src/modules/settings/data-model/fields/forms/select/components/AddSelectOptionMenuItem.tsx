@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -29,8 +29,8 @@ export const AddSelectOptionMenuItem = ({
   }
 
   return (
-    <DropdownListItem onClick={handleClick} startIcon={<IconPlus />}>
+    <ListItem onClick={handleClick} startIcon={<IconPlus />}>
       <OverflowingTextWithTooltip text={t`Add "${trimmedName}" to options`} />
-    </DropdownListItem>
+    </ListItem>
   );
 };

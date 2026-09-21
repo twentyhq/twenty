@@ -1,4 +1,3 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useResetObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useResetObjectPermission';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -7,7 +6,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 type SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps = {
   roleId: string;
@@ -54,18 +53,16 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
                 to={objectPermissionDetailUrl}
                 onClick={() => closeDropdown(dropdownId)}
               >
-                <DropdownListItem
-                  startIcon={<IconPencil />}
-                >{t`Edit`}</DropdownListItem>
+                <ListItem startIcon={<IconPencil />}>{t`Edit`}</ListItem>
               </UndecoratedLink>
             </DropdownMenuItemsContainer>
           )}
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               onClick={handleRemove}
               startIcon={<IconTrash />}
               color="danger"
-            >{t`Remove rule`}</DropdownListItem>
+            >{t`Remove rule`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

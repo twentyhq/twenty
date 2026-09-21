@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
@@ -59,11 +59,11 @@ export const PhoneCountryPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCountries?.length === 0 ? (
-          <DropdownListItem disabled>{t`No results`}</DropdownListItem>
+          <ListItem disabled>{t`No results`}</ListItem>
         ) : (
           <>
             {selectedCountry && (
-              <DropdownListItem
+              <ListItem
                 key={selectedCountry.countryCode}
                 onClick={() => onChange(selectedCountry.countryCode)}
                 role="option"
@@ -79,12 +79,12 @@ export const PhoneCountryPickerDropdownSelect = ({
                 <OverflowingTextWithTooltip
                   text={`${selectedCountry.countryName} (+${selectedCountry.callingCode})`}
                 />
-              </DropdownListItem>
+              </ListItem>
             )}
             {filteredCountries.map(
               ({ countryCode, countryName, callingCode, Flag }) =>
                 selectedCountry?.countryCode === countryCode ? null : (
-                  <DropdownListItem
+                  <ListItem
                     key={countryCode}
                     onClick={() => onChange(countryCode)}
                     role="option"
@@ -100,7 +100,7 @@ export const PhoneCountryPickerDropdownSelect = ({
                     <OverflowingTextWithTooltip
                       text={`${countryName} (+${callingCode})`}
                     />
-                  </DropdownListItem>
+                  </ListItem>
                 ),
             )}
           </>

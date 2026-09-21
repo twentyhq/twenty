@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -65,11 +65,11 @@ export const ObjectOptionsDropdownDefaultView = () => {
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer scrollable={false}>
-        <DropdownListItem
+        <ListItem
           startIcon={<SelectOptionIcon Icon={MainIcon} />}
           endIcon={<IconLock />}
           disabled={true}
-        >{t`Default View`}</DropdownListItem>
+        >{t`Default View`}</ListItem>
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <SelectableList
@@ -82,14 +82,14 @@ export const ObjectOptionsDropdownDefaultView = () => {
             itemId="Fields"
             onEnter={() => onContentChange('fields')}
           >
-            <DropdownListItem
+            <ListItem
               focused={selectedItemId === 'Fields'}
               onClick={() => onContentChange('fields')}
               startIcon={<IconListDetails />}
               description={t`${visibleFieldsCount} selected`}
               descriptionPlacement="end"
               hasSubmenu
-            >{t`Fields`}</DropdownListItem>
+            >{t`Fields`}</ListItem>
           </SelectableListItem>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
@@ -101,24 +101,24 @@ export const ObjectOptionsDropdownDefaultView = () => {
               copyToClipboard(currentUrl, t`Link copied to clipboard`);
             }}
           >
-            <DropdownListItem
+            <ListItem
               focused={selectedItemId === 'Copy link to view'}
               onClick={() => {
                 const currentUrl = window.location.href;
                 copyToClipboard(currentUrl, t`Link copied to clipboard`);
               }}
               startIcon={<IconCopy />}
-            >{t`Copy link to view`}</DropdownListItem>
+            >{t`Copy link to view`}</ListItem>
           </SelectableListItem>
           <SelectableListItem
             itemId="Create custom view"
             onEnter={handleCreateCustomView}
           >
-            <DropdownListItem
+            <ListItem
               focused={selectedItemId === 'Create custom view'}
               onClick={handleCreateCustomView}
               startIcon={<IconLayout />}
-            >{t`Create custom view`}</DropdownListItem>
+            >{t`Create custom view`}</ListItem>
           </SelectableListItem>
         </DropdownMenuItemsContainer>
       </SelectableList>

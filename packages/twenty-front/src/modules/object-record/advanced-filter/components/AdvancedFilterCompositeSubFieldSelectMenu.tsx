@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -142,7 +142,7 @@ export const AdvancedFilterCompositeSubFieldSelectMenu = ({
                   });
                 }}
               >
-                <DropdownListItem
+                <ListItem
                   key={`select-filter-${-1}`}
                   data-testid={`select-filter-${-1}`}
                   focused={selectedItemId === '-1'}
@@ -160,7 +160,7 @@ export const AdvancedFilterCompositeSubFieldSelectMenu = ({
                   <OverflowingTextWithTooltip
                     text={t`Any ${fieldLabel ?? ''} field`}
                   />
-                </DropdownListItem>
+                </ListItem>
               </SelectableListItem>
             )}
           {subFieldsAreFilterable &&
@@ -176,7 +176,7 @@ export const AdvancedFilterCompositeSubFieldSelectMenu = ({
                   });
                 }}
               >
-                <DropdownListItem
+                <ListItem
                   focused={selectedItemId === subFieldName}
                   key={`select-filter-${index}`}
                   data-testid={`select-filter-${index}`}
@@ -199,7 +199,7 @@ export const AdvancedFilterCompositeSubFieldSelectMenu = ({
                     objectFilterDropdownSubMenuFieldType,
                     subFieldName,
                   )}
-                </DropdownListItem>
+                </ListItem>
               </SelectableListItem>
             ))}
         </SelectableList>

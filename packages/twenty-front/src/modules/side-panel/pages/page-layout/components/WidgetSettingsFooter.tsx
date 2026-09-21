@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useDuplicatePageLayoutWidget } from '@/page-layout/hooks/useDuplicatePageLayoutWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -60,23 +60,23 @@ export const WidgetSettingsFooter = ({
             itemId="duplicate-widget"
             onEnter={handleDuplicateWidget}
           >
-            <DropdownListItem
+            <ListItem
               focused={selectedItemId === 'duplicate-widget'}
               onClick={handleDuplicateWidget}
               startIcon={<IconCopyPlus />}
-            >{t`Duplicate widget`}</DropdownListItem>
+            >{t`Duplicate widget`}</ListItem>
           </SelectableListItem>
 
           <SelectableListItem
             itemId="delete-widget"
             onEnter={handleDeleteWidget}
           >
-            <DropdownListItem
+            <ListItem
               focused={selectedItemId === 'delete-widget'}
               onClick={handleDeleteWidget}
               startIcon={<IconTrash />}
               color="danger"
-            >{t`Delete widget`}</DropdownListItem>
+            >{t`Delete widget`}</ListItem>
           </SelectableListItem>
         </OptionsDropdownMenu>,
       ]}

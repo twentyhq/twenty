@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconReload } from 'twenty-ui/icon';
@@ -55,10 +55,10 @@ export const LayoutCustomizationBarMenuDropdown = () => {
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               startIcon={<IconReload />}
               onClick={handleResetClick}
-            >{t`Reset record page layout`}</DropdownListItem>
+            >{t`Reset record page layout`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

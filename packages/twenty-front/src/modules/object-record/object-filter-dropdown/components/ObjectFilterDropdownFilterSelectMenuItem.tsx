@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -39,13 +39,13 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   };
 
   return (
-    <DropdownListItem
+    <ListItem
       focused={isSelectedItemId}
       onClick={handleClick}
       startIcon={<SelectOptionIcon Icon={Icon} />}
       hasSubmenu={shouldShowSubMenu}
     >
       {fieldMetadataItemToSelect.label}
-    </DropdownListItem>
+    </ListItem>
   );
 };

@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -376,10 +376,10 @@ export const FormArrayFieldInput = ({
                       />
                     ) : (
                       <DropdownMenuItemsContainer>
-                        <DropdownListItem
+                        <ListItem
                           onClick={handleAddItemButtonClick}
                           startIcon={<IconPlus />}
-                        >{t`Add item`}</DropdownListItem>
+                        >{t`Add item`}</ListItem>
                       </DropdownMenuItemsContainer>
                     )}
                   </DropdownContent>

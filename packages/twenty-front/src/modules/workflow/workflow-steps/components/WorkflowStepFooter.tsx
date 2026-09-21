@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
@@ -131,32 +131,32 @@ export const WorkflowStepFooter = ({
             itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings}
             onEnter={handleNodeSettings}
           >
-            <DropdownListItem
+            <ListItem
               focused={
                 selectedItemId ===
                 WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings
               }
               onClick={handleNodeSettings}
               startIcon={<IconSettings />}
-            >{t`Node settings`}</DropdownListItem>
+            >{t`Node settings`}</ListItem>
           </SelectableListItem>
         ) : null}
         {hasViewAgentOption ? (
           <SelectableListItem itemId="view-agent" onEnter={handleViewAgent}>
-            <DropdownListItem
+            <ListItem
               focused={selectedItemId === 'view-agent'}
               onClick={handleViewAgent}
               startIcon={<IconLego />}
-            >{t`View Agent`}</DropdownListItem>
+            >{t`View Agent`}</ListItem>
           </SelectableListItem>
         ) : null}
         {hasViewRoleOption ? (
           <SelectableListItem itemId="view-role" onEnter={handleViewRole}>
-            <DropdownListItem
+            <ListItem
               focused={selectedItemId === 'view-role'}
               onClick={handleViewRole}
               startIcon={<IconUsers />}
-            >{t`View Role`}</DropdownListItem>
+            >{t`View Role`}</ListItem>
           </SelectableListItem>
         ) : null}
       </WorkflowStepOptionsMenuItems>

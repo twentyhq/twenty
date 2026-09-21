@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeDash';
@@ -173,7 +173,7 @@ export const SettingsAdminServerAdminAccess = ({
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <DropdownListItem
+                <ListItem
                   disabled={isLastFullAdmin}
                   onClick={() =>
                     requestChange({
@@ -188,8 +188,8 @@ export const SettingsAdminServerAdminAccess = ({
                   {canAccessFullAdminPanel
                     ? t`Revoke admin panel access`
                     : t`Grant admin panel access`}
-                </DropdownListItem>
-                <DropdownListItem
+                </ListItem>
+                <ListItem
                   onClick={() =>
                     requestChange({
                       description: t`impersonation`,
@@ -201,9 +201,9 @@ export const SettingsAdminServerAdminAccess = ({
                   {canImpersonate
                     ? t`Disable impersonation`
                     : t`Enable impersonation`}
-                </DropdownListItem>
+                </ListItem>
                 {!hasFullAccess && (
-                  <DropdownListItem
+                  <ListItem
                     onClick={() =>
                       requestChange({
                         description: t`full server access`,
@@ -214,7 +214,7 @@ export const SettingsAdminServerAdminAccess = ({
                         },
                       })
                     }
-                  >{t`Grant full access`}</DropdownListItem>
+                  >{t`Grant full access`}</ListItem>
                 )}
               </DropdownMenuItemsContainer>
             </DropdownContent>

@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { CONFIG_VARIABLE_SOURCE_OPTIONS } from '@/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions';
@@ -48,7 +48,7 @@ export const ConfigVariableOptionsDropdownContent = ({
     return (
       <DropdownContent>
         <DropdownMenuItemsContainer>
-          <DropdownListItem
+          <ListItem
             onClick={() => onSelectCategory('source')}
             role="option"
             aria-selected={false}
@@ -60,8 +60,8 @@ export const ConfigVariableOptionsDropdownContent = ({
               borderStyle="dashed"
               variant={'soft'}
             >{t`Source`}</Tag>
-          </DropdownListItem>
-          <DropdownListItem
+          </ListItem>
+          <ListItem
             onClick={() => onSelectCategory('group')}
             role="option"
             aria-selected={false}
@@ -73,18 +73,18 @@ export const ConfigVariableOptionsDropdownContent = ({
               borderStyle="dashed"
               variant={'soft'}
             >{t`Group`}</Tag>
-          </DropdownListItem>
+          </ListItem>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer scrollable={false}>
-          <DropdownListItem
+          <ListItem
             startIcon={showHiddenGroupVariables ? <IconEyeOff /> : <IconEye />}
             onClick={() => onShowHiddenChange(!showHiddenGroupVariables)}
           >
             {showHiddenGroupVariables
               ? t`Hide hidden groups`
               : t`Show hidden groups`}
-          </DropdownListItem>
+          </ListItem>
         </DropdownMenuItemsContainer>
       </DropdownContent>
     );
@@ -107,7 +107,7 @@ export const ConfigVariableOptionsDropdownContent = ({
         {selectedCategory === 'source' && (
           <>
             {availableSourceOptions.map((option) => (
-              <DropdownListItem
+              <ListItem
                 key={option.value}
                 onClick={() => {
                   onSourceFilterChange(option.value);
@@ -121,14 +121,14 @@ export const ConfigVariableOptionsDropdownContent = ({
                 <Tag color={option.color} borderStyle="dashed" variant={'soft'}>
                   {option.label}
                 </Tag>
-              </DropdownListItem>
+              </ListItem>
             ))}
           </>
         )}
         {selectedCategory === 'group' && (
           <>
             {groupOptions.map((option) => (
-              <DropdownListItem
+              <ListItem
                 key={option.value}
                 onClick={() => {
                   onGroupFilterChange(option.value);
@@ -146,7 +146,7 @@ export const ConfigVariableOptionsDropdownContent = ({
                 >
                   {option.label}
                 </Tag>
-              </DropdownListItem>
+              </ListItem>
             ))}
           </>
         )}

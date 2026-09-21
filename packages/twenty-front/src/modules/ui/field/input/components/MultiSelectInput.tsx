@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef, useState, createElement } from 'react';
@@ -136,7 +136,7 @@ export const MultiSelectInput = ({
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
           {filteredOptionsInDropDown.length === 0 ? (
-            <DropdownListItem disabled>{t`No option found`}</DropdownListItem>
+            <ListItem disabled>{t`No option found`}</ListItem>
           ) : (
             filteredOptionsInDropDown.map((option) => {
               return (
@@ -147,7 +147,7 @@ export const MultiSelectInput = ({
                     onOptionSelected(formatNewSelectedOptions(option.value));
                   }}
                 >
-                  <DropdownListItem
+                  <ListItem
                     key={option.value}
                     onClick={() =>
                       onOptionSelected(formatNewSelectedOptions(option.value))
@@ -168,7 +168,7 @@ export const MultiSelectInput = ({
                     >
                       {option.label}
                     </Tag>
-                  </DropdownListItem>
+                  </ListItem>
                 </SelectableListItem>
               );
             })

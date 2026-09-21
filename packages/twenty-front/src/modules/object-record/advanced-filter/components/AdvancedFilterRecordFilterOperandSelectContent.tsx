@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
@@ -104,14 +104,14 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
                     handleOperandChange(filterOperand);
                   }}
                 >
-                  <DropdownListItem
+                  <ListItem
                     focused={selectedItemId === filterOperand}
                     onClick={() => {
                       handleOperandChange(filterOperand);
                     }}
                   >
                     {getOperandLabel(filterOperand, timeZoneAbbreviation)}
-                  </DropdownListItem>
+                  </ListItem>
                 </SelectableListItem>
               ))}
             </SelectableList>

@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useGetDefaultFieldMetadataItemForFilter';
@@ -171,15 +171,15 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               startIcon={<IconPlus />}
               onClick={handleAddFilter}
-            >{t`Add rule`}</DropdownListItem>
+            >{t`Add rule`}</ListItem>
             {isFilterRuleGroupOptionVisible && (
-              <DropdownListItem
+              <ListItem
                 startIcon={<IconLibraryPlus />}
                 onClick={handleAddFilterGroup}
-              >{t`Add rule group`}</DropdownListItem>
+              >{t`Add rule group`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -104,7 +104,7 @@ export const WorkflowObjectDropdownContent = ({
               itemId={objectMetadataItem.nameSingular}
               onEnter={() => onOptionClick(objectMetadataItem.nameSingular)}
             >
-              <DropdownListItem
+              <ListItem
                 focused={selectedItemId === objectMetadataItem.nameSingular}
                 startIcon={
                   <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
@@ -112,7 +112,7 @@ export const WorkflowObjectDropdownContent = ({
                 onClick={() => onOptionClick(objectMetadataItem.nameSingular)}
               >
                 {objectMetadataItem.labelPlural}
-              </DropdownListItem>
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

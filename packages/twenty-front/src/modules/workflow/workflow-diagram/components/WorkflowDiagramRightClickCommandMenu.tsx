@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
@@ -71,14 +71,14 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
         x={workflowDiagramRightClickMenuPosition.x}
         y={workflowDiagramRightClickMenuPosition.y}
       >
-        <DropdownListItem
+        <ListItem
           startIcon={<IconPlus />}
           onClick={addNode}
-        >{t`Add node`}</DropdownListItem>
-        <DropdownListItem
+        >{t`Add node`}</ListItem>
+        <ListItem
           startIcon={<IconReorder />}
           onClick={handleReorderWorkflowDiagram}
-        >{t`Tidy up workflow`}</DropdownListItem>
+        >{t`Tidy up workflow`}</ListItem>
       </StyledContainer>
       <WorkflowDiagramRightClickCommandMenuClickOutsideEffect
         rightClickCommandMenuRef={rightClickCommandMenuRef}

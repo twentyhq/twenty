@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -58,9 +57,7 @@ export const ContextDropdownAndAvatar: Story = {
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>
-              <ListItem startIcon={<IconPlus />}>
-                <OverflowingTextWithTooltip text={'Create Workspace'} />
-              </ListItem>
+              <ListItem startIcon={<IconPlus />}>{'Create Workspace'}</ListItem>
             </DropdownMenuItemsContainer>
           </DropdownContent>
         }

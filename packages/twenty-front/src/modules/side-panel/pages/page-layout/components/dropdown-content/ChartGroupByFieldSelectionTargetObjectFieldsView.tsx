@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -157,7 +157,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
               itemId={RECORD_ITEM_ID}
               onEnter={onSelectRecord}
             >
-              <DropdownListItem
+              <ListItem
                 focused={selectedItemId === RECORD_ITEM_ID}
                 onClick={onSelectRecord}
                 role="option"
@@ -175,13 +175,11 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
                 }
               >
                 {recordOptionLabel}
-              </DropdownListItem>
+              </ListItem>
             </SelectableListItem>
           )}
           {availableFields.length === 0 && !isRecordOptionVisible ? (
-            <DropdownListItem
-              disabled
-            >{t`No fields available`}</DropdownListItem>
+            <ListItem disabled>{t`No fields available`}</ListItem>
           ) : (
             availableFields.map((fieldMetadataItem) => (
               <SelectableListItem
@@ -191,7 +189,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
                   handleSelectField(fieldMetadataItem);
                 }}
               >
-                <DropdownListItem
+                <ListItem
                   focused={selectedItemId === fieldMetadataItem.id}
                   onClick={() => {
                     handleSelectField(fieldMetadataItem);
@@ -212,7 +210,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
                   }
                 >
                   {fieldMetadataItem.label}
-                </DropdownListItem>
+                </ListItem>
               </SelectableListItem>
             ))
           )}

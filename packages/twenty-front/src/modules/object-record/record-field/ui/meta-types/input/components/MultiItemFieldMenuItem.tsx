@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { t } from '@lingui/core/macro';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -88,25 +88,25 @@ export const MultiItemFieldMenuItem = <T,>({
         <DropdownContent>
           <DropdownMenuItemsContainer>
             {showSetAsPrimaryButton && (
-              <DropdownListItem
+              <ListItem
                 startIcon={<IconBookmarkPlus />}
                 onClick={handleSetAsPrimaryClick}
-              >{t`Set as Primary`}</DropdownListItem>
+              >{t`Set as Primary`}</ListItem>
             )}
-            <DropdownListItem
+            <ListItem
               startIcon={<IconPencil />}
               onClick={handleEditClick}
-            >{t`Edit`}</DropdownListItem>
-            <DropdownListItem
+            >{t`Edit`}</ListItem>
+            <ListItem
               color="danger"
               startIcon={<IconTrash />}
               onClick={handleDeleteClick}
-            >{t`Delete`}</DropdownListItem>
+            >{t`Delete`}</ListItem>
             {showCopyButton && (
-              <DropdownListItem
+              <ListItem
                 startIcon={<IconCopy />}
                 onClick={handleCopyClick}
-              >{t`Copy`}</DropdownListItem>
+              >{t`Copy`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

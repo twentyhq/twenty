@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
@@ -43,11 +43,11 @@ export const CurrencyPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCurrencies.length === 0 ? (
-          <DropdownListItem disabled>{t`No results`}</DropdownListItem>
+          <ListItem disabled>{t`No results`}</ListItem>
         ) : (
           <>
             {selectedCurrency && (
-              <DropdownListItem
+              <ListItem
                 key={selectedCurrency.value}
                 onClick={() => onChange(selectedCurrency)}
                 role="option"
@@ -56,11 +56,11 @@ export const CurrencyPickerDropdownSelect = ({
                 indicator="check"
               >
                 {selectedCurrency.label}
-              </DropdownListItem>
+              </ListItem>
             )}
             {filteredCurrencies.map((item) =>
               selectedCurrency?.value === item.value ? null : (
-                <DropdownListItem
+                <ListItem
                   key={item.value}
                   onClick={() => onChange(item)}
                   role="option"
@@ -71,7 +71,7 @@ export const CurrencyPickerDropdownSelect = ({
                   <OverflowingTextWithTooltip
                     text={`${item.label} (${item.value})`}
                   />
-                </DropdownListItem>
+                </ListItem>
               ),
             )}
           </>

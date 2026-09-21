@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 
@@ -56,11 +56,11 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               color="danger"
               startIcon={<IconLogout />}
               onClick={handleRevokeSession}
-            >{t`Log out`}</DropdownListItem>
+            >{t`Log out`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

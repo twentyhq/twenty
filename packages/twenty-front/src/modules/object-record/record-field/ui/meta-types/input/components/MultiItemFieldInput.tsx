@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { t } from '@lingui/core/macro';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
@@ -380,14 +380,11 @@ export const MultiItemFieldInput = <T,>({
         />
       ) : !isLimitReached ? (
         <DropdownMenuItemsContainer>
-          <DropdownListItem
-            onClick={handleAddButtonClick}
-            startIcon={<IconPlus />}
-          >
+          <ListItem onClick={handleAddButtonClick} startIcon={<IconPlus />}>
             <OverflowingTextWithTooltip
               text={newItemLabel || `Add ${placeholder}`}
             />
-          </DropdownListItem>
+          </ListItem>
         </DropdownMenuItemsContainer>
       ) : null}
     </DropdownContent>

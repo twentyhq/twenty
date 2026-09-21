@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
@@ -30,7 +30,7 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   return (
     <>
       {aggregateOperations.map((operation) => (
-        <DropdownListItem
+        <ListItem
           key={operation}
           onClick={async () => {
             await updateViewFieldAggregateOperation(operation);
@@ -42,10 +42,10 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
           aria-selected={currentViewFieldAggregateOperation === operation}
         >
           {getAggregateOperationLabel(operation)}
-        </DropdownListItem>
+        </ListItem>
       ))}
       {children}
-      <DropdownListItem
+      <ListItem
         onClick={async () => {
           await updateViewFieldAggregateOperation(null);
           resetContent();
@@ -55,7 +55,7 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
         indicator="check"
         selected={!isDefined(currentViewFieldAggregateOperation)}
         aria-selected={!isDefined(currentViewFieldAggregateOperation)}
-      >{t`None`}</DropdownListItem>
+      >{t`None`}</ListItem>
     </>
   );
 };

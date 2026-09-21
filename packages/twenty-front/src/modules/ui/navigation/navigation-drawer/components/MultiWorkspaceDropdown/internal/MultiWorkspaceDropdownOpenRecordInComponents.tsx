@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -36,7 +36,7 @@ export const MultiWorkspaceDropdownOpenRecordInComponents = () => {
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {Object.values(OpenRecordIn).map((openRecordIn) => (
-          <DropdownListItem
+          <ListItem
             key={openRecordIn}
             startIcon={
               <SelectOptionIcon
@@ -50,7 +50,7 @@ export const MultiWorkspaceDropdownOpenRecordInComponents = () => {
             selected={openRecordIn === openRecordInPreference}
           >
             {t(OPEN_RECORD_IN_OPTIONS[openRecordIn].label)}
-          </DropdownListItem>
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>

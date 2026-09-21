@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -59,7 +59,7 @@ export const SettingPublicDomainRowDropdownMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               color="danger"
               startIcon={<IconTrash />}
               onClick={async () => {
@@ -67,7 +67,7 @@ export const SettingPublicDomainRowDropdownMenu = ({
                 closeDropdown(dropdownId);
                 await refetchPublicDomains();
               }}
-            >{t`Delete`}</DropdownListItem>
+            >{t`Delete`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

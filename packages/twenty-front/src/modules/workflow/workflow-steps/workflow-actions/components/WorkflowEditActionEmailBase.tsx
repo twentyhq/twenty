@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
 import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
@@ -331,7 +331,7 @@ export const WorkflowEditActionEmailBase = ({
                 >
                   <DropdownMenuItemsContainer>
                     {!visibleAdvancedFields.cc && (
-                      <DropdownListItem
+                      <ListItem
                         onClick={() => {
                           setVisibleAdvancedFields((prev) => ({
                             ...prev,
@@ -339,10 +339,10 @@ export const WorkflowEditActionEmailBase = ({
                           }));
                           closeDropdown(advancedOptionsDropdownId);
                         }}
-                      >{t`Add CC`}</DropdownListItem>
+                      >{t`Add CC`}</ListItem>
                     )}
                     {!visibleAdvancedFields.bcc && (
-                      <DropdownListItem
+                      <ListItem
                         onClick={() => {
                           setVisibleAdvancedFields((prev) => ({
                             ...prev,
@@ -350,10 +350,10 @@ export const WorkflowEditActionEmailBase = ({
                           }));
                           closeDropdown(advancedOptionsDropdownId);
                         }}
-                      >{t`Add BCC`}</DropdownListItem>
+                      >{t`Add BCC`}</ListItem>
                     )}
                     {!visibleAdvancedFields.inReplyTo && (
-                      <DropdownListItem
+                      <ListItem
                         onClick={() => {
                           setVisibleAdvancedFields((prev) => ({
                             ...prev,
@@ -361,7 +361,7 @@ export const WorkflowEditActionEmailBase = ({
                           }));
                           closeDropdown(advancedOptionsDropdownId);
                         }}
-                      >{t`Add In-Reply-To`}</DropdownListItem>
+                      >{t`Add In-Reply-To`}</ListItem>
                     )}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

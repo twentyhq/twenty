@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 
@@ -215,10 +215,10 @@ export const WorkflowOutputSchemaBuilder = ({
 
       {!readonly && (
         <StyledAddFieldButtonContainer>
-          <DropdownListItem
+          <ListItem
             startIcon={<IconPlus />}
             onClick={addField}
-          >{t`Add Output Field`}</DropdownListItem>
+          >{t`Add Output Field`}</ListItem>
         </StyledAddFieldButtonContainer>
       )}
     </StyledOutputSchemaContainer>

@@ -1,4 +1,3 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useEffect } from 'react';
 
@@ -26,7 +25,7 @@ import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
@@ -126,16 +125,16 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {isRecordGroupingOptionalForViewType(viewType) && (
-          <DropdownListItem
+          <ListItem
             onClick={handleResetRecordGroupField}
             role="option"
             aria-selected={!isDefined(recordIndexGroupFieldMetadataItem)}
             selected={!isDefined(recordIndexGroupFieldMetadataItem)}
             indicator="check"
-          >{t`None`}</DropdownListItem>
+          >{t`None`}</ListItem>
         )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
-          <DropdownListItem
+          <ListItem
             key={fieldMetadataItem.id}
             onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
             role="option"
@@ -151,7 +150,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
             }
           >
             {fieldMetadataItem.label}
-          </DropdownListItem>
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
@@ -163,9 +162,9 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
             closeDropdown();
           }}
         >
-          <DropdownListItem
+          <ListItem
             startIcon={<IconSettings />}
-          >{t`Create select field`}</DropdownListItem>
+          >{t`Create select field`}</ListItem>
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </DropdownContent>

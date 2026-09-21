@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
@@ -80,7 +80,7 @@ export const RecordGroupAggregateDropdownFieldsContent = () => {
             recordIndexGroupAggregateOperation === aggregateOperation;
 
           return (
-            <DropdownListItem
+            <ListItem
               key={fieldId}
               onClick={() => {
                 updateViewAggregate({
@@ -101,7 +101,7 @@ export const RecordGroupAggregateDropdownFieldsContent = () => {
               selected={isSelected}
             >
               {fieldMetadata.label}
-            </DropdownListItem>
+            </ListItem>
           );
         })}
       </DropdownMenuItemsContainer>

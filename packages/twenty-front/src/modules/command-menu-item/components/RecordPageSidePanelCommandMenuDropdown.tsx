@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
@@ -95,7 +95,7 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
       selectableItemIdArray={selectableItemIdArray}
     >
       {dropdownWidgetCommandMenuItems.map((commandMenuItem) => (
-        <DropdownListItem
+        <ListItem
           key={commandMenuItem.id}
           startIcon={<SelectOptionIcon Icon={commandMenuItem.Icon} />}
           onClick={() => {
@@ -104,7 +104,7 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
           }}
         >
           {commandMenuItem.label}
-        </DropdownListItem>
+        </ListItem>
       ))}
       {dropdownWidgetCommandMenuItems.length > 0 &&
         listedCommandMenuItems.length > 0 && <HorizontalSeparator noMargin />}

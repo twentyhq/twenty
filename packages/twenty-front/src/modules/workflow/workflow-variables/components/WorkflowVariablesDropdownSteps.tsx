@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -98,7 +98,7 @@ export const WorkflowVariablesDropdownSteps = ({
           <DropdownMenuSeparator />
         )}
         {availableSteps.map((item) => (
-          <DropdownListItem
+          <ListItem
             key={`step-${item.id}`}
             focused={false}
             onClick={() => onSelect({ stepId: item.id })}
@@ -114,12 +114,10 @@ export const WorkflowVariablesDropdownSteps = ({
             }
           >
             {item.name}
-          </DropdownListItem>
+          </ListItem>
         ))}
         {matchingVariables.length === 0 && availableSteps.length === 0 && (
-          <DropdownListItem
-            disabled
-          >{t`No variables available`}</DropdownListItem>
+          <ListItem disabled>{t`No variables available`}</ListItem>
         )}
       </DropdownMenuItemsContainer>
     </DropdownContent>

@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useTurnIntoBlockOptions } from '@/advanced-text-editor/hooks/useTurnIntoBlockOptions';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -60,7 +60,7 @@ export const TurnIntoBlockDropdown = ({
         <DropdownContent>
           <DropdownMenuItemsContainer>
             {options.map(({ id, title, icon, onClick }) => (
-              <DropdownListItem
+              <ListItem
                 key={id}
                 startIcon={<SelectOptionIcon Icon={icon} />}
                 onClick={() => {
@@ -71,7 +71,7 @@ export const TurnIntoBlockDropdown = ({
                 }}
               >
                 {title}
-              </DropdownListItem>
+              </ListItem>
             ))}
           </DropdownMenuItemsContainer>
         </DropdownContent>

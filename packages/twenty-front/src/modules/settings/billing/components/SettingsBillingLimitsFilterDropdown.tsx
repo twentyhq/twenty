@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
@@ -83,16 +83,16 @@ export const SettingsBillingLimitsFilterDropdown = ({
     <DropdownContent>
       {renderBackHeader(t`Usage`)}
       <DropdownMenuItemsContainer>
-        <DropdownListItem
+        <ListItem
           onClick={() => onSelectResourceType(null)}
           role="option"
           aria-selected={!isDefined(selectedResourceType)}
           selected={!isDefined(selectedResourceType)}
           indicator="check"
           startIcon={<IconList />}
-        >{t`All`}</DropdownListItem>
+        >{t`All`}</ListItem>
         {resourceTypes.map((resourceType) => (
-          <DropdownListItem
+          <ListItem
             key={resourceType}
             onClick={() => onSelectResourceType(resourceType)}
             role="option"
@@ -106,7 +106,7 @@ export const SettingsBillingLimitsFilterDropdown = ({
             }
           >
             {t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[resourceType])}
-          </DropdownListItem>
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>
@@ -116,16 +116,16 @@ export const SettingsBillingLimitsFilterDropdown = ({
     <DropdownContent>
       {renderBackHeader(t`Spender`)}
       <DropdownMenuItemsContainer>
-        <DropdownListItem
+        <ListItem
           onClick={() => onSelectSpenderType(null)}
           role="option"
           aria-selected={!isDefined(selectedSpenderType)}
           selected={!isDefined(selectedSpenderType)}
           indicator="check"
           startIcon={<IconList />}
-        >{t`All`}</DropdownListItem>
+        >{t`All`}</ListItem>
         {spenderTypes.map((spenderType) => (
-          <DropdownListItem
+          <ListItem
             key={spenderType}
             onClick={() => onSelectSpenderType(spenderType)}
             role="option"
@@ -143,7 +143,7 @@ export const SettingsBillingLimitsFilterDropdown = ({
             }
           >
             {getSpenderTypeLabel(spenderType)}
-          </DropdownListItem>
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>
@@ -152,7 +152,7 @@ export const SettingsBillingLimitsFilterDropdown = ({
   const renderMenuContent = () => (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        <DropdownListItem
+        <ListItem
           startIcon={<IconCoins />}
           description={
             isDefined(selectedResourceType)
@@ -162,8 +162,8 @@ export const SettingsBillingLimitsFilterDropdown = ({
           descriptionPlacement="end"
           hasSubmenu
           onClick={() => setContentId('usage')}
-        >{t`Usage`}</DropdownListItem>
-        <DropdownListItem
+        >{t`Usage`}</ListItem>
+        <ListItem
           startIcon={<IconUsers />}
           description={
             isDefined(selectedSpenderType)
@@ -173,18 +173,18 @@ export const SettingsBillingLimitsFilterDropdown = ({
           descriptionPlacement="end"
           hasSubmenu
           onClick={() => setContentId('spender')}
-        >{t`Spender`}</DropdownListItem>
+        >{t`Spender`}</ListItem>
         {hasActiveFilters && (
           <>
             <DropdownMenuSeparator />
-            <DropdownListItem
+            <ListItem
               color="danger"
               startIcon={<IconTrash />}
               onClick={() => {
                 onSelectResourceType(null);
                 onSelectSpenderType(null);
               }}
-            >{t`Clear filters`}</DropdownListItem>
+            >{t`Clear filters`}</ListItem>
           </>
         )}
       </DropdownMenuItemsContainer>

@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -34,7 +34,7 @@ export const NavigationMenuItemSelectableItem = ({
       itemId={item.id}
       onEnter={item.isDisabled ? undefined : item.onClick}
     >
-      <DropdownListItem
+      <ListItem
         color={item.accent === 'danger' ? 'danger' : 'neutral'}
         startIcon={
           <>
@@ -51,7 +51,7 @@ export const NavigationMenuItemSelectableItem = ({
         focused={isSelectedItemId}
       >
         {item.label}
-      </DropdownListItem>
+      </ListItem>
     </SelectableListItem>
   );
 };

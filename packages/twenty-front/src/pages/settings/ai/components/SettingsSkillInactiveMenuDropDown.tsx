@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -49,16 +49,16 @@ export const SettingsSkillInactiveMenuDropDown = ({
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
-            <DropdownListItem
+            <ListItem
               startIcon={<IconArchiveOff />}
               onClick={handleActivate}
-            >{t`Activate`}</DropdownListItem>
+            >{t`Activate`}</ListItem>
             {isCustomSkill && (
-              <DropdownListItem
+              <ListItem
                 startIcon={<IconTrash />}
                 color="danger"
                 onClick={handleDelete}
-              >{t`Delete`}</DropdownListItem>
+              >{t`Delete`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

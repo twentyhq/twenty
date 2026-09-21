@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
@@ -100,14 +100,14 @@ export const RecordIndexCommandMenuDropdown = () => {
                       openSidePanelMenu();
                     }}
                   >
-                    <DropdownListItem
+                    <ListItem
                       startIcon={<IconLayoutSidebarRightExpand />}
                       onClick={() => {
                         closeDropdown(dropdownId);
                         openSidePanelMenu();
                       }}
                       focused={selectedItemId === 'more-actions'}
-                    >{t`More actions`}</DropdownListItem>
+                    >{t`More actions`}</ListItem>
                   </SelectableListItem>
                 )}
               </SelectableList>

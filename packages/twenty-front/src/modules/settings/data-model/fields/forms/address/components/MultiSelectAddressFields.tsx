@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
@@ -105,7 +105,7 @@ export const MultiSelectAddressFields = <Value extends SelectValue>({
                       onChange?.(onOptionSelected(option.value, values));
                     }}
                   >
-                    <DropdownListItem
+                    <ListItem
                       key={`${option.value}`}
                       onClick={() =>
                         onChange?.(onOptionSelected(option.value, values))
@@ -116,7 +116,7 @@ export const MultiSelectAddressFields = <Value extends SelectValue>({
                       indicator="checkbox"
                     >
                       <Tag color={'transparent'}>{option.label}</Tag>
-                    </DropdownListItem>
+                    </ListItem>
                   </SelectableListItem>
                 );
               })}
@@ -124,13 +124,13 @@ export const MultiSelectAddressFields = <Value extends SelectValue>({
           </DropdownContent>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-            <DropdownListItem
+            <ListItem
               onClick={callToActionButton?.onClick}
               startIcon={<SelectOptionIcon Icon={callToActionButton?.Icon} />}
               disabled={values.length === options.length}
             >
               {callToActionButton?.text}
-            </DropdownListItem>
+            </ListItem>
           </DropdownMenuItemsContainer>
         </SelectableList>
       }

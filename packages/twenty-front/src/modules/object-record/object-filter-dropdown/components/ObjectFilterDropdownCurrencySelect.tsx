@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -115,7 +115,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
       <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
         {filteredSelectedItems?.map((item) => {
           return (
-            <DropdownListItem
+            <ListItem
               render={<button type="button" />}
               key={item.id}
               role="option"
@@ -128,12 +128,12 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               startIcon={item.AvatarIcon && <item.AvatarIcon size="16" />}
             >
               {item.name}
-            </DropdownListItem>
+            </ListItem>
           );
         })}
         {filteredSelectableItems?.map((item) => {
           return (
-            <DropdownListItem
+            <ListItem
               render={<button type="button" />}
               key={item.id}
               role="option"
@@ -146,12 +146,10 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               startIcon={item.AvatarIcon && <item.AvatarIcon size="16" />}
             >
               {item.name}
-            </DropdownListItem>
+            </ListItem>
           );
         })}
-        {showNoResult && (
-          <DropdownListItem disabled>{t`No results`}</DropdownListItem>
-        )}
+        {showNoResult && <ListItem disabled>{t`No results`}</ListItem>}
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

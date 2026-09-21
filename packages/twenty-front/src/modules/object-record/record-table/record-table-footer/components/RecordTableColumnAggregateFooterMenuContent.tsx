@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
@@ -55,37 +55,37 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        <DropdownListItem
+        <ListItem
           onClick={() => {
             onContentChange('countAggregateOperationsOptions');
           }}
           hasSubmenu
-        >{t`Count`}</DropdownListItem>
+        >{t`Count`}</ListItem>
         {!fieldIsRelation && (
-          <DropdownListItem
+          <ListItem
             onClick={() => {
               onContentChange('percentAggregateOperationsOptions');
             }}
             hasSubmenu
-          >{t`Percent`}</DropdownListItem>
+          >{t`Percent`}</ListItem>
         )}
         {fieldIsDateKind && (
-          <DropdownListItem
+          <ListItem
             onClick={() => {
               onContentChange('datesAggregateOperationsOptions');
             }}
             hasSubmenu
-          >{t`Date`}</DropdownListItem>
+          >{t`Date`}</ListItem>
         )}
         {nonStandardAvailableAggregateOperation.length > 0 ? (
-          <DropdownListItem
+          <ListItem
             onClick={() => {
               onContentChange('moreAggregateOperationOptions');
             }}
             hasSubmenu
-          >{t`More options`}</DropdownListItem>
+          >{t`More options`}</ListItem>
         ) : null}
-        <DropdownListItem
+        <ListItem
           onClick={async () => {
             await updateViewFieldAggregateOperation(null);
             resetContent();
@@ -93,7 +93,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
           }}
           indicator="check"
           selected={!isDefined(currentViewFieldAggregateOperation)}
-        >{t`None`}</DropdownListItem>
+        >{t`None`}</ListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

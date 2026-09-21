@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { LightIconButton } from 'twenty-ui/components';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
@@ -103,7 +103,7 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {hiddenFieldMetadataItems.map((fieldMetadataItem) => (
-          <DropdownListItem
+          <ListItem
             key={fieldMetadataItem.id}
             startIcon={
               <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
@@ -118,7 +118,7 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
             }
           >
             {fieldMetadataItem.label}
-          </DropdownListItem>
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>

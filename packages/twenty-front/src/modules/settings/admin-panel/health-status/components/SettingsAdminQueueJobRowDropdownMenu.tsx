@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -47,16 +47,16 @@ export const SettingsAdminQueueJobRowDropdownMenu = ({
         <DropdownContent>
           <DropdownMenuItemsContainer>
             {jobState === JobState.FAILED && onRetry && (
-              <DropdownListItem
+              <ListItem
                 startIcon={<IconRefresh />}
                 onClick={handleRetry}
-              >{t`Retry`}</DropdownListItem>
+              >{t`Retry`}</ListItem>
             )}
-            <DropdownListItem
+            <ListItem
               color="danger"
               startIcon={<IconTrash />}
               onClick={handleDelete}
-            >{t`Delete`}</DropdownListItem>
+            >{t`Delete`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

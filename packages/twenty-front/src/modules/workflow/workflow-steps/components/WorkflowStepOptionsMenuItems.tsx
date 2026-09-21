@@ -1,4 +1,4 @@
-import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS } from '@/workflow/workflow-steps/constants/WorkflowStepOptionsMenuItemIds';
 import { useLingui } from '@lingui/react/macro';
@@ -31,7 +31,7 @@ export const WorkflowStepOptionsMenuItems = ({
         itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode}
         onEnter={onChangeNode}
       >
-        <DropdownListItem
+        <ListItem
           startIcon={<IconPencil />}
           focused={
             selectedItemId === WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode
@@ -39,21 +39,21 @@ export const WorkflowStepOptionsMenuItems = ({
           onClick={onChangeNode}
         >
           {changeNodeText}
-        </DropdownListItem>
+        </ListItem>
       </SelectableListItem>
       {isDefined(onDuplicateNode) ? (
         <SelectableListItem
           itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode}
           onEnter={onDuplicateNode}
         >
-          <DropdownListItem
+          <ListItem
             startIcon={<IconCopyPlus />}
             focused={
               selectedItemId ===
               WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode
             }
             onClick={onDuplicateNode}
-          >{t`Duplicate node`}</DropdownListItem>
+          >{t`Duplicate node`}</ListItem>
         </SelectableListItem>
       ) : null}
       {children}
@@ -62,14 +62,14 @@ export const WorkflowStepOptionsMenuItems = ({
           itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.deleteNode}
           onEnter={onDeleteNode}
         >
-          <DropdownListItem
+          <ListItem
             startIcon={<IconTrash />}
             color="danger"
             focused={
               selectedItemId === WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.deleteNode
             }
             onClick={onDeleteNode}
-          >{t`Delete node`}</DropdownListItem>
+          >{t`Delete node`}</ListItem>
         </SelectableListItem>
       ) : null}
     </>
