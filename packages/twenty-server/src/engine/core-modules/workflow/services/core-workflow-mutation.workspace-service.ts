@@ -642,24 +642,57 @@ export class CoreWorkflowMutationWorkspaceService {
       );
     }, buildSystemAuthContext(workspaceId));
 
-    await this.coreWorkflowMigrationWriteService.run({
-      workspaceId,
-      failureMessage:
-        'Multiple validation errors occurred while discarding workflow draft',
-      operations: {
-        workflowVersion: {
-          flatEntityToCreate: [],
-          flatEntityToDelete: [flatCoreVersionToDelete],
-          flatEntityToUpdate: [],
+    try {
+      await this.coreWorkflowMigrationWriteService.run({
+        workspaceId,
+        failureMessage:
+          'Multiple validation errors occurred while discarding workflow draft',
+        operations: {
+          workflowVersion: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: [flatCoreVersionToDelete],
+            flatEntityToUpdate: [],
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      // The mirror soft-delete is already committed, so leaving it deleted next
+      // to a live core row is drift the user cannot see or undo.
+      await this.restoreDiscardedMirrorVersion({
+        workspaceId,
+        coreWorkflowVersionId: coreVersion.id,
+      });
+
+      throw error;
+    }
 
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
       workspaceId,
     );
 
     return coreVersion.coreWorkflowId;
+  }
+
+  private async restoreDiscardedMirrorVersion({
+    workspaceId,
+    coreWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    coreWorkflowVersionId: string;
+  }): Promise<void> {
+    try {
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        await this.workspaceOrmManager
+          .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
+            shouldBypassPermissionChecks: true,
+          })
+          .restore({ coreWorkflowVersionId });
+      }, buildSystemAuthContext(workspaceId));
+    } catch (restoreError) {
+      this.logger.error(
+        `Failed to restore the mirror version for core version ${coreWorkflowVersionId} in workspace ${workspaceId}: ${restoreError}`,
+      );
+    }
   }
 
   private async resolveDiscardTargetCoreVersionId(

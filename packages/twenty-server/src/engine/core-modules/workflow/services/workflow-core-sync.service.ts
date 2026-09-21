@@ -14,7 +14,7 @@ import {
   CoreWorkflowMetadataExceptionCode,
 } from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
 import { CoreWorkflowMigrationWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-migration-write.service';
-import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
+import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -123,17 +123,40 @@ export class WorkflowCoreSyncService {
         { workspaceId, flatMapsKeys: ['flatWorkflowMaps'] },
       );
 
-    const flatWorkflowsToCreate: FlatWorkflow[] = [];
-    const flatWorkflowsToUpdate: FlatWorkflow[] = [];
+    const flatWorkflowsToCreate: (UniversalFlatWorkflow & { id?: string })[] =
+      [];
+    const flatWorkflowsToUpdate: UniversalFlatWorkflow[] = [];
+
+    // The cache decides which rows exist, so a stale map would send a persisted
+    // id down the create branch and hit the primary key. The table decides.
+    const persistedCoreWorkflowIds = new Set(
+      (
+        await this.coreWorkflowRepository.find(workspaceId, {
+          where: { id: In(coreRows.map(({ id }) => id)) },
+          select: { id: true },
+        })
+      ).map(({ id }) => id),
+    );
 
     for (const coreRow of coreRows) {
-      const existingFlatWorkflow = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: coreRow.id,
-        flatEntityMaps: flatWorkflowMaps,
-      });
+      const existingFlatWorkflow = persistedCoreWorkflowIds.has(coreRow.id)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: coreRow.id,
+            flatEntityMaps: flatWorkflowMaps,
+          })
+        : undefined;
 
-      const flatWorkflow = {
-        id: coreRow.id,
+      if (
+        persistedCoreWorkflowIds.has(coreRow.id) &&
+        !isDefined(existingFlatWorkflow)
+      ) {
+        throw new CoreWorkflowMetadataException(
+          `Core workflow ${coreRow.id} is persisted but missing from the flat entity maps`,
+          CoreWorkflowMetadataExceptionCode.WORKFLOW_NOT_FOUND,
+        );
+      }
+
+      const flatWorkflow: UniversalFlatWorkflow = {
         universalIdentifier: coreRow.universalIdentifier,
         name: coreRow.name,
         workspaceWorkflowId: coreRow.workspaceWorkflowId,
@@ -144,7 +167,7 @@ export class WorkflowCoreSyncService {
           workspaceCustomFlatApplication.universalIdentifier,
         createdAt: coreRow.createdAt.toISOString(),
         updatedAt: new Date().toISOString(),
-      } as unknown as FlatWorkflow;
+      };
 
       if (isDefined(existingFlatWorkflow)) {
         flatWorkflowsToUpdate.push({
@@ -154,7 +177,7 @@ export class WorkflowCoreSyncService {
           createdAt: existingFlatWorkflow.createdAt,
         });
       } else {
-        flatWorkflowsToCreate.push(flatWorkflow);
+        flatWorkflowsToCreate.push({ ...flatWorkflow, id: coreRow.id });
       }
     }
 
@@ -259,16 +282,29 @@ export class WorkflowCoreSyncService {
       (_, index) => !isDefined(resolvedFlatWorkflows[index]),
     );
 
-    // Skipping unresolved ids would leave orphan core rows that still read and
-    // still broadcast, so a cache miss has to fail rather than pass silently.
+    // The dual-write listener deletes the same rows when the workspace mirror is
+    // soft-deleted, so an id that is gone from both the cache and the table is an
+    // idempotent no-op. An id still in the table is a stale cache and must fail
+    // rather than leave an orphan that still reads and still broadcasts.
     if (missingCoreWorkflowIds.length > 0) {
-      throw new CoreWorkflowMetadataException(
-        `Core workflows ${missingCoreWorkflowIds.join(', ')} not found while deleting`,
-        CoreWorkflowMetadataExceptionCode.WORKFLOW_NOT_FOUND,
+      const stillPersisted = await this.coreWorkflowRepository.find(
+        workspaceId,
+        { where: { id: In(missingCoreWorkflowIds) }, select: { id: true } },
       );
+
+      if (stillPersisted.length > 0) {
+        throw new CoreWorkflowMetadataException(
+          `Core workflows ${stillPersisted.map(({ id }) => id).join(', ')} are persisted but missing from the flat entity maps`,
+          CoreWorkflowMetadataExceptionCode.WORKFLOW_NOT_FOUND,
+        );
+      }
     }
 
     const flatWorkflowsToDelete = resolvedFlatWorkflows.filter(isDefined);
+
+    if (flatWorkflowsToDelete.length === 0) {
+      return;
+    }
 
     await this.coreWorkflowMigrationWriteService.run({
       workspaceId,
