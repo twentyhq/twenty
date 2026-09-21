@@ -14,13 +14,18 @@ import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import {
   IconAlertTriangle,
   IconAdjustments,
@@ -39,11 +44,13 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useApplicationVariablesDraft } from '~/pages/settings/applications/hooks/useApplicationVariablesDraft';
+import { SettingsApplicationMissingConfigurationBanner } from '~/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab';
 import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailVariablesTab';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
+import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
@@ -57,6 +64,11 @@ export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
 
   const activeTabId = useAtomComponentStateValue(
+    activeTabIdComponentState,
+    APPLICATION_DETAIL_ID,
+  );
+
+  const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     APPLICATION_DETAIL_ID,
   );
@@ -164,6 +176,15 @@ export const SettingsApplicationDetails = () => {
   const settingsFrontComponentId =
     application?.settingsCustomTabFrontComponentId;
   const hasCustomSettingsTab = isDefined(settingsFrontComponentId);
+
+  // Saved values only: a draft the user has not saved yet does not configure
+  // the app, so the banner has to stay up until the save goes through.
+  const missingRequiredApplicationVariables =
+    getMissingRequiredApplicationVariables(displayedApplicationVariables);
+
+  const configurationTabId = hasCustomSettingsTab
+    ? CUSTOM_SETTINGS_TAB_ID
+    : VARIABLES_TAB_ID;
 
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
@@ -274,6 +295,12 @@ export const SettingsApplicationDetails = () => {
         }
       >
         <SettingsPageContainer overflow="visible">
+          {isNonEmptyArray(missingRequiredApplicationVariables) && (
+            <SettingsApplicationMissingConfigurationBanner
+              missingApplicationVariables={missingRequiredApplicationVariables}
+              onConfigure={() => setActiveTabId(configurationTabId)}
+            />
+          )}
           {isApplicationStopped && (
             <InlineBanner
               color="danger"
