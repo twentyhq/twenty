@@ -39,11 +39,13 @@ describe('buildApiAccessLogLine', () => {
   const build = ({
     request = {},
     statusCode = 200,
+    writableEnded = true,
     durationMs = 12,
     traceContext,
   }: {
     request?: Partial<Request>;
     statusCode?: number;
+    writableEnded?: boolean;
     durationMs?: number;
     traceContext?: RequestTraceContext;
   } = {}): string =>
@@ -54,7 +56,7 @@ describe('buildApiAccessLogLine', () => {
         headers: {},
         ...request,
       } as unknown as Request,
-      response: { statusCode } as unknown as Response,
+      response: { statusCode, writableEnded } as unknown as Response,
       durationMs,
       traceContext,
     });
@@ -67,6 +69,21 @@ describe('buildApiAccessLogLine', () => {
     expect(line).not.toContain('depth=1');
     expect(line).toContain('status=200');
     expect(line).toContain('duration_ms=12');
+  });
+
+  it('should not claim a status for a request the client aborted', () => {
+    const line = build({ writableEnded: false });
+
+    expect(line).toContain('aborted=true');
+    expect(line).not.toContain('status=');
+    expect(line).toContain('duration_ms=12');
+  });
+
+  it('should not mark a completed response as aborted', () => {
+    const line = build();
+
+    expect(line).toContain('status=200');
+    expect(line).not.toContain('aborted=');
   });
 
   it('should log the user as actor', () => {

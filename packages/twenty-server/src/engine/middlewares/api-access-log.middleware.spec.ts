@@ -20,11 +20,12 @@ describe('ApiAccessLogMiddleware', () => {
       ...overrides,
     }) as unknown as Request;
 
-  const buildResponse = () => {
+  const buildResponse = ({ writableEnded = true } = {}) => {
     const listenersByEvent = new Map<string, (() => void)[]>();
 
     const response = {
       statusCode: 200,
+      writableEnded,
       once: jest.fn((event: string, listener: () => void) => {
         listenersByEvent.set(event, [
           ...(listenersByEvent.get(event) ?? []),
@@ -90,12 +91,14 @@ describe('ApiAccessLogMiddleware', () => {
   });
 
   it('should log an aborted request, where finish never fires', () => {
-    const { response, close } = buildResponse();
+    const { response, close } = buildResponse({ writableEnded: false });
 
     middleware.use(buildRequest(), response, next);
     close();
 
     expect(logSpy).toHaveBeenCalledTimes(1);
+    expect(logSpy.mock.calls[0][0]).toContain('aborted=true');
+    expect(logSpy.mock.calls[0][0]).not.toContain('status=');
   });
 
   it('should log a request once when both finish and close fire', () => {

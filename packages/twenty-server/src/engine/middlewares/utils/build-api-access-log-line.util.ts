@@ -21,12 +21,14 @@ export const buildApiAccessLogLine = ({
   traceContext: RequestTraceContext | undefined;
 }): string => {
   const [urlPath] = (request.originalUrl ?? '').split('?');
+  const completed = response.writableEnded;
 
   return toLogfmt({
     method: request.method,
     url_path: urlPath,
     resolvers: formatResolvers(request.executedRootResolvers),
-    status: response.statusCode,
+    status: completed ? response.statusCode : undefined,
+    aborted: completed ? undefined : true,
     duration_ms: durationMs,
     ...formatActor(request),
     workspace_id: request.workspaceId,
