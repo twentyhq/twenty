@@ -132,7 +132,12 @@ describe('defineApplication', () => {
       displayName: 'My App',
       description: 'My app description',
       applicationVariables: {
-        API_KEY: { isSecret: true, isRequired: true, isDeprecated: true },
+        API_KEY: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          isSecret: true,
+          isRequired: true,
+          isDeprecated: true,
+        },
       },
     });
 
@@ -148,7 +153,11 @@ describe('defineApplication', () => {
       displayName: 'My App',
       description: 'My app description',
       applicationVariables: {
-        API_KEY: { isSecret: true, isRequired: true },
+        API_KEY: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          isSecret: true,
+          isRequired: true,
+        },
       },
     });
 
