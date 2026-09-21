@@ -75,3 +75,8 @@ export const AddsQuestionAndChangesType: Story = {
     ).not.toBeInTheDocument();
   },
 };
+
+export const EditsBeforeSaveResponse: Story = {
+  render: (args) => <WorkflowEditActionClassify {...args} />,
+  play: AddsQuestionAndChangesType.play,
+};

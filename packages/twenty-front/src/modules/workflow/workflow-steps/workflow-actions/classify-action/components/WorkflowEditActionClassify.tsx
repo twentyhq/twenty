@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
@@ -65,7 +67,30 @@ export const WorkflowEditActionClassify = ({
   });
 
   const readonly = actionOptions.readonly === true;
-  const questions = action.settings.input.questions;
+  const [input, setInput] = useState(action.settings.input);
+  const questions = input.questions;
+
+  const saveAction = useDebouncedCallback(
+    (updatedInput: WorkflowClassifyAction['settings']['input']) => {
+      if (actionOptions.readonly === true) {
+        return;
+      }
+
+      actionOptions.onActionUpdate({
+        ...action,
+        settings: { ...action.settings, input: updatedInput },
+      });
+    },
+    500,
+  );
+
+  useEffect(() => {
+    if (!saveAction.isPending()) {
+      setInput(action.settings.input);
+    }
+  }, [action.settings.input, saveAction]);
+
+  useEffect(() => () => saveAction.flush(), [saveAction]);
 
   const questionTypeLabels: Record<AiEvaluationQuestionType, string> = {
     choice: t`Pick one option`,
@@ -106,19 +131,15 @@ export const WorkflowEditActionClassify = ({
   );
 
   const updateInput = (
-    input: Partial<WorkflowClassifyAction['settings']['input']>,
+    inputUpdate: Partial<WorkflowClassifyAction['settings']['input']>,
   ) => {
     if (actionOptions.readonly === true) {
       return;
     }
 
-    actionOptions.onActionUpdate({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: { ...action.settings.input, ...input },
-      },
-    });
+    const updatedInput = { ...input, ...inputUpdate };
+    setInput(updatedInput);
+    saveAction(updatedInput);
   };
 
   const updateQuestion = (
@@ -163,7 +184,7 @@ export const WorkflowEditActionClassify = ({
         <FormTextFieldInput
           label={t`Context`}
           multiline
-          defaultValue={action.settings.input.state}
+          defaultValue={input.state}
           placeholder={
             questions.length > 0 &&
             questions.every(({ type }) => type !== 'choice')
