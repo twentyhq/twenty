@@ -27,12 +27,11 @@ const StyledActionSlot = styled.div`
   flex: 0 0 ${themeCssVariables.spacing[8]};
 `;
 
-const StyledFields = styled.div<{ variant: 'options' | 'levels' }>`
+const StyledFields = styled.div`
   display: grid;
   flex: 1;
   gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: ${({ variant }) =>
-    variant === 'levels' ? 'minmax(0, 1fr) minmax(0, 2fr)' : 'minmax(0, 1fr)'};
+  grid-template-columns: minmax(0, 1fr);
   min-width: 0;
 `;
 
@@ -98,7 +97,7 @@ export const WorkflowClassifyQuestionCriteria = ({
       </InputLabel>
       {visibleRows.map((criterion, index) => (
         <StyledRow key={criterion.id}>
-          <StyledFields variant={variant}>
+          <StyledFields>
             <FormTextFieldInput
               defaultValue={criterion.name}
               placeholder={
