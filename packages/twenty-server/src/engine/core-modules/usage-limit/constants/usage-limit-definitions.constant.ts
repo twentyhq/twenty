@@ -109,4 +109,19 @@ export const USAGE_LIMIT_DEFINITIONS = {
       ],
     },
   },
+  [UsageResourceType.RECORD]: {
+    stock: {
+      allowedOperationTypes: [UsageOperationType.RECORD_WRITE],
+      allowedSpenderTypes: ['workspace'],
+      allowedMeters: ['quantity'],
+      defaults: [
+        {
+          spenderType: 'workspace',
+          meter: 'quantity',
+          limitValueConfigVariable: 'WORKSPACE_RECORD_LIMIT',
+          isOverridable: true,
+        },
+      ],
+    },
+  },
 } satisfies Record<UsageResourceType, UsageLimitDefinitions>;
