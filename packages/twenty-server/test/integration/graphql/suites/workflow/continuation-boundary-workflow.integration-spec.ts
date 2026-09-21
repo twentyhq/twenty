@@ -11,12 +11,13 @@ import {
   type WorkflowIfElseAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { MAX_EXECUTED_STEPS_COUNT } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schema = getWorkspaceSchemaName(workspaceId);
 
-const STEPS_BEFORE_BOUNDARY = 21;
-const SKIPPED_CHAIN_LENGTH = 24;
+const STEPS_BEFORE_BOUNDARY = MAX_EXECUTED_STEPS_COUNT + 1;
+const SKIPPED_CHAIN_LENGTH = MAX_EXECUTED_STEPS_COUNT + 4;
 
 const settings = {
   input: {},

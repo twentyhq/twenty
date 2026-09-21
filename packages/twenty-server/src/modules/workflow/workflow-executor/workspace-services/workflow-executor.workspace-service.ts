@@ -50,7 +50,7 @@ import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/ty
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
-const MAX_EXECUTED_STEPS_COUNT = 20;
+export const MAX_EXECUTED_STEPS_COUNT = 20;
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
