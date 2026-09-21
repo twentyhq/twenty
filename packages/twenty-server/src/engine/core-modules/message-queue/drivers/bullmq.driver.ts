@@ -414,6 +414,7 @@ export class BullMQDriver
         count: QUEUE_RETENTION.failedMaxCount,
       },
       delay: options?.delay,
+      deduplication: options?.deduplication,
       broadcastTo: options?.broadcastTo,
     };
   }

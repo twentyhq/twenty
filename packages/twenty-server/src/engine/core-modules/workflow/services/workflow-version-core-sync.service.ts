@@ -35,6 +35,10 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -57,6 +61,8 @@ export class WorkflowVersionCoreSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -280,12 +286,41 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
+    const deletedVersions = await this.coreWorkflowVersionRepository.find(
+      workspaceId,
+      {
+        where: { id: In(coreWorkflowVersionIds) },
+        select: { id: true, coreWorkflowId: true, status: true },
+      },
+    );
+
     await this.deleteCoreVersionsThroughMigration({
       workspaceId,
       coreWorkflowVersionIds,
     });
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
+    await this.evictCronTriggerCacheEntries(deletedVersions);
+  }
+
+  private async evictCronTriggerCacheEntries(
+    deletedVersions: Pick<WorkflowVersionEntity, 'coreWorkflowId' | 'status'>[],
+  ): Promise<void> {
+    const fields = [
+      ...new Set(
+        deletedVersions
+          .filter((version) => version.status === WorkflowVersionStatus.ACTIVE)
+          .map((version) => version.coreWorkflowId)
+          .filter(isNonEmptyString),
+      ),
+    ];
+
+    for (const field of fields) {
+      await this.cacheStorageService.hashDelete({
+        key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+        field,
+      });
+    }
   }
 
   private async deleteCoreVersionsThroughMigration({
@@ -760,17 +795,21 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
-    const versionsToDelete = await this.coreWorkflowVersionRepository.find(
+    const deletedVersions = await this.coreWorkflowVersionRepository.find(
       workspaceId,
-      { where: { workflowId: In(workflowIds) }, select: { id: true } },
+      {
+        where: { workflowId: In(workflowIds) },
+        select: { id: true, coreWorkflowId: true, status: true },
+      },
     );
 
     await this.deleteCoreVersionsThroughMigration({
       workspaceId,
-      coreWorkflowVersionIds: versionsToDelete.map(({ id }) => id),
+      coreWorkflowVersionIds: deletedVersions.map(({ id }) => id),
     });
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
+    await this.evictCronTriggerCacheEntries(deletedVersions);
   }
 
   async deleteCoreVersionsByWorkspaceVersionIds(

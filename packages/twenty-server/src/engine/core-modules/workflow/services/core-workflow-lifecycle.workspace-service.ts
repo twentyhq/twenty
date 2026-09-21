@@ -915,7 +915,8 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
     const cachedTrigger: CachedCronTrigger = {
       workspaceId: resolved.coreWorkflowVersion.workspaceId,
-      workflowId: workspaceWorkflowId,
+      workflowId: resolved.coreWorkflow.id,
+      legacyWorkflowId: workspaceWorkflowId,
       pattern: computeCronPatternFromSchedule(trigger),
       ...buildCoreDispatchIds({
         coreWorkflowVersionId: resolved.coreWorkflowVersion.id,
@@ -926,7 +927,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     try {
       await this.cacheStorageService.hashSetIfExists({
         key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-        field: workspaceWorkflowId,
+        field: resolved.coreWorkflow.id,
         value: JSON.stringify(cachedTrigger),
       });
     } catch (error) {
@@ -976,7 +977,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
         transactionScope.afterCommit(async () => {
           await this.cacheStorageService.hashDelete({
             key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-            field: workspaceWorkflowId,
+            field: resolved.coreWorkflow.id,
           });
         });
 

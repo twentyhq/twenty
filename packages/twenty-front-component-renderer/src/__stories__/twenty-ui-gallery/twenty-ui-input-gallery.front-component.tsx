@@ -11,11 +11,8 @@ import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
   Button,
   ButtonGroup,
-  ColorPickerButton,
   ColorSchemeCard,
   ColorSchemePicker,
-  FloatingButton,
-  FloatingButtonGroup,
   IconListViewGrip,
   SearchInput,
   SegmentedControl,
@@ -69,10 +66,6 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     node: <CodeEditorHeader title="Editor" />,
   },
   {
-    name: 'ColorPickerButton',
-    node: <ColorPickerButton colorName="blue" onClick={() => {}} />,
-  },
-  {
     name: 'ColorSchemeCard',
     node: <ColorSchemeCard variant="Light" />,
   },
@@ -86,21 +79,6 @@ const INPUT_ENTRIES: GalleryEntry[] = [
         darkLabel="Dark"
         systemLabel="System"
       />
-    ),
-  },
-  {
-    name: 'FloatingButton',
-    node: <FloatingButton title="Floating" />,
-  },
-  {
-    name: 'FloatingButtonGroup',
-    node: (
-      <FloatingButtonGroup>
-        {[
-          <FloatingButton key="a" title="A" />,
-          <FloatingButton key="b" title="B" />,
-        ]}
-      </FloatingButtonGroup>
     ),
   },
   {
