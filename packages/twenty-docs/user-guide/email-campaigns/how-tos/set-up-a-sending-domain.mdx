@@ -1,0 +1,158 @@
+---
+title: Set Up a Sending Domain
+description: Verify your domain so Twenty can send campaigns from your own address.
+---
+
+Campaigns go out from an address on your own domain, like `news@yourcompany.com`. Before Twenty can send from it, mailbox providers such as Gmail and Outlook need proof that the domain allows it. You give that proof by adding a few DNS records at the company that manages your domain.
+
+Setup has three steps: create the address in Twenty, add the records at your DNS provider, then let Twenty verify them.
+
+<Note>
+  Twenty's records sit on their own host names, such as
+  `twenty-bounce.yourcompany.com` and `unsubscribe.yourcompany.com`. They do not
+  change the records your everyday email relies on, so you can safely use your
+  main domain. The only exception is the DMARC record, which applies to the
+  whole domain, and which Twenty suggests only when your domain has none.
+</Note>
+
+## Before you start
+
+You need two things:
+
+- **Access to your DNS provider**: the company where you manage your domain's records, for example Cloudflare, GoDaddy or Namecheap. This is often, but not always, the company you bought the domain from.
+- **The Workspace settings permission** in Twenty.
+
+## Part 1: Create the address in Twenty
+
+The sending domain comes from an email channel. If you already set up a shared inbox in Twenty, the domain is already there, and you can skip to Part 2.
+
+1. Go to **Settings → Communication**.
+2. Click **Add email channel**.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/03-twenty-add-email-channel.png"
+  style={{ width: '100%' }}
+/>
+
+3. In **Source Email Address**, type the address you want campaigns to come from, for example `news@yourcompany.com`. Twenty uses everything after the `@` as the sending domain.
+4. In **Display Name**, type the name recipients see in their inbox, for example `Acme Newsletter`.
+5. Click **Save**.
+
+<img
+  src="/images/user-guide/emails/inbound-channels/04-twenty-new-channel-form.png"
+  style={{ width: '100%' }}
+/>
+
+Twenty opens the channel. Scroll to the **Sending domain** section. It lists the records to add, grouped by what they do, with a copy button next to each value.
+
+<Note>
+  A domain can only be verified in one Twenty workspace. If another workspace
+  already uses it, Twenty tells you when you save.
+</Note>
+
+## Part 2: Understand the records
+
+| Group                     | Records                                                                                           | What it does                                                                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Domain authentication** | Three `CNAME` records ending in `._domainkey`, plus an `MX` and a `TXT` record on `twenty-bounce` | Proves your domain allows Twenty to send for it (DKIM and SPF). The `twenty-bounce` records also route bounce reports back to Twenty.      |
+| **DMARC policy**          | One `TXT` record on `_dmarc`                                                                      | Tells mailbox providers what to do with mail that fails the checks. Twenty only lists it if your domain has no DMARC record yet.           |
+| **Unsubscribe link**      | Two `CNAME` records, on `unsubscribe` and `_acme-challenge.unsubscribe`                           | Hosts the unsubscribe page on your own domain, for example `unsubscribe.yourcompany.com`. Campaigns cannot be sent until this is verified. |
+
+Add every record Twenty shows. Gmail, Yahoo and Outlook reject bulk mail that is not authenticated, so skipping one costs you inbox placement rather than saving time.
+
+<Warning>
+  If your domain already has a DMARC record, keep it and do not add a second
+  one. A domain with two DMARC records is treated as having none.
+</Warning>
+
+## Part 3: Add the records at your DNS provider
+
+For each record, create a new entry at your DNS provider and copy three values from Twenty:
+
+- **Type**: `CNAME`, `MX` or `TXT`.
+- **Name**: sometimes called **Host**.
+- **Value**: sometimes called **Target**, **Points to**, **Content** or **Answer**.
+
+For the `MX` record, Twenty shows the priority in front of the value, as in `10 feedback-smtp.eu-central-1.amazonses.com`. Most providers have a separate **Priority** field: put `10` there and the rest in the value.
+
+<Warning>
+  Many providers add your domain to the end of the **Name** automatically. If
+  yours does, paste only the part before your domain. For
+  `twenty-bounce.yourcompany.com`, enter `twenty-bounce`. Otherwise the record
+  ends up at `twenty-bounce.yourcompany.com.yourcompany.com` and never verifies.
+</Warning>
+
+Follow your provider's instructions, using the values from Twenty:
+
+| Provider            | Their guide                                                                                                                                                       | Watch out for                                                                                             |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Amazon Route 53     | [Working with records](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/rrsets-working-with.html)                                                        | Wrap `TXT` values in double quotes.                                                                       |
+| Azure DNS           | [Manage DNS records](https://learn.microsoft.com/en-us/azure/dns/dns-getstarted-portal)                                                                           | Only works if the domain uses Azure's name servers.                                                       |
+| Bluehost            | [Add, edit or delete DNS entries](https://www.bluehost.com/help/article/dns-management-add-edit-or-delete-dns-entries)                                            | Enter only the host part in **Host Record**.                                                              |
+| Cloudflare          | [Create DNS records](https://developers.cloudflare.com/dns/manage-dns-records/how-to/create-dns-records/)                                                         | Set every `CNAME` to **DNS only** (grey cloud). A proxied record never verifies.                          |
+| DigitalOcean        | [Manage DNS records](https://docs.digitalocean.com/products/networking/dns/how-to/manage-records/)                                                                | Only works if the domain uses DigitalOcean's name servers.                                                |
+| Gandi               | [DNS records](https://docs.gandi.net/en/domain_names/common_operations/dns_records.html)                                                                          | End `CNAME` values with a dot, as in `abc.dkim.amazonses.com.`                                            |
+| GoDaddy             | [Add a CNAME record](https://www.godaddy.com/help/add-a-cname-record-19236)                                                                                       | Enter only the host part in **Name**. GoDaddy adds your domain itself.                                    |
+| Google Cloud DNS    | [Manage records](https://cloud.google.com/dns/docs/records)                                                                                                       | Only works if the domain uses Google Cloud's name servers.                                                |
+| Hostinger           | [Manage DNS records](https://www.hostinger.com/support/1583249-how-to-manage-dns-records-at-hostinger/)                                                           | Only works if the domain uses Hostinger's name servers.                                                   |
+| Hover               | [Edit DNS records](https://help.hover.com/hc/en-us/articles/217282457-how-to-edit-dns-records-a-aaaa-cname-mx-txt-srv-)                                           | Enter only the host part in **Hostname**.                                                                 |
+| IONOS               | [Manage DNS settings](https://www.ionos.com/help/domains/general-information-about-dns-settings/managing-dns-settings-in-control-center/)                         | Enter only the host part in **Host name**.                                                                |
+| Name.com            | [Add a CNAME record](https://www.name.com/support/articles/115004895548-adding-a-cname-record)                                                                    | Enter only the host part in **Host**.                                                                     |
+| Namecheap           | [Add TXT, SPF, DKIM and DMARC records](https://www.namecheap.com/support/knowledgebase/article.aspx/317/2237/how-do-i-add-txtspfdkimdmarc-records-for-my-domain/) | Only works if the domain uses Namecheap BasicDNS, FreeDNS or PremiumDNS. Enter only the host part.        |
+| Netlify             | [DNS records](https://docs.netlify.com/manage/domains/configure-domains/dns-records/)                                                                             | Only works if the domain uses Netlify's name servers.                                                     |
+| Network Solutions   | [Manage Advanced DNS records](https://www.networksolutions.com/help/article/manage-dns-adns-records)                                                              | Enter only the host part.                                                                                 |
+| OVHcloud            | [Create a CNAME record](https://docs.ovhcloud.com/en/guides/web-cloud/domains/dns-zone-cname-record-creation)                                                     | Enter only the host part in **Subdomain**.                                                                |
+| Porkbun             | [Edit DNS records](https://kb.porkbun.com/article/68-how-to-edit-dns-records)                                                                                     | Enter only the host part in **Host**.                                                                     |
+| Squarespace Domains | [Edit your domain's DNS records](https://support.squarespace.com/hc/en-us/articles/360002101888-Edit-your-domain-s-DNS-records)                                   | Squarespace blocks a record that conflicts with an existing one instead of replacing it.                  |
+| Vercel              | [Manage DNS records](https://vercel.com/docs/domains/managing-dns-records)                                                                                        | Only works if the domain uses Vercel's name servers. Otherwise, add the records where your DNS is hosted. |
+| Wix                 | [Manage DNS records](https://support.wix.com/en/article/managing-dns-records-in-your-wix-account)                                                                 | Only works if the domain uses Wix's name servers. Otherwise, add the records where your DNS is hosted.    |
+
+If your provider is not listed, the setting is usually called **DNS**, **DNS records**, **Zone editor** or **Advanced DNS**, in the domain's settings.
+
+## Part 4: Verify
+
+Twenty checks your records every hour on its own. To check right away, click **Check verification** in the **Sending domain** section.
+
+DNS changes usually take effect within an hour, but some providers take up to 48 hours. The domain moves from **Pending** to **Verified** once the authentication records are found, and the **Unsubscribe link** row turns **Verified** once its records are found. You can send campaigns when both are verified.
+
+The **DMARC policy** row always shows **Not set**. This is expected: Twenty suggests the record but does not check it.
+
+## Troubleshooting
+
+<Accordion title="The domain stays Pending for hours">
+  Open your DNS provider and compare each **Name** with the one in Twenty. The
+  most common cause is the provider adding your domain a second time, as
+  described in Part 3. Also check that the records were saved at the provider
+  that actually hosts your DNS. If your domain's name servers point elsewhere,
+  records added in your registrar's panel have no effect.
+</Accordion>
+
+<Accordion title="Cloudflare: the records are there but never verify">
+  Each `CNAME` must be set to **DNS only**. With the orange cloud on, Cloudflare
+  answers with its own servers instead of the value Twenty gave you.
+</Accordion>
+
+<Accordion title="The domain shows Failed">
+  Twenty stops checking a failed domain on its own. Fix the records, then click
+  **Check verification**.
+</Accordion>
+
+<Accordion title="The domain shows Temporary Failure">
+  Your DNS provider did not answer when Twenty checked. Twenty keeps checking
+  every hour, so this usually resolves on its own.
+</Accordion>
+
+<Accordion title="Authentication is verified but the Unsubscribe link stays Pending">
+  The two unsubscribe records are checked separately and can take a little
+  longer, because Twenty also issues a secure certificate for them. Check that
+  both `CNAME` records exist, on `unsubscribe` and
+  `_acme-challenge.unsubscribe`, then wait up to an hour.
+</Accordion>
+
+<Accordion title="My provider rejects the MX record">
+  Put `10` in the **Priority** field and only the host name in the value, as in
+  `feedback-smtp.eu-central-1.amazonses.com`. Do not include the `10` in the
+  value itself.
+</Accordion>
+
+Next, read the [best practices](/user-guide/email-campaigns/how-tos/email-campaign-best-practices) before your first send, then [send your first campaign](/user-guide/email-campaigns/how-tos/send-your-first-campaign).

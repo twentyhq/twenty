@@ -1,0 +1,101 @@
+---
+title: Manage Unsubscribes and Topics
+description: See who opted out, and let recipients choose which emails they keep receiving.
+---
+
+Every campaign includes an unsubscribe link, and Twenty keeps track of who used it. Topics go one step further: they let people opt out of one kind of email, like a newsletter, while still receiving the rest.
+
+## How unsubscribing works
+
+Every campaign email includes:
+
+- A line in the footer: "Don't want these emails? Unsubscribe."
+- The one-click unsubscribe headers that Gmail, Yahoo and other email apps use to show their own **Unsubscribe** button.
+
+Clicking the link opens an unsubscribe page on your own domain, for example `unsubscribe.yourcompany.com`:
+
+- **Without public topics**, the page offers a single **Unsubscribe** button.
+- **With public topics**, recipients see one checkbox per topic. They untick what they no longer want and click **Update**, or click **Unsubscribe all**.
+
+An unsubscribe takes effect immediately. The person is skipped on every later campaign it applies to.
+
+<Note>
+  The unsubscribe button built into Gmail, Yahoo and other email apps
+  unsubscribes the person from all your campaigns, not only the topic of the
+  email they received.
+</Note>
+
+## Part 1: Create topics
+
+Topics are categories of email, such as **Newsletter**, **Product updates** or **Events**.
+
+1. Go to **Settings → Communication**.
+2. Under **Unsubscribe**, click **Manage unsubscribe**.
+3. Open the **Topics** tab and click **Add topic**.
+4. In **Name**, type the name recipients see, for example `Newsletter`.
+5. In **Description**, optionally note what the emails contain, for your team's reference.
+6. Turn on **Listed on the unsubscribe page** to make the topic public.
+7. Click **Save**.
+
+| Visibility  | Behavior                                                                                              |
+| ----------- | ----------------------------------------------------------------------------------------------------- |
+| **Public**  | Recipients see the topic on the unsubscribe page and can opt out of it on its own.                    |
+| **Private** | Recipients never see it. Use it to group campaigns for your own tracking. It still respects opt-outs. |
+
+New topics are private until you turn on **Listed on the unsubscribe page**.
+
+## Part 2: Use a topic in a campaign
+
+In the campaign's **Email** tab, choose the topic under **Unsubscribe topic**. The field appears once at least one topic exists.
+
+When the campaign sends, Twenty skips:
+
+- People who unsubscribed from this topic.
+- People who unsubscribed from everything.
+
+People who only opted out of a different topic still receive it.
+
+## Part 3: See who unsubscribed
+
+1. Go to **Settings → Communication**.
+2. Under **Unsubscribe**, click **Manage unsubscribe**.
+3. Open the **Unsubscribers** tab.
+
+The list shows every address that no longer receives campaigns:
+
+| Column            | What it shows                                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Email address** | The address that is skipped.                                                                                  |
+| **Scope**         | **All emails**, or the name of the topic they left.                                                           |
+| **Reason**        | **Unsubscribed**, **Bounce** (the address does not exist) or **Complaint** (they reported the email as spam). |
+| **Date**          | When it happened.                                                                                             |
+
+Use the search and the filters to find a specific address, reason or topic.
+
+<Warning>
+  Bounces and spam complaints are permanent. Sending to those addresses again
+  would harm your domain's reputation, so Twenty does not allow it.
+</Warning>
+
+## Preview the unsubscribe page
+
+The **Unsubscribe page** tab shows exactly what recipients see, with your current public topics. Nothing is saved when you click through the preview.
+
+## Troubleshooting
+
+<Accordion title="Recipients only see an Unsubscribe button, not my topics">
+  Only public topics appear on the unsubscribe page. Open the topic and turn on
+  **Listed on the unsubscribe page**.
+</Accordion>
+
+<Accordion title="Someone unsubscribed from one topic but stopped receiving everything">
+  They probably used the unsubscribe button built into their email app, which
+  unsubscribes them from all your campaigns. Only the link in the email footer
+  offers the choice of topics.
+</Accordion>
+
+<Accordion title="A person was skipped but they want to receive emails again">
+  If you have public topics, they can open the unsubscribe link in an email
+  received in the last 30 days, tick the topics they want and click **Update**.
+  Bounces and spam complaints cannot be undone.
+</Accordion>

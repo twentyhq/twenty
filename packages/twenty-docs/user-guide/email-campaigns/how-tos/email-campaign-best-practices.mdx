@@ -1,0 +1,89 @@
+---
+title: Email Campaign Best Practices
+description: What to do, and what to avoid, so your campaigns reach the inbox and your domain stays in good standing.
+---
+
+Mailbox providers decide where your campaign lands based on who you send to and how they react. A campaign that goes to people who asked for it reaches the inbox. One sent to a bought or stale list lands in spam, and enough spam reports can pause sending from your domain.
+
+This page covers what Twenty handles for you, what is up to you, and the numbers to keep an eye on.
+
+## What Twenty handles for you
+
+- **Authentication**: once your [sending domain](/user-guide/email-campaigns/how-tos/set-up-a-sending-domain) is verified, every campaign is signed with DKIM and passes SPF on your own domain.
+- **Unsubscribe link**: every campaign gets an unsubscribe link in the footer and the one-click unsubscribe headers Gmail and Yahoo require of bulk senders. Opt-outs take effect immediately.
+- **Suppression**: addresses that bounce, report spam or unsubscribe are skipped on every later campaign, with no action needed from you.
+- **Duplicates**: each person is sent one copy, even if they appear twice in a list.
+
+## What is up to you
+
+Twenty cannot know how you collected your contacts or what your company's address is. These are yours to get right.
+
+### Do
+
+- **Only email people who asked to hear from you.** They signed up, bought from you or agreed to receive your emails. Keep a record of when and how they agreed.
+- **Include your postal address.** US law (CAN-SPAM) requires a physical address in every marketing email. Add it to the bottom of your campaign.
+- **Start small on a new domain.** Send your first campaigns to your most engaged contacts, and grow the volume over a few weeks. See [Warm up a new domain](#warm-up-a-new-domain).
+- **Use a recognizable sender.** Keep the same **From** address and display name from one campaign to the next, so recipients know who you are.
+- **Write a subject line that matches the content.** Misleading subject lines are illegal in many countries and drive spam reports everywhere.
+- **Clean your lists.** Remove people who have not engaged with you, by replying, buying or signing in, in six to twelve months, rather than mailing them indefinitely.
+- **Send a test first.** Check the layout, the links and the sender before every campaign.
+- **Use unsubscribe topics.** Topics let people opt out of one kind of email, like a newsletter, instead of everything. See [Manage unsubscribes and topics](/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics).
+
+### Don't
+
+- **Don't buy, rent or scrape lists.** Purchased lists are full of spam traps: addresses that exist only to catch senders who never had permission. A few hits are enough to damage your domain.
+- **Don't import your whole CRM into a campaign list.** Twenty can create people from your synced inbox and calendar. Having exchanged an email with someone is not the same as their agreement to receive marketing.
+- **Don't send one large blast from a new domain.** A sudden jump in volume looks like spam, even when the list is clean.
+- **Don't build the email from a single image.** Emails that are mostly images and little text are more likely to be filtered. Put your message in real text.
+- **Don't use public link shorteners**, like bit.ly. Spammers use them to hide where links lead, so filters treat them with suspicion.
+- **Don't try to re-add people who unsubscribed or reported spam.** Twenty blocks them for a reason.
+
+<Note>
+  Lists of "spam words" to avoid in subject lines are mostly a myth. Modern
+  filters care far more about your domain's reputation and how recipients react
+  than about individual words.
+</Note>
+
+## Numbers to watch
+
+After each campaign, open it and compare the **Bounced count** and **Complained count** with the **Sent count**.
+
+| Measure             | Aim for    | Why it matters                                                                                                      |
+| ------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
+| Spam complaint rate | Below 0.1% | Gmail asks bulk senders to stay under 0.1% and never reach 0.3%. Above that, mail is rejected or sent to spam.      |
+| Bounce rate         | Below 2%   | A high bounce rate means the list is out of date. At 5% or more, your email provider starts reviewing your sending. |
+
+A complaint rate of 0.1% is one spam report per 1,000 emails. If you see more, stop and look at who you are sending to before your next campaign.
+
+<Warning>
+  If too many recipients bounce or mark your emails as spam, sending from your
+  domain can be paused to protect everyone else's deliverability.
+</Warning>
+
+## Warm up a new domain
+
+Mailbox providers trust a domain that sends steadily more than one that appears overnight with a large volume. On a domain that has never sent campaigns:
+
+| Stage               | What to send                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| First week          | 50 to 100 emails a day, to your most engaged contacts                                |
+| Weeks two and three | Roughly double the volume every few days, as long as bounces and complaints stay low |
+| Weeks four to six   | Reach your normal volume, then keep it steady from one send to the next              |
+
+Split a large list into smaller lists to send in stages. Each campaign can reach up to 10,000 people.
+
+## Laws to know
+
+This is general guidance, not legal advice.
+
+- **United States (CAN-SPAM)**: include a postal address, a working unsubscribe link and an honest subject line. Opt-outs must be honored within 10 business days. Twenty processes them immediately.
+- **European Union and United Kingdom (GDPR, ePrivacy, PECR)**: marketing email generally needs the person's prior consent, and you must be able to show when and how you got it.
+- **Canada (CASL)**: you need express or implied consent before sending, and must be able to prove it.
+
+## Further reading
+
+- [Gmail email sender guidelines](https://support.google.com/a/answer/81126)
+- [Yahoo sender best practices](https://senders.yahooinc.com/best-practices/)
+- [Microsoft requirements for high-volume senders](https://techcommunity.microsoft.com/blog/microsoftdefenderforoffice365blog/strengthening-email-ecosystem-outlook%E2%80%99s-new-requirements-for-high%E2%80%90volume-senders/4399730)
+- [CAN-SPAM Act compliance guide](https://www.ftc.gov/business-guidance/resources/can-spam-act-compliance-guide-business)
+- [Google Postmaster Tools](https://postmaster.google.com), to watch your domain's reputation at Gmail

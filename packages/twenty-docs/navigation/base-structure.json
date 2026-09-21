@@ -134,6 +134,25 @@
           ]
         },
         {
+          "key": "emailCampaigns",
+          "label": "Email Campaigns",
+          "icon": "paper-plane",
+          "pages": [
+            "user-guide/email-campaigns/overview",
+            {
+              "key": "emailCampaignsHowTos",
+              "label": "How-Tos",
+              "pages": [
+                "user-guide/email-campaigns/how-tos/set-up-a-sending-domain",
+                "user-guide/email-campaigns/how-tos/email-campaign-best-practices",
+                "user-guide/email-campaigns/how-tos/send-your-first-campaign",
+                "user-guide/email-campaigns/how-tos/create-a-campaign-with-ai",
+                "user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics"
+              ]
+            }
+          ]
+        },
+        {
           "key": "workflows",
           "label": "Workflows",
           "icon": "bolt",
