@@ -1,3 +1,4 @@
+import { VIEW_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -140,11 +141,15 @@ describe('Sync application should succeed when extending another app view with a
 
     const { data: viewsData } = await findViews({
       objectMetadataId: personObject?.id,
+      gqlFields: `${VIEW_GQL_FIELDS}\n    universalIdentifier\n`,
       expectToFail: false,
     });
 
+    // Match by this run's own freshly-generated universalIdentifier, not the
+    // fixed display name 'App A View' - an orphaned row from an earlier
+    // crashed run could share the same name in the shared test DB.
     const appAView = viewsData?.getViews.find(
-      (view) => view.name === APP_A_VIEW_NAME,
+      (view) => view.universalIdentifier === APP_A_VIEW_ID,
     );
 
     expect(appAView).toBeDefined();
