@@ -1166,6 +1166,16 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Log one line per API request with the actor, the endpoint and the trace ids',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  API_ACCESS_LOG_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Driver used for handling exceptions (Console or Sentry)',
     type: ConfigVariableType.ENUM,
     options: Object.values(ExceptionHandlerDriver),
