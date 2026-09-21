@@ -4,7 +4,7 @@
   "description": "Microsoft Teams assistant and workflow steps for Twenty",
   "license": "MIT",
   "engines": {
-    "twenty": ">=2.37.0",
+    "twenty": ">=2.41.0",
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
@@ -23,10 +23,7 @@
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
-    "typecheck": "tsgo --noEmit -p tsconfig.spec.json",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:unit": "vitest run --config vitest.unit.config.ts"
+    "typecheck": "tsgo --noEmit -p tsconfig.spec.json"
   },
   "dependencies": {
     "jose": "^6.2.12"
@@ -34,12 +31,8 @@
   "devDependencies": {
     "@types/node": "^24.7.2",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
-    "msw": "^2.12.14",
     "oxlint": "^0.16.0",
-    "twenty-client-sdk": "^2.37.0",
-    "twenty-sdk": "^2.37.0",
-    "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^4.0.0"
+    "twenty-sdk": "^2.41.0",
+    "typescript": "^5.9.3"
   }
 }

@@ -7,7 +7,7 @@ export default defineApplication({
   displayName: 'Microsoft Teams',
   description:
     'Your CRM, in the conversation. Mention the bot or message it directly to read, create, update and soft-delete records without leaving Teams, and post messages from your workflows.',
-  logoUrl: 'public/teams.svg',
+  logo: 'public/teams.svg',
   author: 'Twenty',
   category: 'Communication',
   websiteUrl:
