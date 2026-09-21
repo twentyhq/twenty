@@ -137,6 +137,12 @@ export class LogicFunctionExecutorService {
 
     await this.throttleExecution(workspaceId);
 
+    await this.assertExecutionAllowed({
+      workspaceId,
+      flatApplication,
+      flatLogicFunction,
+    });
+
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
       flatApplication,
@@ -253,6 +259,33 @@ export class LogicFunctionExecutorService {
         LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
       );
     }
+  }
+
+  // Billing-exempt applications do not debit the workspace for the execution
+  // itself, so an exhausted budget must not stop them either: their per-record
+  // triggers fire during mailbox and calendar import.
+  private async assertExecutionAllowed({
+    workspaceId,
+    flatApplication,
+    flatLogicFunction,
+  }: {
+    workspaceId: string;
+    flatApplication: FlatApplication;
+    flatLogicFunction: FlatLogicFunction;
+  }): Promise<void> {
+    if (isBillingExemptApplication(flatApplication.universalIdentifier)) {
+      return;
+    }
+
+    await this.billingUsageService.assertUsageAllowed({
+      workspaceId,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      operationType: UsageOperationType.CODE_EXECUTION,
+      spenders: {
+        logicFunctionId: flatLogicFunction.id,
+        applicationId: flatApplication.id,
+      },
+    });
   }
 
   private async throttleExecution(workspaceId: string) {

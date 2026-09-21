@@ -48,7 +48,13 @@ export const USAGE_LIMIT_DEFINITIONS = {
       allowedMeters: ['creditsUsedMicro', 'quantity'],
     },
   },
-  [UsageResourceType.WORKFLOW]: {},
+  [UsageResourceType.WORKFLOW]: {
+    quota: {
+      allowedOperationTypes: [UsageOperationType.WORKFLOW_EXECUTION],
+      allowedSpenderTypes: ['workspace', 'workflow'],
+      allowedMeters: ['creditsUsedMicro', 'quantity'],
+    },
+  },
   [UsageResourceType.APP]: {},
   [UsageResourceType.STORAGE]: {
     stock: {
@@ -65,7 +71,13 @@ export const USAGE_LIMIT_DEFINITIONS = {
       ],
     },
   },
-  [UsageResourceType.LOGIC_FUNCTION]: {},
+  [UsageResourceType.LOGIC_FUNCTION]: {
+    quota: {
+      allowedOperationTypes: [UsageOperationType.CODE_EXECUTION],
+      allowedSpenderTypes: ['workspace', 'application', 'logicFunction'],
+      allowedMeters: ['creditsUsedMicro', 'quantity'],
+    },
+  },
   [UsageResourceType.EMAIL]: {
     speed: {
       allowedOperationTypes: [UsageOperationType.EMAIL_SEND],

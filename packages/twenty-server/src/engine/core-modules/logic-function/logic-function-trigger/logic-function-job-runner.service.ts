@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
 
+import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-application-retry-limit.constant';
 import { isRetryableLogicFunctionExecutionError } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/is-retryable-logic-function-execution-error.util';
@@ -73,6 +74,16 @@ export class LogicFunctionJobRunnerService {
         error instanceof LogicFunctionException &&
         error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED
       ) {
+        return;
+      }
+
+      // Same reason as a stopped application: the usage engine refused this
+      // execution on purpose, and a queue retry cannot change that.
+      if (isUsageRefusedError(error)) {
+        this.logger.warn(
+          `Skipping function ${logicFunctionPayload.logicFunctionId} (workspace ${logicFunctionPayload.workspaceId}): ${error.message}`,
+        );
+
         return;
       }
 

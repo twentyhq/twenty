@@ -135,6 +135,8 @@ export class WorkflowExecutorWorkspaceService {
       );
     }
 
+    const billingWorkflowId = workflow.workspaceWorkflowId ?? workflow.id;
+
     let actionOutput: WorkflowActionOutput;
 
     if (
@@ -151,6 +153,7 @@ export class WorkflowExecutorWorkspaceService {
         stepInfos,
         workflowRunId,
         workspaceId,
+        billingWorkflowId,
       });
 
       if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
@@ -218,8 +221,6 @@ export class WorkflowExecutorWorkspaceService {
       !actionOutput.shouldFailSafely &&
       !actionOutput.shouldSkipStepExecution
     ) {
-      const billingWorkflowId = workflow.workspaceWorkflowId ?? workflow.id;
-
       await this.sendWorkflowNodeRunEvent(workspaceId, billingWorkflowId);
     }
 
@@ -454,17 +455,15 @@ export class WorkflowExecutorWorkspaceService {
     stepInfos,
     workflowRunId,
     workspaceId,
+    billingWorkflowId,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
     stepInfos: WorkflowRunStepInfos;
     workflowRunId: string;
     workspaceId: string;
+    billingWorkflowId: string;
   }) {
-    // Credit-cap enforcement lives at the AI entry points (chat resolver,
-    // executeAgent, generate-text controller, title generation). Cheap
-    // workflow steps (DB CRUD, branching, actions) are not gated here so a
-    // chat-driven cap exhaustion does not block non-AI automations.
     const stepId = step.id;
 
     const workflowAction = this.workflowActionFactory.get(step.type);
@@ -480,6 +479,15 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
+      // Gated per node run rather than once per workflow run: a run spans jobs
+      // and can sit pending for hours, and the node is what the engine debits.
+      await this.billingUsageService.assertUsageAllowed({
+        workspaceId,
+        resourceType: UsageResourceType.WORKFLOW,
+        operationType: UsageOperationType.WORKFLOW_EXECUTION,
+        spenders: { workflowId: billingWorkflowId },
+      });
+
       return await workflowAction.execute({
         currentStepId: stepId,
         steps,
