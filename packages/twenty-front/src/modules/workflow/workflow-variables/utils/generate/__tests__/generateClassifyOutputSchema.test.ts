@@ -1,6 +1,34 @@
 import { generateClassifyOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema';
 
 describe('generateClassifyOutputSchema', () => {
+  it('does not advertise unresolved option labels as probability paths', () => {
+    const output = generateClassifyOutputSchema([
+      {
+        id: 'question',
+        name: 'category',
+        type: 'choice',
+        instructions: 'Choose a category',
+        criteria: [
+          { id: 'dynamic', name: '{{trigger.category}}' },
+          { id: 'static', name: 'Other' },
+        ],
+      },
+    ]);
+    expect(output.answers).toMatchObject({
+      value: {
+        category: {
+          value: {
+            choice: { type: 'string' },
+            probabilities: { value: { Other: { type: 'number' } } },
+          },
+        },
+      },
+    });
+    expect(JSON.stringify(output.answers)).not.toContain(
+      '"{{trigger.category}}":',
+    );
+  });
+
   it('should key answers by question name so variables stay readable', () => {
     const outputSchema = generateClassifyOutputSchema([
       {

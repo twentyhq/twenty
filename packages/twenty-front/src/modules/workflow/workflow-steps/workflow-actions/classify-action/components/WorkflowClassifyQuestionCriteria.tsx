@@ -109,9 +109,7 @@ export const WorkflowClassifyQuestionCriteria = ({
                 variant === 'options' ? t`Option` : t`Describe this level`
               }
               readonly={readonly}
-              VariablePicker={
-                variant === 'levels' ? WorkflowVariablePicker : undefined
-              }
+              VariablePicker={WorkflowVariablePicker}
               onChange={(value) =>
                 changeCriterion(
                   criterion.id,

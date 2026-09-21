@@ -1,3 +1,4 @@
+import { isVariableReference } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
@@ -51,7 +52,13 @@ const buildAnswerSchema = (
         },
         probabilities: buildProbabilitiesNode(
           question.criteria
-            .filter((criterion) => isNonEmptyString(criterion.name))
+            // Dynamic labels are only known at runtime, so they cannot provide
+            // stable probability paths in the variable picker.
+            .filter(
+              (criterion) =>
+                isNonEmptyString(criterion.name) &&
+                !isVariableReference(criterion.name),
+            )
             .map((criterion) => criterion.name),
         ),
       };
