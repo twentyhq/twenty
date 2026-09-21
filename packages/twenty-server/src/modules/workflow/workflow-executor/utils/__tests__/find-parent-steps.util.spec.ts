@@ -1,6 +1,7 @@
 import {
   createMockCodeStep,
   createMockIfElseStep,
+  createMockIteratorStep,
 } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { findParentSteps } from 'src/modules/workflow/workflow-executor/utils/find-parent-steps.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -89,5 +90,40 @@ describe('findParentSteps', () => {
     const result = findParentSteps({ step: child, steps });
 
     expect(result).toEqual([standardParent, ifElseParent]);
+  });
+
+  it('should not treat an iterator as a parent of its own loop body', () => {
+    const iterator = createMockIteratorStep('iterator', ['body'], ['body']);
+    const body = createMockCodeStep('body', ['iterator']);
+    const steps: WorkflowAction[] = [iterator, body];
+
+    const result = findParentSteps({ step: body, steps });
+
+    expect(result).toEqual([]);
+  });
+
+  it('should keep an iterator as a parent of its post-loop step', () => {
+    const iterator = createMockIteratorStep('iterator', ['after'], ['body']);
+    const body = createMockCodeStep('body', ['iterator']);
+    const after = createMockCodeStep('after');
+    const steps: WorkflowAction[] = [iterator, body, after];
+
+    const result = findParentSteps({ step: after, steps });
+
+    expect(result).toEqual([iterator]);
+  });
+
+  it('should keep the loop body parent when the iterator is not the loop owner', () => {
+    const otherIterator = createMockIteratorStep(
+      'other-iterator',
+      ['body'],
+      ['other-body'],
+    );
+    const body = createMockCodeStep('body');
+    const steps: WorkflowAction[] = [otherIterator, body];
+
+    const result = findParentSteps({ step: body, steps });
+
+    expect(result).toEqual([otherIterator]);
   });
 });
