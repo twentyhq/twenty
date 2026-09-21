@@ -45,6 +45,7 @@ type ApplicationVariable {
   label: String!
   isSecret: Boolean!
   isDeprecated: Boolean!
+  isRequired: Boolean!
   type: String!
   options: JSON
 }
@@ -1595,6 +1596,7 @@ enum UsageResourceType {
   LOGIC_FUNCTION
   EMAIL
   WEBHOOK
+  RECORD
 }
 
 enum UsageOperationType {
@@ -1609,6 +1611,7 @@ enum UsageOperationType {
   API_REQUEST
   WEBHOOK_CALL
   STORAGE_FILE
+  RECORD_WRITE
   SUBSCRIPTION
 }
 
