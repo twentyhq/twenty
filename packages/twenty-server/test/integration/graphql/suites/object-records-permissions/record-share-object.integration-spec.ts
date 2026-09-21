@@ -66,6 +66,107 @@ describe('recordShare object', () => {
     });
   });
 
+  it('serializes concurrent replacements and preserves other grant sources', async () => {
+    const recordId = randomUUID();
+    const share = { ...recordShareInput, recordId, sourceId: recordId };
+    const workspaceId = SEED_APPLE_WORKSPACE_ID;
+    await recordShareService.insertMany({
+      workspaceId,
+      recordShares: [
+        { ...share, rowCause: RecordShareRowCause.OWNER },
+        { ...share, rowCause: RecordShareRowCause.APPLICATION },
+      ],
+    });
+    const readShares = () =>
+      recordShareService.findByRecordIds({
+        workspaceId,
+        objectMetadataId: personObjectMetadataId,
+        recordIds: [recordId],
+      });
+    try {
+      await Promise.all(
+        Array.from({ length: 8 }, () =>
+          recordShareService.setManualShare({
+            workspaceId,
+            share,
+            enabled: true,
+          }),
+        ),
+      );
+      expect(await readShares()).toHaveLength(3);
+      await recordShareService.setManualShare({
+        workspaceId,
+        share: { ...share, sourceId: randomUUID() },
+        enabled: false,
+      });
+      expect(await readShares()).toHaveLength(3);
+      await recordShareService.setManualShare({
+        workspaceId,
+        share,
+        enabled: false,
+      });
+      expect(
+        (await readShares()).map(({ rowCause }) => rowCause).sort(),
+      ).toEqual(
+        [RecordShareRowCause.OWNER, RecordShareRowCause.APPLICATION].sort(),
+      );
+    } finally {
+      await recordShareService.deleteByRecordIds({
+        workspaceId,
+        objectMetadataId: personObjectMetadataId,
+        recordIds: [recordId],
+      });
+    }
+  });
+
+  it('returns distinct owner-managed read grants for the requested principals', async () => {
+    const recordIds = Array.from({ length: 4 }, () => randomUUID());
+    const principalIds = [randomUUID(), randomUUID()];
+    const readGrant = {
+      ...recordShareInput,
+      principalId: principalIds[0],
+      recordId: recordIds[0],
+      sourceId: recordIds[0],
+    };
+    await recordShareService.insertMany({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      recordShares: [
+        readGrant,
+        { ...readGrant, principalId: principalIds[1] },
+        {
+          ...readGrant,
+          recordId: recordIds[1],
+          sourceId: recordIds[1],
+          rowCause: RecordShareRowCause.APPLICATION,
+        },
+        {
+          ...readGrant,
+          recordId: recordIds[2],
+          sourceId: recordIds[2],
+          accessLevel: RecordShareAccessLevel.READ_WRITE,
+        },
+        { ...readGrant, recordId: recordIds[3], sourceId: randomUUID() },
+      ],
+    });
+    try {
+      const findIds = (ids: string[]) =>
+        recordShareService.findManualReadRecordIdsByPrincipals({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          objectMetadataId: personObjectMetadataId,
+          principalIds: ids,
+        });
+      await expect(findIds(principalIds)).resolves.toEqual([recordIds[0]]);
+      await expect(findIds([randomUUID()])).resolves.toEqual([]);
+      await expect(findIds([])).resolves.toEqual([]);
+    } finally {
+      await recordShareService.deleteByRecordIds({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        objectMetadataId: personObjectMetadataId,
+        recordIds,
+      });
+    }
+  });
+
   it.each([false, true])(
     'refuses reads through the GraphQL API even for an admin when record sharing is %s',
     async (isRecordSharingEnabled) => {

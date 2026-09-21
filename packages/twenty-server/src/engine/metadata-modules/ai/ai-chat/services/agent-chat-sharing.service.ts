@@ -16,6 +16,7 @@ import { Repository } from 'typeorm';
 
 import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
 import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
+import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util';
@@ -54,7 +55,7 @@ export class AgentChatSharingService {
     args: ThreadAccessArgs,
   ): Promise<AgentChatThreadEntity> {
     const { workspaceId, userWorkspaceId, threadId } = args;
-    await this.assertActiveReader(args);
+    const userWorkspace = await this.assertActiveReader(args);
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
     });
@@ -64,19 +65,36 @@ export class AgentChatSharingService {
     if (thread.userWorkspaceId === userWorkspaceId) {
       return thread;
     }
+    if (
+      thread.id ===
+      buildWorkspaceSetupChatThreadId({
+        workspaceId,
+        userWorkspaceId: thread.userWorkspaceId,
+      })
+    ) {
+      return this.throwNotFound();
+    }
     // SYSTEM history stays private even when generic record sharing is disabled.
     if (
       !(await this.sharingFeatureService.isRecordSharingEnabled(workspaceId))
     ) {
       return this.throwNotFound();
     }
-    const { objectMetadataId, principalIds } = await this.getShareContext(args);
+    const { objectMetadataId, principalIds } = await this.getShareContext(
+      args,
+      userWorkspace,
+    );
     const shares = await this.recordShareService.findByRecordIds({
       workspaceId,
       objectMetadataId,
       recordIds: [threadId],
     });
-    if (!shares.some((share) => principalIds.includes(share.principalId))) {
+    if (
+      !shares.some(
+        (share) =>
+          this.isThreadShare(share) && principalIds.includes(share.principalId),
+      )
+    ) {
       return this.throwNotFound();
     }
     return thread;
@@ -92,13 +110,12 @@ export class AgentChatSharingService {
     ) {
       return [];
     }
-    await this.assertActiveReader(args);
-    const context = await this.getShareContext(args);
-    const shares = await this.recordShareService.findByPrincipals({
+    const userWorkspace = await this.assertActiveReader(args);
+    const context = await this.getShareContext(args, userWorkspace);
+    return this.recordShareService.findManualReadRecordIdsByPrincipals({
       workspaceId: args.workspaceId,
       ...context,
     });
-    return [...new Set(shares.map((share) => share.recordId))];
   }
 
   async getSharing(args: ThreadAccessArgs) {
@@ -107,7 +124,9 @@ export class AgentChatSharingService {
     const isEnabled = await this.sharingFeatureService.isRecordSharingEnabled(
       args.workspaceId,
     );
-    const { objectMetadataId } = await this.getShareContext(args);
+    const objectMetadataId = await this.getThreadObjectMetadataId(
+      args.workspaceId,
+    );
     // Readers should not learn other members' or roles' grants from the dialog.
     const shares = canManage
       ? await this.recordShareService.findByRecordIds({
@@ -131,11 +150,7 @@ export class AgentChatSharingService {
       roles,
       canManage,
       isEnabled,
-      shares: shares.filter(
-        (share) =>
-          share.rowCause === RecordShareRowCause.MANUAL &&
-          share.sourceId === args.threadId,
-      ),
+      shares: shares.filter((share) => this.isThreadShare(share)),
     };
   }
 
@@ -152,7 +167,10 @@ export class AgentChatSharingService {
       return this.throwNotFound();
     }
     await this.assertActiveReader(args);
-    if (args.threadId === buildWorkspaceSetupChatThreadId(args)) {
+    if (
+      args.enabled &&
+      args.threadId === buildWorkspaceSetupChatThreadId(args)
+    ) {
       throw new AiException(
         'Workspace setup conversations cannot be shared',
         AiExceptionCode.INVALID_AGENT_INPUT,
@@ -181,7 +199,9 @@ export class AgentChatSharingService {
       );
       validateShareWithPrincipalsOrThrow({ shareWith: [shareWith], ...maps });
     }
-    const { objectMetadataId } = await this.getShareContext(args);
+    const objectMetadataId = await this.getThreadObjectMetadataId(
+      args.workspaceId,
+    );
     await this.recordShareService.setManualShare({
       workspaceId: args.workspaceId,
       enabled: args.enabled,
@@ -216,6 +236,15 @@ export class AgentChatSharingService {
     }
   }
 
+  private isThreadShare(share: RecordShare): boolean {
+    // Only grants managed by the conversation owner may expose its contents.
+    return (
+      share.rowCause === RecordShareRowCause.MANUAL &&
+      share.sourceId === share.recordId &&
+      share.accessLevel === RecordShareAccessLevel.READ
+    );
+  }
+
   private async assertActiveReader({
     workspaceId,
     userWorkspaceId,
@@ -236,12 +265,28 @@ export class AgentChatSharingService {
     ) {
       this.throwNotFound();
     }
+    return member;
   }
 
-  private async getShareContext({
-    workspaceId,
-    userWorkspaceId,
-  }: Omit<ThreadAccessArgs, 'threadId'>) {
+  private async getThreadObjectMetadataId(workspaceId: string) {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+    const objectMetadata =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+      ];
+    if (!isDefined(objectMetadata)) {
+      return this.throwNotFound();
+    }
+    return objectMetadata.id;
+  }
+
+  private async getShareContext(
+    { workspaceId, userWorkspaceId }: Omit<ThreadAccessArgs, 'threadId'>,
+    userWorkspace: UserWorkspaceEntity,
+  ) {
     const {
       flatObjectMetadataMaps,
       flatWorkspaceMemberMaps,
@@ -256,12 +301,6 @@ export class AgentChatSharingService {
         STANDARD_OBJECTS.agentChatThread.universalIdentifier
       ];
     if (!isDefined(objectMetadata)) {
-      return this.throwNotFound();
-    }
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { id: userWorkspaceId, workspaceId },
-    });
-    if (!isDefined(userWorkspace)) {
       return this.throwNotFound();
     }
     const memberId = flatWorkspaceMemberMaps.idByUserId[userWorkspace.userId];

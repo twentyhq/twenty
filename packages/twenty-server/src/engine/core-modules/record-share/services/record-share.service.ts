@@ -4,7 +4,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
-import { RecordShareRowCause } from 'twenty-shared/types';
+import {
+  RecordShareAccessLevel,
+  RecordShareRowCause,
+} from 'twenty-shared/types';
 
 import {
   RecordShareException,
@@ -25,7 +28,7 @@ type RecordShareRepository = WorkspaceRepository<RecordShare>;
 export class RecordShareService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  async findByPrincipals({
+  async findManualReadRecordIdsByPrincipals({
     workspaceId,
     objectMetadataId,
     principalIds,
@@ -33,16 +36,26 @@ export class RecordShareService {
     workspaceId: string;
     objectMetadataId: string;
     principalIds: string[];
-  }): Promise<RecordShare[]> {
+  }): Promise<string[]> {
     if (principalIds.length === 0) {
       return [];
     }
 
-    return this.withRepository({ workspaceId }, (repository) =>
-      repository.find({
-        where: { objectMetadataId, principalId: In(principalIds) },
-      }),
+    const records = await this.withRepository({ workspaceId }, (repository) =>
+      repository
+        .createQueryBuilder('recordShare')
+        .select('recordShare.recordId', 'recordId')
+        .distinctOn(['recordShare.recordId'])
+        .where({
+          objectMetadataId,
+          principalId: In(principalIds),
+          rowCause: RecordShareRowCause.MANUAL,
+          accessLevel: RecordShareAccessLevel.READ,
+        })
+        .andWhere('"recordShare"."sourceId" = "recordShare"."recordId"')
+        .getRawMany<{ recordId: string }>(),
     );
+    return records.map(({ recordId }) => recordId);
   }
 
   // Callers must authorize management of the target record before using this

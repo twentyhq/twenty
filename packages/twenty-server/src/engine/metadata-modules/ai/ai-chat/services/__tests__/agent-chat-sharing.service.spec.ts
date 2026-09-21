@@ -37,7 +37,7 @@ const buildService = () => {
   };
   const shares = {
     findByRecordIds: jest.fn().mockResolvedValue([]),
-    findByPrincipals: jest.fn().mockResolvedValue([]),
+    findManualReadRecordIdsByPrincipals: jest.fn().mockResolvedValue([]),
     setManualShare: jest.fn(),
   };
   const feature = { isRecordSharingEnabled: jest.fn().mockResolvedValue(true) };
@@ -116,6 +116,26 @@ describe('Agent chat sharing', () => {
         objectMetadataId: OBJECT_METADATA_ID,
         recordIds: [THREAD_ID],
       });
+    },
+  );
+
+  it.each([
+    { rowCause: RecordShareRowCause.APPLICATION },
+    { sourceId: 'another-source' },
+    { accessLevel: RecordShareAccessLevel.READ_WRITE },
+  ])(
+    'ignores grants outside the owner-managed sharing dialog: %j',
+    async (override) => {
+      const { service, shares } = buildService();
+      const grant = { ...readShare(MEMBER_ID), ...override };
+      shares.findByRecordIds.mockResolvedValue([grant]);
+      await expect(service.getReadableThread(args)).rejects.toMatchObject({
+        code: 'THREAD_NOT_FOUND',
+      });
+      await expect(service.getSharedThreadIds(args)).resolves.toEqual([]);
+      await expect(
+        service.getSharing({ ...args, userWorkspaceId: OWNER_ID }),
+      ).resolves.toMatchObject({ shares: [] });
     },
   );
 
@@ -268,6 +288,41 @@ describe('Agent chat sharing', () => {
     );
   });
 
+  it('lets owners revoke an existing setup-thread grant', async () => {
+    const { service, shares } = buildService();
+    const threadId = buildWorkspaceSetupChatThreadId({
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceId: OWNER_ID,
+    });
+    await service.setShare({
+      ...args,
+      threadId,
+      userWorkspaceId: OWNER_ID,
+      target: { everyone: true },
+      enabled: false,
+    });
+    expect(shares.setManualShare).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: false,
+        share: expect.objectContaining({ recordId: threadId }),
+      }),
+    );
+  });
+
+  it('keeps setup history private even if a grant was inserted outside the API', async () => {
+    const { service, shares, thread } = buildService();
+    thread.id = buildWorkspaceSetupChatThreadId({
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceId: OWNER_ID,
+    });
+    shares.findByRecordIds.mockResolvedValue([
+      { ...readShare(MEMBER_ID), recordId: thread.id, sourceId: thread.id },
+    ]);
+    await expect(
+      service.getReadableThread({ ...args, threadId: thread.id }),
+    ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
+  });
+
   it('never shares the privileged workspace setup conversation', async () => {
     const { service, shares } = buildService();
     await expect(
@@ -285,12 +340,9 @@ describe('Agent chat sharing', () => {
     expect(shares.setManualShare).not.toHaveBeenCalled();
   });
 
-  it('deduplicates threads shared through several principals', async () => {
+  it('uses distinct readable IDs from the share repository', async () => {
     const { service, shares } = buildService();
-    shares.findByPrincipals.mockResolvedValue([
-      readShare(MEMBER_ID),
-      readShare(ROLE_ID),
-    ]);
+    shares.findManualReadRecordIdsByPrincipals.mockResolvedValue([THREAD_ID]);
     await expect(service.getSharedThreadIds(args)).resolves.toEqual([
       THREAD_ID,
     ]);

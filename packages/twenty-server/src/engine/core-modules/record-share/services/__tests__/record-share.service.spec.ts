@@ -131,20 +131,4 @@ describe('Manual record share management', () => {
     ).rejects.toThrow('write failed');
     expect(rows()).toHaveLength(3);
   });
-
-  it('serializes changes to the same workspace record within the transaction', async () => {
-    const { service, scope, repository } = buildService();
-    await service.setManualShare({
-      workspaceId: 'workspace',
-      share,
-      enabled: true,
-    });
-    expect(scope.executeRawQuery).toHaveBeenCalledWith(
-      'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-      ['record-share:workspace:object:record'],
-    );
-    expect(scope.executeRawQuery.mock.invocationCallOrder[0]).toBeLessThan(
-      repository.delete.mock.invocationCallOrder[0],
-    );
-  });
 });
