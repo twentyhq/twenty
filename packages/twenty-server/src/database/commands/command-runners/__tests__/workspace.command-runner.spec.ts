@@ -26,7 +26,10 @@ describe('WorkspaceCommandRunner failure reporting', () => {
     const iterator = {
       listenToShutdownSignals: jest.fn(),
       iterate: jest.fn().mockResolvedValue(report),
-    } as unknown as WorkspaceIteratorService;
+    } satisfies Pick<
+      WorkspaceIteratorService,
+      'listenToShutdownSignals' | 'iterate'
+    >;
 
     return new TestWorkspaceCommand(iterator, [
       WorkspaceActivationStatus.ACTIVE,

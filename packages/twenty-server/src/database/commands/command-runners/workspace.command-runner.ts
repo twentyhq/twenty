@@ -31,7 +31,10 @@ export abstract class WorkspaceCommandRunner<
   protected logger: CommandLogger;
 
   constructor(
-    protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    protected readonly workspaceIteratorService: Pick<
+      WorkspaceIteratorService,
+      'listenToShutdownSignals' | 'iterate'
+    >,
     protected readonly activationStatuses: WorkspaceActivationStatus[],
   ) {
     super();
