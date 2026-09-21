@@ -323,17 +323,10 @@ export class WorkflowCronTriggerCronJob {
     trigger: CachedCronTrigger,
     reason: string,
   ): Promise<void> {
-    const message = `Cron trigger for workflow ${trigger.workflowId} in workspace ${trigger.workspaceId} will never fire: ${reason}`;
-
-    this.logger.error(message);
-    this.exceptionHandlerService.captureExceptions([new Error(message)], {
-      workspace: { id: trigger.workspaceId },
-    });
-
     await this.metricsService.incrementCounterForEvent({
       key: MetricsKeys.WorkflowTriggerDispatchDropped,
-      eventId: trigger.workspaceId,
-      debugLog: message,
+      eventId: `${trigger.workspaceId}:${trigger.workflowId}`,
+      attributes: { reason },
     });
   }
 

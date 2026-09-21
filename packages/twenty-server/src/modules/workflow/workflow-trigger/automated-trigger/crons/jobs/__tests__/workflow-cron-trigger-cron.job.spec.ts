@@ -7,6 +7,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-ttl.constant';
@@ -41,6 +42,10 @@ const mockCronTriggerDeduplicationService = {
 
 const mockWorkspaceCacheService = {
   getOrRecompute: jest.fn(),
+};
+
+const mockMetricsService = {
+  incrementCounterForEvent: jest.fn(),
 };
 
 const mockWorkflowCoreSyncService = {
@@ -121,6 +126,10 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           provide: WorkflowVersionCoreSyncService,
           useValue: mockWorkflowVersionCoreSyncService,
+        },
+        {
+          provide: MetricsService,
+          useValue: mockMetricsService,
         },
       ],
     }).compile();

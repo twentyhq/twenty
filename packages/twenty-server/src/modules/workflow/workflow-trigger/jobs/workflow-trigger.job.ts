@@ -8,10 +8,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import {
-  type WorkflowVersionEntity,
-  WorkflowVersionStatus as CoreWorkflowVersionStatus,
-} from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
@@ -68,124 +65,67 @@ export class WorkflowTriggerJob {
     workspaceWorkflowVersionId?: string;
     payload: object;
   }): Promise<void> {
+    const coreWorkflowVersion =
+      await this.workflowVersionCoreSyncService.findCoreVersionById(
+        workspaceId,
+        coreWorkflowVersionId,
+      );
+
+    if (!isDefined(coreWorkflowVersion)) {
+      await this.captureDroppedDispatch(
+        workspaceId,
+        workflowId,
+        `Core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}`,
+      );
+      return;
+    }
+
     const coreWorkflow =
       await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
         workspaceId,
         workflowId,
       );
 
-    if (!isDefined(coreWorkflow)) {
-      await this.captureDroppedDispatch({
+    if (
+      !isDefined(coreWorkflow) ||
+      coreWorkflowVersion.coreWorkflowId !== coreWorkflow.id
+    ) {
+      await this.captureDroppedDispatch(
         workspaceId,
-        message: `Core workflow ${workflowId} not found in workspace ${workspaceId}`,
-      });
-
-      return;
-    }
-
-    const dispatchedCoreWorkflowVersion =
-      await this.workflowVersionCoreSyncService.findCoreVersionById(
-        workspaceId,
-        coreWorkflowVersionId,
+        workflowId,
+        `Core workflow version ${coreWorkflowVersionId} does not belong to workflow ${workflowId} in workspace ${workspaceId}`,
       );
-
-    const coreWorkflowVersion =
-      dispatchedCoreWorkflowVersion ??
-      (await this.recoverPublishedCoreVersion({
-        workspaceId,
-        coreWorkflowVersionId,
-        coreWorkflowId: coreWorkflow.id,
-        lastPublishedCoreWorkflowVersionId:
-          coreWorkflow.lastPublishedCoreWorkflowVersionId,
-      }));
-
-    if (!isDefined(coreWorkflowVersion)) {
-      await this.captureDroppedDispatch({
-        workspaceId,
-        message: `Core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId} and workflow ${coreWorkflow.id} has no published version to fall back on`,
-      });
-
-      return;
-    }
-
-    if (coreWorkflowVersion.coreWorkflowId !== coreWorkflow.id) {
-      await this.captureDroppedDispatch({
-        workspaceId,
-        message: `Core workflow version ${coreWorkflowVersion.id} does not belong to workflow ${workflowId} in workspace ${workspaceId}`,
-      });
-
       return;
     }
 
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.ACTIVE) {
-      await this.captureDroppedDispatch({
+      await this.captureDroppedDispatch(
         workspaceId,
-        message: `Core workflow version ${coreWorkflowVersion.id} is not active in workspace ${workspaceId}`,
-      });
-
+        workflowId,
+        `Core workflow version ${coreWorkflowVersionId} is not active in workspace ${workspaceId}`,
+      );
       return;
     }
 
     if (
-      isDefined(dispatchedCoreWorkflowVersion) &&
       isDefined(workspaceWorkflowVersionId) &&
       coreWorkflowVersion.workspaceWorkflowVersionId !==
         workspaceWorkflowVersionId
     ) {
-      await this.captureDroppedDispatch({
+      await this.captureDroppedDispatch(
         workspaceId,
-        message: `Workspace version ${workspaceWorkflowVersionId} conflicts with core version ${coreWorkflowVersion.id} in workspace ${workspaceId}`,
-      });
-
+        workflowId,
+        `Workspace version ${workspaceWorkflowVersionId} conflicts with core version ${coreWorkflowVersionId} in workspace ${workspaceId}`,
+      );
       return;
     }
 
     await this.coreWorkflowRunnerService.run({
       workspaceId,
-      coreWorkflowVersionId: coreWorkflowVersion.id,
+      coreWorkflowVersionId,
       payload,
       source: buildWorkflowRunSource(coreWorkflow.name),
     });
-  }
-
-  private async recoverPublishedCoreVersion({
-    workspaceId,
-    coreWorkflowVersionId,
-    coreWorkflowId,
-    lastPublishedCoreWorkflowVersionId,
-  }: {
-    workspaceId: string;
-    coreWorkflowVersionId: string;
-    coreWorkflowId: string;
-    lastPublishedCoreWorkflowVersionId: string | null;
-  }): Promise<WorkflowVersionEntity | null> {
-    if (
-      !isDefined(lastPublishedCoreWorkflowVersionId) ||
-      lastPublishedCoreWorkflowVersionId === coreWorkflowVersionId
-    ) {
-      return null;
-    }
-
-    const publishedCoreWorkflowVersion =
-      await this.workflowVersionCoreSyncService.findCoreVersionById(
-        workspaceId,
-        lastPublishedCoreWorkflowVersionId,
-      );
-
-    if (!isDefined(publishedCoreWorkflowVersion)) {
-      return null;
-    }
-
-    this.logger.warn(
-      `Dispatched core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}, falling back on published version ${lastPublishedCoreWorkflowVersionId} of workflow ${coreWorkflowId}`,
-    );
-
-    await this.metricsService.incrementCounterForEvent({
-      key: MetricsKeys.WorkflowTriggerDispatchRecovered,
-      eventId: coreWorkflowId,
-    });
-
-    return publishedCoreWorkflowVersion;
   }
 
   private async handleLegacyDispatch(
@@ -206,11 +146,11 @@ export class WorkflowTriggerJob {
       : coreWorkflow?.lastPublishedCoreWorkflowVersionId;
 
     if (!isDefined(coreWorkflowVersionId)) {
-      await this.captureDroppedDispatch({
-        workspaceId: data.workspaceId,
-        message: `Legacy workflow trigger for ${data.workflowId} has no core version mapping in workspace ${data.workspaceId}`,
-      });
-
+      await this.captureDroppedDispatch(
+        data.workspaceId,
+        data.workflowId,
+        `Legacy workflow trigger for ${data.workflowId} has no core version mapping in workspace ${data.workspaceId}`,
+      );
       return;
     }
 
@@ -223,20 +163,17 @@ export class WorkflowTriggerJob {
     });
   }
 
-  private async captureDroppedDispatch({
-    workspaceId,
-    message,
-  }: {
-    workspaceId: string;
-    message: string;
-  }): Promise<void> {
+  private async captureDroppedDispatch(
+    workspaceId: string,
+    workflowId: string,
+    message: string,
+  ): Promise<void> {
     this.logger.error(message);
     this.exceptionHandlerService.captureExceptions([new Error(message)]);
 
     await this.metricsService.incrementCounterForEvent({
       key: MetricsKeys.WorkflowTriggerDispatchDropped,
-      eventId: workspaceId,
-      debugLog: message,
+      eventId: `${workspaceId}:${workflowId}`,
     });
   }
 }

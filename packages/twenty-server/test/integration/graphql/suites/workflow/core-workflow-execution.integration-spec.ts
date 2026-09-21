@@ -461,50 +461,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(runs).toHaveLength(0);
   });
 
-  it('runs the published version when the queued core version no longer exists', async () => {
-    const fixture = await createFixture();
-    const job = await global.workflowTestServices.triggerJob();
-
-    await job.handle({
-      workspaceId,
-      workflowId: fixture.coreWorkflowId,
-      coreWorkflowVersionId: randomUUID(),
-      payload: {},
-    });
-
-    const [run] = await global.testDataSource.query(
-      `SELECT "coreWorkflowVersionId" FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
-      [fixture.coreWorkflowId],
-    );
-
-    expect(run?.coreWorkflowVersionId).toBe(fixture.coreWorkflowVersionId);
-  });
-
-  it('drops a queued core version with no published version to fall back on', async () => {
-    const fixture = await createFixture();
-
-    await global.testDataSource.query(
-      `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = NULL WHERE id = $1`,
-      [fixture.coreWorkflowId],
-    );
-
-    const job = await global.workflowTestServices.triggerJob();
-
-    await job.handle({
-      workspaceId,
-      workflowId: fixture.coreWorkflowId,
-      coreWorkflowVersionId: randomUUID(),
-      payload: {},
-    });
-
-    const runs = await global.testDataSource.query(
-      `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
-      [fixture.coreWorkflowId],
-    );
-
-    expect(runs).toHaveLength(0);
-  });
-
   it('keeps the old webhook URL working without workspace definition reads', async () => {
     const fixture = await createFixture({
       triggerType: 'WEBHOOK',
