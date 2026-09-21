@@ -15,8 +15,8 @@ type LegacySettingsTabRow = {
 
 // Inlined rather than imported from DEFAULT_SETTING_PAGE_* so this command keeps
 // writing what it wrote the day it ran, whatever those constants become.
-const LEGACY_SETTING_PAGE_TITLE = 'Variables';
-const LEGACY_SETTING_PAGE_ICON = 'IconVariable';
+const LEGACY_SETTING_PAGE_TITLE = 'Settings';
+const LEGACY_SETTING_PAGE_ICON = 'IconAdjustments';
 const LEGACY_SETTING_PAGE_POSITION = 0;
 const LEGACY_SETTING_PAGE_SCOPE = 'WORKSPACE';
 

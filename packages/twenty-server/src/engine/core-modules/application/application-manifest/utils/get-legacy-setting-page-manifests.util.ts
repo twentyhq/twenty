@@ -5,8 +5,8 @@ import {
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-const LEGACY_SETTING_PAGE_TITLE = 'Variables';
-const LEGACY_SETTING_PAGE_ICON = 'IconVariable';
+const LEGACY_SETTING_PAGE_TITLE = 'Settings';
+const LEGACY_SETTING_PAGE_ICON = 'IconAdjustments';
 
 // An application built before defineSettingPage existed declares no page, only
 // the deprecated settingsFrontComponent pointer. Without this, syncing such an

@@ -60,7 +60,7 @@ To add a page to an app's settings, declare it with `defineSettingPage` and poin
 
 The page points at the component, not the reverse, so one component can back several pages. Declare as many pages as the app needs.
 
-`scope` is `WORKSPACE` (configured once for the whole workspace, the default) or `WORKSPACE_MEMBER` (configured by each member for themselves). Note that application variables are workspace-wide, so a `WORKSPACE_MEMBER` page storing something per person must persist it through the app's own objects.
+`scope` is `WORKSPACE` (configured once for the whole workspace, the default) or `USER` (configured by each member for themselves). Note that application variables are workspace-wide, so a `USER` page storing something per person must persist it through the app's own objects.
 
 Pages sort by ascending `position`, which is a decimal so a page can be slotted between two existing ones. Two pages of one app cannot share a position in the same scope, and `General` is reserved for the built-in page.
 

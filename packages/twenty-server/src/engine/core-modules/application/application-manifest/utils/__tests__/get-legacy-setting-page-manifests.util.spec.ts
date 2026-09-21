@@ -48,8 +48,8 @@ describe('getLegacySettingPageManifests', () => {
             FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
         }),
         frontComponentUniversalIdentifier: FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-        title: 'Variables',
-        icon: 'IconVariable',
+        title: 'Settings',
+        icon: 'IconAdjustments',
       },
     ]);
   });

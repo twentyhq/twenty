@@ -114,7 +114,7 @@ Declare as many pages as you need. Twenty's own **General** page — auto-upgrad
 | `title` | The page's label. `General` is reserved and fails the build |
 | `icon` *(optional)* | Icon name, resolved client-side; an unknown name falls back to a default |
 | `position` *(optional)* | Sort order, ascending. Defaults to `0` |
-| `scope` *(optional)* | `WORKSPACE` (default) or `WORKSPACE_MEMBER` |
+| `scope` *(optional)* | `WORKSPACE` (default) or `USER` |
 
 `position` is a decimal, so a page can be slotted between two existing ones without renumbering. Pages sort by ascending `position`, ties broken on `universalIdentifier` so the order is the same in every workspace. Two pages of one app cannot share a position in the same scope — the sync refuses it rather than letting install order decide which renders first.
 
@@ -123,9 +123,9 @@ Declare as many pages as you need. Twenty's own **General** page — auto-upgrad
 `scope` says who a page is configured by:
 
 - **`WORKSPACE`** (default) — configured once for the whole workspace, alongside the other workspace settings.
-- **`WORKSPACE_MEMBER`** — configured by each member for themselves, under their own user settings.
+- **`USER`** — configured by each member for themselves, under their own user settings.
 
-A `WORKSPACE_MEMBER` page runs as the member viewing it. Note that `applicationVariables` are workspace-wide: one value shared by everyone. A page that stores something per person should persist it through the app's own objects rather than a variable, otherwise one member's value overwrites another's.
+A `USER` page runs as the member viewing it. Note that `applicationVariables` are workspace-wide: one value shared by everyone. A page that stores something per person should persist it through the app's own objects rather than a variable, otherwise one member's value overwrites another's.
 
 <Note>
 `defineSettingsFrontComponent()` is deprecated in favor of `defineSettingPage()`. An app still using it keeps working — its component is treated as a single **Variables** page — but it can only ever declare one, which is what `defineSettingPage()` exists to lift.

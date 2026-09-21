@@ -6,7 +6,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 @RegisteredInstanceCommand('2.42.0', 1790001681692)
 export class AddSettingPageFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('CREATE TYPE "core"."settingPage_scope_enum" AS ENUM(\'WORKSPACE\', \'WORKSPACE_MEMBER\')');
+    await queryRunner.query('CREATE TYPE "core"."settingPage_scope_enum" AS ENUM(\'WORKSPACE\', \'USER\')');
     await queryRunner.query('CREATE TABLE "core"."settingPage" ("workspaceId" uuid NOT NULL, "universalIdentifier" uuid NOT NULL, "applicationId" uuid NOT NULL, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "frontComponentId" uuid NOT NULL, "title" character varying NOT NULL, "icon" character varying, "position" double precision NOT NULL DEFAULT \'0\', "scope" "core"."settingPage_scope_enum" NOT NULL DEFAULT \'WORKSPACE\', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_7e404463b7409f267826d27cecd" PRIMARY KEY ("id"))');
     await queryRunner.query('CREATE UNIQUE INDEX "IDX_e2d7557a55c83b1afebf2902df" ON "core"."settingPage" ("workspaceId", "universalIdentifier") ');
     await queryRunner.query('CREATE INDEX "IDX_SETTING_PAGE_WORKSPACE_ID_APPLICATION_ID" ON "core"."settingPage" ("workspaceId", "applicationId") ');

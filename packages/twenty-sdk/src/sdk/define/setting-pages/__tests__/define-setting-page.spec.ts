@@ -21,11 +21,11 @@ describe('defineSettingPage', () => {
       ...VALID_CONFIG,
       icon: 'IconRefresh',
       position: 1.5,
-      scope: 'WORKSPACE_MEMBER',
+      scope: 'USER',
     });
 
     expect(result.success).toBe(true);
-    expect(result.config.scope).toBe('WORKSPACE_MEMBER');
+    expect(result.config.scope).toBe('USER');
   });
 
   it('should require a universalIdentifier', () => {
@@ -87,7 +87,7 @@ describe('defineSettingPage', () => {
   it('should reject an unknown scope', () => {
     const result = defineSettingPage({
       ...VALID_CONFIG,
-      scope: 'USER' as never,
+      scope: 'WORKSPACE_MEMBER' as never,
     });
 
     expect(result.success).toBe(false);
