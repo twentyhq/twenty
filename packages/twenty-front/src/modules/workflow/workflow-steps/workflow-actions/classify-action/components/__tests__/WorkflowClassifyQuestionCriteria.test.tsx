@@ -59,7 +59,7 @@ describe('WorkflowClassifyQuestionCriteria', () => {
       />,
     );
     expect(
-      screen.getAllByPlaceholderText('Designs and builds technical systems')[1],
+      screen.getAllByPlaceholderText('When should this option be chosen?')[1],
     ).toBeVisible();
     expect(
       screen.getAllByRole('button', { name: 'Delete option' }).at(-1),
@@ -79,7 +79,7 @@ describe('WorkflowClassifyQuestionCriteria', () => {
       screen.getByDisplayValue('Advises clients on legal matters'),
     );
     await user.type(
-      screen.getAllByPlaceholderText('Designs and builds technical systems')[0],
+      screen.getAllByPlaceholderText('When should this option be chosen?')[0],
       'Invoices',
     );
     expect(onChange).toHaveBeenLastCalledWith([
@@ -135,7 +135,7 @@ describe('WorkflowClassifyQuestionCriteria', () => {
       'Satisfied',
     );
     expect(
-      screen.getAllByPlaceholderText('Expresses happiness with the service'),
+      screen.getAllByPlaceholderText('When should this level apply?'),
     ).toHaveLength(2);
     expect(onChange).toHaveBeenLastCalledWith([
       { id: 'low', name: 'Low', description: 'Unhappy with the service' },
@@ -145,7 +145,7 @@ describe('WorkflowClassifyQuestionCriteria', () => {
       }),
     ]);
     await user.type(
-      screen.getAllByPlaceholderText('Expresses happiness with the service')[1],
+      screen.getAllByPlaceholderText('When should this level apply?')[1],
       'Happy with the service',
     );
     expect(onChange).toHaveBeenLastCalledWith([

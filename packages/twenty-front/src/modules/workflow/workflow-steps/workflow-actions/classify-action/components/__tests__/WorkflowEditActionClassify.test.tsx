@@ -157,7 +157,7 @@ describe('WorkflowEditActionClassify', () => {
     ).toHaveValue('');
     expect(screen.getAllByPlaceholderText('Engineer')[1]).toHaveValue('');
     expect(
-      screen.getAllByPlaceholderText('Designs and builds technical systems')[1],
+      screen.getAllByPlaceholderText('When should this option be chosen?')[1],
     ).toHaveValue('');
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Type' }),
@@ -168,7 +168,7 @@ describe('WorkflowEditActionClassify', () => {
       screen.getByPlaceholderText(/How satisfied is the customer/),
     ).toHaveValue('');
     expect(
-      screen.getAllByPlaceholderText('Expresses happiness with the service')[1],
+      screen.getAllByPlaceholderText('When should this level apply?')[1],
     ).toHaveValue('');
     expect(screen.getByDisplayValue('Dissatisfied')).toBeVisible();
     expect(

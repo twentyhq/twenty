@@ -93,8 +93,8 @@ export const WorkflowClassifyQuestionCriteria = ({
           <FormTextFieldInput
             label={
               variant === 'options'
-                ? t`Option ${index + 1}`
-                : t`Level ${index + 1}`
+                ? t`Option ${index + 1} name`
+                : t`Level ${index + 1} name`
             }
             defaultValue={criterion.name}
             placeholder={variant === 'options' ? t`Engineer` : t`Satisfied`}
@@ -103,11 +103,14 @@ export const WorkflowClassifyQuestionCriteria = ({
             onChange={(name) => changeCriterion(criterion.id, { name })}
           />
           <FormTextFieldInput
+            label={
+              variant === 'options' ? t`Description (optional)` : t`Description`
+            }
             defaultValue={criterion.description ?? ''}
             placeholder={
               variant === 'options'
-                ? t`Designs and builds technical systems`
-                : t`Expresses happiness with the service`
+                ? t`When should this option be chosen?`
+                : t`When should this level apply?`
             }
             readonly={readonly}
             VariablePicker={WorkflowVariablePicker}
