@@ -108,15 +108,12 @@ export class BillingCreditService {
         `Replayed credit grant for workspace ${workspaceId} (idempotency key ${params.idempotencyKey}), repairing derived state`,
       );
 
-      await this.refreshWorkspaceCreditState({
-        workspaceId,
-        isReplay: true,
-      });
+      await this.refreshWorkspaceCreditState(workspaceId);
 
       return alreadyWrittenGrant;
     }
 
-    await this.refreshWorkspaceCreditState({ workspaceId });
+    await this.refreshWorkspaceCreditState(workspaceId);
 
     return grant;
   }
@@ -164,37 +161,23 @@ export class BillingCreditService {
     grantId: string;
     revokedByUserId?: string | null;
   }): Promise<BillingCreditGrantEntity> {
-    const { grant, wasRevokedNow } =
-      await this.billingCreditGrantService.revokeGrant({
-        workspaceId,
-        grantId,
-        revokedByUserId,
-      });
-
-    await this.refreshWorkspaceCreditState({
+    const grant = await this.billingCreditGrantService.revokeGrant({
       workspaceId,
-      isReplay: !wasRevokedNow,
+      grantId,
+      revokedByUserId,
     });
+
+    await this.refreshWorkspaceCreditState(workspaceId);
 
     return grant;
   }
 
-  // A replay changed nothing in the ledger, so the warm allowance counter is
-  // still right and dropping it would only force a needless rewarm.
-  async refreshWorkspaceCreditState({
-    workspaceId,
-    isReplay = false,
-  }: {
-    workspaceId: string;
-    isReplay?: boolean;
-  }): Promise<void> {
+  async refreshWorkspaceCreditState(workspaceId: string): Promise<void> {
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'currentBillingSubscription',
     ]);
 
-    if (!isReplay) {
-      await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
-    }
+    await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
   }
 }
 

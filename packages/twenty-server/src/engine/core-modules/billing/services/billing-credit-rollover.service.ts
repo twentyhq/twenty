@@ -95,19 +95,15 @@ export class BillingCreditRolloverService {
     // Closing the old grants and writing their successors is one settlement:
     // committing the first half alone would leave the workspace with every
     // grant closed and nothing carrying the unspent part forward.
-    const { carriedForwardMicro, hasReplayedGrant } =
-      await this.dataSource.transaction(async (entityManager) =>
-        this.settleGrants({
-          ...params,
-          entityManager,
-          rolloverCapMicro: (rolloverCapMultiplier - 1) * nextAllowanceMicro,
-        }),
-      );
+    await this.dataSource.transaction(async (entityManager) =>
+      this.settleGrants({
+        ...params,
+        entityManager,
+        rolloverCapMicro: (rolloverCapMultiplier - 1) * nextAllowanceMicro,
+      }),
+    );
 
-    await this.billingCreditService.refreshWorkspaceCreditState({
-      workspaceId,
-      isReplay: hasReplayedGrant && carriedForwardMicro === 0,
-    });
+    await this.billingCreditService.refreshWorkspaceCreditState(workspaceId);
   }
 
   private async settleGrants({
@@ -123,7 +119,7 @@ export class BillingCreditRolloverService {
     usageMicro: number;
     rolloverCapMicro: number;
     entityManager: EntityManager;
-  }): Promise<{ carriedForwardMicro: number; hasReplayedGrant: boolean }> {
+  }): Promise<void> {
     const closingGrants =
       await this.billingCreditGrantService.findGrantsLiveDuringPeriod(
         {
@@ -153,11 +149,8 @@ export class BillingCreditRolloverService {
       entityManager,
     );
 
-    let carriedForwardMicro = 0;
-    let hasReplayedGrant = false;
-
     for (const carryForwardGrant of carryForwardGrants) {
-      const grant = await this.billingCreditGrantService.createGrant(
+      await this.billingCreditGrantService.createGrant(
         {
           workspaceId,
           amountMicro: carryForwardGrant.amountMicro,
@@ -185,15 +178,7 @@ export class BillingCreditRolloverService {
         },
         entityManager,
       );
-
-      if (isDefined(grant)) {
-        carriedForwardMicro += grant.amountMicro;
-      } else {
-        hasReplayedGrant = true;
-      }
     }
-
-    return { carriedForwardMicro, hasReplayedGrant };
   }
 }
 

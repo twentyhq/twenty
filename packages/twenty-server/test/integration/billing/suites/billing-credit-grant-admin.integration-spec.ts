@@ -225,6 +225,27 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
   });
 
+  it('drops the counter again when a revocation is retried', async () => {
+    const granted = await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: null,
+    });
+    const creditGrantId = granted.body.data.grantWorkspaceCredits.id;
+
+    await callAdminGraphql(REVOKE_MUTATION, { workspaceId, creditGrantId });
+    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
+
+    const retried = await callAdminGraphql(REVOKE_MUTATION, {
+      workspaceId,
+      creditGrantId,
+    });
+
+    expect(retried.body.errors).toBeUndefined();
+    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
+  });
+
   // The panel only offers the three operator types, but the mutation is
   // reachable directly and these two are written by the period transition and
   // the onboarding jobs.
@@ -280,7 +301,7 @@ describe('Admin credit grant and revoke (integration)', () => {
       first.body.data.grantWorkspaceCredits.id,
     );
     expect(await listCreditGrants(workspaceId)).toHaveLength(1);
-    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBe(500_000);
+    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
   });
 
   // The refusal to time-box a grant with no billing period must not reach a

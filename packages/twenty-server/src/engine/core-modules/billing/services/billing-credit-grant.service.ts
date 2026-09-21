@@ -257,8 +257,6 @@ export class BillingCreditGrantService {
     });
   }
 
-  // wasRevokedNow tells a retried revocation apart from the one that actually
-  // took the credits away, so callers only adjust balances once.
   async revokeGrant({
     workspaceId,
     grantId,
@@ -267,7 +265,7 @@ export class BillingCreditGrantService {
     workspaceId: string;
     grantId: string;
     revokedByUserId?: string | null;
-  }): Promise<{ grant: BillingCreditGrantEntity; wasRevokedNow: boolean }> {
+  }): Promise<BillingCreditGrantEntity> {
     const grant = await this.billingCreditGrantRepository.findOne(workspaceId, {
       where: { id: grantId },
     });
@@ -280,26 +278,18 @@ export class BillingCreditGrantService {
     }
 
     if (isDefined(grant.revokedAt)) {
-      return { grant, wasRevokedNow: false };
+      return grant;
     }
 
-    const { affected } = await this.billingCreditGrantRepository.update(
+    await this.billingCreditGrantRepository.update(
       workspaceId,
       { id: grantId, revokedAt: IsNull() },
       { revokedAt: new Date(), revokedByUserId: revokedByUserId ?? null },
     );
 
-    const revokedGrant = await this.billingCreditGrantRepository.findOneOrFail(
-      workspaceId,
-      { where: { id: grantId } },
-    );
-
-    // Two concurrent revocations both read an unrevoked grant; only the one
-    // whose UPDATE matched may move the balance.
-    return {
-      grant: revokedGrant,
-      wasRevokedNow: isDefined(affected) && affected > 0,
-    };
+    return this.billingCreditGrantRepository.findOneOrFail(workspaceId, {
+      where: { id: grantId },
+    });
   }
 
   async findGrantByIdempotencyKey(

@@ -223,7 +223,7 @@ describe('Billing credit rollover (integration)', () => {
     ).toBeNull();
   });
 
-  it('leaves the allowance counter alone when a successful delivery is repeated', async () => {
+  it('drops the allowance counter again when a successful delivery is repeated', async () => {
     usageSpy.mockResolvedValue(300_000);
 
     await postInvoiceFinalized().expect(200);
@@ -231,9 +231,9 @@ describe('Billing credit rollover (integration)', () => {
 
     await postInvoiceFinalized().expect(200);
 
-    expect(await readAllowanceCounter(workspaceId, CLOSING_PERIOD_START)).toBe(
-      120_000,
-    );
+    expect(
+      await readAllowanceCounter(workspaceId, CLOSING_PERIOD_START),
+    ).toBeNull();
   });
 
   // A subscription anchored on the 31st runs January 31 to February 28. Once
