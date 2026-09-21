@@ -141,7 +141,8 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
         field.isUIEditable = false;
       }
       reverseFlatFieldMetadata.universalSettings = {
-        ...reverseFlatFieldMetadata.universalSettings,
+        relationType: RelationType.MANY_TO_ONE,
+        joinColumnName,
         onDelete: RelationOnDeleteAction.CASCADE,
       };
     }

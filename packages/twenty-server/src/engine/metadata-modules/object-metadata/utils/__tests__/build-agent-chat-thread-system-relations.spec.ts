@@ -7,7 +7,6 @@ import {
 
 import { buildSystemRelationFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
 import { ObjectSystemRelationsOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service';
-import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const { allFlatEntityMaps } = computeTwentyStandardApplicationAllFlatEntityMaps(
@@ -90,7 +89,15 @@ describe('Agent chat thread custom relations', () => {
           {
             flatEntity: source,
             relatedFlatEntityMaps: maps,
-          } as BuildSideEffectsArgs<'objectMetadata'>,
+            allFlatEntityOperationRecordByMetadataName: {},
+            context: {
+              buildOptions: {
+                isSystemBuild: false,
+                applicationUniversalIdentifier:
+                  source.applicationUniversalIdentifier,
+              },
+            },
+          },
         );
       expect(result.status).toBe('success');
       if (result.status !== 'success')
