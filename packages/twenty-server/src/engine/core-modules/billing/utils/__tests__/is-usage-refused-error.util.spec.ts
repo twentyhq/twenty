@@ -31,6 +31,28 @@ describe('isUsageRefusedError', () => {
     ).toBe(true);
   });
 
+  it('recognises an inactive subscription', () => {
+    expect(
+      isUsageRefusedError(
+        new BillingException(
+          'Workspace has no active subscription',
+          BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE,
+        ),
+      ),
+    ).toBe(true);
+  });
+
+  it('recognises an exhausted stock', () => {
+    expect(
+      isUsageRefusedError(
+        new UsageLimitException(
+          'This workspace has reached its storage limit',
+          UsageLimitExceptionCode.STOCK_EXHAUSTED,
+        ),
+      ),
+    ).toBe(true);
+  });
+
   it('leaves a rate limit to the caller, because waiting does help there', () => {
     expect(
       isUsageRefusedError(
