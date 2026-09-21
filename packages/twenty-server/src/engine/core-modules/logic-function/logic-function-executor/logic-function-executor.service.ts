@@ -261,9 +261,6 @@ export class LogicFunctionExecutorService {
     }
   }
 
-  // Billing-exempt applications do not debit the workspace for the execution
-  // itself, so an exhausted budget must not stop them either: their per-record
-  // triggers fire during mailbox and calendar import.
   private async assertExecutionAllowed({
     workspaceId,
     flatApplication,

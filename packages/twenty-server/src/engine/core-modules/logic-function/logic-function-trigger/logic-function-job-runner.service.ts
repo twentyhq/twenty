@@ -77,8 +77,6 @@ export class LogicFunctionJobRunnerService {
         return;
       }
 
-      // Same reason as a stopped application: the usage engine refused this
-      // execution on purpose, and a queue retry cannot change that.
       if (isUsageRefusedError(error)) {
         this.logger.warn(
           `Skipping function ${logicFunctionPayload.logicFunctionId} (workspace ${logicFunctionPayload.workspaceId}): ${error.message}`,

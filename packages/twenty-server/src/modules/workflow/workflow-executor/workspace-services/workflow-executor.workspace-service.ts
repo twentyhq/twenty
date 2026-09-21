@@ -479,8 +479,6 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
-      // Gated per node run rather than once per workflow run: a run spans jobs
-      // and can sit pending for hours, and the node is what the engine debits.
       await this.billingUsageService.assertUsageAllowed({
         workspaceId,
         resourceType: UsageResourceType.WORKFLOW,

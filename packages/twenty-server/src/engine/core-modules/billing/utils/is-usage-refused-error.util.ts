@@ -17,8 +17,6 @@ const REFUSED_USAGE_LIMIT_EXCEPTION_CODES = [
   UsageLimitExceptionCode.STOCK_EXHAUSTED,
 ];
 
-// A refusal from assertUsageAllowed is deliberate, not transient: a caller that
-// retries on error has to stop instead, since the next attempt is refused too.
 export const isUsageRefusedError = (
   error: unknown,
 ): error is BillingException | UsageLimitException =>
