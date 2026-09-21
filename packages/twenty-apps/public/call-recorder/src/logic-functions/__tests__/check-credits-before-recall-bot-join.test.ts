@@ -17,16 +17,6 @@ vi.mock('twenty-sdk/billing', () => ({
   getCreditAvailability: getCreditAvailabilityMock,
 }));
 
-const enqueueJobsMock = vi.hoisted(() => vi.fn());
-
-vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
-  ...(await importOriginal<object>()),
-  enqueueJobs: enqueueJobsMock,
-}));
-
-const FIRST_ATTEMPT = { retryCount: 0, maxRetries: 2 };
-const LAST_ATTEMPT = { retryCount: 2, maxRetries: 2 };
-
 const fetchMock = vi.fn();
 
 const NOW = new Date('2026-01-01T12:49:00.000Z');
@@ -48,7 +38,6 @@ describe('check-credits-before-recall-bot-join', () => {
     queryMock.mockReset();
     mutationMock.mockReset();
     getCreditAvailabilityMock.mockReset();
-    enqueueJobsMock.mockReset();
     queryMock.mockImplementation(async (query) =>
       query.callRecordings !== undefined
         ? {
@@ -87,38 +76,9 @@ describe('check-credits-before-recall-bot-join', () => {
     );
 
     await expect(
-      handlePreJoinCreditCheckJob(
-        { callRecordingId: 'call-recording-1' },
-        FIRST_ATTEMPT,
-      ),
+      handlePreJoinCreditCheckJob({ callRecordingId: 'call-recording-1' }),
     ).rejects.toMatchObject({ name: 'RetryableLogicFunctionError' });
 
-    expect(mutationMock).not.toHaveBeenCalled();
-    expect(enqueueJobsMock).not.toHaveBeenCalled();
-  });
-
-  it('re-enqueues itself a minute later once the queue retries are spent', async () => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-    getCreditAvailabilityMock.mockResolvedValue({
-      hasAvailableCredits: false,
-      reason: 'no-credits',
-    });
-    fetchMock.mockImplementation(
-      async () => new Response(null, { status: 403 }),
-    );
-
-    const result = await handlePreJoinCreditCheckJob(
-      { callRecordingId: 'call-recording-1' },
-      LAST_ATTEMPT,
-    );
-
-    expect(result.status).toBe('deferred');
-    expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        payloads: [{ callRecordingId: 'call-recording-1' }],
-        delayMs: 60_000,
-      }),
-    );
     expect(mutationMock).not.toHaveBeenCalled();
   });
 });

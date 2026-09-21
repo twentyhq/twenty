@@ -1,8 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { type LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
 
-import { enqueuePreJoinCreditCheckRetry } from 'src/logic-functions/data/enqueue-pre-join-credit-check-retry.util';
 import {
   checkCreditsBeforeRecallBotJoin,
   type CheckCreditsBeforeRecallBotJoinResult,
@@ -12,14 +10,9 @@ import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-
 import { fetchWithTimeout } from 'src/logic-functions/utils/fetch-with-timeout.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
-type HandlePreJoinCreditCheckJobResult =
-  | CheckCreditsBeforeRecallBotJoinResult
-  | { status: 'deferred'; reason: string };
-
 export const handlePreJoinCreditCheckJob = async (
   payload: unknown,
-  context: Pick<LogicFunctionExecutionContext, 'retryCount' | 'maxRetries'>,
-): Promise<HandlePreJoinCreditCheckJobResult> => {
+): Promise<CheckCreditsBeforeRecallBotJoinResult> => {
   const body = asRecord(payload);
   const callRecordingId = getString(body?.callRecordingId);
 
@@ -38,24 +31,9 @@ export const handlePreJoinCreditCheckJob = async (
       now: new Date(),
     });
   } catch (error) {
-    if (context.retryCount < context.maxRetries) {
-      throw buildRetryableStepFailure(
-        `pre-join credit check for call recording ${callRecordingId}`,
-        error,
-      );
-    }
-
-    // The flow skips itself once the join time has passed, which bounds these retries to the lead.
-    console.error(
-      `[call-recorder] pre-join credit check for callRecording ${callRecordingId} failed on its last queue attempt, retrying in one minute: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
+    throw buildRetryableStepFailure(
+      `pre-join credit check for call recording ${callRecordingId}`,
+      error,
     );
-    await enqueuePreJoinCreditCheckRetry({ callRecordingId });
-
-    return {
-      status: 'deferred',
-      reason: 'credit check re-enqueued after exhausting queue retries',
-    };
   }
 };
