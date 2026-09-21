@@ -74,11 +74,15 @@ export class WorkflowToolWorkspaceService {
     };
   }
 
-  generateWorkflowTools(
-    workspaceId: string,
-    rolePermissionConfig: RolePermissionConfig,
-    actorContext?: ActorMetadata,
-  ): ToolSet {
+  generateWorkflowTools({
+    workspaceId,
+    rolePermissionConfig,
+    actorContext,
+  }: {
+    workspaceId: string;
+    rolePermissionConfig: RolePermissionConfig;
+    actorContext?: ActorMetadata;
+  }): ToolSet {
     const context: WorkflowToolContext = {
       workspaceId,
       rolePermissionConfig,
