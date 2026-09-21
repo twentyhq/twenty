@@ -1407,6 +1407,23 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  agentChatThreadTarget: {
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+    fields: STANDARD_OBJECT_FIELDS.agentChatThreadTarget,
+    indexes: {
+      threadIdIndex: {
+        universalIdentifier: '19291d2c-15ab-43a0-91f7-1694b34813dd',
+      },
+      targetRecordIndex: {
+        universalIdentifier: '0ab6ceeb-59e0-497c-8497-111033ac6427',
+      },
+      threadTargetUniqueIndex: {
+        universalIdentifier: '578185a7-700e-411a-b499-e5ca9991eac3',
+      },
+    },
+    views: {},
+  },
   agentTurn: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentTurn,
     fields: STANDARD_OBJECT_FIELDS.agentTurn,

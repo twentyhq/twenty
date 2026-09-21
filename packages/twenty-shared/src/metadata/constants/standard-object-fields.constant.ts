@@ -65,6 +65,19 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     turns: { universalIdentifier: 'd5c88fbc-d318-4ee1-b70a-751a925bef5b' },
     messages: { universalIdentifier: '5c851a60-e5d9-4b1e-9926-c2eab6fc9e62' },
+    recordTargets: {
+      universalIdentifier: '5b37eceb-2992-4d27-9897-14af3e3ce9b2',
+    },
+  },
+  agentChatThreadTarget: {
+    ...buildStandardObjectBaseFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+    ),
+    thread: { universalIdentifier: '54664c16-3c3d-4d5e-904c-59e1b3707cfb' },
+    objectMetadataId: {
+      universalIdentifier: '33dbe909-cae0-494e-be29-1946ffe55482',
+    },
+    recordId: { universalIdentifier: '8387849c-d308-4fe4-8ceb-6d8cb14f2244' },
   },
   agentTurn: {
     ...buildStandardObjectBaseFields(

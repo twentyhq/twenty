@@ -12,6 +12,7 @@ const NOW = '2024-01-01T00:00:00.000Z';
 // stays OPEN because merging records reparents its rows under the caller.
 const SYSTEM_WRITABILITY_STANDARD_OBJECT_NAMES = [
   'agentChatThread',
+  'agentChatThreadTarget',
   'agentMessage',
   'agentMessagePart',
   'agentTurn',

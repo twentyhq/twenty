@@ -34,6 +34,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "pendingQuestionMessageId": {
         "universalIdentifier": "51a9b421-7d90-4a59-9712-036ea9721e65",
       },
+      "recordTargets": {
+        "universalIdentifier": "5b37eceb-2992-4d27-9897-14af3e3ce9b2",
+      },
       "title": {
         "universalIdentifier": "9283c05e-127c-46ec-82e9-6424a7c0a2f1",
       },
@@ -71,6 +74,44 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "universalIdentifier": "fab0fff8-0c90-4116-9bb0-7dbc07392633",
+  },
+  "agentChatThreadTarget": {
+    "fields": {
+      "createdAt": {
+        "universalIdentifier": "0b3d45a4-422d-54fd-96bd-0d0aede26d4a",
+      },
+      "deletedAt": {
+        "universalIdentifier": "ba7caf18-b6cd-5227-ae8b-38bd4775f874",
+      },
+      "id": {
+        "universalIdentifier": "3fa2b4a3-bd88-50cb-954b-db72480f7290",
+      },
+      "objectMetadataId": {
+        "universalIdentifier": "33dbe909-cae0-494e-be29-1946ffe55482",
+      },
+      "recordId": {
+        "universalIdentifier": "8387849c-d308-4fe4-8ceb-6d8cb14f2244",
+      },
+      "thread": {
+        "universalIdentifier": "54664c16-3c3d-4d5e-904c-59e1b3707cfb",
+      },
+      "updatedAt": {
+        "universalIdentifier": "dcad8174-0f81-546e-8a27-576ed432fbcd",
+      },
+    },
+    "indexes": {
+      "targetRecordIndex": {
+        "universalIdentifier": "0ab6ceeb-59e0-497c-8497-111033ac6427",
+      },
+      "threadIdIndex": {
+        "universalIdentifier": "19291d2c-15ab-43a0-91f7-1694b34813dd",
+      },
+      "threadTargetUniqueIndex": {
+        "universalIdentifier": "578185a7-700e-411a-b499-e5ca9991eac3",
+      },
+    },
+    "universalIdentifier": "9f2a5bf4-3a57-4e61-b561-eaf5a5b86973",
+    "views": {},
   },
   "agentMessage": {
     "fields": {

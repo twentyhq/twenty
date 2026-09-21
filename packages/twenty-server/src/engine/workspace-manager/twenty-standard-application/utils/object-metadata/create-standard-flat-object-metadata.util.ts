@@ -58,6 +58,51 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
+  agentChatThreadTarget: (
+    args: Omit<
+      CreateStandardObjectArgs<'agentChatThreadTarget'>,
+      'context' | 'objectName'
+    >,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'agentChatThreadTarget',
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
+        nameSingular: 'agentChatThreadTarget',
+        namePlural: 'agentChatThreadTargets',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Agent chat thread target',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Agent chat thread targets',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Record an agent chat thread is attached to',
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconMessage',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        // A link is exactly as private as the thread it points at, so it stays
+        // out of the generic record API and is authorized by the chat layer.
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+    }),
   agentTurn: (
     args: Omit<CreateStandardObjectArgs<'agentTurn'>, 'context' | 'objectName'>,
   ) =>
