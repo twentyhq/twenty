@@ -57,15 +57,14 @@ export const sanitizeRawUpdateFieldInput = ({
     // A settings edit that only changes presentation-only keys (e.g. a date
     // field's displayFormat) is a workspace override, not a change to the
     // system-managed field itself, so it is allowed here.
-    const nonUserOverridableSettingsChanges = isDefined(
-      updatedEditableFieldProperties.settings,
-    )
-      ? getNonUserOverridableSettingsChanges({
-          fieldType: existingFlatFieldMetadata.type,
-          incomingSettings: updatedEditableFieldProperties.settings,
-          existingSettings: existingFlatFieldMetadata.settings,
-        })
-      : [];
+    const nonUserOverridableSettingsChanges =
+      updatedEditableFieldProperties.settings !== undefined
+        ? getNonUserOverridableSettingsChanges({
+            fieldType: existingFlatFieldMetadata.type,
+            incomingSettings: updatedEditableFieldProperties.settings,
+            existingSettings: existingFlatFieldMetadata.settings,
+          })
+        : [];
 
     const forbiddenUpdatedProperties = [
       ...Object.keys(updatedEditableFieldProperties),

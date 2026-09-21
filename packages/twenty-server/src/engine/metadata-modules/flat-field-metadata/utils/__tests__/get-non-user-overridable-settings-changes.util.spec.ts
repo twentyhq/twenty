@@ -1,4 +1,8 @@
-import { DateDisplayFormat, FieldMetadataType } from 'twenty-shared/types';
+import {
+  DateDisplayFormat,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { getNonUserOverridableSettingsChanges } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-non-user-overridable-settings-changes.util';
 
@@ -54,5 +58,15 @@ describe('getNonUserOverridableSettingsChanges', () => {
         existingSettings: { decimals: 0 },
       }),
     ).toEqual(['decimals']);
+  });
+
+  it('flags structural keys when settings are cleared on a non-date field', () => {
+    expect(
+      getNonUserOverridableSettingsChanges({
+        fieldType: FieldMetadataType.RELATION,
+        incomingSettings: null,
+        existingSettings: { relationType: RelationType.ONE_TO_MANY },
+      }),
+    ).toEqual(['relationType']);
   });
 });

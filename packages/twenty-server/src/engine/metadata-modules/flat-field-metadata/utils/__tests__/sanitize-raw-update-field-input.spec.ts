@@ -3,6 +3,7 @@ import {
   DateDisplayFormat,
   type FieldMetadataComplexOption,
   FieldMetadataType,
+  RelationType,
   type TagColor,
 } from 'twenty-shared/types';
 
@@ -112,6 +113,34 @@ describe('sanitizeRawUpdateFieldInput', () => {
         displayFormat: DateDisplayFormat.USER_SETTINGS,
         foo: 'bar',
       } as UpdateFieldInput['settings']),
+    ).toThrow(/Cannot edit system-managed field/);
+  });
+
+  it('allows clearing presentation-only settings on a system-managed date field', () => {
+    expect(() => sanitizeSystemDateFieldSettingsUpdate(null)).not.toThrow();
+  });
+
+  it('rejects clearing settings on a system-managed relation field', () => {
+    expect(() =>
+      sanitizeRawUpdateFieldInput({
+        existingFlatFieldMetadata: getFlatFieldMetadataMock({
+          id: FIELD_ID,
+          type: FieldMetadataType.RELATION,
+          universalIdentifier: 'ab0e6d76-67d8-466f-918a-4b8a8d044131',
+          objectMetadataId: '6450cd8f-c202-498f-8be4-65e1b1c93e32',
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isSystemSideEffect: true,
+          settings: { relationType: RelationType.ONE_TO_MANY },
+        }),
+        rawUpdateFieldInput: {
+          id: FIELD_ID,
+          settings: null,
+        } as UpdateFieldInput,
+        isSystemBuild: false,
+        workspaceCustomApplicationUniversalIdentifier:
+          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      }),
     ).toThrow(/Cannot edit system-managed field/);
   });
 
