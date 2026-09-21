@@ -3,6 +3,7 @@ import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/app
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import {
   type FieldManifest,
   type ObjectManifest,
@@ -64,7 +65,7 @@ const APP_A_BACK_RELATION_FIELD: FieldManifest = {
   },
 };
 
-describe('Sync application should fail when a RELATION field targets another app custom object', () => {
+describe('Sync application should succeed when a RELATION field targets another app custom object', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: APP_A_ID,
@@ -122,7 +123,7 @@ describe('Sync application should fail when a RELATION field targets another app
     });
   }, 60000);
 
-  it("fails to sync App B when its RELATION field targets App A's custom object", async () => {
+  it("successfully syncs App B when its RELATION field targets App A's custom object", async () => {
     const { errors } = await syncApplication({
       manifest: buildBaseManifest({
         appId: APP_B_ID,
@@ -168,18 +169,40 @@ describe('Sync application should fail when a RELATION field targets another app
           ],
         },
       }),
-      expectToFail: true,
+      expectToFail: false,
     });
 
-    // Confirmed via captured runtime evidence (06-DIAGNOSIS.md): the throw
-    // site is ObjectMetadataWithRelationsGqlObjectTypeGenerator.generateFields
-    // (GraphQL-schema-build time), not the field-type validator — the
-    // validator's own flatObjectMetadataMaps resolves the cross-app target
-    // fine, but the app-scoped schema/SDK-generation map does not.
-    expect(isDefined(errors)).toBe(true);
-    expect(errors!.length).toBeGreaterThan(0);
-    expect(JSON.stringify(errors)).toMatch(
-      /has no relation target object metadata/,
+    expect(isDefined(errors)).toBe(false);
+
+    const objects = await findManyObjectMetadataWithIndexes({
+      expectToFail: false,
+    });
+
+    // Match by universalIdentifier, not nameSingular, to avoid collisions
+    // with concurrently-running test apps that may reuse the same object
+    // names.
+    const appAObject = objects.find(
+      (objectMetadata) =>
+        objectMetadata.universalIdentifier === APP_A_OBJECT_ID,
     );
+    const appBObject = objects.find(
+      (objectMetadata) =>
+        objectMetadata.universalIdentifier === APP_B_OBJECT_ID,
+    );
+
+    expect(appAObject).toBeDefined();
+    expect(appBObject).toBeDefined();
+
+    const targetRelationField = appBObject?.fieldsList.find(
+      (field) => field.universalIdentifier === WIDGET_TARGET_RELATION_FIELD_ID,
+    );
+
+    expect(targetRelationField).toBeDefined();
+    // Proves the cross-app relation resolves to App A's actual object id,
+    // not merely that no error was thrown.
+    expect(targetRelationField?.relation?.targetObjectMetadata.id).toBe(
+      appAObject?.id,
+    );
+    expect(targetRelationField?.relation?.type).toBe(RelationType.MANY_TO_ONE);
   }, 60000);
 });
