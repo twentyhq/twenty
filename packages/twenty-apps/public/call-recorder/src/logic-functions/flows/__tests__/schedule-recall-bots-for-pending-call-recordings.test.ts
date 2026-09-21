@@ -280,6 +280,16 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(result.attachedCallRecordingIds).toEqual(['call-recording-1']);
     expect(result.scheduledCallRecordingIds).toEqual([]);
     expect(createBotCalls()).toHaveLength(0);
+    expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        jobs: [
+          {
+            jobId: `credit-check.call-recording-1.recall-bot-existing.${new Date(computeRecallBotJoinAt(UPCOMING_STARTS_AT)).getTime()}`,
+            payload: { callRecordingId: 'call-recording-1' },
+          },
+        ],
+      }),
+    );
     const lookupParameters = new URL(listBotRequestUrls()[0]).searchParams;
     expect(lookupParameters.get('metadata__twentyWorkspaceId')).toBe(
       WORKSPACE_ID,

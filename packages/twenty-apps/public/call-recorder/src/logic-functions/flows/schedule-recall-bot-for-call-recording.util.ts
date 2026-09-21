@@ -20,20 +20,26 @@ import {
 } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
+export type ScheduleRecallBotForCallRecordingResult =
+  | { status: 'scheduled' }
+  | { status: 'skipped'; reason: string }
+  | { status: 'blocked'; failureReason: string }
+  | { status: 'failed'; reason: string };
+
 // The sole place a Recall bot is created. Only the deterministic-create winner and the stale-state cron call it, so one writer per meeting POSTs exactly one bot.
 export const scheduleRecallBotForCallRecording = async (
   client: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
-): Promise<boolean> => {
+): Promise<ScheduleRecallBotForCallRecordingResult> => {
   const meetingUrl = calendarEvent.conferenceLinkUrl;
   const meetingStartsAt = calendarEvent.startsAt;
 
   if (isUndefined(meetingUrl) || isUndefined(meetingStartsAt)) {
-    return false;
+    return { status: 'skipped', reason: 'meeting has no link or start time' };
   }
 
   if (!isCalendarBotSchedulingEnabled()) {
-    return false;
+    return { status: 'skipped', reason: 'calendar bot scheduling is off' };
   }
 
   const joinAt = computeRecallBotJoinAt(meetingStartsAt);
@@ -49,7 +55,10 @@ export const scheduleRecallBotForCallRecording = async (
     freshCallRecording.status !== CallRecordingStatus.SCHEDULED ||
     !isUndefined(freshCallRecording.externalBotId)
   ) {
-    return false;
+    return {
+      status: 'skipped',
+      reason: 'call recording no longer awaits a bot',
+    };
   }
 
   // A bot created this close to the join starts joining at once, so the verdict comes first.
@@ -62,13 +71,15 @@ export const scheduleRecallBotForCallRecording = async (
     : undefined;
 
   if (!isUndefined(creditsUnavailableFailureReason)) {
-    await markCallRecordingNotRecorded({
-      client,
+    await markCallRecordingNotRecorded(client, {
       callRecordingId: callRecording.id,
       failureReason: creditsUnavailableFailureReason,
     });
 
-    return false;
+    return {
+      status: 'blocked',
+      failureReason: creditsUnavailableFailureReason,
+    };
   }
 
   const workspaceId = getCurrentWorkspaceId();
@@ -78,7 +89,7 @@ export const scheduleRecallBotForCallRecording = async (
       `[call-recorder] cannot schedule Recall bot for callRecording ${callRecording.id}: workspace id unavailable, the shared webhook could not be routed back`,
     );
 
-    return false;
+    return { status: 'failed', reason: 'workspace id unavailable' };
   }
 
   const automaticVideoOutput = await buildRecallBotAutomaticVideoOutput();
@@ -126,7 +137,7 @@ export const scheduleRecallBotForCallRecording = async (
       `[call-recorder] failed to schedule Recall bot for callRecording ${callRecording.id}: ${scheduleResult.errorMessage}`,
     );
 
-    return false;
+    return { status: 'failed', reason: scheduleResult.errorMessage };
   }
 
   await updateCallRecording(client, {
@@ -137,9 +148,10 @@ export const scheduleRecallBotForCallRecording = async (
   if (!isJoinWithinCreditCheckLead) {
     await enqueuePreJoinCreditCheck({
       callRecordingId: callRecording.id,
+      externalBotId: scheduleResult.externalBotId,
       joinAt,
     });
   }
 
-  return true;
+  return { status: 'scheduled' };
 };

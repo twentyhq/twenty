@@ -149,12 +149,12 @@ describe('scheduleRecallBotForCallRecording', () => {
   it('enqueues the credit check ten minutes before the join for a meeting that is far enough away', async () => {
     const client = new FakeCoreApiClient();
 
-    const didSchedule = await scheduleBot({
+    const scheduleResult = await scheduleBot({
       client,
       meetingStartsAt: MEETING_IN_ONE_HOUR_STARTS_AT,
     });
 
-    expect(didSchedule).toBe(true);
+    expect(scheduleResult).toEqual({ status: 'scheduled' });
     expect(client.callRecording.externalBotId).toBe('recall-bot-1');
     expect(getCreditAvailabilityMock).not.toHaveBeenCalled();
     expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith({
@@ -162,7 +162,7 @@ describe('scheduleRecallBotForCallRecording', () => {
         CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       jobs: [
         {
-          jobId: `credit-check.call-recording-1.${new Date('2026-01-01T12:59:00.000Z').getTime()}`,
+          jobId: `credit-check.call-recording-1.recall-bot-1.${new Date('2026-01-01T12:59:00.000Z').getTime()}`,
           payload: { callRecordingId: 'call-recording-1' },
         },
       ],
@@ -178,12 +178,15 @@ describe('scheduleRecallBotForCallRecording', () => {
     });
     const client = new FakeCoreApiClient();
 
-    const didSchedule = await scheduleBot({
+    const scheduleResult = await scheduleBot({
       client,
       meetingStartsAt: MEETING_IN_FIVE_MINUTES_STARTS_AT,
     });
 
-    expect(didSchedule).toBe(false);
+    expect(scheduleResult).toEqual({
+      status: 'blocked',
+      failureReason: 'workspace_out_of_credits',
+    });
     expect(createBotCalls()).toHaveLength(0);
     expect(enqueueJobsMock).not.toHaveBeenCalled();
     expect(client.callRecording).toMatchObject({
@@ -197,12 +200,12 @@ describe('scheduleRecallBotForCallRecording', () => {
     getCreditAvailabilityMock.mockResolvedValue({ hasAvailableCredits: true });
     const client = new FakeCoreApiClient();
 
-    const didSchedule = await scheduleBot({
+    const scheduleResult = await scheduleBot({
       client,
       meetingStartsAt: MEETING_IN_FIVE_MINUTES_STARTS_AT,
     });
 
-    expect(didSchedule).toBe(true);
+    expect(scheduleResult).toEqual({ status: 'scheduled' });
     expect(createBotCalls()).toHaveLength(1);
     expect(enqueueJobsMock).not.toHaveBeenCalled();
     expect(client.callRecording.status).toBe('SCHEDULED');
@@ -212,12 +215,12 @@ describe('scheduleRecallBotForCallRecording', () => {
     enqueueJobsMock.mockRejectedValue(new Error('queue unavailable'));
     const client = new FakeCoreApiClient();
 
-    const didSchedule = await scheduleBot({
+    const scheduleResult = await scheduleBot({
       client,
       meetingStartsAt: MEETING_IN_ONE_HOUR_STARTS_AT,
     });
 
-    expect(didSchedule).toBe(true);
+    expect(scheduleResult).toEqual({ status: 'scheduled' });
     expect(client.callRecording.externalBotId).toBe('recall-bot-1');
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('failed to enqueue the pre-join credit check'),

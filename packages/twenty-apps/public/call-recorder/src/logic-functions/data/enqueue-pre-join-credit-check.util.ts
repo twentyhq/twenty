@@ -7,9 +7,11 @@ import { PRE_JOIN_CREDIT_CHECK_LEAD_MINUTES } from 'src/logic-functions/constant
 
 export const enqueuePreJoinCreditCheck = async ({
   callRecordingId,
+  externalBotId,
   joinAt,
 }: {
   callRecordingId: string;
+  externalBotId: string;
   joinAt: string;
 }): Promise<void> => {
   const joinAtMilliseconds = new Date(joinAt).getTime();
@@ -23,7 +25,8 @@ export const enqueuePreJoinCreditCheck = async ({
         CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       jobs: [
         {
-          jobId: `credit-check.${callRecordingId}.${joinAtMilliseconds}`,
+          // A re-created or rescheduled bot gets its own check; the queue keeps a completed id for hours.
+          jobId: `credit-check.${callRecordingId}.${externalBotId}.${joinAtMilliseconds}`,
           payload: { callRecordingId },
         },
       ],

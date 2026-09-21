@@ -339,9 +339,14 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
       return new Response(null, { status: 204 });
     });
 
-    await checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN });
+    const result = await checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN });
 
-    expect(client.callRecording.status).toBe('FAILED');
+    expect(result.status).toBe('skipped');
+    expect(client.callRecording).toMatchObject({
+      status: 'FAILED',
+      externalBotId: 'recall-bot-1',
+      botScheduleIdempotencyKey: 'idempotency-key',
+    });
     expect(client.callRecording.callRecorderFailureReason).toBeUndefined();
   });
 });

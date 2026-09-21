@@ -511,7 +511,16 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         },
       }),
     );
-    expect(enqueueJobsMock).not.toHaveBeenCalled();
+    expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        jobs: [
+          {
+            jobId: `credit-check.${buildCustomerSyncCallRecordingId()}.recall-bot-1.${new Date(FUTURE_RECALL_BOT_JOIN_AT).getTime()}`,
+            payload: { callRecordingId: buildCustomerSyncCallRecordingId() },
+          },
+        ],
+      }),
+    );
   });
 
   it('replaces a stale visible title with the fallback title when the calendar title becomes unavailable', async () => {

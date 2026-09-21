@@ -8,7 +8,6 @@ import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calenda
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCreditsUnavailableFailureReason } from 'src/logic-functions/data/get-credits-unavailable-failure-reason.util';
 import { markCallRecordingNotRecorded } from 'src/logic-functions/data/mark-call-recording-not-recorded.util';
-import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 
@@ -56,6 +55,10 @@ export const checkCreditsBeforeRecallBotJoin = async ({
   if (
     now.getTime() >= new Date(computeRecallBotJoinAt(meetingStartsAt)).getTime()
   ) {
+    console.warn(
+      `[call-recorder] pre-join credit check for callRecording ${callRecordingId} ran after the bot join time; the recording proceeds unchecked`,
+    );
+
     return { status: 'skipped', reason: 'bot join time has passed' };
   }
 
@@ -83,19 +86,18 @@ export const checkCreditsBeforeRecallBotJoin = async ({
     );
   }
 
-  await markCallRecordingNotRecorded({
-    client,
+  const didMarkNotRecorded = await markCallRecordingNotRecorded(client, {
     callRecordingId,
     failureReason,
   });
-  await updateCallRecording(client, {
-    id: callRecordingId,
-    data: {
-      externalBotId: null,
-      botScheduleAttemptedAt: null,
-      botScheduleIdempotencyKey: null,
-    },
-  });
+
+  if (!didMarkNotRecorded) {
+    return {
+      status: 'skipped',
+      reason:
+        'call recording reached a terminal status while its bot was being canceled',
+    };
+  }
 
   return { status: 'blocked', failureReason };
 };
