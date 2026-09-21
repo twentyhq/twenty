@@ -8,6 +8,7 @@ import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/jun
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
+import { canSeeAllForJunctionConfig } from '@/page-layout/widgets/field/utils/canSeeAllForJunctionConfig';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -67,10 +68,10 @@ export const useFieldWidgetActionVisibility = ({
         objectMetadataItems,
       })
     : null;
-  const isJunctionRelation = isDefined(junctionConfig);
-
   const showSeeAll =
-    isOneToManyRelation && !isNestedRelationWidget && !isJunctionRelation;
+    isOneToManyRelation &&
+    !isNestedRelationWidget &&
+    canSeeAllForJunctionConfig(junctionConfig);
 
   const isFieldReadOnly = isRecordFieldReadOnly({
     isRecordReadOnly,

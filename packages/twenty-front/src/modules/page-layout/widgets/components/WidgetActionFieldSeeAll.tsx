@@ -1,7 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
+import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
 import { WidgetCardHeaderActionLink } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionLink';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -22,38 +22,56 @@ export const WidgetActionFieldSeeAll = ({
 
   const { fieldDefinition } = useFieldWidgetFieldDefinition(widget);
 
-  const relationMetadata =
-    isDefined(fieldDefinition) && isFieldRelation(fieldDefinition)
-      ? fieldDefinition.metadata
-      : null;
-
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const relationObjectMetadataItem = objectMetadataItems.find(
-    (item) =>
-      item.nameSingular ===
-      relationMetadata?.relationObjectMetadataNameSingular,
+  const sourceFieldMetadataItem = objectMetadataItems
+    .flatMap(({ fields }) => fields)
+    .find(({ id }) => id === fieldDefinition?.fieldMetadataId);
+
+  const {
+    targetObjectMetadataId,
+    inverseFieldMetadataId,
+    relationTargetFieldMetadataId,
+  } = getFieldWidgetRelationTraversal({
+    sourceFieldMetadataItem,
+    objectMetadataItems,
+  });
+
+  const listedObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === targetObjectMetadataId,
   );
 
-  const relationFieldMetadataItem = relationObjectMetadataItem?.fields.find(
-    ({ id }) => id === relationMetadata?.relationFieldMetadataId,
+  const listedFieldMetadataItem = listedObjectMetadataItem?.fields.find(
+    ({ id }) => id === inverseFieldMetadataId,
   );
+
+  const relationTargetFieldMetadataItem = isDefined(
+    relationTargetFieldMetadataId,
+  )
+    ? objectMetadataItems
+        .flatMap(({ fields }) => fields)
+        .find(({ id }) => id === relationTargetFieldMetadataId)
+    : undefined;
 
   const indexViewId = useAtomFamilySelectorValue(
     indexViewIdFromObjectMetadataItemFamilySelector,
-    { objectMetadataItemId: relationObjectMetadataItem?.id ?? '' },
+    { objectMetadataItemId: listedObjectMetadataItem?.id ?? '' },
   );
 
   if (
-    !isDefined(relationObjectMetadataItem) ||
-    !isDefined(relationFieldMetadataItem)
+    !isDefined(listedObjectMetadataItem) ||
+    !isDefined(listedFieldMetadataItem)
   ) {
     return null;
   }
 
+  const filterKey = isDefined(relationTargetFieldMetadataItem)
+    ? `${listedFieldMetadataItem.name}.${relationTargetFieldMetadataItem.name}`
+    : listedFieldMetadataItem.name;
+
   const filterQueryParams = {
     filter: {
-      [relationFieldMetadataItem.name]: {
+      [filterKey]: {
         [ViewFilterOperand.IS]: {
           selectedRecordIds: [targetRecord.id],
         },
@@ -65,13 +83,13 @@ export const WidgetActionFieldSeeAll = ({
   const filterLinkHref = getAppPath(
     AppPath.RecordIndexPage,
     {
-      objectNamePlural: relationObjectMetadataItem.namePlural,
+      objectNamePlural: listedObjectMetadataItem.namePlural,
     },
     filterQueryParams,
   );
 
   const relationLabelPlural =
-    relationObjectMetadataItem.labelPlural.toLowerCase();
+    listedObjectMetadataItem.labelPlural.toLowerCase();
   const actionLabel = t`See all ${relationLabelPlural} linked to this record`;
 
   return (

@@ -27,6 +27,7 @@ const TEST_PET_IDS = {
   STARSHIP_PET: '20202020-dddd-4000-8000-100000000002',
 };
 
+const ALL_TEST_COMPANY_IDS = Object.values(TEST_COMPANY_IDS);
 const ALL_TEST_PERSON_IDS = Object.values(TEST_PERSON_IDS);
 const ALL_TEST_PET_IDS = Object.values(TEST_PET_IDS);
 
@@ -330,6 +331,151 @@ describe('Filter by relation field (e2e)', () => {
     expect(ids.sort()).toEqual(
       [TEST_PERSON_IDS.AIRBNB_ENGINEER, TEST_PERSON_IDS.AIRBNB_DESIGNER].sort(),
     );
+  });
+
+  it('should filter companies by a field on their to-many people relation', async () => {
+    const queryData = {
+      query: gql`
+        query Companies($filter: CompanyFilterInput) {
+          companies(filter: $filter, first: 10) {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        filter: {
+          and: [
+            { id: { in: ALL_TEST_COMPANY_IDS } },
+            { people: { jobTitle: { eq: 'Designer' } } },
+          ],
+        },
+      },
+    };
+
+    const response = await makeGraphqlAPIRequest(queryData);
+
+    expect(response.body.errors).toBeUndefined();
+
+    const ids = response.body.data.companies.edges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+
+    expect(ids).toEqual([TEST_COMPANY_IDS.AIRBNB]);
+  });
+
+  it('should match a company when any of its people satisfies the to-many filter', async () => {
+    const queryData = {
+      query: gql`
+        query Companies($filter: CompanyFilterInput) {
+          companies(filter: $filter, first: 10) {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        filter: {
+          and: [
+            { id: { in: ALL_TEST_COMPANY_IDS } },
+            { people: { jobTitle: { eq: 'Engineer' } } },
+          ],
+        },
+      },
+    };
+
+    const response = await makeGraphqlAPIRequest(queryData);
+
+    expect(response.body.errors).toBeUndefined();
+
+    const ids = response.body.data.companies.edges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+
+    expect(ids.sort()).toEqual(
+      [
+        TEST_COMPANY_IDS.AIRBNB,
+        TEST_COMPANY_IDS.STRIPE,
+        TEST_COMPANY_IDS.NOTION,
+      ].sort(),
+    );
+  });
+
+  it('should return each company once when several of its people match', async () => {
+    const queryData = {
+      query: gql`
+        query Companies($filter: CompanyFilterInput) {
+          companies(filter: $filter, first: 10) {
+            edges {
+              node {
+                id
+              }
+            }
+            totalCount
+          }
+        }
+      `,
+      variables: {
+        filter: {
+          and: [
+            { id: { eq: TEST_COMPANY_IDS.AIRBNB } },
+            { people: { id: { in: ALL_TEST_PERSON_IDS } } },
+          ],
+        },
+      },
+    };
+
+    const response = await makeGraphqlAPIRequest(queryData);
+
+    expect(response.body.errors).toBeUndefined();
+
+    const ids = response.body.data.companies.edges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+
+    expect(ids).toEqual([TEST_COMPANY_IDS.AIRBNB]);
+    expect(response.body.data.companies.totalCount).toBe(1);
+  });
+
+  it('should combine a to-many relation filter with a scalar filter on the root object', async () => {
+    const queryData = {
+      query: gql`
+        query Companies($filter: CompanyFilterInput) {
+          companies(filter: $filter, first: 10) {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        filter: {
+          and: [
+            { id: { in: ALL_TEST_COMPANY_IDS } },
+            { people: { jobTitle: { eq: 'Engineer' } } },
+            { name: { eq: 'Stripe' } },
+          ],
+        },
+      },
+    };
+
+    const response = await makeGraphqlAPIRequest(queryData);
+
+    expect(response.body.errors).toBeUndefined();
+
+    const ids = response.body.data.companies.edges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+
+    expect(ids).toEqual([TEST_COMPANY_IDS.STRIPE]);
   });
 
   it('should reject relation filters nested deeper than one hop', async () => {

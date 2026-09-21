@@ -2,6 +2,7 @@ import { isNonEmptyString, isObject } from '@sniptt/guards';
 import qs from 'qs';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
@@ -24,6 +25,7 @@ export const useFiltersFromQueryParams = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const queryParamsValidation = filterUrlQueryParamsSchema.safeParse(
     qs.parse(searchParams.toString()),
@@ -61,7 +63,41 @@ export const useFiltersFromQueryParams = () => {
 
           if (!fieldMetadataItem) return null;
 
+          const relationTargetObjectMetadataItem = objectMetadataItems.find(
+            ({ id }) =>
+              id === fieldMetadataItem.relation?.targetObjectMetadata.id,
+          );
+
+          const relationTargetFieldMetadataId =
+            relationTargetObjectMetadataItem?.fields.find(
+              ({ name }) => name === subFieldName,
+            )?.id ?? null;
+
+          const filterValueAsString =
+            Array.isArray(filterValueFromURL) || isObject(filterValueFromURL)
+              ? JSON.stringify(filterValueFromURL)
+              : (filterValueFromURL as string);
+
+          const displayValue = filterValueAsString;
+
+          const filterId = `tmp-${[
+            fieldName,
+            filterOperandFromURL,
+            filterValueFromURL,
+          ].join('-')}`;
+
           if (isDefined(subFieldName) && isNonEmptyString(subFieldName)) {
+            if (isDefined(relationTargetFieldMetadataId)) {
+              return {
+                id: filterId,
+                fieldMetadataId: fieldMetadataItem.id,
+                operand: filterOperandFromURL as ViewFilterOperand,
+                value: filterValueAsString,
+                displayValue,
+                relationTargetFieldMetadataId,
+              };
+            }
+
             if (!isCompositeFieldType(fieldMetadataItem.type)) {
               return null;
             }
@@ -78,19 +114,6 @@ export const useFiltersFromQueryParams = () => {
               return null;
             }
           }
-
-          const filterValueAsString =
-            Array.isArray(filterValueFromURL) || isObject(filterValueFromURL)
-              ? JSON.stringify(filterValueFromURL)
-              : (filterValueFromURL as string);
-
-          const displayValue = filterValueAsString;
-
-          const filterId = `tmp-${[
-            fieldName,
-            filterOperandFromURL,
-            filterValueFromURL,
-          ].join('-')}`;
 
           return {
             id: filterId,
@@ -109,7 +132,7 @@ export const useFiltersFromQueryParams = () => {
     }
 
     return (await Promise.all(promises)).filter(isDefined);
-  }, [queryParamsValidation, objectMetadataItem.fields]);
+  }, [queryParamsValidation, objectMetadataItem.fields, objectMetadataItems]);
 
   const filterGroupQueryParams = queryParamsValidation.success
     ? queryParamsValidation.data.filterGroup
