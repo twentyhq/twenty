@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { getActionIconStrokeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconStrokeOrThrow';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
@@ -42,7 +43,7 @@ export const WorkflowDiagramStepNodeIcon = ({
           ? getTriggerIconColor(data.triggerType)
           : getActionIconColorOrThrow(data.actionType)
       }
-      stroke={stroke === undefined ? undefined : theme.icon.stroke[stroke]}
+      stroke={isDefined(stroke) ? theme.icon.stroke[stroke] : undefined}
     />
   );
 };
