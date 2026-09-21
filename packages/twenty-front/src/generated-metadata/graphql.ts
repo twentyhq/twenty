@@ -241,7 +241,9 @@ export enum AllMetadataName {
   viewFilterGroup = 'viewFilterGroup',
   viewGroup = 'viewGroup',
   viewSort = 'viewSort',
-  webhook = 'webhook'
+  webhook = 'webhook',
+  workflow = 'workflow',
+  workflowVersion = 'workflowVersion'
 }
 
 export type Analytics = {
