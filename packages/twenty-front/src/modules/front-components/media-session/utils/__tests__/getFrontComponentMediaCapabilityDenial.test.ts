@@ -7,7 +7,10 @@ describe('getFrontComponentMediaCapabilityDenial', () => {
         grantedCapabilities: [],
         mediaTypes: ['audio'],
       }),
-    ).toMatchObject({ errorName: 'NotAllowedError' });
+    ).toEqual({
+      errorName: 'NotAllowedError',
+      errorMessage: 'This application does not have microphone access',
+    });
   });
 
   it('denies video without the camera capability', () => {
@@ -16,7 +19,10 @@ describe('getFrontComponentMediaCapabilityDenial', () => {
         grantedCapabilities: [],
         mediaTypes: ['video'],
       }),
-    ).toMatchObject({ errorName: 'NotAllowedError' });
+    ).toEqual({
+      errorName: 'NotAllowedError',
+      errorMessage: 'This application does not have camera access',
+    });
   });
 
   it('keeps microphone and camera capabilities separate', () => {
@@ -35,7 +41,7 @@ describe('getFrontComponentMediaCapabilityDenial', () => {
     ).toMatchObject({ errorMessage: expect.stringContaining('microphone') });
   });
 
-  it('allows only the media types declared by the application', () => {
+  it('allows media types granted to the application', () => {
     expect(
       getFrontComponentMediaCapabilityDenial({
         grantedCapabilities: ['microphone'],

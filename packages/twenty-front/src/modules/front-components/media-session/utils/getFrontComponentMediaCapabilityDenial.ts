@@ -1,7 +1,9 @@
+import { getMissingFrontComponentMediaCapabilities } from '@/front-components/media-session/utils/getMissingFrontComponentMediaCapabilities';
 import {
   type MediaSessionMediaType,
   type MediaSessionStartVeto,
 } from 'twenty-front-component-renderer';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getFrontComponentMediaCapabilityDenial = ({
   grantedCapabilities,
@@ -10,22 +12,17 @@ export const getFrontComponentMediaCapabilityDenial = ({
   grantedCapabilities: string[];
   mediaTypes: MediaSessionMediaType[];
 }): MediaSessionStartVeto | null => {
-  if (
-    mediaTypes.includes('audio') &&
-    !grantedCapabilities.includes('microphone')
-  ) {
-    return {
-      errorName: 'NotAllowedError',
-      errorMessage: 'This application does not have microphone access',
-    };
+  const [missingCapability] = getMissingFrontComponentMediaCapabilities({
+    grantedCapabilities,
+    mediaTypes,
+  });
+
+  if (!isDefined(missingCapability)) {
+    return null;
   }
 
-  if (mediaTypes.includes('video') && !grantedCapabilities.includes('camera')) {
-    return {
-      errorName: 'NotAllowedError',
-      errorMessage: 'This application does not have camera access',
-    };
-  }
-
-  return null;
+  return {
+    errorName: 'NotAllowedError',
+    errorMessage: `This application does not have ${missingCapability} access`,
+  };
 };
