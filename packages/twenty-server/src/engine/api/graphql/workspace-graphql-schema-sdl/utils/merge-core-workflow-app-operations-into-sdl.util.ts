@@ -11,6 +11,23 @@ const ROOT_TYPE_NAMES = ['Query', 'Mutation'];
 const getDefinitionName = (definition: DefinitionNode): string | undefined =>
   'name' in definition ? definition.name?.value : undefined;
 
+const getRootFieldNames = (
+  definitions: readonly DefinitionNode[],
+): Set<string> =>
+  new Set(
+    definitions
+      .filter(
+        (definition) =>
+          definition.kind === Kind.OBJECT_TYPE_DEFINITION &&
+          ROOT_TYPE_NAMES.includes(definition.name.value),
+      )
+      .flatMap((definition) =>
+        definition.kind === Kind.OBJECT_TYPE_DEFINITION
+          ? (definition.fields ?? []).map((field) => field.name.value)
+          : [],
+      ),
+  );
+
 export const mergeCoreWorkflowAppOperationsIntoSdl = ({
   baseSdl,
   operationsSdl,
@@ -24,10 +41,20 @@ export const mergeCoreWorkflowAppOperationsIntoSdl = ({
       .map(getDefinitionName)
       .filter((name): name is string => name !== undefined),
   );
+  const baseRootFieldNames = getRootFieldNames(baseDocument.definitions);
+  const operationsDocument = parse(operationsSdl);
+
+  const hasCollidingRootField = [
+    ...getRootFieldNames(operationsDocument.definitions),
+  ].some((fieldName) => baseRootFieldNames.has(fieldName));
+
+  if (hasCollidingRootField) {
+    return baseSdl;
+  }
 
   const appendedDefinitions: DefinitionNode[] = [];
 
-  for (const definition of parse(operationsSdl).definitions) {
+  for (const definition of operationsDocument.definitions) {
     const definitionName = getDefinitionName(definition);
 
     if (definitionName === undefined) {

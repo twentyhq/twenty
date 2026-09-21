@@ -60,12 +60,15 @@ export const createGetWorkflowCurrentVersionTool = (
         ) ??
         coreWorkflowVersions.find(
           (version) => version.status === CoreWorkflowVersionStatus.ACTIVE,
+        ) ??
+        coreWorkflowVersions.find(
+          (version) => version.status === CoreWorkflowVersionStatus.DEACTIVATED,
         );
 
       if (!isDefined(currentVersion)) {
         return {
           success: false,
-          error: `Workflow ${coreWorkflowId} has no draft or active version`,
+          error: `Workflow ${coreWorkflowId} has no draft, active or deactivated version`,
         };
       }
 

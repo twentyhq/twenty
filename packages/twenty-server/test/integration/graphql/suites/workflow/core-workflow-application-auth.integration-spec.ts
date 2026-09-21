@@ -420,8 +420,23 @@ describe('core workflow API with application credentials (integration)', () => {
       { input: { name: `Api key workflow ${crypto.randomUUID()}` } },
     );
 
-    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     expect(response.body.data?.createCoreWorkflow).toBeFalsy();
+  });
+
+  it('should refuse an API key on a read, where no actor has to be resolved', async () => {
+    const response = await graphqlAs(
+      API_KEY_ACCESS_TOKEN,
+      CORE_WORKFLOW_VERSIONS,
+      {
+        coreWorkflowId: crypto.randomUUID(),
+      },
+    );
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+    expect(
+      response.body.data?.coreWorkflowVersionsByCoreWorkflowId,
+    ).toBeFalsy();
   });
 
   it('should deny an application whose role does not grant the workflows permission', async () => {

@@ -90,6 +90,27 @@ describe('mergeCoreWorkflowAppOperationsIntoSdl', () => {
     );
   });
 
+  it('leaves the base schema untouched when a root field name collides', () => {
+    const baseSdl = /* GraphQL */ `
+      scalar UUID
+
+      type CoreWorkflow {
+        id: UUID!
+      }
+
+      type Query {
+        coreWorkflows: [CoreWorkflow!]!
+      }
+    `;
+
+    expect(
+      mergeCoreWorkflowAppOperationsIntoSdl({
+        baseSdl,
+        operationsSdl: OPERATIONS_SDL,
+      }),
+    ).toBe(baseSdl);
+  });
+
   it('leaves the base schema untouched when a type name collides', () => {
     const baseSdl = /* GraphQL */ `
       scalar UUID

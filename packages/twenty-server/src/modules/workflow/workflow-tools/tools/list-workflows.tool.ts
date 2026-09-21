@@ -15,12 +15,20 @@ import {
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
+const DEFAULT_LIST_WORKFLOWS_LIMIT = 50;
+
 const listWorkflowsSchema = z.object({
   status: z
     .nativeEnum(WorkflowStatus)
     .optional()
     .describe('Filter by status (DRAFT, ACTIVE, DEACTIVATED)'),
-  limit: z.number().int().min(1).max(100).optional().default(50),
+  limit: z
+    .number()
+    .int()
+    .min(1)
+    .max(100)
+    .optional()
+    .default(DEFAULT_LIST_WORKFLOWS_LIMIT),
   after: z
     .string()
     .optional()
@@ -45,7 +53,7 @@ export const createListWorkflowsTool = (
         await deps.coreWorkflowListService.findManyByWorkspaceId(
           context.workspaceId,
           {
-            first: parameters.limit,
+            first: parameters.limit ?? DEFAULT_LIST_WORKFLOWS_LIMIT,
             after: parameters.after,
             orderBy: CoreWorkflowOrderByField.UPDATED_AT,
             orderByDirection: CoreWorkflowOrderByDirection.DESC,
@@ -55,7 +63,7 @@ export const createListWorkflowsTool = (
                   rules: [
                     {
                       fieldKey: CoreWorkflowFilterFieldKey.STATUSES,
-                      operand: CoreWorkflowFilterOperand.IS,
+                      operand: CoreWorkflowFilterOperand.CONTAINS,
                       value: JSON.stringify([parameters.status]),
                     },
                   ],
