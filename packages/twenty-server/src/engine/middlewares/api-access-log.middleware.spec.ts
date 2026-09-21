@@ -112,7 +112,6 @@ describe('ApiAccessLogMiddleware', () => {
       buildRequest({
         user: { id: 'user-id' },
         workspaceId: 'workspace-id',
-        userWorkspaceId: 'user-workspace-id',
         ip: '85.222.104.50',
       } as unknown as Partial<Request>),
     );
@@ -120,7 +119,6 @@ describe('ApiAccessLogMiddleware', () => {
     expect(line).toContain('actor=user');
     expect(line).toContain('actor_id=user-id');
     expect(line).toContain('workspace_id=workspace-id');
-    expect(line).toContain('user_workspace_id=user-workspace-id');
     expect(line).toContain('client_ip=85.222.104.50');
   });
 

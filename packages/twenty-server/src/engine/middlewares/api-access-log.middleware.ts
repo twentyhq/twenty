@@ -67,7 +67,6 @@ export class ApiAccessLogMiddleware implements NestMiddleware {
       duration_ms: Date.now() - startedAtMs,
       ...this.formatActor(request),
       workspace_id: request.workspaceId,
-      user_workspace_id: request.userWorkspaceId,
       auth_provider: request.authProvider ?? undefined,
       token_type: request.tokenType,
       impersonator_user_workspace_id:
