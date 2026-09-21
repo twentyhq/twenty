@@ -35,8 +35,7 @@ export const isMatchingMultiSelectFilter = ({
       const inList = (multiSelectFilter as Record<string, unknown>).in;
       if (Array.isArray(inList)) {
         return (
-          Array.isArray(value) &&
-          inList.some((item) => value.includes(item))
+          Array.isArray(value) && inList.some((item) => value.includes(item))
         );
       }
       return Array.isArray(value) && value.includes(inList as string);
@@ -46,7 +45,8 @@ export const isMatchingMultiSelectFilter = ({
       return Array.isArray(value) && value.includes(eqVal);
     }
     case (multiSelectFilter as Record<string, unknown>).neq !== undefined: {
-      const neqVal = (multiSelectFilter as Record<string, unknown>).neq as string;
+      const neqVal = (multiSelectFilter as Record<string, unknown>)
+        .neq as string;
       return Array.isArray(value) && !value.includes(neqVal);
     }
     case multiSelectFilter.isEmptyArray !== undefined: {
