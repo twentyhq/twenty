@@ -1843,14 +1843,11 @@ msgstr "Không thể thêm quyền trên các đối tượng hệ thống."
 msgid "Cannot complete operation due to related records."
 msgstr "Không thể hoàn tất thao tác do các bản ghi liên quan."
 
-<<<<<<< HEAD
 #. js-lingui-id: 6Sk/wo
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Cannot create blocklist entry for another workspace member."
 msgstr "Không thể tạo mục trong danh sách chặn cho thành viên tổ chức khác."
 
-=======
->>>>>>> twenty/v2.41.0
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
@@ -12977,13 +12974,8 @@ msgstr "tổ chức đang bị tạm ngưng."
 
 #. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-<<<<<<< HEAD
 msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
 msgstr "Đã đạt giới hạn số lượng tổ chức. Cần có khóa doanh nghiệp hợp lệ để tạo thêm tổ chức."
-=======
-msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
-msgstr "Đã đạt giới hạn số lượng không gian làm việc. Cần có khóa Tổ chức hợp lệ để tạo thêm không gian làm việc."
->>>>>>> twenty/v2.41.0
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts

@@ -10,8 +10,8 @@ import { type SocialSsoSignInUpActionType } from '@/auth/types/socialSsoSignInUp
 import { useLingui } from '@lingui/react/macro';
 import { memo, useContext } from 'react';
 import { IconDos } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/layout';
-import { MainButton } from 'twenty-ui/input';
+import { MainButton } from 'twenty-ui/components';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
@@ -49,12 +49,11 @@ export const SignInUpWithDosId = ({
     <>
       <StyledSsoButtonContainer>
         <MainButton
-          Icon={DosIdIcon}
-          title={t`Continue with DOS ID`}
+          startIcon={<DosIdIcon />}
           onClick={handleClick}
-          variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
           fullWidth
-        />
+          variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
+        >{t`Continue with DOS ID`}</MainButton>
         {isLastUsed && (isGlobalScope || hasMultipleAuthMethods) && (
           <LastUsedPill />
         )}

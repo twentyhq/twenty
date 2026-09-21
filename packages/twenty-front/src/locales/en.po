@@ -2080,13 +2080,8 @@ msgstr "AI Usage"
 
 #. js-lingui-id: jSHIk0
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-<<<<<<< HEAD
 msgid "AI usage analytics across workspaces is available with an Enterprise key."
 msgstr "AI usage analytics across organizations is available with an Enterprise key."
-=======
-msgid "AI usage analytics across workspaces is available with an Organization key."
-msgstr "AI usage analytics across workspaces is available with an Organization key."
->>>>>>> twenty/v2.41.0
 
 #. js-lingui-id: 55MeVT
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -3016,16 +3011,12 @@ msgstr "Ask a workspace admin to raise the limit."
 msgid "Ask AI"
 msgstr "Ask AI"
 
-<<<<<<< HEAD
 #. js-lingui-id: HiVVqo
 #: src/modules/ai/components/AiChatEditorSection.tsx
 msgid "Ask your workspace admin to enable an AI model."
 msgstr "Ask your organization admin to enable an AI model."
 
 #. js-lingui-id: mc9nK2
-=======
-#. js-lingui-id: cmkudK
->>>>>>> twenty/v2.41.0
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask anything, @ a record or / a skill..."
 msgstr "Ask anything, @ a record or / a skill..."
@@ -4949,14 +4940,11 @@ msgstr "Configure IMAP settings to receive and sync your emails."
 msgid "Configure SMTP settings to send emails from your account."
 msgstr "Configure SMTP settings to send emails from your account."
 
-<<<<<<< HEAD
 #. js-lingui-id: TiCmQz
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Configure the default AI models for all workspaces"
 msgstr "Configure the default AI models for all organizations"
 
-=======
->>>>>>> twenty/v2.41.0
 #. js-lingui-id: CcCy4C
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Configure the remote MCP server through Warp's agent settings."
@@ -13823,16 +13811,12 @@ msgstr "No agents match your search"
 msgid "No AI consumption recorded for this user."
 msgstr "No AI consumption recorded for this user."
 
-<<<<<<< HEAD
 #. js-lingui-id: 1GMOHe
 #: src/modules/ai/hooks/useAgentChat.ts
 msgid "No AI models are enabled in this workspace."
 msgstr "No AI models are enabled in this organization."
 
 #. js-lingui-id: zcsNvp
-=======
-#. js-lingui-id: iH1iv+
->>>>>>> twenty/v2.41.0
 #: src/modules/ai/components/AiChatEditorSection.tsx
 #: src/modules/ai/hooks/useAgentChat.ts
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -14232,22 +14216,10 @@ msgstr "No metrics data available"
 msgid "No microphone is available. Connect one and try again."
 msgstr "No microphone is available. Connect one and try again."
 
-<<<<<<< HEAD
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
 msgstr "No models available. Please configure AI models in your organization settings."
-=======
-#. js-lingui-id: WGQJB3
-#: src/modules/settings/ai/utils/getAiModelModeDescription.ts
-msgid "No model available"
-msgstr "No model available"
-
-#. js-lingui-id: xo340M
-#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
-msgid "No model is available for this mode."
-msgstr "No model is available for this mode."
->>>>>>> twenty/v2.41.0
 
 #. js-lingui-id: 9VrTfZ
 #: src/modules/activities/notes/components/NotesCardContent.tsx
@@ -15095,13 +15067,8 @@ msgstr "One or more filters reference deactivated or deleted fields and will be 
 
 #. js-lingui-id: 1WZTTl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-<<<<<<< HEAD
 msgid "One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats."
 msgstr "One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Crove on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats."
-=======
-msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
-msgstr "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
->>>>>>> twenty/v2.41.0
 
 #. js-lingui-id: JEtonz
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -18460,14 +18427,11 @@ msgstr "Select Type"
 msgid "Select value"
 msgstr "Select value"
 
-<<<<<<< HEAD
 #. js-lingui-id: RKE3bT
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Select which models appear as recommended in the workspace model picker"
 msgstr "Select which models appear as recommended in the organization model picker"
 
-=======
->>>>>>> twenty/v2.41.0
 #. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Select your language and adjust the size of the interface"

@@ -167,7 +167,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             ]
               .filter(({ id }) => id !== currentWorkspace?.id)
               .slice(0, 3)
-<<<<<<< HEAD
               .map((availableWorkspace) => {
                 const { pathname, searchParams } =
                   getAvailableWorkspacePathAndSearchParams(availableWorkspace);
@@ -189,8 +188,8 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                       text={availableWorkspace.displayName ?? t`(No name)`}
                       avatar={
                         <Avatar
-                          placeholder={availableWorkspace.displayName || ''}
-                          avatarUrl={getAbsoluteImageUrl(
+                          name={availableWorkspace.displayName || ''}
+                          src={getAbsoluteImageUrl(
                             availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
                           )}
                         />
@@ -200,33 +199,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                   </UndecoratedLink>
                 );
               })}
-=======
-              .map((availableWorkspace) => (
-                <UndecoratedLink
-                  key={availableWorkspace.id}
-                  to={buildWorkspaceUrl(
-                    getWorkspaceUrl(availableWorkspace.workspaceUrls),
-                  )}
-                  onClick={(event) => {
-                    event?.preventDefault();
-                    handleChange(availableWorkspace);
-                  }}
-                >
-                  <MenuItemSelectAvatar
-                    text={availableWorkspace.displayName ?? t`(No name)`}
-                    avatar={
-                      <Avatar
-                        name={availableWorkspace.displayName || ''}
-                        src={getAbsoluteImageUrl(
-                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                        )}
-                      />
-                    }
-                    selected={false}
-                  />
-                </UndecoratedLink>
-              ))}
->>>>>>> twenty/v2.41.0
             {availableWorkspacesCount > 4 && (
               <MenuItem
                 LeftIcon={IconSwitchHorizontal}
