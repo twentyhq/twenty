@@ -460,10 +460,7 @@ export class WorkflowDatabaseEventTriggerListener {
       return null;
     }
 
-    const settings = target.definition
-      .settings as BaseDatabaseEventTriggerSettings;
-
-    if (settings?.eventName !== databaseEventName) {
+    if (target.definition.settings.eventName !== databaseEventName) {
       return null;
     }
 

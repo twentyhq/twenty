@@ -12,17 +12,21 @@ import {
   type WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-export type PublishedCoreTriggerTarget =
+export type PublishedCoreTriggerTarget<
+  TTriggerType extends WorkflowTriggerType,
+> =
   | ({
       status: 'RESOLVED';
       workflowId: string;
       legacyWorkflowId?: string;
-      definition: WorkflowTrigger;
+      definition: Extract<WorkflowTrigger, { type: TTriggerType }>;
     } & CoreDispatchIds)
   | { status: 'UNRESOLVABLE'; reason: string }
   | { status: 'NOT_APPLICABLE' };
 
-export const resolvePublishedCoreTriggerTarget = ({
+export const resolvePublishedCoreTriggerTarget = <
+  TTriggerType extends WorkflowTriggerType,
+>({
   workflow,
   publishedVersion,
   expectedTriggerType,
@@ -37,8 +41,8 @@ export const resolvePublishedCoreTriggerTarget = ({
         'id' | 'coreWorkflowId' | 'status' | 'workspaceWorkflowVersionId'
       > & { triggers: WorkflowTrigger[] | null })
     | null;
-  expectedTriggerType: WorkflowTriggerType;
-}): PublishedCoreTriggerTarget => {
+  expectedTriggerType: TTriggerType;
+}): PublishedCoreTriggerTarget<TTriggerType> => {
   if (!isDefined(workflow)) {
     return { status: 'UNRESOLVABLE', reason: 'workflow-not-found' };
   }
@@ -65,7 +69,7 @@ export const resolvePublishedCoreTriggerTarget = ({
     status: 'RESOLVED',
     workflowId: workflow.id,
     legacyWorkflowId: workflow.workspaceWorkflowId ?? undefined,
-    definition,
+    definition: definition as Extract<WorkflowTrigger, { type: TTriggerType }>,
     ...buildCoreDispatchIds({
       coreWorkflowVersionId: publishedVersion.id,
       workspaceWorkflowVersionId: publishedVersion.workspaceWorkflowVersionId,
