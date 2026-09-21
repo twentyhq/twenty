@@ -906,7 +906,9 @@ Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` elem
 
 ### Media capture
 
-`navigator.mediaDevices.getUserMedia()` and `MediaRecorder` work inside front components through sandbox polyfills, so standard recording code runs unchanged and `MediaRecorder.isTypeSupported` answers for common container/codec combinations. Detailed `getUserMedia` constraint objects are accepted but not forwarded — the host captures with its defaults for the requested kinds — and only one capture can be live at a time across applications. Store a recorded `Blob` with the `uploadFile` host function.
+Declare `microphone`, `camera`, or both in the `requestedCapabilities` array passed to `defineApplication()` before using `navigator.mediaDevices.getUserMedia()`. Users approve these capabilities when installing the app. Twenty does not ask again for each capture, but browser and operating system permissions still apply. App updates cannot add media capabilities beyond those approved at installation. An orange dot in the workspace header indicates active capture. Hover over or select the dot to see the apps using the microphone or camera and stop their capture. Pending requests appear as an outlined dot with a cancellation control. A missing capability rejects the request before the browser or operating system is asked for permission.
+
+`getUserMedia()` and `MediaRecorder` run through sandbox polyfills, so standard recording code and `MediaRecorder.isTypeSupported()` work unchanged after approval. Detailed constraint objects are accepted but not forwarded. The host captures with its defaults for the requested kinds. Different applications can capture concurrently, and stopping an app affects only its own sessions. Each front component supports one pending or active capture at a time. Store a recorded `Blob` with the `uploadFile` host function.
 
 ### Other gaps
 

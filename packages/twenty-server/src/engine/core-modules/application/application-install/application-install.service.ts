@@ -4,12 +4,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { promises as fs } from 'fs';
 import { isAbsolute, relative, resolve } from 'path';
 
-import { Manifest } from 'twenty-shared/application';
+import {
+  type ApplicationCapability,
+  Manifest,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
+import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import {
@@ -81,6 +85,7 @@ export class ApplicationInstallService {
     version?: string;
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
+    hasUserApprovedCapabilities?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
@@ -121,6 +126,7 @@ export class ApplicationInstallService {
           workspaceId: params.workspaceId,
           skipWorkspaceCompatibilityCheck:
             params.skipWorkspaceCompatibilityCheck,
+          hasUserApprovedCapabilities: params.hasUserApprovedCapabilities,
         }),
       buildApplicationLifecycleLockKey({
         workspaceId: params.workspaceId,
@@ -136,6 +142,7 @@ export class ApplicationInstallService {
       version?: string;
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
+      hasUserApprovedCapabilities?: boolean;
     },
   ): Promise<boolean> {
     // Re-read inside the lock so a concurrent tarball upload cannot make us
@@ -192,6 +199,7 @@ export class ApplicationInstallService {
       version?: string;
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
+      hasUserApprovedCapabilities?: boolean;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -250,6 +258,7 @@ export class ApplicationInstallService {
       version?: string;
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
+      hasUserApprovedCapabilities?: boolean;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -294,10 +303,19 @@ export class ApplicationInstallService {
       );
     }
 
+    const approvedCapabilities = toApplicationCapabilities(
+      appRegistration.manifest?.application?.requestedCapabilities,
+    );
+    const grantedCapabilities = toApplicationCapabilities(
+      resolvedPackage.manifest.application.requestedCapabilities,
+    ).filter((capability) => approvedCapabilities.includes(capability));
+
     const application = await this.ensureApplicationExists({
       existingApplication,
       universalIdentifier,
       name: resolvedPackage.manifest.application.displayName,
+      grantedCapabilities,
+      hasUserApprovedCapabilities: params.hasUserApprovedCapabilities === true,
       logo:
         resolvedPackage.manifest.application.logo ??
         resolvedPackage.manifest.application.logoUrl ??
@@ -785,27 +803,47 @@ export class ApplicationInstallService {
     return file.id;
   }
 
-  private async ensureApplicationExists(params: {
+  private async ensureApplicationExists({
+    existingApplication,
+    universalIdentifier,
+    name,
+    grantedCapabilities,
+    hasUserApprovedCapabilities,
+    logo,
+    workspaceId,
+    applicationRegistrationId,
+    sourceType,
+  }: {
     existingApplication: ApplicationEntity | null;
     universalIdentifier: string;
     name: string;
+    grantedCapabilities: ApplicationCapability[];
+    hasUserApprovedCapabilities: boolean;
     logo: string | null;
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
   }): Promise<ApplicationEntity> {
-    if (isDefined(params.existingApplication)) {
-      return params.existingApplication;
+    if (isDefined(existingApplication)) {
+      if (!hasUserApprovedCapabilities) {
+        return existingApplication;
+      }
+
+      return await this.applicationService.update(existingApplication.id, {
+        grantedCapabilities,
+        workspaceId,
+      });
     }
 
     return await this.applicationService.create({
-      universalIdentifier: params.universalIdentifier,
-      name: params.name,
-      logo: params.logo,
-      sourcePath: params.universalIdentifier,
-      sourceType: params.sourceType,
-      applicationRegistrationId: params.applicationRegistrationId,
-      workspaceId: params.workspaceId,
+      universalIdentifier,
+      name,
+      grantedCapabilities,
+      logo,
+      sourcePath: universalIdentifier,
+      sourceType,
+      applicationRegistrationId,
+      workspaceId,
     });
   }
 }
