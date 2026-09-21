@@ -30,18 +30,14 @@ describe('getActionHeaderTypeOrThrow', () => {
     expect(getActionHeaderTypeOrThrow('HTTP_REQUEST').message).toBe('Core');
   });
 
-  it('should return "AI" for AI_AGENT action type', () => {
-    expect(getActionHeaderTypeOrThrow('AI_AGENT').message).toBe('AI');
+  it.each(['AI_AGENT', 'CLASSIFY'] as const)('labels %s as AI', (type) => {
+    expect(getActionHeaderTypeOrThrow(type).message).toBe('AI');
   });
-});
 
-it.each(['AI_AGENT', 'CLASSIFY'] as const)('labels %s as AI', (type) => {
-  expect(getActionHeaderTypeOrThrow(type).message).toBe('AI');
+  it.each(['ITERATOR', 'FILTER', 'IF_ELSE', 'DELAY'] as const)(
+    'labels %s as Flow',
+    (type) => {
+      expect(getActionHeaderTypeOrThrow(type).message).toBe('Flow');
+    },
+  );
 });
-
-it.each(['ITERATOR', 'FILTER', 'IF_ELSE', 'DELAY'] as const)(
-  'labels %s as Flow',
-  (type) => {
-    expect(getActionHeaderTypeOrThrow(type).message).toBe('Flow');
-  },
-);
