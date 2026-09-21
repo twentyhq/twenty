@@ -21,4 +21,14 @@ describe('App installation', () => {
 
     expect(app).toBeDefined();
   });
+
+  it('should deploy the List My Teams Transcripts function', async () => {
+    const result = await new MetadataApiClient().query({
+      findManyLogicFunctions: { name: true },
+    });
+
+    expect(
+      result.findManyLogicFunctions.map((logicFunction) => logicFunction.name),
+    ).toContain('teams-list-organizer-transcripts');
+  });
 });
