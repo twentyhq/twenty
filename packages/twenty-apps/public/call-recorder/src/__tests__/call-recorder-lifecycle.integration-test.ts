@@ -1118,8 +1118,6 @@ describe('call recorder app lifecycle (integration)', () => {
   });
 
   describe('credit gate', () => {
-    const FIRST_ATTEMPT = { retryCount: 0, maxRetries: 2 };
-
     it('cancels the scheduled bot before it joins when the workspace cannot spend credits', async () => {
       const { callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
@@ -1130,7 +1128,6 @@ describe('call recorder app lifecycle (integration)', () => {
 
       const result = await handlePreJoinCreditCheckJob(
         recall.creditCheckRequests[0],
-        FIRST_ATTEMPT,
       );
       const callRecording = await fetchCallRecording(callRecordingId);
 
@@ -1154,7 +1151,6 @@ describe('call recorder app lifecycle (integration)', () => {
 
       const result = await handlePreJoinCreditCheckJob(
         recall.creditCheckRequests[0],
-        FIRST_ATTEMPT,
       );
       const callRecording = await fetchCallRecording(callRecordingId);
 
