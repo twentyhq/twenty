@@ -15,6 +15,8 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -52,6 +54,7 @@ export class WorkflowCronTriggerCronJob {
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   @Process(WorkflowCronTriggerCronJob.name)
@@ -261,7 +264,21 @@ export class WorkflowCronTriggerCronJob {
         trigger.workflowId,
       );
 
-    if (!isDefined(workflow?.lastPublishedCoreWorkflowVersionId)) {
+    if (!isDefined(workflow)) {
+      await this.captureUnresolvableTrigger(
+        trigger,
+        `workflow ${trigger.workflowId} not found in core`,
+      );
+
+      return null;
+    }
+
+    if (!isDefined(workflow.lastPublishedCoreWorkflowVersionId)) {
+      await this.captureUnresolvableTrigger(
+        trigger,
+        `workflow ${workflow.id} has no published core version`,
+      );
+
       return null;
     }
 
@@ -270,10 +287,19 @@ export class WorkflowCronTriggerCronJob {
         trigger.workspaceId,
         workflow.lastPublishedCoreWorkflowVersionId,
       );
-    const definition = version?.triggers?.[0];
+
+    if (!isDefined(version)) {
+      await this.captureUnresolvableTrigger(
+        trigger,
+        `published core version ${workflow.lastPublishedCoreWorkflowVersionId} of workflow ${workflow.id} not found`,
+      );
+
+      return null;
+    }
+
+    const definition = version.triggers?.[0];
 
     if (
-      !isDefined(version) ||
       version.coreWorkflowId !== workflow.id ||
       version.status !== WorkflowVersionStatus.ACTIVE ||
       definition?.type !== WorkflowTriggerType.CRON
@@ -291,6 +317,24 @@ export class WorkflowCronTriggerCronJob {
       }),
       pattern: computeCronPatternFromSchedule(definition),
     };
+  }
+
+  private async captureUnresolvableTrigger(
+    trigger: CachedCronTrigger,
+    reason: string,
+  ): Promise<void> {
+    const message = `Cron trigger for workflow ${trigger.workflowId} in workspace ${trigger.workspaceId} will never fire: ${reason}`;
+
+    this.logger.error(message);
+    this.exceptionHandlerService.captureExceptions([new Error(message)], {
+      workspace: { id: trigger.workspaceId },
+    });
+
+    await this.metricsService.incrementCounterForEvent({
+      key: MetricsKeys.WorkflowTriggerDispatchDropped,
+      eventId: trigger.workspaceId,
+      debugLog: message,
+    });
   }
 
   private async shouldDispatch({

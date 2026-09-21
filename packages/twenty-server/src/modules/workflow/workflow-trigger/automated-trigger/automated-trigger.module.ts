@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { CronModule } from 'src/engine/core-modules/cron/cron.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -25,6 +26,7 @@ import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workf
     CacheStorageModule,
     CronModule,
     FeatureFlagModule,
+    MetricsModule,
     RecordShareModule,
     WorkflowCommonModule,
     WorkspaceCacheModule,

@@ -23,6 +23,8 @@ export enum MetricsKeys {
   WorkflowRunThrottled = 'workflow-run/throttled',
   WorkflowRunFailedToEnqueue = 'workflow-run/failed/to-enqueue',
   WorkflowRunSystemError = 'workflow-run/system-error',
+  WorkflowTriggerDispatchDropped = 'workflow-trigger/dispatch-dropped',
+  WorkflowTriggerDispatchRecovered = 'workflow-trigger/dispatch-recovered',
   WorkflowRunStuckRunningDetected = 'workflow-run/stuck-running/detected',
   WorkflowRunStuckRunningFalsePositive = 'workflow-run/stuck-running/false-positive',
   WorkflowCoreConsistencyWorkflowDrift = 'workflow-core-consistency/workflow/drift',
