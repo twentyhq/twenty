@@ -1855,14 +1855,11 @@ msgstr "Cannot add permissions on system objects."
 msgid "Cannot complete operation due to related records."
 msgstr "Cannot complete operation due to related records."
 
-<<<<<<< HEAD
 #. js-lingui-id: 6Sk/wo
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Cannot create blocklist entry for another workspace member."
 msgstr "Cannot create blocklist entry for another organization member."
 
-=======
->>>>>>> twenty/v2.41.0
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
@@ -12989,13 +12986,8 @@ msgstr "Organization is suspended."
 
 #. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-<<<<<<< HEAD
 msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
 msgstr "Organization limit reached. A valid enterprise key is required to create more organizations."
-=======
-msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
-msgstr "Workspace limit reached. A valid Organization key is required to create more workspaces."
->>>>>>> twenty/v2.41.0
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts

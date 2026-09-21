@@ -2068,13 +2068,8 @@ msgstr "Mức sử dụng AI"
 
 #. js-lingui-id: jSHIk0
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-<<<<<<< HEAD
 msgid "AI usage analytics across workspaces is available with an Enterprise key."
 msgstr "Phân tích mức sử dụng AI trên các tổ chức có sẵn khi dùng khóa Enterprise."
-=======
-msgid "AI usage analytics across workspaces is available with an Organization key."
-msgstr "Phân tích mức sử dụng AI trên các không gian làm việc có sẵn khi dùng khóa tổ chức."
->>>>>>> twenty/v2.41.0
 
 #. js-lingui-id: 55MeVT
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -4928,14 +4923,11 @@ msgstr "Cấu hình cài đặt IMAP để nhận và đồng bộ email của b
 msgid "Configure SMTP settings to send emails from your account."
 msgstr "Cấu hình cài đặt SMTP để gửi email từ tài khoản của bạn."
 
-<<<<<<< HEAD
 #. js-lingui-id: TiCmQz
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Configure the default AI models for all workspaces"
 msgstr "Cấu hình các mô hình AI mặc định cho tất cả tổ chức"
 
-=======
->>>>>>> twenty/v2.41.0
 #. js-lingui-id: CcCy4C
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Configure the remote MCP server through Warp's agent settings."
@@ -13802,16 +13794,12 @@ msgstr "Không có tác nhân nào nào phù hợp với tìm kiếm của bạn
 msgid "No AI consumption recorded for this user."
 msgstr "Không có ghi nhận mức tiêu thụ AI cho người dùng này."
 
-<<<<<<< HEAD
 #. js-lingui-id: 1GMOHe
 #: src/modules/ai/hooks/useAgentChat.ts
 msgid "No AI models are enabled in this workspace."
 msgstr "Không có mô hình AI nào được bật trong tổ chức này."
 
 #. js-lingui-id: zcsNvp
-=======
-#. js-lingui-id: iH1iv+
->>>>>>> twenty/v2.41.0
 #: src/modules/ai/components/AiChatEditorSection.tsx
 #: src/modules/ai/hooks/useAgentChat.ts
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -14211,22 +14199,10 @@ msgstr "Không có dữ liệu chỉ số khả dụng"
 msgid "No microphone is available. Connect one and try again."
 msgstr "Không có micrô nào khả dụng. Hãy kết nối một micrô rồi thử lại."
 
-<<<<<<< HEAD
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
 msgstr "Không có mô hình nào có sẵn. Vui lòng cấu hình mô hình AI trong cài đặt tổ chức của bạn."
-=======
-#. js-lingui-id: WGQJB3
-#: src/modules/settings/ai/utils/getAiModelModeDescription.ts
-msgid "No model available"
-msgstr "Không có mô hình nào khả dụng"
-
-#. js-lingui-id: xo340M
-#: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
-msgid "No model is available for this mode."
-msgstr "Không có mô hình nào khả dụng cho chế độ này."
->>>>>>> twenty/v2.41.0
 
 #. js-lingui-id: 9VrTfZ
 #: src/modules/activities/notes/components/NotesCardContent.tsx
@@ -15074,13 +15050,8 @@ msgstr "Một hoặc nhiều bộ lọc tham chiếu đến các trường đã 
 
 #. js-lingui-id: 1WZTTl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-<<<<<<< HEAD
 msgid "One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats."
 msgstr "Mỗi gói đăng ký cung cấp một khóa enterprise để vận hành một môi trường sản xuất và một môi trường dàn dựng (staging) hoặc thử nghiệm tiềm năng. Để chạy môi trường dàn dựng hoặc thử nghiệm, hãy cài đặt Crove trên máy chủ thứ hai, kích hoạt bằng cùng khóa enterprise này, sau đó đăng ký máy chủ đó là một môi trường phát triển. Các môi trường phát triển mở khóa các tính năng enterprise mà không phát sinh thêm chi phí và không được tính vào số suất môi trường sản xuất của bạn."
-=======
-msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
-msgstr "Mỗi gói đăng ký cung cấp một khóa Tổ chức để vận hành một môi trường sản xuất và một môi trường dàn dựng hoặc thử nghiệm tiềm năng. Để chạy môi trường dàn dựng hoặc thử nghiệm, hãy cài đặt Twenty trên máy chủ thứ hai, kích hoạt bằng cùng khóa Tổ chức này, sau đó đăng ký máy chủ đó là một môi trường phát triển. Các môi trường phát triển mở khóa các tính năng cao cấp mà không phát sinh thêm chi phí và không được tính vào số suất môi trường sản xuất của bạn."
->>>>>>> twenty/v2.41.0
 
 #. js-lingui-id: JEtonz
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -18439,14 +18410,11 @@ msgstr "Chọn loại"
 msgid "Select value"
 msgstr "Chọn một giá trị"
 
-<<<<<<< HEAD
 #. js-lingui-id: RKE3bT
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Select which models appear as recommended in the workspace model picker"
 msgstr "Chọn những mô hình sẽ hiển thị là được đề xuất trong bộ chọn mô hình của tổ chức"
 
-=======
->>>>>>> twenty/v2.41.0
 #. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Select your language and adjust the size of the interface"
