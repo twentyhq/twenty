@@ -92,6 +92,11 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
         (timelineActivityType) => timelineActivityType.label,
       ),
   },
+  settingPage: {
+    entityKind: 'setting page',
+    getCandidates: (manifest) =>
+      toCandidates(manifest.settingPages, (settingPage) => settingPage.title),
+  },
   view: {
     entityKind: 'view',
     getCandidates: (manifest) =>

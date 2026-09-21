@@ -556,6 +556,17 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     application: null,
   },
+  settingPage: {
+    workspace: null,
+    application: null,
+    frontComponent: {
+      metadataName: 'frontComponent',
+      foreignKey: 'frontComponentId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'frontComponentUniversalIdentifier',
+    },
+  },
   searchFieldMetadata: {
     workspace: null,
     application: null,

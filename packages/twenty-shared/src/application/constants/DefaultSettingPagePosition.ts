@@ -1,0 +1,1 @@
+export const DEFAULT_SETTING_PAGE_POSITION = 0;

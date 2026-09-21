@@ -129,4 +129,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     fieldMetadata: true,
     frontComponent: true,
   },
+  settingPage: {
+    frontComponent: true,
+  },
 } as const satisfies MetadataRequiredForValidation;

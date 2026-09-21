@@ -64,6 +64,7 @@ const deriveAllMetadataEventsFromDeleteAction = ({
     case 'webhook':
     case 'connectionProvider':
     case 'timelineActivityType':
+    case 'settingPage':
     case 'searchFieldMetadata': {
       const flatEntityToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow<
         MetadataFlatEntity<typeof flatAction.metadataName>

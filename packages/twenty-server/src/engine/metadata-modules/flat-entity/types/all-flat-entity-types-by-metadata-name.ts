@@ -69,6 +69,17 @@ import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
 import { type UniversalFlatTimelineActivityType } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-timeline-activity-type.type';
+import { type FlatSettingPageMaps } from 'src/engine/metadata-modules/flat-setting-page/types/flat-setting-page-maps.type';
+import { type FlatSettingPage } from 'src/engine/metadata-modules/flat-setting-page/types/flat-setting-page.type';
+import { type UniversalFlatSettingPage } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-setting-page.type';
+import {
+  type FlatCreateSettingPageAction,
+  type FlatDeleteSettingPageAction,
+  type FlatUpdateSettingPageAction,
+  type UniversalCreateSettingPageAction,
+  type UniversalDeleteSettingPageAction,
+  type UniversalUpdateSettingPageAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/setting-page/types/workspace-migration-setting-page-action.type';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
@@ -869,5 +880,21 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatTimelineActivityType;
     universalFlatEntity: UniversalFlatTimelineActivityType;
     entity: MetadataEntity<'timelineActivityType'>;
+  };
+  settingPage: {
+    flatEntityMaps: FlatSettingPageMaps;
+    universalActions: {
+      create: UniversalCreateSettingPageAction;
+      update: UniversalUpdateSettingPageAction;
+      delete: UniversalDeleteSettingPageAction;
+    };
+    flatActions: {
+      create: FlatCreateSettingPageAction;
+      update: FlatUpdateSettingPageAction;
+      delete: FlatDeleteSettingPageAction;
+    };
+    flatEntity: FlatSettingPage;
+    universalFlatEntity: UniversalFlatSettingPage;
+    entity: MetadataEntity<'settingPage'>;
   };
 };

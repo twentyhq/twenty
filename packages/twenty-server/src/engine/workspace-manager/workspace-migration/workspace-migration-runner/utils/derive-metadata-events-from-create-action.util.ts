@@ -100,6 +100,7 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'webhook':
     case 'connectionProvider':
     case 'timelineActivityType':
+    case 'settingPage':
     case 'searchFieldMetadata': {
       return [
         {
