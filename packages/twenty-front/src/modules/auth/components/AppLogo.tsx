@@ -4,9 +4,9 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledAppLogoContainer = styled.div<{ size?: number }>`
   align-items: center;
-  background-color: #0a0a0c;
+  background-color: ${themeCssVariables.background.invertedPrimary};
   border-radius: ${themeCssVariables.border.radius.md};
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: ${themeCssVariables.boxShadow.light};
   display: flex;
   height: ${({ size }) => (size ? `${size}px` : '100%')};
   justify-content: center;

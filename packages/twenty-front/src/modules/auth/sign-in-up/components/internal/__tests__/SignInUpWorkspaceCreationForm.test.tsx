@@ -79,7 +79,7 @@ describe('SignInUpWorkspaceCreationForm', () => {
       expect(screen.getByPlaceholderText('apple')).toBeInTheDocument();
 
       const createButton = screen.getByRole('button', {
-        name: 'Create workspace',
+        name: 'Create organization',
       });
       expect(createButton).toBeEnabled();
 
@@ -106,7 +106,7 @@ describe('SignInUpWorkspaceCreationForm', () => {
 
       await act(async () => {
         fireEvent.click(
-          screen.getByRole('button', { name: 'Create workspace' }),
+          screen.getByRole('button', { name: 'Create organization' }),
         );
       });
 
@@ -127,7 +127,7 @@ describe('SignInUpWorkspaceCreationForm', () => {
 
       await act(async () => {
         fireEvent.click(
-          screen.getByRole('button', { name: 'Create workspace' }),
+          screen.getByRole('button', { name: 'Create organization' }),
         );
       });
 
@@ -155,7 +155,7 @@ describe('SignInUpWorkspaceCreationForm', () => {
         ),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('button', { name: 'Create workspace' }),
+        screen.getByRole('button', { name: 'Create organization' }),
       ).toBeDisabled();
 
       fireEvent.click(screen.getByRole('button', { name: 'mystripe' }));
@@ -179,7 +179,7 @@ describe('SignInUpWorkspaceCreationForm', () => {
 
       await act(async () => {
         fireEvent.click(
-          screen.getByRole('button', { name: 'Create workspace' }),
+          screen.getByRole('button', { name: 'Create organization' }),
         );
       });
 

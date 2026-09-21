@@ -180,7 +180,12 @@ export const useClientConfig = (): UseClientConfigResult => {
       setAuthProviders({
         google: clientConfig.authProviders.google,
         microsoft: clientConfig.authProviders.microsoft,
-        password: clientConfig.authProviders.password,
+        // Break-glass: ?direct=1 keeps the password form reachable (for
+        // AUTH_BREAK_GLASS_EMAILS admins) while password auth is disabled
+        // server-side; the server still enforces the allowlist.
+        password:
+          clientConfig.authProviders.password ||
+          new URLSearchParams(window.location.search).has('direct'),
         dosId: clientConfig.authProviders.dosId,
         magicLink: false,
         sso: clientConfig.authProviders.sso,

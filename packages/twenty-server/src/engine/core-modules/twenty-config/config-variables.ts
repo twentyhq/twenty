@@ -78,6 +78,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
+      'Comma-separated admin emails that keep the password mutations reachable while AUTH_PASSWORD_ENABLED is false. Escape hatch for signing in with password (e.g. /welcome?direct=1) when the DOS ID provider is unreachable.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AUTH_BREAK_GLASS_EMAILS: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
       'Prefills tim@apple.dev in the login form, used in local development for quicker sign-in',
     type: ConfigVariableType.BOOLEAN,
   })

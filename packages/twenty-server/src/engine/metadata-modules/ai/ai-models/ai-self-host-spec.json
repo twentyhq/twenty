@@ -5,6 +5,7 @@
       "npm": "@ai-sdk/openai",
       "label": "OpenAI",
       "apiKey": "{{OPENAI_API_KEY}}",
+      "baseUrl": "{{OPENAI_BASE_URL}}",
       "models": {
         "vendor": "openai"
       }

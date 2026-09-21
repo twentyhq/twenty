@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { basename, dirname, posix } from 'path';
+import { basename, dirname, join, posix } from 'path';
 import { type Readable } from 'stream';
 
 import { type ServerFileFolder } from 'twenty-shared/types';
@@ -52,16 +52,13 @@ export class ServerFileStorageService {
       );
     }
 
-    const filePath = posix.join(
-      fileFolder,
-      applicationRegistrationId,
-      resourcePath,
-    ).replace(/\/+/g, '/');
+    const filePath = posix
+      .join(fileFolder, applicationRegistrationId, resourcePath)
+      .replace(/\/+/g, '/');
 
-    const onStorageFilePath = posix.join(
-      SERVER_FILE_STORAGE_PREFIX,
-      filePath,
-    ).replace(/\/+/g, '/');
+    const onStorageFilePath = posix
+      .join(SERVER_FILE_STORAGE_PREFIX, filePath)
+      .replace(/\/+/g, '/');
 
     validateStoragePathIsWithinServerScopeOrThrow({
       onStoragePath: onStorageFilePath,
