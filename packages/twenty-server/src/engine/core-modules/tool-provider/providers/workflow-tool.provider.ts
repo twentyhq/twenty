@@ -98,6 +98,7 @@ export class WorkflowToolProvider implements ToolProvider {
       workspaceId: context.workspaceId,
       rolePermissionConfig: context.rolePermissionConfig,
       actorContext: context.actorContext,
+      userWorkspaceId: context.userWorkspaceId,
     });
   }
 }

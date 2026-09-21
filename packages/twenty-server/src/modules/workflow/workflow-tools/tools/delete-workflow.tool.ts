@@ -33,6 +33,7 @@ export const createDeleteWorkflowTool = (
 
       const coreWorkflow = await deps.coreWorkflowListService.findOneById({
         workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
         coreWorkflowId,
       });
 

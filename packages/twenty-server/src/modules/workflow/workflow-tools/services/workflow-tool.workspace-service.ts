@@ -78,15 +78,18 @@ export class WorkflowToolWorkspaceService {
     workspaceId,
     rolePermissionConfig,
     actorContext,
+    userWorkspaceId,
   }: {
     workspaceId: string;
     rolePermissionConfig: RolePermissionConfig;
     actorContext?: ActorMetadata;
+    userWorkspaceId?: string;
   }): ToolSet {
     const context: WorkflowToolContext = {
       workspaceId,
       rolePermissionConfig,
       actorContext,
+      userWorkspaceId,
     };
 
     const tools = [

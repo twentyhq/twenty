@@ -31,4 +31,5 @@ export type WorkflowToolContext = {
   workspaceId: string;
   rolePermissionConfig: RolePermissionConfig;
   actorContext?: ActorMetadata;
+  userWorkspaceId?: string;
 };

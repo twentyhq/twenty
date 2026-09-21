@@ -226,6 +226,7 @@ const findInitialDraftCoreVersionIdOrThrow = async ({
   const coreWorkflowVersions =
     await deps.coreWorkflowVersionListService.findManyByCoreWorkflowId({
       workspaceId,
+      userWorkspaceId: context.userWorkspaceId,
       coreWorkflowId,
     });
 

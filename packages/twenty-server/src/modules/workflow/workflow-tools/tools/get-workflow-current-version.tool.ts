@@ -38,6 +38,7 @@ export const createGetWorkflowCurrentVersionTool = (
 
       const coreWorkflow = await deps.coreWorkflowListService.findOneById({
         workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
         coreWorkflowId,
       });
 
@@ -51,6 +52,7 @@ export const createGetWorkflowCurrentVersionTool = (
       const coreWorkflowVersions =
         await deps.coreWorkflowVersionListService.findManyByCoreWorkflowId({
           workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
           coreWorkflowId,
         });
 
@@ -74,7 +76,11 @@ export const createGetWorkflowCurrentVersionTool = (
 
       const coreWorkflowVersion =
         await deps.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId(
-          { workspaceId, coreWorkflowVersionId: currentVersion.id },
+          {
+            workspaceId,
+            userWorkspaceId: context.userWorkspaceId,
+            coreWorkflowVersionId: currentVersion.id,
+          },
         );
 
       if (!isDefined(coreWorkflowVersion)) {

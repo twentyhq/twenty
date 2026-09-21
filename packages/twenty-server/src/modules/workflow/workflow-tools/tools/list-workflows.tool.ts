@@ -50,27 +50,26 @@ export const createListWorkflowsTool = (
   execute: async (parameters: ListWorkflowsInput) => {
     try {
       const { edges, pageInfo, totalCount } =
-        await deps.coreWorkflowListService.findManyByWorkspaceId(
-          context.workspaceId,
-          {
-            first: parameters.limit ?? DEFAULT_LIST_WORKFLOWS_LIMIT,
-            after: parameters.after,
-            orderBy: CoreWorkflowOrderByField.UPDATED_AT,
-            orderByDirection: CoreWorkflowOrderByDirection.DESC,
-            filter: parameters.status
-              ? {
-                  logicalOperator: CoreWorkflowFilterLogicalOperator.AND,
-                  rules: [
-                    {
-                      fieldKey: CoreWorkflowFilterFieldKey.STATUSES,
-                      operand: CoreWorkflowFilterOperand.CONTAINS,
-                      value: JSON.stringify([parameters.status]),
-                    },
-                  ],
-                }
-              : undefined,
-          },
-        );
+        await deps.coreWorkflowListService.findManyByWorkspaceId({
+          workspaceId: context.workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          first: parameters.limit ?? DEFAULT_LIST_WORKFLOWS_LIMIT,
+          after: parameters.after,
+          orderBy: CoreWorkflowOrderByField.UPDATED_AT,
+          orderByDirection: CoreWorkflowOrderByDirection.DESC,
+          filter: parameters.status
+            ? {
+                logicalOperator: CoreWorkflowFilterLogicalOperator.AND,
+                rules: [
+                  {
+                    fieldKey: CoreWorkflowFilterFieldKey.STATUSES,
+                    operand: CoreWorkflowFilterOperand.CONTAINS,
+                    value: JSON.stringify([parameters.status]),
+                  },
+                ],
+              }
+            : undefined,
+        });
 
       return {
         success: true,
