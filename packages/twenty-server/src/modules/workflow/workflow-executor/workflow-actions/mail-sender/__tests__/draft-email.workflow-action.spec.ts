@@ -5,6 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ConnectedAccountAccessService } from 'src/engine/metadata-modules/connected-account/connected-account-access.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
@@ -80,6 +81,7 @@ describe('DraftEmailWorkflowAction', () => {
             getRepository: jest.fn().mockReturnValue(workspaceMemberRepository),
           },
         },
+        ConnectedAccountAccessService,
         {
           provide: getRepositoryToken(ConnectedAccountEntity),
           useValue: connectedAccountRepository,
@@ -169,6 +171,7 @@ describe('DraftEmailWorkflowAction', () => {
       connectedAccountRepository.find.mockResolvedValue([
         {
           id: MEMBER_ACCOUNT_ID,
+          userWorkspaceId: USER_WORKSPACE_ID,
           provider: ConnectedAccountProvider.GOOGLE,
           connectionParameters: null,
         },

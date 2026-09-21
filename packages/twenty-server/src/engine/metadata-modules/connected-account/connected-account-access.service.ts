@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type FindOptionsRelations, IsNull, Repository } from 'typeorm';
 
 import { type ConnectedAccountOperation } from 'twenty-shared/types';
@@ -36,7 +37,7 @@ export class ConnectedAccountAccessService {
     operation: ConnectedAccountOperation;
   }): Promise<ConnectedAccountEntity[]> {
     const connectedAccounts = await this.findConnectedAccountsForOperation({
-      authContext,
+      workspaceId: authContext.workspace.id,
       operation,
     });
 
@@ -53,7 +54,7 @@ export class ConnectedAccountAccessService {
     operation: ConnectedAccountOperation;
   }): Promise<ConnectedAccountEntity[]> {
     const connectedAccounts = await this.findConnectedAccountsForOperation({
-      authContext,
+      workspaceId: authContext.workspace.id,
       operation,
     });
 
@@ -62,16 +63,36 @@ export class ConnectedAccountAccessService {
     );
   }
 
-  private async findConnectedAccountsForOperation({
-    authContext,
+  async findFirstOwnedConnectedAccount({
+    workspaceId,
+    userWorkspaceId,
     operation,
   }: {
-    authContext: WorkspaceAuthContext;
+    workspaceId: string;
+    userWorkspaceId: string;
+    operation: ConnectedAccountOperation;
+  }): Promise<ConnectedAccountEntity | undefined> {
+    const connectedAccounts = await this.findConnectedAccountsForOperation({
+      workspaceId,
+      operation,
+    });
+
+    return connectedAccounts.find(
+      (connectedAccount) =>
+        connectedAccount.userWorkspaceId === userWorkspaceId,
+    );
+  }
+
+  private async findConnectedAccountsForOperation({
+    workspaceId,
+    operation,
+  }: {
+    workspaceId: string;
     operation: ConnectedAccountOperation;
   }): Promise<ConnectedAccountEntity[]> {
     const connectedAccounts = await this.connectedAccountRepository.find({
       where: {
-        workspaceId: authContext.workspace.id,
+        workspaceId,
         archivedAt: IsNull(),
       },
       order: { createdAt: 'ASC', id: 'ASC' },
@@ -148,39 +169,44 @@ export class ConnectedAccountAccessService {
     return connectedAccount;
   }
 
-  async selectDefaultConnectedAccountOrThrow({
+  async resolveConnectedAccountOrThrow({
     authContext,
+    connectedAccountId,
     operation,
     relations,
   }: {
     authContext: WorkspaceAuthContext;
+    connectedAccountId: string | undefined;
     operation: ConnectedAccountOperation;
     relations?: FindOptionsRelations<ConnectedAccountEntity>;
   }): Promise<ConnectedAccountEntity> {
-    const actableConnectedAccounts = await this.listActableConnectedAccounts({
+    if (isNonEmptyString(connectedAccountId)) {
+      return this.getActableConnectedAccountOrThrow({
+        authContext,
+        connectedAccountId,
+        operation,
+        relations,
+      });
+    }
+
+    const defaultConnectedAccount = selectDefaultConnectedAccount({
       authContext,
-      operation,
+      connectedAccounts: await this.listActableConnectedAccounts({
+        authContext,
+        operation,
+      }),
     });
 
-    const connectedAccount = selectDefaultConnectedAccount({
-      authContext,
-      connectedAccounts: actableConnectedAccounts,
-    });
-
-    if (!isDefined(connectedAccount)) {
+    if (!isDefined(defaultConnectedAccount)) {
       throw new ConnectedAccountException(
         `No connected account available to this caller can perform ${operation}`,
         ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_CANNOT_PERFORM_OPERATION,
       );
     }
 
-    if (!isDefined(relations)) {
-      return connectedAccount;
-    }
-
     return this.getActableConnectedAccountOrThrow({
       authContext,
-      connectedAccountId: connectedAccount.id,
+      connectedAccountId: defaultConnectedAccount.id,
       operation,
       relations,
     });

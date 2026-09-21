@@ -5,6 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ConnectedAccountAccessService } from 'src/engine/metadata-modules/connected-account/connected-account-access.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
@@ -84,6 +85,7 @@ describe('SendEmailWorkflowAction', () => {
             getRepository: jest.fn().mockReturnValue(workspaceMemberRepository),
           },
         },
+        ConnectedAccountAccessService,
         {
           provide: getRepositoryToken(ConnectedAccountEntity),
           useValue: connectedAccountRepository,
@@ -350,6 +352,7 @@ describe('SendEmailWorkflowAction', () => {
       connectedAccountRepository.find.mockResolvedValue([
         {
           id: MEMBER_ACCOUNT_ID,
+          userWorkspaceId: USER_WORKSPACE_ID,
           provider: ConnectedAccountProvider.GOOGLE,
           connectionParameters: null,
         },
@@ -371,11 +374,13 @@ describe('SendEmailWorkflowAction', () => {
       connectedAccountRepository.find.mockResolvedValue([
         {
           id: 'app-connection-id',
+          userWorkspaceId: USER_WORKSPACE_ID,
           provider: ConnectedAccountProvider.APP,
           connectionParameters: null,
         },
         {
           id: MEMBER_ACCOUNT_ID,
+          userWorkspaceId: USER_WORKSPACE_ID,
           provider: ConnectedAccountProvider.GOOGLE,
           connectionParameters: null,
         },
@@ -397,11 +402,13 @@ describe('SendEmailWorkflowAction', () => {
       connectedAccountRepository.find.mockResolvedValue([
         {
           id: 'imap-without-smtp-id',
+          userWorkspaceId: USER_WORKSPACE_ID,
           provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
           connectionParameters: { IMAP: { host: 'imap.example.com' } },
         },
         {
           id: MEMBER_ACCOUNT_ID,
+          userWorkspaceId: USER_WORKSPACE_ID,
           provider: ConnectedAccountProvider.GOOGLE,
           connectionParameters: null,
         },

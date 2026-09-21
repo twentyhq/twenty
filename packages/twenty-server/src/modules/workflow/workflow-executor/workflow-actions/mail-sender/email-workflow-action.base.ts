@@ -2,17 +2,16 @@ import { type ConnectedAccountOperation } from 'twenty-shared/types';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import {
-  canConnectedAccountPerformOperation,
   isDefined,
   isValidUuid,
   resolveInput as resolveWorkflowInput,
 } from 'twenty-shared/utils';
-import { IsNull, type Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountAccessService } from 'src/engine/metadata-modules/connected-account/connected-account-access.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -34,7 +33,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     loggerName: string,
     workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    private readonly connectedAccountAccessService: ConnectedAccountAccessService,
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {
@@ -98,11 +97,6 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     return { ...resolvedInput, connectedAccountId };
   }
 
-  // The sender configured on an email step is either a connected account id
-  // (static pick) or a workspace member id (from a resolved workflow variable).
-  // When it is a workspace member id, resolve that member's first connected
-  // account; otherwise return it unchanged so the regular connected account
-  // flow applies. Only meaningful inside workflow email actions.
   protected async resolveSenderConnectedAccountId(
     senderId: string,
     workspaceId: string,
@@ -111,74 +105,43 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
       return senderId;
     }
 
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMember = await this.findWorkspaceMemberById(senderId);
-
-      if (!isDefined(workspaceMember)) {
-        return senderId;
-      }
-
-      const connectedAccountId =
-        await this.findFirstConnectedAccountIdByWorkspaceMember(
-          workspaceMember,
-          workspaceId,
-        );
-
-      if (!isDefined(connectedAccountId)) {
-        throw new WorkflowStepExecutorException(
-          `Workspace member '${senderId}' has no connected account that can perform ${this.getMode()}`,
-          WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
-        );
-      }
-
-      return connectedAccountId;
-    }, authContext);
-  }
-
-  private async findWorkspaceMemberById(
-    workspaceMemberId: string,
-  ): Promise<WorkspaceMemberWorkspaceEntity | null> {
-    const workspaceMemberRepository =
-      this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
+    const workspaceMember =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager
+            .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
+              shouldBypassPermissionChecks: true,
+            })
+            .findOne({ where: { id: senderId } }),
+        buildSystemAuthContext(workspaceId),
       );
 
-    return workspaceMemberRepository.findOne({
-      where: { id: workspaceMemberId },
-    });
-  }
+    if (!isDefined(workspaceMember)) {
+      return senderId;
+    }
 
-  private async findFirstConnectedAccountIdByWorkspaceMember(
-    workspaceMember: WorkspaceMemberWorkspaceEntity,
-    workspaceId: string,
-  ): Promise<string | null> {
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: { userId: workspaceMember.userId, workspaceId },
     });
 
-    if (!isDefined(userWorkspace)) {
-      return null;
+    const connectedAccount = isDefined(userWorkspace)
+      ? await this.connectedAccountAccessService.findFirstOwnedConnectedAccount(
+          {
+            workspaceId,
+            userWorkspaceId: userWorkspace.id,
+            operation: this.getMode(),
+          },
+        )
+      : undefined;
+
+    if (!isDefined(connectedAccount)) {
+      throw new WorkflowStepExecutorException(
+        `Workspace member '${senderId}' has no connected account that can perform ${this.getMode()}`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
     }
 
-    const connectedAccounts = await this.connectedAccountRepository.find({
-      where: {
-        userWorkspaceId: userWorkspace.id,
-        workspaceId,
-        archivedAt: IsNull(),
-      },
-      order: { createdAt: 'ASC', id: 'ASC' },
-    });
-
-    const operation = this.getMode();
-
-    const emailCapableAccount = connectedAccounts.find((connectedAccount) =>
-      canConnectedAccountPerformOperation({ connectedAccount, operation }),
-    );
-
-    return emailCapableAccount?.id ?? null;
+    return connectedAccount.id;
   }
 
   protected buildStepLog({

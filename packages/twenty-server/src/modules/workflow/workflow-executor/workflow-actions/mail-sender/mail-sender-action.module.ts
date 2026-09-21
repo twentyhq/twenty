@@ -5,7 +5,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
@@ -21,7 +21,8 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     UserRoleModule,
     UserWorkspaceModule,
     WorkflowRunModule,
-    TypeOrmModule.forFeature([ConnectedAccountEntity, UserWorkspaceEntity]),
+    ConnectedAccountMetadataModule,
+    TypeOrmModule.forFeature([UserWorkspaceEntity]),
   ],
   providers: [
     WorkflowExecutionContextService,

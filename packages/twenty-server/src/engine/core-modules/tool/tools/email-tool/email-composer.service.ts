@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
@@ -9,7 +8,7 @@ import {
   ConnectedAccountOperation,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, LessThanOrEqual, type Repository } from 'typeorm';
+import { In, LessThanOrEqual } from 'typeorm';
 import { z } from 'zod';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -24,11 +23,9 @@ import {
 import { type ComposeEmailParams } from 'src/engine/core-modules/tool/tools/email-tool/types/compose-email-params.type';
 import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { getToolAuthContextOrThrow } from 'src/engine/core-modules/tool/utils/get-tool-auth-context-or-throw.util';
 import { ConnectedAccountAccessService } from 'src/engine/metadata-modules/connected-account/connected-account-access.service';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -50,35 +47,10 @@ export class EmailComposerService {
   constructor(
     private readonly connectedAccountAccessService: ConnectedAccountAccessService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileService: FileService,
   ) {}
-
-  private async getConnectedAccountOrThrow({
-    connectedAccountId,
-    authContext,
-    operation,
-  }: {
-    connectedAccountId: string;
-    authContext: WorkspaceAuthContext;
-    operation: ConnectedAccountOperation;
-  }): Promise<ConnectedAccountEntity> {
-    return this.connectedAccountAccessService.getActableConnectedAccountOrThrow(
-      {
-        authContext,
-        connectedAccountId,
-        operation: operation,
-        relations: {
-          messageChannels: {
-            messageFolders: true,
-          },
-        },
-      },
-    );
-  }
 
   private normalizeRecipients(parameters: ComposeEmailParams): {
     to: string[];
@@ -282,7 +254,6 @@ export class EmailComposerService {
     const { workspaceId } = context;
     const authContext = getToolAuthContextOrThrow(context);
     const { subject, body, files, inReplyTo, fromHandle } = parameters;
-    let { connectedAccountId } = parameters;
 
     let recipients: { to: string[]; cc: string[]; bcc: string[] };
 
@@ -318,25 +289,17 @@ export class EmailComposerService {
 
     const toRecipientsDisplay = recipients.to.join(', ');
 
-    const connectedAccount = isNonEmptyString(connectedAccountId)
-      ? await this.getConnectedAccountOrThrow({
-          connectedAccountId,
-          authContext,
-          operation,
-        })
-      : await this.connectedAccountAccessService.selectDefaultConnectedAccountOrThrow(
-          {
-            authContext,
-            operation: operation,
-            relations: {
-              messageChannels: {
-                messageFolders: true,
-              },
-            },
+    const connectedAccount =
+      await this.connectedAccountAccessService.resolveConnectedAccountOrThrow({
+        authContext,
+        connectedAccountId: parameters.connectedAccountId,
+        operation,
+        relations: {
+          messageChannels: {
+            messageFolders: true,
           },
-        );
-
-    connectedAccountId = connectedAccount.id;
+        },
+      });
 
     const messageChannel =
       connectedAccount.provider === ConnectedAccountProvider.EMAIL_GROUP
@@ -351,7 +314,7 @@ export class EmailComposerService {
 
     if (!isSmtpOnlyAccount && !isDefined(messageChannel)) {
       throw new EmailToolException(
-        `No message channel found for connected account '${connectedAccountId}'`,
+        `No message channel found for connected account '${connectedAccount.id}'`,
         EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
       );
     }
