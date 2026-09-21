@@ -85,6 +85,19 @@ export type CompleteApplicationFileUploadsResult = {
   errors: ApplicationFileCompletionError[];
 };
 
+export type AppTarballUploadTarget = {
+  fileId: string;
+  uploadUrl: string;
+  contentType: string;
+  expiresAt: string;
+};
+
+export type AppTarballRegistration = {
+  id: string;
+  universalIdentifier: string;
+  name: string;
+};
+
 export class FileApi {
   constructor(private readonly client: AxiosInstance) {}
 
@@ -175,6 +188,53 @@ export class FileApi {
         error,
       };
     }
+  }
+
+  async createAppTarballUpload({
+    size,
+  }: {
+    size: number;
+  }): Promise<ApiResponse<AppTarballUploadTarget>> {
+    const mutation = `
+      mutation CreateAppTarballUpload($size: Float!) {
+        createAppTarballUpload(size: $size) {
+          fileId
+          uploadUrl
+          contentType
+          expiresAt
+        }
+      }
+    `;
+
+    return this.runMetadataMutation<AppTarballUploadTarget>({
+      mutation,
+      variables: { size },
+      resultKey: 'createAppTarballUpload',
+      defaultErrorMessage: 'Failed to create tarball upload',
+    });
+  }
+
+  async completeAppTarballUpload({
+    fileId,
+  }: {
+    fileId: string;
+  }): Promise<ApiResponse<AppTarballRegistration>> {
+    const mutation = `
+      mutation CompleteAppTarballUpload($fileId: UUID!) {
+        completeAppTarballUpload(fileId: $fileId) {
+          id
+          universalIdentifier
+          name
+        }
+      }
+    `;
+
+    return this.runMetadataMutation<AppTarballRegistration>({
+      mutation,
+      variables: { fileId },
+      resultKey: 'completeAppTarballUpload',
+      defaultErrorMessage: 'Failed to complete tarball upload',
+    });
   }
 
   async installTarballApp({

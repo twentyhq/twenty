@@ -16,6 +16,7 @@ export class ApplicationRegistrationExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND:
       case ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND:
+      case ApplicationRegistrationExceptionCode.TARBALL_UPLOAD_NOT_FOUND:
         throw new NotFoundError(exception);
       case ApplicationRegistrationExceptionCode.INVALID_INPUT:
       case ApplicationRegistrationExceptionCode.INVALID_SCOPE:

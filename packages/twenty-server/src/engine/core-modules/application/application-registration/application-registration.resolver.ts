@@ -19,6 +19,7 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
@@ -41,6 +42,7 @@ import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-m
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -256,7 +258,40 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
   )
+  @Mutation(() => FileUploadTargetDTO)
+  async createAppTarballUpload(
+    @Args({ name: 'size', type: () => Number }) size: number,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<FileUploadTargetDTO> {
+    return this.applicationTarballService.createTarballUpload({
+      ownerWorkspaceId: workspaceId,
+      size,
+    });
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
+  )
   @Mutation(() => ApplicationRegistrationEntity)
+  async completeAppTarballUpload(
+    @Args({ name: 'fileId', type: () => UUIDScalarType }) fileId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationTarballService.completeTarballUpload({
+      ownerWorkspaceId: workspaceId,
+      fileId,
+    });
+  }
+
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
+  )
+  @Mutation(() => ApplicationRegistrationEntity, {
+    deprecationReason:
+      'Use createAppTarballUpload and completeAppTarballUpload, which send the tarball straight to file storage.',
+  })
   async uploadAppTarball(
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream }: FileUpload,

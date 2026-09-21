@@ -144,6 +144,18 @@ export class ApiService {
     return this.fileApi.uploadAppTarball(...args);
   }
 
+  createAppTarballUpload(
+    ...args: Parameters<FileApi['createAppTarballUpload']>
+  ) {
+    return this.fileApi.createAppTarballUpload(...args);
+  }
+
+  completeAppTarballUpload(
+    ...args: Parameters<FileApi['completeAppTarballUpload']>
+  ) {
+    return this.fileApi.completeAppTarballUpload(...args);
+  }
+
   installTarballApp(...args: Parameters<FileApi['installTarballApp']>) {
     return this.fileApi.installTarballApp(...args);
   }
