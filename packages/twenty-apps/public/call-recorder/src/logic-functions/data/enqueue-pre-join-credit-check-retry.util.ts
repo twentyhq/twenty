@@ -6,21 +6,14 @@ import { PRE_JOIN_CREDIT_CHECK_RETRY_DELAY_MS } from 'src/logic-functions/consta
 
 export const enqueuePreJoinCreditCheckRetry = async ({
   callRecordingId,
-  now,
 }: {
   callRecordingId: string;
-  now: Date;
 }): Promise<void> => {
   try {
     await enqueueJobs({
       logicFunctionUniversalIdentifier:
         CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      jobs: [
-        {
-          jobId: `credit-check.${callRecordingId}.retry.${now.getTime()}`,
-          payload: { callRecordingId },
-        },
-      ],
+      payloads: [{ callRecordingId }],
       retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
       delayMs: PRE_JOIN_CREDIT_CHECK_RETRY_DELAY_MS,
     });

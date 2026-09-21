@@ -115,12 +115,7 @@ describe('check-credits-before-recall-bot-join', () => {
     expect(result.status).toBe('deferred');
     expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
-        jobs: [
-          {
-            jobId: `credit-check.call-recording-1.retry.${NOW.getTime()}`,
-            payload: { callRecordingId: 'call-recording-1' },
-          },
-        ],
+        payloads: [{ callRecordingId: 'call-recording-1' }],
         delayMs: 60_000,
       }),
     );

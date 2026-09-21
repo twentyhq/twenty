@@ -51,7 +51,7 @@ export const handlePreJoinCreditCheckJob = async (
         error instanceof Error ? error.message : String(error)
       }`,
     );
-    await enqueuePreJoinCreditCheckRetry({ callRecordingId, now: new Date() });
+    await enqueuePreJoinCreditCheckRetry({ callRecordingId });
 
     return {
       status: 'deferred',
