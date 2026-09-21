@@ -32,6 +32,9 @@ describe('CoreWorkflowVersionWriteService', () => {
       {} as never,
       { invalidateAutomatedTriggerMaps } as never,
       {
+        assertCoreWorkflowVersionsAreAccessibleOrThrow: jest.fn(),
+      } as never,
+      {
         getFlatEntityMaps: jest.fn().mockResolvedValue({
           flatObjectMetadataMaps: {},
           flatFieldMetadataMaps: {},

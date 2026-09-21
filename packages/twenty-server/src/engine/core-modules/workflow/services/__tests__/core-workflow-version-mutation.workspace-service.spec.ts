@@ -5,6 +5,7 @@ import { CoreWorkflowVersionPostCommitError } from 'src/engine/core-modules/work
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const workspaceId = '20202020-0000-0000-0000-000000000001';
+const userWorkspaceId = '20202020-0000-0000-0000-000000000009';
 const coreWorkflowVersionId = '20202020-0000-0000-0000-000000000002';
 const stepId = '20202020-0000-0000-0000-000000000003';
 
@@ -93,6 +94,7 @@ describe('CoreWorkflowVersionMutationWorkspaceService', () => {
     await expect(
       service.updateStep({
         workspaceId,
+        userWorkspaceId,
         coreWorkflowVersionId,
         step: { ...replacementEmptyStep, id: stepId },
       }),
@@ -113,6 +115,7 @@ describe('CoreWorkflowVersionMutationWorkspaceService', () => {
 
     await service.updateStep({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowVersionId,
       step: { ...replacementEmptyStep, id: stepId },
     });
@@ -136,6 +139,7 @@ describe('CoreWorkflowVersionMutationWorkspaceService', () => {
     await expect(
       service.updateStep({
         workspaceId,
+        userWorkspaceId,
         coreWorkflowVersionId,
         step: { ...replacementEmptyStep, id: stepId },
       }),

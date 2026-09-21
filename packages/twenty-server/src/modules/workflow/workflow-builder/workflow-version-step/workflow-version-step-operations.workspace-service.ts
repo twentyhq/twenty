@@ -581,6 +581,30 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.CLASSIFY: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Classify',
+            type: WorkflowActionType.CLASSIFY,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                state: '',
+                questions: [
+                  {
+                    id: v4(),
+                    name: 'category',
+                    type: 'choice',
+                    instructions: '',
+                    criteria: [],
+                  },
+                ],
+              },
+            },
+          },
+        };
+      }
       case WorkflowActionType.ITERATOR: {
         const emptyNodeStep = this.buildEmptyNodeForIteratorStep({
           iteratorStepId: baseStep.id,

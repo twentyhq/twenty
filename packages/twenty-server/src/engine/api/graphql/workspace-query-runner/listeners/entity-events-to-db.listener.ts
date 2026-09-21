@@ -13,6 +13,8 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { CreateEventLogFromInternalEvent } from 'src/engine/core-modules/event-logs/ingest/create-event-log-from-internal-event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -40,6 +42,7 @@ export class EntityEventsToDbListener {
     private readonly objectRecordEventPublisher: ObjectRecordEventPublisher,
     private readonly timelineActivityRoutingPlanService: TimelineActivityRoutingPlanService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -119,16 +122,30 @@ export class EntityEventsToDbListener {
     }
 
     if (isAuditLogBatchEvent && action !== DatabaseEventAction.DESTROYED) {
-      promises.push(
-        this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
-          CreateEventLogFromInternalEvent.name,
-          batchEvent,
-          { retryLimit: 1 },
-        ),
-      );
+      promises.push(this.enqueueEventLogIfEntitled(batchEvent));
     }
 
     await Promise.all(promises);
+  }
+
+  private async enqueueEventLogIfEntitled<T extends ObjectRecordEvent>(
+    batchEvent: WorkspaceEventBatch<T>,
+  ) {
+    const hasAuditLogsEntitlement =
+      await this.billingSubscriptionService.getWorkspaceEntitlementValue(
+        batchEvent.workspaceId,
+        BillingEntitlementKey.AUDIT_LOGS,
+      );
+
+    if (!hasAuditLogsEntitlement) {
+      return;
+    }
+
+    await this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
+      CreateEventLogFromInternalEvent.name,
+      batchEvent,
+      { retryLimit: 1 },
+    );
   }
 
   private async enqueueWebhookJobsIfAnyWebhookMatches<
