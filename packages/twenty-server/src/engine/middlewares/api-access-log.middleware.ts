@@ -69,8 +69,6 @@ export class ApiAccessLogMiddleware implements NestMiddleware {
       workspace_id: request.workspaceId,
       auth_provider: request.authProvider ?? undefined,
       token_type: request.tokenType,
-      impersonator_user_workspace_id:
-        request.impersonationContext?.impersonatorUserWorkspaceId,
       client_ip: request.ip,
       request_id: this.formatHeader(request.headers?.['x-request-id']),
       trace_id: traceContext?.traceId,

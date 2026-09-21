@@ -252,17 +252,4 @@ describe('ApiAccessLogMiddleware', () => {
       expect.stringContaining('Failed to build the access log line'),
     );
   });
-
-  it('should log the impersonator', () => {
-    const line = runAndCaptureLine(
-      buildRequest({
-        user: { id: 'user-id' },
-        impersonationContext: {
-          impersonatorUserWorkspaceId: 'impersonator-id',
-        },
-      } as unknown as Partial<Request>),
-    );
-
-    expect(line).toContain('impersonator_user_workspace_id=impersonator-id');
-  });
 });
