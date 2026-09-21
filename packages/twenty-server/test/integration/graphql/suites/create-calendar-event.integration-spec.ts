@@ -39,7 +39,7 @@ describe('createCalendarEvent (metadata API) (e2e)', () => {
     const result = response.body.data.createCalendarEvent;
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain('not found');
+    expect(result.error).toContain('No connected account found for id');
     expect(result.iCalUid).toBeNull();
     expect(result.conferenceLink).toBeNull();
   });

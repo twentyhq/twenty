@@ -82,6 +82,17 @@ describe('buildEmailStepLog', () => {
     expect(stepLog.details.error).toBe('Connected account expired');
   });
 
+  it('refuses to log a calendar event as an email step', () => {
+    expect(() =>
+      buildEmailStepLog({
+        mode: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
+        input: baseInput,
+        output: successOutput,
+        durationMs: 120,
+      }),
+    ).toThrow('Calendar events are not logged as email steps');
+  });
+
   it('truncates oversized body previews and reports original byte size', () => {
     const longBody = `<p>${'x'.repeat(20_000)}</p>`;
 

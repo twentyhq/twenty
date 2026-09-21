@@ -1,3 +1,4 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { ConnectedAccountOperation } from 'twenty-shared/types';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
@@ -30,7 +31,10 @@ const buildAutomationContext = () => ({
   workspaceId: WORKSPACE_ID,
   authContext: {
     type: 'application',
-    application: { id: TWENTY_APPLICATION_ID },
+    application: {
+      id: TWENTY_APPLICATION_ID,
+      universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    },
     workspace: { id: WORKSPACE_ID },
   } as unknown as WorkspaceAuthContext,
 });

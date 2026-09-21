@@ -3,7 +3,6 @@ import {
   type ConnectedAccountOperationFields,
 } from '@/types';
 import { assertUnreachable } from '@/utils/assertUnreachable';
-import { getMissingCalendarEventScopes } from '@/utils/connected-account/getMissingCalendarEventScopes';
 import { isDefined } from '@/utils/validation/isDefined';
 
 export const canConnectedAccountCreateCalendarEvent = (
@@ -12,7 +11,7 @@ export const canConnectedAccountCreateCalendarEvent = (
   switch (connectedAccount.provider) {
     case ConnectedAccountProvider.GOOGLE:
     case ConnectedAccountProvider.MICROSOFT:
-      return getMissingCalendarEventScopes(connectedAccount).length === 0;
+      return true;
     case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
       return isDefined(connectedAccount.connectionParameters?.CALDAV);
     case ConnectedAccountProvider.EMAIL_GROUP:

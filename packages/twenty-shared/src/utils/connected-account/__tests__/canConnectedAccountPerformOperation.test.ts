@@ -1,9 +1,11 @@
 import { ConnectedAccountOperation, ConnectedAccountProvider } from '@/types';
+import { canConnectedAccountCreateCalendarEvent } from '@/utils/connected-account/canConnectedAccountCreateCalendarEvent';
 import { canConnectedAccountPerformOperation } from '@/utils/connected-account/canConnectedAccountPerformOperation';
 import { getMissingScopesForOperation } from '@/utils/connected-account/getMissingScopesForOperation';
 
 const GOOGLE_CALENDAR_EVENTS_SCOPE =
   'https://www.googleapis.com/auth/calendar.events';
+const MICROSOFT_CALENDARS_READ_WRITE_SCOPE = 'Calendars.ReadWrite';
 
 describe('canConnectedAccountPerformOperation', () => {
   it('refuses a provider that does not support the operation', () => {
@@ -42,6 +44,27 @@ describe('canConnectedAccountPerformOperation', () => {
         connectedAccount: {
           provider: ConnectedAccountProvider.GOOGLE,
           scopes: ['email', GOOGLE_CALENDAR_EVENTS_SCOPE],
+        },
+        operation: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
+      }),
+    ).toBe(true);
+  });
+
+  it('refuses a Microsoft account until calendars can be written', () => {
+    expect(
+      canConnectedAccountPerformOperation({
+        connectedAccount: {
+          provider: ConnectedAccountProvider.MICROSOFT,
+          scopes: ['Calendars.Read'],
+        },
+        operation: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
+      }),
+    ).toBe(false);
+    expect(
+      canConnectedAccountPerformOperation({
+        connectedAccount: {
+          provider: ConnectedAccountProvider.MICROSOFT,
+          scopes: [MICROSOFT_CALENDARS_READ_WRITE_SCOPE],
         },
         operation: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
       }),
@@ -96,6 +119,37 @@ describe('canConnectedAccountPerformOperation', () => {
       }),
     ).toBe(false);
   });
+
+  it('sends and drafts from an IMAP account that has both settings', () => {
+    const connectedAccount = {
+      provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+      connectionParameters: { IMAP: {}, SMTP: {} },
+    };
+
+    expect(
+      canConnectedAccountPerformOperation({
+        connectedAccount,
+        operation: ConnectedAccountOperation.SEND_EMAIL,
+      }),
+    ).toBe(true);
+    expect(
+      canConnectedAccountPerformOperation({
+        connectedAccount,
+        operation: ConnectedAccountOperation.DRAFT_EMAIL,
+      }),
+    ).toBe(true);
+  });
+});
+
+describe('canConnectedAccountCreateCalendarEvent', () => {
+  it('keeps a Google account missing the calendar scope so it can be reconnected', () => {
+    expect(
+      canConnectedAccountCreateCalendarEvent({
+        provider: ConnectedAccountProvider.GOOGLE,
+        scopes: ['email'],
+      }),
+    ).toBe(true);
+  });
 });
 
 describe('getMissingScopesForOperation', () => {
@@ -109,6 +163,15 @@ describe('getMissingScopesForOperation', () => {
         operation: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
       }),
     ).toEqual([GOOGLE_CALENDAR_EVENTS_SCOPE]);
+    expect(
+      getMissingScopesForOperation({
+        connectedAccount: {
+          provider: ConnectedAccountProvider.MICROSOFT,
+          scopes: null,
+        },
+        operation: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
+      }),
+    ).toEqual([MICROSOFT_CALENDARS_READ_WRITE_SCOPE]);
   });
 
   it('reports nothing missing for an operation that needs no scope', () => {

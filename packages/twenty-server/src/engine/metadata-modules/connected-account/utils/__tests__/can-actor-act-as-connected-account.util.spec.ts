@@ -116,6 +116,21 @@ describe('canActorActAsConnectedAccount', () => {
     ).toBe(false);
   });
 
+  it("lets an api key or a system job act as a member's private account", () => {
+    expect(
+      canActorActAsConnectedAccount({
+        authContext: { type: 'apiKey' } as WorkspaceAuthContext,
+        connectedAccount: buildConnectedAccount({}),
+      }),
+    ).toBe(true);
+    expect(
+      canActorActAsConnectedAccount({
+        authContext: { type: 'system' } as WorkspaceAuthContext,
+        connectedAccount: buildConnectedAccount({}),
+      }),
+    ).toBe(true);
+  });
+
   it('refuses a user pending activation', () => {
     expect(
       canActorActAsConnectedAccount({

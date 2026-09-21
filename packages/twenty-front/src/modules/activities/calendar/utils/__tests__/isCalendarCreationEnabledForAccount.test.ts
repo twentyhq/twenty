@@ -19,6 +19,14 @@ describe('isCalendarCreationEnabledForAccount', () => {
     expect(isCalendarCreationEnabledForAccount(makeAccount())).toBe(true);
   });
 
+  it('keeps an account missing the calendar scope so it can be reconnected', () => {
+    const accountMissingCalendarScope = { ...makeAccount(), scopes: ['email'] };
+
+    expect(
+      isCalendarCreationEnabledForAccount(accountMissingCalendarScope),
+    ).toBe(true);
+  });
+
   it('rejects archived accounts and accounts without calendar sync', () => {
     expect(
       isCalendarCreationEnabledForAccount(
