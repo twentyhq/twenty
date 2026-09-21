@@ -34,16 +34,27 @@ const StyledEditor = styled.div<{
       display: none;
     }
     height: ${({ multiline }) => (multiline ? 'auto' : '100%')};
+    line-height: ${({ multiline }) => (multiline ? '16px' : 'inherit')};
     overflow-x: auto;
     overflow-y: hidden;
     padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
     scrollbar-width: none;
     white-space: ${({ multiline }) => (multiline ? 'pre' : 'nowrap')};
 
+    p.is-editor-empty:first-of-type {
+      align-items: start;
+      display: ${({ multiline }) => (multiline ? 'grid' : 'block')};
+
+      & > br {
+        grid-area: 1 / 1;
+      }
+    }
+
     p.is-editor-empty:first-of-type::before {
       ${FORM_FIELD_PLACEHOLDER_STYLES}
       content: attr(data-placeholder);
-      float: left;
+      float: ${({ multiline }) => (multiline ? 'none' : 'left')};
+      grid-area: 1 / 1;
       height: ${({ multiline }) => (multiline ? 'auto' : '0')};
       pointer-events: none;
       white-space: ${({ multiline }) => (multiline ? 'normal' : 'nowrap')};
