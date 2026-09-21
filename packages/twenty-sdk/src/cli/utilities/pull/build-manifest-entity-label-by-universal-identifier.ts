@@ -1,11 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type Manifest } from 'twenty-shared/application';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 const LABEL_KEYS = ['nameSingular', 'name', 'label', 'title'] as const;
 
 export const buildManifestEntityLabelByUniversalIdentifier = (
-  manifest: Manifest,
+  manifest: Record<string, unknown>,
 ): Record<string, string> => {
   const labelByUniversalIdentifier: Record<string, string> = {};
 
