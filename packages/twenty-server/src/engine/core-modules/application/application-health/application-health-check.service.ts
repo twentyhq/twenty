@@ -40,7 +40,7 @@ export class ApplicationHealthCheckService {
         workspaceId,
       });
 
-    const { healthCheckLogicFunctionId, version } = application;
+    const { healthCheckLogicFunctionId } = application;
 
     if (!isDefined(healthCheckLogicFunctionId)) {
       return null;
@@ -49,24 +49,21 @@ export class ApplicationHealthCheckService {
     return await this.executeHealthCheck({
       healthCheckLogicFunctionId,
       workspaceId,
-      version,
     });
   }
 
   private async executeHealthCheck({
     healthCheckLogicFunctionId,
     workspaceId,
-    version,
   }: {
     healthCheckLogicFunctionId: string;
     workspaceId: string;
-    version: string | null;
   }): Promise<ApplicationHealthCheckResultDTO> {
     const executionResult = await this.logicFunctionExecutorService
       .execute({
         logicFunctionId: healthCheckLogicFunctionId,
         workspaceId,
-        payload: isDefined(version) ? { version } : {},
+        payload: {},
       })
       .catch(() => null);
 

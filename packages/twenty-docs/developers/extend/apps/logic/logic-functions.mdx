@@ -822,7 +822,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 
 Declare a health check with `defineHealthCheck` to report whether your app is actually able to run. It is for what only the app can know: a key that is present but revoked, an account on the wrong plan, a webhook that was never registered. What Twenty can see by itself — a required variable nobody filled in — is covered by [`isRequired`](/developers/extend/apps/config/application) and needs no code.
 
-It runs server-side, so it reads secret variables like any other logic function. The handler receives `HealthCheckPayload` (`{ version?: string }`), the installed version of the app.
+It runs server-side, so it reads secret variables like any other logic function. The handler takes no arguments.
 
 ```ts src/logic-functions/health-check.ts
 import { defineHealthCheck } from 'twenty-sdk/define';

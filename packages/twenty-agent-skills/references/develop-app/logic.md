@@ -116,7 +116,7 @@ Use `defineHealthCheck` to report whether the app is actually able to run. It co
 
 Health check files live alongside other logic functions (typically `src/logic-functions/health-check.ts`). Only one health check is allowed per app; declaring more than one fails the build.
 
-The config takes `universalIdentifier` and `handler`. Handlers receive `HealthCheckPayload` (`{ version?: string }`) and run server-side, so they read secret variables like any other logic function.
+The config takes `universalIdentifier` and `handler`. The handler takes no arguments and runs server-side, so it reads secret variables like any other logic function.
 
 The handler returns `ApplicationHealthCheckResult`, a discriminated union:
 

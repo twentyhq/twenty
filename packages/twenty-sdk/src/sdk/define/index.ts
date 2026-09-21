@@ -101,10 +101,7 @@ export type {
   UninstallHandler,
   UninstallPayload,
 } from '@/sdk/define/logic-functions/uninstall-payload-type';
-export type {
-  HealthCheckHandler,
-  HealthCheckPayload,
-} from '@/sdk/define/logic-functions/health-check-payload-type';
+export type { HealthCheckHandler } from '@/sdk/define/logic-functions/health-check-handler-type';
 export type { HealthCheckLogicFunctionConfig } from '@/sdk/define/logic-functions/health-check-logic-function-config';
 export type {
   ApplicationHealthCheckAction,
