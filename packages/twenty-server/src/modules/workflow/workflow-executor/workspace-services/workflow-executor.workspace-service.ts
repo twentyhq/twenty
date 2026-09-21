@@ -49,7 +49,8 @@ import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/cons
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { MAX_EXECUTED_STEPS_COUNT } from 'src/modules/workflow/workflow-executor/constants/max-executed-steps-count.constant';
+
+const MAX_EXECUTED_STEPS_COUNT = 20;
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {

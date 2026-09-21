@@ -32,16 +32,22 @@ describe('findChildStepIds', () => {
     expect(findChildStepIds({ step })).toHaveLength(2);
   });
 
-  it('deduplicates a step reachable through several edges', () => {
-    const step = createMockIfElseStep(
-      'ifElse',
-      [
-        { id: 'ifBranch', filterGroupId: 'fg', nextStepIds: ['merge'] },
-        { id: 'elseBranch', nextStepIds: ['merge'] },
-      ],
-      ['merge'],
-    );
+  it('deduplicates a step reachable through several branches', () => {
+    const step = createMockIfElseStep('ifElse', [
+      { id: 'ifBranch', filterGroupId: 'fg', nextStepIds: ['merge'] },
+      { id: 'elseBranch', nextStepIds: ['merge'] },
+    ]);
 
     expect(findChildStepIds({ step })).toEqual(['merge']);
+  });
+
+  it('ignores next step ids an if/else step carries outside its branches', () => {
+    const step = createMockIfElseStep(
+      'ifElse',
+      [{ id: 'ifBranch', filterGroupId: 'fg', nextStepIds: ['ifChild'] }],
+      ['strayChild'],
+    );
+
+    expect(findChildStepIds({ step })).toEqual(['ifChild']);
   });
 });

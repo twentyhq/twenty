@@ -6,13 +6,15 @@ export const findChildStepIds = ({
 }: {
   step: WorkflowAction;
 }): string[] => {
-  const childStepIds = [...(step.nextStepIds ?? [])];
-
   if (isWorkflowIfElseAction(step)) {
-    for (const branch of step.settings.input.branches) {
-      childStepIds.push(...(branch.nextStepIds ?? []));
-    }
+    return [
+      ...new Set(
+        step.settings.input.branches.flatMap(
+          (branch) => branch.nextStepIds ?? [],
+        ),
+      ),
+    ];
   }
 
-  return [...new Set(childStepIds)];
+  return [...new Set(step.nextStepIds ?? [])];
 };
