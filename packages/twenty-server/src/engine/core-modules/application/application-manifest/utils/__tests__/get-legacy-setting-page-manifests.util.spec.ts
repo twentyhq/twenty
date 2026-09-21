@@ -5,8 +5,7 @@ import {
 
 import { getLegacySettingPageManifests } from 'src/engine/core-modules/application/application-manifest/utils/get-legacy-setting-page-manifests.util';
 
-const APPLICATION_UNIVERSAL_IDENTIFIER =
-  '39783023-bcac-41e3-b0d2-ff1944d8465d';
+const APPLICATION_UNIVERSAL_IDENTIFIER = '39783023-bcac-41e3-b0d2-ff1944d8465d';
 const FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
   '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7';
 
@@ -48,8 +47,7 @@ describe('getLegacySettingPageManifests', () => {
           frontComponentUniversalIdentifier:
             FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
         }),
-        frontComponentUniversalIdentifier:
-          FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+        frontComponentUniversalIdentifier: FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
         title: 'Variables',
         icon: 'IconVariable',
       },

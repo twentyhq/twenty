@@ -16,6 +16,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "viewSort",
   "index",
   "rowLevelPermissionPredicateGroup",
+  "settingPage",
   "viewGroup",
   "agent",
   "applicationVariable",

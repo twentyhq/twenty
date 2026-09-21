@@ -153,6 +153,12 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for settingPage 1`] = `
+[
+  "frontComponent",
+]
+`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for skill 1`] = `[]`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for timelineActivityType 1`] = `[]`;
