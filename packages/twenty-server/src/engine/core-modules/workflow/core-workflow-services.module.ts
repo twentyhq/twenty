@@ -6,6 +6,7 @@ import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
@@ -28,6 +29,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
 
 @Module({
   imports: [
+    CoreWorkflowAccessModule,
     TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
     AutomatedTriggerModule,
     CacheLockModule,
