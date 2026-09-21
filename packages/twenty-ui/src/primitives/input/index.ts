@@ -7,10 +7,6 @@
  *                              |___/
  */
 
-export { AnimatedButton } from './AnimatedButton/AnimatedButton';
-export type { AnimatedButtonProps } from './AnimatedButton/types/AnimatedButtonProps';
-export type { AnimatedLightIconButtonProps } from './AnimatedLightIconButton/AnimatedLightIconButton';
-export { AnimatedLightIconButton } from './AnimatedLightIconButton/AnimatedLightIconButton';
 export { Button } from './Button/Button';
 export type { ButtonColor } from './Button/types/ButtonColor';
 export type { ButtonProps } from './Button/types/ButtonProps';
@@ -43,14 +39,6 @@ export type {
 export { FloatingButton } from './FloatingButton/FloatingButton';
 export type { FloatingButtonGroupProps } from './FloatingButtonGroup/FloatingButtonGroup';
 export { FloatingButtonGroup } from './FloatingButtonGroup/FloatingButtonGroup';
-export type {
-  FloatingIconButtonSize,
-  FloatingIconButtonPosition,
-  FloatingIconButtonProps,
-} from './FloatingIconButton/FloatingIconButton';
-export { FloatingIconButton } from './FloatingIconButton/FloatingIconButton';
-export type { FloatingIconButtonGroupProps } from './FloatingIconButtonGroup/FloatingIconButtonGroup';
-export { FloatingIconButtonGroup } from './FloatingIconButtonGroup/FloatingIconButtonGroup';
 export { IconListViewGrip } from './IconListViewGrip/IconListViewGrip';
 export { Input } from './Input/Input';
 export type { InputProps } from './Input/types/InputProps';

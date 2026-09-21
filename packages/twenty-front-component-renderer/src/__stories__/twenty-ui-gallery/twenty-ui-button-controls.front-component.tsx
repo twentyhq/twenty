@@ -8,16 +8,32 @@ import {
 } from 'twenty-ui/components';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { MenuItem, MenuItemDraggable } from 'twenty-ui/primitives/navigation';
-import { IconPlus } from 'twenty-ui/icon';
+import { IconPencil, IconPlus, IconX } from 'twenty-ui/icon';
+import { AnimatedIconCrossfade } from 'twenty-ui/primitives/layout';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 import 'twenty-ui/style.css';
 
 const ButtonControls = () => {
   const [activations, setActivations] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const handleClick = () => setActivations((count) => count + 1);
   return (
     <ThemeProvider colorScheme="light">
+      <Button
+        size="sm"
+        aria-expanded={isEditing ? 'true' : 'false'}
+        onClick={() => setIsEditing(!isEditing)}
+        startIcon={
+          <AnimatedIconCrossfade
+            isActive={isEditing}
+            ActiveIcon={IconX}
+            InactiveIcon={IconPencil}
+          />
+        }
+      >
+        Edit actions
+      </Button>
       <Button
         color="accent"
         variant="solid"

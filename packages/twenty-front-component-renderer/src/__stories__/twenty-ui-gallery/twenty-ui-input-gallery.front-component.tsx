@@ -9,8 +9,6 @@ import {
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
-  AnimatedButton,
-  AnimatedLightIconButton,
   Button,
   ButtonGroup,
   ColorPickerButton,
@@ -18,8 +16,6 @@ import {
   ColorSchemePicker,
   FloatingButton,
   FloatingButtonGroup,
-  FloatingIconButton,
-  FloatingIconButtonGroup,
   IconListViewGrip,
   SearchInput,
   SegmentedControl,
@@ -38,19 +34,6 @@ import {
 } from '../shared/front-components/component-gallery';
 
 const INPUT_ENTRIES: GalleryEntry[] = [
-  {
-    name: 'AnimatedButton',
-    node: (
-      <AnimatedButton
-        title="Animated"
-        animatedSvg={<svg width={16} height={16} />}
-      />
-    ),
-  },
-  {
-    name: 'AnimatedLightIconButton',
-    node: <AnimatedLightIconButton Icon={IconStar} />,
-  },
   {
     name: 'Button',
     node: <Button onClick={() => {}}>{'Button'}</Button>,
@@ -121,17 +104,14 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'FloatingIconButton',
-    node: <FloatingIconButton Icon={IconSearch} ariaLabel="Search" />,
-  },
-  {
-    name: 'FloatingIconButtonGroup',
+    name: 'IconButton (elevated)',
     node: (
-      <FloatingIconButtonGroup
-        iconButtons={[{ Icon: IconSearch, ariaLabel: 'Search' }]}
-      />
+      <IconButton elevated size="sm" aria-label="Search">
+        <IconSearch />
+      </IconButton>
     ),
   },
+
   {
     name: 'IconButton',
     node: (

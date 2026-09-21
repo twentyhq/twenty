@@ -98,6 +98,11 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         userWorkspaceRoleMap: {},
         apiKeyRoleMap: {},
         eventEmitterService: { emitDatabaseBatchEvent },
+        recordStock: {
+          assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
+          acquireRecordStock: jest.fn().mockResolvedValue(undefined),
+          releaseRecordStock: jest.fn().mockResolvedValue(undefined),
+        },
         coreDataSource: dataSource,
       },
     });
@@ -417,6 +422,21 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
       expect(archived.deletedAt).toEqual(new Date('2026-01-01T00:00:00Z'));
       expect(archived.createdAt).toBeInstanceOf(Date);
+      expect(archived.activeStreamId).toBeNull();
+      expect(archived.pendingQuestionMessageId).toBeNull();
+      const selected = await threads.findOneOrFail(WORKSPACE_ID, {
+        where: { id: THREAD_ID },
+        select: ['id', 'deletedAt', 'activeStreamId'],
+      });
+      expect(selected.deletedAt).toEqual(new Date('2026-01-01T00:00:00Z'));
+      expect(selected.activeStreamId).toBeNull();
+      const selectedWithObject = await threads.findOneOrFail(WORKSPACE_ID, {
+        where: { id: THREAD_ID },
+        select: { id: true, deletedAt: true },
+      });
+      expect(selectedWithObject.deletedAt).toEqual(
+        new Date('2026-01-01T00:00:00Z'),
+      );
       await threads.update(
         WORKSPACE_ID,
         { id: THREAD_ID },
@@ -429,7 +449,11 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         ['first', 'second'].map((stream) =>
           threads.update(
             WORKSPACE_ID,
-            { id: THREAD_ID, activeStreamId: IsNull() },
+            {
+              id: THREAD_ID,
+              activeStreamId: IsNull(),
+              pendingQuestionMessageId: IsNull(),
+            },
             { activeStreamId: stream },
           ),
         ),
@@ -446,6 +470,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         title: 'New workspace chat',
       });
       expect(created.createdAt).toBeInstanceOf(Date);
+      expect(created.activeStreamId).toBeNull();
       expect(created.totalInputCredits).toBe(0);
       expect(created.workspaceId).toBe(WORKSPACE_ID);
       const checkpointId = '20202020-8888-4888-8888-888888888888';
@@ -467,6 +492,66 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         await messages.count(WORKSPACE_ID, { where: { id: checkpointId } }),
       ).toBe(1);
       expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
+    });
+
+    it('loads messages chronologically and finds the latest processed message with TypeORM ordering', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      const earlierId = '20202020-1111-4111-8111-000000000001';
+      const laterId = '20202020-1111-4111-8111-000000000002';
+
+      await messages.insert(WORKSPACE_ID, [
+        {
+          id: laterId,
+          threadId: THREAD_ID,
+          role: 'assistant' as AgentMessageEntity['role'],
+          processedAt: new Date('2026-09-20T12:00:00Z'),
+        },
+        {
+          id: earlierId,
+          threadId: THREAD_ID,
+          role: 'user' as AgentMessageEntity['role'],
+          processedAt: new Date('2026-09-20T11:00:00Z'),
+        },
+      ]);
+
+      const chronological = await messages.find(WORKSPACE_ID, {
+        where: { threadId: THREAD_ID },
+        order: { processedAt: { direction: 'ASC', nulls: 'LAST' } },
+        relations: { parts: true },
+      });
+
+      expect(chronological.map(({ id }) => id)).toEqual([
+        earlierId,
+        laterId,
+        MESSAGE_ID,
+      ]);
+      expect(chronological[2].parts[0].textContent).toBe(
+        'Hidden setup context',
+      );
+      expect(
+        (
+          await messages.findOneOrFail(WORKSPACE_ID, {
+            where: { threadId: THREAD_ID },
+            order: {
+              processedAt: { direction: 'DESC', nulls: 'LAST' },
+              createdAt: 'DESC',
+              id: 'DESC',
+            },
+            select: ['id', 'turnId'],
+          })
+        ).id,
+      ).toBe(laterId);
+      expect(
+        (
+          await messages.find(WORKSPACE_ID, {
+            where: { threadId: THREAD_ID },
+            order: { processedAt: { direction: 'desc', nulls: 'first' } },
+          })
+        ).map(({ id }) => id),
+      ).toEqual([MESSAGE_ID, laterId, earlierId]);
     });
 
     it('increments exact totals only for the owning stream in both stores', async () => {

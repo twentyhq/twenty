@@ -8,6 +8,7 @@ import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useRe
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type OnRecordCreated } from '@/object-record/types/OnRecordCreated';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -21,10 +22,7 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 type UseCreateNewRecordProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   buildRecordInput?: () => Partial<ObjectRecord>;
-  onRecordCreated?: (
-    record: ObjectRecord,
-    recordInput?: Partial<ObjectRecord>,
-  ) => void;
+  onRecordCreated?: OnRecordCreated;
 };
 
 export const useCreateNewRecord = ({
@@ -118,7 +116,7 @@ export const useCreateNewRecord = ({
         });
       }
 
-      onRecordCreated?.(createdRecord, recordInput);
+      onRecordCreated?.({ record: createdRecord, recordInput });
 
       upsertRecordsInStore({ partialRecords: [createdRecord] });
 

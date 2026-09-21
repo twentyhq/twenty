@@ -1,5 +1,6 @@
 export type CallRecordingTranscriptStatusMarker = {
-  status: 'PENDING' | 'FAILED';
+  status: 'PENDING' | 'FAILED' | 'EMPTY';
+  subCode?: string | null;
 } & Record<string, unknown>;
 
 export type CallRecordingParsedTranscriptWord = {
