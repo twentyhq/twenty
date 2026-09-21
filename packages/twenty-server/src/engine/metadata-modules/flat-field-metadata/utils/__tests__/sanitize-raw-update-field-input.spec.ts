@@ -1,4 +1,6 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
+  DateDisplayFormat,
   type FieldMetadataComplexOption,
   FieldMetadataType,
   type TagColor,
@@ -75,6 +77,67 @@ describe('sanitizeRawUpdateFieldInput', () => {
       ]);
     },
   );
+
+  const sanitizeSystemDateFieldSettingsUpdate = (
+    settings: UpdateFieldInput['settings'],
+  ) =>
+    sanitizeRawUpdateFieldInput({
+      existingFlatFieldMetadata: getFlatFieldMetadataMock({
+        id: FIELD_ID,
+        type: FieldMetadataType.DATE_TIME,
+        universalIdentifier: 'ab0e6d76-67d8-466f-918a-4b8a8d044131',
+        objectMetadataId: '6450cd8f-c202-498f-8be4-65e1b1c93e32',
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isSystemSideEffect: true,
+        settings: { displayFormat: DateDisplayFormat.RELATIVE },
+      }),
+      rawUpdateFieldInput: { id: FIELD_ID, settings } as UpdateFieldInput,
+      isSystemBuild: false,
+      workspaceCustomApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+  it('allows overriding displayFormat on a system-managed date field', () => {
+    expect(() =>
+      sanitizeSystemDateFieldSettingsUpdate({
+        displayFormat: DateDisplayFormat.USER_SETTINGS,
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects a non-presentation settings change on a system-managed date field', () => {
+    expect(() =>
+      sanitizeSystemDateFieldSettingsUpdate({
+        displayFormat: DateDisplayFormat.USER_SETTINGS,
+        foo: 'bar',
+      } as UpdateFieldInput['settings']),
+    ).toThrow(/Cannot edit system-managed field/);
+  });
+
+  it('still rejects non-settings edits on a system-managed date field', () => {
+    expect(() =>
+      sanitizeRawUpdateFieldInput({
+        existingFlatFieldMetadata: getFlatFieldMetadataMock({
+          id: FIELD_ID,
+          type: FieldMetadataType.DATE_TIME,
+          universalIdentifier: 'ab0e6d76-67d8-466f-918a-4b8a8d044131',
+          objectMetadataId: '6450cd8f-c202-498f-8be4-65e1b1c93e32',
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isSystemSideEffect: true,
+          settings: { displayFormat: DateDisplayFormat.RELATIVE },
+        }),
+        rawUpdateFieldInput: {
+          id: FIELD_ID,
+          label: 'Renamed',
+        } as UpdateFieldInput,
+        isSystemBuild: false,
+        workspaceCustomApplicationUniversalIdentifier:
+          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      }),
+    ).toThrow(/Cannot edit system-managed field/);
+  });
 
   it('leaves rating options without colors', () => {
     const ratingOptions = [

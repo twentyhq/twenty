@@ -133,6 +133,7 @@ export {
   NumberDataType,
   DateDisplayFormat,
   FIELD_LINKS_VARIANTS,
+  USER_OVERRIDABLE_PRESENTATION_FIELD_SETTINGS_BY_TYPE,
 } from './FieldMetadataSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldMetadataUniversalSettings } from './FieldMetadataUniversalSettings';

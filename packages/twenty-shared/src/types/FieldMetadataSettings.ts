@@ -1,6 +1,6 @@
 import { type AllowedAddressSubField } from '@/types/AddressFieldsType';
 import { type FieldMetadataMultiItemSettings } from '@/types/FieldMetadataMultiItemSettings';
-import { type FieldMetadataType } from '@/types/FieldMetadataType';
+import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
 import { type RelationOnDeleteAction } from '@/types/RelationOnDeleteAction.type';
 import { type RelationType } from '@/types/RelationType';
@@ -98,3 +98,11 @@ export type FieldMetadataSettings<
     : T extends keyof FieldMetadataSettingsMapping
       ? FieldMetadataSettingsMapping[T]
       : never | null;
+
+// Settings keys that only affect how a field is presented, so a workspace can
+// override them even on system-managed or read-only fields (e.g. createdAt),
+// unlike structural settings that change storage or relations.
+export const USER_OVERRIDABLE_PRESENTATION_FIELD_SETTINGS_BY_TYPE = {
+  [FieldMetadataType.DATE]: ['displayFormat'],
+  [FieldMetadataType.DATE_TIME]: ['displayFormat'],
+} as const satisfies Partial<Record<FieldMetadataType, readonly string[]>>;

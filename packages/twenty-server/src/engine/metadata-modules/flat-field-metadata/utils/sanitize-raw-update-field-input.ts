@@ -17,6 +17,7 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getNonUserOverridableSettingsChanges } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-non-user-overridable-settings-changes.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
@@ -53,17 +54,42 @@ export const sanitizeRawUpdateFieldInput = ({
   );
 
   if (existingFlatFieldMetadata.isSystemSideEffect === true && !isSystemBuild) {
+    // A settings edit that only changes presentation-only keys (e.g. a date
+    // field's displayFormat) is a workspace override, not a change to the
+    // system-managed field itself, so it is allowed here.
+    const nonUserOverridableSettingsChanges = isDefined(
+      updatedEditableFieldProperties.settings,
+    )
+      ? getNonUserOverridableSettingsChanges({
+          fieldType: existingFlatFieldMetadata.type,
+          incomingSettings: updatedEditableFieldProperties.settings,
+          existingSettings: existingFlatFieldMetadata.settings,
+        })
+      : [];
+
     const forbiddenUpdatedProperties = [
       ...Object.keys(updatedEditableFieldProperties),
       ...(isDefined(rawUpdateFieldInput.morphRelationsUpdatePayload)
         ? ['morphRelationsUpdatePayload']
         : []),
-    ].filter(
-      (property) =>
-        !FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES.includes(
+    ].filter((property) => {
+      if (
+        FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES.includes(
           property as (typeof FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES)[number],
-        ),
-    );
+        )
+      ) {
+        return false;
+      }
+
+      if (
+        property === 'settings' &&
+        nonUserOverridableSettingsChanges.length === 0
+      ) {
+        return false;
+      }
+
+      return true;
+    });
 
     if (forbiddenUpdatedProperties.length > 0) {
       throw new FieldMetadataException(
