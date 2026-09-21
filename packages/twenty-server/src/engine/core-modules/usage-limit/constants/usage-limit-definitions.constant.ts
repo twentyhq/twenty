@@ -68,7 +68,10 @@ export const USAGE_LIMIT_DEFINITIONS = {
   [UsageResourceType.LOGIC_FUNCTION]: {},
   [UsageResourceType.EMAIL]: {
     speed: {
-      allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
+      allowedOperationTypes: [
+        UsageOperationType.EMAIL_SEND,
+        UsageOperationType.MESSAGE_CAMPAIGN_SEND,
+      ],
       allowedSpenderTypes: ['workspace'],
       // Two buckets, and a send has to fit both. The workspace one keeps a
       // single tenant's campaign from spending the whole instance budget; the
