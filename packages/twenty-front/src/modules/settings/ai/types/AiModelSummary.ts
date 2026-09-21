@@ -3,6 +3,8 @@ import { type ModelFamily } from '~/generated-metadata/graphql';
 export type AiModelSummary = {
   modelId: string;
   label: string;
+  // Absent on the lists that carry language models only.
+  kind?: string | null;
   modelFamily?: ModelFamily | null;
   providerName?: string | null;
   isDeprecated?: boolean | null;

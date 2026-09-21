@@ -21,6 +21,11 @@ export const ResolvedSlackUserField = ({
 }: ResolvedSlackUserFieldProps) => (
   <SlackPickedEntityButton
     name={resolvedUser.displayName ?? resolvedUser.slackUserId}
+    avatar={{
+      type: 'rounded',
+      placeholder: resolvedUser.displayName ?? resolvedUser.slackUserId,
+      placeholderColorSeed: resolvedUser.slackUserId,
+    }}
     meta={
       isNonEmptyString(resolvedUser.email)
         ? resolvedUser.email

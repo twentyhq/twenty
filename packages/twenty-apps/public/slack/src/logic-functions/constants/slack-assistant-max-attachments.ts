@@ -1,0 +1,1 @@
+export const SLACK_ASSISTANT_MAX_ATTACHMENTS = 10;

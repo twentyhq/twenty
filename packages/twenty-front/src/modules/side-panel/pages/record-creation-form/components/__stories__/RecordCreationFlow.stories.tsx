@@ -30,11 +30,19 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
 import { useContext, useEffect, useState } from 'react';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import {
+  expect,
+  fireEvent,
+  fn,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
 import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 import {
   EngineComponentKey,
   PageLayoutTabLayoutMode,
@@ -312,6 +320,8 @@ const submitCompany = async (canvasElement: HTMLElement, shortcut?: string) => {
   await userEvent.clear(nameInput);
   await userEvent.type(nameInput, 'Acme');
   const createButton = canvas.getByTestId('record-creation-form-create-button');
+  await expect(createButton).toHaveTextContent(getOsControlSymbol());
+  await expect(createButton).toHaveTextContent('⏎');
   if (isDefined(shortcut)) {
     await expect(nameInput).toHaveFocus();
     await userEvent.keyboard(shortcut);
@@ -330,10 +340,10 @@ const submitCompany = async (canvasElement: HTMLElement, shortcut?: string) => {
     expect.objectContaining({ name: 'Acme', employees: 10, position: 'first' }),
   );
   await expect(onRecordCreated).toHaveBeenCalledTimes(1);
-  await expect(onRecordCreated).toHaveBeenCalledWith(
-    expect.objectContaining({ name: 'Acme', employees: 10 }),
-    expect.objectContaining({ name: 'Acme', position: 'first' }),
-  );
+  await expect(onRecordCreated).toHaveBeenCalledWith({
+    record: expect.objectContaining({ name: 'Acme', employees: 10 }),
+    recordInput: expect.objectContaining({ name: 'Acme', position: 'first' }),
+  });
 };
 
 export const SubmitWithButton: Story = {
@@ -382,4 +392,43 @@ export const CreateCompanyFromTaskPage: Story = {
 export const CreateCompanyWithoutObjectContext: Story = {
   args: { commandOrigin: 'no-object' },
   play: ({ canvasElement }) => createCompanyFromCommandMenu(canvasElement),
+};
+
+export const SubmitWithCommandEnter: Story = {
+  play: ({ canvasElement }) =>
+    submitCompany(canvasElement, '{Meta>}{Enter}{/Meta}'),
+};
+export const SubmitWithControlEnter: Story = {
+  play: ({ canvasElement }) =>
+    submitCompany(canvasElement, '{Control>}{Enter}{/Control}'),
+};
+
+export const IgnoreNonSubmitKeys: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: /Create company/ }),
+    );
+    const input = await canvas.findByRole('textbox');
+    await userEvent.click(input);
+    await userEvent.keyboard('{Enter}');
+    await userEvent.keyboard('{Meta>}{Shift>}{Enter}{/Shift}{/Meta}');
+    await userEvent.keyboard('{Control>}{Alt>}{Enter}{/Alt}{/Control}');
+    fireEvent.keyDown(input, {
+      key: 'Enter',
+      code: 'Enter',
+      metaKey: true,
+      isComposing: true,
+    });
+    fireEvent.keyDown(input, {
+      key: 'Enter',
+      code: 'Enter',
+      ctrlKey: true,
+      keyCode: 229,
+    });
+    await expect(
+      canvas.getByTestId('record-creation-form-create-button'),
+    ).toBeVisible();
+    await expect(createCompanyRequest).not.toHaveBeenCalled();
+  },
 };

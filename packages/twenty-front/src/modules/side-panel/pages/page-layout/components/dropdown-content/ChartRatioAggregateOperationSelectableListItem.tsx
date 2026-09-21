@@ -1,3 +1,4 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
@@ -8,7 +9,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ChartRatioAggregateOperationSelectableListItem = ({
   label,
@@ -42,13 +43,17 @@ export const ChartRatioAggregateOperationSelectableListItem = ({
       itemId={DASHBOARD_AGGREGATE_OPERATION_RATIO}
       onEnter={onSelect}
     >
-      <MenuItemSelect
-        text={label}
-        selected={isCurrentlyRatio}
+      <ListItem
         focused={isFocused}
-        hasSubMenu={true}
         onClick={onSelect}
-      />
+        role="option"
+        aria-selected={isCurrentlyRatio}
+        selected={isCurrentlyRatio}
+        indicator="check"
+        hasSubmenu={true}
+      >
+        <OverflowingTextWithTooltip text={label} />
+      </ListItem>
     </SelectableListItem>
   );
 };

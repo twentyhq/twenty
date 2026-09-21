@@ -5,6 +5,11 @@
 // both the host and the source object identifiers, and an object literal
 // cannot reference its sibling keys).
 export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
+  agentChatThread: 'fab0fff8-0c90-4116-9bb0-7dbc07392633',
+  agentTurn: '63697477-8606-415e-86cb-be078d7fcf7e',
+  agentMessage: '62d0354c-3b99-4769-b0f5-4e2651c2ca7d',
+  agentMessagePart: '214bacb0-df89-494e-be42-e5b11c99cff6',
+  agentTurnEvaluation: '73741409-7835-426f-8425-9de13af22302',
   timelineActivity: '20202020-6736-4337-b5c4-8b39fae325a5',
   attachment: '20202020-bd3d-4c60-8dca-571c71d4447a',
   blocklist: '20202020-0408-4f38-b8a8-4d5e3e26e24d',

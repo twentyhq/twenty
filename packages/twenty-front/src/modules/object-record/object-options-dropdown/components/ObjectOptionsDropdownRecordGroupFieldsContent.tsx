@@ -1,3 +1,5 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useEffect } from 'react';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -26,8 +28,8 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
 import {
   MenuItem,
-  MenuItemSelect,
   UndecoratedLink,
+  ListItem,
 } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -128,22 +130,34 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {isRecordGroupingOptionalForViewType(viewType) && (
-          <MenuItemSelect
-            text={t`None`}
-            selected={!isDefined(recordIndexGroupFieldMetadataItem)}
+          <ListItem
             onClick={handleResetRecordGroupField}
-          />
+            role="option"
+            aria-selected={!isDefined(recordIndexGroupFieldMetadataItem)}
+            selected={!isDefined(recordIndexGroupFieldMetadataItem)}
+            indicator="check"
+          >
+            <OverflowingTextWithTooltip text={t`None`} />
+          </ListItem>
         )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
-          <MenuItemSelect
+          <ListItem
             key={fieldMetadataItem.id}
+            onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
+            role="option"
+            aria-selected={
+              fieldMetadataItem.id === recordIndexGroupFieldMetadataItem?.id
+            }
             selected={
               fieldMetadataItem.id === recordIndexGroupFieldMetadataItem?.id
             }
-            onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
-            LeftIcon={getIcon(fieldMetadataItem.icon)}
-            text={fieldMetadataItem.label}
-          />
+            indicator="check"
+            startIcon={
+              <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+            }
+          >
+            <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />

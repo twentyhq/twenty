@@ -13,6 +13,7 @@ import {
   resumePendingCallRecording,
   type ResumePendingCallRecordingResult,
 } from 'src/logic-functions/flows/resume-pending-call-recording.util';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 const CALL_RECORDING_OBJECT_NAME = 'callRecording';
 
@@ -94,8 +95,8 @@ const contradictsPendingCallRecording = (
         CallRecordingRequestStatus.REQUESTED) ||
     (!isUndefined(knownValues.status) &&
       knownValues.status !== CallRecordingStatus.SCHEDULED) ||
-    (!isUndefined(knownValues.externalBotId) &&
-      knownValues.externalBotId !== null)
+    // Event payloads serialize a NULL text column as an empty string.
+    isNonEmptyString(knownValues.externalBotId)
   );
 };
 

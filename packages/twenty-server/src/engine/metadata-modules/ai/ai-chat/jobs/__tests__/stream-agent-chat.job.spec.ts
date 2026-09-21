@@ -178,12 +178,17 @@ describe('StreamAgentChatJob', () => {
         deletedAt: null,
         activeStreamId: 'stream-id',
       }),
-      update: jest.fn().mockImplementation((_workspaceId, _criteria, values) =>
-        Promise.resolve({
-          affected:
-            values && typeof values.totalInputTokens === 'function'
-              ? totalsUpdateAffected
-              : 1,
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+      query: jest.fn().mockImplementation(async (_workspaceId, work) =>
+        work({
+          storage: 'core',
+          table: () => 'core."agentChatThread"',
+          manager: {
+            query: async () =>
+              Array.from({ length: totalsUpdateAffected }, () => ({
+                id: 'thread-id',
+              })),
+          },
         }),
       ),
     };
@@ -317,10 +322,9 @@ describe('StreamAgentChatJob', () => {
         ]),
       }),
     );
-    expect(threadRepository.update).toHaveBeenCalledWith(
+    expect(threadRepository.query).toHaveBeenCalledWith(
       'workspace-id',
-      { id: 'thread-id', activeStreamId: 'stream-id' },
-      expect.objectContaining({ lastStreamError: null }),
+      expect.any(Function),
     );
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
@@ -340,10 +344,9 @@ describe('StreamAgentChatJob', () => {
     expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
       expect.objectContaining({ turnId: 'turn-id' }),
     );
-    expect(threadRepository.update).toHaveBeenCalledWith(
+    expect(threadRepository.query).toHaveBeenCalledWith(
       'workspace-id',
-      { id: 'thread-id', activeStreamId: 'stream-id' },
-      expect.objectContaining({ lastStreamError: null }),
+      expect.any(Function),
     );
     expect(agentChatService.notifyThreadUsageUpdated).not.toHaveBeenCalled();
   });
