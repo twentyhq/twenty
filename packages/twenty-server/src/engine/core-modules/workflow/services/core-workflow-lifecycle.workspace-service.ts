@@ -82,6 +82,11 @@ type ResolvedCoreVersion = {
   workspaceWorkflowId: string;
 };
 
+type TriggerToRestore = {
+  resolved: ResolvedCoreVersion;
+  action: 'enable' | 'disable';
+};
+
 @Injectable()
 export class CoreWorkflowLifecycleWorkspaceService {
   private readonly logger = new Logger(
@@ -225,6 +230,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     // is collected here and applied by the migration runner once that
     // transaction has committed, then reverted if it did not.
     const pendingCoreStatuses = new Map<string, WorkflowVersionStatus>();
+    const triggersToRestore: TriggerToRestore[] = [];
     const statusesToRestore = new Map<string, WorkflowVersionStatus>();
     let pendingCoreWorkflowUpdate:
       | {
@@ -319,6 +325,11 @@ export class CoreWorkflowLifecycleWorkspaceService {
                 resolved: previousResolved,
                 transactionScope,
               });
+
+              triggersToRestore.push({
+                resolved: previousResolved,
+                action: 'enable',
+              });
             }
             await this.writeVersionStatusInTransaction({
               transactionScope,
@@ -377,6 +388,8 @@ export class CoreWorkflowLifecycleWorkspaceService {
             resolved,
             transactionScope,
           });
+
+          triggersToRestore.push({ resolved, action: 'disable' });
         },
       );
     }, buildSystemAuthContext(workspaceId));
@@ -394,6 +407,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
         workspaceWorkflowId: resolved.workspaceWorkflowId,
         lastPublishedVersionId:
           coreWorkflowUpdateToRestore?.lastPublishedVersionId ?? null,
+        triggersToRestore,
       });
 
       throw error;
@@ -453,6 +467,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     }
 
     const pendingCoreStatuses = new Map<string, WorkflowVersionStatus>();
+    const triggersToRestore: TriggerToRestore[] = [];
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
@@ -469,6 +484,8 @@ export class CoreWorkflowLifecycleWorkspaceService {
             resolved,
             transactionScope,
           });
+
+          triggersToRestore.push({ resolved, action: 'enable' });
         },
       );
     }, buildSystemAuthContext(workspaceId));
@@ -484,6 +501,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
         statusByCoreWorkflowVersionId: new Map([
           [resolved.coreWorkflowVersion.id, WorkflowVersionStatus.ACTIVE],
         ]),
+        triggersToRestore,
       });
 
       throw error;
@@ -727,35 +745,60 @@ export class CoreWorkflowLifecycleWorkspaceService {
     statusByCoreWorkflowVersionId,
     workspaceWorkflowId,
     lastPublishedVersionId,
+    triggersToRestore = [],
   }: {
     workspaceId: string;
     statusByCoreWorkflowVersionId: Map<string, WorkflowVersionStatus>;
     workspaceWorkflowId?: string;
     lastPublishedVersionId?: string | null;
+    triggersToRestore?: TriggerToRestore[];
   }): Promise<void> {
     try {
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        for (const [
-          coreWorkflowVersionId,
-          status,
-        ] of statusByCoreWorkflowVersionId.entries()) {
-          await this.workspaceOrmManager
-            .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
-              shouldBypassPermissionChecks: true,
-            })
-            .update({ coreWorkflowVersionId }, { status });
-        }
+        await this.workspaceOrmManager.runInWorkspaceTransaction(
+          async (transactionScope) => {
+            for (const [
+              coreWorkflowVersionId,
+              status,
+            ] of statusByCoreWorkflowVersionId.entries()) {
+              await transactionScope
+                .getRepository<WorkflowVersionWorkspaceEntity>(
+                  'workflowVersion',
+                  { shouldBypassPermissionChecks: true },
+                )
+                .update({ coreWorkflowVersionId }, { status });
+            }
 
-        if (isDefined(workspaceWorkflowId)) {
-          await this.workspaceOrmManager
-            .getRepository<WorkflowWorkspaceEntity>('workflow', {
-              shouldBypassPermissionChecks: true,
-            })
-            .update(
-              { id: workspaceWorkflowId },
-              { lastPublishedVersionId: lastPublishedVersionId ?? null },
-            );
-        }
+            if (isDefined(workspaceWorkflowId)) {
+              await transactionScope
+                .getRepository<WorkflowWorkspaceEntity>('workflow', {
+                  shouldBypassPermissionChecks: true,
+                })
+                .update(
+                  { id: workspaceWorkflowId },
+                  { lastPublishedVersionId: lastPublishedVersionId ?? null },
+                );
+            }
+
+            // The trigger work committed with the mirror transaction, so leaving it
+            // would arm an automation on a version that is no longer active.
+            for (const { resolved, action } of [
+              ...triggersToRestore,
+            ].reverse()) {
+              if (action === 'enable') {
+                await this.enableAutomatedTrigger({
+                  resolved,
+                  transactionScope,
+                });
+              } else {
+                await this.disableAutomatedTrigger({
+                  resolved,
+                  transactionScope,
+                });
+              }
+            }
+          },
+        );
       }, buildSystemAuthContext(workspaceId));
     } catch (revertError) {
       this.exceptionHandlerService.captureExceptions([revertError], {

@@ -20,6 +20,10 @@ import {
   WorkflowVersionEntity,
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import {
+  CoreWorkflowMetadataException,
+  CoreWorkflowMetadataExceptionCode,
+} from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { hasCoreWorkflowWorkspaceVersionIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-version-id-column.util';
 import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
@@ -178,12 +182,24 @@ export class WorkflowVersionCoreSyncService {
     const flatVersionsToUpdate: UniversalFlatWorkflowVersion[] = [];
 
     for (const coreRow of coreRows) {
-      const existingFlatWorkflowVersion = persistedCoreVersionIds.has(coreRow.id)
+      const existingFlatWorkflowVersion = persistedCoreVersionIds.has(
+        coreRow.id,
+      )
         ? findFlatEntityByIdInFlatEntityMaps({
             flatEntityId: coreRow.id,
             flatEntityMaps: flatWorkflowVersionMaps,
           })
         : undefined;
+
+      if (
+        persistedCoreVersionIds.has(coreRow.id) &&
+        !isDefined(existingFlatWorkflowVersion)
+      ) {
+        throw new CoreWorkflowMetadataException(
+          `Core workflow version ${coreRow.id} is persisted but missing from the flat entity maps`,
+          CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_NOT_FOUND,
+        );
+      }
 
       const flatWorkflowVersion: UniversalFlatWorkflowVersion & {
         id: string;
@@ -288,17 +304,41 @@ export class WorkflowVersionCoreSyncService {
         { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
       );
 
-    const flatVersionsToDelete = coreWorkflowVersionIds
-      .map((coreWorkflowVersionId) =>
+    const resolvedFlatVersions = coreWorkflowVersionIds.map(
+      (coreWorkflowVersionId) =>
         findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: coreWorkflowVersionId,
           flatEntityMaps: flatWorkflowVersionMaps,
         }),
-      )
-      .filter(isDefined);
+    );
+
+    const missingCoreWorkflowVersionIds = coreWorkflowVersionIds.filter(
+      (_, index) => !isDefined(resolvedFlatVersions[index]),
+    );
 
     // The dual-write listener deletes the same ids when the mirror is soft
-    // deleted, so an id already gone is an idempotent no-op rather than an error.
+    // deleted, so an id gone from both the cache and the table is an idempotent
+    // no-op. An id still in the table is a stale cache and must fail rather than
+    // leave an orphan that still reads and still broadcasts.
+    if (missingCoreWorkflowVersionIds.length > 0) {
+      const stillPersisted = await this.coreWorkflowVersionRepository.find(
+        workspaceId,
+        {
+          where: { id: In(missingCoreWorkflowVersionIds) },
+          select: { id: true },
+        },
+      );
+
+      if (stillPersisted.length > 0) {
+        throw new CoreWorkflowMetadataException(
+          `Core workflow versions ${stillPersisted.map(({ id }) => id).join(', ')} are persisted but missing from the flat entity maps`,
+          CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_NOT_FOUND,
+        );
+      }
+    }
+
+    const flatVersionsToDelete = resolvedFlatVersions.filter(isDefined);
+
     if (flatVersionsToDelete.length === 0) {
       return;
     }
