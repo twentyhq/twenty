@@ -7,7 +7,5 @@ export const isChatAccessDenied = (
 ) =>
   isDefined(errors) &&
   errors.some((error) =>
-    ['NOT_FOUND', 'FORBIDDEN', 'UNAUTHENTICATED'].includes(
-      String(error.extensions?.code),
-    ),
+    ['NOT_FOUND', 'FORBIDDEN'].includes(String(error.extensions?.code)),
   );

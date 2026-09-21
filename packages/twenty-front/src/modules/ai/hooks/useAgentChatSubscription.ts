@@ -423,8 +423,11 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
     store.set(handleEventCallbackAtom, () => handleEvent);
 
+    let disposeSubscription: (() => void) | undefined;
+
     const handleAccessDenied = () => {
       accessDenied = true;
+      disposeSubscription?.();
       latestMessage = null;
       if (isDefined(throttleTimer)) {
         clearTimeout(throttleTimer);
@@ -488,6 +491,11 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       },
     );
 
+    disposeSubscription = dispose;
+    if (accessDenied) {
+      dispose();
+    }
+
     return () => {
       disposed = true;
       chunkSequencer.reset();
@@ -497,7 +505,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         clearTimeout(throttleTimer);
       }
       cleanupStream();
-      dispose();
+      if (!accessDenied) {
+        dispose();
+      }
     };
   }, [
     threadId,

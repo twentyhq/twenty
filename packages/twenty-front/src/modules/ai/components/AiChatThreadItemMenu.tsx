@@ -1,6 +1,5 @@
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { canManageAgentChatThreadFamilySelector } from '@/ai/states/selectors/canManageAgentChatThreadFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import {
@@ -53,14 +52,10 @@ export const AiChatThreadItemMenu = ({
     surface,
   );
 
-  const metadataStore = useAtomFamilyStateValue(
-    metadataStoreState,
-    'agentChatThreads',
+  const canManageAgentChatThread = useAtomFamilySelectorValue(
+    canManageAgentChatThreadFamilySelector,
+    threadId,
   );
-  const canManage =
-    (metadataStore.current as FlatAgentChatThread[]).find(
-      (thread) => thread.id === threadId,
-    )?.canManage === true;
 
   const handleRename = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -85,7 +80,7 @@ export const AiChatThreadItemMenu = ({
     openDialog(getAiChatThreadDeleteModalId(surface));
   };
 
-  if (!canManage) {
+  if (!canManageAgentChatThread) {
     return null;
   }
 

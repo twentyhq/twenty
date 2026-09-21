@@ -72,10 +72,21 @@ describe('Shared conversation access revocation', () => {
       expect(jotaiStore.get(queuedAtom)).toEqual([]);
       expect(jotaiStore.get(errorAtom)).toMatchObject({ code: 'NOT_FOUND' });
       expect(refreshAgentChatThreads).toHaveBeenCalledTimes(1);
+      expect(disconnect).toHaveBeenCalledTimes(1);
       unmount();
       expect(disconnect).toHaveBeenCalledTimes(1);
     },
   );
+
+  it('clears content and disconnects when the AI permission guard denies access', () => {
+    renderHook(() => useAgentChatSubscription('thread'), { wrapper: Wrapper });
+    act(() =>
+      subscribe.mock.calls[0][1].error([{ extensions: { code: 'FORBIDDEN' } }]),
+    );
+    expect(jotaiStore.get(messagesAtom)).toEqual([]);
+    expect(jotaiStore.get(queuedAtom)).toEqual([]);
+    expect(disconnect).toHaveBeenCalledTimes(1);
+  });
 
   it('does not let buffered stream updates restore content after revocation', async () => {
     const { unmount } = renderHook(() => useAgentChatSubscription('thread'), {
@@ -125,6 +136,38 @@ describe('Shared conversation access revocation', () => {
     expect(jotaiStore.get(messagesAtom)).toEqual([]);
     expect(jotaiStore.get(errorAtom)).toMatchObject({ code: 'NOT_FOUND' });
     unmount();
+  });
+
+  it.each(['next', 'error'])(
+    'preserves queued messages during session expiry on the %s channel',
+    (channel) => {
+      renderHook(() => useAgentChatSubscription('thread'), {
+        wrapper: Wrapper,
+      });
+      const sink = subscribe.mock.calls[0][1];
+      const errors = [{ extensions: { code: 'UNAUTHENTICATED' } }];
+      act(() =>
+        channel === 'next' ? sink.next({ errors }) : sink.error(errors),
+      );
+      expect(jotaiStore.get(messagesAtom)).toHaveLength(1);
+      expect(jotaiStore.get(fetchedAtom)).toHaveLength(1);
+      expect(jotaiStore.get(queuedAtom)).toHaveLength(1);
+      expect(refreshAgentChatThreads).not.toHaveBeenCalled();
+      expect(disconnect).not.toHaveBeenCalled();
+    },
+  );
+
+  it('disconnects when access is denied before the subscription returns', () => {
+    subscribe.mockImplementationOnce((_request, sink) => {
+      sink.next({ errors: denial });
+      return disconnect;
+    });
+    const { unmount } = renderHook(() => useAgentChatSubscription('thread'), {
+      wrapper: Wrapper,
+    });
+    expect(disconnect).toHaveBeenCalledTimes(1);
+    unmount();
+    expect(disconnect).toHaveBeenCalledTimes(1);
   });
 
   it('keeps existing messages on an ordinary connection error', () => {

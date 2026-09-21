@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -18,6 +19,18 @@ export const useChatThreadSharing = (threadId: string) => {
   );
   const [setShareMutation, { loading: saving }] = useMutation(
     SetChatThreadShareDocument,
+    {
+      update: (cache, { data: mutationData }) => {
+        if (!isDefined(mutationData)) {
+          return;
+        }
+        cache.writeQuery({
+          query: GetChatThreadSharingDocument,
+          variables: { threadId },
+          data: { chatThreadSharing: mutationData.setChatThreadShare },
+        });
+      },
+    },
   );
   const { enqueueToast } = useToast();
 
@@ -27,7 +40,6 @@ export const useChatThreadSharing = (threadId: string) => {
   ) => {
     try {
       await setShareMutation({ variables: { threadId, target, enabled } });
-      await refetch();
     } catch (mutationError) {
       enqueueToast(getToastOptionsFromError({ error: mutationError }));
     }

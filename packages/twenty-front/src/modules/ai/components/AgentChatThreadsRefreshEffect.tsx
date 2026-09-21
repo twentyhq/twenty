@@ -8,8 +8,6 @@ export const AgentChatThreadsRefreshEffect = () => {
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
 
   useEffect(() => {
-    // Audience changes (including role membership) need no conversation content
-    // broadcast to people who may have just lost access.
     const refresh = () => {
       if (document.visibilityState === 'visible') {
         void refreshAgentChatThreads();

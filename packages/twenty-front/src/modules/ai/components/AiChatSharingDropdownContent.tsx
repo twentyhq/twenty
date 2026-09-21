@@ -26,7 +26,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { type ChatThreadShareTargetInput } from '~/generated-metadata/graphql';
 
 const StyledDescription = styled.div`
   color: ${themeCssVariables.font.color.secondary};
@@ -52,7 +51,7 @@ export const AiChatSharingDropdownContent = ({
   const matchesSearch = (text: string) =>
     text.toLowerCase().includes(search.trim().toLowerCase());
   const shares = sharing?.shares ?? [];
-  const everyone = shares.some(
+  const isSharedWithEveryone = shares.some(
     (share) => share.principalType === RecordSharePrincipalType.EVERYONE,
   );
   const canAdd = sharing?.canManage === true && sharing.isEnabled && !saving;
@@ -69,14 +68,6 @@ export const AiChatSharingDropdownContent = ({
       !shares.some((share) => share.principalId === role.id) &&
       matchesSearch(role.label),
   );
-
-  const getTarget = (
-    principalType: string,
-    principalId: string,
-  ): ChatThreadShareTargetInput =>
-    principalType === RecordSharePrincipalType.ROLE
-      ? { roleId: principalId }
-      : { workspaceMemberId: principalId };
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
@@ -108,8 +99,8 @@ export const AiChatSharingDropdownContent = ({
                   <AiChatSharingAction
                     text={t`Restricted`}
                     contextualText={t`Only people and roles you add`}
-                    LeftIcon={everyone ? IconLock : IconCheck}
-                    disabled={saving || !everyone}
+                    LeftIcon={isSharedWithEveryone ? undefined : IconCheck}
+                    disabled={saving || !isSharedWithEveryone}
                     onClick={() => {
                       void setShare({ everyone: true }, false);
                     }}
@@ -117,8 +108,8 @@ export const AiChatSharingDropdownContent = ({
                   <AiChatSharingAction
                     text={t`Everyone in the workspace`}
                     contextualText={t`Viewer`}
-                    LeftIcon={everyone ? IconCheck : IconUsers}
-                    disabled={!canAdd || everyone}
+                    LeftIcon={isSharedWithEveryone ? IconCheck : IconUsers}
+                    disabled={!canAdd || isSharedWithEveryone}
                     onClick={() => {
                       void setShare({ everyone: true }, true);
                     }}
@@ -170,10 +161,10 @@ export const AiChatSharingDropdownContent = ({
                               disabled={saving}
                               onClick={() => {
                                 void setShare(
-                                  getTarget(
-                                    share.principalType,
-                                    share.principalId,
-                                  ),
+                                  share.principalType ===
+                                    RecordSharePrincipalType.ROLE
+                                    ? { roleId: share.principalId }
+                                    : { workspaceMemberId: share.principalId },
                                   false,
                                 );
                               }}

@@ -44,7 +44,9 @@ describe('Shared conversation composer', () => {
       });
       render(<AiChatEditorSection />, { wrapper: Wrapper });
       expect(screen.getByRole('status')).toHaveTextContent(
-        'only the owner can send messages',
+        canManage === undefined
+          ? 'Loading conversation'
+          : 'only the owner can send messages',
       );
       expect(screen.queryByRole('textbox')).toBeNull();
       expect(useAiChatEditor).not.toHaveBeenCalled();

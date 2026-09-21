@@ -1,4 +1,4 @@
-import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
+import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { useState } from 'react';
 
@@ -217,11 +217,16 @@ const EditableAiChatEditorSection = () => {
 
 export const AiChatEditorSection = () => {
   const { t } = useLingui();
-  const isReadOnly = useIsCurrentAiChatThreadReadOnly();
-  if (isReadOnly) {
+  const isMobile = useIsMobile();
+  const access = useCurrentAiChatThreadAccess();
+  if (access !== 'owner') {
     return (
-      <StyledInputArea isMobile={false}>
-        <div role="status">{t`View only — only the owner can send messages in this conversation.`}</div>
+      <StyledInputArea isMobile={isMobile}>
+        <div role="status">
+          {access === 'loading'
+            ? t`Loading conversation…`
+            : t`View only — only the owner can send messages in this conversation.`}
+        </div>
         <AiChatStandaloneError />
       </StyledInputArea>
     );
