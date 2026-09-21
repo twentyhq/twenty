@@ -27,10 +27,6 @@ const StyledTr = styled.div<{
         border-left: 1px solid ${themeCssVariables.border.color.medium};
 
         margin-left: -1px;
-
-        div {
-          margin-left: -1px;
-        }
       }
       &:last-of-type {
         border-radius: 0 ${themeCssVariables.border.radius.sm}
