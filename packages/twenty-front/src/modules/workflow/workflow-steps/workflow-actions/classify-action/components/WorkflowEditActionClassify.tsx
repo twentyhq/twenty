@@ -43,12 +43,21 @@ const StyledQuestion = styled.div`
 `;
 
 const StyledQuestionHeader = styled.div`
-  align-items: flex-end;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+  column-gap: ${themeCssVariables.spacing[2]};
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
 
   & > *:first-child {
-    flex: 1;
+    display: grid;
+    grid-column: 1;
+    grid-row: 1 / 4;
+    grid-template-rows: subgrid;
+  }
+
+  & > button {
+    align-self: center;
+    grid-column: 2;
+    grid-row: 2;
   }
 `;
 
