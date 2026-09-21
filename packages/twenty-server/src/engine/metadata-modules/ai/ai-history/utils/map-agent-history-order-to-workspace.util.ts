@@ -1,3 +1,4 @@
+import { mapAgentHistoryFieldNameToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-history-field-name-to-workspace.util';
 import { isDefined } from 'twenty-shared/utils';
 import { isObject } from '@sniptt/guards';
 import { type FindOptionsOrder, type FindOptionsOrderValue } from 'typeorm';
@@ -70,9 +71,7 @@ export const mapAgentHistoryOrderToWorkspace = <TRecord>(
         isDefined(entry[1]),
       )
       .map(([fieldName, value]) => [
-        objectName === 'agentChatThread' && fieldName === 'deletedAt'
-          ? 'archivedAt'
-          : fieldName,
+        mapAgentHistoryFieldNameToWorkspace(objectName, fieldName),
         isRelationOrder(value)
           ? Object.fromEntries(
               Object.entries(value).map(
