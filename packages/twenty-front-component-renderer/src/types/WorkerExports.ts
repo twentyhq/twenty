@@ -15,6 +15,7 @@ export type WorkerExports = {
   onConfirmationModalResult: (
     result: CommandConfirmationModalResult,
   ) => Promise<void>;
+  onSettingsBannerActionClick: () => Promise<void>;
   pushGeometryUpdates: (batch: GeometryUpdateBatch) => Promise<void>;
   pushMediaSessionEvents: (batch: MediaSessionEventBatch) => Promise<void>;
 };

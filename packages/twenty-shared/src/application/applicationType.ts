@@ -1,5 +1,6 @@
 import { type PostInstallLogicFunctionApplicationManifest } from '@/application/postInstallLogicFunctionApplicationType';
 import { type PreInstallLogicFunctionApplicationManifest } from '@/application/preInstallLogicFunctionApplicationType';
+import { type SettingsBannerFrontComponentApplicationManifest } from '@/application/settingsBannerFrontComponentApplicationType';
 import { type SettingsFrontComponentApplicationManifest } from '@/application/settingsFrontComponentApplicationType';
 import { type UninstallLogicFunctionApplicationManifest } from '@/application/uninstallLogicFunctionApplicationType';
 import { type FrontComponentSharedDependenciesManifest } from '@/application/frontComponentSharedDependenciesManifestType';
@@ -37,6 +38,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   preInstallLogicFunction?: PreInstallLogicFunctionApplicationManifest;
   uninstallLogicFunction?: UninstallLogicFunctionApplicationManifest;
   settingsFrontComponent?: SettingsFrontComponentApplicationManifest;
+  settingsBannerFrontComponent?: SettingsBannerFrontComponentApplicationManifest;
   frontComponentSharedDependencies?: FrontComponentSharedDependenciesManifest;
   /**
    * @deprecated Use `defineSettingsFrontComponent()` (exposed on the manifest

@@ -130,6 +130,7 @@ export const buildManifest = async (
   const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
     [];
   const settingsFrontComponentUniversalIdentifiers: string[] = [];
+  const settingsBannerFrontComponentUniversalIdentifiers: string[] = [];
   const applicationRoleUniversalIdentifiers: string[] = [];
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
@@ -374,13 +375,16 @@ export const buildManifest = async (
 
         const relativeFilePath = relative(appPath, filePath);
 
+        const isSettingsBanner =
+          targetFunctionName === TargetFunction.DefineSettingsBanner;
+
         const config: FrontComponentManifest = {
           ...rest,
           componentName: component.name,
           sourceComponentPath: relativeFilePath,
           builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtComponentChecksum: '',
-          isHeadless: rest.isHeadless ?? false,
+          isHeadless: isSettingsBanner || (rest.isHeadless ?? false),
         };
 
         frontComponents.push(config);
@@ -390,6 +394,12 @@ export const buildManifest = async (
           targetFunctionName === TargetFunction.DefineSettingsFrontComponent
         ) {
           settingsFrontComponentUniversalIdentifiers.push(
+            extract.config.universalIdentifier,
+          );
+        }
+
+        if (isSettingsBanner) {
+          settingsBannerFrontComponentUniversalIdentifiers.push(
             extract.config.universalIdentifier,
           );
         }
@@ -613,6 +623,10 @@ export const buildManifest = async (
     errors.push('Only one settings front component is allowed per application');
   }
 
+  if (settingsBannerFrontComponentUniversalIdentifiers.length > 1) {
+    errors.push('Only one settings banner is allowed per application');
+  }
+
   if (applicationRoleUniversalIdentifiers.length > 1) {
     errors.push('Only one defineApplicationRole is allowed per application');
   }
@@ -675,6 +689,14 @@ export const buildManifest = async (
                   settingsFrontComponent: {
                     universalIdentifier:
                       settingsFrontComponentUniversalIdentifiers[0],
+                  },
+                }
+              : {}),
+            ...(settingsBannerFrontComponentUniversalIdentifiers.length >= 1
+              ? {
+                  settingsBannerFrontComponent: {
+                    universalIdentifier:
+                      settingsBannerFrontComponentUniversalIdentifiers[0],
                   },
                 }
               : {}),

@@ -39,6 +39,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useApplicationVariablesDraft } from '~/pages/settings/applications/hooks/useApplicationVariablesDraft';
+import { SettingsApplicationBanner } from '~/pages/settings/applications/components/SettingsApplicationBanner';
 import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab';
 import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailVariablesTab';
@@ -161,6 +162,9 @@ export const SettingsApplicationDetails = () => {
     applicationVariables: displayedApplicationVariables,
   });
 
+  const settingsBannerFrontComponentId =
+    application?.settingsBannerFrontComponentId;
+
   const settingsFrontComponentId =
     application?.settingsCustomTabFrontComponentId;
   const hasCustomSettingsTab = isDefined(settingsFrontComponentId);
@@ -274,6 +278,11 @@ export const SettingsApplicationDetails = () => {
         }
       >
         <SettingsPageContainer overflow="visible">
+          {isDefined(settingsBannerFrontComponentId) && (
+            <SettingsApplicationBanner
+              frontComponentId={settingsBannerFrontComponentId}
+            />
+          )}
           {isApplicationStopped && (
             <InlineBanner
               color="danger"

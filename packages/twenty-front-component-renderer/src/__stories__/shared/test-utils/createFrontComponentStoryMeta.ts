@@ -12,6 +12,8 @@ export const hostApiMocks = {
   closeSidePanel: fn().mockResolvedValue(undefined),
   unmountFrontComponent: fn().mockResolvedValue(undefined),
   updateProgress: fn().mockResolvedValue(undefined),
+  showSettingsBanner: fn().mockResolvedValue(undefined),
+  hideSettingsBanner: fn().mockResolvedValue(undefined),
   requestAccessTokenRefresh: fn().mockResolvedValue('refreshed-token'),
   openCommandConfirmationModal: fn().mockResolvedValue(undefined),
   copyToClipboard: fn().mockResolvedValue(undefined),
@@ -49,6 +51,8 @@ export const resetFrontComponentStoryMocks = () => {
   hostApiMocks.closeSidePanel.mockClear();
   hostApiMocks.unmountFrontComponent.mockClear();
   hostApiMocks.updateProgress.mockClear();
+  hostApiMocks.showSettingsBanner.mockClear();
+  hostApiMocks.hideSettingsBanner.mockClear();
   hostApiMocks.requestAccessTokenRefresh.mockClear();
   hostApiMocks.openCommandConfirmationModal.mockClear();
   hostApiMocks.copyToClipboard.mockClear();

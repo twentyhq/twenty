@@ -31,6 +31,7 @@ import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemot
 import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/thread/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '@/remote/worker/thread/utils/handleCommandConfirmationModalResult';
+import { handleSettingsBannerActionClick } from '@/remote/worker/thread/utils/handleSettingsBannerActionClick';
 import { installErrorEventBridge } from '@/remote/worker/thread/utils/installErrorEventBridge';
 import { renderFrontComponent } from '@/remote/worker/rendering/utils/renderFrontComponent';
 import { setFrontComponentExecutionContext } from '@/remote/worker/environment/utils/setFrontComponentExecutionContext';
@@ -136,6 +137,9 @@ const workerExports: WorkerExports = {
   },
   onConfirmationModalResult: async (result) => {
     await handleCommandConfirmationModalResult(result);
+  },
+  onSettingsBannerActionClick: async () => {
+    await handleSettingsBannerActionClick();
   },
   pushGeometryUpdates: async (batch) => {
     workerGeometryStore.applyGeometryBatch(batch);

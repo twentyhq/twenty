@@ -17,6 +17,7 @@ export enum TargetFunction {
   DefineConnectionProvider = 'defineConnectionProvider',
   DefineFrontComponent = 'defineFrontComponent',
   DefineSettingsFrontComponent = 'defineSettingsFrontComponent',
+  DefineSettingsBanner = 'defineSettingsBanner',
   DefineView = 'defineView',
   DefineViewField = 'defineViewField',
   DefineNavigationMenuItem = 'defineNavigationMenuItem',
@@ -77,6 +78,7 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   [TargetFunction.DefineFrontComponent]: ManifestEntityKey.FrontComponents,
   [TargetFunction.DefineSettingsFrontComponent]:
     ManifestEntityKey.FrontComponents,
+  [TargetFunction.DefineSettingsBanner]: ManifestEntityKey.FrontComponents,
   [TargetFunction.DefineView]: ManifestEntityKey.Views,
   [TargetFunction.DefineViewField]: ManifestEntityKey.ViewFields,
   [TargetFunction.DefineNavigationMenuItem]:

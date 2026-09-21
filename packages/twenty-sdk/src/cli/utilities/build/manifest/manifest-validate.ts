@@ -63,7 +63,8 @@ const findUniversalIdentifiers = (obj: object): string[] => {
       key === 'uninstallLogicFunction' ||
       key === 'onConnectLogicFunction' ||
       key === 'onDisconnectLogicFunction' ||
-      key === 'settingsFrontComponent'
+      key === 'settingsFrontComponent' ||
+      key === 'settingsBannerFrontComponent'
     ) {
       continue;
     }

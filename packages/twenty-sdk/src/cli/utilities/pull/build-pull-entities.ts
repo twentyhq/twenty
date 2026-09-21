@@ -82,6 +82,7 @@ const APPLICATION_PROPERTIES_TO_STRIP = [
   'preInstallLogicFunction',
   'uninstallLogicFunction',
   'settingsFrontComponent',
+  'settingsBannerFrontComponent',
   'settingsCustomTabFrontComponentUniversalIdentifier',
   'frontComponentSharedDependencies',
   'logoUrl',

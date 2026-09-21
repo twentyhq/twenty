@@ -17,6 +17,7 @@ Front components can render in four locations within Twenty:
 - **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
 - **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
 - **App settings** — Defined with [`defineSettingsFrontComponent()`](#custom-settings-component), the front component is the whole content of the app's **Settings** tab, in place of the default **Variables** tab.
+- **App settings banner** — Defined with [`defineSettingsBanner()`](#settings-banner), a headless front component that drives a banner shown at the top of the app's settings page.
 - **AI chat** — A [logic function exposed as an AI tool](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) can name a front component, which then renders that tool's calls inline in the chat in place of the default step row.
 
 A front component on its own isn't reachable from the UI — you need to *surface* it. The four ways to do that are:
@@ -24,6 +25,7 @@ A front component on its own isn't reachable from the UI — you need to *surfac
 - **Pair it with a [command menu item](/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
 - **Embed it as a widget in a [page layout](/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
 - **Define it with [`defineSettingsFrontComponent()`](#custom-settings-component)** — makes it the whole content of the app's **Settings** tab, in place of the default **Variables** tab.
+- **Define it with [`defineSettingsBanner()`](#settings-banner)** — drives a banner at the top of the app's settings page.
 - **Name it from a [logic function's `toolTriggerSettings`](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action)** — renders the tool's calls in the AI chat.
 
 ## Basic example
@@ -112,6 +114,61 @@ export default defineSettingsFrontComponent({
 ```
 
 Only one settings front component is allowed per app; declaring more than one fails the build. When present, the app gains a **Settings** tab rendering this component, in place of the default **Variables** tab.
+
+## Settings banner
+
+To guide users through configuring your app, define a settings banner with `defineSettingsBanner`. It takes the same [configuration fields](#configuration-fields) as `defineFrontComponent` (except `isHeadless`, which is always `true`).
+
+The component mounts as soon as the user opens the app's settings page, on any tab, and renders nothing itself. Through the `useSettingsBanner` hook it decides whether the banner is shown, what it says, and what happens when the action button is clicked.
+
+```tsx src/front-components/settings-banner.tsx
+import { defineSettingsBanner } from 'twenty-sdk/define';
+import {
+  enqueueSnackbar,
+  getApplicationVariable,
+  useSettingsBanner,
+} from 'twenty-sdk/front-component';
+
+const SettingsBanner = () => {
+  const apiKey = getApplicationVariable('API_KEY');
+
+  useSettingsBanner(
+    apiKey
+      ? null
+      : {
+          variant: 'error',
+          text: 'Missing configuration',
+          action: {
+            label: 'Configure',
+            onClick: () =>
+              enqueueSnackbar({
+                message: 'Add your API key in the Variables tab',
+                variant: 'info',
+              }),
+          },
+        },
+  );
+
+  return null;
+};
+
+export default defineSettingsBanner({
+  universalIdentifier: 'f3b6a4d2-9c81-4e0a-b5c7-2d1e8f4a6b03',
+  name: 'settings-banner',
+  description: 'Tells the user what is left to configure',
+  component: SettingsBanner,
+});
+```
+
+`useSettingsBanner` takes the banner to display, or `null` to hide it. The banner is also hidden when the user leaves the settings page. `onClick` runs inside your component, so it can call any front-component SDK function — open a side panel page, navigate, or hit one of your logic functions.
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `variant` | No | `info` (blue), `warning` (orange) or `error` (red). Defaults to `info` |
+| `text` | Yes | The message shown in the banner |
+| `action` | No | `{ label, onClick }` for the banner's action button |
+
+Only one settings banner is allowed per app; declaring more than one fails the build.
 
 ## Headless vs non-headless
 

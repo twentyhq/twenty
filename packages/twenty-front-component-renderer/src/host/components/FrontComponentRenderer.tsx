@@ -6,6 +6,7 @@ import { FrontComponentErrorEffect } from '@/host/effect-components/FrontCompone
 import { FrontComponentGeometryTrackerEffect } from '@/host/effect-components/FrontComponentGeometryTrackerEffect';
 import { FrontComponentInitializeHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentInitializeHostCommunicationApiEffect';
 import { FrontComponentMediaSessionEffect } from '@/host/effect-components/FrontComponentMediaSessionEffect';
+import { FrontComponentSettingsBannerActionEffect } from '@/host/effect-components/FrontComponentSettingsBannerActionEffect';
 import { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
@@ -127,6 +128,11 @@ export const FrontComponentRenderer = ({
               }
             />
             <FrontComponentConfirmationModalResultEffect
+              thread={thread}
+              frontComponentId={executionContext.frontComponentId}
+              onError={setError}
+            />
+            <FrontComponentSettingsBannerActionEffect
               thread={thread}
               frontComponentId={executionContext.frontComponentId}
               onError={setError}

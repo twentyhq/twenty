@@ -142,6 +142,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
+      '2.42.0_AddSettingsBannerFrontComponentIdToApplicationFastInstanceCommand_1789920648347',
+  })
+  settingsBannerFrontComponentId: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
       '2.32.0_AddUninstallLogicFunctionIdToApplicationFastInstanceCommand_1786959731000',
   })
   uninstallLogicFunctionId: string | null;

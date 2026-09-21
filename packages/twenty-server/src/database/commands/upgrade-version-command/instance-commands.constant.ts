@@ -198,6 +198,7 @@ import { AddWorkflowExecutionCompatibilityFastInstanceCommand } from 'src/databa
 import { CoreWorkflowCommandMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789730706712-core-workflow-command-menu-items';
 import { AddWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789893300000-add-workflow-visibility';
 import { AddAiEvaluationModelToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789918648347-add-ai-evaluation-model-to-workspace';
+import { AddSettingsBannerFrontComponentIdToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789920648347-add-settings-banner-front-component-id-to-application';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -398,4 +399,5 @@ export const INSTANCE_COMMANDS = [
   AddAppMessageChannelTypeFastInstanceCommand,
   AddAppMessageChannelUniqueHandleFastInstanceCommand,
   AddAiEvaluationModelToWorkspaceFastInstanceCommand,
+  AddSettingsBannerFrontComponentIdToApplicationFastInstanceCommand,
 ];

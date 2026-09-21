@@ -3,6 +3,8 @@ export type { TransProps } from './components/Trans';
 export { closeSidePanel } from './functions/closeSidePanel';
 export { copyToClipboard } from './functions/copyToClipboard';
 export { getApplicationVariable } from './functions/getApplicationVariable';
+export { hideSettingsBanner } from './functions/hideSettingsBanner';
+export { showSettingsBanner } from './functions/showSettingsBanner';
 export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
 export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';
@@ -19,6 +21,7 @@ export { useLocale } from './hooks/useLocale';
 export { useRecordId } from './hooks/useRecordId';
 export { useToolCall } from './hooks/useToolCall';
 export { useSelectedRecordIds } from './hooks/useSelectedRecordIds';
+export { useSettingsBanner } from './hooks/useSettingsBanner';
 export { useTimelineActivityId } from './hooks/useTimelineActivityId';
 export { useUserId } from './hooks/useUserId';
 export { msg } from './translations/msg';
@@ -38,12 +41,16 @@ export type {
   CommandConfirmationModalResult,
   CopyToClipboardFunction,
   EnqueueSnackbarFunction,
+  HideSettingsBannerFunction,
   NavigateFunction,
   OpenCommandConfirmationModalFunction,
   OpenCommandConfirmationModalHostFunction,
   OpenSidePanelPageFunction,
   OpenSidePanelPageParams,
   RequestAccessTokenRefreshFunction,
+  ShowSettingsBannerFunction,
+  ShowSettingsBannerHostFunction,
+  ShowSettingsBannerParams,
   StorageClearFunction,
   StorageDeleteFunction,
   StorageSetFunction,
@@ -72,5 +79,7 @@ export type {
 export { AppPath, SidePanelPages } from 'twenty-shared/types';
 export type {
   EnqueueSnackbarParams,
+  SettingsBannerParams,
+  SettingsBannerVariant,
   SnackBarVariant,
 } from 'twenty-shared/types';

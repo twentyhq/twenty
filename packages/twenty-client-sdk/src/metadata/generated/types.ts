@@ -1083,6 +1083,9 @@ export default {
             "settingsCustomTabFrontComponentId": [
                 3
             ],
+            "settingsBannerFrontComponentId": [
+                3
+            ],
             "defaultLogicFunctionRole": [
                 48
             ],

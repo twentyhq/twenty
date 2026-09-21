@@ -102,6 +102,11 @@ export class ApplicationDTO {
   settingsCustomTabFrontComponentId?: string;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  settingsBannerFrontComponentId?: string;
+
+  @IsOptional()
   @Field(() => RoleDTO, { nullable: true })
   defaultLogicFunctionRole?: RoleDTO;
 

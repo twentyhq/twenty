@@ -10,6 +10,8 @@ export const FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP: FrontComponentHostComm
     enqueueSnackbar: async () => {},
     closeSidePanel: async () => {},
     updateProgress: async () => {},
+    showSettingsBanner: async () => {},
+    hideSettingsBanner: async () => {},
     copyToClipboard: async () => {},
     uploadFile: async () => ({ status: 'failed', reason: 'upload-failed' }),
     storageSet: async () => {},

@@ -332,6 +332,20 @@ export class ApplicationManifestMigrationService {
         })
       : null;
 
+    const settingsBannerFrontComponentUniversalIdentifier =
+      manifest.application.settingsBannerFrontComponent?.universalIdentifier;
+
+    const settingsBannerFrontComponentId = isDefined(
+      settingsBannerFrontComponentUniversalIdentifier,
+    )
+      ? resolveApplicationReferenceIdOrThrow({
+          flatEntityMaps: refreshedFlatFrontComponentMaps,
+          universalIdentifier: settingsBannerFrontComponentUniversalIdentifier,
+          referenceLabel: 'settings banner front component',
+          exceptionCode: ApplicationExceptionCode.ENTITY_NOT_FOUND,
+        })
+      : null;
+
     const uninstallLogicFunctionUniversalIdentifier =
       manifest.application.uninstallLogicFunction?.universalIdentifier;
 
@@ -352,6 +366,10 @@ export class ApplicationManifestMigrationService {
       ...(isDefined(settingsCustomTabFrontComponentId) ||
       inferDeletionFromMissingEntities
         ? { settingsCustomTabFrontComponentId }
+        : {}),
+      ...(isDefined(settingsBannerFrontComponentId) ||
+      inferDeletionFromMissingEntities
+        ? { settingsBannerFrontComponentId }
         : {}),
       ...(isDefined(uninstallLogicFunctionId) ||
       inferDeletionFromMissingEntities

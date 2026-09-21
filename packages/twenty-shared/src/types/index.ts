@@ -317,6 +317,12 @@ export type {
 export type { SerializedRelation } from './SerializedRelation.type';
 export { SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
 export { ServerFileFolder } from './ServerFileFolder';
+export type { SettingsBannerActionBrowserEventDetail } from './SettingsBannerActionBrowserEventDetail';
+export type {
+  SettingsBannerVariant,
+  SettingsBannerAction,
+  SettingsBannerParams,
+} from './SettingsBannerParams';
 export { SettingsPath } from './SettingsPath';
 export { SidePanelPages } from './SidePanelPages';
 export type { Sources } from './SourcesType';

@@ -3,6 +3,8 @@ import {
   type SidePanelPages,
   type EnqueueSnackbarParams,
   type NavigateOptions,
+  type SettingsBannerParams,
+  type SettingsBannerVariant,
 } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
 
@@ -116,6 +118,27 @@ export type CloseSidePanelFunction = () => Promise<void>;
 
 export type UpdateProgressFunction = (progress: number) => Promise<void>;
 
+export type ShowSettingsBannerParams = {
+  variant?: SettingsBannerVariant;
+  text: string;
+  action?: {
+    label: string;
+    onClick?: () => void;
+  };
+};
+
+export type ShowSettingsBannerFunction = (
+  params: ShowSettingsBannerParams,
+) => Promise<void>;
+
+// The host cannot receive the action callback across the worker boundary, so
+// it only gets the serializable part and calls back on click.
+export type ShowSettingsBannerHostFunction = (
+  params: SettingsBannerParams,
+) => Promise<void>;
+
+export type HideSettingsBannerFunction = () => Promise<void>;
+
 export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type CopyToClipboardFunction = (text: string) => Promise<void>;
@@ -174,6 +197,8 @@ export type FrontComponentHostCommunicationApiStore = {
   enqueueSnackbar?: EnqueueSnackbarFunction;
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
+  showSettingsBanner?: ShowSettingsBannerFunction;
+  hideSettingsBanner?: HideSettingsBannerFunction;
   copyToClipboard?: CopyToClipboardFunction;
   uploadFile?: UploadFileFunction;
   storageSet?: StorageSetFunction;

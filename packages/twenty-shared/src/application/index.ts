@@ -188,6 +188,7 @@ export type {
 export type { ServerVariables } from './server-variables.type';
 export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType';
 export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';
+export type { SettingsBannerFrontComponentApplicationManifest } from './settingsBannerFrontComponentApplicationType';
 export type { SettingsFrontComponentApplicationManifest } from './settingsFrontComponentApplicationType';
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';

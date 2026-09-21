@@ -33,6 +33,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
+import { settingsBannerFamilyState } from '@/front-components/states/settingsBannerFamilyState';
 import { getMediaFileExtension } from '@/front-components/media-session/utils/getMediaFileExtension';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
@@ -165,6 +166,10 @@ export const useFrontComponentExecutionContext = ({
   const setCommandMenuItemProgress = useSetAtomFamilyState(
     commandMenuItemProgressFamilyState,
     commandMenuItemId ?? '',
+  );
+  const setSettingsBanner = useSetAtomFamilyState(
+    settingsBannerFamilyState,
+    frontComponentId,
   );
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
@@ -453,6 +458,20 @@ export const useFrontComponentExecutionContext = ({
       setCommandMenuItemProgress(Math.max(0, Math.min(100, progress)));
     };
 
+  const showSettingsBanner: FrontComponentHostCommunicationApi['showSettingsBanner'] =
+    async ({ variant, text, action }) => {
+      if (!isNonEmptyString(text)) {
+        return;
+      }
+
+      setSettingsBanner({ variant, text, action });
+    };
+
+  const hideSettingsBanner: FrontComponentHostCommunicationApi['hideSettingsBanner'] =
+    async () => {
+      setSettingsBanner(null);
+    };
+
   const copyToClipboard: FrontComponentHostCommunicationApi['copyToClipboard'] =
     async (text) => {
       if (!isNonEmptyString(text)) {
@@ -591,6 +610,8 @@ export const useFrontComponentExecutionContext = ({
       unmountFrontComponent,
       closeSidePanel,
       updateProgress,
+      showSettingsBanner,
+      hideSettingsBanner,
       copyToClipboard,
       uploadFile: hostUploadFile,
       storageSet,

@@ -4,6 +4,7 @@ export { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 export { componentRegistry } from '@/host/generated/host-component-registry';
 export { FrontComponentConfirmationModalResultEffect } from '@/host/effect-components/FrontComponentConfirmationModalResultEffect';
 export { FrontComponentErrorEffect } from '@/host/effect-components/FrontComponentErrorEffect';
+export { FrontComponentSettingsBannerActionEffect } from '@/host/effect-components/FrontComponentSettingsBannerActionEffect';
 export { FrontComponentInitializeHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentInitializeHostCommunicationApiEffect';
 export { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 export { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';

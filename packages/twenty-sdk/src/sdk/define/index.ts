@@ -74,11 +74,13 @@ export {
 } from '@/sdk/define/conditional-availability/conditional-availability-variables';
 
 export { defineFrontComponent } from '@/sdk/define/front-component/define-front-component';
+export { defineSettingsBanner } from '@/sdk/define/front-component/define-settings-banner';
 export { defineSettingsFrontComponent } from '@/sdk/define/front-component/define-settings-front-component';
 export type {
   FrontComponentConfig,
   FrontComponentType,
 } from '@/sdk/define/front-component/front-component-config';
+export type { SettingsBannerConfig } from '@/sdk/define/front-component/settings-banner-config';
 export type { SettingsFrontComponentConfig } from '@/sdk/define/front-component/settings-front-component-config';
 
 export { defineIndex } from '@/sdk/define/indexes/define-index';

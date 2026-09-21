@@ -2,10 +2,12 @@ import {
   type CloseSidePanelFunction,
   type CopyToClipboardFunction,
   type EnqueueSnackbarFunction,
+  type HideSettingsBannerFunction,
   type NavigateFunction,
   type OpenCommandConfirmationModalFunction,
   type OpenSidePanelPageFunction,
   type RequestAccessTokenRefreshFunction,
+  type ShowSettingsBannerFunction,
   type StorageClearFunction,
   type StorageDeleteFunction,
   type StorageSetFunction,
@@ -23,6 +25,8 @@ export type WorkerFrontComponentHostCommunicationApi = {
   enqueueSnackbar?: EnqueueSnackbarFunction;
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
+  showSettingsBanner?: ShowSettingsBannerFunction;
+  hideSettingsBanner?: HideSettingsBannerFunction;
   copyToClipboard?: CopyToClipboardFunction;
   uploadFile?: UploadFileFunction;
   storageSet?: StorageSetFunction;
