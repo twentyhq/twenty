@@ -107,7 +107,9 @@ const HEADER_ICON_MAP: Record<string, typeof IconCalendar> = {
   workflow: IconSettingsAutomation,
 };
 
-export function renderTableHeaderIcon(column: ColumnDef): ReactNode {
+export function renderTableHeaderIcon(
+  column: Pick<ColumnDef, 'id' | 'icon'>,
+): ReactNode {
   const Icon = HEADER_ICON_MAP[column.icon ?? column.id] ?? IconTag;
   return (
     <Icon
