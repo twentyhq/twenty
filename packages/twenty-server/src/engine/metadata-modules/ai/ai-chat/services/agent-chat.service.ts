@@ -166,19 +166,59 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
+    return this.getRankedThreads({ userWorkspaceId, workspaceId });
+  }
+
+  async getThreadsByIds({
+    threadIds,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    threadIds: string[];
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
+    if (!isNonEmptyArray(threadIds)) {
+      return [];
+    }
+
+    return this.getRankedThreads({ threadIds, userWorkspaceId, workspaceId });
+  }
+
+  private async getRankedThreads({
+    threadIds,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    threadIds?: string[];
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
     const rankedThreads = await this.threadRepository.query(
       workspaceId,
-      ({ manager, table, storage }) =>
-        manager.query<{ id: string; last_message_at: Date | null }[]>(
+      ({ manager, table, storage }) => {
+        const parameters: unknown[] = [userWorkspaceId];
+        const conditions = ['thread."userWorkspaceId" = $1'];
+
+        if (isDefined(threadIds)) {
+          parameters.push(threadIds);
+          conditions.push(`thread.id = ANY($${parameters.length}::uuid[])`);
+        }
+
+        if (storage === 'core') {
+          parameters.push(workspaceId);
+          conditions.push(`thread."workspaceId" = $${parameters.length}`);
+        }
+
+        return manager.query<{ id: string; last_message_at: Date | null }[]>(
           `SELECT thread.id, MAX(message."createdAt") AS last_message_at
        FROM ${table('agentChatThread')} thread
        LEFT JOIN ${table('agentMessage')} message ON message."threadId" = thread.id AND message."isHidden" = false
-       WHERE thread."userWorkspaceId" = $1 ${storage === 'core' ? 'AND thread."workspaceId" = $2' : ''}
+       WHERE ${conditions.join(' AND ')}
        GROUP BY thread.id ORDER BY last_message_at DESC NULLS LAST, thread."updatedAt" DESC`,
-          storage === 'core'
-            ? [userWorkspaceId, workspaceId]
-            : [userWorkspaceId],
-        ),
+          parameters,
+        );
+      },
     );
 
     if (rankedThreads.length === 0) {
