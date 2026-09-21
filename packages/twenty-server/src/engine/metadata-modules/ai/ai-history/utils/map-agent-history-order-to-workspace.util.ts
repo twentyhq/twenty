@@ -64,7 +64,6 @@ export const mapAgentHistoryOrderToWorkspace = <TRecord>(
   const entries: [string, HistoryOrderValue | undefined][] =
     Object.entries(order);
 
-  // TypeORM find options use direction/LAST; the workspace ORM uses order/NULLS LAST.
   return Object.fromEntries(
     entries
       .filter((entry): entry is [string, HistoryOrderValue] =>
