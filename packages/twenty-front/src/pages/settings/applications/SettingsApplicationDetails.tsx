@@ -63,6 +63,10 @@ const GENERAL_TAB_ID = 'general';
 const VARIABLES_TAB_ID = 'variables';
 const CUSTOM_SETTINGS_TAB_ID = 'settings';
 
+// The configuration tab is whichever of these the app actually renders, so the
+// banners cannot point at a tab that is absent.
+const CONFIGURATION_TAB_IDS = [CUSTOM_SETTINGS_TAB_ID, VARIABLES_TAB_ID];
+
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
 
@@ -186,16 +190,6 @@ export const SettingsApplicationDetails = () => {
   const hasVariablesTab =
     !hasCustomSettingsTab && displayedApplicationVariables.length > 0;
 
-  const configurationTabId = hasCustomSettingsTab
-    ? CUSTOM_SETTINGS_TAB_ID
-    : hasVariablesTab
-      ? VARIABLES_TAB_ID
-      : undefined;
-
-  const goToConfigurationTab = isDefined(configurationTabId)
-    ? () => setActiveTabId(configurationTabId)
-    : undefined;
-
   const { healthCheckResult, runHealthCheck } = useApplicationHealthCheck({
     applicationId,
     healthCheckLogicFunctionId: application?.healthCheckLogicFunctionId,
@@ -223,6 +217,14 @@ export const SettingsApplicationDetails = () => {
         ]
       : []),
   ];
+
+  const configurationTabId = tabs.find((tab) =>
+    CONFIGURATION_TAB_IDS.includes(tab.id),
+  )?.id;
+
+  const goToConfigurationTab = isDefined(configurationTabId)
+    ? () => setActiveTabId(configurationTabId)
+    : undefined;
 
   const healthBanner = isNonEmptyArray(missingRequiredApplicationVariables)
     ? undefined
