@@ -58,6 +58,10 @@ const StyledQuestionHeader = styled.div`
     grid-column: 2;
     grid-row: 2;
   }
+
+  & > :only-child {
+    grid-column: 1 / -1;
+  }
 `;
 
 type WorkflowEditActionClassifyProps = {
