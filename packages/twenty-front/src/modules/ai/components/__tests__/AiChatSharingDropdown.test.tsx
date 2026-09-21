@@ -33,7 +33,7 @@ describe('Conversation sharing availability', () => {
     { sharing: { isEnabled: false } },
     { sharing: undefined },
     { sharing: undefined, loading: true },
-    { sharing: { isEnabled: true }, error: new Error('Unavailable') },
+    { sharing: undefined, error: new Error('Unavailable') },
   ])('hides sharing when its availability is not confirmed: %j', (state) => {
     useSharing.mockReturnValue(state);
     render(
@@ -58,6 +58,20 @@ describe('Conversation sharing availability', () => {
       expect(screen.getByText('Share conversation')).toBeVisible();
     },
   );
+
+  it('keeps retry reachable after a refresh fails for enabled sharing', () => {
+    useSharing.mockReturnValue({
+      sharing: { isEnabled: true },
+      error: new Error('Unavailable'),
+    });
+    render(
+      <I18nProvider i18n={i18n}>
+        <AiChatSharingDropdown threadId="thread" />
+      </I18nProvider>,
+    );
+    expect(screen.getByRole('button', { name: 'Share' })).toBeVisible();
+    expect(screen.getByText('Share conversation')).toBeVisible();
+  });
 
   it('removes the control and panel when sharing becomes unavailable', () => {
     useSharing.mockReturnValue({ sharing: { isEnabled: true } });

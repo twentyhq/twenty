@@ -11,13 +11,13 @@ import {
 
 const SHARING_REFRESH_INTERVAL_MS = 30_000;
 
-export const useChatThreadSharing = (threadId: string) => {
+export const useChatThreadSharing = (threadId: string, isOpen: boolean) => {
   const { data, loading, error, refetch } = useQuery(
     GetChatThreadSharingDocument,
     {
       variables: { threadId },
       fetchPolicy: 'network-only',
-      pollInterval: SHARING_REFRESH_INTERVAL_MS,
+      pollInterval: isOpen ? SHARING_REFRESH_INTERVAL_MS : 0,
       skipPollAttempt: () => document.visibilityState !== 'visible',
       notifyOnNetworkStatusChange: false,
     },

@@ -258,15 +258,6 @@ export class AgentChatSharingService {
     );
   }
 
-  private isThreadShare(share: RecordShare): boolean {
-    // Only grants managed by the conversation owner may expose its contents.
-    return (
-      share.rowCause === RecordShareRowCause.MANUAL &&
-      share.sourceId === share.recordId &&
-      share.accessLevel === RecordShareAccessLevel.READ
-    );
-  }
-
   private async isThreadSharingEnabled(workspaceId: string): Promise<boolean> {
     const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
