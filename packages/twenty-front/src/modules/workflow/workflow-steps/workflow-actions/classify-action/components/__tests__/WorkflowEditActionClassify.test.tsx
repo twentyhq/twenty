@@ -163,20 +163,22 @@ describe('WorkflowEditActionClassify', () => {
       screen.getByRole('combobox', { name: 'Type' }),
       'score',
     );
-    expect(screen.getByPlaceholderText('react_experience')).toBeVisible();
+    expect(screen.getByPlaceholderText('customer_satisfaction')).toBeVisible();
     expect(
-      screen.getByPlaceholderText(/Assess the React experience/),
+      screen.getByPlaceholderText(/How satisfied is the customer/),
     ).toHaveValue('');
     expect(
-      screen.getAllByPlaceholderText('At least two years of regular React use')[1],
+      screen.getAllByPlaceholderText('Expresses happiness with the service')[1],
     ).toHaveValue('');
-    expect(screen.getByDisplayValue('Beginner')).toBeVisible();
+    expect(screen.getByDisplayValue('Dissatisfied')).toBeVisible();
     expect(
-      screen.getByDisplayValue('Less than two years of regular React use'),
+      screen.getByDisplayValue('Expresses frustration or disappointment'),
     ).toBeVisible();
-    await user.click(screen.getAllByRole('button', { name: 'Delete level' })[0]);
-    expect(screen.queryByDisplayValue('Beginner')).not.toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Experienced')).toHaveValue('');
+    await user.click(
+      screen.getAllByRole('button', { name: 'Delete level' })[0],
+    );
+    expect(screen.queryByDisplayValue('Dissatisfied')).not.toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Satisfied')).toHaveValue('');
   });
 
   it('requires a language model choice and keeps probability disabled', async () => {

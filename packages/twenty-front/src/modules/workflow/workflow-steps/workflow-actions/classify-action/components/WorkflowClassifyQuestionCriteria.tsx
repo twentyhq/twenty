@@ -97,7 +97,7 @@ export const WorkflowClassifyQuestionCriteria = ({
                 : t`Level ${index + 1}`
             }
             defaultValue={criterion.name}
-            placeholder={variant === 'options' ? t`Engineer` : t`Experienced`}
+            placeholder={variant === 'options' ? t`Engineer` : t`Satisfied`}
             readonly={readonly}
             VariablePicker={WorkflowVariablePicker}
             onChange={(name) => changeCriterion(criterion.id, { name })}
@@ -107,7 +107,7 @@ export const WorkflowClassifyQuestionCriteria = ({
             placeholder={
               variant === 'options'
                 ? t`Designs and builds technical systems`
-                : t`At least two years of regular React use`
+                : t`Expresses happiness with the service`
             }
             readonly={readonly}
             VariablePicker={WorkflowVariablePicker}

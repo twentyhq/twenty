@@ -120,7 +120,7 @@ describe('WorkflowClassifyQuestionCriteria', () => {
     render(
       <WorkflowClassifyQuestionCriteria
         criteria={[
-          { id: 'low', name: 'Low', description: 'No React experience' },
+          { id: 'low', name: 'Low', description: 'Unhappy with the service' },
         ]}
         variant="levels"
         maxCriteria={2}
@@ -129,32 +129,30 @@ describe('WorkflowClassifyQuestionCriteria', () => {
       />,
     );
     expect(screen.getByDisplayValue('Low')).toBeVisible();
-    expect(screen.getByDisplayValue('No React experience')).toBeVisible();
+    expect(screen.getByDisplayValue('Unhappy with the service')).toBeVisible();
     await user.type(
-      screen.getAllByPlaceholderText('Experienced')[1],
-      'Experienced',
+      screen.getAllByPlaceholderText('Satisfied')[1],
+      'Satisfied',
     );
     expect(
-      screen.getAllByPlaceholderText('At least two years of regular React use'),
+      screen.getAllByPlaceholderText('Expresses happiness with the service'),
     ).toHaveLength(2);
     expect(onChange).toHaveBeenLastCalledWith([
-      { id: 'low', name: 'Low', description: 'No React experience' },
+      { id: 'low', name: 'Low', description: 'Unhappy with the service' },
       expect.objectContaining({
-        name: 'Experienced',
+        name: 'Satisfied',
         description: '',
       }),
     ]);
     await user.type(
-      screen.getAllByPlaceholderText(
-        'At least two years of regular React use',
-      )[1],
-      'Two years of React',
+      screen.getAllByPlaceholderText('Expresses happiness with the service')[1],
+      'Happy with the service',
     );
     expect(onChange).toHaveBeenLastCalledWith([
-      { id: 'low', name: 'Low', description: 'No React experience' },
+      { id: 'low', name: 'Low', description: 'Unhappy with the service' },
       expect.objectContaining({
-        name: 'Experienced',
-        description: 'Two years of React',
+        name: 'Satisfied',
+        description: 'Happy with the service',
       }),
     ]);
   });

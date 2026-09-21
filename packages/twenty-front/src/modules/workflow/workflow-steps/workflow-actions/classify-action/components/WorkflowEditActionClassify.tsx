@@ -258,8 +258,8 @@ export const WorkflowEditActionClassify = ({
           ? [
               {
                 id: v4(),
-                name: t`Beginner`,
-                description: t`Less than two years of regular React use`,
+                name: t`Dissatisfied`,
+                description: t`Expresses frustration or disappointment`,
               },
             ]
           : questionType === 'choice'
@@ -310,7 +310,12 @@ export const WorkflowEditActionClassify = ({
           label={t`Context`}
           multiline
           defaultValue={action.settings.input.state}
-          placeholder={t`Alex is a software engineer with three years of React experience.`}
+          placeholder={
+            questions.length > 0 &&
+            questions.every(({ type }) => type !== 'choice')
+              ? t`The customer says: "The team was helpful and resolved my issue quickly."`
+              : t`Alex is a software engineer with three years of React experience.`
+          }
           readonly={readonly}
           VariablePicker={WorkflowVariablePicker}
           onChange={(state) => updateInput({ state })}
@@ -329,8 +334,8 @@ export const WorkflowEditActionClassify = ({
                   question.type === 'choice'
                     ? t`profession`
                     : question.type === 'score'
-                      ? t`react_experience`
-                      : t`uses_react`
+                      ? t`customer_satisfaction`
+                      : t`would_recommend`
                 }
                 readonly={readonly}
                 onChange={(name) => updateQuestion(question.id, { name })}
@@ -375,8 +380,8 @@ export const WorkflowEditActionClassify = ({
                 question.type === 'choice'
                   ? t`What is this person's current profession?`
                   : question.type === 'score'
-                    ? t`Assess the React experience described in this profile. Use the highest level whose requirements are met.`
-                    : t`Does this person have professional experience using React?`
+                    ? t`How satisfied is the customer based on their feedback? Grade from dissatisfied to satisfied.`
+                    : t`Would this customer recommend the service based on their feedback?`
               }
               readonly={readonly}
               VariablePicker={WorkflowVariablePicker}
