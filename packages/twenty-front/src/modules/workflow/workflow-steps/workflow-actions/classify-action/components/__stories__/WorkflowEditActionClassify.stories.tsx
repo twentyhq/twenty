@@ -4,6 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, screen, userEvent, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { Button } from 'twenty-ui/primitives/input';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -27,7 +28,7 @@ const DEFAULT_ACTION: WorkflowClassifyAction = {
 const meta = {
   title: 'Modules/Workflow/Actions/Classify/EditAction',
   component: WorkflowEditActionClassify,
-  parameters: { msw: graphqlMocks },
+  parameters: { msw: graphqlMocks, mockingDate: null },
   decorators: [
     WorkflowStepDecorator,
     ComponentDecorator,
@@ -77,6 +78,64 @@ export const AddsQuestionAndChangesType: Story = {
 };
 
 export const EditsBeforeSaveResponse: Story = {
-  render: (args) => <WorkflowEditActionClassify {...args} />,
-  play: AddsQuestionAndChangesType.play,
+  render: function Render(args) {
+    const [action, setAction] = useState(args.action);
+    const [saves, setSaves] = useState<
+      { action: WorkflowClassifyAction; complete: () => void }[]
+    >([]);
+
+    return (
+      <>
+        <WorkflowEditActionClassify
+          {...args}
+          action={action}
+          actionOptions={{
+            onActionUpdate: (updated) =>
+              new Promise<void>((resolve) => {
+                setSaves((current) => [
+                  ...current,
+                  { action: updated, complete: resolve },
+                ]);
+              }),
+          }}
+        />
+        {saves.length > 0 && (
+          <Button
+            onClick={() => {
+              const [save, ...remaining] = saves;
+              setAction(save.action);
+              setSaves(remaining);
+              save.complete();
+            }}
+          >
+            Complete next save
+          </Button>
+        )}
+      </>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Add question' }),
+    );
+    const completeSave = await canvas.findByRole(
+      'button',
+      { name: 'Complete next save' },
+      { timeout: 5000 },
+    );
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Add question' }),
+    );
+    await userEvent.click(completeSave);
+    await expect(await canvas.findAllByText('Pick one option')).toHaveLength(2);
+    await userEvent.click(
+      await canvas.findByRole(
+        'button',
+        { name: 'Complete next save' },
+        { timeout: 5000 },
+      ),
+    );
+    await expect(await canvas.findAllByText('Pick one option')).toHaveLength(2);
+  },
 };

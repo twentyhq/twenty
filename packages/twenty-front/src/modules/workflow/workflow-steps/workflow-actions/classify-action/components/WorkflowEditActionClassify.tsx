@@ -42,7 +42,9 @@ type WorkflowEditActionClassifyProps = {
     | { readonly: true }
     | {
         readonly?: false;
-        onActionUpdate: (action: WorkflowClassifyAction) => void;
+        onActionUpdate: (
+          action: WorkflowClassifyAction,
+        ) => void | Promise<unknown>;
       };
 };
 
@@ -67,30 +69,35 @@ export const WorkflowEditActionClassify = ({
   });
 
   const readonly = actionOptions.readonly === true;
-  const [input, setInput] = useState(action.settings.input);
+  const [pendingInput, setPendingInput] = useState<
+    WorkflowClassifyAction['settings']['input'] | undefined
+  >();
+  const input = pendingInput ?? action.settings.input;
   const questions = input.questions;
 
   const saveAction = useDebouncedCallback(
-    (updatedInput: WorkflowClassifyAction['settings']['input']) => {
+    async (updatedInput: WorkflowClassifyAction['settings']['input']) => {
       if (actionOptions.readonly === true) {
         return;
       }
 
-      actionOptions.onActionUpdate({
+      await actionOptions.onActionUpdate({
         ...action,
         settings: { ...action.settings, input: updatedInput },
       });
+      setPendingInput((currentInput) =>
+        currentInput === updatedInput ? undefined : currentInput,
+      );
     },
     500,
   );
 
-  useEffect(() => {
-    if (!saveAction.isPending()) {
-      setInput(action.settings.input);
-    }
-  }, [action.settings.input, saveAction]);
-
-  useEffect(() => () => saveAction.flush(), [saveAction]);
+  useEffect(
+    () => () => {
+      saveAction.flush();
+    },
+    [saveAction],
+  );
 
   const questionTypeLabels: Record<AiEvaluationQuestionType, string> = {
     choice: t`Pick one option`,
@@ -138,7 +145,7 @@ export const WorkflowEditActionClassify = ({
     }
 
     const updatedInput = { ...input, ...inputUpdate };
-    setInput(updatedInput);
+    setPendingInput(updatedInput);
     saveAction(updatedInput);
   };
 
