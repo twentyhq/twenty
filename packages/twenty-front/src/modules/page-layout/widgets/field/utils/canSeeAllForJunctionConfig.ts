@@ -4,6 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const canSeeAllForJunctionConfig = (
   junctionConfig: FieldWidgetJunctionConfig | null,
-): boolean =>
-  !isDefined(junctionConfig) ||
-  (isUsableJunctionConfig(junctionConfig) && !junctionConfig.isMorphRelation);
+): boolean => {
+  return (
+    !isDefined(junctionConfig) ||
+    (isUsableJunctionConfig(junctionConfig) && !junctionConfig.isMorphRelation)
+  );
+};
