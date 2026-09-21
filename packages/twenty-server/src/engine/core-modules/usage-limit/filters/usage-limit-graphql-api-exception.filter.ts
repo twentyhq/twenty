@@ -22,6 +22,7 @@ export class UsageLimitGraphqlApiExceptionFilter implements ExceptionFilter {
         throw new ForbiddenError(exception);
       case UsageLimitExceptionCode.RATE_LIMITED:
       case UsageLimitExceptionCode.QUOTA_EXHAUSTED:
+      case UsageLimitExceptionCode.STOCK_EXHAUSTED:
         return usageLimitToGraphqlApiExceptionHandler(exception);
       default:
         assertUnreachable(exception.code);

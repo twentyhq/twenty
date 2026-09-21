@@ -1,6 +1,7 @@
 import { parse } from 'graphql';
 
 import { classifyTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/classify-top-level-fields.util';
+import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
 
 const WORKSPACE_RESOLVERS = new Set([
   'findManyCompanies',
@@ -20,7 +21,10 @@ describe('classifyTopLevelFields', () => {
     `;
 
     expect(
-      classifyTopLevelFields(parse(query), undefined, WORKSPACE_RESOLVERS),
+      classifyTopLevelFields(
+        graphQLExtractTopLevelFields(parse(query), undefined),
+        WORKSPACE_RESOLVERS,
+      ),
     ).toEqual({
       hasIntrospectionFields: true,
       hasWorkspaceFields: false,
@@ -37,7 +41,10 @@ describe('classifyTopLevelFields', () => {
     `;
 
     expect(
-      classifyTopLevelFields(parse(query), undefined, WORKSPACE_RESOLVERS),
+      classifyTopLevelFields(
+        graphQLExtractTopLevelFields(parse(query), undefined),
+        WORKSPACE_RESOLVERS,
+      ),
     ).toEqual({
       hasIntrospectionFields: false,
       hasWorkspaceFields: true,
@@ -54,7 +61,10 @@ describe('classifyTopLevelFields', () => {
     `;
 
     expect(
-      classifyTopLevelFields(parse(query), undefined, WORKSPACE_RESOLVERS),
+      classifyTopLevelFields(
+        graphQLExtractTopLevelFields(parse(query), undefined),
+        WORKSPACE_RESOLVERS,
+      ),
     ).toEqual({
       hasIntrospectionFields: false,
       hasWorkspaceFields: false,
@@ -71,7 +81,10 @@ describe('classifyTopLevelFields', () => {
     `;
 
     expect(
-      classifyTopLevelFields(parse(query), undefined, WORKSPACE_RESOLVERS),
+      classifyTopLevelFields(
+        graphQLExtractTopLevelFields(parse(query), undefined),
+        WORKSPACE_RESOLVERS,
+      ),
     ).toEqual({
       hasIntrospectionFields: true,
       hasWorkspaceFields: true,
@@ -88,7 +101,10 @@ describe('classifyTopLevelFields', () => {
     `;
 
     expect(
-      classifyTopLevelFields(parse(query), undefined, WORKSPACE_RESOLVERS),
+      classifyTopLevelFields(
+        graphQLExtractTopLevelFields(parse(query), undefined),
+        WORKSPACE_RESOLVERS,
+      ),
     ).toEqual({
       hasIntrospectionFields: false,
       hasWorkspaceFields: true,
@@ -104,7 +120,10 @@ describe('classifyTopLevelFields', () => {
     `;
 
     expect(
-      classifyTopLevelFields(parse(query), undefined, WORKSPACE_RESOLVERS),
+      classifyTopLevelFields(
+        graphQLExtractTopLevelFields(parse(query), undefined),
+        WORKSPACE_RESOLVERS,
+      ),
     ).toEqual({
       hasIntrospectionFields: false,
       hasWorkspaceFields: false,
@@ -124,7 +143,10 @@ describe('classifyTopLevelFields', () => {
     `;
 
     expect(
-      classifyTopLevelFields(parse(query), undefined, WORKSPACE_RESOLVERS),
+      classifyTopLevelFields(
+        graphQLExtractTopLevelFields(parse(query), undefined),
+        WORKSPACE_RESOLVERS,
+      ),
     ).toEqual({
       hasIntrospectionFields: true,
       hasWorkspaceFields: true,
@@ -144,8 +166,7 @@ describe('classifyTopLevelFields', () => {
 
     expect(
       classifyTopLevelFields(
-        parse(query),
-        'IntrospectionQuery',
+        graphQLExtractTopLevelFields(parse(query), 'IntrospectionQuery'),
         WORKSPACE_RESOLVERS,
       ),
     ).toEqual({
@@ -156,8 +177,7 @@ describe('classifyTopLevelFields', () => {
 
     expect(
       classifyTopLevelFields(
-        parse(query),
-        'WorkspaceQuery',
+        graphQLExtractTopLevelFields(parse(query), 'WorkspaceQuery'),
         WORKSPACE_RESOLVERS,
       ),
     ).toEqual({

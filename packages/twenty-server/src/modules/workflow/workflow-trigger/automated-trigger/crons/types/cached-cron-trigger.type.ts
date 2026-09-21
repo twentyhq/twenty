@@ -3,5 +3,6 @@ import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/wor
 export type CachedCronTrigger = {
   workspaceId: string;
   workflowId: string;
+  legacyWorkflowId?: string;
   pattern: string;
 } & CoreDispatchIds;

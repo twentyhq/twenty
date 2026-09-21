@@ -8,7 +8,7 @@ import { findManyApplications } from 'test/integration/graphql/utils/find-many-a
 import { forgeLegacyHs256Token } from 'test/integration/graphql/utils/forge-legacy-hs256-token.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
-import { renewApplicationToken } from 'test/integration/graphql/utils/renew-application-token.util';
+import { renewApplicationToken } from 'test/integration/metadata/suites/application/utils/renew-application-token.util';
 import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
@@ -289,11 +289,17 @@ describe('JWT Legacy HS256 no-kid fallback - seeded-workspace tokens (integratio
   });
 
   it('verifies a hand-crafted no-kid HS256 APPLICATION_REFRESH token via the legacy fallback (round-trip through renewApplicationToken)', async () => {
+    const sessionAccessTokenPayload = jwt.decode(
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    ) as AccessTokenJwtPayload;
+
     const forgedPayload: ApplicationRefreshTokenJwtPayload = {
       sub: seededApplicationId,
       type: JwtTokenTypeEnum.APPLICATION_REFRESH,
       workspaceId: seededWorkspaceId,
       applicationId: seededApplicationId,
+      userId: sessionAccessTokenPayload.userId,
+      userWorkspaceId: sessionAccessTokenPayload.userWorkspaceId,
     };
 
     const forgedToken = forgeLegacyHs256Token(
@@ -308,16 +314,14 @@ describe('JWT Legacy HS256 no-kid fallback - seeded-workspace tokens (integratio
     expect(decoded.header.alg).toBe('HS256');
     expect(decoded.header.kid).toBeUndefined();
 
-    const response = await renewApplicationToken({
-      applicationRefreshToken: forgedToken,
-      accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    const { data } = await renewApplicationToken({
+      input: { applicationRefreshToken: forgedToken },
+      expectToFail: false,
     });
 
-    expect(response.body.errors).toBeUndefined();
+    const renewed = data.renewApplicationToken;
 
-    const renewed = response.body.data?.renewApplicationToken;
-
-    expect(isNonEmptyString(renewed?.applicationAccessToken.token)).toBe(true);
-    expect(isNonEmptyString(renewed?.applicationRefreshToken.token)).toBe(true);
+    expect(isNonEmptyString(renewed.applicationAccessToken.token)).toBe(true);
+    expect(isNonEmptyString(renewed.applicationRefreshToken.token)).toBe(true);
   });
 });

@@ -3,21 +3,18 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
-import {
-  InputLabel,
-  AnimatedLightIconButton,
-  LightIconButton,
-} from 'twenty-ui/primitives/input';
+import { InputLabel } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
-import { IconChevronDown, IconPlus, IconVariable, IconX } from 'twenty-ui/icon';
+import { IconPlus } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
+import { WorkflowOutputSchemaFieldHeader } from './WorkflowOutputSchemaFieldHeader';
 type WorkflowOutputSchemaBuilderProps = {
   fields: OutputSchemaField[];
   onChange: (fields: OutputSchemaField[]) => void;
@@ -53,33 +50,6 @@ const StyledSettingsContent = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSettingsHeader = styled.div<{
-  showRemoveFieldButton: boolean;
-  isExpanded: boolean;
-}>`
-  align-items: center;
-  border-bottom: ${({ isExpanded }) =>
-    isExpanded ? `1px solid ${themeCssVariables.border.color.medium}` : 'none'};
-  cursor: pointer;
-  display: grid;
-  gap: ${themeCssVariables.spacing[1]};
-  grid-template-columns: ${({ showRemoveFieldButton }) =>
-    showRemoveFieldButton
-      ? `1fr ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]}`
-      : `1fr ${themeCssVariables.spacing[6]}`};
-  height: ${themeCssVariables.spacing[8]};
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledTitleContainer = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
 const StyledAddFieldButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
@@ -103,7 +73,6 @@ export const WorkflowOutputSchemaBuilder = ({
   onChange,
   readonly,
 }: WorkflowOutputSchemaBuilderProps) => {
-  const { theme } = useContext(ThemeContext);
   const [expandedFieldIds, setExpandedFieldIds] = useState<Set<string>>(
     () => new Set(fields.map((field) => field.id)),
   );
@@ -185,31 +154,16 @@ export const WorkflowOutputSchemaBuilder = ({
 
             return (
               <StyledOutputSchemaFieldContainer key={field.id}>
-                <StyledSettingsHeader
-                  showRemoveFieldButton={showRemoveFieldButton}
-                  onClick={() => toggleField(field.id)}
+                <WorkflowOutputSchemaFieldHeader
+                  name={field.name}
                   isExpanded={isExpanded}
-                >
-                  <StyledTitleContainer>
-                    <IconVariable size={theme.icon.size.sm} />
-                    <span>{field.name || t`Untitled field`}</span>
-                  </StyledTitleContainer>
-                  <AnimatedLightIconButton
-                    Icon={IconChevronDown}
-                    size="small"
-                    rotate={isExpanded ? -180 : 0}
-                  />
-                  {showRemoveFieldButton && (
-                    <LightIconButton
-                      testId="remove-output-field-button"
-                      Icon={IconX}
-                      size="small"
-                      onClick={() => {
-                        removeField(field.id);
-                      }}
-                    />
-                  )}
-                </StyledSettingsHeader>
+                  onToggle={() => toggleField(field.id)}
+                  onRemove={
+                    showRemoveFieldButton
+                      ? () => removeField(field.id)
+                      : undefined
+                  }
+                />
                 <AnimatedExpandableContainer
                   isExpanded={isExpanded}
                   initial={false}

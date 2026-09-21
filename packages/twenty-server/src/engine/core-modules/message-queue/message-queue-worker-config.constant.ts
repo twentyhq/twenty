@@ -22,6 +22,15 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   MessageQueue,
   MessageQueueWorkerConfig
 > = {
+  [MessageQueue.recordExportQueue]: {
+    priority: 7,
+    workerOptions: {
+      concurrency: 1,
+      lockDuration: 60_000,
+      maxStalledCount: 0,
+      boundedShutdownDrain: false,
+    },
+  },
   [MessageQueue.taskAssignedQueue]: {
     priority: 4,
     workerOptions: {
@@ -139,6 +148,15 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
+  [MessageQueue.eventLogQueue]: {
+    priority: 1,
+    workerOptions: {
+      concurrency: 3,
+      lockDuration: 30_000,
+      maxStalledCount: 1,
+      boundedShutdownDrain: false,
+    },
+  },
   [MessageQueue.workflowQueue]: {
     priority: 2,
     workerOptions: {
@@ -170,6 +188,15 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 4,
     workerOptions: {
       concurrency: 20,
+      lockDuration: 30_000,
+      maxStalledCount: 1,
+      boundedShutdownDrain: false,
+    },
+  },
+  [MessageQueue.applicationLifecycleHookQueue]: {
+    priority: 4,
+    workerOptions: {
+      concurrency: 1,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,

@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useEffectiveDraftVersionId = (
   draftVersionFromServer: { id: string } | undefined,
+  skip = false,
 ): {
   effectiveDraftId: string | undefined;
   lastDiscardedDraftId: string | undefined;
@@ -23,6 +24,10 @@ export const useEffectiveDraftVersionId = (
   const [previouslyKnownDraftId, setPreviouslyKnownDraftId] = useState<
     string | undefined
   >();
+
+  if (skip) {
+    return { effectiveDraftId: undefined, lastDiscardedDraftId: undefined };
+  }
 
   if (isDefined(draftVersionFromServer)) {
     const isReaddedBySSEAfterDiscard =

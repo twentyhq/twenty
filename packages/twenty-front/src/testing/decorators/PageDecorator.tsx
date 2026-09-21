@@ -172,6 +172,7 @@ export const PageDecorator: Decorator<{
 }> = (Story, { args }) => {
   return (
     <RouterProvider
+      useTransitions={false}
       router={createRouter({
         Story,
         args,

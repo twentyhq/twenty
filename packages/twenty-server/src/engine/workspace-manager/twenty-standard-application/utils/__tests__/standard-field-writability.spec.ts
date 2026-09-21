@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -34,12 +35,23 @@ describe('Standard field writability', () => {
     ).toBe(true);
   });
 
-  it('leaves every other standard field OPEN', () => {
+  it('leaves fields outside protected history and search vectors OPEN', () => {
     const nonSearchVectorWritabilities = new Set(
       standardFlatFieldMetadatas
         .filter(
           (flatFieldMetadata) =>
-            flatFieldMetadata.type !== FieldMetadataType.TS_VECTOR,
+            flatFieldMetadata.type !== FieldMetadataType.TS_VECTOR &&
+            ![
+              STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+              STANDARD_OBJECTS.agentMessage.universalIdentifier,
+              STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
+              STANDARD_OBJECTS.agentTurn.universalIdentifier,
+              STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
+            ].some(
+              (identifier) =>
+                identifier ===
+                flatFieldMetadata.objectMetadataUniversalIdentifier,
+            ),
         )
         .map((flatFieldMetadata) => flatFieldMetadata.writability),
     );

@@ -185,3 +185,23 @@ export const DecorativeCheckbox: Story = {
     await expect(item.querySelector('[data-checked]')).not.toBeNull();
   },
 };
+
+export const NavigationRow: Story = {
+  args: { role: 'button', hasSubmenu: true },
+  render: (args) => (
+    <div role="listitem">
+      <ListItem {...args} render={<button type="button" />} />
+    </div>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const row = within(canvasElement).getByRole('button', { name: 'Item' });
+
+    row.focus();
+    await userEvent.keyboard('{Enter}');
+    await userEvent.keyboard(' ');
+
+    await expect(args.onClick).toHaveBeenCalledTimes(2);
+    await expect(row).toHaveFocus();
+    await expect(row.getBoundingClientRect().height).toBe(32);
+  },
+};

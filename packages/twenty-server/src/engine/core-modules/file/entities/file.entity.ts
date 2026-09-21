@@ -24,6 +24,7 @@ import {
 } from 'src/engine/core-modules/file/types/file-status.types';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { nullableBigintColumnTransformer } from 'src/engine/twenty-orm/utils/nullable-bigint-column-transformer.util';
 
 @Entity('file')
 @Check(
@@ -89,7 +90,11 @@ export class FileEntity {
   @Column({ nullable: false })
   path: string;
 
-  @Column({ nullable: false, type: 'bigint' })
+  @Column({
+    nullable: false,
+    type: 'bigint',
+    transformer: nullableBigintColumnTransformer,
+  })
   size: number;
 
   @CreateDateColumn({ type: 'timestamptz' })

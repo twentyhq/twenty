@@ -10,9 +10,9 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     { label: MessageDescriptor; description: MessageDescriptor }
   >
 > = {
-  [FeatureFlagKey.IS_APP_CLAIMING_ENABLED]: {
-    label: msg`App claiming`,
-    description: msg`Allow developers to claim ownership of applications.`,
+  [FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED]: {
+    label: msg`Async CSV export`,
+    description: msg`Generate CSV exports in the background with progress and automatic downloads.`,
   },
   [FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED]: {
     label: msg`Unique indexes`,
@@ -45,10 +45,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
   [FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED]: {
     label: msg`Message and calendar target reads`,
     description: msg`Use target relations to find messages and calendar events linked to records.`,
-  },
-  [FeatureFlagKey.IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED]: {
-    label: msg`Credit allowance quotas`,
-    description: msg`Use the quota engine to enforce credit allowances.`,
   },
   [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: {
     label: msg`Record sharing`,

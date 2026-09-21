@@ -19,5 +19,7 @@ export const USAGE_OPERATION_TYPE_LABELS: Record<
   [UsageOperationType.EMAIL_SEND]: msg`Email Send`,
   [UsageOperationType.API_REQUEST]: msg`API Request`,
   [UsageOperationType.WEBHOOK_CALL]: msg`Webhook Call`,
+  [UsageOperationType.STORAGE_FILE]: msg`File Storage`,
+  [UsageOperationType.RECORD_WRITE]: msg`Records`,
   [UsageOperationType.SUBSCRIPTION]: msg`Subscription`,
 };

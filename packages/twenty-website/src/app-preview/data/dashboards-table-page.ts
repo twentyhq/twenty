@@ -11,9 +11,15 @@ export const DASHBOARDS_TABLE_PAGE: TablePageDefinition = {
     count: 2,
   },
   columns: [
-    { id: 'name', label: 'Name', width: 240, isFirstColumn: true },
+    {
+      id: 'name',
+      label: 'Name',
+      width: 240,
+      icon: 'layoutDashboard',
+      isFirstColumn: true,
+    },
     { id: 'createdBy', label: 'Created By', width: 160 },
-    { id: 'added', label: 'Last Edited', width: 160 },
+    { id: 'added', label: 'Last Edited', width: 160, icon: 'lastEdited' },
   ],
   rows: [
     {

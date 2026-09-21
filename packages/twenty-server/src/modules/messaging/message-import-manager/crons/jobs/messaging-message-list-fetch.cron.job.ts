@@ -1,9 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import groupBy from 'lodash.groupby';
 import { POLLED_MESSAGE_CHANNEL_TYPES } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
 import {
   MessageChannelSyncStage,
@@ -16,13 +17,13 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { isLastSuccessfulSyncStale } from 'src/modules/connected-account/utils/is-last-successful-sync-stale.util';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
 
@@ -33,13 +34,12 @@ export class MessagingMessageListFetchCronJob {
   private readonly logger = new Logger(MessagingMessageListFetchCronJob.name);
 
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
   @Process(MessagingMessageListFetchCronJob.name)
@@ -48,25 +48,28 @@ export class MessagingMessageListFetchCronJob {
     MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    const activeWorkspaces = await this.workspaceRepository.find({
-      where: {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
-
-    for (const activeWorkspace of activeWorkspaces) {
-      try {
-        const pendingMessageChannels = await this.messageChannelRepository.find(
-          {
-            where: {
-              workspaceId: activeWorkspace.id,
-              isSyncEnabled: true,
-              syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-              type: In([...POLLED_MESSAGE_CHANNEL_TYPES]),
-            },
+    const pendingMessageChannelsAcrossWorkspaces =
+      await this.messageChannelRepository.find({
+        where: {
+          isSyncEnabled: true,
+          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+          type: In([...POLLED_MESSAGE_CHANNEL_TYPES]),
+          workspace: {
+            activationStatus: WorkspaceActivationStatus.ACTIVE,
+            deletedAt: IsNull(),
           },
-        );
+        },
+      });
 
+    const pendingMessageChannelsByWorkspaceId = groupBy(
+      pendingMessageChannelsAcrossWorkspaces,
+      'workspaceId',
+    );
+
+    for (const [workspaceId, pendingMessageChannels] of Object.entries(
+      pendingMessageChannelsByWorkspaceId,
+    )) {
+      try {
         const messageChannelsToSchedule = pendingMessageChannels.filter(
           (messageChannel) =>
             !isThrottled(
@@ -86,7 +89,7 @@ export class MessagingMessageListFetchCronJob {
 
         if (throttledCount > 0) {
           this.logger.log(
-            `Skipped ${throttledCount} throttled message channels for workspace ${activeWorkspace.id}`,
+            `Skipped ${throttledCount} throttled message channels for workspace ${workspaceId}`,
           );
         }
 
@@ -98,31 +101,17 @@ export class MessagingMessageListFetchCronJob {
           (messageChannel) => messageChannel.id,
         );
 
-        const updateResult = await this.messageChannelRepository
-          .createQueryBuilder()
-          .update()
-          .set({
-            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-            syncStageStartedAt: new Date(),
-          })
-          .where({
-            id: In(messageChannelIdsToSchedule),
-            workspaceId: activeWorkspace.id,
-            isSyncEnabled: true,
-            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          })
-          .returning('id')
-          .execute();
-
-        const updatedIds = updateResult.raw.map(
-          (row: { id: string }) => row.id,
-        );
+        const updatedIds =
+          await this.messageChannelSyncStatusService.markAsMessagesListFetchScheduledIfPending(
+            messageChannelIdsToSchedule,
+            workspaceId,
+          );
 
         for (const messageChannelId of updatedIds) {
           await this.messageQueueService.add<MessagingMessageListFetchJobData>(
             MessagingMessageListFetchJob.name,
             {
-              workspaceId: activeWorkspace.id,
+              workspaceId,
               messageChannelId,
             },
           );
@@ -130,7 +119,7 @@ export class MessagingMessageListFetchCronJob {
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: {
-            id: activeWorkspace.id,
+            id: workspaceId,
           },
         });
       }

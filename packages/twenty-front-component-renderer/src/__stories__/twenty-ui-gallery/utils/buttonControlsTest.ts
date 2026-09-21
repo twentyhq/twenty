@@ -5,6 +5,24 @@ export const buttonControlsTest: TwentyUiGalleryPlayFunction = async (
   context,
 ) => {
   const canvas = within(context.canvasElement);
+  const editActions = await canvas.findByRole(
+    'button',
+    { name: 'Edit actions' },
+    { timeout: 10000 },
+  );
+  await waitFor(() =>
+    expect(editActions.getBoundingClientRect().height).toBe(24),
+  );
+  await expect(editActions).toHaveAttribute('aria-expanded', 'false');
+  editActions.focus();
+  await userEvent.keyboard('{Enter}');
+  await waitFor(() =>
+    expect(editActions).toHaveAttribute('aria-expanded', 'true'),
+  );
+  await userEvent.keyboard(' ');
+  await waitFor(() =>
+    expect(editActions).toHaveAttribute('aria-expanded', 'false'),
+  );
   const button = await canvas.findByRole(
     'button',
     { name: 'Create record' },
@@ -38,5 +56,39 @@ export const buttonControlsTest: TwentyUiGalleryPlayFunction = async (
   await userEvent.click(canvas.getByRole('button', { name: 'Second action' }));
   await waitFor(() =>
     expect(canvas.getByLabelText('Activations')).toHaveTextContent('4'),
+  );
+  const addItem = canvas.getByRole('button', { name: 'Add item' });
+  await userEvent.click(addItem);
+  await waitFor(() =>
+    expect(canvas.getByLabelText('Activations')).toHaveTextContent('5'),
+  );
+  const unavailableItem = canvas.getByRole('button', {
+    name: 'Unavailable item',
+  });
+  await expect(unavailableItem).toBeDisabled();
+  await userEvent.click(unavailableItem);
+  await waitFor(() =>
+    expect(canvas.getByLabelText('Activations')).toHaveTextContent('5'),
+  );
+  await expect(addItem.getBoundingClientRect().width).toBe(20);
+  await expect(
+    unavailableItem.getBoundingClientRect().left -
+      addItem.getBoundingClientRect().right,
+  ).toBe(2);
+  const send = canvas.getByRole('button', { name: 'Send' });
+  await expect(send.getBoundingClientRect().width).toBe(20);
+  await expect(getComputedStyle(send).borderTopLeftRadius).toBe('50%');
+
+  await userEvent.click(canvas.getByRole('button', { name: 'Add to record' }));
+  await userEvent.click(
+    canvas.getByRole('button', { name: 'Add to draggable record' }),
+  );
+  const unavailableRecordButton = canvas.getByRole('button', {
+    name: 'Unavailable record button',
+  });
+  await expect(unavailableRecordButton).toBeDisabled();
+  await userEvent.click(unavailableRecordButton);
+  await waitFor(() =>
+    expect(canvas.getByLabelText('Activations')).toHaveTextContent('7'),
   );
 };

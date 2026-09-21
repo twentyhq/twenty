@@ -2,7 +2,6 @@ import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import request from 'supertest';
 import { createMockStripeInvoiceFinalizedData } from 'test/integration/billing/utils/create-mock-stripe-invoice-finalized-data.util';
 import {
-  getBillingUsageCacheService,
   getSeededBillingWorkspaceId,
   insertCreditGrant,
   listCreditGrants,
@@ -209,55 +208,25 @@ describe('Billing credit rollover (integration)', () => {
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 
-  it('adds the carried balance to a warm available-credits counter', async () => {
-    usageSpy.mockResolvedValue(300_000);
-    const cache = getBillingUsageCacheService();
-
-    await cache.warmAvailableCredits(
-      workspaceId,
-      CLOSING_PERIOD_START,
-      NEXT_PERIOD_END,
-      120_000,
-    );
-
-    await postInvoiceFinalized().expect(200);
-
-    expect(
-      await cache.getAvailableCredits(workspaceId, CLOSING_PERIOD_START),
-    ).toBe(120_000 + 700_000);
-  });
-
-  it('leaves a warm available-credits counter alone when a successful delivery is repeated', async () => {
-    usageSpy.mockResolvedValue(300_000);
-    const cache = getBillingUsageCacheService();
-
-    await cache.warmAvailableCredits(
-      workspaceId,
-      CLOSING_PERIOD_START,
-      NEXT_PERIOD_END,
-      120_000,
-    );
-
-    await postInvoiceFinalized().expect(200);
-    const afterFirst = await cache.getAvailableCredits(
-      workspaceId,
-      CLOSING_PERIOD_START,
-    );
-
-    await postInvoiceFinalized().expect(200);
-
-    expect(afterFirst).toBe(120_000 + 700_000);
-    expect(
-      await cache.getAvailableCredits(workspaceId, CLOSING_PERIOD_START),
-    ).toBe(afterFirst);
-  });
-
   it('drops the allowance counter on the period transition', async () => {
     usageSpy.mockResolvedValue(300_000);
 
     // The counter is keyed by the period the subscription is currently in,
     // which is the one the invoice is closing: Stripe moves the subscription
     // forward in a separate event.
+    await warmAllowanceCounter(workspaceId, CLOSING_PERIOD_START, 120_000);
+
+    await postInvoiceFinalized().expect(200);
+
+    expect(
+      await readAllowanceCounter(workspaceId, CLOSING_PERIOD_START),
+    ).toBeNull();
+  });
+
+  it('drops the allowance counter again when a successful delivery is repeated', async () => {
+    usageSpy.mockResolvedValue(300_000);
+
+    await postInvoiceFinalized().expect(200);
     await warmAllowanceCounter(workspaceId, CLOSING_PERIOD_START, 120_000);
 
     await postInvoiceFinalized().expect(200);

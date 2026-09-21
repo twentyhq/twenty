@@ -6,7 +6,11 @@ import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-r
 
 type CallRecordingStateUpdate = Pick<
   CallRecordingUpdateFields,
-  'status' | 'callRecorderFailureReason'
+  | 'status'
+  | 'callRecorderFailureReason'
+  | 'externalBotId'
+  | 'botScheduleAttemptedAt'
+  | 'botScheduleIdempotencyKey'
 >;
 
 export const updateNonTerminalCallRecordingState = async (

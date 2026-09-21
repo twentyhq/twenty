@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { SPENDER_TYPE_SPECIFICITY } from 'src/engine/core-modules/usage-limit/constants/spender-type-specificity.constant';
-import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
+import { type FlatQuotaLimit } from 'src/engine/core-modules/usage-limit/types/flat-quota-limit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
@@ -23,7 +23,7 @@ export const buildQuotaCounters = ({
   operationType,
   periodByUnit,
 }: {
-  limits: FlatUsageLimit[];
+  limits: FlatQuotaLimit[];
   usageSpenders: UsageSpenders;
   workspaceId: string;
   operationType: UsageOperationType;

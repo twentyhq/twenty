@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -12,7 +14,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import {
   DEFAULT_COLOR_LABELS,
-  MenuItemSelectColor,
+  ListItem,
 } from 'twenty-ui/primitives/navigation';
 import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
@@ -65,13 +67,19 @@ export const ThemeColorPickerMenu = ({
               itemId={colorName}
               onEnter={() => onSelectColor(colorName)}
             >
-              <MenuItemSelectColor
+              <ListItem
                 focused={selectedItemId === colorName}
                 onClick={() => onSelectColor(colorName)}
-                color={colorName}
+                role="option"
+                aria-selected={colorName === selectedColor}
                 selected={colorName === selectedColor}
-                colorLabels={DEFAULT_COLOR_LABELS}
-              />
+                indicator="check"
+                startIcon={<ColorSample colorName={colorName} />}
+              >
+                <OverflowingTextWithTooltip
+                  text={DEFAULT_COLOR_LABELS[colorName]}
+                />
+              </ListItem>
             </SelectableListItem>
           ))}
         </DropdownMenuItemsContainer>

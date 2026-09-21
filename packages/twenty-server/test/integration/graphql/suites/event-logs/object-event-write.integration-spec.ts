@@ -17,7 +17,7 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 // End-to-end write path: creating a record fires an objectEvent through
-// entityEventsToDbQueue -> the consumer -> the ClickHouse sink.
+// eventLogQueue -> the consumer -> the ClickHouse sink.
 describe('Object event write (integration)', () => {
   let clickHouseClient: ClickHouseClient;
   let personObjectMetadataId: string;

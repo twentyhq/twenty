@@ -1,3 +1,6 @@
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
 import { styled } from '@linaria/react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { type ComponentProps, useEffect, useMemo } from 'react';
@@ -147,33 +150,42 @@ const PageLayoutTabListPlayground = ({
   return (
     <StyledContainer containerWidth={containerWidth}>
       <PageLayoutTabListEffect
+        isInEditMode={false}
         tabs={sortedTabs}
         componentInstanceId="page-layout-tab-list-story"
       />
 
-      <PageLayoutWidgetDndProvider>
-        <StyledTabListContainer isInIdentifierBar={isInIdentifierBar}>
-          <PageLayoutTabList
-            tabs={sortedTabs}
-            componentInstanceId="page-layout-tab-list-story"
-            behaveAsLinks={false}
-            loading={false}
-            addTabStrategy={
-              isReorderEnabled
-                ? { mode: 'direct', onCreate: handleAddTab }
-                : undefined
-            }
-            isReorderEnabled={isReorderEnabled}
-            pageLayoutType={
-              isInIdentifierBar
-                ? PageLayoutType.RECORD_PAGE
-                : PageLayoutType.DASHBOARD
-            }
-            presentation={presentation}
-            centerTabs={centerTabs}
-          />
-        </StyledTabListContainer>
-      </PageLayoutWidgetDndProvider>
+      <TabListRoot componentInstanceId="page-layout-tab-list-story">
+        <PageLayoutWidgetDndProvider>
+          <StyledTabListContainer isInIdentifierBar={isInIdentifierBar}>
+            <PageLayoutTabList
+              aria-label="Dashboard sections"
+              tabs={sortedTabs}
+              componentInstanceId="page-layout-tab-list-story"
+              behaveAsLinks={false}
+              loading={false}
+              addTabStrategy={
+                isReorderEnabled
+                  ? { mode: 'direct', onCreate: handleAddTab }
+                  : undefined
+              }
+              isReorderEnabled={isReorderEnabled}
+              pageLayoutType={
+                isInIdentifierBar
+                  ? PageLayoutType.RECORD_PAGE
+                  : PageLayoutType.DASHBOARD
+              }
+              presentation={presentation}
+              centerTabs={centerTabs}
+            />
+          </StyledTabListContainer>
+        </PageLayoutWidgetDndProvider>
+        {sortedTabs.map((tab) => (
+          <Tabs.Panel key={tab.id} value={tab.id}>
+            <Text>{tab.title} content</Text>
+          </Tabs.Panel>
+        ))}
+      </TabListRoot>
     </StyledContainer>
   );
 };
@@ -216,18 +228,22 @@ export const Default: Story = {
   args: {
     isReorderEnabled: true,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const tabList = await canvas.findByRole('tablist');
 
+    expect(getComputedStyle(tabList, '::after').display).toBe('none');
+    expect(getComputedStyle(tabList.parentElement!, '::after').display).toBe(
+      args.presentation === 'identifier-bar' ? 'none' : 'block',
+    );
+    expect(await canvas.findByRole('tab', { name: 'Overview' })).toBeVisible();
+    expect(canvas.getByRole('tab', { name: 'Forecasts' })).toBeVisible();
     expect(
-      await canvas.findByRole('button', { name: 'Overview' }),
-    ).toBeVisible();
-    expect(canvas.getByRole('button', { name: 'Forecasts' })).toBeVisible();
+      canvas.queryByRole('button', { name: 'Overview' }),
+    ).not.toBeInTheDocument();
 
     await userEvent.click(
-      within(canvas.getByRole('button', { name: 'Revenue' })).getByText(
-        'Revenue',
-      ),
+      within(canvas.getByRole('tab', { name: 'Revenue' })).getByText('Revenue'),
     );
 
     await waitFor(() =>
@@ -293,4 +309,28 @@ export const IdentifierBarCenteredNarrow: Story = {
     centerTabs: true,
   },
   play: IdentifierBarNarrow.play,
+};
+
+export const KeyboardReorder: Story = {
+  args: { isReorderEnabled: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const overview = await canvas.findByRole('tab', { name: 'Overview' });
+
+    overview.focus();
+    await userEvent.keyboard('[Space]');
+    await userEvent.keyboard('{ArrowRight}');
+    await userEvent.keyboard('[Space]');
+
+    await waitFor(() => {
+      const draft = jotaiStore.get(
+        pageLayoutDraftComponentState.atomFamily({ instanceId: 'instance-id' }),
+      );
+      const orderedTitles = [...draft.tabs]
+        .sort((first, second) => first.position - second.position)
+        .map((tab) => tab.title);
+
+      expect(orderedTitles).toEqual(['Revenue', 'Overview', 'Forecasts']);
+    });
+  },
 };

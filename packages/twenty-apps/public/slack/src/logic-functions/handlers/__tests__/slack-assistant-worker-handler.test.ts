@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
 import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
+import { SLACK_CHANNEL_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-channel-access-denied-text';
+import { SLACK_CHANNEL_RULE_UNREADABLE_ERROR } from 'src/logic-functions/constants/slack-channel-rule-unreadable-error';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-request-timeout-seconds';
 import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
@@ -22,8 +24,9 @@ const {
   finishSlackAssistantRequestWithFailureMock,
   setSlackAssistantThreadTitleMock,
   subscribeSlackThreadMock,
-  getSlackAccessModeMock,
+  resolveSlackChannelAccessPolicyMock,
   resolveSlackAccessDecisionMock,
+  notifySilencedSlackChannelMock,
 } = vi.hoisted(() => ({
   callLog: [] as string[],
   coreApiClientMock: vi.fn(),
@@ -39,17 +42,25 @@ const {
   finishSlackAssistantRequestWithFailureMock: vi.fn(),
   setSlackAssistantThreadTitleMock: vi.fn(),
   subscribeSlackThreadMock: vi.fn(),
-  getSlackAccessModeMock: vi.fn(),
+  resolveSlackChannelAccessPolicyMock: vi.fn(),
   resolveSlackAccessDecisionMock: vi.fn(),
+  notifySilencedSlackChannelMock: vi.fn(),
 }));
 
 vi.mock('src/logic-functions/utils/resolve-slack-access-decision', () => ({
   resolveSlackAccessDecision: resolveSlackAccessDecisionMock,
 }));
 
-vi.mock('src/logic-functions/utils/get-slack-access-mode', () => ({
-  getSlackAccessMode: getSlackAccessModeMock,
+vi.mock('src/logic-functions/utils/notify-silenced-slack-channel', () => ({
+  notifySilencedSlackChannel: notifySilencedSlackChannelMock,
 }));
+
+vi.mock(
+  'src/logic-functions/utils/resolve-slack-channel-access-policy',
+  () => ({
+    resolveSlackChannelAccessPolicy: resolveSlackChannelAccessPolicyMock,
+  }),
+);
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: coreApiClientMock,
@@ -130,6 +141,7 @@ const REQUESTER_IDENTITY = {
 
 const SLACK_CONTEXT = {
   conversationMessages: [],
+  sharedFiles: [],
   requesterName: 'Ada',
   requesterIdentity: undefined,
   requestMessage: undefined,
@@ -148,10 +160,15 @@ describe('slackAssistantWorkerHandler', () => {
       return {};
     });
     claimSlackAssistantRequestMock.mockResolvedValue(true);
+    notifySilencedSlackChannelMock.mockResolvedValue(undefined);
     updateSlackAssistantRequestMock.mockResolvedValue(undefined);
     fetchWorkspaceBaseUrlsMock.mockResolvedValue(['https://acme.twenty.com']);
     resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
-    getSlackAccessModeMock.mockResolvedValue(SLACK_ACCESS_MODE.ANYONE);
+    resolveSlackChannelAccessPolicyMock.mockResolvedValue({
+      status: 'ANSWER',
+      accessMode: SLACK_ACCESS_MODE.ANYONE,
+      isChannelRule: false,
+    });
     resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'ALLOWED' });
     setSlackAssistantThreadTitleMock.mockResolvedValue(undefined);
     subscribeSlackThreadMock.mockResolvedValue(undefined);
@@ -249,10 +266,12 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
-  it('should ask for the access decision with the stored mode and the resolved requester', async () => {
-    getSlackAccessModeMock.mockResolvedValue(
-      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
-    );
+  it('should ask for the access decision with the channel policy mode and the resolved requester', async () => {
+    resolveSlackChannelAccessPolicyMock.mockResolvedValue({
+      status: 'ANSWER',
+      accessMode: SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+      isChannelRule: false,
+    });
     resolveSlackRunAsForRequestMock.mockResolvedValue('workspace-member-1');
     fetchSlackAssistantContextMock.mockImplementation(async () => {
       callLog.push('context:fetch');
@@ -266,6 +285,12 @@ describe('slackAssistantWorkerHandler', () => {
 
     await slackAssistantWorkerHandler(REQUEST_RECORD);
 
+    expect(resolveSlackChannelAccessPolicyMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        slackChannelId: REQUEST_RECORD.slackChannelId,
+        isDirectMessage: true,
+      }),
+    );
     expect(resolveSlackAccessDecisionMock).toHaveBeenCalledWith(
       expect.objectContaining({
         accessMode: SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
@@ -275,10 +300,90 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
-  it('should answer a request access allowed', async () => {
-    getSlackAccessModeMock.mockResolvedValue(
-      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+  it('should word the denial for the channel when a channel rule restricts it', async () => {
+    resolveSlackChannelAccessPolicyMock.mockResolvedValue({
+      status: 'ANSWER',
+      accessMode: SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+      isChannelRule: true,
+    });
+    resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'DENIED' });
+
+    await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
+      done: true,
+      declined: true,
+    });
+
+    expect(sendSlackMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        messageText: SLACK_CHANNEL_ACCESS_DENIED_TEXT,
+      }),
     );
+    expect(updateSlackAssistantRequestMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText: SLACK_CHANNEL_ACCESS_DENIED_TEXT,
+      }),
+    );
+  });
+
+  it('should close a request from a silenced channel without answering or running the agent', async () => {
+    resolveSlackChannelAccessPolicyMock.mockResolvedValue({ status: 'SILENT' });
+
+    await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
+      done: true,
+      silenced: true,
+    });
+
+    expect(callLog).toEqual(['status:start', 'context:fetch', 'status:stop']);
+    expect(runSlackAssistantAgentWithDeadlineMock).not.toHaveBeenCalled();
+    expect(sendSlackMessageMock).not.toHaveBeenCalled();
+    expect(resolveSlackAccessDecisionMock).not.toHaveBeenCalled();
+    expect(updateSlackAssistantRequestMock).toHaveBeenCalledWith(
+      expect.anything(),
+      { id: REQUEST_RECORD.id, status: SLACK_ASSISTANT_REQUEST_STATUS.DONE },
+    );
+  });
+
+  it('should tell the requester privately when the channel was silenced after the request was enqueued', async () => {
+    resolveSlackChannelAccessPolicyMock.mockResolvedValue({ status: 'SILENT' });
+
+    await slackAssistantWorkerHandler({
+      ...REQUEST_RECORD,
+      slackChannelId: 'C0FIN',
+      slackChannelType: 'channel',
+      slackThreadTimestamp: '1700000000.000001',
+    });
+
+    expect(notifySilencedSlackChannelMock).toHaveBeenCalledWith({
+      slackChannelId: 'C0FIN',
+      slackUserId: 'U123',
+      parentMessageTimestamp: '1700000000.000001',
+    });
+  });
+
+  it('should fail rather than answer when the channel rule cannot be read', async () => {
+    resolveSlackChannelAccessPolicyMock.mockResolvedValue({
+      status: 'UNREADABLE',
+    });
+
+    const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
+
+    expect(result).toEqual({
+      failed: true,
+      reason: SLACK_CHANNEL_RULE_UNREADABLE_ERROR,
+    });
+    expect(stopStatusUpdatesMock).toHaveBeenCalledTimes(1);
+    expect(runSlackAssistantAgentWithDeadlineMock).not.toHaveBeenCalled();
+    expect(resolveSlackAccessDecisionMock).not.toHaveBeenCalled();
+  });
+
+  it('should answer a request access allowed', async () => {
+    resolveSlackChannelAccessPolicyMock.mockResolvedValue({
+      status: 'ANSWER',
+      accessMode: SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+      isChannelRule: false,
+    });
     resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
 
     await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({

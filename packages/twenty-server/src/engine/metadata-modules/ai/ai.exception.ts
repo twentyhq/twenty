@@ -26,6 +26,9 @@ export enum AiExceptionCode {
   RUN_AGENT_NOT_ALLOWED = 'RUN_AGENT_NOT_ALLOWED',
   NO_FAILED_TURN_TO_RETRY = 'NO_FAILED_TURN_TO_RETRY',
   STREAM_INTERRUPTED = 'STREAM_INTERRUPTED',
+  EVALUATION_MODEL_NOT_FOUND = 'EVALUATION_MODEL_NOT_FOUND',
+  EVALUATION_QUESTION_UNSUPPORTED = 'EVALUATION_QUESTION_UNSUPPORTED',
+  INVALID_EVALUATION_REQUEST = 'INVALID_EVALUATION_REQUEST',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -72,6 +75,12 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`There is no failed message to retry.`;
     case AiExceptionCode.STREAM_INTERRUPTED:
       return msg`The response was interrupted before it could finish.`;
+    case AiExceptionCode.EVALUATION_MODEL_NOT_FOUND:
+      return msg`No classification model is configured.`;
+    case AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED:
+      return msg`This model cannot answer one of the questions asked.`;
+    case AiExceptionCode.INVALID_EVALUATION_REQUEST:
+      return msg`Invalid classification request.`;
     default:
       assertUnreachable(code);
   }

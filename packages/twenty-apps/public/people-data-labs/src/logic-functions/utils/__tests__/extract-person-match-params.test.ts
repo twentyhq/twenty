@@ -1,9 +1,39 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PERSON_NODE_MOCK } from 'src/logic-functions/__mocks__/person-node.mock';
 import { extractPersonMatchParams } from 'src/logic-functions/utils/extract-person-match-params';
 
 describe('extractPersonMatchParams', () => {
+  beforeEach(() => {
+    vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', undefined);
+    vi.stubEnv('PDL_COMPANY_MIN_LIKELIHOOD', undefined);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it.each([
+    { name: 'a PDL ID', node: { ...PERSON_NODE_MOCK, pdlId: 'pdl-1' } },
+    { name: 'a LinkedIn profile', node: PERSON_NODE_MOCK },
+    {
+      name: 'a name and company',
+      node: {
+        ...PERSON_NODE_MOCK,
+        linkedinLink: null,
+        name: { firstName: 'Jane', lastName: 'Doe' },
+        company: { id: 'co-1', name: 'Acme' },
+      },
+    },
+  ])('uses the person default when matching by $name', ({ node }) => {
+    vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', '7');
+    vi.stubEnv('PDL_COMPANY_MIN_LIKELIHOOD', '8');
+
+    expect(
+      extractPersonMatchParams({ node, input: { records: [] } }),
+    ).toMatchObject({ minLikelihood: 7 });
+  });
+
   it('prefers an existing pdlId and uses the strong-identifier likelihood', () => {
     expect(
       extractPersonMatchParams({
@@ -53,6 +83,8 @@ describe('extractPersonMatchParams', () => {
   });
 
   it('honors an explicit minLikelihood from the input', () => {
+    vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', '7');
+
     expect(
       extractPersonMatchParams({
         node: PERSON_NODE_MOCK,

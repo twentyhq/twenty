@@ -2,6 +2,8 @@ import { type ApolloClient } from '@apollo/client';
 
 import {
   GetCoreWorkflowDocument,
+  GetCoreWorkflowsDocument,
+  GetCoreWorkflowsWithCurrentVersionsDocument,
   GetCoreWorkflowVersionDocument,
   GetCoreWorkflowVersionsDocument,
 } from '~/generated/graphql';
@@ -9,19 +11,26 @@ import {
 export const invalidateCoreWorkflowVersions = async (
   apolloCoreClient: ApolloClient,
 ) => {
-  for (const fieldName of [
-    'coreWorkflow',
-    'coreWorkflowVersion',
-    'coreWorkflowVersions',
-  ]) {
-    apolloCoreClient.cache.evict({ id: 'ROOT_QUERY', fieldName });
-  }
-
   await apolloCoreClient.refetchQueries({
+    optimistic: true,
+    updateCache: (cache) => {
+      for (const fieldName of [
+        'coreWorkflowById',
+        'coreWorkflowVersionById',
+        'coreWorkflowVersionsByCoreWorkflowId',
+        'coreWorkflows',
+        'coreWorkflowsWithCurrentVersions',
+      ]) {
+        cache.evict({ id: 'ROOT_QUERY', fieldName });
+      }
+    },
     include: [
       GetCoreWorkflowVersionsDocument,
       GetCoreWorkflowVersionDocument,
       GetCoreWorkflowDocument,
+      GetCoreWorkflowsDocument,
+      GetCoreWorkflowsWithCurrentVersionsDocument,
     ],
+    onQueryUpdated: (query) => query.options.fetchPolicy !== 'standby',
   });
 };

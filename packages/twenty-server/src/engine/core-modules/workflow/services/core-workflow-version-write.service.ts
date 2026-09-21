@@ -11,6 +11,7 @@ import {
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -34,12 +35,22 @@ export type ValidatedDraftCoreWorkflowVersion = {
   steps: WorkflowAction[] | null;
 };
 
+export class CoreWorkflowVersionPostCommitError extends Error {
+  constructor(readonly cause: unknown) {
+    super(
+      'Workflow version content was committed, but cache invalidation failed',
+    );
+    this.name = 'CoreWorkflowVersionPostCommitError';
+  }
+}
+
 @Injectable()
 export class CoreWorkflowVersionWriteService {
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
@@ -47,11 +58,21 @@ export class CoreWorkflowVersionWriteService {
 
   async getValidatedDraftCoreWorkflowVersion({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<ValidatedDraftCoreWorkflowVersion> {
+    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowVersionIds: [coreWorkflowVersionId],
+      },
+    );
+
     const coreWorkflowVersion =
       await this.coreWorkflowVersionRepository.findOne(workspaceId, {
         where: { id: coreWorkflowVersionId },
@@ -87,77 +108,78 @@ export class CoreWorkflowVersionWriteService {
   async writeContentAndMirror({
     workspaceId,
     coreWorkflowVersionId,
+    expectedVersion,
     trigger,
     steps,
   }: {
     workspaceId: string;
     coreWorkflowVersionId: string;
-    trigger?: WorkflowTrigger | null;
-    steps?: WorkflowAction[] | null;
+    expectedVersion: Pick<WorkflowVersionEntity, 'triggers' | 'steps'>;
+    trigger: WorkflowTrigger | null;
+    steps: WorkflowAction[] | null;
   }): Promise<void> {
-    if (trigger === undefined && steps === undefined) {
-      return;
-    }
-
     await this.assertContentIsNotMalformed({
       workspaceId,
       coreWorkflowVersionId,
-      ...(await this.mergeWithPersistedContent({
-        workspaceId,
-        coreWorkflowVersionId,
-        trigger,
-        steps,
-      })),
+      trigger,
+      steps,
     });
-
-    const setClauses: string[] = [];
-    const parameters: (string | null)[] = [coreWorkflowVersionId, workspaceId];
-
-    if (trigger !== undefined) {
-      parameters.push(isDefined(trigger) ? JSON.stringify([trigger]) : null);
-      setClauses.push(`"triggers" = $${parameters.length}`);
-    }
-
-    if (steps !== undefined) {
-      parameters.push(isDefined(steps) ? JSON.stringify(steps) : null);
-      setClauses.push(`"steps" = $${parameters.length}`);
-    }
-
-    const mirrorUpdatePayload: Pick<
-      Partial<WorkflowVersionWorkspaceEntity>,
-      'trigger' | 'steps'
-    > = {
-      ...(trigger === undefined ? {} : { trigger }),
-      ...(steps === undefined ? {} : { steps }),
-    };
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
-          await transactionScope.executeRawQuery(
-            `UPDATE core."workflowVersion"
-             SET ${setClauses.join(', ')}, "updatedAt" = now()
-             WHERE "id" = $1 AND "workspaceId" = $2`,
-            parameters,
-          );
-
           const mirrorUpdateResult = await transactionScope
             .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
               shouldBypassPermissionChecks: true,
             })
-            .update({ coreWorkflowVersionId }, mirrorUpdatePayload);
+            .update({ coreWorkflowVersionId }, { trigger, steps });
 
           assertExactlyOneMirrorRowWasWritten({
             affected: mirrorUpdateResult.affected,
             coreWorkflowVersionId,
           });
+
+          const updatedVersions = await transactionScope.executeRawQuery(
+            `UPDATE core."workflowVersion"
+             SET "triggers" = $3, "steps" = $4, "updatedAt" = now()
+             WHERE "id" = $1 AND "workspaceId" = $2 AND "status" = 'DRAFT'
+               AND "triggers" IS NOT DISTINCT FROM $5::jsonb
+               AND "steps" IS NOT DISTINCT FROM $6::jsonb
+             RETURNING "id"`,
+            [
+              coreWorkflowVersionId,
+              workspaceId,
+              isDefined(trigger) ? JSON.stringify([trigger]) : null,
+              isDefined(steps) ? JSON.stringify(steps) : null,
+              isDefined(expectedVersion.triggers)
+                ? JSON.stringify(expectedVersion.triggers)
+                : null,
+              isDefined(expectedVersion.steps)
+                ? JSON.stringify(expectedVersion.steps)
+                : null,
+            ],
+          );
+
+          if (updatedVersions.length !== 1) {
+            throw new WorkflowQueryValidationException(
+              `Core workflow version '${coreWorkflowVersionId}' changed during this edit`,
+              WorkflowQueryValidationExceptionCode.FORBIDDEN,
+              {
+                userFriendlyMessage: msg`Workflow version changed, please reload and retry`,
+              },
+            );
+          }
         },
       );
     }, buildSystemAuthContext(workspaceId));
 
-    await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
-      workspaceId,
-    );
+    try {
+      await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+        workspaceId,
+      );
+    } catch (error) {
+      throw new CoreWorkflowVersionPostCommitError(error);
+    }
   }
 
   async createDraftCoreWorkflowVersionAndMirror({
@@ -254,42 +276,6 @@ export class CoreWorkflowVersionWriteService {
     return this.coreWorkflowVersionRepository.count(workspaceId, {
       where: { coreWorkflowId },
     });
-  }
-
-  private async mergeWithPersistedContent({
-    workspaceId,
-    coreWorkflowVersionId,
-    trigger,
-    steps,
-  }: {
-    workspaceId: string;
-    coreWorkflowVersionId: string;
-    trigger?: WorkflowTrigger | null;
-    steps?: WorkflowAction[] | null;
-  }): Promise<{
-    trigger: WorkflowTrigger | null;
-    steps: WorkflowAction[] | null;
-  }> {
-    if (trigger !== undefined && steps !== undefined) {
-      return { trigger, steps };
-    }
-
-    const persistedCoreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { id: coreWorkflowVersionId },
-        select: { id: true, triggers: true, steps: true },
-      });
-
-    return {
-      trigger:
-        trigger === undefined
-          ? (persistedCoreWorkflowVersion?.triggers?.[0] ?? null)
-          : trigger,
-      steps:
-        steps === undefined
-          ? (persistedCoreWorkflowVersion?.steps ?? null)
-          : steps,
-    };
   }
 
   private async assertContentIsNotMalformed({

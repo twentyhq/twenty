@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -20,7 +21,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconX, useIcons } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;
@@ -97,15 +98,23 @@ export const WorkflowVariablesDropdownSteps = ({
           <DropdownMenuSeparator />
         )}
         {availableSteps.map((item) => (
-          <MenuItemSelect
+          <ListItem
             key={`step-${item.id}`}
-            selected={false}
             focused={false}
             onClick={() => onSelect({ stepId: item.id })}
-            text={item.name}
-            LeftIcon={item.icon ? getIcon(item.icon) : undefined}
-            hasSubMenu
-          />
+            role="option"
+            aria-selected={false}
+            selected={false}
+            indicator="check"
+            hasSubmenu={true}
+            startIcon={
+              <SelectOptionIcon
+                Icon={item.icon ? getIcon(item.icon) : undefined}
+              />
+            }
+          >
+            <OverflowingTextWithTooltip text={item.name} />
+          </ListItem>
         ))}
         {matchingVariables.length === 0 && availableSteps.length === 0 && (
           <MenuItem

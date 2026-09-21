@@ -1,3 +1,5 @@
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -10,17 +12,15 @@ import { AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-age
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class AgentTurnGraderService {
   private readonly logger = new Logger(AgentTurnGraderService.name);
 
   constructor(
-    @InjectWorkspaceScopedRepository(AgentTurnEntity)
-    private readonly turnRepository: WorkspaceScopedRepository<AgentTurnEntity>,
-    @InjectWorkspaceScopedRepository(AgentTurnEvaluationEntity)
-    private readonly evaluationRepository: WorkspaceScopedRepository<AgentTurnEvaluationEntity>,
+    @InjectAgentHistoryRepository('agentTurn')
+    private readonly turnRepository: AgentHistoryRepository<AgentTurnEntity>,
+    @InjectAgentHistoryRepository('agentTurnEvaluation')
+    private readonly evaluationRepository: AgentHistoryRepository<AgentTurnEvaluationEntity>,
     private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
 

@@ -23,9 +23,10 @@ export const buildWorkspaceEventEnvelope = <T extends TrackEventName>(
   contextFields: EventContextFields,
   event: T,
   properties: TrackEventProperties<T>,
+  occurredAt?: Date,
 ): WorkspaceEventEnvelope => ({
   table: 'workspaceEvent',
-  row: { ...contextFields, ...makeTrackEvent(event, properties) },
+  row: { ...contextFields, ...makeTrackEvent(event, properties, occurredAt) },
 });
 
 export const buildObjectEventEnvelope = <T extends TrackEventName>(

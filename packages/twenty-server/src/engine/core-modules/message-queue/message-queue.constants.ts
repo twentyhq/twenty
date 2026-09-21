@@ -3,6 +3,7 @@ export const PROCESS_METADATA = Symbol('message-queue:process_metadata');
 export const QUEUE_DRIVER = Symbol('message-queue:queue_driver');
 
 export enum MessageQueue {
+  recordExportQueue = 'record-export-queue',
   taskAssignedQueue = 'task-assigned-queue',
   messagingQueue = 'messaging-queue',
   webhookQueue = 'webhook-queue',
@@ -16,10 +17,12 @@ export enum MessageQueue {
   billingQueue = 'billing-queue',
   workspaceQueue = 'workspace-queue',
   entityEventsToDbQueue = 'entity-events-to-db-queue',
+  eventLogQueue = 'event-log-queue',
   workflowQueue = 'workflow-queue',
   delayedJobsQueue = 'delayed-jobs-queue',
   deleteCascadeQueue = 'delete-cascade-queue',
   logicFunctionQueue = 'logic-function-queue',
+  applicationLifecycleHookQueue = 'application-lifecycle-hook-queue',
   triggerQueue = 'trigger-queue',
   aiQueue = 'ai-queue',
   aiStreamQueue = 'ai-stream-queue',
