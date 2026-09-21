@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
-import { type PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 import { DeferredWorkspaceMigrationActionEntity } from 'src/engine/metadata-modules/deferred-workspace-migration-action/deferred-workspace-migration-action.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -186,8 +185,14 @@ export class DeferredWorkspaceMigrationActionRunnerService {
   }
 
   private async createDeferredActionDataSource(): Promise<DataSource> {
-    const coreDataSourceOptions = this.coreDataSource
-      .options as PostgresConnectionOptions;
+    const coreDataSourceOptions = this.coreDataSource.options;
+
+    if (coreDataSourceOptions.type !== 'postgres') {
+      throw new DeferredWorkspaceMigrationActionException(
+        `Deferred workspace migration actions require a postgres datasource, got ${coreDataSourceOptions.type}`,
+        DeferredWorkspaceMigrationActionExceptionCode.EXECUTION_FAILED,
+      );
+    }
 
     const deferredActionDataSource = new DataSource({
       ...coreDataSourceOptions,
