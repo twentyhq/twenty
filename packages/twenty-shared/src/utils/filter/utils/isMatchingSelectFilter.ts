@@ -1,4 +1,5 @@
 import { type SelectFilter } from '@/types';
+import { isDefined } from '@/utils/validation/isDefined';
 
 import { compareSelectOptionValues } from './compareSelectOptionValues';
 
@@ -11,9 +12,52 @@ export const isMatchingSelectFilter = ({
   value: string | null;
   options?: { value: string; position: number }[] | null;
 }) => {
+  if (!isDefined(selectFilter)) {
+    return false;
+  }
+
+  if (Array.isArray(selectFilter)) {
+    if (Array.isArray(value)) {
+      return selectFilter.some((item) => value.includes(item));
+    }
+    return value !== null && selectFilter.includes(value);
+  }
+
+  if (typeof selectFilter === 'string') {
+    if (Array.isArray(value)) {
+      return value.includes(selectFilter);
+    }
+    return value === selectFilter;
+  }
+
+  if (Array.isArray(value)) {
+    if (Array.isArray(selectFilter.in)) {
+      return selectFilter.in.some((item) => value.includes(item));
+    }
+    if (isDefined(selectFilter.eq)) {
+      return value.includes(selectFilter.eq);
+    }
+  }
+
   switch (true) {
     case selectFilter.in !== undefined: {
-      return value !== null && selectFilter.in.includes(value);
+      if (Array.isArray(selectFilter.in)) {
+        return value !== null && selectFilter.in.includes(value);
+      }
+      return value === selectFilter.in;
+    }
+    case (selectFilter as Record<string, unknown>).containsAny !== undefined: {
+      const containsAny = (selectFilter as Record<string, unknown>).containsAny;
+      if (Array.isArray(containsAny)) {
+        if (Array.isArray(value)) {
+          return containsAny.some((item) => value.includes(item));
+        }
+        return value !== null && containsAny.includes(value);
+      }
+      return false;
+    }
+    case (selectFilter as Record<string, unknown>).isEmptyArray !== undefined: {
+      return false;
     }
     case selectFilter.is !== undefined: {
       if (selectFilter.is === 'NULL') {

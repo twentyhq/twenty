@@ -75,6 +75,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     name: string,
     type: FieldMetadataType,
     settings?: Record<string, unknown>,
+    options?: { value: string; position: number }[],
   ): FlatFieldMetadata =>
     ({
       id,
@@ -94,6 +95,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       mainGroupByFieldMetadataViewIds: [],
       applicationId: null,
       settings,
+      options,
     }) as unknown as FlatFieldMetadata;
 
   const buildFlatFieldMetadataMaps = (
@@ -138,6 +140,17 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         joinColumnName: 'companyId',
       },
     ),
+    createMockFlatFieldMetadata(
+      'status-id',
+      'status',
+      FieldMetadataType.SELECT,
+      undefined,
+      [
+        { value: 'ACTIVE', position: 0 },
+        { value: 'PENDING', position: 1 },
+        { value: 'CLOSED', position: 2 },
+      ],
+    ),
   ];
 
   const flatObjectMetadata = createMockFlatObjectMetadata(
@@ -155,6 +168,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       addressStreet1: 'Main Street',
       addressCity: 'Paris',
     },
+    status: 'ACTIVE',
     companyId: 'company-1',
     deletedAt: null,
     id: 'record-1',
@@ -352,6 +366,82 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       isRecordMatchingRLSRowLevelPermissionPredicate({
         record: { ...baseRecord, company: { id: 'company-1' } } as ObjectRecord,
         filter: { company: { is: 'NULL' } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+  });
+
+  it('matches SELECT fields using array and multi-select filter shapes', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          status: {
+            in: ['ACTIVE', 'PENDING'],
+          },
+        },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          status: {
+            containsAny: ['ACTIVE', 'PENDING'],
+          } as any,
+        },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          status: ['ACTIVE', 'PENDING'] as any,
+        },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          status: 'ACTIVE' as any,
+        },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          status: {
+            in: ['CLOSED'],
+          },
+        },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          status: {
+            containsAny: ['CLOSED'],
+          } as any,
+        },
         flatObjectMetadata,
         flatFieldMetadataMaps,
       }),

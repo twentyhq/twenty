@@ -150,6 +150,56 @@ describe('isMatchingSelectFilter', () => {
     });
   });
 
+  describe('multi-select and array filter compatibility', () => {
+    it('should match containsAny array filter against single select value', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { containsAny: ['ACTIVE', 'PENDING'] } as any,
+          value: 'ACTIVE',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { containsAny: ['ACTIVE', 'PENDING'] } as any,
+          value: 'CLOSED',
+        }),
+      ).toBe(false);
+    });
+
+    it('should match raw array as selectFilter', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: ['ACTIVE', 'PENDING'] as any,
+          value: 'ACTIVE',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: ['ACTIVE', 'PENDING'] as any,
+          value: 'CLOSED',
+        }),
+      ).toBe(false);
+    });
+
+    it('should match scalar string as selectFilter', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: 'ACTIVE' as any,
+          value: 'ACTIVE',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: 'ACTIVE' as any,
+          value: 'CLOSED',
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe('default', () => {
     it('should throw for unexpected filter', () => {
       expect(() =>

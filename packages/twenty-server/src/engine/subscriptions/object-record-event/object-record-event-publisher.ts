@@ -584,16 +584,24 @@ export class ObjectRecordEventPublisher {
         continue;
       }
 
-      if (
-        this.isQueryMatchingObjectRecordEvent({
-          operationSignature,
-          event,
-          subscriberRLSFilter,
-          objectMetadata,
-          flatFieldMetadataMaps,
-        })
-      ) {
-        matchedQueryIds.push(queryId);
+      try {
+        if (
+          this.isQueryMatchingObjectRecordEvent({
+            operationSignature,
+            event,
+            subscriberRLSFilter,
+            objectMetadata,
+            flatFieldMetadataMaps,
+          })
+        ) {
+          matchedQueryIds.push(queryId);
+        }
+      } catch (error) {
+        this.logger.warn(
+          `Failed to evaluate live query filter for queryId ${queryId} on ${operationSignature.objectNameSingular}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
       }
     }
 
@@ -634,16 +642,28 @@ export class ObjectRecordEventPublisher {
 
     if (
       isDefined(subscriberRLSFilter) &&
-      Object.keys(subscriberRLSFilter).length > 0 &&
-      !isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: deliveredRecord,
-        filter: subscriberRLSFilter,
-        flatObjectMetadata: objectMetadata,
-        flatFieldMetadataMaps,
-        shouldIgnoreSoftDeleteDefaultFilter,
-      })
+      Object.keys(subscriberRLSFilter).length > 0
     ) {
-      return false;
+      try {
+        if (
+          !isRecordMatchingRLSRowLevelPermissionPredicate({
+            record: deliveredRecord,
+            filter: subscriberRLSFilter,
+            flatObjectMetadata: objectMetadata,
+            flatFieldMetadataMaps,
+            shouldIgnoreSoftDeleteDefaultFilter,
+          })
+        ) {
+          return false;
+        }
+      } catch (error) {
+        this.logger.warn(
+          `Failed to evaluate subscriber RLS filter for ${operationSignature.objectNameSingular}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+        return false;
+      }
     }
 
     const queryFilter = operationSignature.variables?.filter ?? {};
@@ -657,15 +677,24 @@ export class ObjectRecordEventPublisher {
         ? [properties?.after, properties?.before].filter(isDefined)
         : [deliveredRecord];
 
-    return candidateRecords.some((record) =>
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record,
-        filter: queryFilter,
-        flatObjectMetadata: objectMetadata,
-        flatFieldMetadataMaps,
-        shouldIgnoreSoftDeleteDefaultFilter,
-      }),
-    );
+    try {
+      return candidateRecords.some((record) =>
+        isRecordMatchingRLSRowLevelPermissionPredicate({
+          record,
+          filter: queryFilter,
+          flatObjectMetadata: objectMetadata,
+          flatFieldMetadataMaps,
+          shouldIgnoreSoftDeleteDefaultFilter,
+        }),
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to evaluate live query filter for ${operationSignature.objectNameSingular}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+      return false;
+    }
   }
 
   private async fetchPermissionsContext(

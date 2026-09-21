@@ -97,6 +97,65 @@ describe('isMatchingMultiSelectFilter', () => {
     });
   });
 
+  describe('in, eq, neq and array compatibility', () => {
+    it('should match when in list overlaps with value', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { in: ['A', 'B'] } as any,
+          value: ['A', 'C'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { in: ['X', 'Y'] } as any,
+          value: ['A', 'C'],
+        }),
+      ).toBe(false);
+    });
+
+    it('should match when eq equals an element in value', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { eq: 'A' } as any,
+          value: ['A', 'C'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { eq: 'Z' } as any,
+          value: ['A', 'C'],
+        }),
+      ).toBe(false);
+    });
+
+    it('should match when neq is not in value', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { neq: 'Z' } as any,
+          value: ['A', 'C'],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { neq: 'A' } as any,
+          value: ['A', 'C'],
+        }),
+      ).toBe(false);
+    });
+
+    it('should match when raw array filter overlaps with value', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: ['A', 'B'] as any,
+          value: ['A', 'C'],
+        }),
+      ).toBe(true);
+    });
+  });
+
   describe('default', () => {
     it('should throw for unexpected filter', () => {
       expect(() =>
