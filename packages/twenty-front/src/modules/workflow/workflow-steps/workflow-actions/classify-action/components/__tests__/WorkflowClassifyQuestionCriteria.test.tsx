@@ -57,6 +57,9 @@ describe('WorkflowClassifyQuestionCriteria', () => {
         'e.g. Designs, builds, or maintains software or technical systems.',
       ),
     ).toBeVisible();
+    expect(
+      screen.getByRole('button', { name: 'Delete option' }),
+    ).toBeDisabled();
     const input = screen.getByPlaceholderText('e.g. Engineer');
     await user.type(input, 'Billing');
     expect(input).toHaveFocus();
@@ -76,8 +79,15 @@ describe('WorkflowClassifyQuestionCriteria', () => {
     expect(onChange).toHaveBeenLastCalledWith([
       expect.objectContaining({ name: 'Billing', description: 'Invoices' }),
     ]);
-    await user.click(screen.getByRole('button', { name: 'Delete option' }));
+    const deleteButtons = screen.getAllByRole('button', {
+      name: 'Delete option',
+    });
+    expect(deleteButtons[1]).toBeDisabled();
+    await user.click(deleteButtons[0]);
     expect(onChange).toHaveBeenLastCalledWith([]);
+    expect(
+      screen.getByRole('button', { name: 'Delete option' }),
+    ).toBeDisabled();
     expect(screen.getAllByPlaceholderText('e.g. Engineer')).toHaveLength(1);
   });
 

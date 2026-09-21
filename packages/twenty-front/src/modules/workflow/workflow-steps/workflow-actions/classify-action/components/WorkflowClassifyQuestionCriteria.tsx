@@ -135,17 +135,18 @@ export const WorkflowClassifyQuestionCriteria = ({
           </StyledFields>
           {!readonly && (
             <StyledActionSlot>
-              {(hasContent(criterion) || index < visibleRows.length - 1) && (
-                <Button
-                  startIcon={<IconTrash />}
-                  aria-label={
-                    variant === 'options' ? t`Delete option` : t`Delete level`
-                  }
-                  onClick={() =>
-                    updateRows(rows.filter((row) => row.id !== criterion.id))
-                  }
-                />
-              )}
+              <Button
+                disabled={
+                  !hasContent(criterion) && index === visibleRows.length - 1
+                }
+                startIcon={<IconTrash />}
+                aria-label={
+                  variant === 'options' ? t`Delete option` : t`Delete level`
+                }
+                onClick={() =>
+                  updateRows(rows.filter((row) => row.id !== criterion.id))
+                }
+              />
             </StyledActionSlot>
           )}
         </StyledRow>
