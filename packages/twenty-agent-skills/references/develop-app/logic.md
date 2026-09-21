@@ -109,3 +109,20 @@ Use `defineUninstallLogicFunction` for best-effort cleanup of external resources
 Uninstall hook files live alongside other logic functions (typically `src/logic-functions/uninstall.ts`). Kebab-case filename, one export per file.
 
 The hook runs before the app's metadata, data, and code are removed, so handlers can still query the app's objects and records. Handlers receive `UninstallPayload` (`{ version?: string }`).
+
+## Health Check
+
+Use `defineHealthCheck` to report whether the app is actually able to run. It covers what only the app can know: a key that is present but revoked, an account on the wrong plan, a webhook that was never registered. A required variable nobody filled in is already covered by `isRequired` and needs no code.
+
+Health check files live alongside other logic functions (typically `src/logic-functions/health-check.ts`). Only one health check is allowed per app; declaring more than one fails the build.
+
+The config takes `universalIdentifier` and `handler`. Handlers receive `HealthCheckPayload` (`{ version?: string }`) and run server-side, so they read secret variables like any other logic function.
+
+The handler returns `ApplicationHealthCheckResult`, a discriminated union:
+
+- `{ status: 'ok' }`
+- `{ status: 'warning' | 'error'; message: string; action?: { label: string; settingsTab: 'general' | 'variables' | 'settings' } }`
+
+`message` is shown in a banner on the app's settings page. `action` renders a button labelled `label` that switches to `settingsTab`; the button is omitted when the tab does not exist for that app.
+
+Twenty runs the check when the app's settings page opens and shows the result. Nothing is stored. A check that throws, times out, or returns a shape Twenty cannot read is treated as unknown, never as an error, and no banner is shown.
