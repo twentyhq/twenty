@@ -1,5 +1,6 @@
 import { useGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import {
   CommandMenuContext,
   type CommandMenuContextType,
@@ -11,6 +12,7 @@ import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
+import { getCommandMenuContextApiForContainerType } from '@/command-menu-item/utils/getCommandMenuContextApiForContainerType';
 import { mergeGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/mergeGlobalRecordCreationCommandMenuItems';
 import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import {
@@ -19,9 +21,31 @@ import {
 } from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
-import { type CommandMenuContextApi } from 'twenty-shared/types';
+import {
+  ContextStorePageType,
+  CoreObjectNameSingular,
+  type CommandMenuContextApi,
+} from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
+
+const WORKSPACE_DEFINITION_COMMANDS = new Set<EngineComponentKey>([
+  EngineComponentKey.ADD_TO_FAVORITES,
+  EngineComponentKey.REMOVE_FROM_FAVORITES,
+  EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT,
+  EngineComponentKey.EXPORT_RECORDS,
+  EngineComponentKey.EXPORT_FROM_RECORD_INDEX,
+  EngineComponentKey.EXPORT_VIEW,
+  EngineComponentKey.IMPORT_RECORDS,
+  EngineComponentKey.SEE_DELETED_RECORDS,
+  EngineComponentKey.CREATE_NEW_VIEW,
+  EngineComponentKey.HIDE_DELETED_RECORDS,
+  EngineComponentKey.EXPORT_FROM_RECORD_SHOW,
+  EngineComponentKey.EXPORT_MULTIPLE_RECORDS,
+  EngineComponentKey.UPDATE_MULTIPLE_RECORDS,
+  EngineComponentKey.NAVIGATE_TO_NEXT_RECORD,
+  EngineComponentKey.NAVIGATE_TO_PREVIOUS_RECORD,
+]);
 
 type CommandMenuContextProviderContentProps = {
   displayType: CommandMenuContextType['displayType'];
@@ -38,6 +62,14 @@ export const CommandMenuContextProviderContent = ({
   commandMenuContextApi,
   isInPreviewMode,
 }: CommandMenuContextProviderContentProps) => {
+  const isCore = useIsWorkflowCoreEnabled();
+  const isCoreWorkflow =
+    isCore &&
+    commandMenuContextApi.objectMetadataItem.nameSingular ===
+      CoreObjectNameSingular.Workflow;
+  const isCoreWorkflowIndex =
+    isCoreWorkflow &&
+    commandMenuContextApi.pageType === ContextStorePageType.Index;
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const {
     hasGlobalRecordCreationCommandTemplate,
@@ -56,6 +88,15 @@ export const CommandMenuContextProviderContent = ({
       ? currentPageLayoutId
       : pageLayoutIdFromContext;
 
+  const commandMenuContextApiForAvailability = useMemo(
+    () =>
+      getCommandMenuContextApiForContainerType({
+        commandMenuContextApi,
+        containerType,
+      }),
+    [commandMenuContextApi, containerType],
+  );
+
   const filteredCommandMenuItems = useMemo(() => {
     const currentObjectMetadataItemId =
       commandMenuContextApi.objectMetadataItem.id;
@@ -66,6 +107,16 @@ export const CommandMenuContextProviderContent = ({
       : commandMenuItems;
 
     const contextCommandMenuItems = commandMenuItemsToDisplay
+      .filter(
+        (item) =>
+          !isCoreWorkflowIndex ||
+          item.engineComponentKey !== EngineComponentKey.DELETE_RECORDS,
+      )
+      .filter(
+        (item) =>
+          !isCoreWorkflow ||
+          !WORKSPACE_DEFINITION_COMMANDS.has(item.engineComponentKey),
+      )
       .filter(
         (item) =>
           item.engineComponentKey !==
@@ -81,11 +132,14 @@ export const CommandMenuContextProviderContent = ({
       .filter((item) =>
         evaluateConditionalAvailabilityExpression(
           item.conditionalAvailabilityExpression,
-          commandMenuContextApi,
+          commandMenuContextApiForAvailability,
         ),
       )
       .map((item) =>
-        resolveCommandMenuItemPinning(item, commandMenuContextApi),
+        resolveCommandMenuItemPinning(
+          item,
+          commandMenuContextApiForAvailability,
+        ),
       );
 
     return mergeGlobalRecordCreationCommandMenuItems({
@@ -95,13 +149,16 @@ export const CommandMenuContextProviderContent = ({
     });
   }, [
     commandMenuContextApi,
+    commandMenuContextApiForAvailability,
     globalRecordCreationCommandMenuItems,
     shouldDisplayGlobalRecordCreationCommands,
+    isCoreWorkflow,
     commandMenuItems,
     commandMenuItemsDraft,
     effectivePageLayoutId,
     isInPreviewMode,
     isLayoutCustomizationAllowedOnCurrentPage,
+    isCoreWorkflowIndex,
   ]);
 
   return (

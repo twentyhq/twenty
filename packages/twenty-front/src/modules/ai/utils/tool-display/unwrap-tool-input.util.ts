@@ -2,8 +2,10 @@ import { z } from 'zod';
 
 import { type ToolInput } from '@/ai/types/ToolInput';
 
+// Coercing here would turn a missing name into the string "undefined", which
+// then reads as a real tool name downstream.
 const ExecuteToolSchema = z.object({
-  toolName: z.coerce.string(),
+  toolName: z.string().min(1),
   arguments: z.unknown(),
 });
 

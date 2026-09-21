@@ -7,6 +7,10 @@ import {
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
+import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
@@ -63,6 +67,30 @@ describe('isUserFacingWorkflowExecutorError', () => {
     const error = new WorkflowStepExecutorException(
       'Internal error',
       WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
+    );
+
+    expect(isUserFacingWorkflowExecutorError(error)).toBe(false);
+  });
+
+  // No retry conjures a model, and reporting these as system errors buries the
+  // real ones, so a misconfigured classification step is the author's to fix.
+  it.each([
+    // What an instance with no provider configured at all raises, through
+    // getDefaultModelForTier under the auto-select fallback.
+    AiExceptionCode.API_KEY_NOT_CONFIGURED,
+    AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
+    AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
+    AiExceptionCode.INVALID_EVALUATION_REQUEST,
+  ])('returns true for user-facing AI code %s', (code) => {
+    const error = new AiException('Misconfigured step', code);
+
+    expect(isUserFacingWorkflowExecutorError(error)).toBe(true);
+  });
+
+  it('returns false for an AI failure the user cannot resolve', () => {
+    const error = new AiException(
+      'Agent execution failed',
+      AiExceptionCode.AGENT_EXECUTION_FAILED,
     );
 
     expect(isUserFacingWorkflowExecutorError(error)).toBe(false);

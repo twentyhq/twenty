@@ -4,7 +4,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { Table } from '@/ui/layout/table/components/Table';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
@@ -12,7 +11,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { Section } from 'twenty-ui/components';
+import { SettingsRow, Section } from 'twenty-ui/components';
 import {
   IconFilter,
   IconKey,
@@ -21,7 +20,6 @@ import {
   IconSearch,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -109,20 +107,16 @@ export const SettingsRolesList = () => {
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <MenuItemSwitch
-                  LeftIcon={IconLego}
+                <SettingsRow
+                  startIcon={<IconLego />}
                   onCheckedChange={() => setShowAgentRoles(!showAgentRoles)}
                   checked={showAgentRoles}
-                  text={t`Agent roles`}
-                  size="sm"
-                />
-                <MenuItemSwitch
-                  LeftIcon={IconKey}
+                >{t`Agent roles`}</SettingsRow>
+                <SettingsRow
+                  startIcon={<IconKey />}
                   onCheckedChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
                   checked={showApiKeyRoles}
-                  text={t`API key roles`}
-                  size="sm"
-                />
+                >{t`API key roles`}</SettingsRow>
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }

@@ -7,7 +7,7 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
@@ -61,7 +61,7 @@ export const SettingsAgentSettingsTab = ({
   agent,
 }: SettingsAgentSettingsTabProps) => {
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const aiModels = useAtomStateValue(aiModelsState);
   const noModelsAvailable = aiModels.length === 0;
@@ -163,7 +163,7 @@ export const SettingsAgentSettingsTab = ({
           />
           <Button
             startIcon={<IconTrash />}
-            onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
+            onClick={() => openDialog(DELETE_AGENT_MODAL_ID)}
             variant="outline"
             color="danger"
           >{t`Delete Agent`}</Button>

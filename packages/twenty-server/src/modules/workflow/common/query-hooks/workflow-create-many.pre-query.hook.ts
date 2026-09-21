@@ -13,7 +13,12 @@ export class WorkflowCreateManyPreQueryHook implements WorkspacePreQueryHookInst
     payload: CreateManyResolverArgs<WorkflowWorkspaceEntity>,
   ): Promise<CreateManyResolverArgs<WorkflowWorkspaceEntity>> {
     const sanitizedData = payload.data.map((workflow) => {
-      const { statuses: _statuses, ...workflowWithoutStatuses } = workflow; // silent not to break creation from view with filter
+      const {
+        statuses: _statuses,
+        coreWorkflowId: _coreWorkflowId,
+        lastPublishedVersionId: _lastPublishedVersionId,
+        ...workflowWithoutStatuses
+      } = workflow; // silent not to break creation from view with filter
 
       return workflowWithoutStatuses as WorkflowWorkspaceEntity;
     });

@@ -1,8 +1,8 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 
 import { useMutation } from '@apollo/client/react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -22,7 +22,7 @@ export const SettingsAgentDeleteConfirmationModal = ({
   agentName,
 }: SettingsAgentDeleteConfirmationModalProps) => {
   const { t } = useLingui();
-  const { closeModal } = useModal();
+  const { closeDialog } = useDialog();
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
   const [deleteAgent] = useMutation(DeleteOneAgentDocument);
@@ -34,7 +34,7 @@ export const SettingsAgentDeleteConfirmationModal = ({
           input: { id: agentId },
         },
       });
-      closeModal(DELETE_AGENT_MODAL_ID);
+      closeDialog(DELETE_AGENT_MODAL_ID);
       navigate(SettingsPath.AI);
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
@@ -42,10 +42,10 @@ export const SettingsAgentDeleteConfirmationModal = ({
   };
 
   return (
-    <ConfirmationModal
+    <ConfirmationDialog
       confirmationValue={agentName}
       confirmationPlaceholder={agentName}
-      modalInstanceId={DELETE_AGENT_MODAL_ID}
+      dialogId={DELETE_AGENT_MODAL_ID}
       title={t`Delete Agent`}
       subtitle={
         <Trans>

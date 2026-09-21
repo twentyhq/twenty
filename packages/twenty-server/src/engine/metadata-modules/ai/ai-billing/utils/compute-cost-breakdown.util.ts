@@ -1,4 +1,4 @@
-import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-cost-config.type';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
 export type TokenUsageInput = {
@@ -40,7 +40,7 @@ const safeNumber = (value: number | undefined): number => {
 //   Anthropic: outputTokens excludes reasoning (thinking) tokens
 //   OpenAI/xAI/Groq/Google: outputTokens includes reasoning tokens
 export const computeCostBreakdown = (
-  model: AiModelConfig,
+  model: AiModelCostConfig,
   usage: TokenUsageInput,
 ): CostBreakdown => {
   const rawInputTokens = safeNumber(usage.inputTokens);

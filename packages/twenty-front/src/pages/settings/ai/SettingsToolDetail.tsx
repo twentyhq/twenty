@@ -5,8 +5,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -38,7 +38,7 @@ export const SettingsToolDetail = () => {
   const { enqueueToast } = useToast();
   const { updateLogicFunction, deleteLogicFunction } =
     usePersistLogicFunction();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const [isDeleting, setIsDeleting] = useState(false);
   const [editedName, setEditedName] = useState<string | null>(null);
@@ -253,7 +253,7 @@ export const SettingsToolDetail = () => {
                 <Button
                   startIcon={<IconTrash />}
                   size="sm"
-                  onClick={() => openModal(DELETE_TOOL_MODAL_ID)}
+                  onClick={() => openDialog(DELETE_TOOL_MODAL_ID)}
                   variant="outline"
                   color="danger"
                 >{t`Delete`}</Button>
@@ -262,8 +262,8 @@ export const SettingsToolDetail = () => {
           </>
         )}
       </SettingsPageContainer>
-      <ConfirmationModal
-        modalInstanceId={DELETE_TOOL_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={DELETE_TOOL_MODAL_ID}
         title={t`Delete Tool`}
         subtitle={t`Are you sure you want to delete this tool? This action cannot be undone.`}
         onConfirmClick={handleDelete}

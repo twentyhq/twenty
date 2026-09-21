@@ -15,9 +15,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section, LightIconButton } from 'twenty-ui/components';
 import { IconRestore } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
 
@@ -139,11 +139,13 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
                     <TableCell>
                       {isEdited && (
                         <LightIconButton
-                          Icon={IconRestore}
                           title={t`Reset to default`}
-                          accent="tertiary"
+                          emphasis="subtle"
                           onClick={() => saveTranslationRow(row, null)}
-                        />
+                          aria-label={t`Reset to default`}
+                        >
+                          <IconRestore />
+                        </LightIconButton>
                       )}
                     </TableCell>
                   </TableRow>

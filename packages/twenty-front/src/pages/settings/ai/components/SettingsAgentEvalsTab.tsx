@@ -6,8 +6,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useMutation } from '@apollo/client/react';
@@ -15,7 +15,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Section } from 'twenty-ui/components';
+import { Section, LightIconButton } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   IconDotsVertical,
@@ -24,7 +24,8 @@ import {
   IconPlus,
   IconTrash,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidv4 } from 'uuid';
@@ -65,7 +66,7 @@ export const SettingsAgentEvalsTab = ({
 }: SettingsAgentEvalsTabProps) => {
   const [newInput, setNewInput] = useState('');
   const [inputToDelete, setInputToDelete] = useState<string | null>(null);
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { closeDropdown } = useCloseDropdown();
   const { enqueueToast } = useToast();
   const navigate = useNavigate();
@@ -118,7 +119,7 @@ export const SettingsAgentEvalsTab = ({
 
   const openDeleteModal = (id: string) => {
     setInputToDelete(id);
-    openModal(DELETE_EVAL_INPUT_MODAL_ID);
+    openDialog(DELETE_EVAL_INPUT_MODAL_ID);
   };
 
   const handleRunInput = (text: string, itemId: string) => {
@@ -166,10 +167,12 @@ export const SettingsAgentEvalsTab = ({
                 dropdownPlacement="right-start"
                 clickableComponent={
                   <LightIconButton
-                    Icon={IconDotsVertical}
-                    accent="tertiary"
+                    emphasis="subtle"
                     disabled={disabled}
-                  />
+                    aria-label={t`More options`}
+                  >
+                    <IconDotsVertical />
+                  </LightIconButton>
                 }
                 dropdownComponents={
                   <DropdownContent>
@@ -197,8 +200,8 @@ export const SettingsAgentEvalsTab = ({
         )}
       </Section.Root>
 
-      <ConfirmationModal
-        modalInstanceId={DELETE_EVAL_INPUT_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={DELETE_EVAL_INPUT_MODAL_ID}
         title={t`Delete Evaluation Input`}
         subtitle={t`Are you sure you want to delete this evaluation input?`}
         onConfirmClick={handleDeleteInput}

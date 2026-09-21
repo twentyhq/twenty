@@ -1,3 +1,4 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -9,8 +10,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/primitives/input';
-import { MenuItemMultiSelect } from 'twenty-ui/primitives/navigation';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ConfigVariableType } from '~/generated-admin/graphql';
 import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
@@ -136,17 +137,20 @@ export const ConfigVariableDatabaseInput = ({
               }
               dropdownComponents={
                 <DropdownContent>
-                  <DropdownMenuItemsContainer>
+                  <DropdownMenuItemsContainer isMultiSelect>
                     {selectOptions.map((option) => (
-                      <MenuItemMultiSelect
+                      <ListItem
+                        render={<button type="button" />}
                         key={option.value}
-                        text={option.label}
-                        selected={isValueSelected(option.value)}
                         className="config-variable-array-menu-item-multi-select"
-                        onSelectChange={() =>
-                          handleMultiSelectChange(option.value)
-                        }
-                      />
+                        role="option"
+                        aria-selected={isValueSelected(option.value)}
+                        selected={isValueSelected(option.value)}
+                        indicator="checkbox"
+                        onClick={() => handleMultiSelectChange(option.value)}
+                      >
+                        <OverflowingTextWithTooltip text={option.label} />
+                      </ListItem>
                     ))}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

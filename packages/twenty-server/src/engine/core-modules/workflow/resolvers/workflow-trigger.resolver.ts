@@ -16,6 +16,7 @@ import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-module
 import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -24,6 +25,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { buildWorkflowRunTriggerContext } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-trigger-context.util';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -44,14 +46,25 @@ export class WorkflowTriggerResolver {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
+    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
   ) {}
 
   @Mutation(() => Boolean)
   async activateWorkflowVersion(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ) {
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId: workspace.id,
+        userWorkspaceId,
+        workspaceWorkflowVersionIds: [workflowVersionId],
+      },
+    );
+
     return this.workflowTriggerWorkspaceService.activateWorkflowVersion(
       workflowVersionId,
       workspace.id,
@@ -60,10 +73,20 @@ export class WorkflowTriggerResolver {
 
   @Mutation(() => Boolean)
   async deactivateWorkflowVersion(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ) {
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId: workspace.id,
+        userWorkspaceId,
+        workspaceWorkflowVersionIds: [workflowVersionId],
+      },
+    );
+
     return this.workflowTriggerWorkspaceService.deactivateWorkflowVersion(
       workflowVersionId,
       workspace.id,
@@ -73,11 +96,21 @@ export class WorkflowTriggerResolver {
   @Mutation(() => RunWorkflowVersionDTO)
   @UseGuards(UserAuthGuard)
   async runWorkflowVersion(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input')
     { workflowVersionId, workflowRunId, payload }: RunWorkflowVersionInput,
   ) {
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId: workspace.id,
+        userWorkspaceId,
+        workspaceWorkflowVersionIds: [workflowVersionId],
+      },
+    );
+
     const authContext = buildSystemAuthContext(workspace.id);
 
     const workspaceMember =

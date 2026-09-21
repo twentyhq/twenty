@@ -401,6 +401,26 @@ export class ObjectMetadataResolver {
     }
   }
 
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @Mutation(() => [ObjectMetadataDTO])
+  async updateManyObjects(
+    @Args('inputs', { type: () => [UpdateOneObjectInput] })
+    updateObjectInputs: UpdateOneObjectInput[],
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    try {
+      const flatObjectMetadatas =
+        await this.objectMetadataService.updateManyObjects({
+          updateObjectInputs,
+          workspaceId,
+        });
+
+      return flatObjectMetadatas.map(fromFlatObjectMetadataToObjectMetadataDto);
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+    }
+  }
+
   @ResolveField(() => [FieldMetadataDTO], { nullable: false })
   async fieldsList(
     @AuthWorkspace() workspace: WorkspaceEntity,

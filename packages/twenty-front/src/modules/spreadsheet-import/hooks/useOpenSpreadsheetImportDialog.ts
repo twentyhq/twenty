@@ -1,7 +1,7 @@
 import { SPREADSHEET_IMPORT_MODAL_ID } from '@/spreadsheet-import/constants/SpreadsheetImportModalId';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useOpenSpreadsheetImportDialog = () => {
@@ -9,12 +9,12 @@ export const useOpenSpreadsheetImportDialog = () => {
     spreadsheetImportDialogState,
   );
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const openSpreadsheetImportDialog = (
     options: Omit<SpreadsheetImportDialogOptions, 'isOpen' | 'onClose'>,
   ) => {
-    openModal(SPREADSHEET_IMPORT_MODAL_ID);
+    openDialog(SPREADSHEET_IMPORT_MODAL_ID);
     setSpreadsheetImportDialog({
       isOpen: true,
       isStepBarVisible: true,

@@ -8,8 +8,9 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import { IconRefresh, IconTag } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSwitch } from 'twenty-ui/primitives/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type CommandMenuItemOptionsDropdownProps = Pick<
@@ -62,14 +63,12 @@ export const CommandMenuItemOptionsDropdown = ({
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
           <DropdownMenuItemsContainer>
-            <MenuItemSwitch
-              LeftIcon={IconTag}
-              text={t`Hide label`}
+            <SettingsRow
+              startIcon={<IconTag />}
+              disabled={hasNoShortLabel}
               checked={isLabelHidden || hasNoShortLabel}
               onCheckedChange={handleHiddenLabelChange}
-              size="sm"
-              disabled={hasNoShortLabel}
-            />
+            >{t`Hide label`}</SettingsRow>
             <MenuItem
               LeftIcon={IconRefresh}
               onClick={handleResetToDefault}

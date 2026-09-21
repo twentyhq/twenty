@@ -3,8 +3,8 @@ import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -30,7 +30,7 @@ const StyledDangerActions = styled.div`
 
 export const DeleteAccount = () => {
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { enqueueToast } = useToast();
 
   const [deleteUserAccount] = useMutation(DeleteUserAccountDocument);
@@ -81,22 +81,22 @@ export const DeleteAccount = () => {
       <StyledDangerActions>
         {userHasMultipleWorkspaces && (
           <Button
-            onClick={() => openModal(LEAVE_WORKSPACE_MODAL_ID)}
+            onClick={() => openDialog(LEAVE_WORKSPACE_MODAL_ID)}
             variant="outline"
             color="danger"
           >{t`Leave workspace`}</Button>
         )}
         <Button
-          onClick={() => openModal(DELETE_ACCOUNT_MODAL_ID)}
+          onClick={() => openDialog(DELETE_ACCOUNT_MODAL_ID)}
           variant="outline"
           color="danger"
         >{t`Delete account`}</Button>
       </StyledDangerActions>
       {userHasMultipleWorkspaces && (
-        <ConfirmationModal
+        <ConfirmationDialog
           confirmationValue={userEmail}
           confirmationPlaceholder={userEmail ?? ''}
-          modalInstanceId={LEAVE_WORKSPACE_MODAL_ID}
+          dialogId={LEAVE_WORKSPACE_MODAL_ID}
           title={t`Leave workspace`}
           subtitle={
             <>
@@ -109,10 +109,10 @@ export const DeleteAccount = () => {
           confirmButtonText={t`Leave workspace`}
         />
       )}
-      <ConfirmationModal
+      <ConfirmationDialog
         confirmationValue={userEmail}
         confirmationPlaceholder={userEmail ?? ''}
-        modalInstanceId={DELETE_ACCOUNT_MODAL_ID}
+        dialogId={DELETE_ACCOUNT_MODAL_ID}
         title={t`Account Deletion`}
         subtitle={
           <>

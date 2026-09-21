@@ -8,7 +8,7 @@ import { PRE_2_31_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNI
 // Standard record-page layouts added AFTER 2.31 are born on the derived
 // scheme and need no pre-2.31 literal: list them here to keep the
 // completeness check green.
-const POST_2_28_RECORD_PAGE_KEYS: string[] = [];
+const POST_2_28_RECORD_PAGE_KEYS: string[] = ['messageRecordPage'];
 
 describe('PRE_2_31_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER', () => {
   // A missing entry would make the standard reconcile silently skip that

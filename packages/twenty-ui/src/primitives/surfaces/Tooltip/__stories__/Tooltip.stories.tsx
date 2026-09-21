@@ -34,6 +34,12 @@ const meta: Meta<typeof Tooltip> = {
       </span>
     </Tooltip>
   ),
+};
+
+export default meta;
+type Story = StoryObj<typeof Tooltip>;
+
+export const Default: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.hover(within(canvasElement).getByRole('button'));
 
@@ -41,16 +47,15 @@ const meta: Meta<typeof Tooltip> = {
   },
 };
 
-export default meta;
-type Story = StoryObj<typeof Tooltip>;
-
-export const Default: Story = {};
+export const Documentation: Story = {};
 
 export const WithArrow: Story = {
+  ...Default,
   args: { arrow: true },
 };
 
 export const WithDescription: Story = {
+  ...Default,
   args: {
     content: (
       <Tooltip.Content description="The amount of this opportunity">
@@ -61,6 +66,7 @@ export const WithDescription: Story = {
 };
 
 export const WithIcon: Story = {
+  ...Default,
   args: {
     content: (
       <Tooltip.Content
@@ -104,10 +110,12 @@ const ControlledExample = () => {
 };
 
 export const Controlled: Story = {
+  ...Default,
   render: () => <ControlledExample />,
 };
 
 export const DisabledButton: Story = {
+  ...Default,
   render: (args) => (
     <Tooltip {...args}>
       <span>
@@ -137,6 +145,7 @@ export const Hoverable: Story = {
 };
 
 export const WithMaxWidth: Story = {
+  ...Default,
   args: {
     maxWidth: '200px',
     content: (
@@ -148,6 +157,7 @@ export const WithMaxWidth: Story = {
 };
 
 export const CustomContent: Story = {
+  ...Default,
   args: { content: <strong>Amount in workspace currency</strong> },
 };
 

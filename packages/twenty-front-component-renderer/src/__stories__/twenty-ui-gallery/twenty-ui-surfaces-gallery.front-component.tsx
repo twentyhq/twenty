@@ -5,11 +5,6 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
   OverflowingTextWithTooltip,
   Tooltip,
 } from 'twenty-ui/primitives/surfaces';
@@ -46,36 +41,6 @@ const SURFACES_ENTRIES: GalleryEntry[] = [
   {
     name: 'CardHeader',
     node: <CardHeader>Card header</CardHeader>,
-  },
-  // Rendered closed here so a hang cannot mask the rest of this gallery; the
-  // open-Modal known issue is exposed by twenty-ui-modal-open-gallery.
-  {
-    name: 'Modal',
-    node: (
-      <Modal isOpen={false} ariaLabel="Gallery modal">
-        Modal body
-      </Modal>
-    ),
-  },
-  {
-    name: 'ModalBackdrop',
-    node: (
-      <ModalBackdrop overlay="dark" backdropZIndex={39}>
-        Backdrop child
-      </ModalBackdrop>
-    ),
-  },
-  {
-    name: 'ModalContent',
-    node: <ModalContent>Modal content</ModalContent>,
-  },
-  {
-    name: 'ModalFooter',
-    node: <ModalFooter>Modal footer</ModalFooter>,
-  },
-  {
-    name: 'ModalHeader',
-    node: <ModalHeader>Modal header</ModalHeader>,
   },
   {
     name: 'OverflowingTextWithTooltip',
