@@ -25,6 +25,7 @@ import { WorkspaceFlatViewFilterMapCacheService } from 'src/engine/metadata-modu
 import { WorkspaceFlatViewGroupMapCacheService } from 'src/engine/metadata-modules/flat-view-group/services/workspace-flat-view-group-map-cache.service';
 import { WorkspaceFlatSearchFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-search-field-metadata/services/workspace-flat-search-field-metadata-map-cache.service';
 import { WorkspaceFlatTimelineActivityTypeMapCacheService } from 'src/engine/metadata-modules/flat-timeline-activity-type/services/workspace-flat-timeline-activity-type-map-cache.service';
+import { WorkspaceFlatSettingPageMapCacheService } from 'src/engine/metadata-modules/flat-setting-page/services/workspace-flat-setting-page-map-cache.service';
 import { WorkspaceFlatViewSortMapCacheService } from 'src/engine/metadata-modules/flat-view-sort/services/workspace-flat-view-sort-map-cache.service';
 import { WorkspaceFlatViewMapCacheService } from 'src/engine/metadata-modules/flat-view/services/workspace-flat-view-map-cache.service';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
@@ -43,6 +44,7 @@ import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modu
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { TimelineActivityTypeEntity } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
+import { SettingPageEntity } from 'src/engine/metadata-modules/setting-page/entities/setting-page.entity';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
@@ -82,6 +84,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       FrontComponentEntity,
       SearchFieldMetadataEntity,
       TimelineActivityTypeEntity,
+      SettingPageEntity,
       CommandMenuItemEntity,
     ]),
   ],
@@ -109,6 +112,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatRowLevelPermissionPredicateMapCacheService,
     WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService,
     WorkspaceFlatTimelineActivityTypeMapCacheService,
+    WorkspaceFlatSettingPageMapCacheService,
     provideWorkspaceScopedRepository(PermissionFlagEntity),
     provideWorkspaceScopedRepository(SearchFieldMetadataEntity),
     provideWorkspaceScopedRepository(IndexMetadataEntity),
@@ -128,6 +132,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(RowLevelPermissionPredicateEntity),
     provideWorkspaceScopedRepository(RowLevelPermissionPredicateGroupEntity),
     provideWorkspaceScopedRepository(TimelineActivityTypeEntity),
+    provideWorkspaceScopedRepository(SettingPageEntity),
     provideWorkspaceScopedRepository(CommandMenuItemEntity),
   ],
   exports: [
@@ -154,6 +159,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatRowLevelPermissionPredicateMapCacheService,
     WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService,
     WorkspaceFlatTimelineActivityTypeMapCacheService,
+    WorkspaceFlatSettingPageMapCacheService,
   ],
 })
 export class WorkspaceManyOrAllFlatEntityMapsCacheModule {}

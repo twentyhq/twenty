@@ -190,7 +190,8 @@ export class FlatSettingPageValidatorService {
       }
     }
 
-    const nextPosition = flatEntityUpdate.position ?? fromFlatSettingPage.position;
+    const nextPosition =
+      flatEntityUpdate.position ?? fromFlatSettingPage.position;
     const nextScope = flatEntityUpdate.scope ?? fromFlatSettingPage.scope;
 
     if (
