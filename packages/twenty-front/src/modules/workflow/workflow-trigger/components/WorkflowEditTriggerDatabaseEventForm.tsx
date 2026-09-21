@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -29,7 +28,6 @@ import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLabel = styled.span`
@@ -245,17 +243,15 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                             itemId={option.value}
                             onEnter={() => handleOptionClick(option.value)}
                           >
-                            <ListItem
+                            <DropdownListItem
                               focused={selectedItemId === option.value}
                               startIcon={
                                 <SelectOptionIcon Icon={option.Icon} />
                               }
-                              onClick={getDropdownMenuItemClickHandler(() =>
-                                handleOptionClick(option.value),
-                              )}
+                              onClick={() => handleOptionClick(option.value)}
                             >
-                              <OverflowingTextWithTooltip text={option.label} />
-                            </ListItem>
+                              {option.label}
+                            </DropdownListItem>
                           </SelectableListItem>
                         ))}
                       </SelectableList>

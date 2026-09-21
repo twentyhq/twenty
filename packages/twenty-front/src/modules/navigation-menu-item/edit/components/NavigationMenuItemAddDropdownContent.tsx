@@ -1,4 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { NavigationMenuItemInsertionPreviewEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemInsertionPreviewEffect';
 import {
@@ -19,7 +19,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconX } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -222,9 +221,7 @@ export const NavigationMenuItemAddDropdownContent = ({
               </Fragment>
             ))}
           {items.length === 0 && (
-            <ListItem disabled>
-              <OverflowingTextWithTooltip text={emptyMessage} />
-            </ListItem>
+            <DropdownListItem disabled>{emptyMessage}</DropdownListItem>
           )}
         </DropdownMenuItemsContainer>
       </SelectableList>

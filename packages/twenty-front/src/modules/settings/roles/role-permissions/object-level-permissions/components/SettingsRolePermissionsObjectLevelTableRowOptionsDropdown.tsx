@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useResetObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useResetObjectPermission';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -8,7 +7,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
-import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 type SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps = {
   roleId: string;
@@ -55,20 +54,18 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
                 to={objectPermissionDetailUrl}
                 onClick={() => closeDropdown(dropdownId)}
               >
-                <ListItem startIcon={<IconPencil />}>
-                  <OverflowingTextWithTooltip text={t`Edit`} />
-                </ListItem>
+                <DropdownListItem
+                  startIcon={<IconPencil />}
+                >{t`Edit`}</DropdownListItem>
               </UndecoratedLink>
             </DropdownMenuItemsContainer>
           )}
           <DropdownMenuItemsContainer>
-            <ListItem
-              onClick={getDropdownMenuItemClickHandler(handleRemove)}
+            <DropdownListItem
+              onClick={handleRemove}
               startIcon={<IconTrash />}
               color="danger"
-            >
-              <OverflowingTextWithTooltip text={t`Remove rule`} />
-            </ListItem>
+            >{t`Remove rule`}</DropdownListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

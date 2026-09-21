@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -13,7 +12,6 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type AttachmentDropdownProps = {
   onDownload: () => void;
@@ -62,26 +60,20 @@ export const AttachmentDropdown = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
             {hasDownloadPermission && (
-              <ListItem
+              <DropdownListItem
                 startIcon={<IconDownload />}
-                onClick={getDropdownMenuItemClickHandler(handleDownload)}
-              >
-                <OverflowingTextWithTooltip text={t`Download`} />
-              </ListItem>
+                onClick={handleDownload}
+              >{t`Download`}</DropdownListItem>
             )}
-            <ListItem
+            <DropdownListItem
               startIcon={<IconPencil />}
-              onClick={getDropdownMenuItemClickHandler(handleRename)}
-            >
-              <OverflowingTextWithTooltip text={t`Rename`} />
-            </ListItem>
-            <ListItem
+              onClick={handleRename}
+            >{t`Rename`}</DropdownListItem>
+            <DropdownListItem
               color="danger"
               startIcon={<IconTrash />}
-              onClick={getDropdownMenuItemClickHandler(handleDelete)}
-            >
-              <OverflowingTextWithTooltip text={t`Delete`} />
-            </ListItem>
+              onClick={handleDelete}
+            >{t`Delete`}</DropdownListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
@@ -16,7 +15,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import { isDefined } from 'twenty-shared/utils';
 import { Icon123, IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const RecordGroupAggregateDropdownFieldsContent = () => {
   const {
@@ -76,30 +74,34 @@ export const RecordGroupAggregateDropdownFieldsContent = () => {
           );
 
           if (!fieldMetadata) return null;
+
+          const isSelected =
+            recordIndexGroupAggregateFieldMetadataItem?.id === fieldId &&
+            recordIndexGroupAggregateOperation === aggregateOperation;
+
           return (
-            <ListItem
+            <DropdownListItem
               key={fieldId}
-              onClick={getDropdownMenuItemClickHandler(() => {
+              onClick={() => {
                 updateViewAggregate({
                   kanbanAggregateOperationFieldMetadataId: fieldId,
                   kanbanAggregateOperation: aggregateOperation,
                   objectMetadataItem,
                 });
                 closeDropdown();
-              })}
+              }}
               startIcon={
                 <SelectOptionIcon
                   Icon={getIcon(fieldMetadata.icon) ?? Icon123}
                 />
               }
+              role="option"
+              aria-selected={isSelected}
               indicator="check"
-              selected={
-                recordIndexGroupAggregateFieldMetadataItem?.id === fieldId &&
-                recordIndexGroupAggregateOperation === aggregateOperation
-              }
+              selected={isSelected}
             >
-              <OverflowingTextWithTooltip text={fieldMetadata.label} />
-            </ListItem>
+              {fieldMetadata.label}
+            </DropdownListItem>
           );
         })}
       </DropdownMenuItemsContainer>

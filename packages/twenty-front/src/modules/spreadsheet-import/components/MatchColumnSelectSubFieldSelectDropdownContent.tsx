@@ -1,5 +1,5 @@
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
 import { getSubFieldOptions } from '@/spreadsheet-import/utils/spreadsheetImportGetSubFieldOptions';
@@ -14,7 +14,6 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useState } from 'react';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const MatchColumnSelectSubFieldSelectDropdownContent = ({
   fieldMetadataItem,
@@ -75,16 +74,14 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
       <DropdownMenuItemsContainer hasMaxHeight>
         {subFieldOptions.map(
           ({ value, shortLabelForNestedField, Icon, disabled }) => (
-            <ListItem
+            <DropdownListItem
               key={value}
-              onClick={getDropdownMenuItemClickHandler(() =>
-                handleSubFieldSelect(value),
-              )}
+              onClick={() => handleSubFieldSelect(value)}
               startIcon={<SelectOptionIcon Icon={Icon} />}
               disabled={disabled}
             >
-              <OverflowingTextWithTooltip text={shortLabelForNestedField} />
-            </ListItem>
+              {shortLabelForNestedField}
+            </DropdownListItem>
           ),
         )}
       </DropdownMenuItemsContainer>

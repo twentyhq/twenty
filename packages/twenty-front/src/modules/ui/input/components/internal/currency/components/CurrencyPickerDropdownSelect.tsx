@@ -1,3 +1,4 @@
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
@@ -9,7 +10,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const CurrencyPickerDropdownSelect = ({
   selectedCurrency,
@@ -43,13 +43,11 @@ export const CurrencyPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCurrencies.length === 0 ? (
-          <ListItem>
-            <OverflowingTextWithTooltip text={t`No results`} />
-          </ListItem>
+          <DropdownListItem disabled>{t`No results`}</DropdownListItem>
         ) : (
           <>
             {selectedCurrency && (
-              <ListItem
+              <DropdownListItem
                 key={selectedCurrency.value}
                 onClick={() => onChange(selectedCurrency)}
                 role="option"
@@ -57,12 +55,12 @@ export const CurrencyPickerDropdownSelect = ({
                 selected={true}
                 indicator="check"
               >
-                <OverflowingTextWithTooltip text={selectedCurrency.label} />
-              </ListItem>
+                {selectedCurrency.label}
+              </DropdownListItem>
             )}
             {filteredCurrencies.map((item) =>
               selectedCurrency?.value === item.value ? null : (
-                <ListItem
+                <DropdownListItem
                   key={item.value}
                   onClick={() => onChange(item)}
                   role="option"
@@ -73,7 +71,7 @@ export const CurrencyPickerDropdownSelect = ({
                   <OverflowingTextWithTooltip
                     text={`${item.label} (${item.value})`}
                   />
-                </ListItem>
+                </DropdownListItem>
               ),
             )}
           </>

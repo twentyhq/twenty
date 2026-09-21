@@ -1,6 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -15,7 +13,6 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldInactiveActionDropdownProps = {
@@ -73,32 +70,24 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
-            <ListItem
-              startIcon={
-                <SelectOptionIcon Icon={isCustomField ? IconPencil : IconEye} />
-              }
-              onClick={getDropdownMenuItemClickHandler(handleEdit)}
+            <DropdownListItem
+              startIcon={isCustomField ? <IconPencil /> : <IconEye />}
+              onClick={handleEdit}
             >
-              <OverflowingTextWithTooltip
-                text={isCustomField && !readonly ? t`Edit` : t`View`}
-              />
-            </ListItem>
+              {isCustomField && !readonly ? t`Edit` : t`View`}
+            </DropdownListItem>
             {!readonly && (
-              <ListItem
+              <DropdownListItem
                 startIcon={<IconArchiveOff />}
-                onClick={getDropdownMenuItemClickHandler(handleActivate)}
-              >
-                <OverflowingTextWithTooltip text={t`Activate`} />
-              </ListItem>
+                onClick={handleActivate}
+              >{t`Activate`}</DropdownListItem>
             )}
             {isDeletable && !readonly && (
-              <ListItem
+              <DropdownListItem
                 color="danger"
                 startIcon={<IconTrash />}
-                onClick={getDropdownMenuItemClickHandler(handleDelete)}
-              >
-                <OverflowingTextWithTooltip text={t`Delete`} />
-              </ListItem>
+                onClick={handleDelete}
+              >{t`Delete`}</DropdownListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

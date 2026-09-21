@@ -1,4 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { t } from '@lingui/core/macro';
 import { LightIconButton } from 'twenty-ui/components';
@@ -12,7 +12,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
 import { IconEye, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ViewFieldsHiddenDropdownSection = () => {
   const { viewType, objectMetadataItem, recordIndexId } = useContext(
@@ -60,7 +59,7 @@ export const ViewFieldsHiddenDropdownSection = () => {
         {availableFieldMetadataItemsToShow.length > 0 &&
           availableFieldMetadataItemsToShow.map((fieldMetadataItem) => {
             return (
-              <ListItem
+              <DropdownListItem
                 key={fieldMetadataItem.id}
                 startIcon={
                   <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
@@ -79,8 +78,8 @@ export const ViewFieldsHiddenDropdownSection = () => {
                   </LightIconButton>
                 }
               >
-                <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
-              </ListItem>
+                {fieldMetadataItem.label}
+              </DropdownListItem>
             );
           })}
       </DropdownMenuItemsContainer>

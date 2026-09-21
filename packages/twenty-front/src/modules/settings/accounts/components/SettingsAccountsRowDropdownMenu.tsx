@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
@@ -27,7 +26,6 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
 
@@ -85,71 +83,59 @@ export const SettingsAccountsRowDropdownMenu = ({
           <DropdownContent>
             <DropdownMenuItemsContainer>
               {hasPendingConfiguration && (
-                <ListItem
+                <DropdownListItem
                   startIcon={<IconPlayerPlay />}
-                  onClick={getDropdownMenuItemClickHandler(() => {
+                  onClick={() => {
                     navigate(SettingsPath.AccountsConfiguration, {
                       connectedAccountId: account.id,
                     });
                     closeDropdown(dropdownId);
-                  })}
-                >
-                  <OverflowingTextWithTooltip text={t`Complete setup`} />
-                </ListItem>
+                  }}
+                >{t`Complete setup`}</DropdownListItem>
               )}
               {account.provider ===
                 ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
-                <ListItem
+                <DropdownListItem
                   startIcon={<IconAt />}
-                  onClick={getDropdownMenuItemClickHandler(() => {
+                  onClick={() => {
                     navigate(SettingsPath.EditImapSmtpCaldavConnection, {
                       connectedAccountId: account.id,
                     });
                     closeDropdown(dropdownId);
-                  })}
-                >
-                  <OverflowingTextWithTooltip text={t`Connection settings`} />
-                </ListItem>
+                  }}
+                >{t`Connection settings`}</DropdownListItem>
               )}
-              <ListItem
+              <DropdownListItem
                 startIcon={<IconMail />}
-                onClick={getDropdownMenuItemClickHandler(() => {
+                onClick={() => {
                   navigate(SettingsPath.AccountsEmails);
                   closeDropdown(dropdownId);
-                })}
-              >
-                <OverflowingTextWithTooltip text={t`Emails settings`} />
-              </ListItem>
-              <ListItem
+                }}
+              >{t`Emails settings`}</DropdownListItem>
+              <DropdownListItem
                 startIcon={<IconCalendarEvent />}
-                onClick={getDropdownMenuItemClickHandler(() => {
+                onClick={() => {
                   navigate(SettingsPath.AccountsCalendars);
                   closeDropdown(dropdownId);
-                })}
-              >
-                <OverflowingTextWithTooltip text={t`Calendar settings`} />
-              </ListItem>
+                }}
+              >{t`Calendar settings`}</DropdownListItem>
               {account.authFailedAt && (
-                <ListItem
+                <DropdownListItem
                   startIcon={<IconRefresh />}
-                  onClick={getDropdownMenuItemClickHandler(() => {
+                  onClick={() => {
                     triggerProviderReconnect(account.provider, account.id);
                     closeDropdown(dropdownId);
-                  })}
-                >
-                  <OverflowingTextWithTooltip text={t`Reconnect`} />
-                </ListItem>
+                  }}
+                >{t`Reconnect`}</DropdownListItem>
               )}
-              <ListItem
+              <DropdownListItem
                 color="danger"
                 startIcon={<IconTrash />}
-                onClick={getDropdownMenuItemClickHandler(() => {
+                onClick={() => {
                   closeDropdown(dropdownId);
                   openDialog(deleteAccountModalId);
-                })}
-              >
-                <OverflowingTextWithTooltip text={t`Remove account`} />
-              </ListItem>
+                }}
+              >{t`Remove account`}</DropdownListItem>
             </DropdownMenuItemsContainer>
           </DropdownContent>
         }

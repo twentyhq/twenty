@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -8,7 +7,6 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown } from '@/views/hooks/useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown';
 import { useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export type ViewBarFilterDropdownFieldSelectMenuItemProps = {
   fieldMetadataItemToSelect: FieldMetadataItem;
@@ -44,13 +42,13 @@ export const ViewBarFilterDropdownFieldSelectMenuItem = ({
       itemId={fieldMetadataItemToSelect.id}
       onEnter={handleClick}
     >
-      <ListItem
+      <DropdownListItem
         focused={isSelectedItemId}
-        onClick={getDropdownMenuItemClickHandler(handleClick)}
+        onClick={handleClick}
         startIcon={<SelectOptionIcon Icon={Icon} />}
       >
-        <OverflowingTextWithTooltip text={fieldMetadataItemToSelect.label} />
-      </ListItem>
+        {fieldMetadataItemToSelect.label}
+      </DropdownListItem>
     </SelectableListItem>
   );
 };

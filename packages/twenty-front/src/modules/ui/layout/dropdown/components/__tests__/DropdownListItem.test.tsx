@@ -1,11 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type MouseEvent } from 'react';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 
-describe('dropdown ListItem clicks', () => {
+describe('DropdownListItem', () => {
   it('cancels parent navigation before invoking the action with its event', async () => {
     const user = userEvent.setup();
     const onParentClick = jest.fn();
@@ -16,9 +15,7 @@ describe('dropdown ListItem clicks', () => {
 
     render(
       <a href="#record" onClick={onParentClick}>
-        <ListItem onClick={getDropdownMenuItemClickHandler(onAction)}>
-          Archive
-        </ListItem>
+        <DropdownListItem onClick={onAction}>Archive</DropdownListItem>
       </a>,
     );
 
@@ -34,9 +31,7 @@ describe('dropdown ListItem clicks', () => {
 
     render(
       <div onClick={onTriggerClick}>
-        <ListItem onClick={getDropdownMenuItemClickHandler(undefined)}>
-          Open menu
-        </ListItem>
+        <DropdownListItem>Open menu</DropdownListItem>
       </div>,
     );
 
@@ -52,9 +47,9 @@ describe('dropdown ListItem clicks', () => {
 
     render(
       <div onClick={onParentClick}>
-        <ListItem disabled onClick={getDropdownMenuItemClickHandler(onAction)}>
+        <DropdownListItem disabled onClick={onAction}>
           Delete
-        </ListItem>
+        </DropdownListItem>
       </div>,
     );
 
@@ -62,5 +57,22 @@ describe('dropdown ListItem clicks', () => {
 
     expect(onAction).not.toHaveBeenCalled();
     expect(onParentClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('gives a text label a tooltip and leaves other content untouched', () => {
+    render(
+      <>
+        <DropdownListItem>Rename</DropdownListItem>
+        <DropdownListItem>
+          <span data-testid="custom-label">Custom</span>
+        </DropdownListItem>
+      </>,
+    );
+
+    expect(screen.getByText('Rename')).toHaveAttribute(
+      'data-testid',
+      'tooltip',
+    );
+    expect(screen.getByTestId('custom-label')).toBeInTheDocument();
   });
 });

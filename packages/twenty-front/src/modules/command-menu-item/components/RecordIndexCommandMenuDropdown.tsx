@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
@@ -21,7 +20,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 const StyledDropdownMenuContainer = styled.div`
@@ -102,16 +100,14 @@ export const RecordIndexCommandMenuDropdown = () => {
                       openSidePanelMenu();
                     }}
                   >
-                    <ListItem
+                    <DropdownListItem
                       startIcon={<IconLayoutSidebarRightExpand />}
-                      onClick={getDropdownMenuItemClickHandler(() => {
+                      onClick={() => {
                         closeDropdown(dropdownId);
                         openSidePanelMenu();
-                      })}
+                      }}
                       focused={selectedItemId === 'more-actions'}
-                    >
-                      <OverflowingTextWithTooltip text={t`More actions`} />
-                    </ListItem>
+                    >{t`More actions`}</DropdownListItem>
                   </SelectableListItem>
                 )}
               </SelectableList>

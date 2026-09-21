@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
@@ -26,7 +25,6 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconUserCircle, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 const RELATION_RECORD_SELECTABLE_ITEM_ID = 'relation-record-select';
 
@@ -151,20 +149,16 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
                 itemId={RELATION_RECORD_SELECTABLE_ITEM_ID}
                 onEnter={handleSelectRelationRecord}
               >
-                <ListItem
+                <DropdownListItem
                   focused={
                     selectedItemId === RELATION_RECORD_SELECTABLE_ITEM_ID
                   }
                   data-testid={'select-filter-relation-record'}
-                  onClick={getDropdownMenuItemClickHandler(
-                    handleSelectRelationRecord,
-                  )}
+                  onClick={handleSelectRelationRecord}
                   startIcon={<IconUserCircle />}
                 >
-                  <OverflowingTextWithTooltip
-                    text={workspaceMemberObjectMetadataItem.labelSingular}
-                  />
-                </ListItem>
+                  {workspaceMemberObjectMetadataItem.labelSingular}
+                </DropdownListItem>
               </SelectableListItem>
               <DropdownMenuSeparator />
             </>
@@ -177,19 +171,19 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
                 handleSelectTargetField(targetField);
               }}
             >
-              <ListItem
+              <DropdownListItem
                 focused={selectedItemId === targetField.id}
                 key={`select-filter-relation-${index}`}
                 data-testid={`select-filter-relation-${index}`}
-                onClick={getDropdownMenuItemClickHandler(() => {
+                onClick={() => {
                   handleSelectTargetField(targetField);
-                })}
+                }}
                 startIcon={
                   <SelectOptionIcon Icon={getIcon(targetField.icon)} />
                 }
               >
-                <OverflowingTextWithTooltip text={targetField.label} />
-              </ListItem>
+                {targetField.label}
+              </DropdownListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

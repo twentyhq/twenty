@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -10,7 +9,6 @@ import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   type PublicDomain,
   DeletePublicDomainDocument,
@@ -61,17 +59,15 @@ export const SettingPublicDomainRowDropdownMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <ListItem
+            <DropdownListItem
               color="danger"
               startIcon={<IconTrash />}
-              onClick={getDropdownMenuItemClickHandler(async () => {
+              onClick={async () => {
                 await handleDeletePublicDomain();
                 closeDropdown(dropdownId);
                 await refetchPublicDomains();
-              })}
-            >
-              <OverflowingTextWithTooltip text={t`Delete`} />
-            </ListItem>
+              }}
+            >{t`Delete`}</DropdownListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

@@ -1,4 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useLocation } from 'react-router-dom';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -16,7 +16,7 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings } from 'twenty-ui/icon';
-import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   const { t } = useLingui();
@@ -58,9 +58,9 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
         }}
       >
         <DropdownMenuItemsContainer scrollable={false}>
-          <ListItem startIcon={<IconSettings />}>
-            <OverflowingTextWithTooltip text={t`Edit Fields`} />
-          </ListItem>
+          <DropdownListItem
+            startIcon={<IconSettings />}
+          >{t`Edit Fields`}</DropdownListItem>
         </DropdownMenuItemsContainer>
       </UndecoratedLink>
     </DropdownContent>

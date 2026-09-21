@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -10,7 +9,6 @@ import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowStepFilterGroupOptionsDropdownProps = {
   stepFilterGroupId: string;
@@ -38,15 +36,11 @@ export const WorkflowStepFilterGroupOptionsDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <ListItem
+            <DropdownListItem
               startIcon={<IconTrash />}
-              onClick={getDropdownMenuItemClickHandler(() =>
-                removeStepFilterGroup(stepFilterGroupId),
-              )}
+              onClick={() => removeStepFilterGroup(stepFilterGroupId)}
               color="danger"
-            >
-              <OverflowingTextWithTooltip text={t`Delete group`} />
-            </ListItem>
+            >{t`Delete group`}</DropdownListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

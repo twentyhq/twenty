@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -12,7 +11,6 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type MultipleRecordPickerCreateTargetSelectProps = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -68,20 +66,16 @@ export const MultipleRecordPickerCreateTargetSelect = ({
               itemId={objectMetadataItem.id}
               onEnter={() => handleSelect(objectMetadataItem.id)}
             >
-              <ListItem
+              <DropdownListItem
                 startIcon={
                   <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
                 }
                 focused={selectedItemId === objectMetadataItem.id}
                 disabled={disabled}
-                onClick={getDropdownMenuItemClickHandler(() =>
-                  handleSelect(objectMetadataItem.id),
-                )}
+                onClick={() => handleSelect(objectMetadataItem.id)}
               >
-                <OverflowingTextWithTooltip
-                  text={objectMetadataItem.labelSingular}
-                />
-              </ListItem>
+                {objectMetadataItem.labelSingular}
+              </DropdownListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

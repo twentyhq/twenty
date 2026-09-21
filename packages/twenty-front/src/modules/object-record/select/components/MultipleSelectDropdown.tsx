@@ -1,4 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { Key } from 'ts-key-enum';
 
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -14,7 +14,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const MultipleSelectDropdown = ({
   selectableListId,
@@ -98,7 +97,7 @@ export const MultipleSelectDropdown = ({
                 handleItemSelectChange(item, !item.isSelected);
               }}
             >
-              <ListItem
+              <DropdownListItem
                 key={item.id}
                 focused={item.id === selectedItemId}
                 role="option"
@@ -119,15 +118,13 @@ export const MultipleSelectDropdown = ({
                   />
                 }
               >
-                <OverflowingTextWithTooltip text={item.name} />
-              </ListItem>
+                {item.name}
+              </DropdownListItem>
             </SelectableListItem>
           );
         })}
         {showNoResult && (
-          <ListItem>
-            <OverflowingTextWithTooltip text={t`No results`} />
-          </ListItem>
+          <DropdownListItem disabled>{t`No results`}</DropdownListItem>
         )}
         {loadingItems && <DropdownMenuSkeletonItem />}
       </DropdownMenuItemsContainer>

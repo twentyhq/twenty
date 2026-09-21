@@ -1,10 +1,8 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconReload } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -57,12 +55,10 @@ export const LayoutCustomizationBarMenuDropdown = () => {
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
           <DropdownMenuItemsContainer>
-            <ListItem
+            <DropdownListItem
               startIcon={<IconReload />}
-              onClick={getDropdownMenuItemClickHandler(handleResetClick)}
-            >
-              <OverflowingTextWithTooltip text={t`Reset record page layout`} />
-            </ListItem>
+              onClick={handleResetClick}
+            >{t`Reset record page layout`}</DropdownListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

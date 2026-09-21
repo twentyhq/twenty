@@ -1,6 +1,5 @@
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -41,7 +40,7 @@ import {
   IconUserPlus,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -132,19 +131,15 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
               <DropdownContent>
                 <DropdownMenuItemsContainer>
                   {isMultiWorkspaceEnabled && (
-                    <ListItem
+                    <DropdownListItem
                       startIcon={<IconPlus />}
-                      onClick={getDropdownMenuItemClickHandler(createWorkspace)}
-                    >
-                      <OverflowingTextWithTooltip text={t`Create Workspace`} />
-                    </ListItem>
+                      onClick={createWorkspace}
+                    >{t`Create Workspace`}</DropdownListItem>
                   )}
-                  <ListItem
+                  <DropdownListItem
                     startIcon={<IconLogout />}
-                    onClick={getDropdownMenuItemClickHandler(signOut)}
-                  >
-                    <OverflowingTextWithTooltip text={t`Log out`} />
-                  </ListItem>
+                    onClick={signOut}
+                  >{t`Log out`}</DropdownListItem>
                 </DropdownMenuItemsContainer>
               </DropdownContent>
             }
@@ -173,7 +168,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     handleChange(availableWorkspace);
                   }}
                 >
-                  <ListItem
+                  <DropdownListItem
                     role="option"
                     aria-selected={false}
                     selected={false}
@@ -187,22 +182,16 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                       />
                     }
                   >
-                    <OverflowingTextWithTooltip
-                      text={availableWorkspace.displayName ?? t`(No name)`}
-                    />
-                  </ListItem>
+                    {availableWorkspace.displayName ?? t`(No name)`}
+                  </DropdownListItem>
                 </UndecoratedLink>
               ))}
             {availableWorkspacesCount > 4 && (
-              <ListItem
+              <DropdownListItem
                 startIcon={<IconSwitchHorizontal />}
-                onClick={getDropdownMenuItemClickHandler(() =>
-                  setMultiWorkspaceDropdown('workspaces-list'),
-                )}
+                onClick={() => setMultiWorkspaceDropdown('workspaces-list')}
                 hasSubmenu
-              >
-                <OverflowingTextWithTooltip text={t`Other workspaces`} />
-              </ListItem>
+              >{t`Other workspaces`}</DropdownListItem>
             )}
           </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
@@ -212,14 +201,12 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         {/* Desktop reaches settings from the drawer's mode switcher, which
             mobile does not render, so the workspace menu is where it lives. */}
         {isMobile && (
-          <ListItem
+          <DropdownListItem
             startIcon={<IconSettings />}
-            onClick={getDropdownMenuItemClickHandler(handleSettings)}
-          >
-            <OverflowingTextWithTooltip text={t`Settings`} />
-          </ListItem>
+            onClick={handleSettings}
+          >{t`Settings`}</DropdownListItem>
         )}
-        <ListItem
+        <DropdownListItem
           startIcon={
             <SelectOptionIcon
               Icon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
@@ -227,14 +214,10 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           }
           description={colorScheme}
           hasSubmenu
-          onClick={getDropdownMenuItemClickHandler(() =>
-            setMultiWorkspaceDropdown('themes'),
-          )}
-        >
-          <OverflowingTextWithTooltip text={t`Theme`} />
-        </ListItem>
+          onClick={() => setMultiWorkspaceDropdown('themes')}
+        >{t`Theme`}</DropdownListItem>
         {canDisplaySidePanel && (
-          <ListItem
+          <DropdownListItem
             startIcon={
               <SelectOptionIcon
                 Icon={OPEN_RECORD_IN_OPTIONS[openRecordInPreference].Icon}
@@ -244,12 +227,8 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
               OPEN_RECORD_IN_OPTIONS[openRecordInPreference].label,
             )}
             hasSubmenu
-            onClick={getDropdownMenuItemClickHandler(() =>
-              setMultiWorkspaceDropdown('open-record-in'),
-            )}
-          >
-            <OverflowingTextWithTooltip text={t`Open in`} />
-          </ListItem>
+            onClick={() => setMultiWorkspaceDropdown('open-record-in')}
+          >{t`Open in`}</DropdownListItem>
         )}
         <UndecoratedLink
           to={`${getSettingsPath(SettingsPath.WorkspaceMembersPage)}#invite`}
@@ -257,17 +236,15 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
           }}
         >
-          <ListItem startIcon={<IconUserPlus />}>
-            <OverflowingTextWithTooltip text={t`Invite user`} />
-          </ListItem>
+          <DropdownListItem
+            startIcon={<IconUserPlus />}
+          >{t`Invite user`}</DropdownListItem>
         </UndecoratedLink>
         {isSupportChatConfigured && (
-          <ListItem
+          <DropdownListItem
             startIcon={<IconMessage />}
-            onClick={getDropdownMenuItemClickHandler(handleSupport)}
-          >
-            <OverflowingTextWithTooltip text={t`Support`} />
-          </ListItem>
+            onClick={handleSupport}
+          >{t`Support`}</DropdownListItem>
         )}
       </DropdownMenuItemsContainer>
     </DropdownContent>

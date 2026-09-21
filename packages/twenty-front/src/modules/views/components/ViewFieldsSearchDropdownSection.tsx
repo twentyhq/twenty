@@ -1,4 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { LightIconButton } from 'twenty-ui/components';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
@@ -13,7 +13,6 @@ import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type ViewFieldsSearchDropdownSectionProps = {
   searchInput: string;
@@ -75,7 +74,7 @@ export const ViewFieldsSearchDropdownSection = ({
             fieldMetadataItem.id === fieldMetadataItemLabelIdentifier?.id;
 
           return (
-            <ListItem
+            <DropdownListItem
               key={fieldMetadataItem.id}
               startIcon={
                 <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
@@ -96,14 +95,12 @@ export const ViewFieldsSearchDropdownSection = ({
                 )
               }
             >
-              <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
-            </ListItem>
+              {fieldMetadataItem.label}
+            </DropdownListItem>
           );
         })
       ) : (
-        <ListItem disabled>
-          <OverflowingTextWithTooltip text={t`No results`} />
-        </ListItem>
+        <DropdownListItem disabled>{t`No results`}</DropdownListItem>
       )}
     </DropdownMenuItemsContainer>
   );

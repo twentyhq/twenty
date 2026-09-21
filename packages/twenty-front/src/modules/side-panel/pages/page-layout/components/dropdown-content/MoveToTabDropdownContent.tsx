@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useMoveWidgetToTab } from '@/page-layout/hooks/useMoveWidgetToTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -10,7 +9,6 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const MoveToTabDropdownContent = () => {
@@ -58,9 +56,7 @@ export const MoveToTabDropdownContent = () => {
   if (eligibleTabs.length === 0) {
     return (
       <DropdownMenuItemsContainer>
-        <ListItem>
-          <OverflowingTextWithTooltip text={t`No available tabs`} />
-        </ListItem>
+        <DropdownListItem disabled>{t`No available tabs`}</DropdownListItem>
       </DropdownMenuItemsContainer>
     );
   }
@@ -68,15 +64,15 @@ export const MoveToTabDropdownContent = () => {
   return (
     <DropdownMenuItemsContainer>
       {eligibleTabs.map((tab) => (
-        <ListItem
+        <DropdownListItem
           key={tab.id}
-          onClick={getDropdownMenuItemClickHandler(() => {
+          onClick={() => {
             moveWidgetToTab(pageLayoutEditingWidgetId, tab.id);
             closeDropdown();
-          })}
+          }}
         >
-          <OverflowingTextWithTooltip text={tab.title ?? ''} />
-        </ListItem>
+          {tab.title ?? ''}
+        </DropdownListItem>
       ))}
     </DropdownMenuItemsContainer>
   );

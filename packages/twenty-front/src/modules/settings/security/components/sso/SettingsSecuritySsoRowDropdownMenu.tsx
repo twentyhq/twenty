@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useDeleteSsoIdentityProvider } from '@/settings/security/hooks/useDeleteSsoIdentityProvider';
 import { useUpdateSsoIdentityProvider } from '@/settings/security/hooks/useUpdateSsoIdentityProvider';
 import { type SsoIdentityProvider } from '@/settings/security/types/SsoIdentityProvider';
@@ -12,7 +11,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
 
 type SettingsSecuritySsoRowDropdownMenuProps = {
@@ -79,27 +77,23 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <ListItem
+            <DropdownListItem
               startIcon={<IconArchive />}
-              onClick={getDropdownMenuItemClickHandler(() => {
+              onClick={() => {
                 toggleSsoIdentityProviderStatus(ssoIdp.id);
                 closeDropdown(dropdownId);
-              })}
+              }}
             >
-              <OverflowingTextWithTooltip
-                text={ssoIdp.status === 'Active' ? t`Deactivate` : t`Activate`}
-              />
-            </ListItem>
-            <ListItem
+              {ssoIdp.status === 'Active' ? t`Deactivate` : t`Activate`}
+            </DropdownListItem>
+            <DropdownListItem
               color="danger"
               startIcon={<IconTrash />}
-              onClick={getDropdownMenuItemClickHandler(() => {
+              onClick={() => {
                 handleDeleteSsoIdentityProvider(ssoIdp.id);
                 closeDropdown(dropdownId);
-              })}
-            >
-              <OverflowingTextWithTooltip text={t`Delete`} />
-            </ListItem>
+              }}
+            >{t`Delete`}</DropdownListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
@@ -21,7 +20,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { IconLego, IconSettings, IconTrash, IconUsers } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const WorkflowStepFooter = ({
@@ -133,38 +131,32 @@ export const WorkflowStepFooter = ({
             itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings}
             onEnter={handleNodeSettings}
           >
-            <ListItem
+            <DropdownListItem
               focused={
                 selectedItemId ===
                 WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings
               }
-              onClick={getDropdownMenuItemClickHandler(handleNodeSettings)}
+              onClick={handleNodeSettings}
               startIcon={<IconSettings />}
-            >
-              <OverflowingTextWithTooltip text={t`Node settings`} />
-            </ListItem>
+            >{t`Node settings`}</DropdownListItem>
           </SelectableListItem>
         ) : null}
         {hasViewAgentOption ? (
           <SelectableListItem itemId="view-agent" onEnter={handleViewAgent}>
-            <ListItem
+            <DropdownListItem
               focused={selectedItemId === 'view-agent'}
-              onClick={getDropdownMenuItemClickHandler(handleViewAgent)}
+              onClick={handleViewAgent}
               startIcon={<IconLego />}
-            >
-              <OverflowingTextWithTooltip text={t`View Agent`} />
-            </ListItem>
+            >{t`View Agent`}</DropdownListItem>
           </SelectableListItem>
         ) : null}
         {hasViewRoleOption ? (
           <SelectableListItem itemId="view-role" onEnter={handleViewRole}>
-            <ListItem
+            <DropdownListItem
               focused={selectedItemId === 'view-role'}
-              onClick={getDropdownMenuItemClickHandler(handleViewRole)}
+              onClick={handleViewRole}
               startIcon={<IconUsers />}
-            >
-              <OverflowingTextWithTooltip text={t`View Role`} />
-            </ListItem>
+            >{t`View Role`}</DropdownListItem>
           </SelectableListItem>
         ) : null}
       </WorkflowStepOptionsMenuItems>

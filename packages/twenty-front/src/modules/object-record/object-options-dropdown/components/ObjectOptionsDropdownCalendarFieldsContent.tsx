@@ -1,6 +1,5 @@
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
@@ -16,7 +15,6 @@ import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useG
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   const { t } = useLingui();
@@ -83,7 +81,7 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {filteredCalendarFields.map((fieldMetadataItem) => (
-          <ListItem
+          <DropdownListItem
             key={fieldMetadataItem.id}
             onClick={() => handleCalendarFieldChange(fieldMetadataItem)}
             role="option"
@@ -94,21 +92,19 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
               <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
             }
           >
-            <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
-          </ListItem>
+            {fieldMetadataItem.label}
+          </DropdownListItem>
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>
-        <ListItem
+        <DropdownListItem
           startIcon={<IconSettings />}
-          onClick={getDropdownMenuItemClickHandler(() => {
+          onClick={() => {
             navigateToDateFieldSettings();
             closeDropdown();
-          })}
-        >
-          <OverflowingTextWithTooltip text={t`Create date field`} />
-        </ListItem>
+          }}
+        >{t`Create date field`}</DropdownListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

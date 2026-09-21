@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconClock,
@@ -24,7 +23,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type AiChatThreadFilterDropdownRootMenuProps = {
   dropdownId: string;
@@ -66,33 +64,29 @@ export const AiChatThreadFilterDropdownRootMenu = ({
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        <ListItem
+        <DropdownListItem
           startIcon={<IconStatusChange />}
           description={t(
             AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[agentChatThreadFilterStatus],
           )}
           descriptionPlacement="end"
           hasSubmenu
-          onClick={getDropdownMenuItemClickHandler(() =>
-            onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.STATUS),
-          )}
-        >
-          <OverflowingTextWithTooltip text={t`Status`} />
-        </ListItem>
-        <ListItem
+          onClick={() =>
+            onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.STATUS)
+          }
+        >{t`Status`}</DropdownListItem>
+        <DropdownListItem
           startIcon={<IconLayoutList />}
           description={t(
             AGENT_CHAT_THREAD_GROUP_BY_LABELS[agentChatThreadGroupBy],
           )}
           descriptionPlacement="end"
           hasSubmenu
-          onClick={getDropdownMenuItemClickHandler(() =>
-            onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.GROUP_BY),
-          )}
-        >
-          <OverflowingTextWithTooltip text={t`Group by`} />
-        </ListItem>
-        <ListItem
+          onClick={() =>
+            onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.GROUP_BY)
+          }
+        >{t`Group by`}</DropdownListItem>
+        <DropdownListItem
           startIcon={<IconClock />}
           description={t(
             AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS[
@@ -101,22 +95,18 @@ export const AiChatThreadFilterDropdownRootMenu = ({
           )}
           descriptionPlacement="end"
           hasSubmenu
-          onClick={getDropdownMenuItemClickHandler(() =>
-            onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.LAST_ACTIVITY),
-          )}
-        >
-          <OverflowingTextWithTooltip text={t`Last activity`} />
-        </ListItem>
+          onClick={() =>
+            onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.LAST_ACTIVITY)
+          }
+        >{t`Last activity`}</DropdownListItem>
         {!isAtDefaults && (
           <>
             <DropdownMenuSeparator />
-            <ListItem
+            <DropdownListItem
               color="danger"
               startIcon={<IconTrash />}
-              onClick={getDropdownMenuItemClickHandler(handleClearFilters)}
-            >
-              <OverflowingTextWithTooltip text={t`Clear filters`} />
-            </ListItem>
+              onClick={handleClearFilters}
+            >{t`Clear filters`}</DropdownListItem>
           </>
         )}
       </DropdownMenuItemsContainer>

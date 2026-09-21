@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { t } from '@lingui/core/macro';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -15,7 +14,6 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;
@@ -90,35 +88,25 @@ export const MultiItemFieldMenuItem = <T,>({
         <DropdownContent>
           <DropdownMenuItemsContainer>
             {showSetAsPrimaryButton && (
-              <ListItem
+              <DropdownListItem
                 startIcon={<IconBookmarkPlus />}
-                onClick={getDropdownMenuItemClickHandler(
-                  handleSetAsPrimaryClick,
-                )}
-              >
-                <OverflowingTextWithTooltip text={t`Set as Primary`} />
-              </ListItem>
+                onClick={handleSetAsPrimaryClick}
+              >{t`Set as Primary`}</DropdownListItem>
             )}
-            <ListItem
+            <DropdownListItem
               startIcon={<IconPencil />}
-              onClick={getDropdownMenuItemClickHandler(handleEditClick)}
-            >
-              <OverflowingTextWithTooltip text={t`Edit`} />
-            </ListItem>
-            <ListItem
+              onClick={handleEditClick}
+            >{t`Edit`}</DropdownListItem>
+            <DropdownListItem
               color="danger"
               startIcon={<IconTrash />}
-              onClick={getDropdownMenuItemClickHandler(handleDeleteClick)}
-            >
-              <OverflowingTextWithTooltip text={t`Delete`} />
-            </ListItem>
+              onClick={handleDeleteClick}
+            >{t`Delete`}</DropdownListItem>
             {showCopyButton && (
-              <ListItem
+              <DropdownListItem
                 startIcon={<IconCopy />}
-                onClick={getDropdownMenuItemClickHandler(handleCopyClick)}
-              >
-                <OverflowingTextWithTooltip text={t`Copy`} />
-              </ListItem>
+                onClick={handleCopyClick}
+              >{t`Copy`}</DropdownListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

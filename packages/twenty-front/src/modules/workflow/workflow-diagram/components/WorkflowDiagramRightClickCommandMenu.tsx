@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
@@ -11,7 +10,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, IconReorder } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { WorkflowDiagramRightClickCommandMenuClickOutsideEffect } from './WorkflowDiagramRightClickCommandMenuClickOutsideEffect';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -73,20 +71,14 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
         x={workflowDiagramRightClickMenuPosition.x}
         y={workflowDiagramRightClickMenuPosition.y}
       >
-        <ListItem
+        <DropdownListItem
           startIcon={<IconPlus />}
-          onClick={getDropdownMenuItemClickHandler(addNode)}
-        >
-          <OverflowingTextWithTooltip text={t`Add node`} />
-        </ListItem>
-        <ListItem
+          onClick={addNode}
+        >{t`Add node`}</DropdownListItem>
+        <DropdownListItem
           startIcon={<IconReorder />}
-          onClick={getDropdownMenuItemClickHandler(
-            handleReorderWorkflowDiagram,
-          )}
-        >
-          <OverflowingTextWithTooltip text={t`Tidy up workflow`} />
-        </ListItem>
+          onClick={handleReorderWorkflowDiagram}
+        >{t`Tidy up workflow`}</DropdownListItem>
       </StyledContainer>
       <WorkflowDiagramRightClickCommandMenuClickOutsideEffect
         rightClickCommandMenuRef={rightClickCommandMenuRef}

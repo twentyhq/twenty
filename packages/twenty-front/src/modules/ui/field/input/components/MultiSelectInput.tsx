@@ -1,4 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef, useState, createElement } from 'react';
@@ -21,7 +21,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -137,9 +136,7 @@ export const MultiSelectInput = ({
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
           {filteredOptionsInDropDown.length === 0 ? (
-            <ListItem>
-              <OverflowingTextWithTooltip text={t`No option found`} />
-            </ListItem>
+            <DropdownListItem disabled>{t`No option found`}</DropdownListItem>
           ) : (
             filteredOptionsInDropDown.map((option) => {
               return (
@@ -150,7 +147,7 @@ export const MultiSelectInput = ({
                     onOptionSelected(formatNewSelectedOptions(option.value));
                   }}
                 >
-                  <ListItem
+                  <DropdownListItem
                     key={option.value}
                     onClick={() =>
                       onOptionSelected(formatNewSelectedOptions(option.value))
@@ -171,7 +168,7 @@ export const MultiSelectInput = ({
                     >
                       {option.label}
                     </Tag>
-                  </ListItem>
+                  </DropdownListItem>
                 </SelectableListItem>
               );
             })

@@ -1,10 +1,9 @@
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type AddSelectOptionMenuItemProps = {
   name: string;
@@ -30,11 +29,8 @@ export const AddSelectOptionMenuItem = ({
   }
 
   return (
-    <ListItem
-      onClick={getDropdownMenuItemClickHandler(handleClick)}
-      startIcon={<IconPlus />}
-    >
+    <DropdownListItem onClick={handleClick} startIcon={<IconPlus />}>
       <OverflowingTextWithTooltip text={t`Add "${trimmedName}" to options`} />
-    </ListItem>
+    </DropdownListItem>
   );
 };

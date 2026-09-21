@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-filter-group/hooks/useRemoveRootRecordFilterGroupIfEmpty';
@@ -12,7 +11,6 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type AdvancedFilterRecordFilterGroupOptionsDropdownProps = {
   recordFilterGroupId: string;
@@ -57,13 +55,11 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <ListItem
-              onClick={getDropdownMenuItemClickHandler(handleRemove)}
+            <DropdownListItem
+              onClick={handleRemove}
               startIcon={<IconTrash />}
               color="danger"
-            >
-              <OverflowingTextWithTooltip text={t`Remove rule group`} />
-            </ListItem>
+            >{t`Remove rule group`}</DropdownListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

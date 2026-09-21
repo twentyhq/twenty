@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ChartGroupByFieldSelectionTargetObjectFieldsView } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView';
@@ -18,7 +17,6 @@ import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type MorphRelationTarget = {
@@ -131,9 +129,9 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {availableTargets.length === 0 ? (
-          <ListItem>
-            <OverflowingTextWithTooltip text={t`No targets available`} />
-          </ListItem>
+          <DropdownListItem
+            disabled
+          >{t`No targets available`}</DropdownListItem>
         ) : (
           <SelectableList
             selectableListInstanceId={dropdownId}
@@ -150,7 +148,7 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
                   setSelectedTarget(target);
                 }}
               >
-                <ListItem
+                <DropdownListItem
                   focused={selectedItemId === target.perTargetFieldId}
                   startIcon={
                     <SelectOptionIcon
@@ -162,12 +160,12 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
                     />
                   }
                   hasSubmenu
-                  onClick={getDropdownMenuItemClickHandler(() => {
+                  onClick={() => {
                     setSelectedTarget(target);
-                  })}
+                  }}
                 >
-                  <OverflowingTextWithTooltip text={target.label} />
-                </ListItem>
+                  {target.label}
+                </DropdownListItem>
               </SelectableListItem>
             ))}
           </SelectableList>

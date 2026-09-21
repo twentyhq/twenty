@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useLingui } from '@lingui/react/macro';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { EmailRecipientSuggestionMenuItem } from '@/activities/emails/recipients/components/EmailRecipientSuggestionMenuItem';
 import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/types/EmailRecipientSuggestion';
@@ -28,9 +27,7 @@ export const EmailRecipientSuggestionsDropdownContent = ({
       <DropdownContent widthInPixels={340}>
         <DropdownMenuItemsContainer hasMaxHeight>
           {suggestions.length === 0 ? (
-            <ListItem>
-              <OverflowingTextWithTooltip text={t`No results`} />
-            </ListItem>
+            <DropdownListItem disabled>{t`No results`}</DropdownListItem>
           ) : (
             <SelectableList
               selectableListInstanceId={selectableListInstanceId}

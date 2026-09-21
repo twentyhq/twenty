@@ -1,6 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -13,7 +11,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowObjectDropdownContentProps = {
   dropdownId: string;
@@ -107,25 +104,15 @@ export const WorkflowObjectDropdownContent = ({
               itemId={objectMetadataItem.nameSingular}
               onEnter={() => onOptionClick(objectMetadataItem.nameSingular)}
             >
-              <ListItem
+              <DropdownListItem
                 focused={selectedItemId === objectMetadataItem.nameSingular}
                 startIcon={
-                  <SelectOptionIcon
-                    Icon={() => (
-                      <ObjectMetadataIcon
-                        objectMetadataItem={objectMetadataItem}
-                      />
-                    )}
-                  />
+                  <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
                 }
-                onClick={getDropdownMenuItemClickHandler(() =>
-                  onOptionClick(objectMetadataItem.nameSingular),
-                )}
+                onClick={() => onOptionClick(objectMetadataItem.nameSingular)}
               >
-                <OverflowingTextWithTooltip
-                  text={objectMetadataItem.labelPlural}
-                />
-              </ListItem>
+                {objectMetadataItem.labelPlural}
+              </DropdownListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

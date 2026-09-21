@@ -1,5 +1,5 @@
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useEffect } from 'react';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -26,7 +26,7 @@ import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
-import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
@@ -126,18 +126,16 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {isRecordGroupingOptionalForViewType(viewType) && (
-          <ListItem
+          <DropdownListItem
             onClick={handleResetRecordGroupField}
             role="option"
             aria-selected={!isDefined(recordIndexGroupFieldMetadataItem)}
             selected={!isDefined(recordIndexGroupFieldMetadataItem)}
             indicator="check"
-          >
-            <OverflowingTextWithTooltip text={t`None`} />
-          </ListItem>
+          >{t`None`}</DropdownListItem>
         )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
-          <ListItem
+          <DropdownListItem
             key={fieldMetadataItem.id}
             onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
             role="option"
@@ -152,8 +150,8 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
               <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
             }
           >
-            <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
-          </ListItem>
+            {fieldMetadataItem.label}
+          </DropdownListItem>
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
@@ -165,9 +163,9 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
             closeDropdown();
           }}
         >
-          <ListItem startIcon={<IconSettings />}>
-            <OverflowingTextWithTooltip text={t`Create select field`} />
-          </ListItem>
+          <DropdownListItem
+            startIcon={<IconSettings />}
+          >{t`Create select field`}</DropdownListItem>
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </DropdownContent>

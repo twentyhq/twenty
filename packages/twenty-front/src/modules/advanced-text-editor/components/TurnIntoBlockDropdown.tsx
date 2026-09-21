@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useTurnIntoBlockOptions } from '@/advanced-text-editor/hooks/useTurnIntoBlockOptions';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -11,7 +10,6 @@ import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/react';
 import { useContext, useId } from 'react';
 import { IconPilcrow } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMenuItem = styled.button`
@@ -62,18 +60,18 @@ export const TurnIntoBlockDropdown = ({
         <DropdownContent>
           <DropdownMenuItemsContainer>
             {options.map(({ id, title, icon, onClick }) => (
-              <ListItem
+              <DropdownListItem
                 key={id}
                 startIcon={<SelectOptionIcon Icon={icon} />}
-                onClick={getDropdownMenuItemClickHandler(() => {
+                onClick={() => {
                   onClick();
                   toggleDropdown({
                     dropdownComponentInstanceIdFromProps: dropdownId,
                   });
-                })}
+                }}
               >
-                <OverflowingTextWithTooltip text={title} />
-              </ListItem>
+                {title}
+              </DropdownListItem>
             ))}
           </DropdownMenuItemsContainer>
         </DropdownContent>

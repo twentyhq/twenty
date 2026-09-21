@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -14,7 +13,6 @@ import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 
 type WorkflowStepFilterAddFilterRuleSelectProps = {
@@ -103,19 +101,15 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <ListItem
+            <DropdownListItem
               startIcon={<IconPlus />}
-              onClick={getDropdownMenuItemClickHandler(handleAddFilter)}
-            >
-              <OverflowingTextWithTooltip text={t`Add rule`} />
-            </ListItem>
+              onClick={handleAddFilter}
+            >{t`Add rule`}</DropdownListItem>
             {isFilterRuleGroupOptionVisible && (
-              <ListItem
+              <DropdownListItem
                 startIcon={<IconLibraryPlus />}
-                onClick={getDropdownMenuItemClickHandler(handleAddFilterGroup)}
-              >
-                <OverflowingTextWithTooltip text={t`Add rule group`} />
-              </ListItem>
+                onClick={handleAddFilterGroup}
+              >{t`Add rule group`}</DropdownListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

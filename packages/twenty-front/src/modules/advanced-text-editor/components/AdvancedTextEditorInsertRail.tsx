@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
@@ -20,7 +19,6 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockInsertionRecipes';
@@ -276,45 +274,39 @@ export const AdvancedTextEditorInsertRail = ({
       {openMenu === 'variables' && (
         <StyledPopover>
           {variables.map(({ label, value }) => (
-            <ListItem
+            <DropdownListItem
               key={value}
               description={label}
-              onClick={getDropdownMenuItemClickHandler(() =>
-                insertVariable(value),
-              )}
+              onClick={() => insertVariable(value)}
             >
-              {<StyledVariableLiteral>{value}</StyledVariableLiteral>}
-            </ListItem>
+              <StyledVariableLiteral>{value}</StyledVariableLiteral>
+            </DropdownListItem>
           ))}
         </StyledPopover>
       )}
       {openMenu === 'text' && (
         <StyledPopover>
           {textItems.map(({ Icon, label, content }) => (
-            <ListItem
+            <DropdownListItem
               key={label}
               startIcon={<SelectOptionIcon Icon={Icon} />}
-              onClick={getDropdownMenuItemClickHandler(() =>
-                insertAtEnd(content),
-              )}
+              onClick={() => insertAtEnd(content)}
             >
-              <OverflowingTextWithTooltip text={label} />
-            </ListItem>
+              {label}
+            </DropdownListItem>
           ))}
         </StyledPopover>
       )}
       {openMenu === 'blocks' && (
         <StyledPopover>
           {blockItems.map(({ Icon, id, label, content }) => (
-            <ListItem
+            <DropdownListItem
               key={id}
               startIcon={<SelectOptionIcon Icon={Icon} />}
-              onClick={getDropdownMenuItemClickHandler(() =>
-                insertAtEnd(content),
-              )}
+              onClick={() => insertAtEnd(content)}
             >
-              <OverflowingTextWithTooltip text={label} />
-            </ListItem>
+              {label}
+            </DropdownListItem>
           ))}
         </StyledPopover>
       )}

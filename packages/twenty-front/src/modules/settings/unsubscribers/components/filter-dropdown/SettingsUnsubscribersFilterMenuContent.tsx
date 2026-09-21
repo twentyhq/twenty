@@ -1,8 +1,6 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useLingui } from '@lingui/react/macro';
 import { IconMailCog, IconStatusChange, IconTrash } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { type SettingsUnsubscribersFilterContentId } from '@/settings/unsubscribers/components/filter-dropdown/types/SettingsUnsubscribersFilterContentId';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -29,38 +27,28 @@ export const SettingsUnsubscribersFilterMenuContent = ({
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        <ListItem
+        <DropdownListItem
           startIcon={<IconStatusChange />}
           description={reasonLabel}
           descriptionPlacement="end"
           hasSubmenu
-          onClick={getDropdownMenuItemClickHandler(() =>
-            onContentChange('reason'),
-          )}
-        >
-          <OverflowingTextWithTooltip text={t`Reason`} />
-        </ListItem>
-        <ListItem
+          onClick={() => onContentChange('reason')}
+        >{t`Reason`}</DropdownListItem>
+        <DropdownListItem
           startIcon={<IconMailCog />}
           description={topicLabel}
           descriptionPlacement="end"
           hasSubmenu
-          onClick={getDropdownMenuItemClickHandler(() =>
-            onContentChange('topic'),
-          )}
-        >
-          <OverflowingTextWithTooltip text={t`Topic`} />
-        </ListItem>
+          onClick={() => onContentChange('topic')}
+        >{t`Topic`}</DropdownListItem>
         {hasActiveFilters && (
           <>
             <DropdownMenuSeparator />
-            <ListItem
+            <DropdownListItem
               color="danger"
               startIcon={<IconTrash />}
-              onClick={getDropdownMenuItemClickHandler(onClear)}
-            >
-              <OverflowingTextWithTooltip text={t`Clear filters`} />
-            </ListItem>
+              onClick={onClear}
+            >{t`Clear filters`}</DropdownListItem>
           </>
         )}
       </DropdownMenuItemsContainer>

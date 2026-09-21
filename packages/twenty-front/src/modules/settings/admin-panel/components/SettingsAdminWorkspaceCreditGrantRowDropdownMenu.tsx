@@ -1,9 +1,7 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -35,16 +33,14 @@ export const SettingsAdminWorkspaceCreditGrantRowDropdownMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <ListItem
+            <DropdownListItem
               color="danger"
               startIcon={<IconTrash />}
-              onClick={getDropdownMenuItemClickHandler(() => {
+              onClick={() => {
                 onRevoke();
                 closeDropdown(dropdownId);
-              })}
-            >
-              <OverflowingTextWithTooltip text={t`Revoke`} />
-            </ListItem>
+              }}
+            >{t`Revoke`}</DropdownListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

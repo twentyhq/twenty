@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { RUN_EVALUATION_INPUT } from '@/ai/graphql/mutations/runEvaluationInput';
 import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
@@ -28,7 +27,6 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidv4 } from 'uuid';
 import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
@@ -179,23 +177,15 @@ export const SettingsAgentEvalsTab = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <ListItem
+                      <DropdownListItem
                         startIcon={<IconPlayerPlay />}
-                        onClick={getDropdownMenuItemClickHandler(() =>
-                          handleRunInput(item.text, item.id),
-                        )}
-                      >
-                        <OverflowingTextWithTooltip text={t`Run`} />
-                      </ListItem>
-                      <ListItem
+                        onClick={() => handleRunInput(item.text, item.id)}
+                      >{t`Run`}</DropdownListItem>
+                      <DropdownListItem
                         color="danger"
                         startIcon={<IconTrash />}
-                        onClick={getDropdownMenuItemClickHandler(() =>
-                          openDeleteModal(item.id),
-                        )}
-                      >
-                        <OverflowingTextWithTooltip text={t`Delete`} />
-                      </ListItem>
+                        onClick={() => openDeleteModal(item.id)}
+                      >{t`Delete`}</DropdownListItem>
                     </DropdownMenuItemsContainer>
                   </DropdownContent>
                 }

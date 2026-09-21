@@ -1,5 +1,5 @@
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { ObjectOptionsDropdownMenuViewName } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuViewName';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -37,11 +37,7 @@ import {
   IconShare,
   IconTrash,
 } from 'twenty-ui/icon';
-import {
-  Tooltip,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/primitives/surfaces';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 interface ObjectOptionsDropdownCustomViewProps {
@@ -153,11 +149,9 @@ export const ObjectOptionsDropdownCustomView = ({
             itemId="Layout"
             onEnter={() => onContentChange('layout')}
           >
-            <ListItem
+            <DropdownListItem
               focused={selectedItemId === 'Layout'}
-              onClick={getDropdownMenuItemClickHandler(() =>
-                onContentChange('layout'),
-              )}
+              onClick={() => onContentChange('layout')}
               startIcon={
                 <SelectOptionIcon
                   Icon={viewTypeIconMapping(
@@ -168,19 +162,15 @@ export const ObjectOptionsDropdownCustomView = ({
               description={t(getViewTypeLabel(customViewData.type))}
               descriptionPlacement="end"
               hasSubmenu
-            >
-              <OverflowingTextWithTooltip text={t`Layout`} />
-            </ListItem>
+            >{t`Layout`}</DropdownListItem>
           </SelectableListItem>
           <SelectableListItem
             itemId="Visibility"
             onEnter={() => onContentChange('visibility')}
           >
-            <ListItem
+            <DropdownListItem
               focused={selectedItemId === 'Visibility'}
-              onClick={getDropdownMenuItemClickHandler(() =>
-                onContentChange('visibility'),
-              )}
+              onClick={() => onContentChange('visibility')}
               startIcon={<IconShare />}
               description={
                 customViewData?.visibility === 'UNLISTED'
@@ -189,9 +179,7 @@ export const ObjectOptionsDropdownCustomView = ({
               }
               descriptionPlacement="end"
               hasSubmenu
-            >
-              <OverflowingTextWithTooltip text={t`Visibility`} />
-            </ListItem>
+            >{t`Visibility`}</DropdownListItem>
           </SelectableListItem>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
@@ -203,11 +191,9 @@ export const ObjectOptionsDropdownCustomView = ({
                   itemId="CalendarDateField"
                   onEnter={() => onContentChange('calendarFields')}
                 >
-                  <ListItem
+                  <DropdownListItem
                     focused={selectedItemId === 'CalendarDateField'}
-                    onClick={getDropdownMenuItemClickHandler(() =>
-                      onContentChange('calendarFields'),
-                    )}
+                    onClick={() => onContentChange('calendarFields')}
                     startIcon={<IconCalendar />}
                     description={
                       isDefaultView
@@ -217,20 +203,16 @@ export const ObjectOptionsDropdownCustomView = ({
                     descriptionPlacement="end"
                     hasSubmenu
                     disabled={isDefaultView}
-                  >
-                    <OverflowingTextWithTooltip text={t`Date field`} />
-                  </ListItem>
+                  >{t`Date field`}</DropdownListItem>
                 </SelectableListItem>
               </div>
               <SelectableListItem
                 itemId="CalendarView"
                 onEnter={() => onContentChange('calendarView')}
               >
-                <ListItem
+                <DropdownListItem
                   focused={selectedItemId === 'CalendarView'}
-                  onClick={getDropdownMenuItemClickHandler(() =>
-                    onContentChange('calendarView'),
-                  )}
+                  onClick={() => onContentChange('calendarView')}
                   startIcon={<IconCalendarWeek />}
                   description={
                     recordIndexCalendarLayout === ViewCalendarLayout.MONTH
@@ -240,9 +222,7 @@ export const ObjectOptionsDropdownCustomView = ({
                         : t`Day`
                   }
                   descriptionPlacement="end"
-                >
-                  <OverflowingTextWithTooltip text={t`Calendar view`} />
-                </ListItem>
+                >{t`Calendar view`}</DropdownListItem>
               </SelectableListItem>
             </>
           )}
@@ -250,18 +230,14 @@ export const ObjectOptionsDropdownCustomView = ({
             itemId="Fields"
             onEnter={() => onContentChange('fields')}
           >
-            <ListItem
+            <DropdownListItem
               focused={selectedItemId === 'Fields'}
-              onClick={getDropdownMenuItemClickHandler(() =>
-                onContentChange('fields'),
-              )}
+              onClick={() => onContentChange('fields')}
               startIcon={<IconListDetails />}
               description={t`${visibleFieldsCount} selected`}
               descriptionPlacement="end"
               hasSubmenu
-            >
-              <OverflowingTextWithTooltip text={t`Fields`} />
-            </ListItem>
+            >{t`Fields`}</DropdownListItem>
           </SelectableListItem>
           {customViewData?.type !== ViewType.CALENDAR && (
             <Tooltip
@@ -280,13 +256,13 @@ export const ObjectOptionsDropdownCustomView = ({
                       : onContentChange('recordGroupFields')
                   }
                 >
-                  <ListItem
+                  <DropdownListItem
                     focused={selectedItemId === 'Group'}
-                    onClick={getDropdownMenuItemClickHandler(() =>
+                    onClick={() =>
                       isDefined(recordIndexGroupFieldMetadataItem)
                         ? onContentChange('recordGroups')
-                        : onContentChange('recordGroupFields'),
-                    )}
+                        : onContentChange('recordGroupFields')
+                    }
                     startIcon={<IconLayoutList />}
                     description={
                       isDefaultView
@@ -296,9 +272,7 @@ export const ObjectOptionsDropdownCustomView = ({
                     descriptionPlacement="end"
                     hasSubmenu
                     disabled={isDefaultView}
-                  >
-                    <OverflowingTextWithTooltip text={t`Group`} />
-                  </ListItem>
+                  >{t`Group`}</DropdownListItem>
                 </SelectableListItem>
               </div>
             </Tooltip>
@@ -322,17 +296,13 @@ export const ObjectOptionsDropdownCustomView = ({
                 itemId="Delete view"
                 onEnter={() => handleDelete()}
               >
-                <ListItem
+                <DropdownListItem
                   focused={selectedItemId === 'Delete view'}
-                  onClick={getDropdownMenuItemClickHandler(() =>
-                    handleDelete(),
-                  )}
+                  onClick={() => handleDelete()}
                   startIcon={<IconTrash />}
                   disabled={isDefaultView || isLastView}
                   color="danger"
-                >
-                  <OverflowingTextWithTooltip text={t`Delete view`} />
-                </ListItem>
+                >{t`Delete view`}</DropdownListItem>
               </SelectableListItem>
             </div>
           </Tooltip>

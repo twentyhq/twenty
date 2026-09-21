@@ -1,4 +1,4 @@
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -22,7 +22,6 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconX, useIcons } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;
@@ -99,7 +98,7 @@ export const WorkflowVariablesDropdownSteps = ({
           <DropdownMenuSeparator />
         )}
         {availableSteps.map((item) => (
-          <ListItem
+          <DropdownListItem
             key={`step-${item.id}`}
             focused={false}
             onClick={() => onSelect({ stepId: item.id })}
@@ -114,18 +113,13 @@ export const WorkflowVariablesDropdownSteps = ({
               />
             }
           >
-            <OverflowingTextWithTooltip text={item.name} />
-          </ListItem>
+            {item.name}
+          </DropdownListItem>
         ))}
         {matchingVariables.length === 0 && availableSteps.length === 0 && (
-          <ListItem
-            key="no-steps"
-            onClick={getDropdownMenuItemClickHandler(() => {})}
-            startIcon={<SelectOptionIcon Icon={undefined} />}
-            hasSubmenu={false}
-          >
-            <OverflowingTextWithTooltip text={t`No variables available`} />
-          </ListItem>
+          <DropdownListItem
+            disabled
+          >{t`No variables available`}</DropdownListItem>
         )}
       </DropdownMenuItemsContainer>
     </DropdownContent>

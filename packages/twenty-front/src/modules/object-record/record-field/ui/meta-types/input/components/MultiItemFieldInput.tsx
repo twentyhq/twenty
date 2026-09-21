@@ -1,5 +1,5 @@
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { t } from '@lingui/core/macro';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
@@ -27,7 +27,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
@@ -381,14 +380,14 @@ export const MultiItemFieldInput = <T,>({
         />
       ) : !isLimitReached ? (
         <DropdownMenuItemsContainer>
-          <ListItem
-            onClick={getDropdownMenuItemClickHandler(handleAddButtonClick)}
+          <DropdownListItem
+            onClick={handleAddButtonClick}
             startIcon={<IconPlus />}
           >
             <OverflowingTextWithTooltip
               text={newItemLabel || `Add ${placeholder}`}
             />
-          </ListItem>
+          </DropdownListItem>
         </DropdownMenuItemsContainer>
       ) : null}
     </DropdownContent>

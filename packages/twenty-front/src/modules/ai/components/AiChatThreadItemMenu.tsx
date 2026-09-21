@@ -1,6 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import {
@@ -11,7 +9,6 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useChatThreadArchiveActions } from '@/ai/hooks/useChatThreadArchiveActions';
@@ -90,31 +87,21 @@ export const AiChatThreadItemMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <ListItem
+            <DropdownListItem
               startIcon={<IconPencil />}
-              onClick={getDropdownMenuItemClickHandler(handleRename)}
+              onClick={handleRename}
+            >{t`Rename`}</DropdownListItem>
+            <DropdownListItem
+              startIcon={isArchived ? <IconArchiveOff /> : <IconArchive />}
+              onClick={handleArchive}
             >
-              <OverflowingTextWithTooltip text={t`Rename`} />
-            </ListItem>
-            <ListItem
-              startIcon={
-                <SelectOptionIcon
-                  Icon={isArchived ? IconArchiveOff : IconArchive}
-                />
-              }
-              onClick={getDropdownMenuItemClickHandler(handleArchive)}
-            >
-              <OverflowingTextWithTooltip
-                text={isArchived ? t`Unarchive` : t`Archive`}
-              />
-            </ListItem>
-            <ListItem
+              {isArchived ? t`Unarchive` : t`Archive`}
+            </DropdownListItem>
+            <DropdownListItem
               color="danger"
               startIcon={<IconTrash />}
-              onClick={getDropdownMenuItemClickHandler(handleDelete)}
-            >
-              <OverflowingTextWithTooltip text={t`Delete`} />
-            </ListItem>
+              onClick={handleDelete}
+            >{t`Delete`}</DropdownListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

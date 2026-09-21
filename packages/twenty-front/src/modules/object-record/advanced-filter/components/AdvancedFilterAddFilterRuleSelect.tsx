@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useGetDefaultFieldMetadataItemForFilter';
@@ -22,7 +21,6 @@ import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 
 type AdvancedFilterAddFilterRuleSelectProps = {
@@ -173,19 +171,15 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <ListItem
+            <DropdownListItem
               startIcon={<IconPlus />}
-              onClick={getDropdownMenuItemClickHandler(handleAddFilter)}
-            >
-              <OverflowingTextWithTooltip text={t`Add rule`} />
-            </ListItem>
+              onClick={handleAddFilter}
+            >{t`Add rule`}</DropdownListItem>
             {isFilterRuleGroupOptionVisible && (
-              <ListItem
+              <DropdownListItem
                 startIcon={<IconLibraryPlus />}
-                onClick={getDropdownMenuItemClickHandler(handleAddFilterGroup)}
-              >
-                <OverflowingTextWithTooltip text={t`Add rule group`} />
-              </ListItem>
+                onClick={handleAddFilterGroup}
+              >{t`Add rule group`}</DropdownListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

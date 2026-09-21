@@ -1,11 +1,10 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
-import { ListItem, MenuItemAvatar } from 'twenty-ui/primitives/navigation';
+import { MenuItemAvatar } from 'twenty-ui/primitives/navigation';
 
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
@@ -131,37 +130,29 @@ export const EmailRecipientChipMenuContent = ({
                 contextualText={recipient.address}
               />
             ) : (
-              <ListItem
+              <DropdownListItem
                 startIcon={<IconUserPlus />}
-                onClick={getDropdownMenuItemClickHandler(handleAddAsPerson)}
-              >
-                <OverflowingTextWithTooltip text={t`Add as person`} />
-              </ListItem>
+                onClick={handleAddAsPerson}
+              >{t`Add as person`}</DropdownListItem>
             )}
           </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
         </>
       )}
       <DropdownMenuItemsContainer>
-        <ListItem
+        <DropdownListItem
           startIcon={<IconCopy />}
-          onClick={getDropdownMenuItemClickHandler(handleCopy)}
-        >
-          <OverflowingTextWithTooltip text={t`Copy email`} />
-        </ListItem>
-        <ListItem
+          onClick={handleCopy}
+        >{t`Copy email`}</DropdownListItem>
+        <DropdownListItem
           startIcon={<IconPencil />}
-          onClick={getDropdownMenuItemClickHandler(handleEdit)}
-        >
-          <OverflowingTextWithTooltip text={t`Edit`} />
-        </ListItem>
-        <ListItem
+          onClick={handleEdit}
+        >{t`Edit`}</DropdownListItem>
+        <DropdownListItem
           color="danger"
           startIcon={<IconTrash />}
-          onClick={getDropdownMenuItemClickHandler(handleRemove)}
-        >
-          <OverflowingTextWithTooltip text={t`Remove`} />
-        </ListItem>
+          onClick={handleRemove}
+        >{t`Remove`}</DropdownListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

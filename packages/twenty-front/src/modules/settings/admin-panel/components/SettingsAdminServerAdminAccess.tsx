@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeDash';
@@ -20,7 +19,6 @@ import { IconDotsVertical } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetServerAdminsDocument,
@@ -175,46 +173,38 @@ export const SettingsAdminServerAdminAccess = ({
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <ListItem
+                <DropdownListItem
                   disabled={isLastFullAdmin}
-                  onClick={getDropdownMenuItemClickHandler(() =>
+                  onClick={() =>
                     requestChange({
                       description: t`full admin panel access`,
                       isRevoking: canAccessFullAdminPanel,
                       update: {
                         canAccessFullAdminPanel: !canAccessFullAdminPanel,
                       },
-                    }),
-                  )}
+                    })
+                  }
                 >
-                  <OverflowingTextWithTooltip
-                    text={
-                      canAccessFullAdminPanel
-                        ? t`Revoke admin panel access`
-                        : t`Grant admin panel access`
-                    }
-                  />
-                </ListItem>
-                <ListItem
-                  onClick={getDropdownMenuItemClickHandler(() =>
+                  {canAccessFullAdminPanel
+                    ? t`Revoke admin panel access`
+                    : t`Grant admin panel access`}
+                </DropdownListItem>
+                <DropdownListItem
+                  onClick={() =>
                     requestChange({
                       description: t`impersonation`,
                       isRevoking: canImpersonate,
                       update: { canImpersonate: !canImpersonate },
-                    }),
-                  )}
+                    })
+                  }
                 >
-                  <OverflowingTextWithTooltip
-                    text={
-                      canImpersonate
-                        ? t`Disable impersonation`
-                        : t`Enable impersonation`
-                    }
-                  />
-                </ListItem>
+                  {canImpersonate
+                    ? t`Disable impersonation`
+                    : t`Enable impersonation`}
+                </DropdownListItem>
                 {!hasFullAccess && (
-                  <ListItem
-                    onClick={getDropdownMenuItemClickHandler(() =>
+                  <DropdownListItem
+                    onClick={() =>
                       requestChange({
                         description: t`full server access`,
                         isRevoking: false,
@@ -222,11 +212,9 @@ export const SettingsAdminServerAdminAccess = ({
                           canAccessFullAdminPanel: true,
                           canImpersonate: true,
                         },
-                      }),
-                    )}
-                  >
-                    <OverflowingTextWithTooltip text={t`Grant full access`} />
-                  </ListItem>
+                      })
+                    }
+                  >{t`Grant full access`}</DropdownListItem>
                 )}
               </DropdownMenuItemsContainer>
             </DropdownContent>

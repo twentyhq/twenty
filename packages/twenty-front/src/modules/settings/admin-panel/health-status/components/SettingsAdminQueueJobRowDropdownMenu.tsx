@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -7,7 +6,6 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconRefresh, IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { JobState } from '~/generated-admin/graphql';
 
 type SettingsAdminQueueJobRowDropdownMenuProps = {
@@ -49,20 +47,16 @@ export const SettingsAdminQueueJobRowDropdownMenu = ({
         <DropdownContent>
           <DropdownMenuItemsContainer>
             {jobState === JobState.FAILED && onRetry && (
-              <ListItem
+              <DropdownListItem
                 startIcon={<IconRefresh />}
-                onClick={getDropdownMenuItemClickHandler(handleRetry)}
-              >
-                <OverflowingTextWithTooltip text={t`Retry`} />
-              </ListItem>
+                onClick={handleRetry}
+              >{t`Retry`}</DropdownListItem>
             )}
-            <ListItem
+            <DropdownListItem
               color="danger"
               startIcon={<IconTrash />}
-              onClick={getDropdownMenuItemClickHandler(handleDelete)}
-            >
-              <OverflowingTextWithTooltip text={t`Delete`} />
-            </ListItem>
+              onClick={handleDelete}
+            >{t`Delete`}</DropdownListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

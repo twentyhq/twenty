@@ -1,12 +1,10 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS } from '@/workflow/workflow-steps/constants/WorkflowStepOptionsMenuItemIds';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopyPlus, IconPencil, IconTrash } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowStepOptionsMenuItemsProps = {
   selectedItemId: string | null;
@@ -33,31 +31,29 @@ export const WorkflowStepOptionsMenuItems = ({
         itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode}
         onEnter={onChangeNode}
       >
-        <ListItem
+        <DropdownListItem
           startIcon={<IconPencil />}
           focused={
             selectedItemId === WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode
           }
-          onClick={getDropdownMenuItemClickHandler(onChangeNode)}
+          onClick={onChangeNode}
         >
-          <OverflowingTextWithTooltip text={changeNodeText} />
-        </ListItem>
+          {changeNodeText}
+        </DropdownListItem>
       </SelectableListItem>
       {isDefined(onDuplicateNode) ? (
         <SelectableListItem
           itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode}
           onEnter={onDuplicateNode}
         >
-          <ListItem
+          <DropdownListItem
             startIcon={<IconCopyPlus />}
             focused={
               selectedItemId ===
               WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode
             }
-            onClick={getDropdownMenuItemClickHandler(onDuplicateNode)}
-          >
-            <OverflowingTextWithTooltip text={t`Duplicate node`} />
-          </ListItem>
+            onClick={onDuplicateNode}
+          >{t`Duplicate node`}</DropdownListItem>
         </SelectableListItem>
       ) : null}
       {children}
@@ -66,16 +62,14 @@ export const WorkflowStepOptionsMenuItems = ({
           itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.deleteNode}
           onEnter={onDeleteNode}
         >
-          <ListItem
+          <DropdownListItem
             startIcon={<IconTrash />}
             color="danger"
             focused={
               selectedItemId === WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.deleteNode
             }
-            onClick={getDropdownMenuItemClickHandler(onDeleteNode)}
-          >
-            <OverflowingTextWithTooltip text={t`Delete node`} />
-          </ListItem>
+            onClick={onDeleteNode}
+          >{t`Delete node`}</DropdownListItem>
         </SelectableListItem>
       ) : null}
     </>

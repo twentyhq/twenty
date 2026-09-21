@@ -8,7 +8,8 @@ import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dro
 import { ViewType } from '@/views/types/ViewType';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const mockChangeFieldVisibility = jest.fn();
+const mockChangeRecordFieldVisibility = jest.fn();
+const mockChangeBoardFieldVisibility = jest.fn();
 
 jest.mock('@/object-metadata/hooks/useActiveFieldMetadataItems', () => ({
   useActiveFieldMetadataItems: () => ({
@@ -27,7 +28,7 @@ jest.mock(
   '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard',
   () => ({
     useObjectOptionsForBoard: () => ({
-      handleBoardFieldVisibilityChange: mockChangeFieldVisibility,
+      handleBoardFieldVisibilityChange: mockChangeBoardFieldVisibility,
     }),
   }),
 );
@@ -36,7 +37,7 @@ jest.mock(
   '@/object-record/record-field/hooks/useChangeRecordFieldVisibility',
   () => ({
     useChangeRecordFieldVisibility: () => ({
-      changeRecordFieldVisibility: mockChangeFieldVisibility,
+      changeRecordFieldVisibility: mockChangeRecordFieldVisibility,
     }),
   }),
 );
@@ -71,20 +72,21 @@ describe('field visibility menu actions', () => {
     );
 
     await user.click(screen.getByText('Name'));
-    expect(mockChangeFieldVisibility).not.toHaveBeenCalled();
+    expect(mockChangeRecordFieldVisibility).not.toHaveBeenCalled();
 
     await user.hover(screen.getByText('Name'));
     await user.click(screen.getByRole('button', { name: 'Show field' }));
 
-    expect(mockChangeFieldVisibility).toHaveBeenCalledTimes(1);
-    expect(mockChangeFieldVisibility).toHaveBeenLastCalledWith({
+    expect(mockChangeRecordFieldVisibility).toHaveBeenCalledTimes(1);
+    expect(mockChangeRecordFieldVisibility).toHaveBeenLastCalledWith({
       fieldMetadataId: 'name',
       isVisible: true,
     });
 
     await user.keyboard('{Enter}');
 
-    expect(mockChangeFieldVisibility).toHaveBeenCalledTimes(2);
+    expect(mockChangeRecordFieldVisibility).toHaveBeenCalledTimes(2);
+    expect(mockChangeBoardFieldVisibility).not.toHaveBeenCalled();
     expect(screen.getByText('Name')).toBeInTheDocument();
   });
 });

@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { type MouseEvent, useCallback } from 'react';
@@ -26,7 +25,6 @@ import { computeViewPickerVisibleViews } from '@/views/view-picker/utils/compute
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey, ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
@@ -221,12 +219,10 @@ export const ViewPickerListContent = () => {
       <DropdownMenuSeparator />
       <StyledBoldDropdownMenuItemsContainerWrapper>
         <DropdownMenuItemsContainer scrollable={false}>
-          <ListItem
-            onClick={getDropdownMenuItemClickHandler(handleAddViewButtonClick)}
+          <DropdownListItem
+            onClick={handleAddViewButtonClick}
             startIcon={<IconPlus />}
-          >
-            <OverflowingTextWithTooltip text={t`Add view`} />
-          </ListItem>
+          >{t`Add view`}</DropdownListItem>
         </DropdownMenuItemsContainer>
       </StyledBoldDropdownMenuItemsContainerWrapper>
     </DropdownContent>

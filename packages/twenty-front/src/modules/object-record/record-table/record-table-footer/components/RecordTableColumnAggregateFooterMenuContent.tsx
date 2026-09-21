@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
@@ -12,7 +11,6 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {
@@ -57,58 +55,45 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        <ListItem
-          onClick={getDropdownMenuItemClickHandler(() => {
+        <DropdownListItem
+          onClick={() => {
             onContentChange('countAggregateOperationsOptions');
-          })}
+          }}
           hasSubmenu
-        >
-          <OverflowingTextWithTooltip text={t`Count`} />
-        </ListItem>
+        >{t`Count`}</DropdownListItem>
         {!fieldIsRelation && (
-          <ListItem
-            onClick={getDropdownMenuItemClickHandler(() => {
+          <DropdownListItem
+            onClick={() => {
               onContentChange('percentAggregateOperationsOptions');
-            })}
+            }}
             hasSubmenu
-          >
-            <OverflowingTextWithTooltip text={t`Percent`} />
-          </ListItem>
+          >{t`Percent`}</DropdownListItem>
         )}
         {fieldIsDateKind && (
-          <ListItem
-            onClick={getDropdownMenuItemClickHandler(() => {
+          <DropdownListItem
+            onClick={() => {
               onContentChange('datesAggregateOperationsOptions');
-            })}
+            }}
             hasSubmenu
-          >
-            <OverflowingTextWithTooltip text={t`Date`} />
-          </ListItem>
+          >{t`Date`}</DropdownListItem>
         )}
         {nonStandardAvailableAggregateOperation.length > 0 ? (
-          <ListItem
-            onClick={getDropdownMenuItemClickHandler(() => {
+          <DropdownListItem
+            onClick={() => {
               onContentChange('moreAggregateOperationOptions');
-            })}
+            }}
             hasSubmenu
-          >
-            <OverflowingTextWithTooltip text={t`More options`} />
-          </ListItem>
+          >{t`More options`}</DropdownListItem>
         ) : null}
-        <ListItem
-          key="none"
-          onClick={getDropdownMenuItemClickHandler(async () => {
+        <DropdownListItem
+          onClick={async () => {
             await updateViewFieldAggregateOperation(null);
             resetContent();
             closeDropdown(dropdownId);
-          })}
-          role="option"
+          }}
           indicator="check"
           selected={!isDefined(currentViewFieldAggregateOperation)}
-          aria-selected={!isDefined(currentViewFieldAggregateOperation)}
-        >
-          <OverflowingTextWithTooltip text={t`None`} />
-        </ListItem>
+        >{t`None`}</DropdownListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

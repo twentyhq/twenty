@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
@@ -13,7 +12,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle, IconX, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -306,27 +304,24 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
         />
         <DropdownMenuItemsContainer>
           {filteredMenuItems.map((item) => (
-            <ListItem
+            <DropdownListItem
               key={item.id}
               startIcon={
                 <SelectOptionIcon
                   Icon={item.icon ? getIcon(item.icon) : IconUserCircle}
                 />
               }
-              onClick={getDropdownMenuItemClickHandler(() =>
-                handleSelectField(item.fieldMetadataId, item.subFieldName),
-              )}
+              onClick={() =>
+                handleSelectField(item.fieldMetadataId, item.subFieldName)
+              }
             >
-              <OverflowingTextWithTooltip text={item.label} />
-            </ListItem>
+              {item.label}
+            </DropdownListItem>
           ))}
           {filteredMenuItems.length === 0 && (
-            <ListItem
-              onClick={getDropdownMenuItemClickHandler(() => {})}
+            <DropdownListItem
               disabled
-            >
-              <OverflowingTextWithTooltip text={t`No compatible fields`} />
-            </ListItem>
+            >{t`No compatible fields`}</DropdownListItem>
           )}
         </DropdownMenuItemsContainer>
       </DropdownContent>

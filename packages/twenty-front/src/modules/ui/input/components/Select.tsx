@@ -1,7 +1,6 @@
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
 import { type MouseEvent, useMemo, useRef, useState } from 'react';
 
@@ -26,7 +25,6 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -252,7 +250,7 @@ export const Select = <Value extends SelectValue>({
               )}
               {isDefined(pinnedOption) && (
                 <DropdownMenuItemsContainer scrollable={false}>
-                  <ListItem
+                  <DropdownListItem
                     onClick={() => {
                       onChange?.(pinnedOption.value);
                       onBlur?.();
@@ -278,8 +276,8 @@ export const Select = <Value extends SelectValue>({
                       </>
                     }
                   >
-                    <OverflowingTextWithTooltip text={pinnedOption.label} />
-                  </ListItem>
+                    {pinnedOption.label}
+                  </DropdownListItem>
                 </DropdownMenuItemsContainer>
               )}
               {isDefined(pinnedOption) && isNonEmptyArray(filteredOptions) && (
@@ -306,7 +304,7 @@ export const Select = <Value extends SelectValue>({
                           onEnter={handleSelectOption}
                         >
                           {renderAsTag && isDefined(option.color) ? (
-                            <ListItem
+                            <DropdownListItem
                               focused={selectedItemId === option.label}
                               onClick={handleSelectOption}
                               role="option"
@@ -325,9 +323,9 @@ export const Select = <Value extends SelectValue>({
                               >
                                 {option.label}
                               </Tag>
-                            </ListItem>
+                            </DropdownListItem>
                           ) : (
-                            <ListItem
+                            <DropdownListItem
                               focused={selectedItemId === option.label}
                               onClick={handleSelectOption}
                               role="option"
@@ -350,8 +348,8 @@ export const Select = <Value extends SelectValue>({
                                 </>
                               }
                             >
-                              <OverflowingTextWithTooltip text={option.label} />
-                            </ListItem>
+                              {option.label}
+                            </DropdownListItem>
                           )}
                         </SelectableListItem>
                       );
@@ -363,18 +361,14 @@ export const Select = <Value extends SelectValue>({
                 isNonEmptyArray(filteredOptions) && <DropdownMenuSeparator />}
               {isDefined(callToActionButton) && (
                 <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-                  <ListItem
-                    onClick={getDropdownMenuItemClickHandler(
-                      callToActionButton.onClick,
-                    )}
+                  <DropdownListItem
+                    onClick={callToActionButton.onClick}
                     startIcon={
                       <SelectOptionIcon Icon={callToActionButton.Icon} />
                     }
                   >
-                    <OverflowingTextWithTooltip
-                      text={callToActionButton.text}
-                    />
-                  </ListItem>
+                    {callToActionButton.text}
+                  </DropdownListItem>
                 </DropdownMenuItemsContainer>
               )}
             </DropdownContent>

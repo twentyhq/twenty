@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useEffect } from 'react';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
@@ -35,7 +34,6 @@ import {
   IconLayoutList,
   IconPlus,
 } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { t } = useLingui();
@@ -140,36 +138,28 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                   onContentChange('recordGroupFields')
                 }
               >
-                <ListItem
+                <DropdownListItem
                   focused={selectedItemId === 'GroupBy'}
                   disabled={isGroupByFieldPickerDisabled}
-                  onClick={getDropdownMenuItemClickHandler(() =>
-                    onContentChange('recordGroupFields'),
-                  )}
+                  onClick={() => onContentChange('recordGroupFields')}
                   startIcon={<IconLayoutList />}
                   description={recordIndexGroupFieldMetadataItem?.label}
                   descriptionPlacement="end"
                   hasSubmenu
-                >
-                  <OverflowingTextWithTooltip text={t`Group by`} />
-                </ListItem>
+                >{t`Group by`}</DropdownListItem>
               </SelectableListItem>
               <SelectableListItem
                 itemId="Sort"
                 onEnter={() => onContentChange('recordGroupSort')}
               >
-                <ListItem
+                <DropdownListItem
                   focused={selectedItemId === 'Sort'}
-                  onClick={getDropdownMenuItemClickHandler(() =>
-                    onContentChange('recordGroupSort'),
-                  )}
+                  onClick={() => onContentChange('recordGroupSort')}
                   startIcon={<IconArrowsSort />}
                   description={recordIndexRecordGroupSort}
                   descriptionPlacement="end"
                   hasSubmenu
-                >
-                  <OverflowingTextWithTooltip text={t`Sort`} />
-                </ListItem>
+                >{t`Sort`}</DropdownListItem>
               </SelectableListItem>
             </>
           )}
@@ -203,14 +193,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
-            <ListItem
-              onClick={getDropdownMenuItemClickHandler(() =>
-                onContentChange('addRecordGroup'),
-              )}
+            <DropdownListItem
+              onClick={() => onContentChange('addRecordGroup')}
               startIcon={<IconPlus />}
-            >
-              <OverflowingTextWithTooltip text={t`New group`} />
-            </ListItem>
+            >{t`New group`}</DropdownListItem>
           </DropdownMenuItemsContainer>
         </>
       )}
@@ -227,12 +213,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 itemId="HiddenGroups"
                 onEnter={() => onContentChange('hiddenRecordGroups')}
               >
-                <ListItem
+                <DropdownListItem
                   onClick={() => onContentChange('hiddenRecordGroups')}
                   startIcon={<IconEyeOff />}
                   render={<button type="button" />}
                   hasSubmenu
-                >{`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}</ListItem>
+                >{`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}</DropdownListItem>
               </SelectableListItem>
             </SelectableList>
           </DropdownMenuItemsContainer>

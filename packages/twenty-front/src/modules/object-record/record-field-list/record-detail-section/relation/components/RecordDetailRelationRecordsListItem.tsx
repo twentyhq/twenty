@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
@@ -45,7 +44,6 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/primitives/layout';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
@@ -248,21 +246,17 @@ export const RecordDetailRelationRecordsListItem = ({
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <ListItem
+                  <DropdownListItem
                     startIcon={<IconUnlink />}
-                    onClick={getDropdownMenuItemClickHandler(handleDetach)}
-                  >
-                    <OverflowingTextWithTooltip text={t`Detach`} />
-                  </ListItem>
+                    onClick={handleDetach}
+                  >{t`Detach`}</DropdownListItem>
                   {!isAccountOwnerRelation &&
                     relationObjectPermissions.canSoftDeleteObjectRecords && (
-                      <ListItem
+                      <DropdownListItem
                         startIcon={<IconTrash />}
                         color="danger"
-                        onClick={getDropdownMenuItemClickHandler(handleDelete)}
-                      >
-                        <OverflowingTextWithTooltip text={t`Delete`} />
-                      </ListItem>
+                        onClick={handleDelete}
+                      >{t`Delete`}</DropdownListItem>
                     )}
                 </DropdownMenuItemsContainer>
               </DropdownContent>

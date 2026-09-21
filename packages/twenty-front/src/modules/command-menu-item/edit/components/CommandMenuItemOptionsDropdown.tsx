@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useResetCommandMenuItemToDefault } from '@/command-menu-item/edit/hooks/useResetCommandMenuItemToDefault';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -12,7 +11,6 @@ import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { SettingsRow } from 'twenty-ui/components';
 import { IconRefresh, IconTag } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type CommandMenuItemOptionsDropdownProps = Pick<
@@ -71,12 +69,10 @@ export const CommandMenuItemOptionsDropdown = ({
               checked={isLabelHidden || hasNoShortLabel}
               onCheckedChange={handleHiddenLabelChange}
             >{t`Hide label`}</SettingsRow>
-            <ListItem
+            <DropdownListItem
               startIcon={<IconRefresh />}
-              onClick={getDropdownMenuItemClickHandler(handleResetToDefault)}
-            >
-              <OverflowingTextWithTooltip text={t`Reset to default`} />
-            </ListItem>
+              onClick={handleResetToDefault}
+            >{t`Reset to default`}</DropdownListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

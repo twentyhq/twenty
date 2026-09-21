@@ -1,3 +1,4 @@
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useCallback, useRef, useState } from 'react';
 import { useStore } from 'jotai';
 
@@ -18,9 +19,6 @@ import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-
 import { upsertMorphItem } from '@/object-record/record-picker/multiple-record-picker/utils/upsertMorphItem';
 import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -226,14 +224,12 @@ export const MultipleRecordPicker = ({
   const createNewButtonSection =
     creatableObjectMetadataItems.length > 0 ? (
       <DropdownMenuItemsContainer scrollable={false}>
-        <ListItem
-          onClick={getDropdownMenuItemClickHandler(handleCreateNewButtonClick)}
+        <DropdownListItem
+          onClick={handleCreateNewButtonClick}
           disabled={isCreatePending}
           startIcon={<IconPlus />}
           hasSubmenu={creatableObjectMetadataItems.length > 1}
-        >
-          <OverflowingTextWithTooltip text={t`Add New`} />
-        </ListItem>
+        >{t`Add New`}</DropdownListItem>
       </DropdownMenuItemsContainer>
     ) : null;
 

@@ -1,4 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -17,7 +17,6 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useState } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';
@@ -117,7 +116,7 @@ export const ObjectFilterDropdownCountrySelect = () => {
       <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
         {filteredSelectedItems?.map((item) => {
           return (
-            <ListItem
+            <DropdownListItem
               render={<button type="button" />}
               key={item.id}
               role="option"
@@ -129,13 +128,13 @@ export const ObjectFilterDropdownCountrySelect = () => {
               }}
               startIcon={getCountryFlagMenuItemAvatar(item.name, countries)}
             >
-              <OverflowingTextWithTooltip text={item.name} />
-            </ListItem>
+              {item.name}
+            </DropdownListItem>
           );
         })}
         {filteredSelectableItems?.map((item) => {
           return (
-            <ListItem
+            <DropdownListItem
               render={<button type="button" />}
               key={item.id}
               role="option"
@@ -147,14 +146,12 @@ export const ObjectFilterDropdownCountrySelect = () => {
               }}
               startIcon={getCountryFlagMenuItemAvatar(item.name, countries)}
             >
-              <OverflowingTextWithTooltip text={item.name} />
-            </ListItem>
+              {item.name}
+            </DropdownListItem>
           );
         })}
         {showNoResult && (
-          <ListItem>
-            <OverflowingTextWithTooltip text={t`No results`} />
-          </ListItem>
+          <DropdownListItem disabled>{t`No results`}</DropdownListItem>
         )}
       </DropdownMenuItemsContainer>
     </DropdownContent>

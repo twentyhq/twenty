@@ -1,4 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { LightIconButton } from 'twenty-ui/components';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
@@ -15,7 +15,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconEye, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
@@ -104,7 +103,7 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {hiddenFieldMetadataItems.map((fieldMetadataItem) => (
-          <ListItem
+          <DropdownListItem
             key={fieldMetadataItem.id}
             startIcon={
               <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
@@ -118,8 +117,8 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
               </LightIconButton>
             }
           >
-            <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
-          </ListItem>
+            {fieldMetadataItem.label}
+          </DropdownListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>

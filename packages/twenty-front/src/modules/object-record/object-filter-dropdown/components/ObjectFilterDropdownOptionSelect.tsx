@@ -1,3 +1,4 @@
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { useEffect, useMemo, useState } from 'react';
@@ -27,7 +28,6 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined, parseJson } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '';
@@ -176,12 +176,10 @@ export const ObjectFilterDropdownOptionSelect = ({
     >
       <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
         {showNoResult ? (
-          <ListItem>
-            <OverflowingTextWithTooltip text={t`No results`} />
-          </ListItem>
+          <DropdownListItem disabled>{t`No results`}</DropdownListItem>
         ) : (
           optionsInDropdown?.map((option) => (
-            <ListItem
+            <DropdownListItem
               render={<button type="button" />}
               key={option.id}
               className=""
@@ -199,7 +197,7 @@ export const ObjectFilterDropdownOptionSelect = ({
               ) : (
                 <OverflowingTextWithTooltip text={option.label} />
               )}
-            </ListItem>
+            </DropdownListItem>
           ))
         )}
       </DropdownMenuItemsContainer>

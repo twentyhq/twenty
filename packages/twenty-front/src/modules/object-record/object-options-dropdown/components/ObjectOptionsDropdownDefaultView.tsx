@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -22,7 +21,6 @@ import {
   IconLock,
   useIcons,
 } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const ObjectOptionsDropdownDefaultView = () => {
@@ -67,13 +65,11 @@ export const ObjectOptionsDropdownDefaultView = () => {
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer scrollable={false}>
-        <ListItem
+        <DropdownListItem
           startIcon={<SelectOptionIcon Icon={MainIcon} />}
           endIcon={<IconLock />}
           disabled={true}
-        >
-          <OverflowingTextWithTooltip text={t`Default View`} />
-        </ListItem>
+        >{t`Default View`}</DropdownListItem>
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <SelectableList
@@ -86,18 +82,14 @@ export const ObjectOptionsDropdownDefaultView = () => {
             itemId="Fields"
             onEnter={() => onContentChange('fields')}
           >
-            <ListItem
+            <DropdownListItem
               focused={selectedItemId === 'Fields'}
-              onClick={getDropdownMenuItemClickHandler(() =>
-                onContentChange('fields'),
-              )}
+              onClick={() => onContentChange('fields')}
               startIcon={<IconListDetails />}
               description={t`${visibleFieldsCount} selected`}
               descriptionPlacement="end"
               hasSubmenu
-            >
-              <OverflowingTextWithTooltip text={t`Fields`} />
-            </ListItem>
+            >{t`Fields`}</DropdownListItem>
           </SelectableListItem>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
@@ -109,29 +101,24 @@ export const ObjectOptionsDropdownDefaultView = () => {
               copyToClipboard(currentUrl, t`Link copied to clipboard`);
             }}
           >
-            <ListItem
+            <DropdownListItem
               focused={selectedItemId === 'Copy link to view'}
-              onClick={getDropdownMenuItemClickHandler(() => {
+              onClick={() => {
                 const currentUrl = window.location.href;
                 copyToClipboard(currentUrl, t`Link copied to clipboard`);
-              })}
+              }}
               startIcon={<IconCopy />}
-            >
-              <OverflowingTextWithTooltip text={t`Copy link to view`} />
-            </ListItem>
+            >{t`Copy link to view`}</DropdownListItem>
           </SelectableListItem>
           <SelectableListItem
             itemId="Create custom view"
             onEnter={handleCreateCustomView}
           >
-            <ListItem
+            <DropdownListItem
               focused={selectedItemId === 'Create custom view'}
-              onClick={getDropdownMenuItemClickHandler(handleCreateCustomView)}
+              onClick={handleCreateCustomView}
               startIcon={<IconLayout />}
-              descriptionPlacement="end"
-            >
-              <OverflowingTextWithTooltip text={t`Create custom view`} />
-            </ListItem>
+            >{t`Create custom view`}</DropdownListItem>
           </SelectableListItem>
         </DropdownMenuItemsContainer>
       </SelectableList>

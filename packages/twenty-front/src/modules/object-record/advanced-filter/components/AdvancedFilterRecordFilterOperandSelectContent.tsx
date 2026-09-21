@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
@@ -23,7 +22,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { type ViewFilterOperand } from 'twenty-shared/types';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type AdvancedFilterRecordFilterOperandSelectContentProps = {
   recordFilterId: string;
@@ -106,19 +104,14 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
                     handleOperandChange(filterOperand);
                   }}
                 >
-                  <ListItem
+                  <DropdownListItem
                     focused={selectedItemId === filterOperand}
-                    onClick={getDropdownMenuItemClickHandler(() => {
+                    onClick={() => {
                       handleOperandChange(filterOperand);
-                    })}
+                    }}
                   >
-                    <OverflowingTextWithTooltip
-                      text={getOperandLabel(
-                        filterOperand,
-                        timeZoneAbbreviation,
-                      )}
-                    />
-                  </ListItem>
+                    {getOperandLabel(filterOperand, timeZoneAbbreviation)}
+                  </DropdownListItem>
                 </SelectableListItem>
               ))}
             </SelectableList>

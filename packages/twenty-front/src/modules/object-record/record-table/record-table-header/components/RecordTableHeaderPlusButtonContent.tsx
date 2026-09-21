@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useCallback, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -21,7 +20,7 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSettings, useIcons } from 'twenty-ui/icon';
-import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();
@@ -97,28 +96,24 @@ export const RecordTableHeaderPlusButtonContent = () => {
       <DropdownMenuItemsContainer>
         {filteredFieldMetadataItems.length > 0 ? (
           filteredFieldMetadataItems.map((fieldMetadataItem) => (
-            <ListItem
+            <DropdownListItem
               key={fieldMetadataItem.id}
-              onClick={getDropdownMenuItemClickHandler(() =>
-                handleFieldMetadataItemMenuItemClick(fieldMetadataItem),
-              )}
+              onClick={() =>
+                handleFieldMetadataItemMenuItemClick(fieldMetadataItem)
+              }
               startIcon={
                 <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
               }
             >
-              <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
-            </ListItem>
+              {fieldMetadataItem.label}
+            </DropdownListItem>
           ))
         ) : (
-          <ListItem disabled>
-            <OverflowingTextWithTooltip
-              text={
-                hasAvailableFields
-                  ? t`No results`
-                  : t`All fields are already visible`
-              }
-            />
-          </ListItem>
+          <DropdownListItem disabled>
+            {hasAvailableFields
+              ? t`No results`
+              : t`All fields are already visible`}
+          </DropdownListItem>
         )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
@@ -132,9 +127,9 @@ export const RecordTableHeaderPlusButtonContent = () => {
             setNavigationMemorizedUrl(location.pathname + location.search);
           }}
         >
-          <ListItem startIcon={<IconSettings />}>
-            <OverflowingTextWithTooltip text={t`Customize fields`} />
-          </ListItem>
+          <DropdownListItem
+            startIcon={<IconSettings />}
+          >{t`Customize fields`}</DropdownListItem>
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </DropdownContent>

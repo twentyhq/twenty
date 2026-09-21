@@ -1,3 +1,4 @@
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
@@ -10,7 +11,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import 'react-phone-number-input/style.css';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconContainer = styled.div`
@@ -59,13 +59,11 @@ export const PhoneCountryPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCountries?.length === 0 ? (
-          <ListItem>
-            <OverflowingTextWithTooltip text={t`No results`} />
-          </ListItem>
+          <DropdownListItem disabled>{t`No results`}</DropdownListItem>
         ) : (
           <>
             {selectedCountry && (
-              <ListItem
+              <DropdownListItem
                 key={selectedCountry.countryCode}
                 onClick={() => onChange(selectedCountry.countryCode)}
                 role="option"
@@ -81,12 +79,12 @@ export const PhoneCountryPickerDropdownSelect = ({
                 <OverflowingTextWithTooltip
                   text={`${selectedCountry.countryName} (+${selectedCountry.callingCode})`}
                 />
-              </ListItem>
+              </DropdownListItem>
             )}
             {filteredCountries.map(
               ({ countryCode, countryName, callingCode, Flag }) =>
                 selectedCountry?.countryCode === countryCode ? null : (
-                  <ListItem
+                  <DropdownListItem
                     key={countryCode}
                     onClick={() => onChange(countryCode)}
                     role="option"
@@ -102,7 +100,7 @@ export const PhoneCountryPickerDropdownSelect = ({
                     <OverflowingTextWithTooltip
                       text={`${countryName} (+${callingCode})`}
                     />
-                  </ListItem>
+                  </DropdownListItem>
                 ),
             )}
           </>

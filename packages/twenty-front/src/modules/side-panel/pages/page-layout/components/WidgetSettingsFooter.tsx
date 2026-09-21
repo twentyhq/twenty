@@ -1,5 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useDuplicatePageLayoutWidget } from '@/page-layout/hooks/useDuplicatePageLayoutWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -13,7 +12,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopyPlus, IconTrash } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const WidgetSettingsFooter = ({
   pageLayoutId,
@@ -62,27 +60,23 @@ export const WidgetSettingsFooter = ({
             itemId="duplicate-widget"
             onEnter={handleDuplicateWidget}
           >
-            <ListItem
+            <DropdownListItem
               focused={selectedItemId === 'duplicate-widget'}
-              onClick={getDropdownMenuItemClickHandler(handleDuplicateWidget)}
+              onClick={handleDuplicateWidget}
               startIcon={<IconCopyPlus />}
-            >
-              <OverflowingTextWithTooltip text={t`Duplicate widget`} />
-            </ListItem>
+            >{t`Duplicate widget`}</DropdownListItem>
           </SelectableListItem>
 
           <SelectableListItem
             itemId="delete-widget"
             onEnter={handleDeleteWidget}
           >
-            <ListItem
+            <DropdownListItem
               focused={selectedItemId === 'delete-widget'}
-              onClick={getDropdownMenuItemClickHandler(handleDeleteWidget)}
+              onClick={handleDeleteWidget}
               startIcon={<IconTrash />}
               color="danger"
-            >
-              <OverflowingTextWithTooltip text={t`Delete widget`} />
-            </ListItem>
+            >{t`Delete widget`}</DropdownListItem>
           </SelectableListItem>
         </OptionsDropdownMenu>,
       ]}

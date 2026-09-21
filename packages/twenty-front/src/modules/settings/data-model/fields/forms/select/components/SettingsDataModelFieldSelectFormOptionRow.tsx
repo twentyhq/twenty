@@ -1,5 +1,4 @@
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
@@ -20,7 +19,7 @@ import {
   IconX,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { type ColorLabels, ListItem } from 'twenty-ui/primitives/navigation';
+import { type ColorLabels } from 'twenty-ui/primitives/navigation';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
@@ -170,7 +169,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           <DropdownContent>
             <DropdownMenuItemsContainer>
               {MAIN_COLOR_NAMES.map((colorName) => (
-                <ListItem
+                <DropdownListItem
                   key={colorName}
                   onClick={() => {
                     onChange({ ...option, color: colorName });
@@ -182,8 +181,8 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
                   indicator="check"
                   startIcon={<ColorSample colorName={colorName} />}
                 >
-                  <OverflowingTextWithTooltip text={colorLabels[colorName]} />
-                </ListItem>
+                  {colorLabels[colorName]}
+                </DropdownListItem>
               ))}
             </DropdownMenuItemsContainer>
           </DropdownContent>
@@ -231,37 +230,31 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
             <DropdownContent>
               <DropdownMenuItemsContainer>
                 {isDefault ? (
-                  <ListItem
+                  <DropdownListItem
                     startIcon={<IconX />}
-                    onClick={getDropdownMenuItemClickHandler(() => {
+                    onClick={() => {
                       onRemoveAsDefault?.();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
-                    })}
-                  >
-                    <OverflowingTextWithTooltip text={t`Remove as default`} />
-                  </ListItem>
+                    }}
+                  >{t`Remove as default`}</DropdownListItem>
                 ) : (
-                  <ListItem
+                  <DropdownListItem
                     startIcon={<IconCheck />}
-                    onClick={getDropdownMenuItemClickHandler(() => {
+                    onClick={() => {
                       onSetAsDefault?.();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
-                    })}
-                  >
-                    <OverflowingTextWithTooltip text={t`Set as default`} />
-                  </ListItem>
+                    }}
+                  >{t`Set as default`}</DropdownListItem>
                 )}
                 {!!onRemove && !isDefault && (
-                  <ListItem
+                  <DropdownListItem
                     color="danger"
                     startIcon={<IconTrash />}
-                    onClick={getDropdownMenuItemClickHandler(() => {
+                    onClick={() => {
                       onRemove();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
-                    })}
-                  >
-                    <OverflowingTextWithTooltip text={t`Remove option`} />
-                  </ListItem>
+                    }}
+                  >{t`Remove option`}</DropdownListItem>
                 )}
               </DropdownMenuItemsContainer>
             </DropdownContent>

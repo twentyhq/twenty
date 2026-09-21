@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
@@ -20,7 +19,6 @@ import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type PageLayoutTabListNewTabDropdownContentProps = {
   onCreate: () => void;
@@ -78,12 +76,10 @@ export const PageLayoutTabListNewTabDropdownContent = ({
     <DropdownContent>
       <DropdownMenuHeader>{t`New tab`}</DropdownMenuHeader>
       <DropdownMenuItemsContainer>
-        <ListItem
+        <DropdownListItem
           startIcon={<IconPlus />}
-          onClick={getDropdownMenuItemClickHandler(handleCreateEmptyTab)}
-        >
-          <OverflowingTextWithTooltip text={t`Empty tab`} />
-        </ListItem>
+          onClick={handleCreateEmptyTab}
+        >{t`Empty tab`}</DropdownListItem>
       </DropdownMenuItemsContainer>
       {inactiveTabs.length > 0 && (
         <>
@@ -91,19 +87,17 @@ export const PageLayoutTabListNewTabDropdownContent = ({
           <DropdownMenuSectionLabel label={t`Disabled`} />
           <DropdownMenuItemsContainer>
             {inactiveTabs.map((tab) => (
-              <ListItem
+              <DropdownListItem
                 key={tab.id}
                 startIcon={
                   <SelectOptionIcon
                     Icon={isDefined(tab.icon) ? getIcon(tab.icon) : undefined}
                   />
                 }
-                onClick={getDropdownMenuItemClickHandler(() =>
-                  handleReactivateTab(tab.id),
-                )}
+                onClick={() => handleReactivateTab(tab.id)}
               >
-                <OverflowingTextWithTooltip text={tab.title} />
-              </ListItem>
+                {tab.title}
+              </DropdownListItem>
             ))}
           </DropdownMenuItemsContainer>
         </>

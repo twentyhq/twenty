@@ -1,22 +1,14 @@
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconSearch } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-
-const StyledSearchText = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  margin-left: ${themeCssVariables.spacing[1]};
-`;
 
 type ViewBarFilterDropdownAnyFieldSearchButtonMenuItemProps = {
   onClick?: () => void;
@@ -41,20 +33,12 @@ export const ViewBarFilterDropdownAnyFieldSearchButtonMenuItem = ({
       itemId={VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH}
       onEnter={onClick}
     >
-      <ListItem
+      <DropdownListItem
         focused={isSelectedItemId}
-        onClick={getDropdownMenuItemClickHandler(onClick)}
+        onClick={onClick}
         startIcon={<IconSearch />}
-      >
-        {
-          <>
-            {t`Search any field`}
-            {objectFilterDropdownSearchInput && (
-              <StyledSearchText>{t`· ${objectFilterDropdownSearchInput}`}</StyledSearchText>
-            )}
-          </>
-        }
-      </ListItem>
+        description={objectFilterDropdownSearchInput}
+      >{t`Search any field`}</DropdownListItem>
     </SelectableListItem>
   );
 };

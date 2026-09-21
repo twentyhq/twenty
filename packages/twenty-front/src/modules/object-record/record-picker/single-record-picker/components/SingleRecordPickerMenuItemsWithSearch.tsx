@@ -1,3 +1,4 @@
+import { DropdownListItem } from '@/ui/layout/dropdown/components/DropdownListItem';
 import { type SingleRecordPickerMenuItemsWithSearchProps } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerMenuItemsWithSearchProps';
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -9,9 +10,6 @@ import { useSingleRecordPickerSearch } from '@/object-record/record-picker/singl
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -92,12 +90,10 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           {isDefined(onCreate) && canCreateRecords && (
             <>
               <DropdownMenuItemsContainer scrollable={false}>
-                <ListItem
-                  onClick={getDropdownMenuItemClickHandler(handleCreateNew)}
+                <DropdownListItem
+                  onClick={handleCreateNew}
                   startIcon={<IconPlus />}
-                >
-                  <OverflowingTextWithTooltip text={t`Add New`} />
-                </ListItem>
+                >{t`Add New`}</DropdownListItem>
               </DropdownMenuItemsContainer>
               <DropdownMenuSeparator />
             </>
@@ -142,12 +138,10 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer scrollable={false}>
-                <ListItem
-                  onClick={getDropdownMenuItemClickHandler(handleCreateNew)}
+                <DropdownListItem
+                  onClick={handleCreateNew}
                   startIcon={<IconPlus />}
-                >
-                  <OverflowingTextWithTooltip text={t`Add New`} />
-                </ListItem>
+                >{t`Add New`}</DropdownListItem>
               </DropdownMenuItemsContainer>
             </>
           )}
