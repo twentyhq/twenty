@@ -62,8 +62,8 @@ yarn twenty dev:build
 ```
 
 `yarn test` runs the integration suite against a running Twenty server: it
-installs the application, checks that the list action is deployed, then
-uninstalls the application. Configure `TWENTY_API_URL` and `TWENTY_API_KEY` for
+installs the application, checks that the list action is deployed, exercises
+it against an in-memory Microsoft Graph, then uninstalls the application. Configure `TWENTY_API_URL` and `TWENTY_API_KEY` for
 a disposable workspace; do not use the shared QA workspace. Public apps use the
 monorepo CI workflows.
 
