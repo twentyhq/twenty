@@ -37,8 +37,9 @@ describe('Conversation sharing through the authenticated API', () => {
       const previousEnabled =
         featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] === true;
       const roleId = userWorkspaceRoleMap[USER_WORKSPACE_DATA_SEED_IDS.JONY];
-      if (!isDefined(roleId))
+      if (!isDefined(roleId)) {
         throw new Error('Seeded recipient role is missing');
+      }
       const target: ChatThreadShareTargetInput =
         audience === 'member'
           ? { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY }

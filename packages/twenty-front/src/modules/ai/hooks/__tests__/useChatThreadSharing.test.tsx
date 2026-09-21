@@ -11,27 +11,44 @@ import { type ReactNode } from 'react';
 import { AiChatSharingRefreshEffect } from '@/ai/components/AiChatSharingRefreshEffect';
 import { useChatThreadSharing } from '@/ai/hooks/useChatThreadSharing';
 
+const mockEnqueueToast = jest.fn();
+
 jest.mock('twenty-ui/primitives/feedback', () => ({
-  useToast: () => ({ enqueueToast: jest.fn() }),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 const createHarness = () => {
-  const request = jest.fn(() => ({
-    chatThreadSharing: {
-      __typename: 'AgentChatThreadSharing',
-      canManage: true,
-      isEnabled: true,
-      shares: [],
-      roles: [],
-    },
-  }));
+  const sharing = {
+    __typename: 'ChatThreadSharingDTO',
+    canManage: true,
+    isEnabled: true,
+    shares: [],
+    roles: [],
+  };
+  const request = jest.fn((operationName: string | undefined) =>
+    operationName === 'SetChatThreadShare'
+      ? {
+          setChatThreadShare: {
+            ...sharing,
+            shares: [
+              {
+                __typename: 'ChatThreadShareDTO',
+                id: 'grant',
+                principalId: 'member',
+                principalType: 'WORKSPACE_MEMBER',
+              },
+            ],
+          },
+        }
+      : { chatThreadSharing: sharing },
+  );
   const client = new ApolloClient({
     cache: new InMemoryCache(),
     link: new ApolloLink(
-      () =>
+      (operation) =>
         new Observable((observer) => {
           try {
-            observer.next({ data: request() });
+            observer.next({ data: request(operation.operationName) });
             observer.complete();
           } catch (error) {
             observer.error(error);
@@ -46,8 +63,43 @@ const createHarness = () => {
 };
 
 describe('useChatThreadSharing', () => {
-  beforeEach(() => jest.useFakeTimers());
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.clearAllMocks();
+  });
   afterEach(() => jest.useRealTimers());
+
+  it('updates the audience from the successful mutation without another request', async () => {
+    const { request, wrapper } = createHarness();
+    const { result } = renderHook(() => useChatThreadSharing('thread', false), {
+      wrapper,
+    });
+    await waitFor(() => expect(result.current.sharing?.isEnabled).toBe(true));
+    await act(async () => {
+      await result.current.setShare({ workspaceMemberId: 'member' }, true);
+    });
+    expect(request).toHaveBeenCalledTimes(2);
+    expect(result.current.sharing?.shares).toEqual([
+      expect.objectContaining({ principalId: 'member' }),
+    ]);
+    expect(mockEnqueueToast).not.toHaveBeenCalled();
+  });
+
+  it('reports a rejected mutation without changing the saved audience', async () => {
+    const { request, wrapper } = createHarness();
+    const { result } = renderHook(() => useChatThreadSharing('thread', false), {
+      wrapper,
+    });
+    await waitFor(() => expect(result.current.sharing?.isEnabled).toBe(true));
+    request.mockImplementationOnce(() => {
+      throw new Error('Save failed');
+    });
+    await act(async () => {
+      await result.current.setShare({ workspaceMemberId: 'member' }, true);
+    });
+    expect(result.current.sharing?.shares).toEqual([]);
+    expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
+  });
 
   it('fetches availability once while closed and polls only while open', async () => {
     const { request, wrapper } = createHarness();
