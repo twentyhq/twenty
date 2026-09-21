@@ -52,6 +52,7 @@ import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/appli
 import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab';
 import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailVariablesTab';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
+import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
@@ -224,29 +225,21 @@ export const SettingsApplicationDetails = () => {
       : []),
   ];
 
-  const healthAction = healthCheckResult?.action;
-  const healthActionTabId = isNonEmptyString(healthAction?.location)
-    ? healthAction.location
-    : configurationTabId;
+  const healthBanner = isNonEmptyArray(missingRequiredApplicationVariables)
+    ? undefined
+    : getApplicationHealthBanner({
+        healthCheckResult,
+        availableTabIds: tabs.map((tab) => tab.id),
+        fallbackTabId: configurationTabId,
+      });
 
-  const healthBannerResult =
-    !isNonEmptyArray(missingRequiredApplicationVariables) &&
-    isDefined(healthCheckResult) &&
-    isNonEmptyString(healthCheckResult.message)
-      ? {
-          status: healthCheckResult.status,
-          message: healthCheckResult.message,
-          action:
-            isDefined(healthAction) &&
-            isDefined(healthActionTabId) &&
-            tabs.some((tab) => tab.id === healthActionTabId)
-              ? {
-                  label: healthAction.label,
-                  onClick: () => setActiveTabId(healthActionTabId),
-                }
-              : undefined,
-        }
-      : undefined;
+  const healthBannerAction = healthBanner?.action;
+  const healthBannerButton = isDefined(healthBannerAction)
+    ? {
+        label: healthBannerAction.label,
+        onClick: () => setActiveTabId(healthBannerAction.tabId),
+      }
+    : undefined;
 
   const renderActiveTabContent = () => {
     if (!isDefined(application)) {
@@ -348,11 +341,11 @@ export const SettingsApplicationDetails = () => {
                 onConfigure={goToConfigurationTab}
               />
             )}
-          {isDefined(healthBannerResult) && (
+          {isDefined(healthBanner) && (
             <SettingsApplicationHealthBanner
-              healthStatus={healthBannerResult.status}
-              healthMessage={healthBannerResult.message}
-              action={healthBannerResult.action}
+              healthStatus={healthBanner.status}
+              healthMessage={healthBanner.message}
+              action={healthBannerButton}
             />
           )}
           {isApplicationStopped && (
