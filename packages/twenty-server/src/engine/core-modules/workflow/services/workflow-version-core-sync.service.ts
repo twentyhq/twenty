@@ -1,4 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
+
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { toCoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/utils/workflow-version-status.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -41,7 +50,43 @@ export class WorkflowVersionCoreSyncService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPositionService: RecordPositionService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationService: ApplicationService,
   ) {}
+
+  private async runCoreWorkflowMigration({
+    workspaceId,
+    failureMessage,
+    operations,
+  }: {
+    workspaceId: string;
+    failureMessage: string;
+    operations: AllFlatEntityOperationByMetadataName;
+  }): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: operations,
+          workspaceId,
+          isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        failureMessage,
+      );
+    }
+  }
 
   async upsertToCore(
     workspaceId: string,
@@ -99,15 +144,83 @@ export class WorkflowVersionCoreSyncService {
           ? [workflowVersion.trigger]
           : null,
         steps: workflowVersion.steps ?? null,
-        status: workflowVersion.status as unknown as WorkflowVersionStatus,
+        status: toCoreWorkflowVersionStatus(workflowVersion.status),
         universalIdentifier: uuidv4(),
         applicationId,
       };
     });
 
-    await this.coreWorkflowVersionRepository.upsert(workspaceId, coreRows, [
-      'id',
-    ]);
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const { flatWorkflowVersionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
+      );
+
+    // The table decides create vs update: a stale map would send a persisted id
+    // down the create branch and into the primary key.
+    const persistedCoreVersionIds = new Set(
+      (
+        await this.coreWorkflowVersionRepository.find(workspaceId, {
+          where: { id: In(coreRows.map(({ id }) => id)) },
+          select: { id: true },
+        })
+      ).map(({ id }) => id),
+    );
+
+    const timestamp = new Date().toISOString();
+    const flatVersionsToCreate: (UniversalFlatWorkflowVersion & {
+      id?: string;
+    })[] = [];
+    const flatVersionsToUpdate: UniversalFlatWorkflowVersion[] = [];
+
+    for (const coreRow of coreRows) {
+      const existingFlatWorkflowVersion = persistedCoreVersionIds.has(coreRow.id)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: coreRow.id,
+            flatEntityMaps: flatWorkflowVersionMaps,
+          })
+        : undefined;
+
+      const flatWorkflowVersion: UniversalFlatWorkflowVersion & {
+        id: string;
+      } = {
+        ...coreRow,
+        coreWorkflowId:
+          coreRow.coreWorkflowId ??
+          existingFlatWorkflowVersion?.coreWorkflowId ??
+          null,
+        universalIdentifier:
+          existingFlatWorkflowVersion?.universalIdentifier ??
+          coreRow.universalIdentifier,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        createdAt: existingFlatWorkflowVersion?.createdAt ?? timestamp,
+        updatedAt: timestamp,
+      };
+
+      if (isDefined(existingFlatWorkflowVersion)) {
+        flatVersionsToUpdate.push(flatWorkflowVersion);
+      } else {
+        flatVersionsToCreate.push(flatWorkflowVersion);
+      }
+    }
+
+    await this.runCoreWorkflowMigration({
+      workspaceId,
+      failureMessage:
+        'Multiple validation errors occurred while mirroring workflow versions to core',
+      operations: {
+        workflowVersion: {
+          flatEntityToCreate: flatVersionsToCreate,
+          flatEntityToDelete: [],
+          flatEntityToUpdate: flatVersionsToUpdate,
+        },
+      },
+    });
 
     await this.writeBackCoreVersionIds(
       workspaceId,
@@ -151,11 +264,57 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
-    await this.coreWorkflowVersionRepository.delete(workspaceId, {
-      id: In(coreWorkflowVersionIds),
+    await this.deleteCoreVersionsThroughMigration({
+      workspaceId,
+      coreWorkflowVersionIds,
     });
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
+  }
+
+  private async deleteCoreVersionsThroughMigration({
+    workspaceId,
+    coreWorkflowVersionIds,
+  }: {
+    workspaceId: string;
+    coreWorkflowVersionIds: string[];
+  }): Promise<void> {
+    if (coreWorkflowVersionIds.length === 0) {
+      return;
+    }
+
+    const { flatWorkflowVersionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
+      );
+
+    const flatVersionsToDelete = coreWorkflowVersionIds
+      .map((coreWorkflowVersionId) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: coreWorkflowVersionId,
+          flatEntityMaps: flatWorkflowVersionMaps,
+        }),
+      )
+      .filter(isDefined);
+
+    // The dual-write listener deletes the same ids when the mirror is soft
+    // deleted, so an id already gone is an idempotent no-op rather than an error.
+    if (flatVersionsToDelete.length === 0) {
+      return;
+    }
+
+    await this.runCoreWorkflowMigration({
+      workspaceId,
+      failureMessage:
+        'Multiple validation errors occurred while deleting workflow versions',
+      operations: {
+        workflowVersion: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: flatVersionsToDelete,
+          flatEntityToUpdate: [],
+        },
+      },
+    });
   }
 
   async findCoreVersionById(
@@ -302,6 +461,17 @@ export class WorkflowVersionCoreSyncService {
         transactionScope,
       );
     }
+
+    // This writer stays on raw SQL because it runs inside a transaction its
+    // caller owns and relies on the locks taken above, so the flat entity maps
+    // have to be refreshed by hand or the next migration write diffs against a
+    // cache that no longer matches the table.
+    transactionScope.afterCommit(async () => {
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatWorkflowVersionMaps'],
+      });
+    });
 
     return { coreWorkflowVersionId };
   }
@@ -550,8 +720,14 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
-    await this.coreWorkflowVersionRepository.delete(workspaceId, {
-      workflowId: In(workflowIds),
+    const versionsToDelete = await this.coreWorkflowVersionRepository.find(
+      workspaceId,
+      { where: { workflowId: In(workflowIds) }, select: { id: true } },
+    );
+
+    await this.deleteCoreVersionsThroughMigration({
+      workspaceId,
+      coreWorkflowVersionIds: versionsToDelete.map(({ id }) => id),
     });
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
