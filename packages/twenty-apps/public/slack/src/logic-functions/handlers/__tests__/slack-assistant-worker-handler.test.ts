@@ -26,6 +26,7 @@ const {
   subscribeSlackThreadMock,
   resolveSlackChannelAccessPolicyMock,
   resolveSlackAccessDecisionMock,
+  notifySilencedSlackChannelMock,
 } = vi.hoisted(() => ({
   callLog: [] as string[],
   coreApiClientMock: vi.fn(),
@@ -43,10 +44,15 @@ const {
   subscribeSlackThreadMock: vi.fn(),
   resolveSlackChannelAccessPolicyMock: vi.fn(),
   resolveSlackAccessDecisionMock: vi.fn(),
+  notifySilencedSlackChannelMock: vi.fn(),
 }));
 
 vi.mock('src/logic-functions/utils/resolve-slack-access-decision', () => ({
   resolveSlackAccessDecision: resolveSlackAccessDecisionMock,
+}));
+
+vi.mock('src/logic-functions/utils/notify-silenced-slack-channel', () => ({
+  notifySilencedSlackChannel: notifySilencedSlackChannelMock,
 }));
 
 vi.mock(
@@ -154,6 +160,7 @@ describe('slackAssistantWorkerHandler', () => {
       return {};
     });
     claimSlackAssistantRequestMock.mockResolvedValue(true);
+    notifySilencedSlackChannelMock.mockResolvedValue(undefined);
     updateSlackAssistantRequestMock.mockResolvedValue(undefined);
     fetchWorkspaceBaseUrlsMock.mockResolvedValue(['https://acme.twenty.com']);
     resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
@@ -336,6 +343,23 @@ describe('slackAssistantWorkerHandler', () => {
       expect.anything(),
       { id: REQUEST_RECORD.id, status: SLACK_ASSISTANT_REQUEST_STATUS.DONE },
     );
+  });
+
+  it('should tell the requester privately when the channel was silenced after the request was enqueued', async () => {
+    resolveSlackChannelAccessPolicyMock.mockResolvedValue({ status: 'SILENT' });
+
+    await slackAssistantWorkerHandler({
+      ...REQUEST_RECORD,
+      slackChannelId: 'C0FIN',
+      slackChannelType: 'channel',
+      slackThreadTimestamp: '1700000000.000001',
+    });
+
+    expect(notifySilencedSlackChannelMock).toHaveBeenCalledWith({
+      slackChannelId: 'C0FIN',
+      slackUserId: 'U123',
+      parentMessageTimestamp: '1700000000.000001',
+    });
   });
 
   it('should fail rather than answer when the channel rule cannot be read', async () => {

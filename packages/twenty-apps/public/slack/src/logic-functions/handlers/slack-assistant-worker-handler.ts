@@ -25,6 +25,7 @@ import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspac
 import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-slack-assistant-request-resumable';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { notifySilencedSlackChannel } from 'src/logic-functions/utils/notify-silenced-slack-channel';
 import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
 import { resolveSlackAssistantAttachments } from 'src/logic-functions/utils/resolve-slack-assistant-attachments';
 import { resolveSlackChannelAccessPolicy } from 'src/logic-functions/utils/resolve-slack-channel-access-policy';
@@ -146,6 +147,14 @@ export const slackAssistantWorkerHandler = async (
 
     if (channelAccessPolicy.status === 'SILENT') {
       await stopStatusUpdates();
+
+      if (isNonEmptyString(record.slackUserId)) {
+        await notifySilencedSlackChannel({
+          slackChannelId,
+          slackUserId: record.slackUserId,
+          parentMessageTimestamp,
+        });
+      }
 
       await updateSlackAssistantRequest(client, {
         id: record.id,
