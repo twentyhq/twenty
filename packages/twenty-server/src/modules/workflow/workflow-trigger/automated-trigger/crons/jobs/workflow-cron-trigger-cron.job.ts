@@ -1,7 +1,7 @@
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
-import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
+import { resolvePublishedCoreTriggerTarget } from 'src/modules/workflow/workflow-trigger/utils/resolve-published-core-trigger-target.util';
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -264,65 +264,50 @@ export class WorkflowCronTriggerCronJob {
         trigger.workflowId,
       );
 
-    if (!isDefined(workflow)) {
-      await this.captureUnresolvableTrigger(
+    const publishedVersion = isDefined(
+      workflow?.lastPublishedCoreWorkflowVersionId,
+    )
+      ? await this.workflowVersionCoreSyncService.findCoreVersionById(
+          trigger.workspaceId,
+          workflow.lastPublishedCoreWorkflowVersionId,
+        )
+      : null;
+
+    const target = resolvePublishedCoreTriggerTarget({
+      workflow,
+      publishedVersion,
+      expectedTriggerType: WorkflowTriggerType.CRON,
+    });
+
+    if (target.status === 'UNRESOLVABLE') {
+      await this.captureUnresolvableTrigger({
         trigger,
-        `workflow ${trigger.workflowId} not found in core`,
-      );
+        reason: target.reason,
+      });
 
       return null;
     }
 
-    if (!isDefined(workflow.lastPublishedCoreWorkflowVersionId)) {
-      await this.captureUnresolvableTrigger(
-        trigger,
-        `workflow ${workflow.id} has no published core version`,
-      );
-
-      return null;
-    }
-
-    const version =
-      await this.workflowVersionCoreSyncService.findCoreVersionById(
-        trigger.workspaceId,
-        workflow.lastPublishedCoreWorkflowVersionId,
-      );
-
-    if (!isDefined(version)) {
-      await this.captureUnresolvableTrigger(
-        trigger,
-        `published core version ${workflow.lastPublishedCoreWorkflowVersionId} of workflow ${workflow.id} not found`,
-      );
-
-      return null;
-    }
-
-    const definition = version.triggers?.[0];
-
-    if (
-      version.coreWorkflowId !== workflow.id ||
-      version.status !== WorkflowVersionStatus.ACTIVE ||
-      definition?.type !== WorkflowTriggerType.CRON
-    ) {
+    if (target.status === 'NOT_APPLICABLE') {
       return null;
     }
 
     return {
       workspaceId: trigger.workspaceId,
-      workflowId: workflow.id,
-      legacyWorkflowId: workflow.workspaceWorkflowId ?? undefined,
-      ...buildCoreDispatchIds({
-        coreWorkflowVersionId: version.id,
-        workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
-      }),
-      pattern: computeCronPatternFromSchedule(definition),
+      workflowId: target.workflowId,
+      legacyWorkflowId: target.legacyWorkflowId,
+      ...buildCoreDispatchIds(target),
+      pattern: computeCronPatternFromSchedule(target.definition),
     };
   }
 
-  private async captureUnresolvableTrigger(
-    trigger: CachedCronTrigger,
-    reason: string,
-  ): Promise<void> {
+  private async captureUnresolvableTrigger({
+    trigger,
+    reason,
+  }: {
+    trigger: CachedCronTrigger;
+    reason: string;
+  }): Promise<void> {
     await this.metricsService.incrementCounterForEvent({
       key: MetricsKeys.WorkflowTriggerDispatchDropped,
       eventId: `${trigger.workspaceId}:${trigger.workflowId}`,

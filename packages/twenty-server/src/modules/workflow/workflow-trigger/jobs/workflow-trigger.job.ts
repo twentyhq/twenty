@@ -72,11 +72,11 @@ export class WorkflowTriggerJob {
       );
 
     if (!isDefined(coreWorkflowVersion)) {
-      await this.captureDroppedDispatch(
+      await this.captureDroppedDispatch({
         workspaceId,
         workflowId,
-        `Core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}`,
-      );
+        message: `Core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}`,
+      });
       return;
     }
 
@@ -90,20 +90,20 @@ export class WorkflowTriggerJob {
       !isDefined(coreWorkflow) ||
       coreWorkflowVersion.coreWorkflowId !== coreWorkflow.id
     ) {
-      await this.captureDroppedDispatch(
+      await this.captureDroppedDispatch({
         workspaceId,
         workflowId,
-        `Core workflow version ${coreWorkflowVersionId} does not belong to workflow ${workflowId} in workspace ${workspaceId}`,
-      );
+        message: `Core workflow version ${coreWorkflowVersionId} does not belong to workflow ${workflowId} in workspace ${workspaceId}`,
+      });
       return;
     }
 
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.ACTIVE) {
-      await this.captureDroppedDispatch(
+      await this.captureDroppedDispatch({
         workspaceId,
         workflowId,
-        `Core workflow version ${coreWorkflowVersionId} is not active in workspace ${workspaceId}`,
-      );
+        message: `Core workflow version ${coreWorkflowVersionId} is not active in workspace ${workspaceId}`,
+      });
       return;
     }
 
@@ -112,11 +112,11 @@ export class WorkflowTriggerJob {
       coreWorkflowVersion.workspaceWorkflowVersionId !==
         workspaceWorkflowVersionId
     ) {
-      await this.captureDroppedDispatch(
+      await this.captureDroppedDispatch({
         workspaceId,
         workflowId,
-        `Workspace version ${workspaceWorkflowVersionId} conflicts with core version ${coreWorkflowVersionId} in workspace ${workspaceId}`,
-      );
+        message: `Workspace version ${workspaceWorkflowVersionId} conflicts with core version ${coreWorkflowVersionId} in workspace ${workspaceId}`,
+      });
       return;
     }
 
@@ -146,11 +146,11 @@ export class WorkflowTriggerJob {
       : coreWorkflow?.lastPublishedCoreWorkflowVersionId;
 
     if (!isDefined(coreWorkflowVersionId)) {
-      await this.captureDroppedDispatch(
-        data.workspaceId,
-        data.workflowId,
-        `Legacy workflow trigger for ${data.workflowId} has no core version mapping in workspace ${data.workspaceId}`,
-      );
+      await this.captureDroppedDispatch({
+        workspaceId: data.workspaceId,
+        workflowId: data.workflowId,
+        message: `Legacy workflow trigger for ${data.workflowId} has no core version mapping in workspace ${data.workspaceId}`,
+      });
       return;
     }
 
@@ -163,11 +163,15 @@ export class WorkflowTriggerJob {
     });
   }
 
-  private async captureDroppedDispatch(
-    workspaceId: string,
-    workflowId: string,
-    message: string,
-  ): Promise<void> {
+  private async captureDroppedDispatch({
+    workspaceId,
+    workflowId,
+    message,
+  }: {
+    workspaceId: string;
+    workflowId: string;
+    message: string;
+  }): Promise<void> {
     this.logger.error(message);
     this.exceptionHandlerService.captureExceptions([new Error(message)]);
 
