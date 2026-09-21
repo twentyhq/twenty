@@ -1,3 +1,4 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
@@ -21,7 +22,7 @@ import { LightIconButton } from 'twenty-ui/components';
 import {
   type ColorLabels,
   MenuItem,
-  MenuItemSelectColor,
+  ListItem,
 } from 'twenty-ui/primitives/navigation';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -172,16 +173,20 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           <DropdownContent>
             <DropdownMenuItemsContainer>
               {MAIN_COLOR_NAMES.map((colorName) => (
-                <MenuItemSelectColor
+                <ListItem
                   key={colorName}
                   onClick={() => {
                     onChange({ ...option, color: colorName });
                     closeColorDropdown(SELECT_COLOR_DROPDOWN_ID);
                   }}
-                  color={colorName}
+                  role="option"
+                  aria-selected={colorName === option.color}
                   selected={colorName === option.color}
-                  colorLabels={colorLabels}
-                />
+                  indicator="check"
+                  startIcon={<ColorSample colorName={colorName} />}
+                >
+                  <OverflowingTextWithTooltip text={colorLabels[colorName]} />
+                </ListItem>
               ))}
             </DropdownMenuItemsContainer>
           </DropdownContent>

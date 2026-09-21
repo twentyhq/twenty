@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { useEffect, useMemo, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
@@ -25,7 +27,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined, parseJson } from 'twenty-shared/utils';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/primitives/navigation';
+import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '';
@@ -172,22 +174,30 @@ export const ObjectFilterDropdownOptionSelect = ({
       selectableItemIdArray={objectRecordsIds}
       focusId={focusId}
     >
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
         {showNoResult ? (
           <MenuItem text={t`No results`} />
         ) : (
           optionsInDropdown?.map((option) => (
-            <MenuItemMultiSelect
+            <ListItem
+              render={<button type="button" />}
               key={option.id}
-              selected={option.isSelected}
-              isKeySelected={option.id === selectedItemId}
-              onSelectChange={(selected) =>
-                handleMultipleOptionSelectChange(option, selected)
-              }
-              text={option.label}
-              color={option.color}
               className=""
-            />
+              focused={option.id === selectedItemId}
+              role="option"
+              aria-selected={option.isSelected}
+              selected={option.isSelected}
+              indicator="checkbox"
+              onClick={() =>
+                handleMultipleOptionSelectChange(option, !option.isSelected)
+              }
+            >
+              {isDefined(option.color) ? (
+                <Tag color={option.color}>{option.label}</Tag>
+              ) : (
+                <OverflowingTextWithTooltip text={option.label} />
+              )}
+            </ListItem>
           ))
         )}
       </DropdownMenuItemsContainer>

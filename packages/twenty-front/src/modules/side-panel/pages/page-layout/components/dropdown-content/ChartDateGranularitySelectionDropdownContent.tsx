@@ -1,3 +1,4 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -15,7 +16,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   type FieldsConfiguration,
   type WidgetConfiguration,
@@ -160,14 +161,20 @@ export const ChartDateGranularitySelectionDropdownContent = ({
                 handleSelectDateGranularityOption(option);
               }}
             >
-              <MenuItemSelect
-                text={getDateGranularityLabel(option)}
-                selected={currentDateGranularity === option}
+              <ListItem
                 focused={selectedItemId === option}
                 onClick={() => {
                   handleSelectDateGranularityOption(option);
                 }}
-              />
+                role="option"
+                aria-selected={currentDateGranularity === option}
+                selected={currentDateGranularity === option}
+                indicator="check"
+              >
+                <OverflowingTextWithTooltip
+                  text={getDateGranularityLabel(option)}
+                />
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

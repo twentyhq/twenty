@@ -1,3 +1,5 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useMemo, useState } from 'react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -19,7 +21,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconForbid, IconX, useIcons } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type ReadonlyDeep } from 'type-fest';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -106,12 +108,18 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
           {!isNonEmptyString(searchFilter) && (
             <>
               <DropdownMenuItemsContainer scrollable={false}>
-                <MenuItemSelect
-                  selected={selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY}
+                <ListItem
                   onClick={onDoNotImportSelect}
-                  LeftIcon={IconForbid}
-                  text={t`Do not import`}
-                />
+                  role="option"
+                  aria-selected={
+                    selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY
+                  }
+                  selected={selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY}
+                  indicator="check"
+                  startIcon={<SelectOptionIcon Icon={IconForbid} />}
+                >
+                  <OverflowingTextWithTooltip text={t`Do not import`} />
+                </ListItem>
               </DropdownMenuItemsContainer>
               {suggestedOptions.length > 0 && (
                 <>
@@ -119,14 +127,18 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                   <DropdownMenuSectionLabel label={t`Suggested`} />
                   <DropdownMenuItemsContainer scrollable={false}>
                     {suggestedOptions.map((option) => (
-                      <MenuItemSelect
+                      <ListItem
                         key={option.value}
-                        selected={selectedValue?.value === option.value}
                         onClick={() => handleSuggestedOptionClick(option)}
-                        LeftIcon={option.Icon}
-                        text={option.label}
-                        contextualText={option.fieldMetadataTypeLabel}
-                      />
+                        role="option"
+                        aria-selected={selectedValue?.value === option.value}
+                        selected={selectedValue?.value === option.value}
+                        indicator="check"
+                        description={option.fieldMetadataTypeLabel}
+                        startIcon={<SelectOptionIcon Icon={option.Icon} />}
+                      >
+                        <OverflowingTextWithTooltip text={option.label} />
+                      </ListItem>
                     ))}
                   </DropdownMenuItemsContainer>
                 </>
@@ -137,15 +149,19 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
           )}
           <DropdownMenuItemsContainer scrollable={false}>
             {filteredAvailableFieldMetadataItems.map((field) => (
-              <MenuItemSelect
+              <ListItem
                 key={field.id}
-                selected={selectedValue?.value === field.name}
                 onClick={() => handleFieldClick(field)}
-                LeftIcon={getIcon(field.icon)}
-                text={field.label}
-                contextualText={getFieldMetadataTypeLabel(field.type)}
-                hasSubMenu={hasNestedFields(field)}
-              />
+                role="option"
+                aria-selected={selectedValue?.value === field.name}
+                selected={selectedValue?.value === field.name}
+                indicator="check"
+                hasSubmenu={hasNestedFields(field)}
+                description={getFieldMetadataTypeLabel(field.type)}
+                startIcon={<SelectOptionIcon Icon={getIcon(field.icon)} />}
+              >
+                <OverflowingTextWithTooltip text={field.label} />
+              </ListItem>
             ))}
           </DropdownMenuItemsContainer>
         </ScrollWrapper>
