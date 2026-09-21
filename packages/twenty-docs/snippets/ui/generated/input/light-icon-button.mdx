@@ -29,15 +29,11 @@
 </ParamField>
 
 <ParamField body="elevated" type="boolean">
-  Adds a shadow. Defaults to the value of `floating`.
+  Adds a shadow and backdrop blur without changing the button colors.
 </ParamField>
 
 <ParamField body="emphasis" type="&quot;standard&quot; | &quot;subtle&quot;" default="standard">
   Standard secondary text or subtle tertiary text. Semantic colors and solid surfaces keep their own colors.
-</ParamField>
-
-<ParamField body="floating" type="boolean">
-  Adds a floating surface, backdrop blur, and a shadow by default. Does not change the size or position.
 </ParamField>
 
 <ParamField body="focusableWhenDisabled" type="boolean" default="false">
@@ -81,6 +77,6 @@
   Preferred placement of the tooltip relative to the button.
 </ParamField>
 
-<ParamField body="variant" type="&quot;ghost&quot; | &quot;outline&quot; | &quot;soft&quot; | &quot;solid&quot;" default="ghost">
+<ParamField body="variant" type="&quot;ghost&quot; | &quot;outline&quot; | &quot;soft&quot; | &quot;solid&quot; | &quot;surface&quot;" default="ghost">
   Visual treatment of the button surface.
 </ParamField>

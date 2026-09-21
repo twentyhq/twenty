@@ -26,58 +26,88 @@ type Story = StoryObj<typeof IconButton>;
 
 export const Default: Story = { decorators: [ComponentDecorator] };
 
-export const Floating: Story = {
+export const Surface: Story = {
   ...Default,
-  args: { floating: true, size: 'sm' },
+  args: { variant: 'surface', elevated: true, size: 'sm' },
 };
 
-export const FloatingTooltip: Story = {
-  ...Floating,
-  args: { ...Floating.args, tooltip: 'Search records', tooltipDelay: 0 },
+export const SurfaceTooltip: Story = {
+  ...Surface,
+  args: { ...Surface.args, tooltip: 'Search records', tooltipDelay: 0 },
 };
 
-export const FloatingAppearance: Story = {
+export const AppearanceEffects: Story = {
   ...Default,
   args: { onClick: fn() },
   render: (args) => (
     <>
       <IconButton {...args} aria-label="Regular action" />
-      <IconButton {...args} floating aria-label="Floating action" />
+      <IconButton {...args} elevated aria-label="Elevated action" />
+      <IconButton {...args} variant="surface" aria-label="Surface only" />
       <IconButton
         {...args}
-        floating
-        size="sm"
-        aria-label="Compact floating action"
+        variant="surface"
+        elevated
+        aria-label="Combined effects"
       />
       <IconButton
         {...args}
-        floating
-        elevated={false}
+        variant="surface"
+        elevated
+        size="sm"
+        aria-label="Compact action"
+      />
+      <IconButton
+        {...args}
+        variant="surface"
         href="#search"
-        aria-label="Floating link without shadow"
+        aria-label="Surface link without elevation"
       />
     </>
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const regular = canvas.getByRole('button', { name: 'Regular action' });
-    const floating = canvas.getByRole('button', { name: 'Floating action' });
+    const elevated = canvas.getByRole('button', { name: 'Elevated action' });
+    const surface = canvas.getByRole('button', { name: 'Surface only' });
+    const combined = canvas.getByRole('button', { name: 'Combined effects' });
     const compact = canvas.getByRole('button', {
-      name: 'Compact floating action',
+      name: 'Compact action',
     });
     const link = canvas.getByRole('link', {
-      name: 'Floating link without shadow',
+      name: 'Surface link without elevation',
     });
 
     await expect(regular.getBoundingClientRect().width).toBe(32);
     await expect(getComputedStyle(regular).boxShadow).toBe('none');
     await expect(getComputedStyle(regular).backdropFilter).toBe('none');
-    await expect(floating.getBoundingClientRect().width).toBe(32);
-    await expect(floating).toHaveAttribute('type', 'button');
+    await expect(getComputedStyle(elevated).boxShadow).not.toBe('none');
+    await expect(getComputedStyle(elevated).backdropFilter).not.toBe('none');
+    await expect(getComputedStyle(surface).boxShadow).toBe('none');
+    await expect(getComputedStyle(surface).backdropFilter).toBe('none');
+    await expect(getComputedStyle(surface).backgroundColor).not.toBe(
+      getComputedStyle(regular).backgroundColor,
+    );
+
+    for (const property of [
+      'backgroundColor',
+      'borderColor',
+      'color',
+    ] as const) {
+      await expect(getComputedStyle(elevated)[property]).toBe(
+        getComputedStyle(regular)[property],
+      );
+      await expect(getComputedStyle(combined)[property]).toBe(
+        getComputedStyle(surface)[property],
+      );
+    }
+
+    await expect(combined.getBoundingClientRect().width).toBe(32);
+    await expect(combined).toHaveAttribute('type', 'button');
     await expect(compact.getBoundingClientRect().width).toBe(24);
     await expect(compact.getBoundingClientRect().height).toBe(24);
 
-    for (const button of [floating, compact]) {
+    for (const button of [combined, compact]) {
       await expect(getComputedStyle(button).boxShadow).not.toBe('none');
       await expect(getComputedStyle(button).backdropFilter).not.toBe('none');
       await expect(
@@ -85,13 +115,18 @@ export const FloatingAppearance: Story = {
       ).toBe(16);
     }
 
-    floating.focus();
+    combined.focus();
     await userEvent.keyboard('{Enter} ');
     await expect(args.onClick).toHaveBeenCalledTimes(2);
     await expect(link).toHaveAttribute('href', '#search');
     await expect(getComputedStyle(link).boxShadow).toBe('none');
-    await expect(getComputedStyle(link).backdropFilter).not.toBe('none');
+    await expect(getComputedStyle(link).backdropFilter).toBe('none');
   },
+};
+
+export const AppearanceEffectsDark: Story = {
+  ...AppearanceEffects,
+  globals: { colorScheme: 'dark' },
 };
 
 export const Keyboard: Story = {
@@ -252,7 +287,7 @@ export const Grouped: Story = {
 const CATALOG_STATES: Record<string, Partial<IconButtonProps>> = {
   default: {},
   small: { size: 'sm' },
-  floating: { floating: true },
+  elevated: { elevated: true },
   hover: { className: 'hover' },
   pressed: { className: 'pressed' },
   focused: { className: 'focused' },
@@ -283,7 +318,7 @@ export const Catalog: CatalogStory<Story, typeof IconButton> = {
         },
         {
           name: 'variant',
-          values: ['solid', 'outline', 'soft', 'ghost'],
+          values: ['solid', 'outline', 'soft', 'ghost', 'surface'],
           props: (variant: ButtonVariant) => ({ variant }),
         },
       ],

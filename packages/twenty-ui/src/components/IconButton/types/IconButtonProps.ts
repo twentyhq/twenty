@@ -19,7 +19,6 @@ export type IconButtonProps = Omit<
 > & {
   size?: IconButtonSize;
   shape?: 'square' | 'round';
-  floating?: boolean;
   children: ReactNode;
   'aria-label': string;
   tooltip?: string;

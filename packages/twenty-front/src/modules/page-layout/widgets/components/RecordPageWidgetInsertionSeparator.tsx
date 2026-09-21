@@ -74,7 +74,8 @@ export const RecordPageWidgetInsertionSeparator = ({
   return (
     <StyledSeparator>
       <IconButton
-        floating
+        variant="surface"
+        elevated
         className={INSERT_BUTTON_CLASS_NAME}
         aria-label={t`Add widget above ${widget.title}`}
         size="sm"

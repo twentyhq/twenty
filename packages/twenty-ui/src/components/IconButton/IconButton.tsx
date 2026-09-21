@@ -14,8 +14,6 @@ export const IconButton = ({
   children,
   size = 'md',
   shape = 'square',
-  floating = false,
-  elevated = floating,
   className,
   tooltip,
   tooltipPlace = 'bottom',
@@ -35,8 +33,6 @@ export const IconButton = ({
       size={size === 'xs' ? 'sm' : size}
       data-icon-size={resolvedSize}
       data-shape={shape}
-      data-floating={floating || undefined}
-      elevated={elevated}
       disabled={disabled}
       loading={loading}
       startIcon={<span className={styles.icon}>{children}</span>}

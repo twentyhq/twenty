@@ -32,7 +32,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'input/icon-button',
     propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
-    propDefaults: { elevated: 'floating' },
   },
   {
     name: 'MainButton',

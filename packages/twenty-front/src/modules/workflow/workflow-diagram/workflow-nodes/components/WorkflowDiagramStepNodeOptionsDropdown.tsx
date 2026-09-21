@@ -70,7 +70,12 @@ export const WorkflowDiagramStepNodeOptionsDropdown = ({
           dropdownId={dropdownId}
           selectableItemIdArray={selectableItemIds}
           clickableComponent={
-            <IconButton floating size="md" aria-label={t`Node options`}>
+            <IconButton
+              variant="surface"
+              elevated
+              size="md"
+              aria-label={t`Node options`}
+            >
               <IconDotsVertical />
             </IconButton>
           }

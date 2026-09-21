@@ -133,7 +133,8 @@ export const RichTextFieldInput = () => {
       </StyledEditorScroll>
       <StyledCollapseButton>
         <IconButton
-          floating
+          variant="surface"
+          elevated
           size="sm"
           onClick={() => {
             onEscape?.({ skipPersist: true });

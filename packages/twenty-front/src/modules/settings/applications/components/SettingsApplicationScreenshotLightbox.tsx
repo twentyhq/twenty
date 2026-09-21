@@ -115,7 +115,8 @@ export const SettingsApplicationScreenshotLightbox = ({
           <StyledContainer>
             <StyledCloseButton>
               <IconButton
-                floating
+                variant="surface"
+                elevated
                 size="sm"
                 aria-label={t`Close`}
                 onClick={onClose}
@@ -126,7 +127,8 @@ export const SettingsApplicationScreenshotLightbox = ({
             {hasSeveralScreenshots && (
               <StyledPreviousButton>
                 <IconButton
-                  floating
+                  variant="surface"
+                  elevated
                   size="sm"
                   aria-label={t`Previous screenshot`}
                   onClick={showPrevious}
@@ -143,7 +145,8 @@ export const SettingsApplicationScreenshotLightbox = ({
               <>
                 <StyledNextButton>
                   <IconButton
-                    floating
+                    variant="surface"
+                    elevated
                     size="sm"
                     aria-label={t`Next screenshot`}
                     onClick={showNext}

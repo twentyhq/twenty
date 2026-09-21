@@ -22,7 +22,8 @@ export const RecordInlineCellButton = ({
     <AnimatedContainer>
       <StyledInlineCellButtonContainer>
         <IconButton
-          floating
+          variant="surface"
+          elevated
           size="sm"
           aria-label={ariaLabel ?? t`Edit field`}
           onClick={onClick}

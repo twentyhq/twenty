@@ -37,7 +37,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Adds a shadow. Defaults to the value of `floating`."
+        "description": "Adds a shadow and backdrop blur without changing the button colors."
       },
       {
         "name": "emphasis",
@@ -45,13 +45,6 @@
         "required": false,
         "defaultValue": "standard",
         "description": "Standard secondary text or subtle tertiary text. Semantic colors and solid surfaces keep their own colors."
-      },
-      {
-        "name": "floating",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Adds a floating surface, backdrop blur, and a shadow by default. Does not change the size or position."
       },
       {
         "name": "focusableWhenDisabled",
@@ -125,7 +118,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\" | \"surface\"",
         "required": false,
         "defaultValue": "ghost",
         "description": "Visual treatment of the button surface."
@@ -169,15 +162,8 @@
         "name": "elevated",
         "type": "boolean",
         "required": false,
-        "defaultValue": "floating",
-        "description": "Adds a shadow. Defaults to the value of `floating`."
-      },
-      {
-        "name": "floating",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Adds a floating surface, backdrop blur, and a shadow by default. Does not change the size or position."
+        "defaultValue": null,
+        "description": "Adds a shadow and backdrop blur without changing the button colors."
       },
       {
         "name": "focusableWhenDisabled",
@@ -251,7 +237,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\" | \"surface\"",
         "required": false,
         "defaultValue": null,
         "description": "Visual treatment of the button surface."
@@ -282,7 +268,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "true",
-        "description": "Adds a shadow to the button."
+        "description": "Adds a shadow and backdrop blur without changing the button colors."
       },
       {
         "name": "endIcon",
@@ -363,7 +349,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\" | \"surface\"",
         "required": false,
         "defaultValue": "solid",
         "description": "Visual treatment of the button surface."
@@ -394,7 +380,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Adds a shadow to the button."
+        "description": "Adds a shadow and backdrop blur without changing the button colors."
       },
       {
         "name": "emphasis",
@@ -482,7 +468,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\" | \"surface\"",
         "required": false,
         "defaultValue": "ghost",
         "description": "Visual treatment of the button surface."
@@ -513,7 +499,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Adds a shadow to the button."
+        "description": "Adds a shadow and backdrop blur without changing the button colors."
       },
       {
         "name": "endIcon",
@@ -594,7 +580,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\" | \"surface\"",
         "required": false,
         "defaultValue": "outline",
         "description": "Visual treatment of the button surface."
@@ -643,7 +629,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\" | \"surface\"",
         "required": false,
         "defaultValue": null,
         "description": "Shared surface treatment that overrides the variant of buttons in the group."

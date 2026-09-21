@@ -181,7 +181,8 @@ export const RawJsonFieldInput = () => {
           {showEditingButton && (
             <StyledSwitchModeButtonContainer>
               <IconButton
-                floating
+                variant="surface"
+                elevated
                 size="sm"
                 onClick={handleStartEditing}
                 aria-label={t`Edit JSON`}

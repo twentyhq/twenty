@@ -7,7 +7,7 @@ import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import IconButtonReference from '/snippets/ui/generated/input/icon-button.mdx';
 
-`IconButton` composes [Button](/ui/primitives/input/button) with a square or round surface and an optional floating appearance. Pass the icon as children and provide an `aria-label` describing the action. Icon content is decorative and hidden from assistive technology.
+`IconButton` composes [Button](/ui/primitives/input/button) with a square or round surface. Pass the icon as children and provide an `aria-label` describing the action. Icon content is decorative and hidden from assistive technology.
 
 ## Usage
 
@@ -62,36 +62,41 @@ The tooltip defaults to the bottom, with a 1000ms delay and a 5px offset. Use `t
 
 Your application supplies `loading` and `disabled`. Both prevent activation. Loading preserves the square dimensions and accessible label. The button does not track a selected value or set loading automatically after a click. Native keyboard focus follows the browser; use `aria-pressed` when your application owns a toggle state.
 
-## Floating actions
+## Surface, shadow, and blur
 
-Use `floating` for actions over content or between widgets. It adds a floating surface, backdrop blur, and a shadow. Positioning and visibility belong to the surrounding layout. The size remains `md` (32px) by default; set `size="sm"` for a 24px control. Set `elevated={false}` to remove the shadow while keeping the floating surface and blur.
+Control the surface and elevation independently:
+
+- `variant="surface"` supplies the background, border, icon, and interaction colors for a bordered surface.
+- `elevated` adds a shadow and blurs the content behind the button where its background is transparent.
+
+`elevated` defaults to `false` and works with every variant. These props do not change positioning, visibility, or size. The size remains `md` (32px) by default; set `size="sm"` for a 24px control.
 
 ```tsx
 import { IconButton } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 
 export const AddWidgetButton = () => (
-  <IconButton floating size="sm" aria-label="Add widget">
+  <IconButton variant="surface" elevated size="sm" aria-label="Add widget">
     <IconPlus />
   </IconButton>
 );
 ```
 
 <StoryEmbed
-  title="Floating icon action"
-  storyId="ui-components-iconbutton--floating"
+  title="Icon action with surface, shadow, and blur"
+  storyId="ui-components-iconbutton--surface"
   height={180}
 />
 
-The default neutral outline uses a bordered floating surface. Other variants and colors retain their usual treatment. Floating actions support the same tooltips, loading states, links, and keyboard interactions as other icon buttons.
+Omit `elevated` to keep the surface without shadow or blur. Use `elevated` on its own to retain the default outline colors. All combinations support the same tooltips, loading states, links, and keyboard interactions.
 
 <StoryEmbed
-  title="Floating icon action with tooltip"
-  storyId="ui-components-iconbutton--floating-tooltip"
+  title="Surface icon action with tooltip"
+  storyId="ui-components-iconbutton--surface-tooltip"
   height={180}
 />
 
-Replace existing `FloatingIconButton` controls with `IconButton floating`. Pass the icon as children, use native `aria-label`, and map `small` to `sm` and `medium` to `md`. Supply `size="sm"` when the previous control used its default size. Native focus and `aria-pressed` replace synthetic focus and active flags.
+Replace existing `FloatingIconButton` controls with `IconButton variant="surface" elevated`. Pass the icon as children, use native `aria-label`, and map `small` to `sm` and `medium` to `md`. Supply `size="sm"` when the previous control used its default size. Native focus and `aria-pressed` replace synthetic focus and active flags.
 
 `FloatingIconButtonGroup` is removed. Compose ButtonGroup with IconButton for grouped actions, and keep any shared floating surface in your layout.
 
