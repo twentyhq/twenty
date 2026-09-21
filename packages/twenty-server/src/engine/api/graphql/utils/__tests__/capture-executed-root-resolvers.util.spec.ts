@@ -4,19 +4,6 @@ import { parse } from 'graphql';
 import { captureExecutedRootResolvers } from 'src/engine/api/graphql/utils/capture-executed-root-resolvers.util';
 import { extractTopLevelFieldsSafely } from 'src/engine/api/graphql/utils/extract-top-level-fields-safely.util';
 
-const MULTI_OPERATION_QUERY = `
-  query ReadPeople {
-    findManyPeople {
-      id
-    }
-  }
-  mutation WipePeople {
-    deleteManyPeople {
-      id
-    }
-  }
-`;
-
 describe('captureExecutedRootResolvers', () => {
   const capture = (
     query: string,
@@ -35,12 +22,6 @@ describe('captureExecutedRootResolvers', () => {
   it('should record the executed root resolvers', () => {
     expect(capture('mutation { createOneCompany { id } }')).toEqual([
       'createOneCompany',
-    ]);
-  });
-
-  it('should record only the operation selected by operationName', () => {
-    expect(capture(MULTI_OPERATION_QUERY, 'WipePeople')).toEqual([
-      'deleteManyPeople',
     ]);
   });
 

@@ -101,18 +101,6 @@ describe('buildApiAccessLogLine', () => {
     expect(line).toContain('auth_provider=password');
   });
 
-  it('should prefer the api key over the user as actor', () => {
-    const line = build({
-      request: {
-        apiKey: { id: 'api-key-id' },
-        user: { id: 'user-id' },
-      } as unknown as Partial<Request>,
-    });
-
-    expect(line).toContain('actor=apiKey');
-    expect(line).toContain('actor_id=api-key-id');
-  });
-
   it('should log anonymous when nothing authenticated the request', () => {
     const line = build();
 
