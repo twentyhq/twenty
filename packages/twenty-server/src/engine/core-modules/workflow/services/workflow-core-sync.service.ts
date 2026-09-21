@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { WorkflowVisibility } from 'twenty-shared/types';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
@@ -212,6 +213,8 @@ export class WorkflowCoreSyncService {
         lastPublishedVersionId: coreRow.lastPublishedVersionId,
         lastPublishedCoreWorkflowVersionId:
           coreRow.lastPublishedCoreWorkflowVersionId,
+        visibility: WorkflowVisibility.WORKSPACE,
+        createdByUserWorkspaceId: null,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         createdAt: coreRow.createdAt.toISOString(),
@@ -224,6 +227,9 @@ export class WorkflowCoreSyncService {
           ...flatWorkflow,
           universalIdentifier: existingFlatWorkflow.universalIdentifier,
           createdAt: existingFlatWorkflow.createdAt,
+          visibility: existingFlatWorkflow.visibility,
+          createdByUserWorkspaceId:
+            existingFlatWorkflow.createdByUserWorkspaceId,
         });
       } else {
         flatWorkflowsToCreate.push({ ...flatWorkflow, id: coreRow.id });
