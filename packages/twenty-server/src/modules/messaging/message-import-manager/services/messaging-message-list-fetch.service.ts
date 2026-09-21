@@ -60,6 +60,7 @@ export class MessagingMessageListFetchService {
   public async processMessageListFetch(
     messageChannel: MessageChannelEntity,
     workspaceId: string,
+    maxMessagesToImportInline?: number,
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -253,6 +254,22 @@ export class MessagingMessageListFetchService {
 
           if (totalMessagesToImportCount === 0) {
             await this.messageChannelSyncStatusService.markAsMessageSyncCompleted(
+              [freshMessageChannel.id],
+              workspaceId,
+            );
+
+            return;
+          }
+
+          if (
+            isDefined(maxMessagesToImportInline) &&
+            totalMessagesToImportCount > maxMessagesToImportInline
+          ) {
+            this.logger.log(
+              `WorkspaceId: ${workspaceId}, MessageChannelId: ${freshMessageChannel.id} - Deferring ${totalMessagesToImportCount} messages to the import cron`,
+            );
+
+            await this.messageChannelSyncStatusService.markAsMessagesImportPending(
               [freshMessageChannel.id],
               workspaceId,
             );

@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MESSAGING_MESSAGE_WEBHOOK_SYNC_INLINE_IMPORT_MAX_MESSAGES } from 'src/modules/connected-account-sync-webhooks/messaging-message-webhook-sync/constants/messaging-message-webhook-sync-inline-import-max-messages.constant';
 import { type MessagingMessageWebhookSyncJobData } from 'src/modules/connected-account-sync-webhooks/messaging-message-webhook-sync/types/messaging-message-webhook-sync-job-data.type';
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 
@@ -49,6 +50,7 @@ export class MessagingMessageWebhookSyncService {
     await this.messagingMessageListFetchService.processMessageListFetch(
       messageChannel,
       workspaceId,
+      MESSAGING_MESSAGE_WEBHOOK_SYNC_INLINE_IMPORT_MAX_MESSAGES,
     );
   }
 
