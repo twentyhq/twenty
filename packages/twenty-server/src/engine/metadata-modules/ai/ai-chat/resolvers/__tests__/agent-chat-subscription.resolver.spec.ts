@@ -98,7 +98,7 @@ describe('Shared conversation subscriptions', () => {
     expect(jest.getTimerCount()).toBe(0);
   });
 
-  it('rejects an already pending event after a grant is revoked', async () => {
+  it('rejects an already pending event when its authorization expires', async () => {
     const context = buildResolver();
     const subscription = await context.resolver.onAgentChatEvent(
       THREAD_ID,
@@ -108,12 +108,30 @@ describe('Shared conversation subscriptions', () => {
     await subscription.next();
     const pending = subscription.next();
     context.sharingService.getReadableThread.mockRejectedValue(denied());
+    jest.setSystemTime(Date.now() + AGENT_CHAT_KEEPALIVE_INTERVAL_MS);
     context.deliver();
     await expect(pending).rejects.toMatchObject({
       extensions: { code: 'NOT_FOUND' },
     });
     expect(context.iterator.return).toHaveBeenCalledTimes(1);
     expect(jest.getTimerCount()).toBe(0);
+  });
+
+  it('does not query authorization once per token during a burst', async () => {
+    const context = buildResolver();
+    const subscription = await context.resolver.onAgentChatEvent(
+      THREAD_ID,
+      { id: WORKSPACE_ID } as never,
+      VIEWER_ID,
+    );
+    await subscription.next();
+    for (let index = 0; index < 200; index++) {
+      const pending = subscription.next();
+      context.deliver();
+      await pending;
+    }
+    expect(context.sharingService.getReadableThread).toHaveBeenCalledTimes(1);
+    await subscription.return?.();
   });
 
   it('closes an idle subscription after revocation without waiting for content', async () => {

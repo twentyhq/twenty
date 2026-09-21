@@ -55,6 +55,25 @@ describe('Subscription authorization', () => {
     expect(source.return).toHaveBeenCalledTimes(1);
   });
 
+  it.each([false, true])(
+    'preserves access denial when cleanup fails synchronously=%s',
+    async (synchronous) => {
+      const source = createSource();
+      const denial = new Error('access revoked');
+      source.return = synchronous
+        ? jest.fn(() => {
+            throw new Error('cleanup failed');
+          })
+        : jest.fn().mockRejectedValue(new Error('cleanup failed'));
+      const iterator = withAsyncIteratorAuthorization(
+        source,
+        jest.fn().mockRejectedValue(denial),
+      );
+      await expect(iterator.next()).rejects.toBe(denial);
+      await expect(iterator.throw?.(denial)).rejects.toBe(denial);
+    },
+  );
+
   it('releases the underlying subscription when the client disconnects', async () => {
     const source = createSource();
     const iterator = withAsyncIteratorAuthorization(source, jest.fn());

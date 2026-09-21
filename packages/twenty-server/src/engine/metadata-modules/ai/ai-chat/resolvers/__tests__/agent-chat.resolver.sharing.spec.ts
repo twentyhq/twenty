@@ -21,7 +21,11 @@ const buildResolver = () => {
     getReadableThread: jest
       .fn()
       .mockResolvedValue({ id: THREAD_ID, userWorkspaceId: 'owner' }),
-    deleteThreadShares: jest.fn(),
+    deleteThreadWithShares: jest.fn(),
+  };
+  const broadcaster = { broadcast: jest.fn() };
+  const sandbox = {
+    releaseThreadSandbox: jest.fn().mockResolvedValue(undefined),
   };
   const chatService = new AgentChatService(
     threadRepository as never,
@@ -30,8 +34,8 @@ const buildResolver = () => {
     {} as never,
     {} as never,
     {} as never,
-    {} as never,
-    {} as never,
+    broadcaster as never,
+    sandbox as never,
     sharing as never,
   );
   const streaming = {
@@ -69,10 +73,33 @@ const buildResolver = () => {
     streaming,
     events,
     redis,
+    broadcaster,
+    sandbox,
   };
 };
 
 describe('Shared conversation API boundaries', () => {
+  it('does not announce deletion or release a sandbox when the transaction rolls back', async () => {
+    const context = buildResolver();
+    context.threadRepository.findOne.mockResolvedValue({
+      id: THREAD_ID,
+      userWorkspaceId: 'owner',
+      workspaceId: WORKSPACE_ID,
+    });
+    context.sharing.deleteThreadWithShares.mockRejectedValue(
+      new Error('cleanup failed'),
+    );
+    await expect(
+      context.chatService.hardDeleteThread({
+        threadId: THREAD_ID,
+        userWorkspaceId: 'owner',
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).rejects.toThrow('cleanup failed');
+    expect(context.broadcaster.broadcast).not.toHaveBeenCalled();
+    expect(context.sandbox.releaseThreadSandbox).not.toHaveBeenCalled();
+  });
+
   it('returns readable threads and catchup to viewers without granting ownership', async () => {
     const { resolver } = buildResolver();
     const thread = await resolver.chatThread(THREAD_ID, VIEWER_ID, workspace);

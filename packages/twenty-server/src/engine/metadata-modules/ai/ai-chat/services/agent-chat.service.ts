@@ -35,31 +35,11 @@ import {
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { serializeAgentChatThreadForBroadcast } from 'src/engine/metadata-modules/ai/ai-chat/utils/serialize-agent-chat-thread-for-broadcast.util';
+import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
-
-const serializeThreadForBroadcast = (
-  thread: AgentChatThreadEntity,
-  lastMessageAt: Date | null,
-) => ({
-  id: thread.id,
-  canManage: true,
-  title: thread.title,
-  totalInputTokens: thread.totalInputTokens,
-  totalOutputTokens: thread.totalOutputTokens,
-  totalCacheReadTokens: thread.totalCacheReadTokens,
-  totalCacheCreationTokens: thread.totalCacheCreationTokens,
-  contextWindowTokens: thread.contextWindowTokens,
-  conversationSize: thread.conversationSize,
-  totalInputCredits: toDisplayCredits(thread.totalInputCredits),
-  totalOutputCredits: toDisplayCredits(thread.totalOutputCredits),
-  deletedAt: thread.deletedAt,
-  lastMessageAt,
-  createdAt: thread.createdAt,
-  updatedAt: thread.updatedAt,
-});
 
 @Injectable()
 export class AgentChatService {
@@ -111,7 +91,11 @@ export class AgentChatService {
           recordId: savedThread.id,
           recipientUserWorkspaceIds: [userWorkspaceId],
           properties: {
-            after: serializeThreadForBroadcast(savedThread, null),
+            after: serializeAgentChatThreadForBroadcast({
+              thread: savedThread,
+              lastMessageAt: null,
+              recipientUserWorkspaceId: userWorkspaceId,
+            }),
           },
         },
       ],
@@ -205,11 +189,21 @@ export class AgentChatService {
     return rankedThreads.flatMap((rankedThread) => {
       const thread = threadById.get(rankedThread.id);
 
-      return thread
+      if (
+        isDefined(thread) &&
+        thread.userWorkspaceId !== userWorkspaceId &&
+        thread.id ===
+          buildWorkspaceSetupChatThreadId({
+            workspaceId,
+            userWorkspaceId: thread.userWorkspaceId,
+          })
+      ) {
+        return [];
+      }
+      return isDefined(thread)
         ? [
             {
               ...thread,
-              canManage: thread.userWorkspaceId === userWorkspaceId,
               lastMessageAt: rankedThread.last_message_at ?? null,
             },
           ]
@@ -1043,20 +1037,18 @@ export class AgentChatService {
       );
     }
 
-    const result = await this.threadRepository.delete(workspaceId, {
-      id: threadId,
+    const deleted = await this.sharingService.deleteThreadWithShares({
+      workspaceId,
+      threadId,
       userWorkspaceId,
     });
 
-    if ((result.affected ?? 0) === 0) {
+    if (!deleted) {
       this.logger.warn(
         `hardDeleteThread: thread ${threadId} vanished between fetch and delete`,
       );
-
       return;
     }
-
-    await this.sharingService.deleteThreadShares(workspaceId, threadId);
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: thread.workspaceId,
@@ -1067,7 +1059,11 @@ export class AgentChatService {
           recordId: threadId,
           recipientUserWorkspaceIds: [userWorkspaceId],
           properties: {
-            before: serializeThreadForBroadcast(thread, null),
+            before: serializeAgentChatThreadForBroadcast({
+              thread,
+              lastMessageAt: null,
+              recipientUserWorkspaceId: userWorkspaceId,
+            }),
           },
         },
       ],
@@ -1162,7 +1158,11 @@ export class AgentChatService {
           recipientUserWorkspaceIds: [userWorkspaceId],
           properties: {
             updatedFields,
-            after: serializeThreadForBroadcast(thread, lastMessageAt),
+            after: serializeAgentChatThreadForBroadcast({
+              thread,
+              lastMessageAt,
+              recipientUserWorkspaceId: userWorkspaceId,
+            }),
           },
         },
       ],

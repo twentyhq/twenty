@@ -1,9 +1,11 @@
 /* @license Enterprise */
 
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, type EntityManager } from 'typeorm';
 import {
   RecordShareAccessLevel,
   RecordShareRowCause,
@@ -137,6 +139,28 @@ export class RecordShareService {
 
     await this.withRepository({ workspaceId, transactionScope }, (repository) =>
       repository.delete({ objectMetadataId, recordId: In(recordIds) }),
+    );
+  }
+
+  async deleteByRecordIdsInTransaction({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    manager,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+    manager: EntityManager;
+  }): Promise<void> {
+    if (recordIds.length === 0) {
+      return;
+    }
+    // History transactions can span core and workspace tables and must reuse
+    // their existing connection rather than open a separate ORM transaction.
+    await manager.query(
+      `DELETE FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)} WHERE "objectMetadataId" = $1 AND "recordId" = ANY($2::uuid[])`,
+      [objectMetadataId, recordIds],
     );
   }
 

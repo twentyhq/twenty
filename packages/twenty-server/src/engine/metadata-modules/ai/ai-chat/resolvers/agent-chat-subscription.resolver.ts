@@ -1,3 +1,4 @@
+import { createSubscriptionAuthorization } from 'src/engine/subscriptions/utils/create-subscription-authorization';
 import { aiGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/ai/utils/ai-graphql-api-exception-handler.util';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { withAsyncIteratorAuthorization } from 'src/engine/subscriptions/utils/with-async-iterator-authorization';
@@ -51,14 +52,17 @@ export class AgentChatSubscriptionResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
-    const authorize = () =>
-      this.sharingService
-        .getReadableThread({
-          workspaceId: workspace.id,
-          threadId,
-          userWorkspaceId,
-        })
-        .catch(aiGraphqlApiExceptionHandler);
+    const authorize = createSubscriptionAuthorization(
+      () =>
+        this.sharingService
+          .getReadableThread({
+            workspaceId: workspace.id,
+            threadId,
+            userWorkspaceId,
+          })
+          .catch(aiGraphqlApiExceptionHandler),
+      AGENT_CHAT_KEEPALIVE_INTERVAL_MS,
+    );
     await authorize();
 
     const iterator = await this.subscriptionService.subscribeToAgentChat({
@@ -80,7 +84,7 @@ export class AgentChatSubscriptionResolver {
         initialValue: keepalivePayload,
         heartbeatErrorBehavior: 'close',
         onHeartbeat: async () => {
-          await authorize();
+          await authorize(true);
           if (
             Date.now() - lastReapCheckAt >=
             AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS

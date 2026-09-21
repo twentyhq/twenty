@@ -12,7 +12,11 @@ export const withAsyncIteratorAuthorization = <TValue>(
       }
       return result;
     } catch (error) {
-      await iterator.return?.();
+      try {
+        await iterator.return?.();
+      } catch {
+        // Transport cleanup must not hide the original access denial.
+      }
       throw error;
     }
   },
@@ -21,7 +25,11 @@ export const withAsyncIteratorAuthorization = <TValue>(
     return { done: true, value: undefined };
   },
   async throw(error: unknown) {
-    await iterator.return?.();
+    try {
+      await iterator.return?.();
+    } catch {
+      // Preserve the caller's failure even if transport cleanup also fails.
+    }
     throw error;
   },
   [Symbol.asyncIterator]() {

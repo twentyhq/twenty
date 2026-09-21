@@ -215,10 +215,11 @@ export class AgentChatSharingService {
     return this.getSharing(args);
   }
 
-  async deleteThreadShares(
-    workspaceId: string,
-    threadId: string,
-  ): Promise<void> {
+  async deleteThreadWithShares({
+    workspaceId,
+    threadId,
+    userWorkspaceId,
+  }: ThreadAccessArgs): Promise<boolean> {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -227,13 +228,36 @@ export class AgentChatSharingService {
       flatObjectMetadataMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.agentChatThread.universalIdentifier
       ];
-    if (isDefined(objectMetadata)) {
-      await this.recordShareService.deleteByRecordIds({
-        workspaceId,
-        objectMetadataId: objectMetadata.id,
-        recordIds: [threadId],
-      });
-    }
+
+    // The history route holds one transaction across both schemas, including
+    // legacy core threads. A grant-cleanup failure must roll back the deletion.
+    return this.threadRepository.query(
+      workspaceId,
+      async ({ manager, table, storage }) => {
+        const deleted = await manager.query<{ id: string }[]>(
+          `WITH deleted_thread AS (
+          DELETE FROM ${table('agentChatThread')}
+          WHERE id = $1 AND "userWorkspaceId" = $2 ${storage === 'core' ? 'AND "workspaceId" = $3' : ''}
+          RETURNING id
+        ) SELECT id FROM deleted_thread`,
+          storage === 'core'
+            ? [threadId, userWorkspaceId, workspaceId]
+            : [threadId, userWorkspaceId],
+        );
+        if (deleted.length === 0) {
+          return false;
+        }
+        if (isDefined(objectMetadata)) {
+          await this.recordShareService.deleteByRecordIdsInTransaction({
+            workspaceId,
+            objectMetadataId: objectMetadata.id,
+            recordIds: [threadId],
+            manager,
+          });
+        }
+        return true;
+      },
+    );
   }
 
   private isThreadShare(share: RecordShare): boolean {
