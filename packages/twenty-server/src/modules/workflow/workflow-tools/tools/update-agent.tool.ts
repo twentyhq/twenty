@@ -54,7 +54,7 @@ const updateAgentSchema = z.object({
   responseFormat: agentResponseFormatSchema
     .optional()
     .describe(
-      'Optional response format. Use { type: "text" } for free-form text output, or { type: "json", schema: { type: "object", properties: { fieldName: { type: "string" } }, required: ["fieldName"], additionalProperties: false } } for structured output. Downstream steps can reference structured fields via {{stepId.fieldName}} (or {{stepId.response}} for text format).',
+      'Optional response format. Use { type: "text" } for free-form text output, or { type: "json", schema: { type: "object", properties: { fieldName: { type: "string" } } } } for structured output. Downstream steps can reference structured fields via {{stepId.fieldName}} (or {{stepId.response}} for text format).',
     ),
 });
 
