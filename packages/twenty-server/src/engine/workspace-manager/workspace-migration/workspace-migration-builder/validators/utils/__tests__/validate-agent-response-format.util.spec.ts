@@ -59,7 +59,7 @@ describe('validateAgentResponseFormat', () => {
     expect(errors[0].code).toBe(AiExceptionCode.INVALID_AGENT_INPUT);
   });
 
-  it('should not throw when a json schema is missing its properties', () => {
+  it('should return an error without throwing when a json schema is missing its properties', () => {
     // Legacy or API-provided data can omit properties despite the type
     const malformedFormat = {
       type: 'json',
@@ -69,9 +69,13 @@ describe('validateAgentResponseFormat', () => {
     expect(() =>
       validateAgentResponseFormat({ responseFormat: malformedFormat }),
     ).not.toThrow();
-    expect(
-      validateAgentResponseFormat({ responseFormat: malformedFormat }),
-    ).toEqual([]);
+
+    const errors = validateAgentResponseFormat({
+      responseFormat: malformedFormat,
+    });
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].code).toBe(AiExceptionCode.INVALID_AGENT_INPUT);
   });
 
   it('should report every invalid property name at once', () => {

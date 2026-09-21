@@ -10,6 +10,7 @@ import {
 import { pathExists } from '@/cli/utilities/file/fs-utils';
 import { type ApplicationExportCoverageEntry } from '@/cli/utilities/pull/application-export-type';
 import { applyPullWrites } from '@/cli/utilities/pull/apply-pull-writes';
+import { buildManifestEntityLabelByUniversalIdentifier } from '@/cli/utilities/pull/build-manifest-entity-label-by-universal-identifier';
 import { type SkippedPullEntity } from '@/cli/utilities/pull/build-pull-entities';
 import {
   planPullWrites,
@@ -45,6 +46,7 @@ export type AppPullResult = {
   coverage: ApplicationExportCoverageEntry[];
   unreadableRelativePaths: string[];
   compiledTranslationEntryCountByLocale: Record<string, number>;
+  entityLabelByUniversalIdentifier: Record<string, string>;
   hadBase: boolean;
   isSdkResolvable: boolean;
 };
@@ -229,6 +231,8 @@ const innerAppPull = async (
         .map((scannedFile) => scannedFile.relativePath),
       compiledTranslationEntryCountByLocale:
         translationPlan.compiledEntryCountByLocale,
+      entityLabelByUniversalIdentifier:
+        buildManifestEntityLabelByUniversalIdentifier(manifest),
       hadBase: isDefined(baseManifest),
       isSdkResolvable: isSdkResolvable(appPath),
     },

@@ -126,10 +126,14 @@ describe('seedEnrichmentWorkflow', () => {
     ).toBe(CORE_WORKFLOW_VERSION_ID);
   });
 
-  it('skips creation when a workflow with the same name already exists', async () => {
-    const mutations: AnyRequest[] = [];
-
-    const client = createCoreApiClientMock({
+  const buildExistingWorkflowClient = ({
+    versionStatuses,
+    mutations,
+  }: {
+    versionStatuses: string[];
+    mutations: AnyRequest[];
+  }) =>
+    createCoreApiClientMock({
       queryResult: (request: unknown) =>
         'coreWorkflows' in (request as AnyRequest)
           ? {
@@ -141,18 +145,46 @@ describe('seedEnrichmentWorkflow', () => {
                 ],
               },
             }
-          : {},
+          : {
+              coreWorkflowVersionsByCoreWorkflowId: versionStatuses.map(
+                (status, index) => ({ id: `version-${index}`, status }),
+              ),
+            },
       onMutation: (request) => mutations.push(request as AnyRequest),
     });
 
+  it('skips creation when the existing workflow is already active', async () => {
+    const mutations: AnyRequest[] = [];
+
     const result = await seedEnrichmentWorkflow({
-      client,
+      client: buildExistingWorkflowClient({
+        versionStatuses: ['ACTIVE'],
+        mutations,
+      }),
       logicFunctionId: 'logic-function-1',
       seed: SEED,
     });
 
     expect(result.status).toBe('skipped');
     expect(result.coreWorkflowId).toBe('existing-core-1');
+    expect(mutations).toHaveLength(0);
+  });
+
+  it('reports a failure when the existing workflow was left without an active version', async () => {
+    const mutations: AnyRequest[] = [];
+
+    const result = await seedEnrichmentWorkflow({
+      client: buildExistingWorkflowClient({
+        versionStatuses: ['DRAFT'],
+        mutations,
+      }),
+      logicFunctionId: 'logic-function-1',
+      seed: SEED,
+    });
+
+    expect(result.status).toBe('failed');
+    expect(result.coreWorkflowId).toBe('existing-core-1');
+    expect(result.error).toContain('no active version');
     expect(mutations).toHaveLength(0);
   });
 

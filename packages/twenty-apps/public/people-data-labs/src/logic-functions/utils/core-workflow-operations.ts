@@ -53,7 +53,7 @@ export const queryCoreWorkflowsByNameContains = async ({
   return {
     nodes: (result.coreWorkflows?.edges ?? [])
       .map((edge) => edge.node)
-      .filter((node): node is CoreWorkflowNode => node !== undefined),
+      .filter(isDefined),
     endCursor: result.coreWorkflows?.pageInfo?.endCursor ?? undefined,
     hasNextPage: result.coreWorkflows?.pageInfo?.hasNextPage ?? false,
   };

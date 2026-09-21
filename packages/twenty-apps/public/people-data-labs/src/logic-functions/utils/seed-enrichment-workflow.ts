@@ -33,11 +33,24 @@ export const seedEnrichmentWorkflow = async ({
   });
 
   if (isDefined(existingCoreWorkflowId)) {
+    const existingVersions = await queryCoreWorkflowVersions({
+      client,
+      coreWorkflowId: existingCoreWorkflowId,
+    });
+    const hasActiveVersion = existingVersions.some(
+      (coreWorkflowVersion) => coreWorkflowVersion.status === 'ACTIVE',
+    );
+
     return {
       objectNameSingular: seed.objectNameSingular,
       workflowName: seed.workflowName,
-      status: 'skipped',
+      status: hasActiveVersion ? 'skipped' : 'failed',
       coreWorkflowId: existingCoreWorkflowId,
+      ...(hasActiveVersion
+        ? {}
+        : {
+            error: `Workflow "${seed.workflowName}" already exists but has no active version, so an earlier seeding run left it incomplete. Delete it and reinstall to reseed.`,
+          }),
     };
   }
 

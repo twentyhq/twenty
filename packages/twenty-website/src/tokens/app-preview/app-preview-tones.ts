@@ -1,6 +1,6 @@
 // The mockup's tone tables (single module). Every product-color group derives
-// straight from twenty-ui: TAG (tag color3/11), SIDEBAR (TintedIconTile
-// color5/6/11), DASHBOARD_CHART (graph color8), WORKFLOW_CANVAS (blue/red +
+// straight from twenty-ui: TAG (tag color3/11), SIDEBAR (nav icon color11 +
+// avatar color5), DASHBOARD_CHART (graph color8), WORKFLOW_CANVAS (blue/red +
 // turquoise tag), WORKFLOW_AVATAR_INK (gray11), RECORD_FILE_SHEET_INK
 // (turquoise), PRODUCT_VISUAL washes (transparent ramp + primary ink).
 // Only genuinely authored marketing art remains: TERMINAL + EDITOR (the
@@ -8,7 +8,6 @@
 // box-shadows (e.g. RECORD_NOTE_HIGHLIGHT_SHADOW).
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
-type ToneSurface = { background: string; border: string; color: string };
 type TonePair = { background: string; color: string };
 
 // Our tone names map 1:1 onto twenty-ui's tag colors, except `teal` is the
@@ -18,8 +17,8 @@ const tagTone = (name: keyof typeof THEME_LIGHT.tag.text): TonePair => ({
   color: THEME_LIGHT.tag.text[name],
 });
 
-// Object nav items render as the product's TintedIconTile: color5 surface,
-// color6 border, color11 icon. (Our `teal` is the product's `turquoise`.)
+// Object nav items render their icon flat in color11; the avatar items keep
+// a color5 surface. (Our `teal` is the product's `turquoise`.)
 const sidebarTone = (
   name:
     | 'amber'
@@ -32,13 +31,12 @@ const sidebarTone = (
     | 'red'
     | 'turquoise'
     | 'violet',
-): ToneSurface => ({
+): TonePair => ({
   background: THEME_LIGHT.color[`${name}5`],
-  border: THEME_LIGHT.color[`${name}6`],
   color: THEME_LIGHT.color[`${name}11`],
 });
 
-const SIDEBAR: Record<string, ToneSurface> = {
+const SIDEBAR: Record<string, TonePair> = {
   amber: sidebarTone('amber'),
   blue: sidebarTone('blue'),
   gray: sidebarTone('gray'),

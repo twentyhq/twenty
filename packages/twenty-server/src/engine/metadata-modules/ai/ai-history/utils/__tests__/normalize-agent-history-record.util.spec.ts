@@ -1,6 +1,23 @@
 import { normalizeAgentHistoryRecord } from 'src/engine/metadata-modules/ai/ai-history/utils/normalize-agent-history-record.util';
 
 describe('normalizeAgentHistoryRecord', () => {
+  it.each([
+    ['', null],
+    [null, null],
+    [undefined, undefined],
+    ['active-stream-id', 'active-stream-id'],
+  ])('normalizes the stream claim %p to %p', (activeStreamId, expected) => {
+    const record = { activeStreamId, title: '' };
+    expect(
+      normalizeAgentHistoryRecord({
+        record,
+        workspaceId: 'workspace-id',
+        objectName: 'agentChatThread',
+      }),
+    ).toMatchObject({ activeStreamId: expected, title: '' });
+    expect(record.activeStreamId).toBe(activeStreamId);
+  });
+
   it('preserves nested record deletion dates independently of the thread archive', () => {
     const archivedAt = '2026-09-10T10:00:00.000Z';
     const deletedAt = '2026-09-11T10:00:00.000Z';

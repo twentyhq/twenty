@@ -1,5 +1,7 @@
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
+import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
+import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { type Meta } from '@storybook/react-vite';
@@ -233,6 +235,18 @@ export const ListItemPreact: Story = createGalleryStory({
   play: listItemTest,
 });
 
+export const PickerListItemsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-picker-list-items',
+  runtime: 'react',
+  play: pickerListItemsTest,
+});
+
+export const PickerListItemsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-picker-list-items',
+  runtime: 'preact',
+  play: pickerListItemsTest,
+});
+
 export const SettingsRowReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-settings-row',
   runtime: 'react',
@@ -447,4 +461,16 @@ export const ChipControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-chip-controls',
   runtime: 'preact',
   play: chipControlsTest,
+});
+
+export const IconButtonElevatedReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-icon-button-elevated',
+  runtime: 'react',
+  play: iconButtonElevatedTest,
+});
+
+export const IconButtonElevatedPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-icon-button-elevated',
+  runtime: 'preact',
+  play: iconButtonElevatedTest,
 });

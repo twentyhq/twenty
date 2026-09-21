@@ -23,6 +23,7 @@ export enum ApplicationRegistrationExceptionCode {
   PROVENANCE_CHECK_UNAVAILABLE = 'PROVENANCE_CHECK_UNAVAILABLE',
   GITHUB_AUTH_FAILED = 'GITHUB_AUTH_FAILED',
   GITHUB_ORG_OWNERSHIP_REQUIRED = 'GITHUB_ORG_OWNERSHIP_REQUIRED',
+  CLAIM_STATE_MISMATCH = 'CLAIM_STATE_MISMATCH',
 }
 
 const getExceptionUserFriendlyMessage = (
@@ -65,6 +66,8 @@ const getExceptionUserFriendlyMessage = (
       return msg`GitHub authentication failed. Try connecting your GitHub account again.`;
     case ApplicationRegistrationExceptionCode.GITHUB_ORG_OWNERSHIP_REQUIRED:
       return msg`Your GitHub account does not own the organization that publishes this package. If you are an owner, make sure you granted this app access to the organization on GitHub's authorization screen (Organization access section).`;
+    case ApplicationRegistrationExceptionCode.CLAIM_STATE_MISMATCH:
+      return msg`This claim was started in another browser or has already been used. Start the claim again from this browser.`;
     default:
       assertUnreachable(code);
   }

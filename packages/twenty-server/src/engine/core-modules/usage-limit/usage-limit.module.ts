@@ -17,6 +17,7 @@ import { UsageQuotaDefinitionService } from 'src/engine/core-modules/usage-limit
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
+import { WorkspaceRecordStockService } from 'src/engine/core-modules/usage-limit/services/workspace-record-stock.service';
 import { UsageLimitResolver } from 'src/engine/core-modules/usage-limit/usage-limit.resolver';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { UsageLimitsCacheService } from 'src/engine/core-modules/usage-limit/services/usage-limits-cache.service';
@@ -46,6 +47,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageLimitQuotaService,
     UsageLimitSpeedService,
     UsageLimitStockService,
+    WorkspaceRecordStockService,
     UsageLimitEntitlementService,
     UsageLimitsCacheService,
     UsagePeriodService,
@@ -65,6 +67,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageLimitQuotaService,
     UsageLimitSpeedService,
     UsageLimitStockService,
+    WorkspaceRecordStockService,
     UsageLimitsCacheService,
   ],
 })
