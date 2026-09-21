@@ -28,6 +28,7 @@ export const SettingsAdmin = () => {
       title={t`Admin Panel`}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Administration`}
           tabs={tabs}
           componentInstanceId={SETTINGS_ADMIN_TABS_ID}
         />

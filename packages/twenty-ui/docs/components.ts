@@ -1,12 +1,38 @@
+import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
+import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
+import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
+import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
+import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
+import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
+import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
+import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
+import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
+import { SETTINGS_ROW_PROP_DESCRIPTIONS } from './settingsRowPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
+import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
+import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'LightIconButton',
+    source: 'components/LightIconButton/LightIconButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'input/light-icon-button',
+    propDescriptions: LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'IconButton',
+    source: 'components/IconButton/IconButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'input/icon-button',
+    propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
+  },
   {
     name: 'MainButton',
     source: 'components/MainButton/MainButton.tsx',
@@ -106,6 +132,20 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/navigation/Tabs/Tabs.tsx',
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/tabs',
+    partPropDescriptions: {
+      Tab: {
+        endIcon: 'Decorative content after the label and before the badge.',
+        highlighted: 'Emphasizes the tab content without changing selection.',
+      },
+    },
+  },
+  {
+    name: 'Dialog',
+    source: 'primitives/surfaces/Dialog/Dialog.tsx',
+    entryPoint: 'twenty-ui/primitives/surfaces',
+    slug: 'surfaces/dialog',
+    propDescriptions: DIALOG_PROP_DESCRIPTIONS,
+    partPropDescriptions: { Title: DIALOG_TITLE_PROP_DESCRIPTIONS },
   },
   {
     name: 'AlertDialog',
@@ -124,6 +164,16 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Popover/Popover.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/popover',
+  },
+  {
+    name: 'Tooltip',
+    source: 'primitives/surfaces/Tooltip/Tooltip.tsx',
+    entryPoint: 'twenty-ui/primitives/surfaces',
+    slug: 'surfaces/tooltip',
+    parts: ['Root', 'Trigger', 'Popup', 'Content', 'Provider'],
+    propDescriptions: TOOLTIP_PROP_DESCRIPTIONS,
+    propDefaults: { sideOffset: '10' },
+    partPropDescriptions: TOOLTIP_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'Toast',
@@ -164,5 +214,56 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/data-display',
     slug: 'data-display/status',
     propDescriptions: STATUS_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Heading',
+    source: 'primitives/typography/Heading/Heading.tsx',
+    entryPoint: 'twenty-ui/primitives/typography',
+    slug: 'typography/heading',
+    propDescriptions: HEADING_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'SettingsRow',
+    source: 'components/SettingsRow/SettingsRow.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/settings-row',
+    propDescriptions: SETTINGS_ROW_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Section',
+    source: 'components/Section/Section.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/section',
+    partPropDescriptions: {
+      Root: SECTION_ROOT_PROP_DESCRIPTIONS,
+      Header: SECTION_HEADER_PROP_DESCRIPTIONS,
+    },
+  },
+  {
+    name: 'CodeEditor',
+    source: 'components/code-editor/CodeEditor/CodeEditor.tsx',
+    entryPoint: 'twenty-ui/components/code-editor',
+    slug: 'components/code-editor',
+    propDescriptions: CODE_EDITOR_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'CodeEditorHeader',
+    source: 'components/code-editor/CodeEditorHeader/CodeEditorHeader.tsx',
+    entryPoint: 'twenty-ui/components/code-editor',
+    slug: 'components/code-editor-header',
+    propDescriptions: CODE_EDITOR_HEADER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'TabButton',
+    source: 'components/TabButton/TabButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/tab-button',
+    propDescriptions: {
+      ...BUTTON_PROP_DESCRIPTIONS,
+      active:
+        'Highlights the current destination or an action associated with the active tab. Does not change the control role.',
+      badge: 'Content following the label and trailing icon, such as a count.',
+      size: 'Padding of the tab content: sm or md.',
+    },
   },
 ] as const;

@@ -7,7 +7,7 @@ description: One simple balance that powers your workflows, AI agents, and AI ch
 
 Credits are a single balance that powers everything we run on your behalf that has a real cost: **workflow automations**, **AI agents**, and the **AI chat**. Instead of juggling separate quotas for "automation runs" and "AI tokens," you have one simple balance to keep an eye on.
 
-**1 credit = $1 of usage.** A credit is just a dollar of work, so your balance is easy to reason about — no abstract units to convert.
+**1 credit = \$1 of usage.** A credit is just a dollar of work, so your balance is easy to reason about — no abstract units to convert.
 
 ## How far does a credit go?
 
@@ -15,11 +15,11 @@ Cost scales with the work. Everyday automation and quick AI messages cost a tiny
 
 | What you do | Roughly costs | What that means |
 |-------------|---------------|-----------------|
-| Run a standard workflow step (search, create, or update records) | $0.0001 | **10,000 runs per credit** |
-| Trigger an app's logic function | $0.0001 + $0.0001 per second of runtime | **Thousands of runs per credit** |
+| Run a standard workflow step (search, create, or update records) | \$0.0001 | **10,000 runs per credit** |
+| Trigger an app's logic function | \$0.0001 + \$0.0001 per second of runtime | **Thousands of runs per credit** |
 | Call an external API or run a code node | A small fraction of a credit | Thousands per credit |
 | Send a quick AI chat message or simple AI step | A fraction of a cent | Hundreds per credit |
-| Run a large AI agent task (e.g. "configure 10 workspace objects") | Can run to **~$1 or more** | A few per credit |
+| Run a large AI agent task (e.g. "configure 10 workspace objects") | Can run to **~\$1 or more** | A few per credit |
 | Run an AI web search | A fixed per-search cost | Hundreds of searches per credit |
 
 <Note>
@@ -27,17 +27,19 @@ For most teams, standard automations are effectively free — you'll only make a
 </Note>
 
 <Note>
-Not every app charges for its runs. Call Recorder, Last Contact and Fathom react to every email, calendar event and recording imported into your workspace, and Slack runs on every Slack event its bot subscribes to, so their logic function runs are free. You are still charged for the metered work they do, such as recorded call minutes or the AI credits behind Slack assistant answers.
+Not every app charges for its runs. Call Recorder, Last Contact, Fathom and Granola react to every email, calendar event and recording imported into your workspace, and Slack runs on every Slack event its bot subscribes to, so their logic function runs are free. You are still charged for the metered work they do, such as recorded call minutes or the AI credits behind Slack assistant answers.
 </Note>
 
 ## How logic function runs are metered
 
 Logic function pricing mirrors AWS Lambda: a flat charge per invocation plus a duration charge for the time your code actually runs, billed per millisecond.
 
-- **Per invocation**: $0.0001
-- **Per duration**: $0.0001 per second of runtime ($0.0000001 per millisecond)
+- **Per invocation**: \$0.0001
+- **Per duration**: \$0.0001 per second of runtime (\$0.0000001 per millisecond)
 
-A typical function that finishes in under a second costs at most double the flat invocation charge. Long-running functions pay for the compute they use: a function running for a full minute adds $0.006, and one hitting the 15-minute timeout adds $0.09. A function that times out is billed for its full elapsed time, just like on AWS.
+A typical function that finishes in under a second costs at most double the flat invocation charge. Long-running functions pay for the compute they use: a function running for a full minute adds \$0.006, and one hitting the 15-minute timeout adds \$0.09. A function that times out is billed for its full elapsed time, just like on AWS.
+
+For apps with [server routes](/developers/extend/apps/operations/publishing#owner-workspace-costs-and-availability), the resolver runs against the app owner's workspace balance. A target function dispatched to another workspace is billed separately to that workspace.
 
 ## How AI usage is metered
 
@@ -51,8 +53,8 @@ Every subscription includes credits, and the amount depends on your **billing cy
 
 | Billing Cycle | Included Credits | Equivalent Usage |
 |---------------|------------------|------------------|
-| Monthly | 5 / month | ~$5 of usage each month |
-| Yearly | 50 / year | ~$50 of usage each year |
+| Monthly | 5 / month | ~\$5 of usage each month |
+| Yearly | 50 / year | ~\$50 of usage each year |
 
 These credits are designed to cover everyday automation comfortably. Five credits cover tens of thousands of standard automation steps or hundreds of quick AI messages — though a handful of large, multi-step agent tasks can use them up faster. You can top up at any time (see below).
 

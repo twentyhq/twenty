@@ -5,13 +5,13 @@ import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT } from '@/page-layout/constant
 import { useOpenPageLayoutTabSettings } from '@/page-layout/hooks/useOpenPageLayoutTabSettings';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPinned } from 'twenty-ui/icon';
-import { IconButtonWithTooltip } from 'twenty-ui/primitives/input';
-import { TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const SIDE_TRACK = `min(${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px, calc(100% / 3))`;
@@ -112,15 +112,16 @@ export const PageLayoutRecordIdentifierBar = ({
 
         {isPinnedTabEditable && isDefined(pinnedTab) && (
           <StyledPinnedTab>
-            <IconButtonWithTooltip
-              Icon={IconPinned}
-              ariaLabel={t`Edit pinned tab: ${pinnedTab.title}`}
+            <IconButton
+              aria-label={t`Edit pinned tab: ${pinnedTab.title}`}
               onClick={() => openTabSettings(pinnedTab.id)}
-              tooltipContent={t`Pinned tab, always shown on the left`}
+              tooltip={t`Pinned tab, always shown on the left`}
               tooltipDelay={TooltipDelay.shortDelay}
-              size="small"
-              variant="tertiary"
-            />
+              size="sm"
+              variant="ghost"
+            >
+              <IconPinned />
+            </IconButton>
           </StyledPinnedTab>
         )}
       </StyledIdentifierCell>

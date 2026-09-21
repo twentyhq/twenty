@@ -12,9 +12,9 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -109,7 +109,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     objectMetadataItemsWithPermissionOverride?.length > 0;
 
   return (
-    <Section>
+    <Section.Root>
       <Table>
         <SettingsRolePermissionsObjectLevelTableHeader
           showPermissionsLabel={hasObjectPermissions}
@@ -136,7 +136,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
       </Table>
       {isEditable && (
         <StyledCreateObjectOverrideSectionContainer>
-          <Section>
+          <Section.Root>
             <Button
               startIcon={<IconPlus />}
               size="sm"
@@ -146,9 +146,9 @@ export const SettingsRolePermissionsObjectLevelSection = ({
               onClick={handleAddRule}
               variant="outline"
             >{t`Add rule`}</Button>
-          </Section>
+          </Section.Root>
         </StyledCreateObjectOverrideSectionContainer>
       )}
-    </Section>
+    </Section.Root>
   );
 };

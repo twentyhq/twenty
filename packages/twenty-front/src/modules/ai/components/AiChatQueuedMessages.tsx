@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 
@@ -8,7 +9,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledQueueContainer = styled(StyledAiChatContentContainer)`
@@ -67,10 +68,12 @@ export const AiChatQueuedMessages = () => {
           <StyledQueuedItem key={message.id}>
             <StyledQueuedText>{displayText}</StyledQueuedText>
             <LightIconButton
-              Icon={IconX}
               onClick={() => deleteQueuedMessage(message.id)}
-              size="small"
-            />
+              size="sm"
+              aria-label={t`Remove queued message`}
+            >
+              <IconX />
+            </LightIconButton>
           </StyledQueuedItem>
         );
       })}

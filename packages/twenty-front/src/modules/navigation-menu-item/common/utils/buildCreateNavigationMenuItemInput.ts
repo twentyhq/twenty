@@ -29,6 +29,10 @@ export const buildCreateNavigationMenuItemInput = (
   } else if (isNavigationMenuItemObject(draftItem)) {
     input.targetObjectMetadataId =
       draftItem.targetObjectMetadataId ?? undefined;
+  } else if (isDefined(draftItem.pageLayoutId)) {
+    input.pageLayoutId = draftItem.pageLayoutId;
+    input.name = draftItem.name ?? undefined;
+    input.icon = draftItem.icon ?? null;
   } else if (isDefined(draftItem.viewId)) {
     input.viewId = draftItem.viewId;
   } else if (isDefined(draftItem.targetRecordId)) {

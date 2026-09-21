@@ -1,4 +1,5 @@
 declare const classNames: {
+  readonly closeButton: 'closeButton';
   readonly root: 'root';
   readonly progress: 'progress';
   readonly header: 'header';

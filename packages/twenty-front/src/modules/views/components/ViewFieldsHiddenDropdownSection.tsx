@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import { LightIconButton } from 'twenty-ui/components';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
@@ -59,16 +61,19 @@ export const ViewFieldsHiddenDropdownSection = () => {
               <MenuItem
                 key={fieldMetadataItem.id}
                 LeftIcon={getIcon(fieldMetadataItem.icon)}
-                iconButtons={[
-                  {
-                    Icon: IconEye,
-                    onClick: () =>
+                iconButtons={
+                  <LightIconButton
+                    aria-label={t`Show field`}
+                    onClick={() =>
                       handleChangeFieldVisibility({
                         fieldMetadataId: fieldMetadataItem.id,
                         isVisible: true,
-                      }),
-                  },
-                ]}
+                      })
+                    }
+                  >
+                    <IconEye />
+                  </LightIconButton>
+                }
                 text={fieldMetadataItem.label}
               />
             );

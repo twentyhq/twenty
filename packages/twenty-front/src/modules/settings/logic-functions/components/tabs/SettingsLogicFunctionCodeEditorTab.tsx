@@ -8,10 +8,10 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/components';
+import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { IconPlayerPlay } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Button, CoreEditorHeader } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Button } from 'twenty-ui/primitives/input';
 
 const StyledTabListContainer = styled.div`
   > * {
@@ -50,6 +50,7 @@ export const SettingsLogicFunctionCodeEditorTab = ({
   const HeaderTabList = (
     <StyledTabListContainer>
       <TabList
+        aria-label={t`Function files`}
         tabs={files.map((file) => {
           return { id: file.path, title: file.path.split('/').at(-1) || '' };
         })}
@@ -59,12 +60,12 @@ export const SettingsLogicFunctionCodeEditorTab = ({
   );
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Code your function`}
         description={t`Write your function (in typescript) below`}
       />
-      <CoreEditorHeader leftNodes={[HeaderTabList]} rightNodes={[TestButton]} />
+      <CodeEditorHeader leftNodes={[HeaderTabList]} rightNodes={[TestButton]} />
       {activeTabId && (
         <SettingsLogicFunctionCodeEditor
           files={files}
@@ -73,6 +74,6 @@ export const SettingsLogicFunctionCodeEditorTab = ({
           applicationVariableKeys={applicationVariableKeys}
         />
       )}
-    </Section>
+    </Section.Root>
   );
 };

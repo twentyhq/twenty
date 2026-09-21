@@ -15,6 +15,15 @@
 {{ .Release.Namespace }}
 {{- end -}}
 
+{{/* ServiceAccount name used by server/worker pods */}}
+{{- define "twenty.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create -}}
+{{- default (include "twenty.fullname" .) .Values.serviceAccount.name -}}
+{{- else -}}
+{{- default "default" .Values.serviceAccount.name -}}
+{{- end -}}
+{{- end -}}
+
 {{/* Server image fields merged with globals */}}
 {{- define "twenty.server.image" -}}
 {{- $repo := default $.Values.image.repository (index $.Values.server.image "repository" | default "") -}}

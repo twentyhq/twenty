@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey, ViewType, ViewVisibility } from 'twenty-shared/types';
+import { FeatureFlagKey, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -13,7 +13,6 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
-import { fromDeleteViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
@@ -33,6 +32,7 @@ import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/up
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
+import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -228,69 +228,10 @@ export class ViewService {
     deleteViewInput: DeleteViewInput;
     workspaceId: string;
   }): Promise<ViewDTO> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    const { flatViewMaps: existingFlatViewMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewMaps'],
-        },
-      );
-
-    const optimisticallyUpdatedFlatViewWithDeletedAt =
-      fromDeleteViewInputToFlatViewOrThrow({
-        deleteViewInput,
-        flatViewMaps: existingFlatViewMaps,
-        callerApplicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-        workspaceCustomApplicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-      });
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            view: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [optimisticallyUpdatedFlatViewWithDeletedAt],
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-        },
-      );
-
-    if (validateAndBuildResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while deleting view',
-      );
-    }
-
-    const { flatViewMaps: recomputedExistingFlatViewMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewMaps'],
-        },
-      );
-
-    return fromFlatViewToViewDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: deleteViewInput.id,
-        flatEntityMaps: recomputedExistingFlatViewMaps,
-      }),
-    );
+    return this.destroyOne({
+      destroyViewInput: deleteViewInput,
+      workspaceId,
+    });
   }
 
   async destroyOne({
@@ -385,24 +326,6 @@ export class ViewService {
     });
   }
 
-  private isViewVisibleToUser(
-    view: {
-      visibility: ViewVisibility;
-      createdByUserWorkspaceId: string | null;
-    },
-    userWorkspaceId?: string,
-  ): boolean {
-    if (view.visibility === ViewVisibility.WORKSPACE) {
-      return true;
-    }
-
-    return (
-      view.visibility === ViewVisibility.UNLISTED &&
-      isDefined(userWorkspaceId) &&
-      view.createdByUserWorkspaceId === userWorkspaceId
-    );
-  }
-
   private async getFilteredFlatViews({
     workspaceId,
     objectMetadataId,
@@ -446,7 +369,7 @@ export class ViewService {
           viewTypes.length === 0 ||
           viewTypes.includes(flatView.type),
       )
-      .filter((flatView) => this.isViewVisibleToUser(flatView, userWorkspaceId))
+      .filter((flatView) => isViewVisibleToUser(flatView, userWorkspaceId))
       .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
   }
 

@@ -1,0 +1,45 @@
+.button {
+  @include square-button;
+
+  --tw-button-size: var(--t-spacing-8);
+
+  &[data-icon-size='sm'] {
+    --tw-button-size: var(--t-spacing-6);
+  }
+
+  &[data-icon-size='xs'] {
+    --tw-button-size: var(--t-spacing-5);
+  }
+
+  &[data-shape='round'] {
+    border-radius: 50%;
+    corner-shape: round;
+  }
+
+  &[data-shape='round'][data-variant='solid'][data-color='accent'][data-disabled] {
+    --tw-button-background: var(--t-background-quaternary);
+    --tw-button-color: var(--t-font-color-tertiary);
+
+    cursor: default;
+    opacity: 1;
+  }
+}
+
+.tooltipAnchor {
+  display: inline-flex;
+}
+
+.icon {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+  & > svg {
+    block-size: calc(
+      var(--tw-icon-button-icon-size, var(--t-icon-size-md)) * 1px
+    );
+    inline-size: calc(
+      var(--tw-icon-button-icon-size, var(--t-icon-size-md)) * 1px
+    );
+  }
+}

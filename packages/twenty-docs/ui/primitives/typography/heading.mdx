@@ -1,0 +1,43 @@
+---
+title: Heading
+description: Render semantic headings with independent visual sizes.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import HeadingReference from '/snippets/ui/generated/typography/heading.mdx';
+
+`Heading` renders an `h2` by default. Use `children` for its content, `level` for document structure, and `size` for appearance.
+
+<StoryEmbed
+  storyId="ui-typography-heading--documentation"
+  title="Heading example"
+  height={180}
+/>
+
+## Choose a heading level and size
+
+Choose levels in document order. A smaller visual size does not change the level announced by assistive technology.
+
+```tsx
+import { Heading } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceTitle = () => (
+  <Heading level={1} size="lg">
+    Workspace settings
+  </Heading>
+);
+```
+
+Sizes `xs`, `sm`, `md`, and `lg` use the matching font tokens. Headings have no outer margin; their surrounding layout owns spacing.
+
+## Color and composition
+
+Use `color="secondary"` for less prominent headings. `tertiary` is also available, but its contrast depends on the font size, theme, and background. Check readability when using it.
+
+Native attributes, styles, class names, and refs pass to the heading. Use `render` to compose with a custom element or component; that element is responsible for preserving heading semantics.
+
+For a heading with supporting text or actions, use [Section](/ui/components/section).
+
+## Props
+
+<HeadingReference />

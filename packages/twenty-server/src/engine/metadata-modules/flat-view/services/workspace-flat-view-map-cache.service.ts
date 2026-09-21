@@ -39,6 +39,10 @@ const FLAT_VIEW_ROWS_REQUIREMENT = {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['viewId'],
   },
+  navigationMenuItem: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['viewId'],
+  },
 } as const;
 
 @Injectable()
@@ -62,6 +66,7 @@ export class WorkspaceFlatViewMapCacheService extends MetadataFlatEntityMapsCach
       viewFilterGroup: viewFilterGroups,
       viewSort: viewSorts,
       viewFieldGroup: viewFieldGroups,
+      navigationMenuItem: navigationMenuItems,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
@@ -83,6 +88,8 @@ export class WorkspaceFlatViewMapCacheService extends MetadataFlatEntityMapsCach
           viewFilterGroups: viewFilterGroups.byViewId.get(viewEntity.id) || [],
           viewSorts: viewSorts.byViewId.get(viewEntity.id) || [],
           viewFieldGroups: viewFieldGroups.byViewId.get(viewEntity.id) || [],
+          navigationMenuItems:
+            navigationMenuItems.byViewId.get(viewEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,

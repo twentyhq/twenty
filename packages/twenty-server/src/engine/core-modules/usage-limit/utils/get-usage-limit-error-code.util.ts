@@ -4,6 +4,7 @@ import { UsageLimitExceptionCode } from 'src/engine/core-modules/usage-limit/exc
 export const getUsageLimitErrorCode = (
   code: UsageLimitExceptionCode,
 ): ErrorCode =>
-  code === UsageLimitExceptionCode.QUOTA_EXHAUSTED
+  code === UsageLimitExceptionCode.QUOTA_EXHAUSTED ||
+  code === UsageLimitExceptionCode.STOCK_EXHAUSTED
     ? ErrorCode.QUOTA_EXHAUSTED
     : ErrorCode.RATE_LIMITED;

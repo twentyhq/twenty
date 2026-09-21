@@ -26,6 +26,7 @@ import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 
 @Controller(`${ApiPath.Rest}/ai`)
@@ -36,6 +37,7 @@ import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
   AiRestApiExceptionFilter,
   UsageLimitRestApiExceptionFilter,
   BillingRestApiExceptionFilter,
+  AuthRestApiExceptionFilter,
 )
 export class AiGenerateTextController {
   constructor(

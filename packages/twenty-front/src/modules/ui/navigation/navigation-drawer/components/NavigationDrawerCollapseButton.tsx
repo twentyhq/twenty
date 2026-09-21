@@ -1,15 +1,11 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNavigationDrawerTogglePresentation';
 import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
-import { useId } from 'react';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/primitives/surfaces';
+import { LightIconButton } from 'twenty-ui/components';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCollapseButton = styled.div`
@@ -34,7 +30,6 @@ export const NavigationDrawerCollapseButton = ({
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
   const { toggleNavigationDrawer } = useToggleNavigationDrawer();
-  const tooltipId = useId();
   const { label, Icon } = useNavigationDrawerTogglePresentation(
     direction === 'left',
   );
@@ -45,22 +40,22 @@ export const NavigationDrawerCollapseButton = ({
   }
 
   return (
-    <StyledCollapseButton className={className} data-tooltip-id={tooltipId}>
-      <LightIconButton
-        Icon={Icon}
-        accent="secondary"
-        size="small"
-        onClick={toggleNavigationDrawer}
-        aria-label={label}
-      />
-      <AppTooltip
-        anchorSelect={`[data-tooltip-id='${tooltipId}'] > button`}
-        title={label}
-        delay={TooltipDelay.longDelay}
-        place={TooltipPosition.Bottom}
-        offset={5}
-        noArrow
-      />
-    </StyledCollapseButton>
+    <Tooltip
+      content={label}
+      delay={TooltipDelay.longDelay}
+      side="bottom"
+      sideOffset={5}
+    >
+      <StyledCollapseButton className={className}>
+        <LightIconButton
+          emphasis="standard"
+          size="sm"
+          onClick={toggleNavigationDrawer}
+          aria-label={label}
+        >
+          <Icon />
+        </LightIconButton>
+      </StyledCollapseButton>
+    </Tooltip>
   );
 };

@@ -103,6 +103,12 @@ runs:
       shell: bash
       run: npx wait-on http://localhost:3000/healthz --timeout 180000 --interval 1000
 
+    - name: Start worker
+      if: inputs.source == 'local'
+      shell: bash
+      working-directory: packages/twenty-server
+      run: nohup yarn worker:prod > /tmp/twenty-worker.log 2>&1 &
+
     - name: Resolve server url and api key
       id: resolve
       shell: bash

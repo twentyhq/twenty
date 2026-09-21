@@ -18,10 +18,16 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
+@UseFilters(
+  UsageLimitGraphqlApiExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+  AuthGraphqlApiExceptionFilter,
+)
 @MetadataResolver()
 export class FilesFieldResolver {
   constructor(private readonly filesFieldService: FilesFieldService) {}

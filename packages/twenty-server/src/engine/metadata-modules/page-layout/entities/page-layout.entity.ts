@@ -17,6 +17,7 @@ import {
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_PAGE_LAYOUT_IS_FIRST_TAB_PINNED_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-38/add-page-layout-is-first-tab-pinned-upgrade-command-name.constant';
+import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutType } from 'twenty-shared/types';
@@ -61,6 +62,12 @@ export class PageLayoutEntity
     cascade: true,
   })
   tabs: Relation<PageLayoutTabEntity[]>;
+
+  @OneToMany(
+    () => NavigationMenuItemEntity,
+    (navigationMenuItem) => navigationMenuItem.pageLayout,
+  )
+  navigationMenuItems: Relation<NavigationMenuItemEntity[]>;
 
   @Column({ nullable: true, type: 'uuid' })
   defaultTabToFocusOnMobileAndSidePanelId: string | null;

@@ -18,11 +18,7 @@ import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-a
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
 import { truncateRecordingNoticeMessage } from 'src/logic-functions/utils/truncate-recording-notice-message.util';
 
-type InCallSectionProps = {
-  frontComponentId: string;
-};
-
-export const InCallSection = ({ frontComponentId }: InCallSectionProps) => {
+export const InCallSection = () => {
   const noticeMessageInputId = useId();
   const [isNoticeEnabled, setIsNoticeEnabled] = useState(
     () =>
@@ -38,12 +34,10 @@ export const InCallSection = ({ frontComponentId }: InCallSectionProps) => {
 
   const { saveImmediately: saveNoticeEnabledImmediately } =
     useAutosaveApplicationVariable({
-      frontComponentId,
       variableKey: CALL_RECORDER_RECORDING_NOTICE_ROW.variableKey,
     });
   const { saveDebounced: saveNoticeMessageDebounced } =
     useAutosaveApplicationVariable({
-      frontComponentId,
       variableKey: CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD.variableKey,
     });
 
@@ -72,7 +66,6 @@ export const InCallSection = ({ frontComponentId }: InCallSectionProps) => {
           {CALL_RECORDER_TIMING_ROWS.map((row) => (
             <TimingCounterRow
               key={row.variableKey}
-              frontComponentId={frontComponentId}
               variableKey={row.variableKey}
               title={row.title}
               description={row.description}

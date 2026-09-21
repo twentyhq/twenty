@@ -1,17 +1,17 @@
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { OnboardingActivationSteps } from '@/onboarding/components/OnboardingActivationSteps';
 import { OnboardingActivationStepsEffect } from '@/onboarding/components/OnboardingActivationStepsEffect';
 import { ONBOARDING_ACTIVATION_MESSAGES } from '@/onboarding/constants/OnboardingActivationMessages';
 import { useState } from 'react';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-const RenderWithModalContent = () => {
+const RenderWithStyledAuthContent = () => {
   const [messageIndex, setMessageIndex] = useState(0);
 
   return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
+    <StyledAuthContent>
       <OnboardingActivationStepsEffect
         messageIndex={messageIndex}
         setMessageIndex={setMessageIndex}
@@ -21,7 +21,7 @@ const RenderWithModalContent = () => {
         messages={ONBOARDING_ACTIVATION_MESSAGES}
         messageIndex={messageIndex}
       />
-    </ModalContent>
+    </StyledAuthContent>
   );
 };
 
@@ -29,7 +29,7 @@ const meta: Meta<typeof OnboardingActivationSteps> = {
   title: 'Modules/Onboarding/OnboardingActivationSteps',
   component: OnboardingActivationSteps,
   decorators: [ComponentDecorator],
-  render: RenderWithModalContent,
+  render: RenderWithStyledAuthContent,
 };
 
 export default meta;
