@@ -396,6 +396,7 @@ export {
   IconSquareRoundedX,
   IconSquareX,
   IconStack2,
+  IconStairs,
   IconStar,
   IconStatusChange,
   IconStepInto,

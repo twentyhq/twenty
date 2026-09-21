@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
   CLASSIFY_ANSWER_NAME_PATTERN,
   CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER,
   type WorkflowClassifyQuestion,
@@ -47,7 +48,9 @@ const getQuestionProblem = (
   // are keyed by index, so their labels stay free.
   if (question.type === 'choice') {
     const unreachableOption = question.criteria.find((criterion) =>
-      criterion.name.includes(CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER),
+      criterion.name
+        .replace(CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX, '')
+        .includes(CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER),
     );
 
     if (isDefined(unreachableOption)) {

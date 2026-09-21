@@ -9,7 +9,7 @@ import { UndoRedo } from '@tiptap/extensions/undo-redo';
 import { Slice } from '@tiptap/pm/model';
 
 import { type Editor, useEditor } from '@tiptap/react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 
@@ -40,13 +40,17 @@ export const useTextVariableEditor = ({
   defaultValue,
   onUpdate,
 }: UseTextVariableEditorProps) => {
+  // Tiptap retains this callback outside React; the ref bridges its decoration
+  // lifecycle to updated props without recreating the editor or its history.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const placeholderRef = useRef(placeholder);
   const editor = useEditor({
     extensions: [
       Document,
       Paragraph,
       Text,
       Placeholder.configure({
-        placeholder,
+        placeholder: () => placeholderRef.current ?? '',
       }),
       WorkflowVariableTag,
       ...(multiline
@@ -132,6 +136,16 @@ export const useTextVariableEditor = ({
   useEffect(() => {
     editor?.setEditable(!readonly, false);
   }, [editor, readonly]);
+
+  useEffect(() => {
+    placeholderRef.current = placeholder;
+
+    // Placeholder decorations need a transaction to refresh without replacing
+    // the editor and losing its content, selection, or undo history.
+    if (isDefined(editor) && !editor.isDestroyed) {
+      editor.view.dispatch(editor.state.tr.setMeta('addToHistory', false));
+    }
+  }, [editor, placeholder]);
 
   return editor;
 };

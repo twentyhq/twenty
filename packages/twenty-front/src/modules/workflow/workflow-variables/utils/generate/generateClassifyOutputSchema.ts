@@ -1,3 +1,4 @@
+import { isVariableReference } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
@@ -6,14 +7,10 @@ import {
   type WorkflowClassifyQuestion,
 } from 'twenty-shared/workflow';
 
-// Only an evaluation model returns a distribution; the language-model fallback
-// answers without one, so these read as undefined on a workspace that has no
-// evaluation provider. The label says so, because the picker cannot show a
-// value that depends on which model answers at run time.
 const buildProbabilitiesNode = (keys: string[]): Node => ({
   isLeaf: false,
   type: 'object',
-  label: 'Probabilities (evaluation models only)',
+  label: 'Probabilities',
   value: Object.fromEntries(
     keys.map((key) => [
       key,
@@ -51,7 +48,13 @@ const buildAnswerSchema = (
         },
         probabilities: buildProbabilitiesNode(
           question.criteria
-            .filter((criterion) => isNonEmptyString(criterion.name))
+            // Dynamic labels are only known at runtime, so they cannot provide
+            // stable probability paths in the variable picker.
+            .filter(
+              (criterion) =>
+                isNonEmptyString(criterion.name) &&
+                !isVariableReference(criterion.name),
+            )
             .map((criterion) => criterion.name),
         ),
       };
