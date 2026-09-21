@@ -5,7 +5,7 @@ export const CLASSIFY_ACTION: {
   type: Extract<WorkflowActionType, 'CLASSIFY'>;
   icon: string;
 } = {
-  defaultLabel: 'Jev classifier',
+  defaultLabel: 'Classify (Jev)',
   type: 'CLASSIFY',
   icon: 'IconCategory',
 };
