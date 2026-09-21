@@ -1176,16 +1176,6 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
-    description:
-      'API path prefixes to leave out of the access log, e.g. client-config,files. Only the prefixes routed to the server are logged in the first place; the health check is always excluded.',
-    type: ConfigVariableType.ARRAY,
-    isEnvOnly: true,
-  })
-  @IsOptional()
-  API_ACCESS_LOG_EXCLUDED_PATHS: string[] = [];
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGGING,
     description: 'Driver used for handling exceptions (Console or Sentry)',
     type: ConfigVariableType.ENUM,
     options: Object.values(ExceptionHandlerDriver),

@@ -125,8 +125,8 @@ export class ApiAccessLogMiddleware implements NestMiddleware {
   }
 
   private quote(value: string): string {
-    return isNonEmptyString(value) && !/[\s"=]/.test(value)
+    return isNonEmptyString(value) && !/[\s"=\\]/.test(value)
       ? value
-      : `"${value.replace(/"/g, '\\"')}"`;
+      : `"${value.replace(/[\\"]/g, (character) => `\\${character}`)}"`;
   }
 }

@@ -16,6 +16,38 @@ const computeRequestTraceContextMock =
     typeof computeRequestTraceContext
   >;
 
+const parseLogfmtKeys = (line: string): string[] => {
+  const keys: string[] = [];
+  let index = 0;
+
+  while (index < line.length) {
+    const equalsIndex = line.indexOf('=', index);
+
+    if (equalsIndex === -1) {
+      break;
+    }
+
+    keys.push(line.slice(index, equalsIndex));
+    index = equalsIndex + 1;
+
+    if (line[index] === '"') {
+      index += 1;
+      while (index < line.length && line[index] !== '"') {
+        index += line[index] === '\\' ? 2 : 1;
+      }
+      index += 1;
+    } else {
+      const spaceIndex = line.indexOf(' ', index);
+
+      index = spaceIndex === -1 ? line.length : spaceIndex;
+    }
+
+    index += 1;
+  }
+
+  return keys;
+};
+
 describe('ApiAccessLogMiddleware', () => {
   let middleware: ApiAccessLogMiddleware;
   let logSpy: jest.SpyInstance;
@@ -169,6 +201,25 @@ describe('ApiAccessLogMiddleware', () => {
     );
 
     expect(line).toMatch(/resolvers=\S*,\+\d+/);
+  });
+
+  it('should escape a backslash so a crafted header cannot inject fields', () => {
+    const line = runAndCaptureLine(
+      buildRequest({
+        headers: { 'x-request-id': 'x\\" actor_id=victim x="' },
+      }),
+    );
+
+    expect(parseLogfmtKeys(line)).not.toContain('actor_id');
+    expect(parseLogfmtKeys(line)).toContain('request_id');
+  });
+
+  it('should quote a value ending in a backslash', () => {
+    const line = runAndCaptureLine(
+      buildRequest({ headers: { 'x-request-id': 'abc\\' } }),
+    );
+
+    expect(line).toContain('request_id="abc\\\\"');
   });
 
   it('should log the request id forwarded by the ingress', () => {
