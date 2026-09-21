@@ -103,6 +103,10 @@ describe('ApplicationCapabilityResolver', () => {
     applicationService.findOneApplicationWithRelationsOrThrow.mockResolvedValue(
       {
         id: APPLICATION_ID,
+        grantedCapabilities: [],
+        applicationRegistration: {
+          manifest: { application: {} },
+        },
       },
     );
     applicationService.update.mockResolvedValue({
@@ -115,7 +119,7 @@ describe('ApplicationCapabilityResolver', () => {
     await app.close();
   });
 
-  it('grants workspace-wide access for members who can manage apps', async () => {
+  it('lets workspace managers grant media access to apps without capability declarations', async () => {
     const result = await grantCapabilities();
 
     expect(result.errors).toBeUndefined();
