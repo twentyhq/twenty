@@ -1150,6 +1150,7 @@ exports[`Application export - data model exports the whole application as a stab
       "universalIdentifier": "<TEST_ROLE>",
     },
   ],
+  "settingPages": [],
   "skills": [],
   "timelineActivityTypes": [],
   "translations": {
