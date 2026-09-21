@@ -50,6 +50,7 @@ export const AnimatedIcon: Story = {
     const button = within(canvasElement).getByRole('button', {
       name: 'Edit actions',
     });
+    await document.fonts.load('500 1em Inter');
     await document.fonts.ready;
     const [pencil, cross] = button.querySelectorAll('svg');
     const originalWidth = button.getBoundingClientRect().width;
@@ -63,10 +64,17 @@ export const AnimatedIcon: Story = {
       expect(getComputedStyle(pencil.parentElement!).opacity).toBe('0');
       expect(getComputedStyle(cross.parentElement!).opacity).toBe('1');
     });
-    await expect(button.getBoundingClientRect().width).toBe(originalWidth);
+    await waitFor(() =>
+      expect(button.getBoundingClientRect().width).toBe(originalWidth),
+    );
     await userEvent.keyboard(' ');
     await expect(button).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.tab();
   },
+};
+export const AnimatedIconDocumentation: Story = {
+  ...AnimatedIcon,
+  play: undefined,
 };
 export const Keyboard: Story = {
   ...Default,

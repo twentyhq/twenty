@@ -22,7 +22,7 @@ const ButtonControls = () => {
     <ThemeProvider colorScheme="light">
       <Button
         size="sm"
-        aria-expanded={isEditing ? 'true' : 'false'}
+        aria-expanded={isEditing}
         onClick={() => setIsEditing(!isEditing)}
         startIcon={
           <AnimatedIconCrossfade

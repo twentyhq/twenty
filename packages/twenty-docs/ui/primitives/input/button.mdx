@@ -73,7 +73,7 @@ Choose `solid`, `outline`, `soft`, or `ghost` independently of the `neutral`, `a
 
 ## Animated icons
 
-Compose `Button` with `AnimatedIconCrossfade` to change its icon when application state changes. This replaces `AnimatedButton`: pass the animated element to `startIcon` instead of `animatedSvg`, and the label as children instead of `title`.
+Compose `Button` with `AnimatedIconCrossfade` to change its icon when application state changes. Pass the animated element to `startIcon` and the label as children.
 
 ```tsx
 import { useState } from 'react';
@@ -87,8 +87,7 @@ export const EditActions = () => {
   return (
     <Button
       size="sm"
-      variant="outline"
-      aria-expanded={isEditing ? 'true' : 'false'}
+      aria-expanded={isEditing}
       onClick={() => setIsEditing(!isEditing)}
       startIcon={
         <AnimatedIconCrossfade
@@ -104,11 +103,11 @@ export const EditActions = () => {
 };
 ```
 
-`AnimatedLightIconButton` is also removed. When an icon is itself an action, use `IconButton` or `LightIconButton` and animate its icon content. When a disclosure header owns expansion, keep its chevron decorative and expose `aria-expanded` on the header control. Keep animation styles with the feature and respect `prefers-reduced-motion`.
+When an icon is itself an action, use `IconButton` or `LightIconButton` and animate its icon content. When a disclosure header owns expansion, keep its chevron decorative and expose `aria-expanded` on the header control. Keep animation styles with the feature and respect `prefers-reduced-motion`.
 
 <StoryEmbed
   title="Button with an animated icon"
-  storyId="ui-input-button-button--animated-icon"
+  storyId="ui-input-button-button--animated-icon-documentation"
   height={120}
 />
 
