@@ -98,6 +98,11 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         userWorkspaceRoleMap: {},
         apiKeyRoleMap: {},
         eventEmitterService: { emitDatabaseBatchEvent },
+        recordStock: {
+          assertRecordStockAvailable: jest.fn(),
+          acquireRecordStock: jest.fn(),
+          releaseRecordStock: jest.fn(),
+        },
         coreDataSource: dataSource,
       },
     });
