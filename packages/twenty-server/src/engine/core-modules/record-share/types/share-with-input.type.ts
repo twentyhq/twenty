@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 
 export type ShareWithInput = {

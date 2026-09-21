@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import {
   type RecordShareAccessLevel,
   type RecordSharePrincipalType,

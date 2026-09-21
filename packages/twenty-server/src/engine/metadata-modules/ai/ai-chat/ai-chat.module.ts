@@ -1,4 +1,4 @@
-import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
+import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
 import { AgentChatSharingService } from './services/agent-chat-sharing.service';
 import { AgentChatSharingResolver } from './resolvers/agent-chat-sharing.resolver';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
@@ -47,7 +47,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
 
 @Module({
   imports: [
-    RecordShareModule,
+    RecordShareStorageModule,
     AgentChatStreamStateModule,
     AgentHistoryModule,
     UsageLimitModule,
