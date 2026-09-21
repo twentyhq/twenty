@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { CommandRunner, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource } from 'typeorm';
@@ -132,6 +133,12 @@ export abstract class WorkspaceCommandRunner<
           });
         },
       });
+
+      if (isNonEmptyArray(report.fail)) {
+        throw new Error(
+          `Command failed for ${report.fail.length} workspace(s). See the workspace errors above.`,
+        );
+      }
 
       if (report.interrupted) {
         this.logger.warn(
