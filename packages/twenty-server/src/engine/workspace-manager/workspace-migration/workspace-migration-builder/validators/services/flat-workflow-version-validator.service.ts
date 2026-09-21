@@ -16,7 +16,7 @@ export class FlatWorkflowVersionValidatorService {
   public validateFlatWorkflowVersionCreation({
     flatEntityToValidate: flatWorkflowVersion,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatWorkflowVersionMaps: optimisticFlatWorkflowMaps,
+      flatWorkflowVersionMaps: optimisticFlatWorkflowVersionMaps,
     },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.workflowVersion
@@ -31,7 +31,7 @@ export class FlatWorkflowVersionValidatorService {
 
     const existingWorkflowVersion = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatWorkflowVersion.universalIdentifier,
-      flatEntityMaps: optimisticFlatWorkflowMaps,
+      flatEntityMaps: optimisticFlatWorkflowVersionMaps,
     });
 
     if (isDefined(existingWorkflowVersion)) {
@@ -48,7 +48,7 @@ export class FlatWorkflowVersionValidatorService {
   public validateFlatWorkflowVersionDeletion({
     flatEntityToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatWorkflowVersionMaps: optimisticFlatWorkflowMaps,
+      flatWorkflowVersionMaps: optimisticFlatWorkflowVersionMaps,
     },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.workflowVersion
@@ -63,7 +63,7 @@ export class FlatWorkflowVersionValidatorService {
 
     const existingWorkflowVersion = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatEntityToValidate.universalIdentifier,
-      flatEntityMaps: optimisticFlatWorkflowMaps,
+      flatEntityMaps: optimisticFlatWorkflowVersionMaps,
     });
 
     if (!isDefined(existingWorkflowVersion)) {
@@ -80,7 +80,7 @@ export class FlatWorkflowVersionValidatorService {
   public validateFlatWorkflowVersionUpdate({
     universalIdentifier,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatWorkflowVersionMaps: optimisticFlatWorkflowMaps,
+      flatWorkflowVersionMaps: optimisticFlatWorkflowVersionMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.workflowVersion
@@ -95,7 +95,7 @@ export class FlatWorkflowVersionValidatorService {
 
     const existingWorkflowVersion = findFlatEntityByUniversalIdentifier({
       universalIdentifier,
-      flatEntityMaps: optimisticFlatWorkflowMaps,
+      flatEntityMaps: optimisticFlatWorkflowVersionMaps,
     });
 
     if (!isDefined(existingWorkflowVersion)) {
