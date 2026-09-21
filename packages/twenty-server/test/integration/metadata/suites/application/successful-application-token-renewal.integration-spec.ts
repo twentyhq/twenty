@@ -71,6 +71,12 @@ describe('Application token renewal should succeed', () => {
       type: JwtTokenTypeEnum.APPLICATION_REFRESH,
     });
     expect(tokenBucketThrottleOrThrowSpy).toHaveBeenCalledWith(
+      `app-renew:${SEED_APPLE_WORKSPACE_ID}:${USER_WORKSPACE_DATA_SEED_IDS.JANE}`,
+      1,
+      30,
+      30_000,
+    );
+    expect(tokenBucketThrottleOrThrowSpy).toHaveBeenCalledWith(
       `app-renew:${SEED_APPLE_WORKSPACE_ID}:${USER_WORKSPACE_DATA_SEED_IDS.JANE}:${applicationId}`,
       1,
       30,

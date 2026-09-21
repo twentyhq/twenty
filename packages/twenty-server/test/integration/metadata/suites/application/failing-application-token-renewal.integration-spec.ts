@@ -1,4 +1,6 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { type ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { renewApplicationToken } from 'test/integration/metadata/suites/application/utils/renew-application-token.util';
@@ -147,4 +149,29 @@ describe('Application token renewal should fail', () => {
       expectOneNotInternalServerErrorSnapshot({ errors });
     },
   );
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should consume session rate limit bucket on failed renewal attempts', async () => {
+    const tokenBucketThrottleOrThrowSpy = jest.spyOn(
+      getAppProviderByClassName<ThrottlerService>('ThrottlerService'),
+      'tokenBucketThrottleOrThrow',
+    );
+
+    await renewApplicationToken({
+      input: {
+        applicationRefreshToken: 'invalid-malformed-token',
+      },
+      expectToFail: true,
+    });
+
+    expect(tokenBucketThrottleOrThrowSpy).toHaveBeenCalledWith(
+      `app-renew:${SEED_APPLE_WORKSPACE_ID}:${USER_WORKSPACE_DATA_SEED_IDS.JANE}`,
+      1,
+      30,
+      30_000,
+    );
+  });
 });
