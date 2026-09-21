@@ -3783,6 +3783,7 @@ type Query {
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
+  chatThreadsForRecord(objectNameSingular: String!, recordId: UUID!): [AgentChatThread!]!
   getAiSystemPromptPreview: AiSystemPromptPreview!
   skills: [Skill!]!
   skill(id: UUID!): Skill
@@ -4110,6 +4111,8 @@ type Mutation {
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
+  attachChatThreadToRecord(threadId: UUID!, objectNameSingular: String!, recordId: UUID!): Boolean!
+  detachChatThreadFromRecord(threadId: UUID!, objectNameSingular: String!, recordId: UUID!): Boolean!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
