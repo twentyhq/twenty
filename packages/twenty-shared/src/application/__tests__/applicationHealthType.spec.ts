@@ -8,9 +8,10 @@ describe('isApplicationHealthCheckResult', () => {
       {
         status: 'error',
         message: 'Key revoked',
-        action: { label: 'Fix', settingsTab: 'variables' },
+        action: { label: 'Fix', location: 'variables' },
       },
     ],
+    [{ status: 'error', message: 'Key revoked', action: { label: 'Fix' } }],
   ])('should accept %p', (value) => {
     expect(isApplicationHealthCheckResult(value)).toBe(true);
   });
@@ -25,12 +26,18 @@ describe('isApplicationHealthCheckResult', () => {
     [{ status: 'error', message: 'Boom', action: {} }],
     [{ status: 'error', message: 'Boom', action: { label: 2 } }],
     [{ status: 'error', message: 'Boom', action: { label: '' } }],
-    [{ status: 'error', message: 'Boom', action: { label: 'Fix' } }],
     [
       {
         status: 'error',
         message: 'Boom',
-        action: { label: 'Fix', settingsTab: 'nope' },
+        action: { label: 'Fix', location: 2 },
+      },
+    ],
+    [
+      {
+        status: 'error',
+        message: 'Boom',
+        action: { label: 'Fix', location: '' },
       },
     ],
   ])('should reject %p', (value) => {

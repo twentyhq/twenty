@@ -1985,11 +1985,9 @@ export interface DeletedWorkspaceMember {
 
 export interface ApplicationHealthCheckAction {
     label: Scalars['String']
-    settingsTab: ApplicationSettingsTab
+    location?: Scalars['String']
     __typename: 'ApplicationHealthCheckAction'
 }
-
-export type ApplicationSettingsTab = 'GENERAL' | 'VARIABLES' | 'SETTINGS'
 
 export interface ApplicationHealthCheckResult {
     status: ApplicationHealthStatus
@@ -5706,7 +5704,7 @@ export interface DeletedWorkspaceMemberGenqlSelection{
 
 export interface ApplicationHealthCheckActionGenqlSelection{
     label?: boolean | number
-    settingsTab?: boolean | number
+    location?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10930,12 +10928,6 @@ export const enumSupportDriver = {
 export const enumCaptchaDriverType = {
    GOOGLE_RECAPTCHA: 'GOOGLE_RECAPTCHA' as const,
    TURNSTILE: 'TURNSTILE' as const
-}
-
-export const enumApplicationSettingsTab = {
-   GENERAL: 'GENERAL' as const,
-   VARIABLES: 'VARIABLES' as const,
-   SETTINGS: 'SETTINGS' as const
 }
 
 export const enumApplicationHealthStatus = {

@@ -37,7 +37,6 @@ import {
 import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import {
-  ApplicationSettingsTab,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationDocument,
   IsApplicationStoppedDocument,
@@ -63,15 +62,6 @@ const APPLICATION_DETAIL_ID = 'application-detail-id';
 const GENERAL_TAB_ID = 'general';
 const VARIABLES_TAB_ID = 'variables';
 const CUSTOM_SETTINGS_TAB_ID = 'settings';
-
-const TAB_ID_BY_APPLICATION_SETTINGS_TAB: Record<
-  ApplicationSettingsTab,
-  string
-> = {
-  [ApplicationSettingsTab.GENERAL]: GENERAL_TAB_ID,
-  [ApplicationSettingsTab.VARIABLES]: VARIABLES_TAB_ID,
-  [ApplicationSettingsTab.SETTINGS]: CUSTOM_SETTINGS_TAB_ID,
-};
 
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
@@ -235,9 +225,9 @@ export const SettingsApplicationDetails = () => {
   ];
 
   const healthAction = healthCheckResult?.action;
-  const healthActionTabId = isDefined(healthAction)
-    ? TAB_ID_BY_APPLICATION_SETTINGS_TAB[healthAction.settingsTab]
-    : undefined;
+  const healthActionTabId = isNonEmptyString(healthAction?.location)
+    ? healthAction.location
+    : configurationTabId;
 
   const healthBannerResult =
     !isNonEmptyArray(missingRequiredApplicationVariables) &&

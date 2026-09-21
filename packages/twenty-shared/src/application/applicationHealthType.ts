@@ -7,17 +7,9 @@ export const APPLICATION_HEALTH_CHECK_REPORTED_STATUSES = [
 export type ApplicationHealthCheckReportedStatus =
   (typeof APPLICATION_HEALTH_CHECK_REPORTED_STATUSES)[number];
 
-export const APPLICATION_SETTINGS_TABS = [
-  'general',
-  'variables',
-  'settings',
-] as const;
-
-export type ApplicationSettingsTab = (typeof APPLICATION_SETTINGS_TABS)[number];
-
 export type ApplicationHealthCheckAction = {
   label: string;
-  settingsTab: ApplicationSettingsTab;
+  location?: string;
 };
 
 export type ApplicationHealthCheckResult =
@@ -57,13 +49,15 @@ export const isApplicationHealthCheckResult = (
     return false;
   }
 
-  const { label, settingsTab } = action as Record<string, unknown>;
+  const { label, location } = action as Record<string, unknown>;
 
   if (typeof label !== 'string' || label.length === 0) {
     return false;
   }
 
-  return APPLICATION_SETTINGS_TABS.includes(
-    settingsTab as ApplicationSettingsTab,
-  );
+  if (location === undefined) {
+    return true;
+  }
+
+  return typeof location === 'string' && location.length > 0;
 };

@@ -38,13 +38,11 @@ export {
 } from './applicationCategoryType';
 export type {
   ApplicationHealthCheckReportedStatus,
-  ApplicationSettingsTab,
   ApplicationHealthCheckAction,
   ApplicationHealthCheckResult,
 } from './applicationHealthType';
 export {
   APPLICATION_HEALTH_CHECK_REPORTED_STATUSES,
-  APPLICATION_SETTINGS_TABS,
   isApplicationHealthCheckResult,
 } from './applicationHealthType';
 export type { ApplicationManifest } from './applicationType';

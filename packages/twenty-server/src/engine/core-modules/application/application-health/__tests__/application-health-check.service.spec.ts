@@ -1,6 +1,5 @@
 import { ApplicationHealthCheckService } from 'src/engine/core-modules/application/application-health/application-health-check.service';
 import { ApplicationHealthStatus } from 'src/engine/core-modules/application/enums/application-health-status.enum';
-import { ApplicationSettingsTab } from 'src/engine/core-modules/application/enums/application-settings-tab.enum';
 
 const APPLICATION_ID = 'a7d3f1c2-1111-4222-8333-444455556666';
 const WORKSPACE_ID = 'b7d3f1c2-1111-4222-8333-444455556666';
@@ -60,7 +59,7 @@ describe('ApplicationHealthCheckService', () => {
         data: {
           status: 'error',
           message: 'Your key was revoked',
-          action: { label: 'Reconnect', settingsTab: 'variables' },
+          action: { label: 'Reconnect', location: 'variables' },
         },
       }),
     });
@@ -68,10 +67,7 @@ describe('ApplicationHealthCheckService', () => {
     expect(await run(service)).toEqual({
       status: ApplicationHealthStatus.ERROR,
       message: 'Your key was revoked',
-      action: {
-        label: 'Reconnect',
-        settingsTab: ApplicationSettingsTab.VARIABLES,
-      },
+      action: { label: 'Reconnect', location: 'variables' },
     });
   });
 

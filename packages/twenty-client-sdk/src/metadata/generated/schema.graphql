@@ -2359,13 +2359,7 @@ type DeletedWorkspaceMember {
 
 type ApplicationHealthCheckAction {
   label: String!
-  settingsTab: ApplicationSettingsTab!
-}
-
-enum ApplicationSettingsTab {
-  GENERAL
-  VARIABLES
-  SETTINGS
+  location: String
 }
 
 type ApplicationHealthCheckResult {

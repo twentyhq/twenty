@@ -7,7 +7,7 @@ export const RUN_APPLICATION_HEALTH_CHECK = gql`
       message
       action {
         label
-        settingsTab
+        location
       }
     }
   }

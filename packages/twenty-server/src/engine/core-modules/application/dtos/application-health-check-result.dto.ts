@@ -1,15 +1,14 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { ApplicationHealthStatus } from 'src/engine/core-modules/application/enums/application-health-status.enum';
-import { ApplicationSettingsTab } from 'src/engine/core-modules/application/enums/application-settings-tab.enum';
 
 @ObjectType('ApplicationHealthCheckAction')
 export class ApplicationHealthCheckActionDTO {
   @Field(() => String)
   label: string;
 
-  @Field(() => ApplicationSettingsTab)
-  settingsTab: ApplicationSettingsTab;
+  @Field(() => String, { nullable: true })
+  location: string | null;
 }
 
 @ObjectType('ApplicationHealthCheckResult')

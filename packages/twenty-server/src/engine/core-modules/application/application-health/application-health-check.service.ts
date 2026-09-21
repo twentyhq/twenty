@@ -1,15 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  type ApplicationSettingsTab as ReportedApplicationSettingsTab,
-  isApplicationHealthCheckResult,
-} from 'twenty-shared/application';
+import { isApplicationHealthCheckResult } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationHealthStatus } from 'src/engine/core-modules/application/enums/application-health-status.enum';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type ApplicationHealthCheckResultDTO } from 'src/engine/core-modules/application/dtos/application-health-check-result.dto';
-import { ApplicationSettingsTab } from 'src/engine/core-modules/application/enums/application-settings-tab.enum';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
 const REPORTED_STATUS_TO_HEALTH_STATUS = {
@@ -17,15 +13,6 @@ const REPORTED_STATUS_TO_HEALTH_STATUS = {
   warning: ApplicationHealthStatus.WARNING,
   error: ApplicationHealthStatus.ERROR,
 } as const;
-
-const REPORTED_SETTINGS_TAB_TO_SETTINGS_TAB = {
-  general: ApplicationSettingsTab.GENERAL,
-  variables: ApplicationSettingsTab.VARIABLES,
-  settings: ApplicationSettingsTab.SETTINGS,
-} as const satisfies Record<
-  ReportedApplicationSettingsTab,
-  ApplicationSettingsTab
->;
 
 const UNKNOWN_HEALTH: ApplicationHealthCheckResultDTO = {
   status: ApplicationHealthStatus.UNKNOWN,
@@ -122,11 +109,7 @@ export class ApplicationHealthCheckService {
       status: REPORTED_STATUS_TO_HEALTH_STATUS[data.status],
       message: data.message,
       action: isDefined(action)
-        ? {
-            label: action.label,
-            settingsTab:
-              REPORTED_SETTINGS_TAB_TO_SETTINGS_TAB[action.settingsTab],
-          }
+        ? { label: action.label, location: action.location ?? null }
         : null,
     };
   }
