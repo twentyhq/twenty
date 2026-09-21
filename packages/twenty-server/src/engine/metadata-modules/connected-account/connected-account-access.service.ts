@@ -21,19 +21,6 @@ import { canActorActAsConnectedAccount } from 'src/engine/metadata-modules/conne
 import { canActorSeeConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/can-actor-see-connected-account.util';
 import { selectDefaultConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/select-default-connected-account.util';
 
-const LISTED_CONNECTED_ACCOUNT_COLUMNS = {
-  id: true,
-  handle: true,
-  handleAliases: true,
-  provider: true,
-  name: true,
-  scopes: true,
-  visibility: true,
-  userWorkspaceId: true,
-  applicationId: true,
-  connectionParameters: true,
-} as const;
-
 @Injectable()
 export class ConnectedAccountAccessService {
   constructor(
@@ -61,16 +48,13 @@ export class ConnectedAccountAccessService {
   async listActableConnectedAccounts({
     authContext,
     operation,
-    relations,
   }: {
     authContext: WorkspaceAuthContext;
     operation: ConnectedAccountOperation;
-    relations?: FindOptionsRelations<ConnectedAccountEntity>;
   }): Promise<ConnectedAccountEntity[]> {
     const connectedAccounts = await this.findConnectedAccountsForOperation({
       authContext,
       operation,
-      relations,
     });
 
     return connectedAccounts.filter((connectedAccount) =>
@@ -81,11 +65,9 @@ export class ConnectedAccountAccessService {
   private async findConnectedAccountsForOperation({
     authContext,
     operation,
-    relations,
   }: {
     authContext: WorkspaceAuthContext;
     operation: ConnectedAccountOperation;
-    relations?: FindOptionsRelations<ConnectedAccountEntity>;
   }): Promise<ConnectedAccountEntity[]> {
     const connectedAccounts = await this.connectedAccountRepository.find({
       where: {
@@ -93,36 +75,22 @@ export class ConnectedAccountAccessService {
         archivedAt: IsNull(),
       },
       order: { createdAt: 'ASC', id: 'ASC' },
-      ...(isDefined(relations)
-        ? { relations }
-        : { select: LISTED_CONNECTED_ACCOUNT_COLUMNS }),
+      select: {
+        id: true,
+        handle: true,
+        handleAliases: true,
+        provider: true,
+        name: true,
+        scopes: true,
+        visibility: true,
+        userWorkspaceId: true,
+        applicationId: true,
+        connectionParameters: true,
+      },
     });
 
     return connectedAccounts.filter((connectedAccount) =>
       canConnectedAccountPerformOperation({ connectedAccount, operation }),
-    );
-  }
-
-  async listConnectedAccountsRequiringReconnect({
-    authContext,
-    operation,
-  }: {
-    authContext: WorkspaceAuthContext;
-    operation: ConnectedAccountOperation;
-  }): Promise<ConnectedAccountEntity[]> {
-    const connectedAccounts = await this.connectedAccountRepository.find({
-      where: {
-        workspaceId: authContext.workspace.id,
-        archivedAt: IsNull(),
-      },
-      order: { createdAt: 'ASC', id: 'ASC' },
-      select: LISTED_CONNECTED_ACCOUNT_COLUMNS,
-    });
-
-    return connectedAccounts.filter(
-      (connectedAccount) =>
-        canActorActAsConnectedAccount({ authContext, connectedAccount }) &&
-        !canConnectedAccountPerformOperation({ connectedAccount, operation }),
     );
   }
 

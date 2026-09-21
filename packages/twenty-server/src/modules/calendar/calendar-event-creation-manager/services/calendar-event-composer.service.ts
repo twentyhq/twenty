@@ -12,7 +12,6 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountAccessService } from 'src/engine/metadata-modules/connected-account/connected-account-access.service';
 import { ConnectedAccountException } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
-import { buildUnsupportedOperationMessage } from 'src/engine/metadata-modules/connected-account/utils/build-unsupported-operation-message.util';
 import { selectDefaultConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/select-default-connected-account.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { isValidTimeZone } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-valid-time-zone.util';
@@ -53,10 +52,16 @@ export class CalendarEventComposerService {
       return { success: false, error: normalizedInput.error };
     }
 
-    const resolution = await this.resolveCalendarAccountOrError(
+    const resolution = await this.resolveCalendarAccount(
       params.connectedAccountId,
       authContext,
-    );
+    ).catch((error) => {
+      if (error instanceof ConnectedAccountException) {
+        return { error: error.message };
+      }
+
+      throw error;
+    });
 
     if ('error' in resolution) {
       return { success: false, error: resolution.error };
@@ -180,63 +185,24 @@ export class CalendarEventComposerService {
       .filter((email) => email.length > 0);
   }
 
-  private async resolveCalendarAccountOrError(
-    connectedAccountId: string | undefined,
-    authContext: WorkspaceAuthContext,
-  ): Promise<ResolvedCalendarAccount> {
-    try {
-      return await this.resolveCalendarAccount(connectedAccountId, authContext);
-    } catch (error) {
-      if (error instanceof ConnectedAccountException) {
-        return { error: error.message };
-      }
-
-      throw error;
-    }
-  }
-
   private async resolveCalendarAccount(
     connectedAccountId: string | undefined,
     authContext: WorkspaceAuthContext,
   ): Promise<ResolvedCalendarAccount> {
-    // A blank id (the workflow node's default) falls back to the default account.
-    if (!isNonEmptyString(connectedAccountId)) {
-      return this.resolveDefaultCalendarAccount(authContext);
-    }
-
-    const connectedAccount =
-      await this.connectedAccountAccessService.getActableConnectedAccountOrThrow(
-        {
+    const candidateConnectedAccounts = isNonEmptyString(connectedAccountId)
+      ? [
+          await this.connectedAccountAccessService.getActableConnectedAccountOrThrow(
+            {
+              authContext,
+              connectedAccountId,
+              operation: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
+            },
+          ),
+        ]
+      : await this.connectedAccountAccessService.listActableConnectedAccounts({
           authContext,
-          connectedAccountId,
           operation: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
-        },
-      );
-
-    const calendarChannel = await this.findSyncEnabledCalendarChannel(
-      connectedAccount.id,
-      authContext.workspace.id,
-    );
-
-    if (!isDefined(calendarChannel)) {
-      return {
-        error: `Connected account '${connectedAccountId}' has no calendar channel with sync enabled. Enable calendar sync for this account first.`,
-      };
-    }
-
-    return { connectedAccount, calendarChannel };
-  }
-
-  // Only sync-enabled channels are eligible: a created event is reconciled by the
-  // provider sync, which skips channels whose sync is disabled.
-  private async resolveDefaultCalendarAccount(
-    authContext: WorkspaceAuthContext,
-  ): Promise<ResolvedCalendarAccount> {
-    const actableConnectedAccounts =
-      await this.connectedAccountAccessService.listActableConnectedAccounts({
-        authContext,
-        operation: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
-      });
+        });
 
     const syncEnabledCalendarChannels =
       await this.calendarChannelRepository.find({
@@ -244,7 +210,7 @@ export class CalendarEventComposerService {
           workspaceId: authContext.workspace.id,
           isSyncEnabled: true,
           connectedAccountId: In(
-            actableConnectedAccounts.map(
+            candidateConnectedAccounts.map(
               (connectedAccount) => connectedAccount.id,
             ),
           ),
@@ -252,18 +218,15 @@ export class CalendarEventComposerService {
         order: { createdAt: 'ASC' },
       });
 
-    const connectedAccountsWithSyncedChannel = syncEnabledCalendarChannels
-      .map((calendarChannel) =>
-        actableConnectedAccounts.find(
-          (actableAccount) =>
-            actableAccount.id === calendarChannel.connectedAccountId,
-        ),
-      )
-      .filter(isDefined);
-
     const connectedAccount = selectDefaultConnectedAccount({
       authContext,
-      connectedAccounts: connectedAccountsWithSyncedChannel,
+      connectedAccounts: syncEnabledCalendarChannels
+        .map((calendarChannel) =>
+          candidateConnectedAccounts.find(
+            (candidate) => candidate.id === calendarChannel.connectedAccountId,
+          ),
+        )
+        .filter(isDefined),
     });
 
     const calendarChannel = syncEnabledCalendarChannels.find(
@@ -272,43 +235,11 @@ export class CalendarEventComposerService {
 
     if (!isDefined(connectedAccount) || !isDefined(calendarChannel)) {
       return {
-        error: await this.buildNoDefaultCalendarAccountError(authContext),
+        error:
+          'No connected account with calendar sync enabled can create this event. Enable calendar sync for the account first.',
       };
     }
 
     return { connectedAccount, calendarChannel };
-  }
-
-  private async buildNoDefaultCalendarAccountError(
-    authContext: WorkspaceAuthContext,
-  ): Promise<string> {
-    const connectedAccountsMissingScopes =
-      await this.connectedAccountAccessService.listConnectedAccountsRequiringReconnect(
-        {
-          authContext,
-          operation: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
-        },
-      );
-
-    const connectedAccountMissingScopes = connectedAccountsMissingScopes[0];
-
-    if (isDefined(connectedAccountMissingScopes)) {
-      return buildUnsupportedOperationMessage({
-        connectedAccount: connectedAccountMissingScopes,
-        operation: ConnectedAccountOperation.CREATE_CALENDAR_EVENT,
-      });
-    }
-
-    return 'No Google, Microsoft or CalDAV account with calendar sync is available to this caller';
-  }
-
-  private async findSyncEnabledCalendarChannel(
-    connectedAccountId: string,
-    workspaceId: string,
-  ): Promise<CalendarChannelEntity | null> {
-    return this.calendarChannelRepository.findOne({
-      where: { connectedAccountId, workspaceId, isSyncEnabled: true },
-      order: { createdAt: 'ASC' },
-    });
   }
 }
