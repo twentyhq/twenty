@@ -3,7 +3,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
-import { useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -121,7 +120,6 @@ export const WorkflowEditActionClassify = ({
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const aiModels = useAtomStateValue(aiModelsState);
   const aiModelTiers = useAtomStateValue(aiModelTiersState);
-  const [exampleVersion, setExampleVersion] = useState(0);
   const selectedModelId = action.settings.input.modelId;
   const defaultEvaluationModel =
     aiEvaluationModels.find(
@@ -300,75 +298,14 @@ export const WorkflowEditActionClassify = ({
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
         <FormTextFieldInput
-          key={`context-${exampleVersion}`}
           label={t`Context`}
           multiline
           defaultValue={action.settings.input.state}
-          placeholder={t`Content to analyze: an email, a profile, meeting notes…`}
+          placeholder={t`e.g. Alex is a software engineer with five years of experience, including three years using React and TypeScript.`}
           readonly={readonly}
           VariablePicker={WorkflowVariablePicker}
           onChange={(state) => updateInput({ state })}
         />
-
-        {!readonly &&
-          !isNonEmptyString(action.settings.input.state.trim()) &&
-          questions.every(
-            (question) =>
-              !isNonEmptyString(question.instructions.trim()) &&
-              question.criteria.length === 0,
-          ) && (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                updateInput({
-                  state: t`Alex is a software engineer with five years of experience. Alex has used React and TypeScript daily for the past three years. Previously, Alex worked on Python backend services.`,
-                  questions: [
-                    {
-                      id: v4(),
-                      name: 'profession',
-                      type: 'choice',
-                      instructions: t`What is this person's current profession, based on the profile?`,
-                      criteria: [
-                        {
-                          id: v4(),
-                          name: 'lawyer',
-                          description: t`Provides legal advice or represents clients in legal matters`,
-                        },
-                        {
-                          id: v4(),
-                          name: 'engineer',
-                          description: t`Designs, builds, or maintains software or other technical systems`,
-                        },
-                        {
-                          id: v4(),
-                          name: 'other',
-                          description: t`Another profession, or insufficient information to identify one`,
-                        },
-                      ],
-                    },
-                    {
-                      id: v4(),
-                      name: 'react_experience',
-                      type: 'score',
-                      instructions: t`Assess the React experience explicitly described in the profile. Use the highest level whose requirements are met.`,
-                      criteria: [
-                        { id: v4(), name: t`No React experience mentioned` },
-                        {
-                          id: v4(),
-                          name: t`React experience mentioned, but less than two years or duration unknown`,
-                        },
-                        {
-                          id: v4(),
-                          name: t`At least two years of regular React use`,
-                        },
-                      ],
-                    },
-                  ],
-                });
-                setExampleVersion((version) => version + 1);
-              }}
-            >{t`Use an example`}</Button>
-          )}
 
         {questions.map((question) => (
           <StyledQuestion key={question.id}>
@@ -377,9 +314,15 @@ export const WorkflowEditActionClassify = ({
             <StyledQuestionHeader>
               <FormTextFieldInput
                 label={t`Result name`}
-                hint={t`Find this result in later steps, for example: profession`}
+                hint={t`Use this name to find the answer in later workflow steps.`}
                 defaultValue={question.name}
-                placeholder={t`category`}
+                placeholder={
+                  question.type === 'choice'
+                    ? t`e.g. profession`
+                    : question.type === 'score'
+                      ? t`e.g. react_experience`
+                      : t`e.g. uses_react`
+                }
                 readonly={readonly}
                 onChange={(name) => updateQuestion(question.id, { name })}
               />
@@ -419,7 +362,13 @@ export const WorkflowEditActionClassify = ({
               label={t`Question`}
               multiline
               defaultValue={question.instructions}
-              placeholder={t`What should be determined from the context?`}
+              placeholder={
+                question.type === 'choice'
+                  ? t`e.g. What is this person's current profession, based on the profile?`
+                  : question.type === 'score'
+                    ? t`e.g. Assess the React experience described in this profile. Use the highest level whose requirements are met.`
+                    : t`e.g. Does this person have professional experience using React?`
+              }
               readonly={readonly}
               VariablePicker={WorkflowVariablePicker}
               onChange={(instructions) =>

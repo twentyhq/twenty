@@ -53,12 +53,14 @@ describe('WorkflowClassifyQuestionCriteria', () => {
       />,
     );
     expect(
-      screen.getByPlaceholderText('When should this option be chosen?'),
+      screen.getByPlaceholderText(
+        'e.g. Designs, builds, or maintains software or technical systems.',
+      ),
     ).toBeVisible();
-    const input = screen.getByPlaceholderText('Option');
+    const input = screen.getByPlaceholderText('e.g. Engineer');
     await user.type(input, 'Billing');
     expect(input).toHaveFocus();
-    expect(screen.getAllByPlaceholderText('Option')).toHaveLength(2);
+    expect(screen.getAllByPlaceholderText('e.g. Engineer')).toHaveLength(2);
     expect(onChange).toHaveBeenLastCalledWith([
       expect.objectContaining({ name: 'Billing' }),
     ]);
@@ -66,7 +68,9 @@ describe('WorkflowClassifyQuestionCriteria', () => {
       screen.queryByRole('button', { name: 'Add description' }),
     ).not.toBeInTheDocument();
     await user.type(
-      screen.getAllByPlaceholderText('When should this option be chosen?')[0],
+      screen.getAllByPlaceholderText(
+        'e.g. Designs, builds, or maintains software or technical systems.',
+      )[0],
       'Invoices',
     );
     expect(onChange).toHaveBeenLastCalledWith([
@@ -74,7 +78,7 @@ describe('WorkflowClassifyQuestionCriteria', () => {
     ]);
     await user.click(screen.getByRole('button', { name: 'Delete option' }));
     expect(onChange).toHaveBeenLastCalledWith([]);
-    expect(screen.getAllByPlaceholderText('Option')).toHaveLength(1);
+    expect(screen.getAllByPlaceholderText('e.g. Engineer')).toHaveLength(1);
   });
 
   it('retains a partially filled option when its label is cleared', async () => {
@@ -88,7 +92,7 @@ describe('WorkflowClassifyQuestionCriteria', () => {
         onChange={onChange}
       />,
     );
-    await user.clear(screen.getAllByPlaceholderText('Option')[0]);
+    await user.clear(screen.getAllByPlaceholderText('e.g. Engineer')[0]);
     expect(onChange).toHaveBeenLastCalledWith([
       { id: 'billing', name: '', description: 'Invoices' },
     ]);
@@ -110,12 +114,16 @@ describe('WorkflowClassifyQuestionCriteria', () => {
     );
     expect(screen.getByDisplayValue('No React experience')).toBeVisible();
     await user.type(
-      screen.getAllByPlaceholderText('Describe this level')[1],
+      screen.getAllByPlaceholderText(
+        'e.g. At least two years of regular React use',
+      )[1],
       'Experienced',
     );
-    expect(screen.getAllByPlaceholderText('Describe this level')).toHaveLength(
-      2,
-    );
+    expect(
+      screen.getAllByPlaceholderText(
+        'e.g. At least two years of regular React use',
+      ),
+    ).toHaveLength(2);
     expect(onChange).toHaveBeenLastCalledWith([
       { id: 'low', name: 'Low', description: 'No React experience' },
       expect.objectContaining({

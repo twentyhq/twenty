@@ -106,7 +106,9 @@ export const WorkflowClassifyQuestionCriteria = ({
                   : criterion.name
               }
               placeholder={
-                variant === 'options' ? t`Option` : t`Describe this level`
+                variant === 'options'
+                  ? t`e.g. Engineer`
+                  : t`e.g. At least two years of regular React use`
               }
               readonly={readonly}
               VariablePicker={WorkflowVariablePicker}
@@ -122,7 +124,7 @@ export const WorkflowClassifyQuestionCriteria = ({
             {variant === 'options' && (
               <FormTextFieldInput
                 defaultValue={criterion.description ?? ''}
-                placeholder={t`When should this option be chosen?`}
+                placeholder={t`e.g. Designs, builds, or maintains software or technical systems.`}
                 readonly={readonly}
                 VariablePicker={WorkflowVariablePicker}
                 onChange={(description) =>

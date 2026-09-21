@@ -140,25 +140,42 @@ const renderEditor = (evaluationAvailable = false) => {
 };
 
 describe('WorkflowEditActionClassify', () => {
-  it('loads an editable example without retaining the empty context', async () => {
+  it('guides an empty form with job-profile placeholders without inserting sample data', async () => {
     const user = userEvent.setup();
     const onUpdate = renderEditor();
-    await user.click(screen.getByRole('button', { name: 'Use an example' }));
-    expect(
-      screen.getByDisplayValue(/Alex is a software engineer/),
-    ).toBeVisible();
-    expect(screen.getByDisplayValue('profession')).toBeVisible();
-    expect(screen.getByDisplayValue('react_experience')).toBeVisible();
     expect(
       screen.queryByRole('button', { name: 'Use an example' }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: 'Add level' }),
-    ).not.toBeInTheDocument();
+      screen.getByPlaceholderText(/Alex is a software engineer/),
+    ).toHaveValue('');
+    expect(onUpdate).not.toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: 'Add question' }));
+    expect(screen.getByPlaceholderText('e.g. profession')).toBeVisible();
     expect(
-      screen.queryByRole('button', { name: 'Add option' }),
-    ).not.toBeInTheDocument();
-    expect(onUpdate).toHaveBeenCalledTimes(1);
+      screen.getByPlaceholderText(
+        "e.g. What is this person's current profession, based on the profile?",
+      ),
+    ).toHaveValue('');
+    expect(screen.getByPlaceholderText('e.g. Engineer')).toHaveValue('');
+    expect(
+      screen.getByPlaceholderText(
+        'e.g. Designs, builds, or maintains software or technical systems.',
+      ),
+    ).toHaveValue('');
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Response type' }),
+      'score',
+    );
+    expect(screen.getByPlaceholderText('e.g. react_experience')).toBeVisible();
+    expect(
+      screen.getByPlaceholderText(/Assess the React experience/),
+    ).toHaveValue('');
+    expect(
+      screen.getByPlaceholderText(
+        'e.g. At least two years of regular React use',
+      ),
+    ).toHaveValue('');
   });
 
   it('requires a language model choice and keeps probability disabled', async () => {
