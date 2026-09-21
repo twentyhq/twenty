@@ -34,7 +34,6 @@ export const buildApiAccessLogLine = ({
     workspace_id: request.workspaceId,
     auth_provider: request.authProvider ?? undefined,
     token_type: request.tokenType,
-    client_ip: request.ip,
     request_id: formatRequestId(request.headers?.['x-request-id']),
     trace_id: traceContext?.traceId,
     span_id: traceContext?.spanId,

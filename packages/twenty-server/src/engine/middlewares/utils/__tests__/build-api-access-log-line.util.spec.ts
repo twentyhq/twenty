@@ -92,7 +92,6 @@ describe('buildApiAccessLogLine', () => {
         user: { id: 'user-id' },
         workspaceId: 'workspace-id',
         authProvider: 'password',
-        ip: '85.222.104.50',
       } as unknown as Partial<Request>,
     });
 
@@ -100,7 +99,6 @@ describe('buildApiAccessLogLine', () => {
     expect(line).toContain('actor_id=user-id');
     expect(line).toContain('workspace_id=workspace-id');
     expect(line).toContain('auth_provider=password');
-    expect(line).toContain('client_ip=85.222.104.50');
   });
 
   it('should prefer the api key over the user as actor', () => {
