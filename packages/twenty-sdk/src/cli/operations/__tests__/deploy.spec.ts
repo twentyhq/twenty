@@ -95,17 +95,16 @@ describe('appDeploy', () => {
   it('falls back to the multipart upload when the server has no direct upload', async () => {
     mockCreateAppTarballUpload.mockResolvedValue({
       success: false,
-      error:
-        'Cannot query field "createAppTarballUpload" on type "Mutation".',
+      error: 'Cannot query field "createAppTarballUpload" on type "Mutation".',
     });
 
     const result = await appDeploy({ tarballPath });
 
     expect(result).toEqual({ success: true, data: registration });
     expect(mockUploadAppTarball).toHaveBeenCalledTimes(1);
-    expect(
-      mockUploadAppTarball.mock.calls[0][0].tarballBuffer.toString(),
-    ).toBe(TARBALL_CONTENT);
+    expect(mockUploadAppTarball.mock.calls[0][0].tarballBuffer.toString()).toBe(
+      TARBALL_CONTENT,
+    );
     expect(mockPutFileToUploadUrl).not.toHaveBeenCalled();
     expect(mockCompleteAppTarballUpload).not.toHaveBeenCalled();
   });

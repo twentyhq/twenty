@@ -2990,11 +2990,13 @@ export type Mutation = {
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSession;
   claimApplicationRegistrationOwnership: ApplicationRegistration;
+  completeAppTarballUpload: ApplicationRegistration;
   completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
   completeBookCallOnboardingStep: OnboardingStepSuccess;
   completeFileUpload: FileWithSignedUrl;
   createApiKey: ApiKey;
   createAppMessageChannel: MessageChannel;
+  createAppTarballUpload: FileUploadTarget;
   createApplicationFileUploads: CreateApplicationFileUploadsResult;
   createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
@@ -3216,6 +3218,7 @@ export type Mutation = {
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
   upgradeApplication: Scalars['Boolean']['output'];
+  /** @deprecated Use createAppTarballUpload and completeAppTarballUpload, which send the tarball straight to file storage. */
   uploadAppTarball: ApplicationRegistration;
   uploadApplicationFile: File;
   uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl;
@@ -3310,6 +3313,11 @@ export type MutationClaimApplicationRegistrationOwnershipArgs = {
 };
 
 
+export type MutationCompleteAppTarballUploadArgs = {
+  fileId: Scalars['UUID']['input'];
+};
+
+
 export type MutationCompleteApplicationFileUploadsArgs = {
   applicationUniversalIdentifier: Scalars['String']['input'];
   fileIds: Array<Scalars['UUID']['input']>;
@@ -3334,6 +3342,11 @@ export type MutationCreateApiKeyArgs = {
 
 export type MutationCreateAppMessageChannelArgs = {
   input: CreateAppMessageChannelInput;
+};
+
+
+export type MutationCreateAppTarballUploadArgs = {
+  size: Scalars['Float']['input'];
 };
 
 

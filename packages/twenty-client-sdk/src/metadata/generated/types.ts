@@ -9493,6 +9493,24 @@ export default {
                     ]
                 }
             ],
+            "createAppTarballUpload": [
+                160,
+                {
+                    "size": [
+                        15,
+                        "Float!"
+                    ]
+                }
+            ],
+            "completeAppTarballUpload": [
+                76,
+                {
+                    "fileId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "uploadAppTarball": [
                 76,
                 {
