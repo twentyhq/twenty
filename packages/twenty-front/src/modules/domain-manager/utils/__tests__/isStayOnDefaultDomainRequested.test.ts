@@ -1,3 +1,4 @@
+import { forgetStayOnDefaultDomainRequest } from '@/domain-manager/utils/forgetStayOnDefaultDomainRequest';
 import { isStayOnDefaultDomainRequested } from '@/domain-manager/utils/isStayOnDefaultDomainRequested';
 import { rememberStayOnDefaultDomainRequest } from '@/domain-manager/utils/rememberStayOnDefaultDomainRequest';
 
@@ -28,6 +29,16 @@ describe('isStayOnDefaultDomainRequested', () => {
 
   it('remembers nothing when the url carries no marker', () => {
     rememberStayOnDefaultDomainRequest();
+
+    expect(isStayOnDefaultDomainRequested()).toBe(false);
+  });
+
+  it('is false again once the visit ends on a workspace', () => {
+    window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
+    rememberStayOnDefaultDomainRequest();
+
+    forgetStayOnDefaultDomainRequest();
+    window.history.replaceState(null, '', '/welcome');
 
     expect(isStayOnDefaultDomainRequested()).toBe(false);
   });

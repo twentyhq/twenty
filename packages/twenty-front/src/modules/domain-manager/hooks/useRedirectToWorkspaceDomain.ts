@@ -2,6 +2,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { forgetStayOnDefaultDomainRequest } from '@/domain-manager/utils/forgetStayOnDefaultDomainRequest';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useRedirectToWorkspaceDomain = () => {
@@ -21,6 +22,11 @@ export const useRedirectToWorkspaceDomain = () => {
     target?: string,
   ) => {
     if (!isMultiWorkspaceEnabled) return;
+
+    // Landing on a workspace ends the visit to the default domain, so a later
+    // plain visit is auto-redirected again
+    forgetStayOnDefaultDomainRequest();
+
     redirect(
       buildWorkspaceUrl(baseUrl, pathname, {
         ...searchParams,
