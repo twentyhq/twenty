@@ -9261,6 +9261,15 @@ export default {
                     ]
                 }
             ],
+            "updateManyObjects": [
+                23,
+                {
+                    "inputs": [
+                        483,
+                        "[UpdateOneObjectInput!]!"
+                    ]
+                }
+            ],
             "createOneIndex": [
                 259,
                 {
