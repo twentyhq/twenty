@@ -65,6 +65,11 @@ describe('WorkspaceCommandRunner failure reporting', () => {
           interrupted,
         }),
       ).rejects.toThrow('Command failed for 2 workspace(s)');
+      if (interrupted) {
+        expect(Logger.prototype.warn).toHaveBeenCalledWith(
+          expect.stringContaining('Rerun it to process the remaining ones'),
+        );
+      }
     },
   );
 

@@ -137,23 +137,23 @@ export abstract class WorkspaceCommandRunner<
         },
       });
 
-      if (isNonEmptyArray(report.fail)) {
-        throw new Error(
-          `Command failed for ${report.fail.length} workspace(s). See the workspace errors above.`,
-        );
-      }
-
       if (report.interrupted) {
         this.logger.warn(
           chalk.yellow(
             'Command interrupted before processing every workspace. Rerun it to process the remaining ones.',
           ),
         );
-
-        return;
       }
 
-      this.logger.log(chalk.blue('Command completed!'));
+      if (isNonEmptyArray(report.fail)) {
+        throw new Error(
+          `Command failed for ${report.fail.length} workspace(s). See the workspace errors above.`,
+        );
+      }
+
+      if (!report.interrupted) {
+        this.logger.log(chalk.blue('Command completed!'));
+      }
     } catch (error) {
       this.logger.error(chalk.red(`Command failed`));
       throw error;
