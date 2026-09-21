@@ -35,13 +35,13 @@ const OBJECT_EVENT_BY_SUFFIX = {
   '.upserted': OBJECT_RECORD_UPSERTED_EVENT,
 } as const;
 
-@Processor(MessageQueue.entityEventsToDbQueue)
+@Processor(MessageQueue.eventLogQueue)
 export class CreateEventLogFromInternalEvent {
   private readonly logger = new Logger(CreateEventLogFromInternalEvent.name);
 
   constructor(
     private readonly workspaceEventSinkService: WorkspaceEventSinkService,
-    @InjectMessageQueue(MessageQueue.entityEventsToDbQueue)
+    @InjectMessageQueue(MessageQueue.eventLogQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 

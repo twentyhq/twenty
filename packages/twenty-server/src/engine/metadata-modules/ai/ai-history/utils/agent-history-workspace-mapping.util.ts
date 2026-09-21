@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+import { mapAgentHistoryFieldNameToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-history-field-name-to-workspace.util';
 import {
   type FindManyOptions,
   type FindOptionsWhere,
@@ -38,11 +40,12 @@ export function mapAgentHistoryValuesToWorkspace<
     );
   }
   const { workspaceId: _workspaceId, ...fields }: ObjectLiteral = { ...values };
-  if (objectName === 'agentChatThread' && 'deletedAt' in fields) {
-    const { deletedAt, ...remainingFields } = fields;
-    return { ...remainingFields, archivedAt: deletedAt };
-  }
-  return fields;
+  return Object.fromEntries(
+    Object.entries(fields).map(([fieldName, value]) => [
+      mapAgentHistoryFieldNameToWorkspace(objectName, fieldName),
+      value,
+    ]),
+  );
 }
 
 export function mapAgentHistoryWhereToWorkspace<
@@ -77,9 +80,39 @@ export function mapAgentHistoryWhereToWorkspace<
       'Pass workspaceId separately from history query criteria',
     );
   }
-  if (objectName !== 'agentChatThread' || !('deletedAt' in where)) {
-    return where;
-  }
-  const { deletedAt, ...rest } = where;
-  return { ...rest, archivedAt: deletedAt };
+  return Object.fromEntries(
+    Object.entries(where).map(([fieldName, value]) => [
+      mapAgentHistoryFieldNameToWorkspace(objectName, fieldName),
+      value,
+    ]),
+  );
 }
+
+export const mapAgentHistorySelectToWorkspace = <TRecord>(
+  objectName: AgentHistoryObjectName,
+  select: FindManyOptions<TRecord>['select'],
+): WorkspaceFindOptions['select'] => {
+  if (!isDefined(select)) {
+    return undefined;
+  }
+  if (Array.isArray(select)) {
+    return select.map((fieldName) =>
+      mapAgentHistoryFieldNameToWorkspace(objectName, String(fieldName)),
+    );
+  }
+
+  return Object.fromEntries(
+    Object.entries(select).map(([fieldName, value]) => {
+      if (value !== undefined && typeof value !== 'boolean') {
+        throw new AgentHistoryStorageException(
+          'INVALID_CRITERIA',
+          'History field selections must be boolean',
+        );
+      }
+      return [
+        mapAgentHistoryFieldNameToWorkspace(objectName, fieldName),
+        value === true,
+      ];
+    }),
+  );
+};
