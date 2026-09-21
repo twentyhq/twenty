@@ -99,6 +99,8 @@ export interface FrontComponent {
     applicationTokenPair?: ApplicationTokenPair
     applicationVariables?: Scalars['JSON']
     frontComponentSharedDependenciesChecksum?: Scalars['String']
+    applicationName?: Scalars['String']
+    applicationGrantedCapabilities?: Scalars['String'][]
     __typename: 'FrontComponent'
 }
 
@@ -2055,6 +2057,7 @@ export interface MarketplaceAppDetail {
     installCount: Scalars['Int']
     defaultRoleUniversalIdentifier?: Scalars['String']
     roles?: MarketplaceAppRole[]
+    requestedCapabilities: Scalars['String'][]
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: Scalars['JSON']
     __typename: 'MarketplaceAppDetail'
@@ -2068,6 +2071,12 @@ export interface TriggerInstallApplicationJobResult {
 export interface TriggerUninstallApplicationJobResult {
     jobId: Scalars['String']
     __typename: 'TriggerUninstallApplicationJobResult'
+}
+
+export interface ApplicationCapabilityGrant {
+    id: Scalars['UUID']
+    grantedCapabilities: Scalars['String'][]
+    __typename: 'ApplicationCapabilityGrant'
 }
 
 export interface WorkspaceCompanyEnrichmentResult {
@@ -3477,6 +3486,7 @@ export interface Mutation {
     uploadAppTarball: ApplicationRegistration
     claimApplicationRegistrationOwnership: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
+    grantApplicationCapabilities: ApplicationCapabilityGrant
     /** @deprecated Use installApplication instead */
     installMarketplaceApp: Scalars['Boolean']
     installApplication: Application
@@ -3728,6 +3738,8 @@ export interface FrontComponentGenqlSelection{
     applicationTokenPair?: ApplicationTokenPairGenqlSelection
     applicationVariables?: boolean | number
     frontComponentSharedDependenciesChecksum?: boolean | number
+    applicationName?: boolean | number
+    applicationGrantedCapabilities?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5761,6 +5773,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     installCount?: boolean | number
     defaultRoleUniversalIdentifier?: boolean | number
     roles?: MarketplaceAppRoleGenqlSelection
+    requestedCapabilities?: boolean | number
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: boolean | number
     __typename?: boolean | number
@@ -5775,6 +5788,13 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
 
 export interface TriggerUninstallApplicationJobResultGenqlSelection{
     jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationCapabilityGrantGenqlSelection{
+    id?: boolean | number
+    grantedCapabilities?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7290,6 +7310,7 @@ export interface MutationGenqlSelection{
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
+    grantApplicationCapabilities?: (ApplicationCapabilityGrantGenqlSelection & { __args: {input: GrantApplicationCapabilitiesInput} })
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
@@ -7690,6 +7711,8 @@ export interface CreateApplicationRegistrationVariableInput {applicationRegistra
 export interface UpdateApplicationRegistrationVariableInput {id: Scalars['String'],update: UpdateApplicationRegistrationVariablePayload}
 
 export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),resetValue?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null)}
+
+export interface GrantApplicationCapabilitiesInput {applicationId: Scalars['UUID'],capabilities: Scalars['String'][]}
 
 export interface TriggerInstallApplicationJobInput {universalIdentifier: Scalars['String']}
 
@@ -9268,6 +9291,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isTriggerUninstallApplicationJobResult = (obj?: { __typename?: any } | null): obj is TriggerUninstallApplicationJobResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerUninstallApplicationJobResult"')
       return TriggerUninstallApplicationJobResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationCapabilityGrant_possibleTypes: string[] = ['ApplicationCapabilityGrant']
+    export const isApplicationCapabilityGrant = (obj?: { __typename?: any } | null): obj is ApplicationCapabilityGrant => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationCapabilityGrant"')
+      return ApplicationCapabilityGrant_possibleTypes.includes(obj.__typename)
     }
     
 
