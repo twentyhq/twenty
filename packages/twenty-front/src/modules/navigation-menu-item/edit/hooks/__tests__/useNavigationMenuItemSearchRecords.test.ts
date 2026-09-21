@@ -79,12 +79,12 @@ describe('navigation record search duplicates', () => {
       { initialProps: { currentItems: [existingItem] } },
     );
     expect(result.current.navigationMenuItemSearchRecords).toEqual([
-      { ...record, isAlreadyInSidebar: true },
+      { ...record, targetRecordId: record.recordId, isAlreadyInSidebar: true },
     ]);
 
     rerender({ currentItems: [] });
     expect(result.current.navigationMenuItemSearchRecords).toEqual([
-      { ...record, isAlreadyInSidebar: false },
+      { ...record, targetRecordId: record.recordId, isAlreadyInSidebar: false },
     ]);
   });
 });

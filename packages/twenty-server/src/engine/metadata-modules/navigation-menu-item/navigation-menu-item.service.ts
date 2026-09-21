@@ -625,11 +625,13 @@ export class NavigationMenuItemService {
     targetRecordId,
     targetObjectMetadataId,
     workspaceId,
+    userWorkspaceId,
     authContext,
   }: {
     targetRecordId: string;
     targetObjectMetadataId: string;
     workspaceId: string;
+    userWorkspaceId?: string;
     authContext: WorkspaceAuthContext;
   }): Promise<RecordIdentifierDTO | null> {
     try {
@@ -638,6 +640,7 @@ export class NavigationMenuItemService {
           targetRecordId,
           targetObjectMetadataId,
           workspaceId,
+          userWorkspaceId,
           authContext,
         },
       );

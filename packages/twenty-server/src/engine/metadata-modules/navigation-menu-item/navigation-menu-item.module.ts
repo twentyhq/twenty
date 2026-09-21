@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { CoreWorkflowFavoriteTargetModule } from 'src/engine/core-modules/workflow/core-workflow-favorite-target.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatNavigationMenuItemModule } from 'src/engine/metadata-modules/flat-navigation-menu-item/flat-navigation-menu-item.module';
 import { NavigationMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/navigation-menu-item/interceptors/navigation-menu-item-graphql-api-exception.interceptor';
@@ -27,6 +28,7 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
     FlatNavigationMenuItemModule,
     PermissionsModule,
     FileModule,
+    CoreWorkflowFavoriteTargetModule,
   ],
   providers: [
     NavigationMenuItemService,

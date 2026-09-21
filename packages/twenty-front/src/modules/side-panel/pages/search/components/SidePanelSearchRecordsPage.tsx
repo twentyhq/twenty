@@ -14,8 +14,8 @@ import { css } from '@linaria/core';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -75,12 +75,7 @@ export const SidePanelSearchRecordsPage = () => {
                   });
                 } else {
                   closeCommandMenu();
-                  navigate(
-                    getAppPath(AppPath.RecordShowPage, {
-                      objectNameSingular: item.objectNameSingular,
-                      objectRecordId: item.recordId,
-                    }),
-                  );
+                  navigate(item.showPagePath);
                 }
               };
 

@@ -2,6 +2,7 @@ import { useDebounce } from 'use-debounce';
 
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
+import { getNavigationMenuItemTargetRecordId } from '@/navigation-menu-item/edit/utils/getNavigationMenuItemTargetRecordId';
 import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,6 +11,7 @@ const SEARCH_DEBOUNCE_DELAY = 300;
 
 export type NavigationMenuItemSearchRecord = {
   recordId: string;
+  targetRecordId: string;
   isAlreadyInSidebar: boolean;
   objectNameSingular: string;
   label: string;
@@ -57,19 +59,31 @@ export const useNavigationMenuItemSearchRecords = ({
   );
 
   const recordIdsAlreadyAdded = new Set(
-    currentItems.flatMap((item) =>
-      isDefined(item.targetRecordId) ? [item.targetRecordId] : [],
-    ),
+    currentItems.flatMap((item) => [
+      ...(isDefined(item.targetRecordId) ? [item.targetRecordId] : []),
+      ...(isDefined(item.targetRecordIdentifier)
+        ? [item.targetRecordIdentifier.id]
+        : []),
+    ]),
   );
 
   const navigationMenuItemSearchRecords = searchRecords.map(
-    (record): NavigationMenuItemSearchRecord => ({
-      recordId: record.recordId,
-      isAlreadyInSidebar: recordIdsAlreadyAdded.has(record.recordId),
-      objectNameSingular: record.objectNameSingular,
-      label: record.label,
-      imageUrl: record.imageUrl,
-    }),
+    (record): NavigationMenuItemSearchRecord => {
+      const targetRecordId = getNavigationMenuItemTargetRecordId({
+        objectNameSingular: record.objectNameSingular,
+        recordId: record.recordId,
+        coreWorkflowId: record.coreWorkflowId,
+      });
+
+      return {
+        recordId: record.recordId,
+        targetRecordId,
+        isAlreadyInSidebar: recordIdsAlreadyAdded.has(targetRecordId),
+        objectNameSingular: record.objectNameSingular,
+        label: record.label,
+        imageUrl: record.imageUrl,
+      };
+    },
   );
 
   return {

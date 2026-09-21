@@ -9,6 +9,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { findNavigationMenuItemForRecord } from '@/navigation-menu-item/common/utils/findNavigationMenuItemForRecord';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -67,10 +68,12 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     !isNonEmptyArray(recordIds) || !isDefined(objectMetadataItem)
       ? []
       : recordIds.filter((recordId) =>
-          navigationMenuItems?.some(
-            (item) =>
-              item.targetRecordId === recordId &&
-              item.targetObjectMetadataId === objectMetadataItem.id,
+          isDefined(
+            findNavigationMenuItemForRecord({
+              navigationMenuItems: navigationMenuItems ?? [],
+              recordId,
+              objectMetadataId: objectMetadataItem.id,
+            }),
           ),
         );
 

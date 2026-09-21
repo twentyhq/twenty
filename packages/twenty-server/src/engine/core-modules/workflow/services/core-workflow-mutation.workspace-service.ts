@@ -7,6 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
@@ -19,6 +22,10 @@ import {
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
+import {
+  NavigationMenuItemDeletionJob,
+  type NavigationMenuItemDeletionJobData,
+} from 'src/engine/metadata-modules/navigation-menu-item/jobs/navigation-menu-item-deletion.job';
 import { getWorkflowCommandMenuItemLabel } from 'src/modules/workflow/workflow-trigger/utils/get-workflow-command-menu-item-label.util';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
@@ -68,6 +75,8 @@ export class CoreWorkflowMutationWorkspaceService {
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
+    @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
+    private readonly deleteCascadeQueueService: MessageQueueService,
   ) {}
 
   async duplicateWorkflow({
@@ -541,6 +550,20 @@ export class CoreWorkflowMutationWorkspaceService {
       workspaceId,
       coreWorkflowIds,
     );
+
+    const deletedRecordIds = [
+      ...new Set([
+        ...deletedCoreWorkflows.map(({ id }) => id),
+        ...mirrorWorkflowIds,
+      ]),
+    ];
+
+    if (deletedRecordIds.length > 0) {
+      await this.deleteCascadeQueueService.add<NavigationMenuItemDeletionJobData>(
+        NavigationMenuItemDeletionJob.name,
+        { workspaceId, deletedRecordIds },
+      );
+    }
 
     return deletedCoreWorkflows;
   }

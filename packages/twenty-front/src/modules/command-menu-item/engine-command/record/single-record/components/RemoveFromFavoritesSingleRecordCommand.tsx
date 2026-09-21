@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
+import { findNavigationMenuItemForRecord } from '@/navigation-menu-item/common/utils/findNavigationMenuItemForRecord';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
 export const RemoveFromFavoritesSingleRecordCommand = () => {
@@ -22,14 +23,14 @@ export const RemoveFromFavoritesSingleRecordCommand = () => {
 
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
-  const foundNavigationMenuItem = [
-    ...navigationMenuItems,
-    ...workspaceNavigationMenuItems,
-  ].find(
-    (item) =>
-      item.targetRecordId === recordId &&
-      item.targetObjectMetadataId === objectMetadataItem.id,
-  );
+  const foundNavigationMenuItem = findNavigationMenuItemForRecord({
+    navigationMenuItems: [
+      ...navigationMenuItems,
+      ...workspaceNavigationMenuItems,
+    ],
+    recordId,
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const handleExecute = () => {
     if (!isDefined(foundNavigationMenuItem)) {

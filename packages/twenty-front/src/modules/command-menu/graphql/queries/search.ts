@@ -24,6 +24,7 @@ export const SEARCH_QUERY = gql`
           objectLabelSingular
           label
           imageUrl
+          coreWorkflowId
           tsRankCD
           tsRank
         }
