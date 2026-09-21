@@ -28,6 +28,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { ApiRequestContextMiddleware } from 'src/engine/core-modules/usage/middlewares/api-request-context.middleware';
+import { ApiAccessLogMiddleware } from 'src/engine/middlewares/api-access-log.middleware';
 import { CookieSessionCsrfMiddleware } from 'src/engine/middlewares/cookie-session-csrf.middleware';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { GraphQLRefuseSuspendedWorkspaceMiddleware } from 'src/engine/middlewares/graphql-refuse-suspended-workspace.middleware';
@@ -112,6 +113,17 @@ export class AppModule {
   }
 
   configure(consumer: MiddlewareConsumer) {
+    const loggedApiPaths = Object.values(ApiPath).filter(
+      (apiPath) => apiPath !== ApiPath.Health,
+    );
+
+    consumer.apply(ApiAccessLogMiddleware).forRoutes(
+      ...loggedApiPaths.flatMap((apiPath) => [
+        { path: apiPath, method: RequestMethod.ALL },
+        { path: `${apiPath}/*path`, method: RequestMethod.ALL },
+      ]),
+    );
+
     // Before any middleware that authenticates from the session cookie.
     consumer
       .apply(CookieSessionCsrfMiddleware)
