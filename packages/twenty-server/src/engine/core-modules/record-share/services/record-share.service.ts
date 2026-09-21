@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
+import { RecordShareRowCause } from 'twenty-shared/types';
 
 import {
   RecordShareException,
@@ -23,6 +24,70 @@ type RecordShareRepository = WorkspaceRepository<RecordShare>;
 @Injectable()
 export class RecordShareService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
+
+  async findByPrincipals({
+    workspaceId,
+    objectMetadataId,
+    principalIds,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    principalIds: string[];
+  }): Promise<RecordShare[]> {
+    if (principalIds.length === 0) {
+      return [];
+    }
+
+    return this.withRepository({ workspaceId }, (repository) =>
+      repository.find({
+        where: { objectMetadataId, principalId: In(principalIds) },
+      }),
+    );
+  }
+
+  // Callers must authorize management of the target record before using this
+  // system repository. Other sources (including ownership) are never removed.
+  async setManualShare({
+    workspaceId,
+    share,
+    enabled,
+  }: {
+    workspaceId: string;
+    share: Omit<RecordShareInput, 'rowCause'>;
+    enabled: boolean;
+  }): Promise<void> {
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction(async (scope) => {
+          await scope.executeRawQuery(
+            'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+            [
+              `record-share:${workspaceId}:${share.objectMetadataId}:${share.recordId}`,
+            ],
+          );
+          await this.withRepository(
+            { workspaceId, transactionScope: scope },
+            async (repository) => {
+              await repository.delete({
+                objectMetadataId: share.objectMetadataId,
+                recordId: share.recordId,
+                principalId: share.principalId,
+                principalType: share.principalType,
+                rowCause: RecordShareRowCause.MANUAL,
+                sourceId: share.sourceId,
+              });
+              if (enabled) {
+                await repository.insert({
+                  ...share,
+                  rowCause: RecordShareRowCause.MANUAL,
+                });
+              }
+            },
+          );
+        }),
+      buildSystemAuthContext(workspaceId),
+    );
+  }
 
   async insertMany({
     workspaceId,
