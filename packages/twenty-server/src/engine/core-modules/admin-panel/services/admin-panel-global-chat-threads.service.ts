@@ -1,43 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import {
-  ASK_QUESTIONS_TOOL_NAME,
-  type AskQuestionsToolStatus,
-} from 'twenty-shared/ai';
-import { isNonEmptyString } from '@sniptt/guards';
-import { Brackets, Repository, type SelectQueryBuilder } from 'typeorm';
-
+import { Repository } from 'typeorm';
+import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { ADMIN_CHAT_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/admin-panel/constants/admin-chat-threads-max-page-size.constant';
-import { type AdminChatThreadListItemDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-thread-list-item.dto';
 import { type PaginatedAdminChatThreadsDTO } from 'src/engine/core-modules/admin-panel/dtos/paginated-admin-chat-threads.dto';
 import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
 import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
 import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
-import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
-import {
-  AgentMessageEntity,
-  AgentMessageRole,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-thread-id-namespace.constant';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
-
-const WORKSPACE_SETUP_THREAD_ID_EXPRESSION = `public.uuid_generate_v5(
-  :setupThreadNamespace::uuid,
-  "thread"."workspaceId"::text || ':' || "thread"."userWorkspaceId"::text
-)`;
-
-const ANSWERED_ASK_QUESTIONS_STATUS: AskQuestionsToolStatus = 'answered';
-
-const ANSWERED_ASK_QUESTIONS_PART_EXPRESSION = `"answeredQuestionPart"."toolOutput" -> 'result' ->> 'status' = :answeredQuestionStatus`;
-
-const ORDER_EXPRESSION_BY_SORT_FIELD: Record<AdminChatThreadSortField, string> =
-  {
-    [AdminChatThreadSortField.MESSAGE_COUNT]: '"messageCount"',
-    [AdminChatThreadSortField.REPLY_COUNT]: '"userReplyCount"',
-    [AdminChatThreadSortField.CREATED_AT]: '"thread"."createdAt"',
-    [AdminChatThreadSortField.UPDATED_AT]: '"thread"."updatedAt"',
-  };
 
 type GlobalChatThreadsArgs = {
   scope: AdminChatThreadScope;
@@ -68,224 +40,128 @@ type GlobalChatThreadRawRow = {
   updatedAt: Date;
 };
 
+const COLUMN_BY_SORT_FIELD: Record<
+  AdminChatThreadSortField,
+  'messageCount' | 'userReplyCount' | 'createdAt' | 'updatedAt'
+> = {
+  [AdminChatThreadSortField.MESSAGE_COUNT]: 'messageCount',
+  [AdminChatThreadSortField.REPLY_COUNT]: 'userReplyCount',
+  [AdminChatThreadSortField.CREATED_AT]: 'createdAt',
+  [AdminChatThreadSortField.UPDATED_AT]: 'updatedAt',
+};
+
 @Injectable()
 export class AdminPanelGlobalChatThreadsService {
   constructor(
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(AgentChatThreadEntity)
-    private readonly agentChatThreadRepository: Repository<AgentChatThreadEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly historyStorage: AgentHistoryStorageService,
   ) {}
 
-  private buildOnboardingThreadPredicate(
-    queryBuilder: SelectQueryBuilder<AgentChatThreadEntity>,
-  ): string {
-    const hiddenKickoffMessageSubQuery = queryBuilder
-      .subQuery()
-      .select('1')
-      .from(AgentMessageEntity, 'hiddenMessage')
-      .where('hiddenMessage.threadId = thread.id')
-      .andWhere('hiddenMessage.isHidden = true')
-      .getQuery();
-
-    return `(EXISTS (${hiddenKickoffMessageSubQuery}) OR "thread"."id" = ${WORKSPACE_SETUP_THREAD_ID_EXPRESSION})`;
-  }
-
-  private buildAnsweredQuestionSubQuery(
-    queryBuilder: SelectQueryBuilder<AgentChatThreadEntity>,
-    selection: string,
-  ): string {
-    return queryBuilder
-      .subQuery()
-      .select(selection)
-      .from(AgentMessagePartEntity, 'answeredQuestionPart')
-      .innerJoin(
-        AgentMessageEntity,
-        'questionMessage',
-        'questionMessage.id = answeredQuestionPart.messageId',
-      )
-      .where('questionMessage.threadId = thread.id')
-      .andWhere('questionMessage.isHidden = false')
-      .andWhere('answeredQuestionPart.toolName = :askQuestionsToolName')
-      .andWhere(ANSWERED_ASK_QUESTIONS_PART_EXPRESSION)
-      .getQuery();
-  }
-
-  private buildUserNeverEngagedPredicate(
-    queryBuilder: SelectQueryBuilder<AgentChatThreadEntity>,
-  ): string {
-    const visibleUserMessageSubQuery = queryBuilder
-      .subQuery()
-      .select('1')
-      .from(AgentMessageEntity, 'userMessage')
-      .where('userMessage.threadId = thread.id')
-      .andWhere('userMessage.isHidden = false')
-      .andWhere('userMessage.role = :userMessageRole')
-      .getQuery();
-
-    const answeredQuestionSubQuery = this.buildAnsweredQuestionSubQuery(
-      queryBuilder,
-      '1',
-    );
-
-    return `(NOT EXISTS (${visibleUserMessageSubQuery}) AND NOT EXISTS (${answeredQuestionSubQuery}))`;
-  }
-
-  private applyFilters(
-    queryBuilder: SelectQueryBuilder<AgentChatThreadEntity>,
-    {
-      scope,
-      hasErrorOnly,
-      userNeverEngagedOnly,
-      searchTerm,
-    }: Pick<
-      GlobalChatThreadsArgs,
-      'scope' | 'hasErrorOnly' | 'userNeverEngagedOnly' | 'searchTerm'
-    >,
-  ): SelectQueryBuilder<AgentChatThreadEntity> {
-    queryBuilder
-      .innerJoin(
-        'thread.workspace',
-        'workspace',
-        '"workspace"."allowImpersonation" = true AND "workspace"."deletedAt" IS NULL',
-      )
-      .leftJoin('thread.userWorkspace', 'userWorkspace')
-      .leftJoin('userWorkspace.user', 'user')
-      .withDeleted()
-      .setParameter(
-        'setupThreadNamespace',
-        WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
-      )
-      .setParameter('userMessageRole', AgentMessageRole.USER)
-      .setParameter('askQuestionsToolName', ASK_QUESTIONS_TOOL_NAME)
-      .setParameter('answeredQuestionStatus', ANSWERED_ASK_QUESTIONS_STATUS);
-
-    if (scope === AdminChatThreadScope.ONBOARDING) {
-      queryBuilder.andWhere(this.buildOnboardingThreadPredicate(queryBuilder));
-    }
-
-    if (hasErrorOnly) {
-      queryBuilder.andWhere('"thread"."lastStreamError" IS NOT NULL');
-    }
-
-    if (userNeverEngagedOnly) {
-      queryBuilder.andWhere(this.buildUserNeverEngagedPredicate(queryBuilder));
-    }
-
-    const trimmedSearchTerm = searchTerm?.trim();
-
-    if (isNonEmptyString(trimmedSearchTerm)) {
-      const escapedSearchTerm = trimmedSearchTerm.replace(/[\\%_]/g, '\\$&');
-
-      queryBuilder.andWhere(
-        new Brackets((subQuery) => {
-          subQuery
-            .where('"workspace"."displayName" ILIKE :searchPattern')
-            .orWhere('"user"."email" ILIKE :searchPattern')
-            .orWhere('"thread"."id"::text ILIKE :searchPattern');
-        }),
-        { searchPattern: `%${escapedSearchTerm}%` },
-      );
-    }
-
-    return queryBuilder;
-  }
-
-  async getGlobalChatThreads({
-    scope,
-    hasErrorOnly,
-    userNeverEngagedOnly,
-    searchTerm,
-    sortBy,
-    sortDirection,
-    limit,
-    offset,
-  }: GlobalChatThreadsArgs): Promise<PaginatedAdminChatThreadsDTO> {
-    const sanitizedLimit = Math.min(
-      Math.max(limit, 1),
+  async getGlobalChatThreads(
+    args: GlobalChatThreadsArgs,
+  ): Promise<PaginatedAdminChatThreadsDTO> {
+    const limit = Math.min(
+      Math.max(args.limit, 1),
       ADMIN_CHAT_THREADS_MAX_PAGE_SIZE,
     );
-    const sanitizedOffset = Math.max(offset, 0);
-
-    const filterArgs = {
-      scope,
-      hasErrorOnly,
-      userNeverEngagedOnly,
-      searchTerm,
+    const offset = Math.max(args.offset, 0);
+    const field = COLUMN_BY_SORT_FIELD[args.sortBy];
+    const direction =
+      args.sortDirection === AdminChatThreadSortDirection.ASC ? 1 : -1;
+    const workspaces = await this.workspaceRepository.find({
+      where: { allowImpersonation: true },
+      select: { id: true },
+      order: { id: 'ASC' },
+    });
+    let candidates: GlobalChatThreadRawRow[] = [];
+    let totalCount = 0;
+    const compare = (
+      left: GlobalChatThreadRawRow,
+      right: GlobalChatThreadRawRow,
+    ) => {
+      const leftValue = Number(left[field]);
+      const rightValue = Number(right[field]);
+      return (
+        direction * (leftValue - rightValue) || left.id.localeCompare(right.id)
+      );
     };
 
-    const orderExpression = ORDER_EXPRESSION_BY_SORT_FIELD[sortBy];
-
-    const orderDirection: 'ASC' | 'DESC' =
-      sortDirection === AdminChatThreadSortDirection.ASC ? 'ASC' : 'DESC';
-
-    const listQueryBuilder = this.applyFilters(
-      this.agentChatThreadRepository.createQueryBuilder('thread'),
-      filterArgs,
+    await this.historyStorage.runReadOnlyReport(
+      workspaces.map((workspace) => workspace.id),
+      async ({ manager, partitions }) => {
+        // Bound each statement's size and keep only the global page candidates.
+        for (
+          let offsetIndex = 0;
+          offsetIndex < partitions.length;
+          offsetIndex += 25
+        ) {
+          const parameters: unknown[] = [];
+          const queries = partitions
+            .slice(offsetIndex, offsetIndex + 25)
+            .map(({ workspaceIds, storage, table }, partitionIndex) => {
+              const workspaceCondition =
+                storage === 'core'
+                  ? 'AND thread."workspaceId" = workspace.id'
+                  : '';
+              const search = args.searchTerm?.trim().replace(/[\\%_]/g, '\\$&');
+              const query = `
+          WITH candidates AS (
+            SELECT thread.id, thread.title, workspace.id AS "workspaceId", workspace."displayName" AS "workspaceDisplayName",
+              thread."userWorkspaceId", owner.email AS "userEmail", owner."firstName" AS "userFirstName", owner."lastName" AS "userLastName",
+              ${storage === 'core' ? 'thread."deletedAt"' : 'thread."archivedAt"'} AS "deletedAt", thread."createdAt", thread."updatedAt", thread."lastStreamError" IS NOT NULL AS "hasError",
+              (EXISTS (SELECT 1 FROM ${table('agentMessage')} hidden WHERE hidden."threadId" = thread.id AND hidden."isHidden" = true)
+                OR thread.id = public.uuid_generate_v5($2::uuid, workspace.id::text || ':' || thread."userWorkspaceId"::text)) AS "isOnboardingThread",
+              (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false) AS "messageCount",
+              ((SELECT COUNT(*) FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false AND message.role = 'user')
+                + (SELECT COUNT(*) FROM ${table('agentMessagePart')} part JOIN ${table('agentMessage')} message ON message.id = part."messageId"
+                   WHERE message."threadId" = thread.id AND message."isHidden" = false AND part."toolName" = $3 AND part."toolOutput"->'result'->>'status' = 'answered'))::int AS "userReplyCount"
+            FROM ${table('agentChatThread')} thread
+            JOIN core.workspace workspace ON workspace.id = ANY($1::uuid[]) AND workspace."allowImpersonation" = true AND workspace."deletedAt" IS NULL
+            LEFT JOIN core."userWorkspace" membership ON membership.id = thread."userWorkspaceId" AND membership."workspaceId" = workspace.id
+            LEFT JOIN core."user" owner ON owner.id = membership."userId"
+            WHERE true ${workspaceCondition}
+              AND ($4::text IS NULL OR workspace."displayName" ILIKE $4 OR owner.email ILIKE $4 OR thread.id::text ILIKE $4)
+          )
+          SELECT *, COUNT(*) OVER () AS "totalCount", $9::int AS "partitionIndex" FROM candidates
+          WHERE ($5::boolean = false OR "isOnboardingThread") AND ($6::boolean = false OR "hasError") AND ($7::boolean = false OR "userReplyCount" = 0)
+          ORDER BY "${field}" ${direction === 1 ? 'ASC' : 'DESC'}, id ASC LIMIT $8`;
+              const parameterOffset = parameters.length;
+              parameters.push(
+                workspaceIds,
+                WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
+                ASK_QUESTIONS_TOOL_NAME,
+                search ? `%${search}%` : null,
+                args.scope === AdminChatThreadScope.ONBOARDING,
+                args.hasErrorOnly,
+                args.userNeverEngagedOnly,
+                offset + limit,
+                partitionIndex,
+              );
+              return `(${query.replace(/\$(\d+)/g, (_, position: string) => `$${Number(position) + parameterOffset}`)})`;
+            });
+          const rows = await manager.query<
+            (GlobalChatThreadRawRow & {
+              totalCount: string;
+              partitionIndex: number;
+            })[]
+          >(queries.join(' UNION ALL '), parameters);
+          totalCount += [
+            ...new Map(
+              rows.map((row) => [row.partitionIndex, Number(row.totalCount)]),
+            ).values(),
+          ].reduce((total, count) => total + count, 0);
+          candidates = [...candidates, ...rows]
+            .sort(compare)
+            .slice(0, offset + limit);
+        }
+      },
     );
-
-    const rows = await listQueryBuilder
-      .leftJoin('thread.messages', 'message', '"message"."isHidden" = false')
-      .select('thread.id', 'id')
-      .addSelect('thread.title', 'title')
-      .addSelect('thread.workspaceId', 'workspaceId')
-      .addSelect('thread.userWorkspaceId', 'userWorkspaceId')
-      .addSelect('thread.deletedAt', 'deletedAt')
-      .addSelect('thread.createdAt', 'createdAt')
-      .addSelect('thread.updatedAt', 'updatedAt')
-      .addSelect('workspace.displayName', 'workspaceDisplayName')
-      .addSelect('user.email', 'userEmail')
-      .addSelect('user.firstName', 'userFirstName')
-      .addSelect('user.lastName', 'userLastName')
-      .addSelect('"thread"."lastStreamError" IS NOT NULL', 'hasError')
-      .addSelect(
-        this.buildOnboardingThreadPredicate(listQueryBuilder),
-        'isOnboardingThread',
-      )
-      .addSelect('COUNT("message"."id")::int', 'messageCount')
-      .addSelect(
-        `(
-          (COUNT("message"."id") FILTER (WHERE "message"."role" = :userMessageRole))
-          + (${this.buildAnsweredQuestionSubQuery(listQueryBuilder, 'COUNT(*)')})
-        )::int`,
-        'userReplyCount',
-      )
-      .groupBy('"thread"."id"')
-      .addGroupBy('"workspace"."id"')
-      .addGroupBy('"userWorkspace"."id"')
-      .addGroupBy('"user"."id"')
-      .orderBy(orderExpression, orderDirection)
-      .addOrderBy('"thread"."id"', 'ASC')
-      .limit(sanitizedLimit)
-      .offset(sanitizedOffset)
-      .getRawMany<GlobalChatThreadRawRow>();
-
-    const totalCount = await this.applyFilters(
-      this.agentChatThreadRepository.createQueryBuilder('thread'),
-      filterArgs,
-    ).getCount();
-
-    const threads: AdminChatThreadListItemDTO[] = rows.map((row) => ({
-      id: row.id,
-      title: row.title,
-      workspaceId: row.workspaceId,
-      workspaceDisplayName: row.workspaceDisplayName,
-      userWorkspaceId: row.userWorkspaceId,
-      userEmail: row.userEmail,
-      userFirstName: row.userFirstName,
-      userLastName: row.userLastName,
-      messageCount: row.messageCount,
-      userReplyCount: row.userReplyCount,
-      hasError: row.hasError,
-      isOnboardingThread: row.isOnboardingThread,
-      deletedAt: row.deletedAt,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-    }));
-
+    const threads = candidates.slice(offset, offset + limit);
     return {
       threads,
       totalCount,
-      hasMore: sanitizedOffset + threads.length < totalCount,
+      hasMore: offset + threads.length < totalCount,
     };
   }
 }

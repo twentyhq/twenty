@@ -126,6 +126,44 @@ describe('defineApplication', () => {
     expect(warnings.some((warning) => warning.includes('API_KEY'))).toBe(true);
   });
 
+  it('should warn when an application variable is both required and deprecated', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      applicationVariables: {
+        API_KEY: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          isSecret: true,
+          isRequired: true,
+          isDeprecated: true,
+        },
+      },
+    });
+
+    const warnings = result.warnings ?? [];
+
+    expect(result.success).toBe(true);
+    expect(warnings.some((warning) => warning.includes('API_KEY'))).toBe(true);
+  });
+
+  it('should not warn when an application variable is only required', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      applicationVariables: {
+        API_KEY: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          isSecret: true,
+          isRequired: true,
+        },
+      },
+    });
+
+    expect(result.warnings ?? []).toEqual([]);
+  });
+
   it('should accept a billable operation mapped to a known operationType', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',

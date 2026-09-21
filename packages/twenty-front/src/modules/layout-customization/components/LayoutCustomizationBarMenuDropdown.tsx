@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconReload } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -45,10 +45,11 @@ export const LayoutCustomizationBarMenuDropdown = () => {
       clickableComponent={
         <StyledInvertedIconButtonWrapper>
           <LightIconButton
-            Icon={IconDotsVertical}
-            accent="tertiary"
+            emphasis="subtle"
             aria-label={t`Layout customization menu`}
-          />
+          >
+            <IconDotsVertical />
+          </LightIconButton>
         </StyledInvertedIconButtonWrapper>
       }
       dropdownComponents={

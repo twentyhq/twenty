@@ -19,7 +19,8 @@ import {
   AnimatedPlaceholderEmptyTitle,
   useToast,
 } from 'twenty-ui/primitives/feedback';
-import { Button, LightIconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -242,10 +243,12 @@ export const SettingsAgentLogsTab = ({
                       .replace(':turnId', turn.id)}
                   >
                     <LightIconButton
-                      Icon={IconChevronRight}
                       title={t`View all evaluations`}
-                      accent="tertiary"
-                    />
+                      emphasis="subtle"
+                      aria-label={t`View all evaluations`}
+                    >
+                      <IconChevronRight />
+                    </LightIconButton>
                   </UndecoratedLink>
                 )}
               </TableCell>

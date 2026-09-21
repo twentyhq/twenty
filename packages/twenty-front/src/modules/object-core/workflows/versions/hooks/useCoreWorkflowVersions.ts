@@ -11,7 +11,7 @@ export const useCoreWorkflowVersions = (workflowId: string) => {
     {
       client: apolloCoreClient,
       fetchPolicy: 'cache-and-network',
-      variables: { workspaceWorkflowId: workflowId },
+      variables: { coreWorkflowId: workflowId },
     },
   );
 

@@ -48,6 +48,7 @@ export const Default: Story = {
 
 export const Documentation: Story = {
   ...Default,
+  play: undefined,
   args: { variant: 'with-header' },
   render: (args) => (
     <div style={{ width: '100%' }}>
@@ -66,6 +67,7 @@ export const Documentation: Story = {
 
 export const Dark: Story = {
   ...Documentation,
+  play: Default.play,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };

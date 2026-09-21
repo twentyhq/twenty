@@ -1,0 +1,75 @@
+---
+title: LightIconButton
+description: Present lightweight icon actions with standard or subtle emphasis.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LightIconButtonReference from '/snippets/ui/generated/input/light-icon-button.mdx';
+
+`LightIconButton` composes [IconButton](/ui/components/input/icon-button) with a ghost surface and a small size. Supply an accessible name and decorative icon content.
+
+<StoryEmbed
+  storyId="ui-input-button-lighticonbutton--documentation"
+  title="Light icon button"
+  height={240}
+/>
+
+## Usage
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const AddAction = () => (
+  <LightIconButton aria-label="Add record" emphasis="subtle">
+    <IconPlus />
+  </LightIconButton>
+);
+```
+
+Standard emphasis uses secondary neutral text; subtle emphasis uses tertiary text. Explicit semantic colors and group colors take precedence. Small controls are 24px with a 14px icon; medium controls are 32px with a 16px icon. Compact controls use `size="xs"` and are 20px.
+
+## State and interaction
+
+Button owns keyboard activation, disabled and loading behavior, refs, native attributes, and render composition. The native default is `type="button"`. Use `aria-pressed` for toggles and `aria-expanded` for disclosures. The application owns these states and can set `color="accent"` to highlight a selected action. Keyboard focus uses the shared focus ring.
+
+Tooltip text is optional and does not replace `aria-label`. Set `href` for a link and supply `render` when the application owns routing.
+
+## Updating existing controls
+
+Import `LightIconButton` from `twenty-ui/components`. Replace `Icon={IconPlus}` with `<IconPlus />` children, `small`/`medium` with `sm`/`md`, `accent="tertiary"` with `emphasis="subtle"`, and `testId` with `data-testid`. Replace synthetic `active` and `focus` flags with semantic state and actual keyboard focus.
+
+Replace `LightIconButtonGroup` with [ButtonGroup](/ui/primitives/input/button-group) using `attached={false}` and explicit children. Set `disabled` on unavailable actions, including actions without a click handler. Wrappers and tooltip triggers can remain around each child.
+
+## Menu item icon buttons
+
+`MenuItem`, `MenuItemDraggable`, and `MenuItemAvatar` accept JSX through `iconButtons`. Pass one `LightIconButton` directly, or use `ButtonGroup` for multiple buttons. The menu controls their placement and hover visibility; each button owns its accessible name, click handler, and disabled state. Wrap dropdown triggers directly around the button.
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components';
+import { IconEyeOff, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
+
+export const RecordMenuItem = () => (
+  <MenuItem
+    text="Record"
+    iconButtons={
+      <ButtonGroup attached={false}>
+        <LightIconButton aria-label="Hide record">
+          <IconEyeOff />
+        </LightIconButton>
+        <LightIconButton aria-label="Delete record" disabled>
+          <IconTrash />
+        </LightIconButton>
+      </ButtonGroup>
+    }
+  />
+);
+```
+
+Replace descriptor arrays with these elements and remove `MenuItemIconButton` types. A button without an `onClick` handler can remain enabled when a surrounding dropdown owns its interaction. Set `disabled` explicitly for unavailable buttons.
+
+## Props
+
+<LightIconButtonReference />

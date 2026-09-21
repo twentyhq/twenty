@@ -26,18 +26,10 @@ jest.mock(
   '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup',
   () => ({
     WorkflowDiagramEdgeButtonGroup: ({
-      iconButtons,
+      children,
     }: {
-      iconButtons: Array<{ onClick: () => void; ariaLabel: string }>;
-    }) => (
-      <>
-        {iconButtons.map((iconButton) => (
-          <button key={iconButton.ariaLabel} onClick={iconButton.onClick}>
-            {iconButton.ariaLabel}
-          </button>
-        ))}
-      </>
-    ),
+      children: React.ReactNode;
+    }) => children,
   }),
 );
 

@@ -5,7 +5,6 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createManyViewGroups } from 'test/integration/metadata/suites/view-group/utils/create-many-view-groups.util';
 import { deleteOneViewGroup } from 'test/integration/metadata/suites/view-group/utils/delete-one-view-group.util';
-import { destroyOneViewGroup } from 'test/integration/metadata/suites/view-group/utils/destroy-one-view-group.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -159,12 +158,6 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
         });
 
         expect(deleteViewGroup.deletedAt).not.toBeNull();
-        await destroyOneViewGroup({
-          expectToFail: false,
-          input: {
-            id: viewGroupId,
-          },
-        });
       }
     }
     createdViewGroupIds = [];

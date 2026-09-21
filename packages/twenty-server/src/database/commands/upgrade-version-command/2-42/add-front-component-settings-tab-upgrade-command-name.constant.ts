@@ -1,2 +1,2 @@
 export const ADD_FRONT_COMPONENT_SETTINGS_TAB_UPGRADE_COMMAND_NAME =
-  '2.42.0_AddFrontComponentSettingsTabFastInstanceCommand_1789724121846';
+  '2.42.0_AddFrontComponentSettingsTabFastInstanceCommand_1789986879091';

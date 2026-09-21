@@ -1,3 +1,5 @@
+import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
+import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { AiChatUsageService } from 'src/engine/metadata-modules/ai/ai-chat/services/ai-chat-usage.service';
 import { AiChatUsageResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/ai-chat-usage.resolver';
@@ -15,9 +17,6 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
-import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
-import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
@@ -36,8 +35,6 @@ import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscripti
 import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
 import { WorkspaceSetupChatService } from './services/workspace-setup-chat.service';
 import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-subscriber.service';
-import { AgentChatEventPublisherService } from './services/agent-chat-event-publisher.service';
-import { AgentChatStreamHeartbeatService } from './services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
@@ -47,6 +44,8 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
 
 @Module({
   imports: [
+    AgentChatStreamStateModule,
+    AgentHistoryModule,
     UsageLimitModule,
     TypeOrmModule.forFeature([
       AgentChatThreadEntity,
@@ -75,8 +74,6 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AiChatUsageService,
     AiChatUsageResolver,
     AgentChatCancelSubscriberService,
-    AgentChatEventPublisherService,
-    AgentChatStreamHeartbeatService,
     AgentChatResolver,
     AgentChatSubscriptionResolver,
     WorkspaceSetupChatResolver,
@@ -89,10 +86,6 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     StreamAgentChatJob,
     SystemPromptBuilderService,
     AiGraphqlApiExceptionInterceptor,
-    provideWorkspaceScopedRepository(AgentChatThreadEntity),
-    provideWorkspaceScopedRepository(AgentTurnEntity),
-    provideWorkspaceScopedRepository(AgentMessageEntity),
-    provideWorkspaceScopedRepository(AgentMessagePartEntity),
     provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [

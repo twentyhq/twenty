@@ -1,9 +1,6 @@
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { type AvatarProps } from '@ui/primitives/data-display/Avatar/types/AvatarProps';
-import {
-  type MenuItemIconButton,
-  MenuItem,
-} from '@ui/primitives/navigation/MenuItem/MenuItem';
+import { MenuItem } from '@ui/primitives/navigation/MenuItem/MenuItem';
 import { type MouseEvent, type ReactNode } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { type MenuItemAccent } from '@ui/primitives/navigation/MenuItem/types/MenuItemAccent';
@@ -11,7 +8,7 @@ import { type MenuItemAccent } from '@ui/primitives/navigation/MenuItem/types/Me
 export type MenuItemAvatarProps = {
   accent?: MenuItemAccent;
   className?: string;
-  iconButtons?: MenuItemIconButton[];
+  iconButtons?: ReactNode;
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   avatar?: Pick<

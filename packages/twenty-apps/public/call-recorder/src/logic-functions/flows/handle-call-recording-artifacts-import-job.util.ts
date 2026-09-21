@@ -7,6 +7,7 @@ import {
 } from 'src/logic-functions/flows/import-call-recording-artifacts.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
+import { fetchWithTimeout } from 'src/logic-functions/utils/fetch-with-timeout.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
 type HandleCallRecordingArtifactsImportJobResult =
@@ -28,7 +29,7 @@ export const handleCallRecordingArtifactsImportJob = async (
   if (
     isUndefined(callRecordingId) ||
     isUndefined(requestedAt) ||
-    (scope !== 'transcript' && scope !== 'media')
+    (scope !== 'transcript' && scope !== 'audio' && scope !== 'video')
   ) {
     return {
       status: 'skipped',
@@ -39,7 +40,7 @@ export const handleCallRecordingArtifactsImportJob = async (
 
   try {
     return await importCallRecordingArtifacts({
-      client: new CoreApiClient(),
+      client: new CoreApiClient({ fetch: fetchWithTimeout }),
       request: { callRecordingId, requestedAt },
       scope,
     });

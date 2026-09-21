@@ -12,8 +12,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -40,6 +42,7 @@ export class CommandMenuItemResolver {
   constructor(
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly frontComponentService: FrontComponentService,
+    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
   ) {}
 
   @ResolveField(() => String)
@@ -111,18 +114,42 @@ export class CommandMenuItemResolver {
   @UseGuards(NoPermissionGuard)
   @AllowSuspendedWorkspace()
   async commandMenuItems(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<CommandMenuItemDTO[]> {
-    return await this.commandMenuItemService.findAll(workspace.id);
+    return await this.withoutInaccessibleWorkflowItems({
+      commandMenuItems: await this.commandMenuItemService.findAll(workspace.id),
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Query(() => CommandMenuItemDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
   async commandMenuItem(
     @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<CommandMenuItemDTO | null> {
-    return await this.commandMenuItemService.findById(id, workspace.id);
+    const commandMenuItem = await this.commandMenuItemService.findById(
+      id,
+      workspace.id,
+    );
+
+    if (!isDefined(commandMenuItem)) {
+      return null;
+    }
+
+    const [accessibleCommandMenuItem] =
+      await this.withoutInaccessibleWorkflowItems({
+        commandMenuItems: [commandMenuItem],
+        workspaceId: workspace.id,
+        userWorkspaceId,
+      });
+
+    return accessibleCommandMenuItem ?? null;
   }
 
   @Mutation(() => CommandMenuItemDTO)
@@ -159,5 +186,35 @@ export class CommandMenuItemResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<CommandMenuItemDTO> {
     return await this.commandMenuItemService.delete(id, workspace.id);
+  }
+
+  // Activating a manual trigger writes a workspace-wide menu item, so the
+  // command menu announces a private workflow by name unless the list answers
+  // to the same rule as the workflow itself.
+  private async withoutInaccessibleWorkflowItems({
+    commandMenuItems,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    commandMenuItems: CommandMenuItemDTO[];
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<CommandMenuItemDTO[]> {
+    const inaccessibleWorkspaceWorkflowVersionIds =
+      await this.coreWorkflowAccessService.findInaccessibleWorkspaceWorkflowVersionIds(
+        {
+          workspaceId,
+          userWorkspaceId,
+          workspaceWorkflowVersionIds: commandMenuItems
+            .map(({ workflowVersionId }) => workflowVersionId)
+            .filter(isDefined),
+        },
+      );
+
+    return commandMenuItems.filter(
+      ({ workflowVersionId }) =>
+        !isDefined(workflowVersionId) ||
+        !inaccessibleWorkspaceWorkflowVersionIds.has(workflowVersionId),
+    );
   }
 }

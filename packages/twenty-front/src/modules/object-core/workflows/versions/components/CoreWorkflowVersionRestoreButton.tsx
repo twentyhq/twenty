@@ -8,10 +8,10 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 
 export const CoreWorkflowVersionRestoreButton = ({
   workflowId,
-  workspaceWorkflowVersionId,
+  coreWorkflowVersionId,
 }: {
   workflowId: string;
-  workspaceWorkflowVersionId: string;
+  coreWorkflowVersionId: string;
 }) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
@@ -22,7 +22,7 @@ export const CoreWorkflowVersionRestoreButton = ({
     isLoadingCoreWorkflowVersions,
   } = useRestoreCoreWorkflowVersionAsDraft({
     workflowId,
-    workspaceWorkflowVersionId,
+    coreWorkflowVersionId,
   });
 
   const handleRestoreClick = () => {

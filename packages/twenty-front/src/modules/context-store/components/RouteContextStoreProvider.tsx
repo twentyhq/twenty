@@ -10,7 +10,7 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { isUsableLastVisitedView } from '@/views/utils/isUsableLastVisitedView';
 import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey, ViewType } from '~/generated-metadata/graphql';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -55,18 +55,30 @@ const getViewId = ({
 export const RouteContextStoreProvider = () => {
   const location = useLocation();
   const routeObjects = useWorkspaceRouteObjects();
-  const isRecordIndexPage = isMatchingLocation(
+  const isCoreWorkflowIndexPage = isMatchingLocation(
     location,
-    AppPath.RecordIndexPage,
+    AppPath.WorkflowCoreIndexPage,
   );
-  const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
+  const isRecordIndexPage =
+    isCoreWorkflowIndexPage ||
+    isMatchingLocation(location, AppPath.RecordIndexPage);
+  const isCoreWorkflowShowPage = isMatchingLocation(
+    location,
+    AppPath.WorkflowCoreShowPage,
+  );
+  const isRecordShowPage =
+    isCoreWorkflowShowPage ||
+    isMatchingLocation(location, AppPath.RecordShowPage);
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
   const isAiChatPage = isMatchingLocation(location, AppPath.AiChat);
   const isSettingsPage = useIsSettingsPage();
 
   const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
   const objectNamePlural = routeParams?.objectNamePlural;
-  const objectNameSingular = routeParams?.objectNameSingular;
+  const isCoreWorkflowPage = isCoreWorkflowIndexPage || isCoreWorkflowShowPage;
+  const objectNameSingular = isCoreWorkflowPage
+    ? CoreObjectNameSingular.Workflow
+    : routeParams?.objectNameSingular;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');
@@ -143,7 +155,7 @@ export const RouteContextStoreProvider = () => {
 
   return (
     <RouteContextStoreProviderEffect
-      viewId={viewId}
+      viewId={isCoreWorkflowPage ? undefined : viewId}
       objectMetadataItem={objectMetadataItem}
       isRecordIndexPage={isRecordIndexPage}
       isRecordShowPage={isRecordShowPage}

@@ -103,6 +103,13 @@ const PINNED_ITEMS = [
 ];
 
 const OTHER_ITEM = createCommandMenuItem({
+  id: 'story-import-records',
+  label: 'Import records',
+  icon: 'IconFileImport',
+  engineComponentKey: EngineComponentKey.IMPORT_RECORDS,
+});
+
+const NAVIGATION_ITEM = createCommandMenuItem({
   id: 'story-go-to-people',
   label: 'Go to People',
 });
@@ -234,7 +241,7 @@ export const EmptySearchWithAllPinnedItemsInHeader: Story = {
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
-    expect(canvas.queryByText('Delete')).not.toBeInTheDocument();
+    expect(await canvas.findByText('Delete')).toBeVisible();
   },
 };
 
@@ -253,7 +260,7 @@ export const WhitespaceOnlySearchWithAllPinnedItemsInHeader: Story = {
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
-    expect(canvas.queryByText('Delete')).not.toBeInTheDocument();
+    expect(await canvas.findByText('Delete')).toBeVisible();
   },
 };
 
@@ -269,7 +276,7 @@ export const EmptySearchWithOverflowingPinnedItems: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Delete')).toBeVisible();
-    expect(await canvas.findByText('Go to People')).toBeVisible();
+    expect(await canvas.findByText('Import records')).toBeVisible();
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
@@ -324,6 +331,51 @@ export const SearchWithoutMatchingItemsAndWithFallback: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Search records')).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
+    });
+  },
+};
+
+export const NavigationSitsLastAtRest: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [...PINNED_ITEMS, OTHER_ITEM, NAVIGATION_ITEM],
+      sidePanelSearch: '',
+      pinnedItemsContainerWidth: 1000,
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Import records')).toBeVisible();
+    expect(await canvas.findByText('Go to People')).toBeVisible();
+
+    const headings = canvas.getAllByText(
+      /^(Pinned|This object|Workspace|Go to)$/,
+    );
+
+    expect(headings.map((heading) => heading.textContent)).toEqual([
+      'Pinned',
+      'This object',
+      'Workspace',
+      'Go to',
+    ]);
+  },
+};
+
+export const NavigationIsFoundBySearch: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [...PINNED_ITEMS, OTHER_ITEM, NAVIGATION_ITEM],
+      sidePanelSearch: 'people',
+      pinnedItemsContainerWidth: 1000,
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Go to People')).toBeVisible();
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });

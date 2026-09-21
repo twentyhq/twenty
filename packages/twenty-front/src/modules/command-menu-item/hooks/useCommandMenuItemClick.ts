@@ -94,6 +94,7 @@ export const useCommandMenuItemClick = ({
         engineComponentKey: item.engineComponentKey,
         frontComponentId: item.frontComponentId ?? undefined,
         workflowVersionId: item.workflowVersionId ?? undefined,
+        coreWorkflowVersionId: item.coreWorkflowVersionId ?? undefined,
         availabilityType: item.availabilityType,
         availabilityObjectMetadataId: item.availabilityObjectMetadataId,
         payload:

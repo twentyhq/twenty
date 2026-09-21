@@ -195,8 +195,12 @@ import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 's
 import { AddAppMessageChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789395506192-add-app-message-channel-type';
 import { AddAppMessageChannelUniqueHandleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789418882171-add-app-message-channel-unique-handle';
 import { AddWorkflowExecutionCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789719131000-add-workflow-execution-compatibility';
-import { AddFrontComponentSettingsTabFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789724121846-add-front-component-settings-tab';
-import { BackfillFrontComponentSettingsTabSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1789724121847-backfill-front-component-settings-tab';
+import { CoreWorkflowCommandMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789730706712-core-workflow-command-menu-items';
+import { AddWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789893300000-add-workflow-visibility';
+import { AddAiEvaluationModelToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789918648347-add-ai-evaluation-model-to-workspace';
+import { AddIsRequiredToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789920900000-add-is-required-to-application-variables';
+import { AddFrontComponentSettingsTabFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789986879091-add-front-component-settings-tab';
+import { BackfillFrontComponentSettingsTabSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1789986879092-backfill-front-component-settings-tab';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -391,9 +395,13 @@ export const INSTANCE_COMMANDS = [
   AddCoreVersionPointersFastInstanceCommand,
   AddWorkspaceWorkflowVersionIdToWorkflowVersionFastInstanceCommand,
   AddWorkflowExecutionCompatibilityFastInstanceCommand,
+  CoreWorkflowCommandMenuItemsFastInstanceCommand,
+  AddWorkflowVisibilityFastInstanceCommand,
   AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand,
   AddAppMessageChannelTypeFastInstanceCommand,
   AddAppMessageChannelUniqueHandleFastInstanceCommand,
+  AddAiEvaluationModelToWorkspaceFastInstanceCommand,
+  AddIsRequiredToApplicationVariablesFastInstanceCommand,
   AddFrontComponentSettingsTabFastInstanceCommand,
   BackfillFrontComponentSettingsTabSlowInstanceCommand,
 ];
