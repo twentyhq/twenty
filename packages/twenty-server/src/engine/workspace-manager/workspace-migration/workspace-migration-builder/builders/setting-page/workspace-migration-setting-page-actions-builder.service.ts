@@ -28,7 +28,9 @@ export class WorkspaceMigrationSettingPageActionsBuilderService extends Workspac
     'create'
   > {
     const validationResult =
-      this.flatSettingPageValidatorService.validateFlatSettingPageCreation(args);
+      this.flatSettingPageValidatorService.validateFlatSettingPageCreation(
+        args,
+      );
 
     if (validationResult.errors.length > 0) {
       return {
@@ -56,7 +58,9 @@ export class WorkspaceMigrationSettingPageActionsBuilderService extends Workspac
     'delete'
   > {
     const validationResult =
-      this.flatSettingPageValidatorService.validateFlatSettingPageDeletion(args);
+      this.flatSettingPageValidatorService.validateFlatSettingPageDeletion(
+        args,
+      );
 
     if (validationResult.errors.length > 0) {
       return {

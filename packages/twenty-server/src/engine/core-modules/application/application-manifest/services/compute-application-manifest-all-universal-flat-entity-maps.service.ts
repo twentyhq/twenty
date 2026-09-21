@@ -34,6 +34,7 @@ import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissio
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType } from 'src/engine/core-modules/application/application-manifest/converters/from-timeline-activity-type-manifest-to-universal-flat-timeline-activity-type.util';
 import { fromSettingPageManifestToUniversalFlatSettingPage } from 'src/engine/core-modules/application/application-manifest/converters/from-setting-page-manifest-to-universal-flat-setting-page.util';
+import { getLegacySettingPageManifests } from 'src/engine/core-modules/application/application-manifest/utils/get-legacy-setting-page-manifests.util';
 import { fromViewFieldGroupManifestToUniversalFlatViewFieldGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-group-manifest-to-universal-flat-view-field-group.util';
 import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-manifest-to-universal-flat-view-field.util';
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
@@ -669,7 +670,12 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    for (const settingPageManifest of manifest.settingPages ?? []) {
+    const settingPageManifests = [
+      ...(manifest.settingPages ?? []),
+      ...getLegacySettingPageManifests(manifest),
+    ];
+
+    for (const settingPageManifest of settingPageManifests) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity: fromSettingPageManifestToUniversalFlatSettingPage({
           settingPageManifest,

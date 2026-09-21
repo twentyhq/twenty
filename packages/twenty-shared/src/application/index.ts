@@ -83,6 +83,7 @@ export { getFieldUniversalIdentifier } from './deterministic-identifier/get-fiel
 export { getFrontComponentUniversalIdentifier } from './deterministic-identifier/get-front-component-universal-identifier.util';
 export { getIndexFieldUniversalIdentifier } from './deterministic-identifier/get-index-field-universal-identifier.util';
 export { getIndexUniversalIdentifier } from './deterministic-identifier/get-index-universal-identifier.util';
+export { getLegacySettingPageUniversalIdentifier } from './deterministic-identifier/get-legacy-setting-page-universal-identifier.util';
 export { getLogicFunctionUniversalIdentifier } from './deterministic-identifier/get-logic-function-universal-identifier.util';
 export {
   getFolderNavigationMenuItemUniversalIdentifier,
