@@ -76,6 +76,7 @@ export const FormTextFieldInput = ({
           onBlur={onBlur}
         >
           <TextVariableEditor
+            placeholder={placeholder ?? t`Enter text`}
             editor={editor}
             multiline={multiline}
             readonly={readonly}

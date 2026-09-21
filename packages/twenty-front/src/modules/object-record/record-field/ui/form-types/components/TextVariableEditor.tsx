@@ -1,6 +1,6 @@
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
-import { EditorContent, type Editor } from '@tiptap/react';
+import { EditorContent, type Editor, useEditorState } from '@tiptap/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditor = styled.div<{
@@ -8,15 +8,29 @@ const StyledEditor = styled.div<{
   readonly?: boolean;
 }>`
   box-sizing: border-box;
-  display: flex;
+  display: grid;
   height: 100%;
   min-width: 0;
   padding-right: ${({ multiline }) =>
     multiline ? themeCssVariables.spacing[8] : '0'};
   width: 100%;
   .editor-content {
+    grid-area: 1 / 1;
     min-width: 0;
     width: 100%;
+  }
+
+  // Measure the placeholder outside the editable paragraph to preserve caret positioning.
+  &[data-placeholder]::after {
+    ${FORM_FIELD_PLACEHOLDER_STYLES}
+    content: attr(data-placeholder);
+    grid-area: 1 / 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+    pointer-events: none;
+    visibility: hidden;
+    white-space: normal;
   }
 
   .tiptap {
@@ -79,15 +93,26 @@ type TextVariableEditorProps = {
   multiline: boolean | undefined;
   readonly: boolean | undefined;
   editor: Editor;
+  placeholder?: string;
 };
 
 export const TextVariableEditor = ({
   multiline,
   readonly,
   editor,
+  placeholder,
 }: TextVariableEditorProps) => {
+  const isEmpty = useEditorState({
+    editor,
+    selector: ({ editor: currentEditor }) => currentEditor.isEmpty,
+  });
+
   return (
-    <StyledEditor multiline={multiline} readonly={readonly}>
+    <StyledEditor
+      multiline={multiline}
+      readonly={readonly}
+      data-placeholder={multiline && isEmpty ? placeholder : undefined}
+    >
       <EditorContent className="editor-content" editor={editor} />
     </StyledEditor>
   );
