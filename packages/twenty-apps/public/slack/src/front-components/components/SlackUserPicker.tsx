@@ -26,11 +26,20 @@ export const SlackUserPicker = ({
       options={options}
       isSearching={isSearching}
       onSelect={onSelect}
-      getOptionKey={(slackUser) => slackUser.slackUserId}
-      getOptionName={(slackUser) =>
-        slackUser.displayName ?? slackUser.slackUserId
-      }
-      getOptionMeta={(slackUser) => slackUser.email}
+      getOption={(slackUser) => {
+        const displayedName = slackUser.displayName ?? slackUser.slackUserId;
+
+        return {
+          key: slackUser.slackUserId,
+          name: displayedName,
+          meta: slackUser.email,
+          avatar: {
+            type: 'rounded',
+            placeholder: displayedName,
+            placeholderColorSeed: slackUser.slackUserId,
+          },
+        };
+      }}
       searchLabel="Search Slack by name or email"
       emptyText={
         searchErrorMessage ??

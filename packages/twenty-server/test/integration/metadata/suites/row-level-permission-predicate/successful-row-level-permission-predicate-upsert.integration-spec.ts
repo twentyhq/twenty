@@ -348,10 +348,15 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
       ],
     };
 
-    await upsertRowLevelPermissionPredicates({
+    const { data: createData } = await upsertRowLevelPermissionPredicates({
       expectToFail: false,
       input: createInput,
     });
+
+    const createdPredicateId =
+      createData.upsertRowLevelPermissionPredicates.predicates[0].id;
+    const createdPredicateGroupId =
+      createData.upsertRowLevelPermissionPredicates.predicateGroups[0].id;
 
     const deleteInput: UpsertRowLevelPermissionPredicatesInput = {
       roleId: createdRoleId,
@@ -371,6 +376,31 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
     expect(
       deleteData.upsertRowLevelPermissionPredicates.predicateGroups,
     ).toHaveLength(0);
+
+    const recreateInput: UpsertRowLevelPermissionPredicatesInput = {
+      roleId: createdRoleId,
+      objectMetadataId: companyObjectMetadataId,
+      predicates: [{ ...createInput.predicates[0], id: createdPredicateId }],
+      predicateGroups: [
+        { ...createInput.predicateGroups[0], id: createdPredicateGroupId },
+      ],
+    };
+
+    const { data: recreateData } = await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input: recreateInput,
+    });
+
+    expect(
+      recreateData.upsertRowLevelPermissionPredicates.predicates.map(
+        ({ id }: { id: string }) => id,
+      ),
+    ).toEqual([createdPredicateId]);
+    expect(
+      recreateData.upsertRowLevelPermissionPredicates.predicateGroups.map(
+        ({ id }: { id: string }) => id,
+      ),
+    ).toEqual([createdPredicateGroupId]);
   });
 
   it('should upsert predicates with predicate groups', async () => {
