@@ -37,6 +37,7 @@ import {
 import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import {
+  ApplicationSettingsTab,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationDocument,
   IsApplicationStoppedDocument,
@@ -62,6 +63,15 @@ const APPLICATION_DETAIL_ID = 'application-detail-id';
 const GENERAL_TAB_ID = 'general';
 const VARIABLES_TAB_ID = 'variables';
 const CUSTOM_SETTINGS_TAB_ID = 'settings';
+
+const TAB_ID_BY_APPLICATION_SETTINGS_TAB: Record<
+  ApplicationSettingsTab,
+  string
+> = {
+  [ApplicationSettingsTab.GENERAL]: GENERAL_TAB_ID,
+  [ApplicationSettingsTab.VARIABLES]: VARIABLES_TAB_ID,
+  [ApplicationSettingsTab.SETTINGS]: CUSTOM_SETTINGS_TAB_ID,
+};
 
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
@@ -206,17 +216,6 @@ export const SettingsApplicationDetails = () => {
     await runHealthCheck();
   };
 
-  const healthBannerResult =
-    !isNonEmptyArray(missingRequiredApplicationVariables) &&
-    isDefined(healthCheckResult) &&
-    isNonEmptyString(healthCheckResult.message)
-      ? {
-          status: healthCheckResult.status,
-          message: healthCheckResult.message,
-          actionLabel: healthCheckResult.actionLabel,
-        }
-      : undefined;
-
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
     // A custom settings tab lays out the application variables itself, so
@@ -234,6 +233,30 @@ export const SettingsApplicationDetails = () => {
         ]
       : []),
   ];
+
+  const healthAction = healthCheckResult?.action;
+  const healthActionTabId = isDefined(healthAction)
+    ? TAB_ID_BY_APPLICATION_SETTINGS_TAB[healthAction.settingsTab]
+    : undefined;
+
+  const healthBannerResult =
+    !isNonEmptyArray(missingRequiredApplicationVariables) &&
+    isDefined(healthCheckResult) &&
+    isNonEmptyString(healthCheckResult.message)
+      ? {
+          status: healthCheckResult.status,
+          message: healthCheckResult.message,
+          action:
+            isDefined(healthAction) &&
+            isDefined(healthActionTabId) &&
+            tabs.some((tab) => tab.id === healthActionTabId)
+              ? {
+                  label: healthAction.label,
+                  onClick: () => setActiveTabId(healthActionTabId),
+                }
+              : undefined,
+        }
+      : undefined;
 
   const renderActiveTabContent = () => {
     if (!isDefined(application)) {
@@ -339,8 +362,7 @@ export const SettingsApplicationDetails = () => {
             <SettingsApplicationHealthBanner
               healthStatus={healthBannerResult.status}
               healthMessage={healthBannerResult.message}
-              healthActionLabel={healthBannerResult.actionLabel}
-              onAction={goToConfigurationTab}
+              action={healthBannerResult.action}
             />
           )}
           {isApplicationStopped && (

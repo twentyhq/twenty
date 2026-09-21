@@ -5,7 +5,10 @@ export const RUN_APPLICATION_HEALTH_CHECK = gql`
     runApplicationHealthCheck(applicationId: $applicationId) {
       status
       message
-      actionLabel
+      action {
+        label
+        settingsTab
+      }
     }
   }
 `;

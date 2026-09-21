@@ -4,7 +4,13 @@ describe('isApplicationHealthCheckResult', () => {
   it.each([
     [{ status: 'ok' }],
     [{ status: 'warning', message: 'Key expires soon' }],
-    [{ status: 'error', message: 'Key revoked', action: { label: 'Fix' } }],
+    [
+      {
+        status: 'error',
+        message: 'Key revoked',
+        action: { label: 'Fix', settingsTab: 'variables' },
+      },
+    ],
   ])('should accept %p', (value) => {
     expect(isApplicationHealthCheckResult(value)).toBe(true);
   });
@@ -19,6 +25,14 @@ describe('isApplicationHealthCheckResult', () => {
     [{ status: 'error', message: 'Boom', action: {} }],
     [{ status: 'error', message: 'Boom', action: { label: 2 } }],
     [{ status: 'error', message: 'Boom', action: { label: '' } }],
+    [{ status: 'error', message: 'Boom', action: { label: 'Fix' } }],
+    [
+      {
+        status: 'error',
+        message: 'Boom',
+        action: { label: 'Fix', settingsTab: 'nope' },
+      },
+    ],
   ])('should reject %p', (value) => {
     expect(isApplicationHealthCheckResult(value)).toBe(false);
   });

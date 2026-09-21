@@ -1,11 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isApplicationHealthCheckResult } from 'twenty-shared/application';
+import {
+  type ApplicationSettingsTab as ReportedApplicationSettingsTab,
+  isApplicationHealthCheckResult,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationHealthStatus } from 'src/engine/core-modules/application/enums/application-health-status.enum';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type ApplicationHealthCheckResultDTO } from 'src/engine/core-modules/application/dtos/application-health-check-result.dto';
+import { ApplicationSettingsTab } from 'src/engine/core-modules/application/enums/application-settings-tab.enum';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
 const REPORTED_STATUS_TO_HEALTH_STATUS = {
@@ -14,10 +18,19 @@ const REPORTED_STATUS_TO_HEALTH_STATUS = {
   error: ApplicationHealthStatus.ERROR,
 } as const;
 
+const REPORTED_SETTINGS_TAB_TO_SETTINGS_TAB = {
+  general: ApplicationSettingsTab.GENERAL,
+  variables: ApplicationSettingsTab.VARIABLES,
+  settings: ApplicationSettingsTab.SETTINGS,
+} as const satisfies Record<
+  ReportedApplicationSettingsTab,
+  ApplicationSettingsTab
+>;
+
 const UNKNOWN_HEALTH: ApplicationHealthCheckResultDTO = {
   status: ApplicationHealthStatus.UNKNOWN,
   message: null,
-  actionLabel: null,
+  action: null,
 };
 
 @Injectable()
@@ -99,14 +112,22 @@ export class ApplicationHealthCheckService {
       return {
         status: ApplicationHealthStatus.OK,
         message: null,
-        actionLabel: null,
+        action: null,
       };
     }
+
+    const { action } = data;
 
     return {
       status: REPORTED_STATUS_TO_HEALTH_STATUS[data.status],
       message: data.message,
-      actionLabel: data.action?.label ?? null,
+      action: isDefined(action)
+        ? {
+            label: action.label,
+            settingsTab:
+              REPORTED_SETTINGS_TAB_TO_SETTINGS_TAB[action.settingsTab],
+          }
+        : null,
     };
   }
 }

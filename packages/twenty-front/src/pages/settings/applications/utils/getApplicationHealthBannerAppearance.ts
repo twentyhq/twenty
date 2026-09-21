@@ -15,7 +15,7 @@ const APPEARANCE_BY_STATUS: Partial<
   Record<ApplicationHealthStatus, ApplicationHealthBannerAppearance>
 > = {
   [ApplicationHealthStatus.WARNING]: {
-    color: 'warning',
+    color: 'blue',
     Icon: IconAlertTriangle,
   },
   [ApplicationHealthStatus.ERROR]: {

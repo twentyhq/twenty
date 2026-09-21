@@ -2,19 +2,17 @@ import { clsx } from 'clsx';
 
 import styles from './Banner.module.scss';
 
-export type BannerColor = 'blue' | 'warning' | 'danger';
+export type BannerColor = 'blue' | 'danger';
 
 export type BannerVariant = 'primary' | 'secondary';
 
 const BANNER_VARIANT_COLOR_CLASS_NAMES = {
   primary: {
     blue: styles.primaryBlue,
-    warning: styles.primaryWarning,
     danger: styles.primaryDanger,
   },
   secondary: {
     blue: styles.secondaryBlue,
-    warning: styles.secondaryWarning,
     danger: styles.secondaryDanger,
   },
 } as const;

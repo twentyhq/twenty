@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { type ApplicationHealthStatus } from '~/generated-metadata/graphql';
@@ -7,15 +6,13 @@ import { getApplicationHealthBannerAppearance } from '~/pages/settings/applicati
 type SettingsApplicationHealthBannerProps = {
   healthStatus: ApplicationHealthStatus;
   healthMessage: string;
-  healthActionLabel?: string | null;
-  onAction?: () => void;
+  action?: { label: string; onClick: () => void };
 };
 
 export const SettingsApplicationHealthBanner = ({
   healthStatus,
   healthMessage,
-  healthActionLabel,
-  onAction,
+  action,
 }: SettingsApplicationHealthBannerProps) => {
   const appearance = getApplicationHealthBannerAppearance(healthStatus);
 
@@ -29,13 +26,8 @@ export const SettingsApplicationHealthBanner = ({
       LeftIcon={appearance.Icon}
       message={healthMessage}
       button={
-        isDefined(onAction)
-          ? {
-              title: isDefined(healthActionLabel)
-                ? healthActionLabel
-                : t`Configure`,
-              onClick: onAction,
-            }
+        isDefined(action)
+          ? { title: action.label, onClick: action.onClick }
           : undefined
       }
     />

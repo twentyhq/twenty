@@ -1983,10 +1983,18 @@ export interface DeletedWorkspaceMember {
     __typename: 'DeletedWorkspaceMember'
 }
 
+export interface ApplicationHealthCheckAction {
+    label: Scalars['String']
+    settingsTab: ApplicationSettingsTab
+    __typename: 'ApplicationHealthCheckAction'
+}
+
+export type ApplicationSettingsTab = 'GENERAL' | 'VARIABLES' | 'SETTINGS'
+
 export interface ApplicationHealthCheckResult {
     status: ApplicationHealthStatus
     message?: Scalars['String']
-    actionLabel?: Scalars['String']
+    action?: ApplicationHealthCheckAction
     __typename: 'ApplicationHealthCheckResult'
 }
 
@@ -5696,10 +5704,17 @@ export interface DeletedWorkspaceMemberGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationHealthCheckActionGenqlSelection{
+    label?: boolean | number
+    settingsTab?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationHealthCheckResultGenqlSelection{
     status?: boolean | number
     message?: boolean | number
-    actionLabel?: boolean | number
+    action?: ApplicationHealthCheckActionGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9237,6 +9252,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const ApplicationHealthCheckAction_possibleTypes: string[] = ['ApplicationHealthCheckAction']
+    export const isApplicationHealthCheckAction = (obj?: { __typename?: any } | null): obj is ApplicationHealthCheckAction => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationHealthCheckAction"')
+      return ApplicationHealthCheckAction_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ApplicationHealthCheckResult_possibleTypes: string[] = ['ApplicationHealthCheckResult']
     export const isApplicationHealthCheckResult = (obj?: { __typename?: any } | null): obj is ApplicationHealthCheckResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationHealthCheckResult"')
@@ -10907,6 +10930,12 @@ export const enumSupportDriver = {
 export const enumCaptchaDriverType = {
    GOOGLE_RECAPTCHA: 'GOOGLE_RECAPTCHA' as const,
    TURNSTILE: 'TURNSTILE' as const
+}
+
+export const enumApplicationSettingsTab = {
+   GENERAL: 'GENERAL' as const,
+   VARIABLES: 'VARIABLES' as const,
+   SETTINGS: 'SETTINGS' as const
 }
 
 export const enumApplicationHealthStatus = {

@@ -7,8 +7,17 @@ export const APPLICATION_HEALTH_CHECK_REPORTED_STATUSES = [
 export type ApplicationHealthCheckReportedStatus =
   (typeof APPLICATION_HEALTH_CHECK_REPORTED_STATUSES)[number];
 
+export const APPLICATION_SETTINGS_TABS = [
+  'general',
+  'variables',
+  'settings',
+] as const;
+
+export type ApplicationSettingsTab = (typeof APPLICATION_SETTINGS_TABS)[number];
+
 export type ApplicationHealthCheckAction = {
   label: string;
+  settingsTab: ApplicationSettingsTab;
 };
 
 export type ApplicationHealthCheckResult =
@@ -48,7 +57,13 @@ export const isApplicationHealthCheckResult = (
     return false;
   }
 
-  const { label } = action as Record<string, unknown>;
+  const { label, settingsTab } = action as Record<string, unknown>;
 
-  return typeof label === 'string' && label.length > 0;
+  if (typeof label !== 'string' || label.length === 0) {
+    return false;
+  }
+
+  return APPLICATION_SETTINGS_TABS.includes(
+    settingsTab as ApplicationSettingsTab,
+  );
 };

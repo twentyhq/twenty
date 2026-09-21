@@ -2357,10 +2357,21 @@ type DeletedWorkspaceMember {
   userWorkspaceId: UUID
 }
 
+type ApplicationHealthCheckAction {
+  label: String!
+  settingsTab: ApplicationSettingsTab!
+}
+
+enum ApplicationSettingsTab {
+  GENERAL
+  VARIABLES
+  SETTINGS
+}
+
 type ApplicationHealthCheckResult {
   status: ApplicationHealthStatus!
   message: String
-  actionLabel: String
+  action: ApplicationHealthCheckAction
 }
 
 enum ApplicationHealthStatus {

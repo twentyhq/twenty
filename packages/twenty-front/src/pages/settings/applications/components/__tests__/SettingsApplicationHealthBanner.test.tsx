@@ -7,46 +7,34 @@ import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/c
 
 const renderBanner = ({
   healthStatus = ApplicationHealthStatus.ERROR,
-  healthActionLabel,
-  hasConfigurationTab = true,
+  hasAction = true,
 }: {
   healthStatus?: ApplicationHealthStatus;
-  healthActionLabel?: string | null;
-  hasConfigurationTab?: boolean;
+  hasAction?: boolean;
 }) =>
   render(
     <I18nProvider i18n={i18n}>
       <SettingsApplicationHealthBanner
         healthStatus={healthStatus}
         healthMessage="Your key was revoked"
-        healthActionLabel={healthActionLabel}
-        onAction={hasConfigurationTab ? jest.fn() : undefined}
+        action={
+          hasAction ? { label: 'Reconnect', onClick: jest.fn() } : undefined
+        }
       />
     </I18nProvider>,
   );
 
 describe('SettingsApplicationHealthBanner', () => {
   it('should use the action label reported by the app', () => {
-    renderBanner({ healthActionLabel: 'Reconnect' });
+    renderBanner({});
 
     expect(
       screen.getByRole('button', { name: /Reconnect/ }),
     ).toBeInTheDocument();
   });
 
-  it('should fall back to Configure when the app reports no action label', () => {
-    renderBanner({});
-
-    expect(
-      screen.getByRole('button', { name: /Configure/ }),
-    ).toBeInTheDocument();
-  });
-
-  it('should render the message without a button when there is nowhere to configure', () => {
-    renderBanner({
-      healthActionLabel: 'Reconnect',
-      hasConfigurationTab: false,
-    });
+  it('should render the message without a button when the app reports no action', () => {
+    renderBanner({ hasAction: false });
 
     expect(screen.getByText('Your key was revoked')).toBeInTheDocument();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();

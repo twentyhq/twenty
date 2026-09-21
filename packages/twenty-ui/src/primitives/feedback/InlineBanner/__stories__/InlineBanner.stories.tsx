@@ -63,14 +63,6 @@ export const DisabledAction: Story = {
   },
 };
 
-export const Warning: Story = {
-  args: {
-    color: 'warning',
-    message: 'Your API key expires in 3 days.',
-    button: { title: 'Renew', onClick: fn() },
-  },
-};
-
 export const WithoutAction: Story = {
   args: {
     color: 'danger',
