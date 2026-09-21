@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import {
   IconListCheck,
@@ -56,10 +57,19 @@ export const SettingsAiModelsTab = () => {
 
   const evaluationModelId = currentWorkspace?.aiEvaluationModelId ?? '';
 
+  const automaticEvaluationModel = aiEvaluationModels.find(
+    (model) => model.isAvailable && !model.isDeprecated,
+  );
+
   // A deprecated model stays listed while it is the one chosen, so the select
   // shows what is actually in effect rather than silently reading as Automatic.
   const evaluationModelOptions = [
-    { value: '', label: t`Automatic` },
+    {
+      value: '',
+      label: isDefined(automaticEvaluationModel)
+        ? t`Automatic · ${automaticEvaluationModel.label}`
+        : t`Not configured`,
+    },
     ...aiEvaluationModels
       .filter(
         (evaluationModel) =>
@@ -69,6 +79,10 @@ export const SettingsAiModelsTab = () => {
       .map((evaluationModel) => ({
         value: evaluationModel.modelId,
         label: evaluationModel.label,
+        disabled: !evaluationModel.isAvailable,
+        contextualText: evaluationModel.isAvailable
+          ? undefined
+          : t`Provider is not configured`,
       })),
   ];
 
@@ -77,7 +91,7 @@ export const SettingsAiModelsTab = () => {
       <Section.Root>
         <Section.Header
           title={t`Models`}
-          description={t`Choose the default modes for people and agents`}
+          description={t`Choose the default models for chat, agents, and classification`}
         />
         <Card rounded backgroundColor={themeCssVariables.background.secondary}>
           <StyledSettingsSelectGroup controlWidth={160}>
@@ -109,7 +123,32 @@ export const SettingsAiModelsTab = () => {
                 selectSizeVariant="small"
               />
             </SettingsOptionCardContentSelect>
+            <SettingsOptionCardContentSelect
+              Icon={IconListCheck}
+              title={t`Classification`}
+              description={t`Model used by Classify workflow steps`}
+            >
+              <Select
+                dropdownId="models-tab-evaluation-model-select"
+                value={evaluationModelId}
+                onChange={(modelId) =>
+                  handleEvaluationModelChange(modelId === '' ? null : modelId)
+                }
+                options={evaluationModelOptions}
+                selectSizeVariant="small"
+                dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+              />
+            </SettingsOptionCardContentSelect>
           </StyledSettingsSelectGroup>
+        </Card>
+      </Section.Root>
+
+      <Section.Root>
+        <Section.Header
+          title={t`Language model configuration`}
+          description={t`Configure the model behind each mode used by AI chat and agents`}
+        />
+        <Card rounded backgroundColor={themeCssVariables.background.secondary}>
           <SettingsOptionCardContentSwitch
             Icon={IconWand}
             title={t`Choose automatically`}
@@ -148,38 +187,6 @@ export const SettingsAiModelsTab = () => {
           )}
         </Card>
       </Section.Root>
-
-      {aiEvaluationModels.length > 0 && (
-        <Section.Root>
-          <Section.Header
-            title={t`Classification`}
-            description={t`Choose the model that answers Classify steps`}
-          />
-          <Card
-            rounded
-            backgroundColor={themeCssVariables.background.secondary}
-          >
-            <StyledSettingsSelectGroup controlWidth={260}>
-              <SettingsOptionCardContentSelect
-                Icon={IconListCheck}
-                title={t`Evaluation model`}
-                description={t`Returns a calibrated probability for every answer`}
-              >
-                <Select
-                  dropdownId="models-tab-evaluation-model-select"
-                  value={evaluationModelId}
-                  onChange={(modelId) =>
-                    handleEvaluationModelChange(modelId === '' ? null : modelId)
-                  }
-                  options={evaluationModelOptions}
-                  selectSizeVariant="small"
-                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-                />
-              </SettingsOptionCardContentSelect>
-            </StyledSettingsSelectGroup>
-          </Card>
-        </Section.Root>
-      )}
 
       <SettingsAiModelTiersPreview />
     </>
