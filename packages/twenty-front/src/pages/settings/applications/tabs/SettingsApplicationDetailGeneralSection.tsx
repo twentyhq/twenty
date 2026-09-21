@@ -19,7 +19,7 @@ import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/appli
 import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
-type SettingsApplicationDetailGeneralTabProps = {
+type SettingsApplicationDetailGeneralSectionProps = {
   application: Pick<
     Application,
     | 'id'
@@ -41,7 +41,7 @@ type SettingsApplicationDetailGeneralTabProps = {
   isUninstalling: boolean;
 };
 
-export const SettingsApplicationDetailGeneralTab = ({
+export const SettingsApplicationDetailGeneralSection = ({
   application,
   displayName,
   description,
@@ -53,7 +53,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   isUpgrading,
   onUninstall,
   isUninstalling,
-}: SettingsApplicationDetailGeneralTabProps) => {
+}: SettingsApplicationDetailGeneralSectionProps) => {
   const navigateSettings = useNavigateSettings();
 
   const canManageApplications = useHasPermissionFlag(

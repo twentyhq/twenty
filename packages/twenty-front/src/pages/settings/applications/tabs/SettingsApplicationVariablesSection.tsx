@@ -13,23 +13,21 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[4]};
 `;
 
-type SettingsApplicationDetailVariablesTabProps = {
+type SettingsApplicationVariablesSectionProps = {
   applicationVariables: ApplicationVariable[];
   onVariableChange: (key: string, value: string) => void;
 };
 
-export const SettingsApplicationDetailVariablesTab = ({
+export const SettingsApplicationVariablesSection = ({
   applicationVariables,
   onVariableChange,
-}: SettingsApplicationDetailVariablesTabProps) => {
-  const sectionDescription =
-    applicationVariables.length > 0
-      ? t`Set your application configuration variables`
-      : t`No variables to set for this application`;
-
+}: SettingsApplicationVariablesSectionProps) => {
   return (
     <Section.Root>
-      <Section.Header title={t`Variables`} description={sectionDescription} />
+      <Section.Header
+        title={t`Variables`}
+        description={t`Set your application configuration variables`}
+      />
       <StyledContainer>
         {applicationVariables.map((applicationVariable) => (
           <div key={applicationVariable.key}>

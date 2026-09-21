@@ -10,10 +10,6 @@ import { useUninstallApplication } from '@/settings/applications/hooks/useUninst
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -21,13 +17,7 @@ import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  IconAlertTriangle,
-  IconAdjustments,
-  IconDeviceFloppy,
-  IconSettings,
-  IconVariable,
-} from 'twenty-ui/icon';
+import { IconAlertTriangle, IconDeviceFloppy } from 'twenty-ui/icon';
 import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import {
@@ -40,26 +30,15 @@ import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useApplicationVariablesDraft } from '~/pages/settings/applications/hooks/useApplicationVariablesDraft';
 import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection';
-import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab';
-import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailVariablesTab';
+import { SettingsApplicationDetailGeneralSection } from '~/pages/settings/applications/tabs/SettingsApplicationDetailGeneralSection';
+import { SettingsApplicationVariablesSection } from '~/pages/settings/applications/tabs/SettingsApplicationVariablesSection';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
-const APPLICATION_DETAIL_ID = 'application-detail-id';
-
-const GENERAL_TAB_ID = 'general';
-const VARIABLES_TAB_ID = 'variables';
-const CUSTOM_SETTINGS_TAB_ID = 'settings';
-
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
-
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    APPLICATION_DETAIL_ID,
-  );
 
   const { data, refetch } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId },
@@ -163,64 +142,45 @@ export const SettingsApplicationDetails = () => {
 
   const settingsFrontComponentId =
     application?.settingsCustomTabFrontComponentId;
-  const hasCustomSettingsTab = isDefined(settingsFrontComponentId);
+  const hasCustomSettings = isDefined(settingsFrontComponentId);
+  // A custom settings front component lays out the application variables
+  // itself, so exposing them again would duplicate the same fields.
+  const hasVariablesForm =
+    !hasCustomSettings && displayedApplicationVariables.length > 0;
 
-  const tabs: SingleTabProps[] = [
-    { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
-    // A custom settings tab lays out the application variables itself, so
-    // exposing them again would duplicate the same fields.
-    ...(!hasCustomSettingsTab && displayedApplicationVariables.length > 0
-      ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
-      : []),
-    ...(hasCustomSettingsTab
-      ? [
-          {
-            id: CUSTOM_SETTINGS_TAB_ID,
-            title: t`Settings`,
-            Icon: IconAdjustments,
-          },
-        ]
-      : []),
-  ];
-
-  const renderActiveTabContent = () => {
+  const renderContent = () => {
     if (!isDefined(application)) {
       return <SettingsSectionSkeletonLoader />;
     }
 
-    switch (activeTabId) {
-      case GENERAL_TAB_ID:
-        return (
-          <SettingsApplicationDetailGeneralTab
-            application={application}
-            displayName={displayName}
-            description={getApplicationDescriptionSummary(description)}
-            coverImageUrl={getCoverImageUrl()}
-            marketplaceUniversalIdentifier={detail?.universalIdentifier}
-            hasUpdate={hasUpdate}
-            latestAvailableVersion={latestAvailableVersion ?? undefined}
-            onUpgrade={handleUpgrade}
-            isUpgrading={isUpgrading}
-            onUninstall={uninstall}
-            isUninstalling={isUninstalling}
-          />
-        );
-      case VARIABLES_TAB_ID:
-        return (
-          <SettingsApplicationDetailVariablesTab
-            applicationVariables={draftApplicationVariables}
-            onVariableChange={setApplicationVariableValue}
-          />
-        );
-      case CUSTOM_SETTINGS_TAB_ID:
-        return hasCustomSettingsTab ? (
+    return (
+      <>
+        <SettingsApplicationDetailGeneralSection
+          application={application}
+          displayName={displayName}
+          description={getApplicationDescriptionSummary(description)}
+          coverImageUrl={getCoverImageUrl()}
+          marketplaceUniversalIdentifier={detail?.universalIdentifier}
+          hasUpdate={hasUpdate}
+          latestAvailableVersion={latestAvailableVersion ?? undefined}
+          onUpgrade={handleUpgrade}
+          isUpgrading={isUpgrading}
+          onUninstall={uninstall}
+          isUninstalling={isUninstalling}
+        />
+        {hasCustomSettings && (
           <SettingsApplicationCustomSettingsSection
             frontComponentId={settingsFrontComponentId}
           />
-        ) : null;
-      default:
-        return <></>;
-    }
+        )}
+        {hasVariablesForm && (
+          <SettingsApplicationVariablesSection
+            applicationVariables={draftApplicationVariables}
+            onVariableChange={setApplicationVariableValue}
+          />
+        )}
+      </>
+    );
   };
 
   return (
@@ -252,7 +212,7 @@ export const SettingsApplicationDetails = () => {
           { children: displayName },
         ]}
         actionButton={
-          activeTabId === VARIABLES_TAB_ID ? (
+          hasVariablesForm ? (
             <Button
               startIcon={<IconDeviceFloppy />}
               variant="solid"
@@ -265,13 +225,6 @@ export const SettingsApplicationDetails = () => {
             >{t`Save settings`}</Button>
           ) : undefined
         }
-        secondaryBar={
-          <SettingsTabBar
-            aria-label={t`Application details`}
-            tabs={tabs}
-            componentInstanceId={APPLICATION_DETAIL_ID}
-          />
-        }
       >
         <SettingsPageContainer overflow="visible">
           {isApplicationStopped && (
@@ -281,7 +234,7 @@ export const SettingsApplicationDetails = () => {
               message={t`We are currently encountering issues with this app, its behavior may be degraded while we work on a fix.`}
             />
           )}
-          {renderActiveTabContent()}
+          {renderContent()}
         </SettingsPageContainer>
       </SettingsPageLayout>
     </CurrentApplicationContext.Provider>
