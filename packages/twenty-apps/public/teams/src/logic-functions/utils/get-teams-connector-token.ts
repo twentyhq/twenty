@@ -7,28 +7,26 @@ import { type TeamsBotCredentials } from 'src/logic-functions/types/teams-bot-cr
 import { type TeamsConnectorToken } from 'src/logic-functions/types/teams-connector-token.type';
 import { mintTeamsConnectorToken } from 'src/logic-functions/utils/mint-teams-connector-token';
 
-const isUsable = (token: TeamsConnectorToken | null): boolean =>
+const isTokenUsable = (
+  token: TeamsConnectorToken | null,
+): token is TeamsConnectorToken =>
   isDefined(token) &&
-  typeof token.accessToken === 'string' &&
-  token.accessToken.length > 0 &&
-  typeof token.expiresAtMs === 'number' &&
   token.expiresAtMs - TEAMS_CONNECTOR_TOKEN_REFRESH_MARGIN_MS > Date.now();
 
 export const getTeamsConnectorToken = async (
   credentials: TeamsBotCredentials,
 ): Promise<string> => {
-  const cached = await kv.get<TeamsConnectorToken>(
+  const cachedToken = await kv.get<TeamsConnectorToken>(
     TEAMS_CONNECTOR_TOKEN_KV_KEY,
-    { scope: 'SERVER' },
   );
 
-  if (isUsable(cached)) {
-    return cached.accessToken;
+  if (isTokenUsable(cachedToken)) {
+    return cachedToken.accessToken;
   }
 
-  const minted = await mintTeamsConnectorToken(credentials);
+  const mintedToken = await mintTeamsConnectorToken(credentials);
 
-  await kv.set(TEAMS_CONNECTOR_TOKEN_KV_KEY, minted, { scope: 'SERVER' });
+  await kv.set(TEAMS_CONNECTOR_TOKEN_KV_KEY, mintedToken);
 
-  return minted.accessToken;
+  return mintedToken.accessToken;
 };

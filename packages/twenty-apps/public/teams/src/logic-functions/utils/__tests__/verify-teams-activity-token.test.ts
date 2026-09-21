@@ -6,6 +6,7 @@ import { verifyTeamsActivityTokenOrThrow } from 'src/logic-functions/utils/verif
 
 const BOT_APP_ID = 'bbbbbbbb-1111-2222-3333-444444444444';
 const SERVICE_URL = 'https://smba.trafficmanager.net/amer/';
+const NORMALIZED_SERVICE_URL = 'https://smba.trafficmanager.net/amer';
 
 let privateKey: CryptoKey;
 let publicKey: CryptoKey;
@@ -53,34 +54,28 @@ beforeAll(async () => {
 });
 
 describe('verifyTeamsActivityTokenOrThrow', () => {
-  it('accepts a well-formed Bot Connector token', async () => {
-    const claims = await verify(await signActivityToken());
-
-    expect(claims).toEqual({
-      issuer: TEAMS_BOT_CONNECTOR_ISSUER,
-      audience: BOT_APP_ID,
-      serviceUrl: 'https://smba.trafficmanager.net/amer',
-    });
-  });
-
-  it('accepts the documented serviceUrl spelling as well as the wire one', async () => {
-    const claims = await verify(
-      await signActivityToken({ claimName: 'serviceUrl' }),
+  it('should return the verified service url for a well-formed Bot Connector token', async () => {
+    expect(await verify(await signActivityToken())).toBe(
+      NORMALIZED_SERVICE_URL,
     );
-
-    expect(claims.serviceUrl).toBe('https://smba.trafficmanager.net/amer');
   });
 
-  it('ignores a trailing slash difference between claim and activity', async () => {
-    await expect(
-      verify(
+  it('should accept the documented serviceUrl spelling as well as the wire one', async () => {
+    expect(
+      await verify(await signActivityToken({ claimName: 'serviceUrl' })),
+    ).toBe(NORMALIZED_SERVICE_URL);
+  });
+
+  it('should ignore a trailing slash difference between claim and activity', async () => {
+    expect(
+      await verify(
         await signActivityToken({ serviceUrlClaim: SERVICE_URL }),
-        'https://smba.trafficmanager.net/amer',
+        NORMALIZED_SERVICE_URL,
       ),
-    ).resolves.toBeDefined();
+    ).toBe(NORMALIZED_SERVICE_URL);
   });
 
-  it('rejects a missing Authorization header', async () => {
+  it('should reject a missing Authorization header', async () => {
     await expect(
       verifyTeamsActivityTokenOrThrow({
         authorizationHeader: undefined,
@@ -91,7 +86,7 @@ describe('verifyTeamsActivityTokenOrThrow', () => {
     ).rejects.toThrow('Missing or malformed Authorization header');
   });
 
-  it('rejects a non-Bearer scheme', async () => {
+  it('should reject a non-Bearer scheme', async () => {
     await expect(
       verifyTeamsActivityTokenOrThrow({
         authorizationHeader: `Basic ${await signActivityToken()}`,
@@ -102,40 +97,53 @@ describe('verifyTeamsActivityTokenOrThrow', () => {
     ).rejects.toThrow('Missing or malformed Authorization header');
   });
 
-  it('rejects a token from another issuer', async () => {
+  it('should reject an Authorization header carrying more than a scheme and a token', async () => {
+    await expect(
+      verifyTeamsActivityTokenOrThrow({
+        authorizationHeader: `Bearer ${await signActivityToken()} extra`,
+        activityServiceUrl: SERVICE_URL,
+        botAppId: BOT_APP_ID,
+        keySet: publicKey,
+      }),
+    ).rejects.toThrow('Missing or malformed Authorization header');
+  });
+
+  it('should reject a token from another issuer', async () => {
     await expect(
       verify(await signActivityToken({ issuer: 'https://evil.example' })),
     ).rejects.toThrow();
   });
 
-  it('rejects a token minted for another bot', async () => {
+  it('should reject a token minted for another bot', async () => {
     await expect(
       verify(await signActivityToken({ audience: 'someone-elses-app-id' })),
     ).rejects.toThrow();
   });
 
-  it('rejects an expired token beyond the clock tolerance', async () => {
+  it('should reject an expired token beyond the clock tolerance', async () => {
     await expect(
       verify(await signActivityToken({ expiresIn: '-10m' })),
     ).rejects.toThrow();
   });
 
-  it('rejects a token whose serviceUrl claim points elsewhere', async () => {
+  it('should reject a token whose serviceUrl claim points elsewhere', async () => {
     await expect(
       verify(
-        await signActivityToken({ serviceUrlClaim: 'https://attacker.example' }),
+        await signActivityToken({
+          serviceUrlClaim: 'https://attacker.example',
+        }),
       ),
     ).rejects.toThrow('does not match the serviceUrl claim');
   });
 
-  it('rejects a token carrying no serviceUrl claim', async () => {
+  it('should reject a token carrying no serviceUrl claim', async () => {
     await expect(
       verify(await signActivityToken({ serviceUrlClaim: null })),
     ).rejects.toThrow('has no serviceUrl claim');
   });
 
-  it('rejects a symmetrically signed token, so alg cannot be downgraded', async () => {
-    const forged = await new SignJWT({ serviceurl: SERVICE_URL })
+  it('should reject a symmetrically signed token, so alg cannot be downgraded', async () => {
+    const forgedToken = await new SignJWT({ serviceurl: SERVICE_URL })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuer(TEAMS_BOT_CONNECTOR_ISSUER)
       .setAudience(BOT_APP_ID)
@@ -145,7 +153,7 @@ describe('verifyTeamsActivityTokenOrThrow', () => {
 
     await expect(
       verifyTeamsActivityTokenOrThrow({
-        authorizationHeader: `Bearer ${forged}`,
+        authorizationHeader: `Bearer ${forgedToken}`,
         activityServiceUrl: SERVICE_URL,
         botAppId: BOT_APP_ID,
         keySet: symmetricSecret,

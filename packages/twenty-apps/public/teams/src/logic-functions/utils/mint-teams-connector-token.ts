@@ -1,8 +1,10 @@
+import { isNonEmptyString, isPositiveInteger } from '@sniptt/guards';
+
 import { TEAMS_CONNECTOR_TOKEN_SCOPE } from 'src/logic-functions/constants/teams-connector-token-scope';
 import { type TeamsBotCredentials } from 'src/logic-functions/types/teams-bot-credentials.type';
 import { type TeamsConnectorToken } from 'src/logic-functions/types/teams-connector-token.type';
 
-type TokenResponse = {
+type TeamsConnectorTokenResponse = {
   access_token?: string;
   expires_in?: number;
 };
@@ -32,17 +34,18 @@ export const mintTeamsConnectorToken = async ({
     );
   }
 
-  const body = (await response.json()) as TokenResponse;
+  const body = (await response.json()) as TeamsConnectorTokenResponse;
 
-  if (typeof body.access_token !== 'string' || body.access_token.length === 0) {
+  if (!isNonEmptyString(body.access_token)) {
     throw new Error('Bot Connector token response carried no access_token');
   }
 
-  const expiresInSeconds =
-    typeof body.expires_in === 'number' ? body.expires_in : 3600;
+  if (!isPositiveInteger(body.expires_in)) {
+    throw new Error('Bot Connector token response carried no expires_in');
+  }
 
   return {
     accessToken: body.access_token,
-    expiresAtMs: Date.now() + expiresInSeconds * 1000,
+    expiresAtMs: Date.now() + body.expires_in * 1000,
   };
 };

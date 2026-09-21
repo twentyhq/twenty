@@ -23,7 +23,9 @@
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
-    "typecheck": "tsgo --noEmit -p tsconfig.spec.json"
+    "typecheck": "tsgo --noEmit -p tsconfig.spec.json",
+    "test:unit": "vitest run --config vitest.unit.config.ts",
+    "test:watch": "vitest --config vitest.unit.config.ts"
   },
   "dependencies": {
     "jose": "^6.2.12"
@@ -33,6 +35,8 @@
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "oxlint": "^0.16.0",
     "twenty-sdk": "^2.41.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^4.0.0"
   }
 }

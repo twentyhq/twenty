@@ -11,7 +11,7 @@ export const deleteTeamsActivity = async ({
   activityId: string;
   accessToken: string;
 }): Promise<void> => {
-  await requestTeamsConnector<void>({
+  await requestTeamsConnector({
     serviceUrl,
     path: `/v3/conversations/${encodeURIComponent(conversationId)}/activities/${encodeURIComponent(activityId)}`,
     method: 'DELETE',
