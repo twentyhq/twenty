@@ -436,9 +436,8 @@ describe('createFrontComponentMediaSessionHost', () => {
     ).resolves.toMatchObject({ status: 'failed', errorName: 'TypeError' });
   });
 
-  it('should keep accepting captures after the pending-start callback throws', async () => {
+  it('should not surface a pending-start listener failure to the caller', async () => {
     const getUserMedia = jest.fn().mockResolvedValue(createFakeStream());
-    let shouldThrow = true;
 
     Object.defineProperty(globalThis.navigator, 'mediaDevices', {
       configurable: true,
@@ -448,17 +447,15 @@ describe('createFrontComponentMediaSessionHost', () => {
     const host = createFrontComponentMediaSessionHost({
       beforeStartStream: () => null,
       onPendingStartChange: () => {
-        if (shouldThrow) {
-          throw new Error('The consumer failed to render the pending state');
-        }
+        throw new Error('The listener failed to render the pending state');
       },
     });
 
     await expect(
       host.mediaStartStream({ audio: true, video: false }),
-    ).rejects.toThrow('The consumer failed to render the pending state');
+    ).resolves.toMatchObject({ status: 'started' });
 
-    shouldThrow = false;
+    host.stopAllSessions();
 
     await expect(
       host.mediaStartStream({ audio: true, video: false }),
@@ -501,6 +498,38 @@ describe('createFrontComponentMediaSessionHost', () => {
     expect(onActiveSessionsChange).toHaveBeenLastCalledWith([
       expect.objectContaining({ mediaTypes: ['audio'] }),
     ]);
+
+    host.stopAllSessions();
+  });
+  it('should register and keep stopping a capture when a listener throws', async () => {
+    const stream = createFakeStream();
+
+    Object.defineProperty(globalThis.navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getUserMedia: jest.fn().mockResolvedValue(stream) },
+    });
+
+    const host = createFrontComponentMediaSessionHost({
+      beforeStartStream: () => null,
+      onPendingStartChange: () => {
+        throw new Error('The listener failed to render the pending state');
+      },
+      onActiveSessionsChange: () => {
+        throw new Error('The listener failed to render the active sessions');
+      },
+    });
+
+    await expect(
+      host.mediaStartStream({ audio: true, video: false }),
+    ).resolves.toMatchObject({ status: 'started' });
+
+    host.stopAllSessions();
+
+    expect(stream.getTracks()[0].stop).toHaveBeenCalled();
+
+    await expect(
+      host.mediaStartStream({ audio: true, video: false }),
+    ).resolves.toMatchObject({ status: 'started' });
 
     host.stopAllSessions();
   });

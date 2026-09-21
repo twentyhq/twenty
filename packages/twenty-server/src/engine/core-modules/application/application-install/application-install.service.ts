@@ -303,19 +303,24 @@ export class ApplicationInstallService {
       );
     }
 
+    // The approval screen renders the registration manifest, so a grant may
+    // only cover what both it and the resolved package declare. With no stored
+    // manifest nothing was shown, and an existing grant is left untouched.
     const approvedCapabilities = toApplicationCapabilities(
       appRegistration.manifest?.application?.requestedCapabilities,
     );
     const grantedCapabilities = toApplicationCapabilities(
       resolvedPackage.manifest.application.requestedCapabilities,
     ).filter((capability) => approvedCapabilities.includes(capability));
+    const shouldApplyApprovedCapabilities =
+      params.hasUserApprovedCapabilities === true &&
+      isDefined(appRegistration.manifest);
 
     const application = await this.ensureApplicationExists({
       existingApplication,
       universalIdentifier,
       name: resolvedPackage.manifest.application.displayName,
       grantedCapabilities,
-      hasUserApprovedCapabilities: params.hasUserApprovedCapabilities === true,
       logo:
         resolvedPackage.manifest.application.logo ??
         resolvedPackage.manifest.application.logoUrl ??
@@ -352,6 +357,13 @@ export class ApplicationInstallService {
             ],
           );
         }
+      }
+
+      if (isVersionUpgrade && shouldApplyApprovedCapabilities) {
+        await this.applicationService.update(application.id, {
+          grantedCapabilities,
+          workspaceId: params.workspaceId,
+        });
       }
 
       await this.writeFilesToStorage(
@@ -808,7 +820,6 @@ export class ApplicationInstallService {
     universalIdentifier,
     name,
     grantedCapabilities,
-    hasUserApprovedCapabilities,
     logo,
     workspaceId,
     applicationRegistrationId,
@@ -818,21 +829,13 @@ export class ApplicationInstallService {
     universalIdentifier: string;
     name: string;
     grantedCapabilities: ApplicationCapability[];
-    hasUserApprovedCapabilities: boolean;
     logo: string | null;
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
   }): Promise<ApplicationEntity> {
     if (isDefined(existingApplication)) {
-      if (!hasUserApprovedCapabilities) {
-        return existingApplication;
-      }
-
-      return await this.applicationService.update(existingApplication.id, {
-        grantedCapabilities,
-        workspaceId,
-      });
+      return existingApplication;
     }
 
     return await this.applicationService.create({

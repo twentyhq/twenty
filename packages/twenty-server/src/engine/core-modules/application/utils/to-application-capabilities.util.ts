@@ -4,6 +4,11 @@ import {
 } from 'twenty-shared/application';
 
 export const toApplicationCapabilities = (
-  capabilities: string[] | undefined,
-): ApplicationCapability[] =>
-  (capabilities ?? []).filter(isApplicationCapability);
+  capabilities: unknown,
+): ApplicationCapability[] => {
+  if (!Array.isArray(capabilities)) {
+    return [];
+  }
+
+  return capabilities.filter(isApplicationCapability);
+};

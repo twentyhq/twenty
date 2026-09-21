@@ -99,6 +99,10 @@ const StoredSessionsIndicator = ({
   );
 };
 
+const stopRecorderAudio = fn();
+const stopRecorderVideo = fn();
+const stopCameraApp = fn();
+
 const recorderSession: FrontComponentMediaSessionStatus = {
   id: 'recorder-audio',
   applicationId: 'recorder',
@@ -120,33 +124,27 @@ export const Hidden: StoryObj<typeof FrontComponentMediaSessionIndicator> = {
 export const OneRowPerApplication: StoryObj<
   typeof FrontComponentMediaSessionIndicator
 > = {
-  render: () => {
-    const stopRecorderAudio = fn();
-    const stopRecorderVideo = fn();
-    const stopCameraApp = fn();
-
-    return (
-      <StoredSessionsIndicator
-        sessions={[
-          { ...recorderSession, onStop: stopRecorderAudio },
-          {
-            ...recorderSession,
-            id: 'recorder-video',
-            activeMediaTypes: ['video'],
-            onStop: stopRecorderVideo,
-          },
-          {
-            ...recorderSession,
-            id: 'camera-session',
-            applicationId: 'camera-app',
-            applicationName: 'Camera app',
-            activeMediaTypes: ['video'],
-            onStop: stopCameraApp,
-          },
-        ]}
-      />
-    );
-  },
+  render: () => (
+    <StoredSessionsIndicator
+      sessions={[
+        { ...recorderSession, onStop: stopRecorderAudio },
+        {
+          ...recorderSession,
+          id: 'recorder-video',
+          activeMediaTypes: ['video'],
+          onStop: stopRecorderVideo,
+        },
+        {
+          ...recorderSession,
+          id: 'camera-session',
+          applicationId: 'camera-app',
+          applicationName: 'Camera app',
+          activeMediaTypes: ['video'],
+          onStop: stopCameraApp,
+        },
+      ]}
+    />
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -168,6 +166,14 @@ export const OneRowPerApplication: StoryObj<
     ).toBeVisible();
     await expect(applicationsCanvas.getByText('Camera app')).toBeVisible();
     await expect(applicationsCanvas.getByText('Camera')).toBeVisible();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Stop recording for Recorder' }),
+    );
+
+    await expect(stopRecorderAudio).toHaveBeenCalledTimes(1);
+    await expect(stopRecorderVideo).toHaveBeenCalledTimes(1);
+    await expect(stopCameraApp).not.toHaveBeenCalled();
   },
 };
 

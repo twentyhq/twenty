@@ -78,6 +78,16 @@ const toFailure = (
   errorMessage: error instanceof Error ? error.message : String(error),
 });
 
+// A listener that throws must not abort the host mid-start: an unregistered
+// capture leaves the device on with no session left to stop it.
+const notifyListener = (notify: () => void): void => {
+  try {
+    notify();
+  } catch {
+    console.warn('A front component media session listener failed');
+  }
+};
+
 const stopLateMediaStream = (
   mediaStreamPromise: Promise<MediaStreamStartOutcome>,
 ): void => {
@@ -169,7 +179,7 @@ export const createFrontComponentMediaSessionHost = ({
           streamSessions.has(session.streamId) ? session.mediaStream : null,
       }));
 
-    onActiveSessionsChange(activeSessions);
+    notifyListener(() => onActiveSessionsChange(activeSessions));
   };
 
   const refreshStreamSessionLiveness = (streamId: string): void => {
@@ -246,7 +256,7 @@ export const createFrontComponentMediaSessionHost = ({
         resolveInterruptedPolicy(MEDIA_START_CANCELLED_FAILURE);
         policyAbortController.abort();
       };
-      onPendingStartChange?.(mediaTypes);
+      notifyListener(() => onPendingStartChange?.(mediaTypes));
       policyTimeoutId = setTimeout(() => {
         resolveInterruptedPolicy(MEDIA_START_TIMEOUT_FAILURE);
         policyAbortController.abort();
@@ -260,7 +270,7 @@ export const createFrontComponentMediaSessionHost = ({
       clearTimeout(policyTimeoutId);
       cancelPendingStart = null;
       isMediaPolicyRequestPending = false;
-      onPendingStartChange?.(null);
+      notifyListener(() => onPendingStartChange?.(null));
     }
 
     if ('errorName' in policyOutcome) {
@@ -336,7 +346,7 @@ export const createFrontComponentMediaSessionHost = ({
       cancelPendingStart = () => {
         resolveInterruptedStart(MEDIA_START_CANCELLED_FAILURE);
       };
-      onPendingStartChange?.(mediaTypes);
+      notifyListener(() => onPendingStartChange?.(mediaTypes));
 
       startTimeoutId = setTimeout(() => {
         resolveInterruptedStart(MEDIA_START_TIMEOUT_FAILURE);
@@ -354,7 +364,7 @@ export const createFrontComponentMediaSessionHost = ({
         stopLateMediaStream(mediaStreamPromise);
       }
 
-      onPendingStartChange?.(null);
+      notifyListener(() => onPendingStartChange?.(null));
     }
 
     if ('errorName' in startOutcome) {
