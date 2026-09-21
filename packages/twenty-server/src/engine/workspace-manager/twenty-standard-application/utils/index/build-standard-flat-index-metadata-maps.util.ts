@@ -1,3 +1,4 @@
+import { buildAgentChatThreadTargetStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-chat-thread-target-standard-flat-index-metadata.util';
 import { buildAgentTurnEvaluationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-turn-evaluation-standard-flat-index-metadata.util';
 import { buildAgentMessagePartStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-message-part-standard-flat-index-metadata.util';
 import { buildAgentMessageStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-message-standard-flat-index-metadata.util';
@@ -48,6 +49,7 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   agentMessagePart: buildAgentMessagePartStandardFlatIndexMetadatas,
   agentMessage: buildAgentMessageStandardFlatIndexMetadatas,
   agentTurn: buildAgentTurnStandardFlatIndexMetadatas,
+  agentChatThreadTarget: buildAgentChatThreadTargetStandardFlatIndexMetadatas,
   agentChatThread: buildAgentChatThreadStandardFlatIndexMetadatas,
   attachment: buildAttachmentStandardFlatIndexMetadatas,
   blocklist: buildBlocklistStandardFlatIndexMetadatas,

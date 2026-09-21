@@ -60,6 +60,11 @@ export const getAgentHistorySchemaAdditions = ({
     .filter(
       (field) =>
         objectIdentifiers.has(field.objectMetadataUniversalIdentifier) &&
+        // Record links are provisioned after history migration, with their target objects.
+        (!isDefined(field.relationTargetObjectMetadataUniversalIdentifier) ||
+          objectIdentifiers.has(
+            field.relationTargetObjectMetadataUniversalIdentifier,
+          )) &&
         !isDefined(
           existing.flatFieldMetadataMaps.byUniversalIdentifier[
             field.universalIdentifier

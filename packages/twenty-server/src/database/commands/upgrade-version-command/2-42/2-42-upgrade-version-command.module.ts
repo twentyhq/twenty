@@ -1,3 +1,4 @@
+import { AddAgentChatThreadTargetsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790022535220-add-agent-chat-thread-targets.command';
 import { Module } from '@nestjs/common';
 
 import { MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
@@ -36,6 +37,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
   ],
   providers: [
+    AddAgentChatThreadTargetsCommand,
     MigrateAgentHistoryToWorkspaceCommand,
     UnpinCreationCommandsOnRecordSelectionCommand,
     RelinkWorkflowVersionsToCoreWorkflowsCommand,

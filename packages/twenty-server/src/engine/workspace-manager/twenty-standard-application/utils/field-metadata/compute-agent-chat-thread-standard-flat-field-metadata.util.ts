@@ -470,6 +470,33 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  targets: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'targets',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Targets', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({ message: 'Targets', context: 'fieldMetadata.description' }),
+        ),
+        icon: 'IconRelationOneToMany',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'agentChatThreadTarget',
+        targetFieldName: 'thread',
+        morphId: null,
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+          joinColumnName: null,
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
   turns: {
     ...createStandardRelationFieldFlatMetadata({
       ...args,

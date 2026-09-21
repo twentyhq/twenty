@@ -1,3 +1,4 @@
+import { type AgentChatThreadTargetWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-target.workspace-entity';
 import {
   type ActorMetadata,
   type EmailsMetadata,
@@ -39,6 +40,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   companyId: string | null;
   pointOfContactForOpportunities: EntityRelation<OpportunityWorkspaceEntity[]>;
   taskTargets: EntityRelation<TaskTargetWorkspaceEntity[]>;
+  agentChatThreadTargets: EntityRelation<
+    AgentChatThreadTargetWorkspaceEntity[]
+  >;
   noteTargets: EntityRelation<NoteTargetWorkspaceEntity[]>;
   calendarEventTargets: EntityRelation<CalendarEventTargetWorkspaceEntity[]>;
   messageThreadTargets: EntityRelation<MessageThreadTargetWorkspaceEntity[]>;

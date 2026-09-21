@@ -9,6 +9,7 @@ import {
 type StandardTargetObjectName =
   | 'calendarEventTarget'
   | 'messageThreadTarget'
+  | 'agentChatThreadTarget'
   | 'noteTarget'
   | 'taskTarget';
 

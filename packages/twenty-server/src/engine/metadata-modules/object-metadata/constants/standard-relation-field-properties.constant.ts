@@ -4,6 +4,10 @@ import { msg } from '@lingui/core/macro';
 import { DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS } from 'twenty-shared/metadata';
 
 export const STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT = {
+  agentChatThreadTarget: {
+    label: msg({ message: `Conversations`, context: 'fieldMetadata.label' }),
+    icon: 'IconMessage',
+  },
   noteTarget: {
     label: msg({ message: `Notes`, context: 'fieldMetadata.label' }),
     icon: 'IconNotes',
@@ -24,6 +28,7 @@ export const STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT = {
     icon: 'IconTimelineEvent',
   },
 } satisfies Record<
-  (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number],
+  | (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number]
+  | 'agentChatThreadTarget',
   { label: MessageDescriptor; icon: string }
 >;

@@ -33,6 +33,11 @@ describe('getAgentHistorySchemaAdditions', () => {
     expect(
       additions.objects.map((object) => object.universalIdentifier).sort(),
     ).toEqual([...HISTORY_IDENTIFIERS].sort());
+    expect(
+      additions.fields.map(({ universalIdentifier }) => universalIdentifier),
+    ).not.toContain(
+      STANDARD_OBJECTS.agentChatThread.fields.targets.universalIdentifier,
+    );
     expect(additions.fields.length).toBeGreaterThan(0);
     expect(additions.indexes.length).toBeGreaterThan(0);
     for (const entry of [...additions.fields, ...additions.indexes]) {

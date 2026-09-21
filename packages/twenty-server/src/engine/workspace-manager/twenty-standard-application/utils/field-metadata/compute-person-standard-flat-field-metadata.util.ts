@@ -5,6 +5,7 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 import {
   DateDisplayFormat,
   FieldMetadataType,
+  MetadataWritability,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
@@ -484,6 +485,43 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  agentChatThreadTargets: {
+    ...createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'agentChatThreadTargets',
+        isSystemSideEffect: true,
+        label: i18nLabel(
+          STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT
+            .agentChatThreadTarget.label,
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Agent chat threads tied to the contact`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT
+          .agentChatThreadTarget.icon,
+        isNullable: true,
+        isUIEditable: false,
+        targetObjectName: 'agentChatThreadTarget',
+        targetFieldName: 'targetPerson',
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
   noteTargets: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

@@ -1398,6 +1398,37 @@ export const STANDARD_OBJECTS = {
       }),
     },
   },
+  agentChatThreadTarget: {
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+    fields: STANDARD_OBJECT_FIELDS.agentChatThreadTarget,
+    morphIds: {
+      targetMorphId: { morphId: '161bb522-6528-4ea4-be79-f07e07c7414c' },
+    },
+    indexes: {
+      threadIdIndex: {
+        universalIdentifier: '37104a84-a93a-4792-a262-3d7187b8007d',
+      },
+      personIdIndex: {
+        universalIdentifier: '55bb1801-0f38-44b5-9b00-23a66465cac5',
+      },
+      companyIdIndex: {
+        universalIdentifier: 'e0dbe3ee-3fda-48b0-83f3-154181776529',
+      },
+      opportunityIdIndex: {
+        universalIdentifier: 'bc75d193-9ebd-44b4-86d9-813944431e1d',
+      },
+      threadPersonUniqueIndex: {
+        universalIdentifier: '5f7126b8-9083-4ab2-8eff-3de1939ad46a',
+      },
+      threadCompanyUniqueIndex: {
+        universalIdentifier: '4974e2a2-bdfc-4d36-afba-9c2e99708627',
+      },
+      threadOpportunityUniqueIndex: {
+        universalIdentifier: '3525acd3-155e-4741-9ed5-753b30ffffbb',
+      },
+    },
+  },
   agentChatThread: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
     fields: STANDARD_OBJECT_FIELDS.agentChatThread,
