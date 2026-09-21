@@ -1,3 +1,6 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
@@ -11,7 +14,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const RecordPageSidePanelCommandMenuDropdown = () => {
@@ -94,15 +97,16 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
       selectableItemIdArray={selectableItemIdArray}
     >
       {dropdownWidgetCommandMenuItems.map((commandMenuItem) => (
-        <MenuItem
+        <ListItem
           key={commandMenuItem.id}
-          text={commandMenuItem.label}
-          LeftIcon={commandMenuItem.Icon}
-          onClick={() => {
+          startIcon={<SelectOptionIcon Icon={commandMenuItem.Icon} />}
+          onClick={getDropdownMenuItemClickHandler(() => {
             closeDropdown(dropdownId);
             commandMenuItem.onClick();
-          }}
-        />
+          })}
+        >
+          <OverflowingTextWithTooltip text={commandMenuItem.label} />
+        </ListItem>
       ))}
       {dropdownWidgetCommandMenuItems.length > 0 &&
         listedCommandMenuItems.length > 0 && <HorizontalSeparator noMargin />}

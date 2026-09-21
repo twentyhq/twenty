@@ -1,8 +1,11 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useRecordGroupActions } from '@/object-record/record-group/hooks/useRecordGroupActions';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { ViewType } from '@/views/types/ViewType';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const RecordBoardColumnDropdownMenu = () => {
   const recordGroupActions = useRecordGroupActions({
@@ -13,14 +16,15 @@ export const RecordBoardColumnDropdownMenu = () => {
     <DropdownContent selectDisabled>
       <DropdownMenuItemsContainer>
         {recordGroupActions.map((action) => (
-          <MenuItem
+          <ListItem
             key={action.id}
-            onClick={() => {
+            onClick={getDropdownMenuItemClickHandler(() => {
               action.callback();
-            }}
-            LeftIcon={action.icon}
-            text={action.label}
-          />
+            })}
+            startIcon={<SelectOptionIcon Icon={action.icon} />}
+          >
+            <OverflowingTextWithTooltip text={action.label} />
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>

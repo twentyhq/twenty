@@ -1,3 +1,4 @@
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -42,8 +43,12 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 
-import { CardContent, CardFooter } from 'twenty-ui/primitives/surfaces';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import {
+  CardContent,
+  CardFooter,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/primitives/surfaces';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
@@ -380,12 +385,9 @@ export const SettingsDataModelFieldSelectForm = ({
                           widthInPixels={GenericDropdownContentWidth.Narrow}
                         >
                           <DropdownMenuItemsContainer>
-                            <MenuItem
-                              text={
-                                isBulkInputMode ? t`Single edit` : t`Bulk edit`
-                              }
-                              LeftIcon={IconPencil}
-                              onClick={() => {
+                            <ListItem
+                              startIcon={<IconPencil />}
+                              onClick={getDropdownMenuItemClickHandler(() => {
                                 if (!isBulkInputMode) {
                                   setBulkInputText(
                                     convertOptionsToBulkText(options),
@@ -395,17 +397,28 @@ export const SettingsDataModelFieldSelectForm = ({
                                   (currentInputMode) => !currentInputMode,
                                 );
                                 closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
-                              }}
-                            />
-                            <MenuItem
-                              text={t`Remove all`}
-                              accent="danger"
-                              LeftIcon={IconTrash}
-                              onClick={() => {
+                              })}
+                            >
+                              <OverflowingTextWithTooltip
+                                text={
+                                  isBulkInputMode
+                                    ? t`Single edit`
+                                    : t`Bulk edit`
+                                }
+                              />
+                            </ListItem>
+                            <ListItem
+                              color="danger"
+                              startIcon={<IconTrash />}
+                              onClick={getDropdownMenuItemClickHandler(() => {
                                 onChange([]);
                                 closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
-                              }}
-                            />
+                              })}
+                            >
+                              <OverflowingTextWithTooltip
+                                text={t`Remove all`}
+                              />
+                            </ListItem>
                           </DropdownMenuItemsContainer>
                         </DropdownContent>
                       }

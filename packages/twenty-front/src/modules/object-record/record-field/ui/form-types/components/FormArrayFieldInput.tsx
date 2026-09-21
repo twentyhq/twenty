@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -29,7 +31,7 @@ import { useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { toSpliced } from '~/utils/array/toSpliced';
 
 type FormArrayFieldInputProps = {
@@ -376,11 +378,14 @@ export const FormArrayFieldInput = ({
                       />
                     ) : (
                       <DropdownMenuItemsContainer>
-                        <MenuItem
-                          onClick={handleAddItemButtonClick}
-                          LeftIcon={IconPlus}
-                          text={t`Add item`}
-                        />
+                        <ListItem
+                          onClick={getDropdownMenuItemClickHandler(
+                            handleAddItemButtonClick,
+                          )}
+                          startIcon={<IconPlus />}
+                        >
+                          <OverflowingTextWithTooltip text={t`Add item`} />
+                        </ListItem>
                       </DropdownMenuItemsContainer>
                     )}
                   </DropdownContent>

@@ -1,7 +1,18 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledAppIconContainer = styled.span`
+  background: ${themeCssVariables.background.transparent.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  padding: ${themeCssVariables.spacing[1]};
+`;
 
 type AppMenuItemProps = {
   applicationId?: string | null;
@@ -25,17 +36,19 @@ export const AppMenuItem = ({
   });
 
   return (
-    <MenuItem
-      withIconContainer={true}
-      LeftIcon={() => (
-        <AppChip applicationId={applicationId} size={'md'} chipOnly />
-      )}
-      text={text}
-      contextualText={applicationChipData.name}
-      onClick={onClick}
+    <ListItem
+      startIcon={
+        <StyledAppIconContainer>
+          <AppChip applicationId={applicationId} size="md" chipOnly />
+        </StyledAppIconContainer>
+      }
+      description={applicationChipData.name}
+      onClick={getDropdownMenuItemClickHandler(onClick)}
       focused={focused}
       disabled={disabled}
-      RightComponent={RightComponent}
-    />
+      endIcon={RightComponent}
+    >
+      <OverflowingTextWithTooltip text={text} />
+    </ListItem>
   );
 };

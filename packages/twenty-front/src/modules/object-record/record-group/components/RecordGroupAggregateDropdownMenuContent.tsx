@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
 import { type RecordGroupAggregateDropdownContextValue } from '@/object-record/record-group/types/RecordGroupAggregateDropdownContextValue';
@@ -5,7 +7,7 @@ import { type RecordGroupAggregateDropdownContextValue } from '@/object-record/r
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useLingui } from '@lingui/react/macro';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const RecordGroupAggregateDropdownMenuContent = () => {
   const { t } = useLingui();
@@ -20,34 +22,38 @@ export const RecordGroupAggregateDropdownMenuContent = () => {
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        <MenuItem
-          onClick={() => {
+        <ListItem
+          onClick={getDropdownMenuItemClickHandler(() => {
             onContentChange('countAggregateOperationsOptions');
-          }}
-          text={t`Count`}
-          hasSubMenu
-        />
-        <MenuItem
-          onClick={() => {
+          })}
+          hasSubmenu
+        >
+          <OverflowingTextWithTooltip text={t`Count`} />
+        </ListItem>
+        <ListItem
+          onClick={getDropdownMenuItemClickHandler(() => {
             onContentChange('percentAggregateOperationsOptions');
-          }}
-          text={t`Percent`}
-          hasSubMenu
-        />
-        <MenuItem
-          onClick={() => {
+          })}
+          hasSubmenu
+        >
+          <OverflowingTextWithTooltip text={t`Percent`} />
+        </ListItem>
+        <ListItem
+          onClick={getDropdownMenuItemClickHandler(() => {
             onContentChange('datesAggregateOperationOptions');
-          }}
-          text={t`Date`}
-          hasSubMenu
-        />
-        <MenuItem
-          onClick={() => {
+          })}
+          hasSubmenu
+        >
+          <OverflowingTextWithTooltip text={t`Date`} />
+        </ListItem>
+        <ListItem
+          onClick={getDropdownMenuItemClickHandler(() => {
             onContentChange('moreAggregateOperationOptions');
-          }}
-          text={t`More options`}
-          hasSubMenu
-        />
+          })}
+          hasSubmenu
+        >
+          <OverflowingTextWithTooltip text={t`More options`} />
+        </ListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

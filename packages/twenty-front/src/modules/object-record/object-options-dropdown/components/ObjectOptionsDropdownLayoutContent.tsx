@@ -1,3 +1,4 @@
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
@@ -36,7 +37,7 @@ import {
   IconTable,
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
@@ -272,35 +273,41 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   itemId="CalendarDateField"
                   onEnter={() => onContentChange('calendarFields')}
                 >
-                  <MenuItem
+                  <ListItem
                     focused={selectedItemId === 'CalendarDateField'}
-                    onClick={() => onContentChange('calendarFields')}
-                    LeftIcon={IconCalendar}
-                    text={t`Date field`}
-                    contextualText={calendarFieldMetadata?.label}
-                    contextualTextPosition="right"
-                    hasSubMenu
-                  />
+                    onClick={getDropdownMenuItemClickHandler(() =>
+                      onContentChange('calendarFields'),
+                    )}
+                    startIcon={<IconCalendar />}
+                    description={calendarFieldMetadata?.label}
+                    descriptionPlacement="end"
+                    hasSubmenu
+                  >
+                    <OverflowingTextWithTooltip text={t`Date field`} />
+                  </ListItem>
                 </SelectableListItem>
                 <SelectableListItem
                   itemId="CalendarView"
                   onEnter={() => onContentChange('calendarView')}
                 >
-                  <MenuItem
+                  <ListItem
                     focused={selectedItemId === 'CalendarView'}
-                    onClick={() => onContentChange('calendarView')}
-                    LeftIcon={IconCalendarWeek}
-                    text={t`Calendar view`}
-                    contextualText={
+                    onClick={getDropdownMenuItemClickHandler(() =>
+                      onContentChange('calendarView'),
+                    )}
+                    startIcon={<IconCalendarWeek />}
+                    description={
                       recordIndexCalendarLayout === ViewCalendarLayout.MONTH
                         ? t`Month`
                         : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
                           ? t`Week`
                           : t`Day`
                     }
-                    contextualTextPosition="right"
-                    hasSubMenu
-                  />
+                    descriptionPlacement="end"
+                    hasSubmenu
+                  >
+                    <OverflowingTextWithTooltip text={t`Calendar view`} />
+                  </ListItem>
                 </SelectableListItem>
               </>
             )}
@@ -313,19 +320,20 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     : onContentChange('recordGroupFields');
                 }}
               >
-                <MenuItem
+                <ListItem
                   focused={selectedItemId === 'Group'}
-                  onClick={() =>
+                  onClick={getDropdownMenuItemClickHandler(() =>
                     isDefined(recordIndexGroupFieldMetadataItem)
                       ? onContentChange('recordGroups')
-                      : onContentChange('recordGroupFields')
-                  }
-                  LeftIcon={IconLayoutList}
-                  text={t`Group`}
-                  contextualText={recordIndexGroupFieldMetadataItem?.label}
-                  contextualTextPosition="right"
-                  hasSubMenu
-                />
+                      : onContentChange('recordGroupFields'),
+                  )}
+                  startIcon={<IconLayoutList />}
+                  description={recordIndexGroupFieldMetadataItem?.label}
+                  descriptionPlacement="end"
+                  hasSubmenu
+                >
+                  <OverflowingTextWithTooltip text={t`Group`} />
+                </ListItem>
               </SelectableListItem>
             )}
             {currentView?.type !== ViewType.TABLE &&

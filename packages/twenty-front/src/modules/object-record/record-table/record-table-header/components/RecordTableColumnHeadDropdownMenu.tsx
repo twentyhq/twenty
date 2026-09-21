@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
@@ -23,7 +25,7 @@ import {
   IconEyeOff,
   IconFilter,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   recordField: RecordField;
@@ -135,40 +137,47 @@ export const RecordTableColumnHeadDropdownMenu = ({
       <StyledDropdownMenuItemsContainerWrapper>
         <DropdownMenuItemsContainer>
           {isFilterable && (
-            <MenuItem
-              LeftIcon={IconFilter}
-              onClick={handleFilterClick}
-              text={t`Filter`}
-            />
+            <ListItem
+              startIcon={<IconFilter />}
+              onClick={getDropdownMenuItemClickHandler(handleFilterClick)}
+            >
+              <OverflowingTextWithTooltip text={t`Filter`} />
+            </ListItem>
           )}
           {isSortable && (
-            <MenuItem
-              LeftIcon={IconArrowsSort}
-              onClick={handleSortClick}
-              text={t`Sort`}
-            />
+            <ListItem
+              startIcon={<IconArrowsSort />}
+              onClick={getDropdownMenuItemClickHandler(handleSortClick)}
+            >
+              <OverflowingTextWithTooltip text={t`Sort`} />
+            </ListItem>
           )}
           {showSeparator && <DropdownMenuSeparator />}
           {canMoveLeft && (
-            <MenuItem
-              LeftIcon={IconArrowLeft}
-              onClick={handleColumnMoveLeft}
-              text={t`Move left`}
-            />
+            <ListItem
+              startIcon={<IconArrowLeft />}
+              onClick={getDropdownMenuItemClickHandler(handleColumnMoveLeft)}
+            >
+              <OverflowingTextWithTooltip text={t`Move left`} />
+            </ListItem>
           )}
           {canMoveRight && (
-            <MenuItem
-              LeftIcon={IconArrowRight}
-              onClick={handleColumnMoveRight}
-              text={t`Move right`}
-            />
+            <ListItem
+              startIcon={<IconArrowRight />}
+              onClick={getDropdownMenuItemClickHandler(handleColumnMoveRight)}
+            >
+              <OverflowingTextWithTooltip text={t`Move right`} />
+            </ListItem>
           )}
           {canHide && (
-            <MenuItem
-              LeftIcon={IconEyeOff}
-              onClick={async () => await handleColumnVisibility()}
-              text={t`Hide`}
-            />
+            <ListItem
+              startIcon={<IconEyeOff />}
+              onClick={getDropdownMenuItemClickHandler(
+                async () => await handleColumnVisibility(),
+              )}
+            >
+              <OverflowingTextWithTooltip text={t`Hide`} />
+            </ListItem>
           )}
         </DropdownMenuItemsContainer>
       </StyledDropdownMenuItemsContainerWrapper>

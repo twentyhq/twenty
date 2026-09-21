@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useDuplicatePageLayoutWidget } from '@/page-layout/hooks/useDuplicatePageLayoutWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -11,7 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopyPlus, IconTrash } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const WidgetSettingsFooter = ({
   pageLayoutId,
@@ -60,25 +62,27 @@ export const WidgetSettingsFooter = ({
             itemId="duplicate-widget"
             onEnter={handleDuplicateWidget}
           >
-            <MenuItem
+            <ListItem
               focused={selectedItemId === 'duplicate-widget'}
-              onClick={handleDuplicateWidget}
-              text={t`Duplicate widget`}
-              LeftIcon={IconCopyPlus}
-            />
+              onClick={getDropdownMenuItemClickHandler(handleDuplicateWidget)}
+              startIcon={<IconCopyPlus />}
+            >
+              <OverflowingTextWithTooltip text={t`Duplicate widget`} />
+            </ListItem>
           </SelectableListItem>
 
           <SelectableListItem
             itemId="delete-widget"
             onEnter={handleDeleteWidget}
           >
-            <MenuItem
+            <ListItem
               focused={selectedItemId === 'delete-widget'}
-              onClick={handleDeleteWidget}
-              text={t`Delete widget`}
-              LeftIcon={IconTrash}
-              accent="danger"
-            />
+              onClick={getDropdownMenuItemClickHandler(handleDeleteWidget)}
+              startIcon={<IconTrash />}
+              color="danger"
+            >
+              <OverflowingTextWithTooltip text={t`Delete widget`} />
+            </ListItem>
           </SelectableListItem>
         </OptionsDropdownMenu>,
       ]}

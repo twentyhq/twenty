@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
@@ -25,7 +27,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
 
@@ -83,65 +85,71 @@ export const SettingsAccountsRowDropdownMenu = ({
           <DropdownContent>
             <DropdownMenuItemsContainer>
               {hasPendingConfiguration && (
-                <MenuItem
-                  LeftIcon={IconPlayerPlay}
-                  text={t`Complete setup`}
-                  onClick={() => {
+                <ListItem
+                  startIcon={<IconPlayerPlay />}
+                  onClick={getDropdownMenuItemClickHandler(() => {
                     navigate(SettingsPath.AccountsConfiguration, {
                       connectedAccountId: account.id,
                     });
                     closeDropdown(dropdownId);
-                  }}
-                />
+                  })}
+                >
+                  <OverflowingTextWithTooltip text={t`Complete setup`} />
+                </ListItem>
               )}
               {account.provider ===
                 ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
-                <MenuItem
-                  text={t`Connection settings`}
-                  LeftIcon={IconAt}
-                  onClick={() => {
+                <ListItem
+                  startIcon={<IconAt />}
+                  onClick={getDropdownMenuItemClickHandler(() => {
                     navigate(SettingsPath.EditImapSmtpCaldavConnection, {
                       connectedAccountId: account.id,
                     });
                     closeDropdown(dropdownId);
-                  }}
-                />
+                  })}
+                >
+                  <OverflowingTextWithTooltip text={t`Connection settings`} />
+                </ListItem>
               )}
-              <MenuItem
-                LeftIcon={IconMail}
-                text={t`Emails settings`}
-                onClick={() => {
+              <ListItem
+                startIcon={<IconMail />}
+                onClick={getDropdownMenuItemClickHandler(() => {
                   navigate(SettingsPath.AccountsEmails);
                   closeDropdown(dropdownId);
-                }}
-              />
-              <MenuItem
-                LeftIcon={IconCalendarEvent}
-                text={t`Calendar settings`}
-                onClick={() => {
+                })}
+              >
+                <OverflowingTextWithTooltip text={t`Emails settings`} />
+              </ListItem>
+              <ListItem
+                startIcon={<IconCalendarEvent />}
+                onClick={getDropdownMenuItemClickHandler(() => {
                   navigate(SettingsPath.AccountsCalendars);
                   closeDropdown(dropdownId);
-                }}
-              />
+                })}
+              >
+                <OverflowingTextWithTooltip text={t`Calendar settings`} />
+              </ListItem>
               {account.authFailedAt && (
-                <MenuItem
-                  LeftIcon={IconRefresh}
-                  text={t`Reconnect`}
-                  onClick={() => {
+                <ListItem
+                  startIcon={<IconRefresh />}
+                  onClick={getDropdownMenuItemClickHandler(() => {
                     triggerProviderReconnect(account.provider, account.id);
                     closeDropdown(dropdownId);
-                  }}
-                />
+                  })}
+                >
+                  <OverflowingTextWithTooltip text={t`Reconnect`} />
+                </ListItem>
               )}
-              <MenuItem
-                accent="danger"
-                LeftIcon={IconTrash}
-                text={t`Remove account`}
-                onClick={() => {
+              <ListItem
+                color="danger"
+                startIcon={<IconTrash />}
+                onClick={getDropdownMenuItemClickHandler(() => {
                   closeDropdown(dropdownId);
                   openDialog(deleteAccountModalId);
-                }}
-              />
+                })}
+              >
+                <OverflowingTextWithTooltip text={t`Remove account`} />
+              </ListItem>
             </DropdownMenuItemsContainer>
           </DropdownContent>
         }

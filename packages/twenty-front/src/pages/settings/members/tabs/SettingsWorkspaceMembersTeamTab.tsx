@@ -1,3 +1,4 @@
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -29,9 +30,12 @@ import {
   IconHierarchy,
   IconListDetails,
 } from 'twenty-ui/icon';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import {
+  Tooltip,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/primitives/surfaces';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -189,26 +193,30 @@ export const SettingsWorkspaceMembersTeamTab = () => {
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <MenuItem
-                  LeftIcon={IconListDetails}
-                  text={t`See records`}
-                  onClick={() => {
+                <ListItem
+                  startIcon={<IconListDetails />}
+                  onClick={getDropdownMenuItemClickHandler(() => {
                     navigateApp(AppPath.RecordIndexPage, {
                       objectNamePlural: 'workspaceMembers',
                     });
                     closeDropdown('workspace-members-open-dropdown');
-                  }}
-                />
-                <MenuItem
-                  LeftIcon={IconHierarchy}
-                  text={t`See data model settings`}
-                  onClick={() => {
+                  })}
+                >
+                  <OverflowingTextWithTooltip text={t`See records`} />
+                </ListItem>
+                <ListItem
+                  startIcon={<IconHierarchy />}
+                  onClick={getDropdownMenuItemClickHandler(() => {
                     navigateSettings(SettingsPath.ObjectDetail, {
                       objectNamePlural: 'workspaceMembers',
                     });
                     closeDropdown('workspace-members-open-dropdown');
-                  }}
-                />
+                  })}
+                >
+                  <OverflowingTextWithTooltip
+                    text={t`See data model settings`}
+                  />
+                </ListItem>
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }

@@ -1,3 +1,4 @@
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
@@ -25,7 +26,7 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -362,11 +363,18 @@ export const Select = <Value extends SelectValue>({
                 isNonEmptyArray(filteredOptions) && <DropdownMenuSeparator />}
               {isDefined(callToActionButton) && (
                 <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-                  <MenuItem
-                    onClick={callToActionButton.onClick}
-                    LeftIcon={callToActionButton.Icon}
-                    text={callToActionButton.text}
-                  />
+                  <ListItem
+                    onClick={getDropdownMenuItemClickHandler(
+                      callToActionButton.onClick,
+                    )}
+                    startIcon={
+                      <SelectOptionIcon Icon={callToActionButton.Icon} />
+                    }
+                  >
+                    <OverflowingTextWithTooltip
+                      text={callToActionButton.text}
+                    />
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               )}
             </DropdownContent>

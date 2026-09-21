@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
@@ -43,7 +45,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/primitives/layout';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
@@ -246,19 +248,21 @@ export const RecordDetailRelationRecordsListItem = ({
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <MenuItem
-                    LeftIcon={IconUnlink}
-                    text={t`Detach`}
-                    onClick={handleDetach}
-                  />
+                  <ListItem
+                    startIcon={<IconUnlink />}
+                    onClick={getDropdownMenuItemClickHandler(handleDetach)}
+                  >
+                    <OverflowingTextWithTooltip text={t`Detach`} />
+                  </ListItem>
                   {!isAccountOwnerRelation &&
                     relationObjectPermissions.canSoftDeleteObjectRecords && (
-                      <MenuItem
-                        LeftIcon={IconTrash}
-                        text={t`Delete`}
-                        accent="danger"
-                        onClick={handleDelete}
-                      />
+                      <ListItem
+                        startIcon={<IconTrash />}
+                        color="danger"
+                        onClick={getDropdownMenuItemClickHandler(handleDelete)}
+                      >
+                        <OverflowingTextWithTooltip text={t`Delete`} />
+                      </ListItem>
                     )}
                 </DropdownMenuItemsContainer>
               </DropdownContent>

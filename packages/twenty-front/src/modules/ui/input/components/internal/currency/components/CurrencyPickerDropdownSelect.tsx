@@ -9,7 +9,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const CurrencyPickerDropdownSelect = ({
   selectedCurrency,
@@ -43,7 +43,9 @@ export const CurrencyPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCurrencies.length === 0 ? (
-          <MenuItem text={t`No results`} />
+          <ListItem>
+            <OverflowingTextWithTooltip text={t`No results`} />
+          </ListItem>
         ) : (
           <>
             {selectedCurrency && (

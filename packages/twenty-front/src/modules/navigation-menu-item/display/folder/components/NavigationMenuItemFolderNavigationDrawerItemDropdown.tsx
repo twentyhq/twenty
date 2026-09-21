@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconDotsVertical,
@@ -6,7 +8,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -42,30 +44,33 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
       renderMenu={({ onClose, onAdd }) => (
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              LeftIcon={IconEdit}
-              onClick={() => {
+            <ListItem
+              startIcon={<IconEdit />}
+              onClick={getDropdownMenuItemClickHandler(() => {
                 onClose();
                 onEdit();
-              }}
-              accent="default"
-              text={t`Edit`}
-            />
-            <MenuItem
-              LeftIcon={IconPlus}
-              onClick={() => onAdd({ folderId, position: itemCount })}
-              accent="default"
-              text={t`Add menu item`}
-            />
-            <MenuItem
-              LeftIcon={IconTrash}
-              onClick={() => {
+              })}
+            >
+              <OverflowingTextWithTooltip text={t`Edit`} />
+            </ListItem>
+            <ListItem
+              startIcon={<IconPlus />}
+              onClick={getDropdownMenuItemClickHandler(() =>
+                onAdd({ folderId, position: itemCount }),
+              )}
+            >
+              <OverflowingTextWithTooltip text={t`Add menu item`} />
+            </ListItem>
+            <ListItem
+              startIcon={<IconTrash />}
+              onClick={getDropdownMenuItemClickHandler(() => {
                 onClose();
                 onDelete();
-              }}
-              accent="danger"
-              text={t`Remove from sidebar`}
-            />
+              })}
+              color="danger"
+            >
+              <OverflowingTextWithTooltip text={t`Remove from sidebar`} />
+            </ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       )}

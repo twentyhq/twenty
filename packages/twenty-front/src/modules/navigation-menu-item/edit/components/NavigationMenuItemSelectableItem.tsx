@@ -1,7 +1,10 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { useLingui } from '@lingui/react/macro';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -33,20 +36,24 @@ export const NavigationMenuItemSelectableItem = ({
       itemId={item.id}
       onEnter={item.isDisabled ? undefined : item.onClick}
     >
-      <MenuItem
-        text={item.label}
-        accent={item.accent}
-        LeftIcon={item.Icon}
-        LeftComponent={item.icon}
-        onClick={item.onClick}
+      <ListItem
+        color={item.accent === 'danger' ? 'danger' : 'neutral'}
+        startIcon={
+          <>
+            <SelectOptionIcon Icon={item.Icon} />
+            {item.icon}
+          </>
+        }
+        onClick={getDropdownMenuItemClickHandler(item.onClick)}
         disabled={item.isDisabled}
-        contextualText={
+        description={
           item.isAlreadyInSidebar ? t`Already in sidebar` : item.contextualText
         }
-        contextualTextPosition="left"
-        hasSubMenu={item.hasSubMenu}
+        hasSubmenu={item.hasSubMenu}
         focused={isSelectedItemId}
-      />
+      >
+        <OverflowingTextWithTooltip text={item.label} />
+      </ListItem>
     </SelectableListItem>
   );
 };

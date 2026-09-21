@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
@@ -10,8 +12,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
-import { IconCheck } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {
@@ -56,55 +57,58 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        <MenuItem
-          onClick={() => {
+        <ListItem
+          onClick={getDropdownMenuItemClickHandler(() => {
             onContentChange('countAggregateOperationsOptions');
-          }}
-          text={t`Count`}
-          hasSubMenu
-        />
+          })}
+          hasSubmenu
+        >
+          <OverflowingTextWithTooltip text={t`Count`} />
+        </ListItem>
         {!fieldIsRelation && (
-          <MenuItem
-            onClick={() => {
+          <ListItem
+            onClick={getDropdownMenuItemClickHandler(() => {
               onContentChange('percentAggregateOperationsOptions');
-            }}
-            text={t`Percent`}
-            hasSubMenu
-          />
+            })}
+            hasSubmenu
+          >
+            <OverflowingTextWithTooltip text={t`Percent`} />
+          </ListItem>
         )}
         {fieldIsDateKind && (
-          <MenuItem
-            onClick={() => {
+          <ListItem
+            onClick={getDropdownMenuItemClickHandler(() => {
               onContentChange('datesAggregateOperationsOptions');
-            }}
-            text={t`Date`}
-            hasSubMenu
-          />
+            })}
+            hasSubmenu
+          >
+            <OverflowingTextWithTooltip text={t`Date`} />
+          </ListItem>
         )}
         {nonStandardAvailableAggregateOperation.length > 0 ? (
-          <MenuItem
-            onClick={() => {
+          <ListItem
+            onClick={getDropdownMenuItemClickHandler(() => {
               onContentChange('moreAggregateOperationOptions');
-            }}
-            text={t`More options`}
-            hasSubMenu
-          />
+            })}
+            hasSubmenu
+          >
+            <OverflowingTextWithTooltip text={t`More options`} />
+          </ListItem>
         ) : null}
-        <MenuItem
+        <ListItem
           key="none"
-          onClick={async () => {
+          onClick={getDropdownMenuItemClickHandler(async () => {
             await updateViewFieldAggregateOperation(null);
             resetContent();
             closeDropdown(dropdownId);
-          }}
-          text={t`None`}
-          RightIcon={
-            !isDefined(currentViewFieldAggregateOperation)
-              ? IconCheck
-              : undefined
-          }
+          })}
+          role="option"
+          indicator="check"
+          selected={!isDefined(currentViewFieldAggregateOperation)}
           aria-selected={!isDefined(currentViewFieldAggregateOperation)}
-        />
+        >
+          <OverflowingTextWithTooltip text={t`None`} />
+        </ListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

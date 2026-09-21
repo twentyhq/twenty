@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useEffect } from 'react';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
@@ -33,7 +35,7 @@ import {
   IconLayoutList,
   IconPlus,
 } from 'twenty-ui/icon';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { t } = useLingui();
@@ -138,30 +140,36 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                   onContentChange('recordGroupFields')
                 }
               >
-                <MenuItem
+                <ListItem
                   focused={selectedItemId === 'GroupBy'}
                   disabled={isGroupByFieldPickerDisabled}
-                  onClick={() => onContentChange('recordGroupFields')}
-                  LeftIcon={IconLayoutList}
-                  text={t`Group by`}
-                  contextualText={recordIndexGroupFieldMetadataItem?.label}
-                  contextualTextPosition="right"
-                  hasSubMenu
-                />
+                  onClick={getDropdownMenuItemClickHandler(() =>
+                    onContentChange('recordGroupFields'),
+                  )}
+                  startIcon={<IconLayoutList />}
+                  description={recordIndexGroupFieldMetadataItem?.label}
+                  descriptionPlacement="end"
+                  hasSubmenu
+                >
+                  <OverflowingTextWithTooltip text={t`Group by`} />
+                </ListItem>
               </SelectableListItem>
               <SelectableListItem
                 itemId="Sort"
                 onEnter={() => onContentChange('recordGroupSort')}
               >
-                <MenuItem
+                <ListItem
                   focused={selectedItemId === 'Sort'}
-                  onClick={() => onContentChange('recordGroupSort')}
-                  LeftIcon={IconArrowsSort}
-                  text={t`Sort`}
-                  contextualText={recordIndexRecordGroupSort}
-                  contextualTextPosition="right"
-                  hasSubMenu
-                />
+                  onClick={getDropdownMenuItemClickHandler(() =>
+                    onContentChange('recordGroupSort'),
+                  )}
+                  startIcon={<IconArrowsSort />}
+                  description={recordIndexRecordGroupSort}
+                  descriptionPlacement="end"
+                  hasSubmenu
+                >
+                  <OverflowingTextWithTooltip text={t`Sort`} />
+                </ListItem>
               </SelectableListItem>
             </>
           )}
@@ -195,11 +203,14 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
-            <MenuItem
-              onClick={() => onContentChange('addRecordGroup')}
-              LeftIcon={IconPlus}
-              text={t`New group`}
-            />
+            <ListItem
+              onClick={getDropdownMenuItemClickHandler(() =>
+                onContentChange('addRecordGroup'),
+              )}
+              startIcon={<IconPlus />}
+            >
+              <OverflowingTextWithTooltip text={t`New group`} />
+            </ListItem>
           </DropdownMenuItemsContainer>
         </>
       )}

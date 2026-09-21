@@ -1,3 +1,4 @@
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
@@ -19,11 +20,7 @@ import {
   IconX,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import {
-  type ColorLabels,
-  MenuItem,
-  ListItem,
-} from 'twenty-ui/primitives/navigation';
+import { type ColorLabels, ListItem } from 'twenty-ui/primitives/navigation';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
@@ -234,34 +231,37 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
             <DropdownContent>
               <DropdownMenuItemsContainer>
                 {isDefault ? (
-                  <MenuItem
-                    LeftIcon={IconX}
-                    text={t`Remove as default`}
-                    onClick={() => {
+                  <ListItem
+                    startIcon={<IconX />}
+                    onClick={getDropdownMenuItemClickHandler(() => {
                       onRemoveAsDefault?.();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
-                    }}
-                  />
+                    })}
+                  >
+                    <OverflowingTextWithTooltip text={t`Remove as default`} />
+                  </ListItem>
                 ) : (
-                  <MenuItem
-                    LeftIcon={IconCheck}
-                    text={t`Set as default`}
-                    onClick={() => {
+                  <ListItem
+                    startIcon={<IconCheck />}
+                    onClick={getDropdownMenuItemClickHandler(() => {
                       onSetAsDefault?.();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
-                    }}
-                  />
+                    })}
+                  >
+                    <OverflowingTextWithTooltip text={t`Set as default`} />
+                  </ListItem>
                 )}
                 {!!onRemove && !isDefault && (
-                  <MenuItem
-                    accent="danger"
-                    LeftIcon={IconTrash}
-                    text={t`Remove option`}
-                    onClick={() => {
+                  <ListItem
+                    color="danger"
+                    startIcon={<IconTrash />}
+                    onClick={getDropdownMenuItemClickHandler(() => {
                       onRemove();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
-                    }}
-                  />
+                    })}
+                  >
+                    <OverflowingTextWithTooltip text={t`Remove option`} />
+                  </ListItem>
                 )}
               </DropdownMenuItemsContainer>
             </DropdownContent>

@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
@@ -26,7 +28,7 @@ import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/primitives/data-display';
 import { IconFilter } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
@@ -145,19 +147,20 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
       itemId={VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER}
       onEnter={handleClick}
     >
-      <MenuItem
-        text={t`Advanced filter`}
-        onClick={handleClick}
-        LeftIcon={IconFilter}
+      <ListItem
+        onClick={getDropdownMenuItemClickHandler(handleClick)}
+        startIcon={<IconFilter />}
         focused={isSelectedItemId}
-        RightComponent={
+        endIcon={
           advancedFilterQuerySubFilterCount > 0 ? (
             <StyledPillContainer>
               <Pill label={advancedFilterQuerySubFilterCount.toString()} />
             </StyledPillContainer>
           ) : undefined
         }
-      />
+      >
+        <OverflowingTextWithTooltip text={t`Advanced filter`} />
+      </ListItem>
     </SelectableListItem>
   );
 };

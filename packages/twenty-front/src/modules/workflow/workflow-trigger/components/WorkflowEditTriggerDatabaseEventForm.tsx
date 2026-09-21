@@ -1,3 +1,6 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -26,7 +29,7 @@ import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLabel = styled.span`
@@ -242,12 +245,17 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                             itemId={option.value}
                             onEnter={() => handleOptionClick(option.value)}
                           >
-                            <MenuItem
+                            <ListItem
                               focused={selectedItemId === option.value}
-                              LeftIcon={option.Icon}
-                              text={option.label}
-                              onClick={() => handleOptionClick(option.value)}
-                            />
+                              startIcon={
+                                <SelectOptionIcon Icon={option.Icon} />
+                              }
+                              onClick={getDropdownMenuItemClickHandler(() =>
+                                handleOptionClick(option.value),
+                              )}
+                            >
+                              <OverflowingTextWithTooltip text={option.label} />
+                            </ListItem>
                           </SelectableListItem>
                         ))}
                       </SelectableList>

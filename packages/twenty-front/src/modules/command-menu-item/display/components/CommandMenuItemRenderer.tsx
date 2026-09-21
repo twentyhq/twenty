@@ -9,6 +9,7 @@ import { useCommandMenuItemClick } from '@/command-menu-item/hooks/useCommandMen
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -19,7 +20,8 @@ import { useContext } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledPreviewWrapper = styled.div`
@@ -180,14 +182,15 @@ const CommandMenuItemSelectableRenderer = ({
 
   return (
     <SelectableListItem itemId={item.id} onEnter={onItemClick}>
-      <MenuItem
+      <ListItem
         focused={isSelectedItemId}
-        LeftIcon={Icon}
-        onClick={onItemClick}
-        text={label}
-        RightComponent={loaderComponent}
+        startIcon={<Icon />}
+        onClick={getDropdownMenuItemClickHandler(onItemClick)}
+        endIcon={loaderComponent}
         disabled={disabled}
-      />
+      >
+        <OverflowingTextWithTooltip text={label} />
+      </ListItem>
     </SelectableListItem>
   );
 };

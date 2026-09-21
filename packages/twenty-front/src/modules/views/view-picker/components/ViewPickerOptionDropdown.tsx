@@ -1,3 +1,6 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -22,7 +25,7 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   PermissionFlagType,
   ViewVisibility,
@@ -133,28 +136,37 @@ export const ViewPickerOptionDropdown = ({
         dropdownContent={
           <DropdownContent>
             <DropdownMenuItemsContainer>
-              <MenuItem
-                LeftIcon={isFavorite ? IconHeartOff : IconHeart}
-                text={isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
-                onClick={handleToggleFavorite}
-              />
+              <ListItem
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={isFavorite ? IconHeartOff : IconHeart}
+                  />
+                }
+                onClick={getDropdownMenuItemClickHandler(handleToggleFavorite)}
+              >
+                <OverflowingTextWithTooltip
+                  text={isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
+                />
+              </ListItem>
               {!isIndexView && canEditView && (
                 <>
-                  <MenuItem
-                    LeftIcon={IconPencil}
-                    text={t`Edit`}
-                    onClick={(event) => {
+                  <ListItem
+                    startIcon={<IconPencil />}
+                    onClick={getDropdownMenuItemClickHandler((event) => {
                       onEdit(event, view.id);
                       closeDropdown(dropdownId);
-                    }}
-                  />
+                    })}
+                  >
+                    <OverflowingTextWithTooltip text={t`Edit`} />
+                  </ListItem>
                   {!isLastView && (
-                    <MenuItem
-                      LeftIcon={IconTrash}
-                      text={t`Delete`}
-                      onClick={handleDelete}
-                      accent="danger"
-                    />
+                    <ListItem
+                      startIcon={<IconTrash />}
+                      onClick={getDropdownMenuItemClickHandler(handleDelete)}
+                      color="danger"
+                    >
+                      <OverflowingTextWithTooltip text={t`Delete`} />
+                    </ListItem>
                   )}
                 </>
               )}

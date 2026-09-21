@@ -1,3 +1,4 @@
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useLingui } from '@lingui/react/macro';
@@ -10,7 +11,7 @@ import {
   IconTrash,
   IconUsers,
 } from 'twenty-ui/icon';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { USAGE_LIMIT_RESOURCE_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitResourceTypeIcons';
 import { USAGE_LIMIT_RESOURCE_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitResourceTypeLabels';
@@ -161,42 +162,47 @@ export const SettingsBillingLimitsFilterDropdown = ({
   const renderMenuContent = () => (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        <MenuItem
-          LeftIcon={IconCoins}
-          text={t`Usage`}
-          contextualText={
+        <ListItem
+          startIcon={<IconCoins />}
+          description={
             isDefined(selectedResourceType)
               ? t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[selectedResourceType])
               : t`All`
           }
-          contextualTextPosition="right"
-          hasSubMenu
-          onClick={() => setContentId('usage')}
-        />
-        <MenuItem
-          LeftIcon={IconUsers}
-          text={t`Spender`}
-          contextualText={
+          descriptionPlacement="end"
+          hasSubmenu
+          onClick={getDropdownMenuItemClickHandler(() => setContentId('usage'))}
+        >
+          <OverflowingTextWithTooltip text={t`Usage`} />
+        </ListItem>
+        <ListItem
+          startIcon={<IconUsers />}
+          description={
             isDefined(selectedSpenderType)
               ? getSpenderTypeLabel(selectedSpenderType)
               : t`All`
           }
-          contextualTextPosition="right"
-          hasSubMenu
-          onClick={() => setContentId('spender')}
-        />
+          descriptionPlacement="end"
+          hasSubmenu
+          onClick={getDropdownMenuItemClickHandler(() =>
+            setContentId('spender'),
+          )}
+        >
+          <OverflowingTextWithTooltip text={t`Spender`} />
+        </ListItem>
         {hasActiveFilters && (
           <>
             <DropdownMenuSeparator />
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Clear filters`}
-              onClick={() => {
+            <ListItem
+              color="danger"
+              startIcon={<IconTrash />}
+              onClick={getDropdownMenuItemClickHandler(() => {
                 onSelectResourceType(null);
                 onSelectSpenderType(null);
-              }}
-            />
+              })}
+            >
+              <OverflowingTextWithTooltip text={t`Clear filters`} />
+            </ListItem>
           </>
         )}
       </DropdownMenuItemsContainer>

@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
 import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
@@ -43,7 +45,7 @@ import { Callout } from 'twenty-ui/primitives/feedback';
 import { IconPlus } from 'twenty-ui/icon';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Button } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type WorkflowEditActionEmailBaseProps = {
@@ -331,40 +333,43 @@ export const WorkflowEditActionEmailBase = ({
                 >
                   <DropdownMenuItemsContainer>
                     {!visibleAdvancedFields.cc && (
-                      <MenuItem
-                        text={t`Add CC`}
-                        onClick={() => {
+                      <ListItem
+                        onClick={getDropdownMenuItemClickHandler(() => {
                           setVisibleAdvancedFields((prev) => ({
                             ...prev,
                             cc: true,
                           }));
                           closeDropdown(advancedOptionsDropdownId);
-                        }}
-                      />
+                        })}
+                      >
+                        <OverflowingTextWithTooltip text={t`Add CC`} />
+                      </ListItem>
                     )}
                     {!visibleAdvancedFields.bcc && (
-                      <MenuItem
-                        text={t`Add BCC`}
-                        onClick={() => {
+                      <ListItem
+                        onClick={getDropdownMenuItemClickHandler(() => {
                           setVisibleAdvancedFields((prev) => ({
                             ...prev,
                             bcc: true,
                           }));
                           closeDropdown(advancedOptionsDropdownId);
-                        }}
-                      />
+                        })}
+                      >
+                        <OverflowingTextWithTooltip text={t`Add BCC`} />
+                      </ListItem>
                     )}
                     {!visibleAdvancedFields.inReplyTo && (
-                      <MenuItem
-                        text={t`Add In-Reply-To`}
-                        onClick={() => {
+                      <ListItem
+                        onClick={getDropdownMenuItemClickHandler(() => {
                           setVisibleAdvancedFields((prev) => ({
                             ...prev,
                             inReplyTo: true,
                           }));
                           closeDropdown(advancedOptionsDropdownId);
-                        }}
-                      />
+                        })}
+                      >
+                        <OverflowingTextWithTooltip text={t`Add In-Reply-To`} />
+                      </ListItem>
                     )}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

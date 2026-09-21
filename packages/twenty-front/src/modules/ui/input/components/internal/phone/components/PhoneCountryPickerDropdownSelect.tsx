@@ -10,7 +10,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import 'react-phone-number-input/style.css';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconContainer = styled.div`
@@ -59,7 +59,9 @@ export const PhoneCountryPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCountries?.length === 0 ? (
-          <MenuItem text={t`No results`} />
+          <ListItem>
+            <OverflowingTextWithTooltip text={t`No results`} />
+          </ListItem>
         ) : (
           <>
             {selectedCountry && (

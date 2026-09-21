@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
@@ -6,8 +8,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   aggregateOperations,
@@ -31,35 +32,37 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   return (
     <>
       {aggregateOperations.map((operation) => (
-        <MenuItem
+        <ListItem
           key={operation}
-          onClick={async () => {
+          onClick={getDropdownMenuItemClickHandler(async () => {
             await updateViewFieldAggregateOperation(operation);
             closeDropdown(dropdownId);
-          }}
-          text={getAggregateOperationLabel(operation)}
-          RightIcon={
-            currentViewFieldAggregateOperation === operation
-              ? IconCheck
-              : undefined
-          }
+          })}
+          role="option"
+          indicator="check"
+          selected={currentViewFieldAggregateOperation === operation}
           aria-selected={currentViewFieldAggregateOperation === operation}
-        />
+        >
+          <OverflowingTextWithTooltip
+            text={getAggregateOperationLabel(operation)}
+          />
+        </ListItem>
       ))}
       {children}
-      <MenuItem
+      <ListItem
         key="none"
-        onClick={async () => {
+        onClick={getDropdownMenuItemClickHandler(async () => {
           await updateViewFieldAggregateOperation(null);
           resetContent();
           closeDropdown(dropdownId);
-        }}
-        text={t`None`}
-        RightIcon={
-          !isDefined(currentViewFieldAggregateOperation) ? IconCheck : undefined
-        }
+        })}
+        role="option"
+        indicator="check"
+        selected={!isDefined(currentViewFieldAggregateOperation)}
         aria-selected={!isDefined(currentViewFieldAggregateOperation)}
-      />
+      >
+        <OverflowingTextWithTooltip text={t`None`} />
+      </ListItem>
     </>
   );
 };

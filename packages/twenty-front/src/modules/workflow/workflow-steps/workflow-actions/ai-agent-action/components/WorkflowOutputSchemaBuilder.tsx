@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 
@@ -11,7 +13,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
 import { IconPlus } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
 import { WorkflowOutputSchemaFieldHeader } from './WorkflowOutputSchemaFieldHeader';
@@ -215,11 +217,12 @@ export const WorkflowOutputSchemaBuilder = ({
 
       {!readonly && (
         <StyledAddFieldButtonContainer>
-          <MenuItem
-            LeftIcon={IconPlus}
-            text={t`Add Output Field`}
-            onClick={addField}
-          />
+          <ListItem
+            startIcon={<IconPlus />}
+            onClick={getDropdownMenuItemClickHandler(addField)}
+          >
+            <OverflowingTextWithTooltip text={t`Add Output Field`} />
+          </ListItem>
         </StyledAddFieldButtonContainer>
       )}
     </StyledOutputSchemaContainer>

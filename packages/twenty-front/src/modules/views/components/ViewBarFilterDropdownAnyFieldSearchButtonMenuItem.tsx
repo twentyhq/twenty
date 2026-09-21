@@ -1,3 +1,4 @@
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -5,7 +6,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconSearch } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
@@ -40,11 +41,12 @@ export const ViewBarFilterDropdownAnyFieldSearchButtonMenuItem = ({
       itemId={VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH}
       onEnter={onClick}
     >
-      <MenuItem
+      <ListItem
         focused={isSelectedItemId}
-        onClick={onClick}
-        LeftIcon={IconSearch}
-        text={
+        onClick={getDropdownMenuItemClickHandler(onClick)}
+        startIcon={<IconSearch />}
+      >
+        {
           <>
             {t`Search any field`}
             {objectFilterDropdownSearchInput && (
@@ -52,7 +54,7 @@ export const ViewBarFilterDropdownAnyFieldSearchButtonMenuItem = ({
             )}
           </>
         }
-      />
+      </ListItem>
     </SelectableListItem>
   );
 };

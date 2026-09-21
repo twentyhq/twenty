@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -8,7 +10,7 @@ import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowStepFilterOptionsDropdownProps = {
   stepFilterId: string;
@@ -36,12 +38,15 @@ export const WorkflowStepFilterOptionsDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              LeftIcon={IconTrash}
-              text={t`Delete`}
-              onClick={() => removeStepFilter(stepFilterId)}
-              accent="danger"
-            />
+            <ListItem
+              startIcon={<IconTrash />}
+              onClick={getDropdownMenuItemClickHandler(() =>
+                removeStepFilter(stepFilterId),
+              )}
+              color="danger"
+            >
+              <OverflowingTextWithTooltip text={t`Delete`} />
+            </ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

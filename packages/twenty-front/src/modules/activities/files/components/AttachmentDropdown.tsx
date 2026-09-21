@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -11,7 +13,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type AttachmentDropdownProps = {
   onDownload: () => void;
@@ -60,23 +62,26 @@ export const AttachmentDropdown = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
             {hasDownloadPermission && (
-              <MenuItem
-                text={t`Download`}
-                LeftIcon={IconDownload}
-                onClick={handleDownload}
-              />
+              <ListItem
+                startIcon={<IconDownload />}
+                onClick={getDropdownMenuItemClickHandler(handleDownload)}
+              >
+                <OverflowingTextWithTooltip text={t`Download`} />
+              </ListItem>
             )}
-            <MenuItem
-              text={t`Rename`}
-              LeftIcon={IconPencil}
-              onClick={handleRename}
-            />
-            <MenuItem
-              text={t`Delete`}
-              accent="danger"
-              LeftIcon={IconTrash}
-              onClick={handleDelete}
-            />
+            <ListItem
+              startIcon={<IconPencil />}
+              onClick={getDropdownMenuItemClickHandler(handleRename)}
+            >
+              <OverflowingTextWithTooltip text={t`Rename`} />
+            </ListItem>
+            <ListItem
+              color="danger"
+              startIcon={<IconTrash />}
+              onClick={getDropdownMenuItemClickHandler(handleDelete)}
+            >
+              <OverflowingTextWithTooltip text={t`Delete`} />
+            </ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

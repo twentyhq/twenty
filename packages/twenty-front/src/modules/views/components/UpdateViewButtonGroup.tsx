@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { styled } from '@linaria/react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -25,7 +27,7 @@ import { t } from '@lingui/core/macro';
 import { IconChevronDown, IconPlus } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -126,11 +128,14 @@ export const UpdateViewButtonGroup = () => {
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <MenuItem
-                    onClick={handleCreateViewClick}
-                    LeftIcon={IconPlus}
-                    text={t`Create view`}
-                  />
+                  <ListItem
+                    onClick={getDropdownMenuItemClickHandler(
+                      handleCreateViewClick,
+                    )}
+                    startIcon={<IconPlus />}
+                  >
+                    <OverflowingTextWithTooltip text={t`Create view`} />
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               </DropdownContent>
             }

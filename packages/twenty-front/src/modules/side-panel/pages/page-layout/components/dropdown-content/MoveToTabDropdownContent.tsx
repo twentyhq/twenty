@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useMoveWidgetToTab } from '@/page-layout/hooks/useMoveWidgetToTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -8,7 +10,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const MoveToTabDropdownContent = () => {
@@ -56,7 +58,9 @@ export const MoveToTabDropdownContent = () => {
   if (eligibleTabs.length === 0) {
     return (
       <DropdownMenuItemsContainer>
-        <MenuItem text={t`No available tabs`} />
+        <ListItem>
+          <OverflowingTextWithTooltip text={t`No available tabs`} />
+        </ListItem>
       </DropdownMenuItemsContainer>
     );
   }
@@ -64,14 +68,15 @@ export const MoveToTabDropdownContent = () => {
   return (
     <DropdownMenuItemsContainer>
       {eligibleTabs.map((tab) => (
-        <MenuItem
+        <ListItem
           key={tab.id}
-          text={tab.title ?? ''}
-          onClick={() => {
+          onClick={getDropdownMenuItemClickHandler(() => {
             moveWidgetToTab(pageLayoutEditingWidgetId, tab.id);
             closeDropdown();
-          }}
-        />
+          })}
+        >
+          <OverflowingTextWithTooltip text={tab.title ?? ''} />
+        </ListItem>
       ))}
     </DropdownMenuItemsContainer>
   );

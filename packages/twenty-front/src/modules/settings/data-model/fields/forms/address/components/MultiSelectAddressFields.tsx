@@ -1,3 +1,6 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
@@ -14,7 +17,7 @@ import { t } from '@lingui/core/macro';
 import { type MouseEvent, useMemo, useState } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type CallToActionButton = {
   text: string;
@@ -123,12 +126,15 @@ export const MultiSelectAddressFields = <Value extends SelectValue>({
           </DropdownContent>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-            <MenuItem
-              onClick={callToActionButton?.onClick}
-              LeftIcon={callToActionButton?.Icon}
-              text={callToActionButton?.text}
+            <ListItem
+              onClick={getDropdownMenuItemClickHandler(
+                callToActionButton?.onClick,
+              )}
+              startIcon={<SelectOptionIcon Icon={callToActionButton?.Icon} />}
               disabled={values.length === options.length}
-            />
+            >
+              <OverflowingTextWithTooltip text={callToActionButton?.text} />
+            </ListItem>
           </DropdownMenuItemsContainer>
         </SelectableList>
       }

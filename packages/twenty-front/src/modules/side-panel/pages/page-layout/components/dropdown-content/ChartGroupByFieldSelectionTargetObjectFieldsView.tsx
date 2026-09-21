@@ -20,7 +20,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -180,7 +180,9 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
             </SelectableListItem>
           )}
           {availableFields.length === 0 && !isRecordOptionVisible ? (
-            <MenuItem text={t`No fields available`} />
+            <ListItem>
+              <OverflowingTextWithTooltip text={t`No fields available`} />
+            </ListItem>
           ) : (
             availableFields.map((fieldMetadataItem) => (
               <SelectableListItem

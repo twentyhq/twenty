@@ -26,11 +26,7 @@ import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
-import {
-  MenuItem,
-  UndecoratedLink,
-  ListItem,
-} from 'twenty-ui/primitives/navigation';
+import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
@@ -169,7 +165,9 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
             closeDropdown();
           }}
         >
-          <MenuItem LeftIcon={IconSettings} text={t`Create select field`} />
+          <ListItem startIcon={<IconSettings />}>
+            <OverflowingTextWithTooltip text={t`Create select field`} />
+          </ListItem>
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </DropdownContent>

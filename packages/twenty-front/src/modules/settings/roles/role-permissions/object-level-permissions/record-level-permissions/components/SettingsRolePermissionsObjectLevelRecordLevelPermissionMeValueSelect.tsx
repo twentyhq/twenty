@@ -1,3 +1,6 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
@@ -10,7 +13,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle, IconX, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -303,21 +306,27 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
         />
         <DropdownMenuItemsContainer>
           {filteredMenuItems.map((item) => (
-            <MenuItem
+            <ListItem
               key={item.id}
-              LeftIcon={item.icon ? getIcon(item.icon) : IconUserCircle}
-              text={item.label}
-              onClick={() =>
-                handleSelectField(item.fieldMetadataId, item.subFieldName)
+              startIcon={
+                <SelectOptionIcon
+                  Icon={item.icon ? getIcon(item.icon) : IconUserCircle}
+                />
               }
-            />
+              onClick={getDropdownMenuItemClickHandler(() =>
+                handleSelectField(item.fieldMetadataId, item.subFieldName),
+              )}
+            >
+              <OverflowingTextWithTooltip text={item.label} />
+            </ListItem>
           ))}
           {filteredMenuItems.length === 0 && (
-            <MenuItem
-              text={t`No compatible fields`}
-              onClick={() => {}}
+            <ListItem
+              onClick={getDropdownMenuItemClickHandler(() => {})}
               disabled
-            />
+            >
+              <OverflowingTextWithTooltip text={t`No compatible fields`} />
+            </ListItem>
           )}
         </DropdownMenuItemsContainer>
       </DropdownContent>

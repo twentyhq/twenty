@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -10,7 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   type ApprovedAccessDomain,
   DeleteApprovedAccessDomainDocument,
@@ -71,15 +73,16 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text="Delete"
-              onClick={() => {
+            <ListItem
+              color="danger"
+              startIcon={<IconTrash />}
+              onClick={getDropdownMenuItemClickHandler(() => {
                 handleDeleteApprovedAccessDomain();
                 closeDropdown(dropdownId);
-              }}
-            />
+              })}
+            >
+              <OverflowingTextWithTooltip text={'Delete'} />
+            </ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

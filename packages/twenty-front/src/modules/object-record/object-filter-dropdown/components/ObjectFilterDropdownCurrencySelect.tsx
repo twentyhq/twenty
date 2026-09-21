@@ -16,7 +16,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useState } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';
@@ -150,7 +150,11 @@ export const ObjectFilterDropdownCurrencySelect = () => {
             </ListItem>
           );
         })}
-        {showNoResult && <MenuItem text={t`No results`} />}
+        {showNoResult && (
+          <ListItem>
+            <OverflowingTextWithTooltip text={t`No results`} />
+          </ListItem>
+        )}
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

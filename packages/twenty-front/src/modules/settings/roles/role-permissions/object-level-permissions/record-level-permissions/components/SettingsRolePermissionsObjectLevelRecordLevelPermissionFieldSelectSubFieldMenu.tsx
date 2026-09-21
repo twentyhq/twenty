@@ -1,3 +1,6 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 /* @license Enterprise */
 
 import {
@@ -6,7 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
@@ -156,27 +159,34 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
                     );
                   }}
                 >
-                  <MenuItem
+                  <ListItem
                     focused={selectedItemId === subFieldName}
                     key={`select-filter-${index}`}
-                    testId={`select-filter-${index}`}
-                    onClick={() => {
+                    data-testid={`select-filter-${index}`}
+                    onClick={getDropdownMenuItemClickHandler(() => {
                       if (isDefined(fieldMetadataItemUsedInDropdown)) {
                         handleSelectFilter(
                           fieldMetadataItemUsedInDropdown,
                           subFieldName,
                         );
                       }
-                    }}
-                    text={getCompositeSubFieldLabel(
-                      objectFilterDropdownSubMenuFieldType,
-                      subFieldName,
-                    )}
-                    LeftIcon={getIcon(
-                      ICON_NAME_BY_SUB_FIELD[subFieldName] ??
-                        fieldMetadataItemUsedInDropdown?.icon,
-                    )}
-                  />
+                    })}
+                    startIcon={
+                      <SelectOptionIcon
+                        Icon={getIcon(
+                          ICON_NAME_BY_SUB_FIELD[subFieldName] ??
+                            fieldMetadataItemUsedInDropdown?.icon,
+                        )}
+                      />
+                    }
+                  >
+                    <OverflowingTextWithTooltip
+                      text={getCompositeSubFieldLabel(
+                        objectFilterDropdownSubMenuFieldType,
+                        subFieldName,
+                      )}
+                    />
+                  </ListItem>
                 </SelectableListItem>
               ))}
           </SelectableList>

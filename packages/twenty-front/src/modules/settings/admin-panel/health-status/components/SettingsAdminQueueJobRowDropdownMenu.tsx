@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -5,7 +7,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconRefresh, IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { JobState } from '~/generated-admin/graphql';
 
 type SettingsAdminQueueJobRowDropdownMenuProps = {
@@ -47,18 +49,20 @@ export const SettingsAdminQueueJobRowDropdownMenu = ({
         <DropdownContent>
           <DropdownMenuItemsContainer>
             {jobState === JobState.FAILED && onRetry && (
-              <MenuItem
-                text={t`Retry`}
-                LeftIcon={IconRefresh}
-                onClick={handleRetry}
-              />
+              <ListItem
+                startIcon={<IconRefresh />}
+                onClick={getDropdownMenuItemClickHandler(handleRetry)}
+              >
+                <OverflowingTextWithTooltip text={t`Retry`} />
+              </ListItem>
             )}
-            <MenuItem
-              accent="danger"
-              text={t`Delete`}
-              LeftIcon={IconTrash}
-              onClick={handleDelete}
-            />
+            <ListItem
+              color="danger"
+              startIcon={<IconTrash />}
+              onClick={getDropdownMenuItemClickHandler(handleDelete)}
+            >
+              <OverflowingTextWithTooltip text={t`Delete`} />
+            </ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

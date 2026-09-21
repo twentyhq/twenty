@@ -1,3 +1,6 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectSortDropdownId } from '@/object-record/object-sort-dropdown/utils/getObjectSortDropdownId';
@@ -33,7 +36,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { Trans, useLingui } from '@lingui/react/macro';
 import { findByProperty } from 'twenty-shared/utils';
 import { IconX, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
@@ -230,17 +233,24 @@ export const ObjectSortDropdownButton = () => {
                         itemId={visibleFieldMetadataItem.id}
                         onEnter={() => handleAddSort(visibleFieldMetadataItem)}
                       >
-                        <MenuItem
+                        <ListItem
                           focused={
                             selectedItemId === visibleFieldMetadataItem.id
                           }
-                          testId={`visible-select-sort-${index}`}
-                          onClick={() =>
-                            handleAddSort(visibleFieldMetadataItem)
+                          data-testid={`visible-select-sort-${index}`}
+                          onClick={getDropdownMenuItemClickHandler(() =>
+                            handleAddSort(visibleFieldMetadataItem),
+                          )}
+                          startIcon={
+                            <SelectOptionIcon
+                              Icon={getIcon(visibleFieldMetadataItem.icon)}
+                            />
                           }
-                          LeftIcon={getIcon(visibleFieldMetadataItem.icon)}
-                          text={visibleFieldMetadataItem.label}
-                        />
+                        >
+                          <OverflowingTextWithTooltip
+                            text={visibleFieldMetadataItem.label}
+                          />
+                        </ListItem>
                       </SelectableListItem>
                     ),
                   )}
@@ -259,15 +269,24 @@ export const ObjectSortDropdownButton = () => {
                         itemId={hiddenFieldMetadataItem.id}
                         onEnter={() => handleAddSort(hiddenFieldMetadataItem)}
                       >
-                        <MenuItem
+                        <ListItem
                           focused={
                             selectedItemId === hiddenFieldMetadataItem.id
                           }
-                          testId={`hidden-select-sort-${index}`}
-                          onClick={() => handleAddSort(hiddenFieldMetadataItem)}
-                          LeftIcon={getIcon(hiddenFieldMetadataItem.icon)}
-                          text={hiddenFieldMetadataItem.label}
-                        />
+                          data-testid={`hidden-select-sort-${index}`}
+                          onClick={getDropdownMenuItemClickHandler(() =>
+                            handleAddSort(hiddenFieldMetadataItem),
+                          )}
+                          startIcon={
+                            <SelectOptionIcon
+                              Icon={getIcon(hiddenFieldMetadataItem.icon)}
+                            />
+                          }
+                        >
+                          <OverflowingTextWithTooltip
+                            text={hiddenFieldMetadataItem.label}
+                          />
+                        </ListItem>
                       </SelectableListItem>
                     ),
                   )}

@@ -1,3 +1,6 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -12,7 +15,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type SettingsObjectInactiveMenuDropDownProps = {
   isCustomObject: boolean;
@@ -66,25 +69,32 @@ export const SettingsObjectInactiveMenuDropDown = ({
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              text={isEditable ? t`Edit` : t`View`}
-              LeftIcon={isEditable ? IconPencil : IconEye}
-              onClick={handleEdit}
-            />
-            {!isReadOnly && (
-              <MenuItem
-                text={t`Activate`}
-                LeftIcon={IconArchiveOff}
-                onClick={handleActivate}
+            <ListItem
+              startIcon={
+                <SelectOptionIcon Icon={isEditable ? IconPencil : IconEye} />
+              }
+              onClick={getDropdownMenuItemClickHandler(handleEdit)}
+            >
+              <OverflowingTextWithTooltip
+                text={isEditable ? t`Edit` : t`View`}
               />
+            </ListItem>
+            {!isReadOnly && (
+              <ListItem
+                startIcon={<IconArchiveOff />}
+                onClick={getDropdownMenuItemClickHandler(handleActivate)}
+              >
+                <OverflowingTextWithTooltip text={t`Activate`} />
+              </ListItem>
             )}
             {isCustomObject && !isReadOnly && (
-              <MenuItem
-                text={t`Delete`}
-                LeftIcon={IconTrash}
-                accent="danger"
-                onClick={handleDelete}
-              />
+              <ListItem
+                startIcon={<IconTrash />}
+                color="danger"
+                onClick={getDropdownMenuItemClickHandler(handleDelete)}
+              >
+                <OverflowingTextWithTooltip text={t`Delete`} />
+              </ListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

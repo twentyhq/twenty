@@ -9,7 +9,9 @@ import { useSingleRecordPickerSearch } from '@/object-record/record-picker/singl
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -90,11 +92,12 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           {isDefined(onCreate) && canCreateRecords && (
             <>
               <DropdownMenuItemsContainer scrollable={false}>
-                <CreateNewButton
-                  onClick={handleCreateNew}
-                  LeftIcon={IconPlus}
-                  text={t`Add New`}
-                />
+                <ListItem
+                  onClick={getDropdownMenuItemClickHandler(handleCreateNew)}
+                  startIcon={<IconPlus />}
+                >
+                  <OverflowingTextWithTooltip text={t`Add New`} />
+                </ListItem>
               </DropdownMenuItemsContainer>
               <DropdownMenuSeparator />
             </>
@@ -139,11 +142,12 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer scrollable={false}>
-                <CreateNewButton
-                  onClick={handleCreateNew}
-                  LeftIcon={IconPlus}
-                  text={t`Add New`}
-                />
+                <ListItem
+                  onClick={getDropdownMenuItemClickHandler(handleCreateNew)}
+                  startIcon={<IconPlus />}
+                >
+                  <OverflowingTextWithTooltip text={t`Add New`} />
+                </ListItem>
               </DropdownMenuItemsContainer>
             </>
           )}

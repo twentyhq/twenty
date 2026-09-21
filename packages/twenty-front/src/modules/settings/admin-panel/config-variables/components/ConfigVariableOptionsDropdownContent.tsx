@@ -1,3 +1,6 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { CONFIG_VARIABLE_SOURCE_OPTIONS } from '@/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions';
@@ -12,7 +15,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconChevronLeft, IconEye, IconEyeOff } from 'twenty-ui/icon';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 type ConfigVariableOptionsDropdownContentProps = {
@@ -80,27 +83,36 @@ export const ConfigVariableOptionsDropdownContent = ({
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer scrollable={false}>
-          <MenuItem
-            text={
-              showHiddenGroupVariables
-                ? t`Hide hidden groups`
-                : t`Show hidden groups`
+          <ListItem
+            startIcon={
+              <SelectOptionIcon
+                Icon={() =>
+                  showHiddenGroupVariables ? (
+                    <IconEyeOff
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                    />
+                  ) : (
+                    <IconEye
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                    />
+                  )
+                }
+              />
             }
-            LeftIcon={() =>
-              showHiddenGroupVariables ? (
-                <IconEyeOff
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.sm}
-                />
-              ) : (
-                <IconEye
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.sm}
-                />
-              )
-            }
-            onClick={() => onShowHiddenChange(!showHiddenGroupVariables)}
-          />
+            onClick={getDropdownMenuItemClickHandler(() =>
+              onShowHiddenChange(!showHiddenGroupVariables),
+            )}
+          >
+            <OverflowingTextWithTooltip
+              text={
+                showHiddenGroupVariables
+                  ? t`Hide hidden groups`
+                  : t`Show hidden groups`
+              }
+            />
+          </ListItem>
         </DropdownMenuItemsContainer>
       </DropdownContent>
     );

@@ -1,5 +1,8 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { type IconComponent } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const RecordGroupAggregateDropdownMenuItem = ({
   onContentChange,
@@ -13,11 +16,12 @@ export const RecordGroupAggregateDropdownMenuItem = ({
   RightIcon?: IconComponent | null;
 }) => {
   return (
-    <MenuItem
-      onClick={onContentChange}
-      text={text}
-      hasSubMenu={hasSubMenu}
-      RightIcon={RightIcon}
-    />
+    <ListItem
+      onClick={getDropdownMenuItemClickHandler(onContentChange)}
+      hasSubmenu={hasSubMenu}
+      endIcon={<SelectOptionIcon Icon={RightIcon} />}
+    >
+      <OverflowingTextWithTooltip text={text} />
+    </ListItem>
   );
 };

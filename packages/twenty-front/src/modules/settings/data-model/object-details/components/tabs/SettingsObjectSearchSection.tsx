@@ -1,3 +1,5 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -33,8 +35,11 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
-import { Card } from 'twenty-ui/primitives/surfaces';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import {
+  Card,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsObjectSearchSectionProps = {
@@ -276,15 +281,16 @@ export const SettingsObjectSearchSection = ({
                     const FieldIcon = getIcon(field.icon);
 
                     return (
-                      <MenuItem
+                      <ListItem
                         key={field.id}
-                        LeftIcon={FieldIcon}
-                        text={field.label}
-                        onClick={() => {
+                        startIcon={<SelectOptionIcon Icon={FieldIcon} />}
+                        onClick={getDropdownMenuItemClickHandler(() => {
                           closeDropdown(ADD_SEARCH_FIELD_DROPDOWN_ID);
                           handleSetFieldSearchable(field.id, true);
-                        }}
-                      />
+                        })}
+                      >
+                        <OverflowingTextWithTooltip text={field.label} />
+                      </ListItem>
                     );
                   })}
                 </DropdownMenuItemsContainer>

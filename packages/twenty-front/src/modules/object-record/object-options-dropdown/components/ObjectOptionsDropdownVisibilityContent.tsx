@@ -1,3 +1,4 @@
+import { getDropdownMenuItemClickHandler } from '@/ui/layout/dropdown/utils/getDropdownMenuItemClickHandler';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -27,7 +28,7 @@ import {
   Tooltip,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/primitives/surfaces';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   ViewVisibility,
   PermissionFlagType,
@@ -151,12 +152,13 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
                 itemId="Copy view link"
                 onEnter={handleCopyLink}
               >
-                <MenuItem
+                <ListItem
                   focused={selectedItemId === 'Copy view link'}
-                  onClick={handleCopyLink}
-                  LeftIcon={IconCopy}
-                  text={t`Copy view link`}
-                />
+                  onClick={getDropdownMenuItemClickHandler(handleCopyLink)}
+                  startIcon={<IconCopy />}
+                >
+                  <OverflowingTextWithTooltip text={t`Copy view link`} />
+                </ListItem>
               </SelectableListItem>
             </>
           )}
