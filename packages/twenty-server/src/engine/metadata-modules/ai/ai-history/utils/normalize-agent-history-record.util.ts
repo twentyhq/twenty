@@ -20,6 +20,11 @@ export const normalizeAgentHistoryRecord = ({
   const normalized: ObjectLiteral = { ...record, workspaceId };
   if (objectName === 'agentChatThread') {
     normalized.deletedAt = record.archivedAt ?? null;
+    // Workspace text formatting turns SQL NULL into an empty string, which
+    // chat stream coordination must not interpret as an active stream claim.
+    if (normalized.activeStreamId === '') {
+      normalized.activeStreamId = null;
+    }
   }
   for (const field of ['createdAt', 'updatedAt', 'deletedAt', 'processedAt']) {
     if (typeof normalized[field] === 'string') {

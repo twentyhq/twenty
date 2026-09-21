@@ -213,13 +213,12 @@ export class GroupByWithRecordsService {
     const pageStart = offsetForRecords;
     const pageEnd = offsetForRecords + RECORDS_PER_GROUP_LIMIT;
 
-    const jsonObjectEntries = [
+    const recordColumnsToSelect = [
       ...Object.keys(columnsToSelect).map(
-        (columnName) => `'${columnName}', "${SUB_QUERY_PREFIX}${columnName}"`,
+        (columnName) => `"${SUB_QUERY_PREFIX}${columnName}" AS "${columnName}"`,
       ),
       ...groupByDefinitions.map(
-        (groupByDefinition) =>
-          `'${groupByDefinition.alias}', "${groupByDefinition.alias}"`,
+        (groupByDefinition) => `"${groupByDefinition.alias}"`,
       ),
     ].join(', ');
 
@@ -227,7 +226,7 @@ export class GroupByWithRecordsService {
 
     const sql =
       `SELECT ${groupByAliases}, ` +
-      `JSON_AGG(CASE WHEN ${pageFilter} THEN JSON_BUILD_OBJECT(${jsonObjectEntries}) END) ` +
+      `JSON_AGG(CASE WHEN ${pageFilter} THEN (SELECT ROW_TO_JSON(record) FROM (SELECT ${recordColumnsToSelect}) AS record) END) ` +
       `FILTER (WHERE ${pageFilter}) AS "records" ` +
       `FROM (${subQueryBuilder.getQuery()}) AS "ranked_records" ` +
       `GROUP BY ${groupByAliases}`;
