@@ -1,27 +1,15 @@
-import { styled } from '@linaria/react';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useIcons } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
-
-const StyledLabel = styled.span`
-  display: flex;
-  flex-direction: column;
-`;
-
-const StyledDescription = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-`;
 
 type Action = {
   defaultLabel: string;
   type: WorkflowActionType;
   icon: string;
   disabled?: boolean;
-  description?: string;
+  contextualText?: string;
   tooltip?: string;
 };
 
@@ -47,16 +35,8 @@ export const WorkflowActionMenuItems = ({
               <Icon color={getActionIconColorOrThrow(action.type)} size={16} />
             )}
             disabled={action.disabled}
-            text={
-              action.description ? (
-                <StyledLabel>
-                  {action.defaultLabel}
-                  <StyledDescription>{action.description}</StyledDescription>
-                </StyledLabel>
-              ) : (
-                action.defaultLabel
-              )
-            }
+            text={action.defaultLabel}
+            contextualText={action.contextualText}
             onClick={() => onClick(action.type)}
           />
         );

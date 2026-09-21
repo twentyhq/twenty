@@ -72,12 +72,16 @@ export const SidePanelWorkflowSelectAction = ({
       </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
         actions={AI_ACTIONS.map((action) =>
-          action.type === 'CLASSIFY' && !jevAvailable
+          action.type === 'CLASSIFY'
             ? {
                 ...action,
-                disabled: true,
-                description: t`Needs a TypeSafe AI API key`,
-                tooltip: t`Ask your administrator to configure TYPESAFE_AI_API_KEY in Settings → Admin panel and enable Jev.`,
+                disabled: !jevAvailable,
+                contextualText: jevAvailable
+                  ? undefined
+                  : t`TypeSafe AI API key missing`,
+                tooltip: jevAvailable
+                  ? undefined
+                  : t`Ask your administrator to configure TYPESAFE_AI_API_KEY in Settings → Admin panel and enable Jev.`,
               }
             : action,
         )}

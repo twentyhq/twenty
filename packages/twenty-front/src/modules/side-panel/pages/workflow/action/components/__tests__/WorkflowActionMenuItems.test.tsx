@@ -17,14 +17,14 @@ it('explains unavailable classification and prevents selection', async () => {
           defaultLabel: 'Classify',
           icon: 'IconCategory',
           disabled: true,
-          description: 'Needs a TypeSafe AI API key',
+          contextualText: 'TypeSafe AI API key missing',
           tooltip: 'Ask your administrator to configure the key.',
         },
       ]}
       onClick={onClick}
     />,
   );
-  expect(screen.getByText('Needs a TypeSafe AI API key')).toBeVisible();
+  expect(screen.getByText('· TypeSafe AI API key missing')).toBeVisible();
   await userEvent.click(screen.getByText('Classify'));
   expect(onClick).not.toHaveBeenCalled();
 });
