@@ -15,6 +15,7 @@ import {
 } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const OLDEST_HANDLE = 'workspace-oldest-account@apple.dev';
 const CALLER_HANDLE = 'run-caller-account@apple.dev';
@@ -165,6 +166,55 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         subject,
         body: '<p>Pinned sender send body</p>',
       },
+    });
+
+    expect(workflowRun).toMatchObject({
+      status: 'COMPLETED',
+      stepStatus: 'SUCCESS',
+    });
+    expect(workflowRun.stepResult).toMatchObject({
+      subject,
+      connectedAccountId: oldestAccount.connectedAccountId,
+    });
+  }, 60000);
+
+  it("sends from a workspace member's own mailbox when the step names that member", async () => {
+    const subject = `Member sender send ${randomUUID()}`;
+
+    const workflowRun = await runWorkflowActionStep({
+      name: 'Member sender send email workflow',
+      stepType: 'SEND_EMAIL',
+      input: {
+        connectedAccountId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        recipients: { to: RECIPIENT, cc: '', bcc: '' },
+        subject,
+        body: '<p>Member sender send body</p>',
+      },
+    });
+
+    expect(workflowRun).toMatchObject({
+      status: 'COMPLETED',
+      stepStatus: 'SUCCESS',
+    });
+    expect(workflowRun.stepResult).toMatchObject({
+      subject,
+      connectedAccountId: oldestAccount.connectedAccountId,
+    });
+  }, 60000);
+
+  it('sends from the account a workflow variable resolves to', async () => {
+    const subject = `Variable sender send ${randomUUID()}`;
+
+    const workflowRun = await runWorkflowActionStep({
+      name: 'Variable sender send email workflow',
+      stepType: 'SEND_EMAIL',
+      input: {
+        connectedAccountId: '{{trigger.senderId}}',
+        recipients: { to: RECIPIENT, cc: '', bcc: '' },
+        subject,
+        body: '<p>Variable sender send body</p>',
+      },
+      payload: { senderId: oldestAccount.connectedAccountId },
     });
 
     expect(workflowRun).toMatchObject({

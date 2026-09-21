@@ -30,7 +30,7 @@ export const runWebhookTriggeredActionStep = async ({
   input,
 }: {
   name: string;
-  stepType: 'SEND_EMAIL' | 'DRAFT_EMAIL';
+  stepType: 'SEND_EMAIL' | 'DRAFT_EMAIL' | 'CREATE_CALENDAR_EVENT';
   input: Record<string, unknown>;
 }): Promise<WebhookTriggeredActionStepRun> => {
   const createWorkflowResponse = await makeGraphqlAPIRequest({
