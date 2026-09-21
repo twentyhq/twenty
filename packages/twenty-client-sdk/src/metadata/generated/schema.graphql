@@ -3632,6 +3632,7 @@ enum AllMetadataName {
   connectionProvider
   searchFieldMetadata
   timelineActivityType
+  settingPage
 }
 
 type MinimalObjectMetadata {

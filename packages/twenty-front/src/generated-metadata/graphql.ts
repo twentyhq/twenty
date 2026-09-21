@@ -232,6 +232,7 @@ export enum AllMetadataName {
   rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
   rowLevelPermissionPredicateGroup = 'rowLevelPermissionPredicateGroup',
   searchFieldMetadata = 'searchFieldMetadata',
+  settingPage = 'settingPage',
   skill = 'skill',
   timelineActivityType = 'timelineActivityType',
   view = 'view',
