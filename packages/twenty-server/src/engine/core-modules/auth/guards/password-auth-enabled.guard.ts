@@ -1,4 +1,8 @@
-import { type CanActivate, type ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  type CanActivate,
+  type ExecutionContext,
+  Injectable,
+} from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -12,7 +16,10 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { isBreakGlassEmail } from 'src/engine/core-modules/auth/utils/is-break-glass-email.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-type ResolverArgs = Record<string, unknown> & { email?: unknown; loginToken?: unknown };
+type ResolverArgs = Record<string, unknown> & {
+  email?: unknown;
+  loginToken?: unknown;
+};
 
 // Closes the password backdoor: AUTH_PASSWORD_ENABLED=false only hides the
 // password form in the UI, while the password mutations below stayed callable
@@ -35,10 +42,13 @@ export class PasswordAuthEnabledGuard implements CanActivate {
 
     const email = await this.resolveEmail(context);
 
-    if (isDefined(email) && isBreakGlassEmail(
-      email,
-      this.twentyConfigService.get('AUTH_BREAK_GLASS_EMAILS'),
-    )) {
+    if (
+      isDefined(email) &&
+      isBreakGlassEmail(
+        email,
+        this.twentyConfigService.get('AUTH_BREAK_GLASS_EMAILS'),
+      )
+    ) {
       return true;
     }
 

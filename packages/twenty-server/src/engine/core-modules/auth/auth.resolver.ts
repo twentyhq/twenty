@@ -1132,11 +1132,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => InvalidatePasswordDTO)
-  @UseGuards(
-    PasswordAuthEnabledGuard,
-    PublicEndpointGuard,
-    NoPermissionGuard,
-  )
+  @UseGuards(PasswordAuthEnabledGuard, PublicEndpointGuard, NoPermissionGuard)
   async updatePasswordViaResetToken(
     @Args()
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
@@ -1152,11 +1148,7 @@ export class AuthResolver {
   }
 
   @Query(() => ValidatePasswordResetTokenDTO)
-  @UseGuards(
-    PasswordAuthEnabledGuard,
-    PublicEndpointGuard,
-    NoPermissionGuard,
-  )
+  @UseGuards(PasswordAuthEnabledGuard, PublicEndpointGuard, NoPermissionGuard)
   async validatePasswordResetToken(
     @Args() args: ValidatePasswordResetTokenInput,
   ): Promise<ValidatePasswordResetTokenDTO> {

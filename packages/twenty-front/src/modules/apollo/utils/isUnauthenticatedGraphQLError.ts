@@ -10,4 +10,3 @@ export const isUnauthenticatedGraphQLError = (
   graphQLError.message === 'Token has expired.' ||
   graphQLError.message === 'Token invalid.' ||
   graphQLError.message === 'You must be authenticated to perform this action.';
-

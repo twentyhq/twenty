@@ -731,7 +731,9 @@ const createSettingsRouteElements = ({
   <>
     <Route
       index
-      element={<Navigate to={getSettingsPath(SettingsPath.ProfilePage)} replace />}
+      element={
+        <Navigate to={getSettingsPath(SettingsPath.ProfilePage)} replace />
+      }
     />
     <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
     <Route

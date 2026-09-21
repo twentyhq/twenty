@@ -283,10 +283,10 @@ export const SignInUpGlobalScopeForm = () => {
             authProviders.google ||
             authProviders.microsoft) &&
             authProviders.password && (
-            <HorizontalSeparator
-              color={themeCssVariables.background.transparent.light}
-            />
-          )}
+              <HorizontalSeparator
+                color={themeCssVariables.background.transparent.light}
+              />
+            )}
           {authProviders.password && (
             // oxlint-disable-next-line react/jsx-props-no-spreading
             <FormProvider {...form}>
