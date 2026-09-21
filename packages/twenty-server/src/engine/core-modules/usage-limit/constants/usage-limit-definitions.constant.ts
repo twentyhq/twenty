@@ -1,6 +1,14 @@
+import { USAGE_OPERATION_TYPES } from 'twenty-shared/application';
+
 import { type UsageLimitDefinitions } from 'src/engine/core-modules/usage-limit/types/usage-limit-definition.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+
+// Mirrors exactly what ChargeDto accepts: a category an app can charge under
+// but no limit can target would be silently uncappable.
+const APP_CHARGEABLE_OPERATION_TYPES = USAGE_OPERATION_TYPES.map(
+  (operationTypeValue) => UsageOperationType[operationTypeValue],
+);
 
 export const USAGE_LIMIT_DEFINITIONS = {
   [UsageResourceType.API]: {
@@ -57,15 +65,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
   },
   [UsageResourceType.APP]: {
     quota: {
-      allowedOperationTypes: [
-        UsageOperationType.AI_CHAT_TOKEN,
-        UsageOperationType.AI_WORKFLOW_TOKEN,
-        UsageOperationType.WORKFLOW_EXECUTION,
-        UsageOperationType.CODE_EXECUTION,
-        UsageOperationType.WEB_SEARCH,
-        UsageOperationType.CALL_RECORDING,
-        UsageOperationType.EMAIL_SEND,
-      ],
+      allowedOperationTypes: APP_CHARGEABLE_OPERATION_TYPES,
       allowedSpenderTypes: ['workspace', 'application', 'userWorkspace'],
       // Quantity is whatever the charging app decided it counts, so it is not
       // comparable between two apps sharing an operation type.
