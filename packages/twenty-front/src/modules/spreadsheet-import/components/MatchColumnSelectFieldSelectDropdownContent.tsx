@@ -1,5 +1,6 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useMemo, useState } from 'react';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';

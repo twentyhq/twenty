@@ -1,9 +1,9 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { UpdateCoreWorkflowDocument } from '~/generated/graphql';
 
 export const useRenameCoreWorkflow = ({

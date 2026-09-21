@@ -1,5 +1,6 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useEffect } from 'react';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';

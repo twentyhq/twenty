@@ -1,12 +1,13 @@
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type WorkflowClassifyCriterion } from 'twenty-shared/workflow';
-import { v4 } from 'uuid';
 import { IconPlus, IconTrash } from 'twenty-ui/icon';
-import { Button, InputLabel } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { v4 } from 'uuid';
 
 const StyledContainer = styled.div`
   display: flex;

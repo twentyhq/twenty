@@ -1,8 +1,7 @@
-import { t } from '@lingui/core/macro';
-import { LightIconButton } from 'twenty-ui/components';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldsConfigurationFieldItem } from '@/page-layout/types/FieldsConfiguration';
-import { MenuItemDraggable } from 'twenty-ui/components';
+import { t } from '@lingui/core/macro';
+import { LightIconButton, MenuItemDraggable } from 'twenty-ui/components';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
 
 type FieldsConfigurationFieldEditorProps = {

@@ -2,6 +2,7 @@ import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 

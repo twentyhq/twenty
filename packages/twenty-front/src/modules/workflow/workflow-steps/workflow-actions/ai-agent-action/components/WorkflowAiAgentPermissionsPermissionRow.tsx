@@ -1,8 +1,7 @@
-import { t } from '@lingui/core/macro';
-import { LightIconButton } from 'twenty-ui/components';
 import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
-import { MenuItem } from 'twenty-ui/components';
+import { t } from '@lingui/core/macro';
+import { LightIconButton, MenuItem } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
 
 type WorkflowAiAgentPermissionsPermissionRowProps = {

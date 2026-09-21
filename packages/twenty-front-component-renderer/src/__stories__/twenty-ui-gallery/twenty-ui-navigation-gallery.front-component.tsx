@@ -1,10 +1,18 @@
-import { IconHome, IconUser } from 'twenty-ui/icon';
-import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
-import { Tag, ColorSample } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { MenuItem, MenuItemAvatar, MenuItemDraggable, MenuItemSuggestion, MenuPicker, NavigationBar, RoundedLink, DEFAULT_COLOR_LABELS } from 'twenty-ui/components';
-import { MenuItemHotKeys, MenuItemLeftContent, SocialLink, StyledHoverableMenuItemBase, StyledMenuItemIconCheck, StyledMenuItemLabel, StyledMenuItemLeftContent, UndecoratedLink, ListItem } from 'twenty-ui/primitives/navigation';
+import {
+  DEFAULT_COLOR_LABELS,
+  MenuItem,
+  MenuItemAvatar,
+  MenuItemDraggable,
+  MenuItemSuggestion,
+  MenuPicker,
+  NavigationBar,
+  OverflowingTextWithTooltip,
+  RoundedLink,
+} from 'twenty-ui/components';
+import { IconHome, IconUser } from 'twenty-ui/icon';
+import { ColorSample, Tag } from 'twenty-ui/primitives/data-display';
+import { ClickToActionLink, ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import {

@@ -1,5 +1,6 @@
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';

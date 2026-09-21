@@ -1,8 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
-import { SettingsRow } from 'twenty-ui/components';
-import { TintedIconTile } from 'twenty-ui/components';
+import {
+  OverflowingTextWithTooltip,
+  SettingsRow,
+  TintedIconTile,
+} from 'twenty-ui/components';
 import { IconCube } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 

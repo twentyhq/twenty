@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
