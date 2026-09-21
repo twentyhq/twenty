@@ -2,16 +2,23 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { describe, expect, it } from 'vitest';
 
-describe('Teams Transcripts installation', () => {
-  it('installs the application with its reserved identity', async () => {
-    const result = await new MetadataApiClient().query({
-      findManyApplications: { id: true, universalIdentifier: true },
+describe('App installation', () => {
+  it('should find the installed app in the applications list', async () => {
+    const client = new MetadataApiClient();
+
+    const result = await client.query({
+      findManyApplications: {
+        id: true,
+        name: true,
+        universalIdentifier: true,
+      },
     });
-    expect(
-      result.findManyApplications.some(
-        (application) =>
-          application.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
-      ),
-    ).toBe(true);
+
+    const app = result.findManyApplications.find(
+      (application: { universalIdentifier: string }) =>
+        application.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(app).toBeDefined();
   });
 });

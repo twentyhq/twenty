@@ -7,17 +7,10 @@ import {
 
 export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  label: `${APP_DISPLAY_NAME} default role`,
-  description: `${APP_DISPLAY_NAME} default role`,
+  label: `${APP_DISPLAY_NAME} default function role`,
+  description: `${APP_DISPLAY_NAME} default function role`,
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
-  canUpdateAllSettings: false,
-  canBeAssignedToAgents: false,
-  canBeAssignedToUsers: false,
-  canBeAssignedToApiKeys: false,
-  objectPermissions: [],
-  fieldPermissions: [],
-  permissionFlagUniversalIdentifiers: [],
 });

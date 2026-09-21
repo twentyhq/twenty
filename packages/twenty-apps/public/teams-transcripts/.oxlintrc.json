@@ -8,7 +8,6 @@
   "ignorePatterns": ["node_modules", "dist"],
   "rules": {
     "no-unused-vars": "off",
-
     "typescript/no-unused-vars": [
       "warn",
       {
