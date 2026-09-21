@@ -148,7 +148,7 @@ exports[`blocklist scope hooks refuses to null out the workspace member of a mem
   "extensions": {
     "code": "BAD_USER_INPUT",
     "subCode": "BAD_REQUEST",
-    "userFriendlyMessage": "Workspace member cannot be updated.",
+    "userFriendlyMessage": "Organization member cannot be updated.",
   },
   "message": "Workspace member cannot be updated",
 }

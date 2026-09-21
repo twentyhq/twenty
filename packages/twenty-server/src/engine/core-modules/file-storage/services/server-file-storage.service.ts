@@ -52,16 +52,13 @@ export class ServerFileStorageService {
       );
     }
 
-    const filePath = posix.join(
-      fileFolder,
-      applicationRegistrationId,
-      resourcePath,
-    ).replace(/\/+/g, '/');
+    const filePath = posix
+      .join(fileFolder, applicationRegistrationId, resourcePath)
+      .replace(/\/+/g, '/');
 
-    const onStorageFilePath = posix.join(
-      SERVER_FILE_STORAGE_PREFIX,
-      filePath,
-    ).replace(/\/+/g, '/');
+    const onStorageFilePath = posix
+      .join(SERVER_FILE_STORAGE_PREFIX, filePath)
+      .replace(/\/+/g, '/');
 
     validateStoragePathIsWithinServerScopeOrThrow({
       onStoragePath: onStorageFilePath,
