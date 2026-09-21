@@ -23,6 +23,10 @@ const StyledRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledActionSlot = styled.div`
+  flex: 0 0 ${themeCssVariables.spacing[8]};
+`;
+
 const StyledFields = styled.div`
   display: flex;
   flex: 1;
@@ -129,18 +133,21 @@ export const WorkflowClassifyQuestionCriteria = ({
               />
             )}
           </StyledFields>
-          {!readonly &&
-            (hasContent(criterion) || index < visibleRows.length - 1) && (
-              <Button
-                startIcon={<IconTrash />}
-                aria-label={
-                  variant === 'options' ? t`Delete option` : t`Delete level`
-                }
-                onClick={() =>
-                  updateRows(rows.filter((row) => row.id !== criterion.id))
-                }
-              />
-            )}
+          {!readonly && (
+            <StyledActionSlot>
+              {(hasContent(criterion) || index < visibleRows.length - 1) && (
+                <Button
+                  startIcon={<IconTrash />}
+                  aria-label={
+                    variant === 'options' ? t`Delete option` : t`Delete level`
+                  }
+                  onClick={() =>
+                    updateRows(rows.filter((row) => row.id !== criterion.id))
+                  }
+                />
+              )}
+            </StyledActionSlot>
+          )}
         </StyledRow>
       ))}
     </StyledContainer>
