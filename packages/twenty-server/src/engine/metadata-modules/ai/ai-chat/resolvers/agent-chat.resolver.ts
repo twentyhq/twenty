@@ -1,8 +1,10 @@
+import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Args,
+  Int,
   Float,
   Mutation,
   Parent,
@@ -62,6 +64,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 @MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {
   constructor(
+    private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly agentChatService: AgentChatService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
@@ -72,6 +75,50 @@ export class AgentChatResolver {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
   ) {}
+
+  @Mutation(() => Boolean)
+  async attachChatThreadToRecord(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @Args('objectMetadataId', { type: () => UUIDScalarType })
+    objectMetadataId: string,
+    @Args('recordId', { type: () => UUIDScalarType }) recordId: string,
+  ): Promise<boolean> {
+    return this.agentChatThreadTargetService.attach({
+      threadId,
+      objectMetadataId,
+      recordId,
+    });
+  }
+
+  @Mutation(() => Boolean)
+  async detachChatThreadFromRecord(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @Args('objectMetadataId', { type: () => UUIDScalarType })
+    objectMetadataId: string,
+    @Args('recordId', { type: () => UUIDScalarType }) recordId: string,
+  ): Promise<boolean> {
+    return this.agentChatThreadTargetService.detach({
+      threadId,
+      objectMetadataId,
+      recordId,
+    });
+  }
+
+  @Query(() => [AgentChatThreadDTO])
+  async chatThreadsForRecord(
+    @Args('objectMetadataId', { type: () => UUIDScalarType })
+    objectMetadataId: string,
+    @Args('recordId', { type: () => UUIDScalarType }) recordId: string,
+    @Args('limit', { type: () => Int, defaultValue: 50 }) limit: number,
+    @Args('offset', { type: () => Int, defaultValue: 0 }) offset: number,
+  ): Promise<AgentChatThreadEntity[]> {
+    return this.agentChatThreadTargetService.findForRecord({
+      objectMetadataId,
+      recordId,
+      limit,
+      offset,
+    });
+  }
 
   @Query(() => [AgentChatThreadDTO])
   @AllowSuspendedWorkspace()

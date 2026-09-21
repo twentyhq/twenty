@@ -1,3 +1,4 @@
+import { assertNoAgentChatThreadTargets } from 'src/database/commands/agent-history/utils/assert-no-agent-chat-thread-targets.util';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
@@ -86,6 +87,7 @@ export class AgentHistoryMigrationService {
               storage: current.storage,
             });
             if (target === 'core') {
+              await assertNoAgentChatThreadTargets(runner, workspaceId);
               await this.validationService.assertNoCoreIdCollisions({
                 runner,
                 workspaceId,
