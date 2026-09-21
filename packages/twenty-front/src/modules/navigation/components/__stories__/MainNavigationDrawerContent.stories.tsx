@@ -17,6 +17,7 @@ import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecora
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const THREAD = {
+  canManage: true,
   id: '3a36fc8c-c8e2-4f16-a283-24dc05e3704b',
   title: 'Pipeline summary',
   createdAt: '2026-01-01T12:00:00.000Z',
