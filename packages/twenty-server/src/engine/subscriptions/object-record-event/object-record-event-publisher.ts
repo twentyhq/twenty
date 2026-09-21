@@ -120,15 +120,24 @@ export class ObjectRecordEventPublisher {
         continue;
       }
 
-      await this.processObjectRecordStreamEvents({
-        streamChannelId,
-        streamData,
-        workspaceEventBatch: eventBatch,
-        permissionsContext,
-        flatWorkspaceMemberMaps,
-        workspaceMemberIdByUserId,
-        eventRecordAccessGate,
-      });
+      try {
+        await this.processObjectRecordStreamEvents({
+          streamChannelId,
+          streamData,
+          workspaceEventBatch: eventBatch,
+          permissionsContext,
+          flatWorkspaceMemberMaps,
+          workspaceMemberIdByUserId,
+          eventRecordAccessGate,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to process ${eventBatch.name} subscription events for stream ${streamChannelId}, skipping this stream: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+          error instanceof Error ? error.stack : undefined,
+        );
+      }
     }
 
     await this.eventStreamService.removeFromActiveStreams(

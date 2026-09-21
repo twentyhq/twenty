@@ -5,9 +5,11 @@ import {
   FeatureFlagKey,
   FieldMetadataType,
   MetadataReadability,
+  type LeafObjectRecordFilter,
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
   type RecordGqlOperationFilter,
+  type StringFilter,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -1090,6 +1092,73 @@ describe('ObjectRecordEventPublisher', () => {
       expect(
         mockSubscriptionService.publishToEventStream,
       ).not.toHaveBeenCalled();
+    });
+
+    it('should keep delivering to the other streams when one stream filter evaluation throws', async () => {
+      const failingStreamChannelId = 'failing-stream-channel-id';
+      const failingFilterName = 'Broken Filter';
+
+      const buildStreamDataWithFilterName = (
+        filterName: string,
+      ): EventStreamData => ({
+        ...mockStreamData,
+        queries: {
+          'query-1': {
+            objectNameSingular: 'company',
+            variables: {
+              filter: { name: { eq: filterName } },
+            },
+          },
+        },
+      });
+
+      mockEventStreamService.getActiveStreamIds.mockResolvedValue([
+        failingStreamChannelId,
+        streamChannelId,
+      ]);
+
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([
+          [
+            failingStreamChannelId,
+            buildStreamDataWithFilterName(failingFilterName),
+          ],
+          [streamChannelId, buildStreamDataWithFilterName('Test Company')],
+        ]) as Map<string, EventStreamData | undefined>,
+      );
+
+      (
+        isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
+      ).mockImplementation(({ filter }: { filter: LeafObjectRecordFilter }) => {
+        if (
+          (filter.name as StringFilter | undefined)?.eq === failingFilterName
+        ) {
+          throw new TypeError('value.split is not a function');
+        }
+
+        return true;
+      });
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [createMockEvent()],
+      };
+
+      await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).toHaveBeenCalledTimes(1);
+      expect(mockSubscriptionService.publishToEventStream).toHaveBeenCalledWith(
+        expect.objectContaining({
+          eventStreamChannelId: streamChannelId,
+        }),
+      );
+      expect(
+        mockEventStreamService.removeFromActiveStreams,
+      ).toHaveBeenCalledWith(workspaceId, []);
     });
 
     it('should not publish when user has no role assigned', async () => {
