@@ -27,19 +27,19 @@ const StyledEditor = styled.div<{
       readonly
         ? themeCssVariables.font.color.light
         : themeCssVariables.font.color.primary};
-    display: flex;
+    display: ${({ multiline }) => (multiline ? 'block' : 'flex')};
     font-family: ${themeCssVariables.font.family};
     font-weight: ${themeCssVariables.font.weight.regular};
     &::-webkit-scrollbar {
       display: none;
     }
     height: ${({ multiline }) => (multiline ? 'auto' : '100%')};
-    line-height: ${({ multiline }) => (multiline ? '16px' : 'inherit')};
+    overflow-wrap: ${({ multiline }) => (multiline ? 'anywhere' : 'normal')};
     overflow-x: ${({ multiline }) => (multiline ? 'visible' : 'auto')};
     overflow-y: ${({ multiline }) => (multiline ? 'visible' : 'hidden')};
     padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
     scrollbar-width: none;
-    white-space: ${({ multiline }) => (multiline ? 'pre' : 'nowrap')};
+    white-space: ${({ multiline }) => (multiline ? 'pre-wrap' : 'nowrap')};
 
     p.is-editor-empty:first-of-type::before {
       ${FORM_FIELD_PLACEHOLDER_STYLES}
