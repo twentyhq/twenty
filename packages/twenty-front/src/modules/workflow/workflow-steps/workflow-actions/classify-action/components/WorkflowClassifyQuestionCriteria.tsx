@@ -6,7 +6,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { type WorkflowClassifyCriterion } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
-import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button, InputLabel } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -61,28 +60,15 @@ export const WorkflowClassifyQuestionCriteria = ({
   onChange,
 }: WorkflowClassifyQuestionCriteriaProps) => {
   const { t } = useLingui();
-  const minimumRows = variant === 'options' ? 2 : 1;
   const [rows, setRows] = useState(() => [
-    ...criteria,
-    ...Array.from(
-      { length: Math.max(1, minimumRows - criteria.length) },
-      createEmptyCriterion,
-    ),
+    ...criteria.filter(hasContent),
+    createEmptyCriterion(),
   ]);
 
   const updateRows = (updatedRows: WorkflowClassifyCriterion[]) => {
     const filledRows = updatedRows.filter(hasContent);
-    const trailingRow = updatedRows[updatedRows.length - 1];
-    const nextRows = [
-      ...updatedRows,
-      ...(isDefined(trailingRow) && !hasContent(trailingRow)
-        ? []
-        : [createEmptyCriterion()]),
-    ];
-    while (nextRows.length < minimumRows) {
-      nextRows.push(createEmptyCriterion());
-    }
-    setRows(nextRows);
+    const emptyRow = updatedRows.find((row) => !hasContent(row));
+    setRows([...filledRows, emptyRow ?? createEmptyCriterion()]);
     onChange(filledRows);
   };
 
@@ -106,18 +92,12 @@ export const WorkflowClassifyQuestionCriteria = ({
       <InputLabel>
         {variant === 'options' ? t`Options` : t`Levels, lowest first`}
       </InputLabel>
-      {visibleRows.map((criterion, index) => (
+      {visibleRows.map((criterion) => (
         <StyledRow key={criterion.id}>
           <StyledFields>
             <FormTextFieldInput
               defaultValue={criterion.name}
-              placeholder={
-                variant === 'options'
-                  ? index === 0
-                    ? t`Lawyer`
-                    : t`Engineer`
-                  : t`Experienced`
-              }
+              placeholder={variant === 'options' ? t`Engineer` : t`Experienced`}
               readonly={readonly}
               VariablePicker={WorkflowVariablePicker}
               onChange={(name) => changeCriterion(criterion.id, { name })}
@@ -126,9 +106,7 @@ export const WorkflowClassifyQuestionCriteria = ({
               defaultValue={criterion.description ?? ''}
               placeholder={
                 variant === 'options'
-                  ? index === 0
-                    ? t`Advises clients on legal matters`
-                    : t`Designs and builds technical systems`
+                  ? t`Designs and builds technical systems`
                   : t`At least two years of regular React use`
               }
               readonly={readonly}

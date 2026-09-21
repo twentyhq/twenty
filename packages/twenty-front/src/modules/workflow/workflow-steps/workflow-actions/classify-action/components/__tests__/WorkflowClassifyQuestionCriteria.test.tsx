@@ -46,32 +46,40 @@ describe('WorkflowClassifyQuestionCriteria', () => {
     const onChange = jest.fn();
     render(
       <WorkflowClassifyQuestionCriteria
-        criteria={[]}
+        criteria={[
+          {
+            id: 'lawyer',
+            name: 'Lawyer',
+            description: 'Advises clients on legal matters',
+          },
+        ]}
         variant="options"
         readonly={false}
         onChange={onChange}
       />,
     );
     expect(
-      screen.getByPlaceholderText('Designs and builds technical systems'),
+      screen.getAllByPlaceholderText('Designs and builds technical systems')[1],
     ).toBeVisible();
     expect(
-      screen.getAllByRole('button', { name: 'Delete option' })[0],
+      screen.getAllByRole('button', { name: 'Delete option' }).at(-1),
     ).toBeDisabled();
-    const input = screen.getByPlaceholderText('Lawyer');
-    expect(input).toHaveValue('');
-    expect(screen.getByPlaceholderText('Engineer')).toHaveValue('');
+    const input = screen.getByDisplayValue('Lawyer');
+    await user.clear(input);
     await user.type(input, 'Billing');
     expect(input).toHaveFocus();
-    expect(screen.getAllByPlaceholderText('Engineer')).toHaveLength(1);
+    expect(screen.getAllByPlaceholderText('Engineer')).toHaveLength(2);
     expect(onChange).toHaveBeenLastCalledWith([
       expect.objectContaining({ name: 'Billing' }),
     ]);
     expect(
       screen.queryByRole('button', { name: 'Add description' }),
     ).not.toBeInTheDocument();
+    await user.clear(
+      screen.getByDisplayValue('Advises clients on legal matters'),
+    );
     await user.type(
-      screen.getAllByPlaceholderText('Advises clients on legal matters')[0],
+      screen.getAllByPlaceholderText('Designs and builds technical systems')[0],
       'Invoices',
     );
     expect(onChange).toHaveBeenLastCalledWith([
@@ -84,7 +92,7 @@ describe('WorkflowClassifyQuestionCriteria', () => {
     await user.click(deleteButtons[0]);
     expect(onChange).toHaveBeenLastCalledWith([]);
     expect(
-      screen.getAllByRole('button', { name: 'Delete option' })[0],
+      screen.getAllByRole('button', { name: 'Delete option' }).at(-1),
     ).toBeDisabled();
     expect(screen.getAllByPlaceholderText('Engineer')).toHaveLength(1);
   });
@@ -100,7 +108,7 @@ describe('WorkflowClassifyQuestionCriteria', () => {
         onChange={onChange}
       />,
     );
-    await user.clear(screen.getByPlaceholderText('Lawyer'));
+    await user.clear(screen.getByDisplayValue('Billing'));
     expect(onChange).toHaveBeenLastCalledWith([
       { id: 'billing', name: '', description: 'Invoices' },
     ]);

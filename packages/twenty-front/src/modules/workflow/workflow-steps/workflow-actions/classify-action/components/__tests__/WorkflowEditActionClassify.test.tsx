@@ -155,9 +155,9 @@ describe('WorkflowEditActionClassify', () => {
     expect(
       screen.getByPlaceholderText("What is this person's current profession?"),
     ).toHaveValue('');
-    expect(screen.getByPlaceholderText('Engineer')).toHaveValue('');
+    expect(screen.getAllByPlaceholderText('Engineer')[1]).toHaveValue('');
     expect(
-      screen.getByPlaceholderText('Designs and builds technical systems'),
+      screen.getAllByPlaceholderText('Designs and builds technical systems')[1],
     ).toHaveValue('');
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Response type' }),
