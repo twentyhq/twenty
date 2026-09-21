@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { type WorkflowClassifyCriterion } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 import { IconTrash } from 'twenty-ui/icon';
-import { Button, InputLabel } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -88,13 +88,14 @@ export const WorkflowClassifyQuestionCriteria = ({
 
   return (
     <StyledContainer>
-      {variant === 'levels' && (
-        <InputLabel>{t`Levels, lowest first`}</InputLabel>
-      )}
       {visibleRows.map((criterion, index) => (
         <StyledRow key={criterion.id}>
           <FormTextFieldInput
-            label={variant === 'options' ? t`Option ${index + 1}` : undefined}
+            label={
+              variant === 'options'
+                ? t`Option ${index + 1}`
+                : t`Level ${index + 1}`
+            }
             defaultValue={criterion.name}
             placeholder={variant === 'options' ? t`Engineer` : t`Experienced`}
             readonly={readonly}
