@@ -2370,7 +2370,7 @@ type ApplicationHealthCheckResult {
 
 enum ApplicationHealthStatus {
   OK
-  WARNING
+  INFO
   ERROR
   UNKNOWN
 }

@@ -3,7 +3,7 @@ import { isApplicationHealthCheckResult } from '@/application/applicationHealthT
 describe('isApplicationHealthCheckResult', () => {
   it.each([
     [{ status: 'ok' }],
-    [{ status: 'warning', message: 'Key expires soon' }],
+    [{ status: 'info', message: 'Key expires soon' }],
     [
       {
         status: 'error',

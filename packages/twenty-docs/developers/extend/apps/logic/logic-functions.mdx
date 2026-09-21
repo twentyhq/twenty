@@ -852,8 +852,8 @@ The result is a discriminated union, not a boolean:
 
 | Field | Required | Description |
 | --- | --- | --- |
-| `status` | Yes | `ok`, `warning` or `error` |
-| `message` | For `warning` / `error` | Shown in the banner on the app's settings page |
+| `status` | Yes | `ok`, `info` or `error` |
+| `message` | For `info` / `error` | Shown in the banner on the app's settings page |
 | `action` | No | `{ label, location }` for the banner's button. `location` is the settings tab it opens, today `general`, `variables` or `settings`; omit it to land on the app's configuration tab |
 
 Twenty runs the check when the app's settings page opens and shows the result in a banner there. Nothing is stored, so what you report is always what the check just returned.

@@ -1,6 +1,6 @@
 export const APPLICATION_HEALTH_CHECK_REPORTED_STATUSES = [
   'ok',
-  'warning',
+  'info',
   'error',
 ] as const;
 
@@ -33,7 +33,7 @@ export const isApplicationHealthCheckResult = (
     return true;
   }
 
-  if (status !== 'warning' && status !== 'error') {
+  if (status !== 'info' && status !== 'error') {
     return false;
   }
 

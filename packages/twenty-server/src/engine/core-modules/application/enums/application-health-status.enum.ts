@@ -2,7 +2,7 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum ApplicationHealthStatus {
   OK = 'OK',
-  WARNING = 'WARNING',
+  INFO = 'INFO',
   ERROR = 'ERROR',
   UNKNOWN = 'UNKNOWN',
 }

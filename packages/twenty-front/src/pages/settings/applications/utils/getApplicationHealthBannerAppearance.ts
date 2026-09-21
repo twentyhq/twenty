@@ -1,6 +1,6 @@
 import {
   IconAlertCircle,
-  IconAlertTriangle,
+  IconInfoCircle,
   type IconComponent,
 } from 'twenty-ui/icon';
 import { type BannerColor } from 'twenty-ui/primitives/feedback';
@@ -14,9 +14,9 @@ type ApplicationHealthBannerAppearance = {
 const APPEARANCE_BY_STATUS: Partial<
   Record<ApplicationHealthStatus, ApplicationHealthBannerAppearance>
 > = {
-  [ApplicationHealthStatus.WARNING]: {
-    color: 'gray',
-    Icon: IconAlertTriangle,
+  [ApplicationHealthStatus.INFO]: {
+    color: 'blue',
+    Icon: IconInfoCircle,
   },
   [ApplicationHealthStatus.ERROR]: {
     color: 'danger',

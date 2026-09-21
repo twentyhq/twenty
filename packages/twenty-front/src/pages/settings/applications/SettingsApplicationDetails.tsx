@@ -63,8 +63,6 @@ const GENERAL_TAB_ID = 'general';
 const VARIABLES_TAB_ID = 'variables';
 const CUSTOM_SETTINGS_TAB_ID = 'settings';
 
-// The configuration tab is whichever of these the app actually renders, so the
-// banners cannot point at a tab that is absent.
 const CONFIGURATION_TAB_IDS = [CUSTOM_SETTINGS_TAB_ID, VARIABLES_TAB_ID];
 
 export const SettingsApplicationDetails = () => {

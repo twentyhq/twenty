@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isApplicationHealthCheckResult } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,7 +10,7 @@ import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-func
 
 const REPORTED_STATUS_TO_HEALTH_STATUS = {
   ok: ApplicationHealthStatus.OK,
-  warning: ApplicationHealthStatus.WARNING,
+  info: ApplicationHealthStatus.INFO,
   error: ApplicationHealthStatus.ERROR,
 } as const;
 
@@ -22,8 +22,6 @@ const UNKNOWN_HEALTH: ApplicationHealthCheckResultDTO = {
 
 @Injectable()
 export class ApplicationHealthCheckService {
-  private readonly logger = new Logger(ApplicationHealthCheckService.name);
-
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
@@ -70,17 +68,8 @@ export class ApplicationHealthCheckService {
         workspaceId,
         payload: isDefined(version) ? { version } : {},
       })
-      .catch((error) => {
-        this.logger.warn(
-          `Health check ${healthCheckLogicFunctionId} for workspace ${workspaceId} threw: ${error instanceof Error ? error.message : String(error)}`,
-        );
+      .catch(() => null);
 
-        return null;
-      });
-
-    // A health check that fails, times out or reports a shape we cannot read
-    // tells us nothing about the app. Reporting that as an error would paint
-    // every app red whenever a third party has an outage.
     if (!isDefined(executionResult) || isDefined(executionResult.error)) {
       return UNKNOWN_HEALTH;
     }
@@ -88,10 +77,6 @@ export class ApplicationHealthCheckService {
     const { data } = executionResult;
 
     if (!isApplicationHealthCheckResult(data)) {
-      this.logger.warn(
-        `Health check ${healthCheckLogicFunctionId} for workspace ${workspaceId} returned an unreadable result`,
-      );
-
       return UNKNOWN_HEALTH;
     }
 

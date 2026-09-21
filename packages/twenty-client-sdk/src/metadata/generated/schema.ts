@@ -1996,7 +1996,7 @@ export interface ApplicationHealthCheckResult {
     __typename: 'ApplicationHealthCheckResult'
 }
 
-export type ApplicationHealthStatus = 'OK' | 'WARNING' | 'ERROR' | 'UNKNOWN'
+export type ApplicationHealthStatus = 'OK' | 'INFO' | 'ERROR' | 'UNKNOWN'
 
 export interface MarketplaceApp {
     id: Scalars['String']
@@ -10932,7 +10932,7 @@ export const enumCaptchaDriverType = {
 
 export const enumApplicationHealthStatus = {
    OK: 'OK' as const,
-   WARNING: 'WARNING' as const,
+   INFO: 'INFO' as const,
    ERROR: 'ERROR' as const,
    UNKNOWN: 'UNKNOWN' as const
 }
