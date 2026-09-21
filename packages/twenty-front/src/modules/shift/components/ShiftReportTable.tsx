@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconAlertTriangle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

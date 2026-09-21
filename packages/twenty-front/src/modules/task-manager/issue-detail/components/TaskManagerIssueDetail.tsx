@@ -5,9 +5,9 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconArrowLeft, IconBrowserMaximize, IconLink } from 'twenty-ui/icon';
-import { LightIconButton, TabButton } from 'twenty-ui/input';
+import { LightIconButton, TabButton } from 'twenty-ui/components';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

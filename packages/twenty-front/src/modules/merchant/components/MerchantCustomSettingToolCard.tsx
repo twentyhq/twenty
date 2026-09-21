@@ -2,8 +2,8 @@ import { Fragment, useState } from 'react';
 
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Tag, type TagColor } from 'twenty-ui/data-display';
-import { Button } from 'twenty-ui/input';
+import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
@@ -24,7 +24,7 @@ import {
   hasCustomSettingValue,
   parseValueForSave,
 } from '@/merchant/utils/customSettingValueTransforms';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel } from 'twenty-ui/primitives/input';
 import { isDefined } from 'twenty-shared/utils';
 import { FileFolder } from '~/generated-metadata/graphql';
 

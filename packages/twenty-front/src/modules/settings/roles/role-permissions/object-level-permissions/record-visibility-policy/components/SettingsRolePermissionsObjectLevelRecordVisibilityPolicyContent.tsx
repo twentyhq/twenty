@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, IconTrash } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';

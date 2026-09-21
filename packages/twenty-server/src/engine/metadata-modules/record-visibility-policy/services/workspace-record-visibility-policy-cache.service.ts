@@ -7,9 +7,10 @@ import { type RecordVisibilityPoliciesByRoleId } from 'src/engine/twenty-orm/typ
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 
 @Injectable()
-@WorkspaceCache('recordVisibilityPolicies')
+@WorkspaceCache('recordVisibilityPolicies', { packingPonderation: 1 })
 export class WorkspaceRecordVisibilityPolicyCacheService extends WorkspaceCacheProvider<RecordVisibilityPoliciesByRoleId> {
   constructor(
     @InjectWorkspaceScopedRepository(RecordVisibilityPolicyEntity)
@@ -18,9 +19,9 @@ export class WorkspaceRecordVisibilityPolicyCacheService extends WorkspaceCacheP
     super();
   }
 
-  async computeForCache(
-    workspaceId: string,
-  ): Promise<RecordVisibilityPoliciesByRoleId> {
+  async computeForCache({
+    workspaceId,
+  }: WorkspaceCacheProviderContext): Promise<RecordVisibilityPoliciesByRoleId> {
     const policies =
       await this.recordVisibilityPolicyRepository.find(workspaceId);
 

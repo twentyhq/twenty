@@ -3,8 +3,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { computeStandardAppAccessViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-app-access-views.util';
-import { computeStandardAppViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-app-views.util';
 import { computeStandardAttachmentViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-attachment-views.util';
 import { computeStandardBlocklistViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-blocklist-views.util';
 import { computeStandardCalendarChannelEventAssociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-channel-event-association-views.util';
@@ -13,9 +11,7 @@ import { computeStandardCalendarEventViews } from 'src/engine/workspace-manager/
 import { computeStandardCallRecordingViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-call-recording-views.util';
 import { computeStandardCompanyViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-company-views.util';
 import { computeStandardDashboardViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-dashboard-views.util';
-import { computeStandardEpicViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-epic-views.util';
 import { computeStandardMessageCampaignViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-campaign-views.util';
-import { computeStandardMerchantViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-merchant-views.util';
 import { computeStandardMessageChannelMessageAssociationMessageFolderViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-message-folder-views.util';
 import { computeStandardMessageChannelMessageAssociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-views.util';
 import { computeStandardMessageListViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-list-views.util';
@@ -25,17 +21,8 @@ import { computeStandardMessageThreadViews } from 'src/engine/workspace-manager/
 import { computeStandardMessageViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-views.util';
 import { computeStandardNoteTargetViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-note-target-views.util';
 import { computeStandardNoteViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-note-views.util';
-import { computeStandardIssueCommentViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-issue-comment-views.util';
-import { computeStandardIssueViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-issue-views.util';
-import { computeStandardIssueStatusViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-issue-status-views.util';
-import { computeStandardShiftViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-shift-views.util';
-import { computeStandardShiftTemplateViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-shift-template-views.util';
-import { computeStandardSpecialDayViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-special-day-views.util';
-import { computeStandardWorklogViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-worklog-views.util';
 import { computeStandardOpportunityViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-opportunity-views.util';
 import { computeStandardPersonViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-person-views.util';
-import { computeStandardProjectViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-project-views.util';
-import { computeStandardSprintViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-sprint-views.util';
 import { computeStandardTaskTargetViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-task-target-views.util';
 import { computeStandardTaskViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-task-views.util';
 import { computeStandardTimelineActivityViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-timeline-activity-views.util';
@@ -51,8 +38,6 @@ type StandardViewBuilder<P extends AllStandardObjectName> = (
 ) => Record<string, FlatView>;
 
 const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
-  app: computeStandardAppViews,
-  appAccess: computeStandardAppAccessViews,
   attachment: computeStandardAttachmentViews,
   blocklist: computeStandardBlocklistViews,
   calendarChannelEventAssociation:
@@ -75,18 +60,7 @@ const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   note: computeStandardNoteViews,
   noteTarget: computeStandardNoteTargetViews,
   opportunity: computeStandardOpportunityViews,
-  issue: computeStandardIssueViews,
-  issueStatus: computeStandardIssueStatusViews,
-  issueComment: computeStandardIssueCommentViews,
-  worklog: computeStandardWorklogViews,
-  shiftTemplate: computeStandardShiftTemplateViews,
-  specialDay: computeStandardSpecialDayViews,
-  shift: computeStandardShiftViews,
   person: computeStandardPersonViews,
-  project: computeStandardProjectViews,
-  merchant: computeStandardMerchantViews,
-  sprint: computeStandardSprintViews,
-  epic: computeStandardEpicViews,
   task: computeStandardTaskViews,
   taskTarget: computeStandardTaskTargetViews,
   timelineActivity: computeStandardTimelineActivityViews,

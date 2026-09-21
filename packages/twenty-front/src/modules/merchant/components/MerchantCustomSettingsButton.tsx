@@ -4,10 +4,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { v4 as uuidv4 } from 'uuid';
 import { IconSettings } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/input';
-import { Section, SectionAlignment } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
+import { Heading } from 'twenty-ui/primitives/typography';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
@@ -33,9 +35,9 @@ import {
 } from '@/merchant/utils/customSettingValueTransforms';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { InputLabel } from 'twenty-ui/primitives/input';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { FileFolder } from '~/generated-metadata/graphql';
@@ -135,7 +137,7 @@ export const MerchantCustomSettingsButton = ({
   recordId,
 }: MerchantCustomSettingsButtonProps) => {
   const { t } = useLingui();
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
   const mountId = useId();
   const modalInstanceId = getModalInstanceId(recordId, mountId);
   const currentUser = useAtomStateValue(currentUserState);
@@ -210,7 +212,7 @@ export const MerchantCustomSettingsButton = ({
     });
     setSchemaValues(initialValues);
     setActiveTab('settings');
-    openModal(modalInstanceId);
+    openDialog(modalInstanceId);
   };
 
   const handleSchemaValueChange = (key: string, value: CustomSettingValue) => {
@@ -262,7 +264,7 @@ export const MerchantCustomSettingsButton = ({
       updateOneRecordInput: { customSettings: newCustomSettings },
     });
     await refetch();
-    closeModal(modalInstanceId);
+    closeDialog(modalInstanceId);
   };
 
   // Each Run writes a fresh envelope (new runId) under the tool's key; the app
@@ -308,18 +310,19 @@ export const MerchantCustomSettingsButton = ({
         onClick={handleOpen}
       />
       <div onClick={stopClickPropagation} onMouseDown={stopClickPropagation}>
-        <ModalStatefulWrapper
-          modalInstanceId={modalInstanceId}
-          size="medium"
-          isClosable
-          padding="large"
+        <DialogInstance
+          dialogId={modalInstanceId}
+          dismissible
           renderInDocumentBody
         >
-          <StyledModalContent>
-            <H1Title
-              title={t`Custom Settings`}
-              fontColor={H1TitleFontColor.Primary}
-            />
+          {({ container, backdrop, viewportProps, onKeyDown }) => (
+            <Dialog.Popup
+              aria-label={t`Custom settings`}
+              size="md"
+              {...{ container, backdrop, viewportProps, onKeyDown }}
+            >
+              <StyledModalContent>
+            <Heading level={1} size="lg">{t`Custom Settings`}</Heading>
             {showTabBar && (
               <StyledTabBar>
                 <StyledTabButton
@@ -339,7 +342,7 @@ export const MerchantCustomSettingsButton = ({
               </StyledTabBar>
             )}
             <StyledScrollableSection>
-              <Section alignment={SectionAlignment.Center}>
+              <Section.Root align="center">
                 {!hasSchema ? (
                   <InputLabel>
                     {t`No custom settings configured for this app.`}
@@ -394,7 +397,7 @@ export const MerchantCustomSettingsButton = ({
                     })}
                   </StyledContentStack>
                 )}
-              </Section>
+              </Section.Root>
             </StyledScrollableSection>
             <StyledFooter>
               {hasSchema && currentTab === 'settings' ? (
@@ -421,8 +424,10 @@ export const MerchantCustomSettingsButton = ({
                 />
               )}
             </StyledFooter>
-          </StyledModalContent>
-        </ModalStatefulWrapper>
+            </StyledModalContent>
+            </Dialog.Popup>
+          )}
+        </DialogInstance>
       </div>
     </>
   );

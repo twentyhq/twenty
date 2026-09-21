@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button, type SelectOption } from 'twenty-ui/input';
+import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';

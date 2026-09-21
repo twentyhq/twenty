@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';

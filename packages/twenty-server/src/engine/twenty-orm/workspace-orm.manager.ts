@@ -115,8 +115,11 @@ export class WorkspaceOrmManager {
       apiKeyRoleMap,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
-      appScopeGrants,
       recordVisibilityPolicies,
+      // TEMP-FOR-MIGRATE: `appScopeGrants` provider (custom AppAccessModule)
+      // is unwired until the custom backend is ported to the new ORM API.
+      // Upgrade runs as system context which bypasses app-scope checks, so
+      // empty grants are safe here. MUST be restored in the port phase.
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMapsOrm',
@@ -128,7 +131,6 @@ export class WorkspaceOrmManager {
       'apiKeyRoleMap',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
-      'appScopeGrants',
       'recordVisibilityPolicies',
     ]);
 
@@ -152,9 +154,8 @@ export class WorkspaceOrmManager {
       permissionsPerRoleId,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
-      appScopeGrantsByMemberId: appScopeGrants.grantsByMemberId,
-      allObjectRecordsRoleFlagsByRoleId:
-        appScopeGrants.allObjectRecordsRoleFlagsByRoleId,
+      appScopeGrantsByMemberId: {},
+      allObjectRecordsRoleFlagsByRoleId: {},
       recordVisibilityPoliciesByRoleId: recordVisibilityPolicies,
     };
   }

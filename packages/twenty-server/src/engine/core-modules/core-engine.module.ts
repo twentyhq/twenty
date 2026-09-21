@@ -84,8 +84,6 @@ import { CreateCalendarEventModule } from 'src/modules/calendar/calendar-event-c
 import { CallRecordingModule } from 'src/modules/call-recording/call-recording.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
-import { ShiftModule } from 'src/modules/shift/shift.module';
-import { SprintModule } from 'src/modules/sprint/sprint.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
 import { FileApiModule } from './file/file-api.module';
@@ -186,8 +184,6 @@ import { FileApiModule } from './file/file-api.module';
     EventLogsViewerModule,
     PreInstalledAppsModule,
     AppBillingModule,
-    SprintModule,
-    ShiftModule,
   ],
   providers: [
     {

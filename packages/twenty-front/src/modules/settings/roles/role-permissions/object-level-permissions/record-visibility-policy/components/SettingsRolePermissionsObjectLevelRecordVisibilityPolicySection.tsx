@@ -1,6 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/components';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelRecordVisibilityPolicyContent } from '@/settings/roles/role-permissions/object-level-permissions/record-visibility-policy/components/SettingsRolePermissionsObjectLevelRecordVisibilityPolicyContent';
@@ -21,8 +20,8 @@ export const SettingsRolePermissionsObjectLevelRecordVisibilityPolicySection =
     roleId,
   }: SettingsRolePermissionsObjectLevelRecordVisibilityPolicySectionProps) => {
     return (
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Which records can this role see`}
           description={t`Add conditions below to limit which records of this object are visible to this role. This works even without the paid Record-Level feature above.`}
         />
@@ -30,6 +29,6 @@ export const SettingsRolePermissionsObjectLevelRecordVisibilityPolicySection =
           objectMetadataItem={objectMetadataItem}
           roleId={roleId}
         />
-      </Section>
+      </Section.Root>
     );
   };

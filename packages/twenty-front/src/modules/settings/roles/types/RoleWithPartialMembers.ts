@@ -18,5 +18,5 @@ export type PartialWorkspaceMember = Omit<
 export type RoleWithPartialMembers = Omit<Role, 'workspaceMembers'> & {
   workspaceMembers: PartialWorkspaceMember[];
   // Not in the generated Role type yet — see RecordVisibilityPolicy.ts.
-  recordVisibilityPolicies?: RecordVisibilityPolicy[];
+  recordVisibilityPolicies?: RecordVisibilityPolicy[] | null;
 };

@@ -1,6 +1,6 @@
 import { Draggable } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
-import { Avatar, Tag } from 'twenty-ui/data-display';
+import { Avatar, Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';

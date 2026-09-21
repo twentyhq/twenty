@@ -8,7 +8,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { t } from '@lingui/core/macro';
 import {
   computeMorphRelationGqlFieldName,
@@ -59,7 +59,7 @@ export const useUpdateRelationOneToManyFieldInput = () => {
       fieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
-  const { enqueueInfoSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const updateRelation = useCallback(
     async (morphItem: RecordPickerPickableMorphItem) => {
@@ -110,8 +110,9 @@ export const useUpdateRelationOneToManyFieldInput = () => {
         // Target's FK to this record is required (e.g. Worklog.issue), so it can't be
         // detached and left orphaned — unselecting it means deleting it instead.
         await deleteOneTargetRecord(morphItem.recordId);
-        enqueueInfoSnackBar({
-          message: t`This record requires a parent, so it was deleted instead of detached.`,
+        enqueueToast({
+          variant: 'info',
+          children: t`This record requires a parent, so it was deleted instead of detached.`,
         });
       } else {
         await recordOneToManyFieldDetachTargetRecord({
@@ -127,7 +128,7 @@ export const useUpdateRelationOneToManyFieldInput = () => {
     },
     [
       deleteOneTargetRecord,
-      enqueueInfoSnackBar,
+      enqueueToast,
       fieldDefinition.metadata.objectMetadataNameSingular,
       fieldDefinition.metadata.relationObjectMetadataNameSingular,
       fieldDefinition.metadata.targetFieldMetadataName,

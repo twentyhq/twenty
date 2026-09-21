@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

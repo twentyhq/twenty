@@ -8,14 +8,15 @@ import { useLingui } from '@lingui/react/macro';
 import { createPortal } from 'react-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Avatar, Tag } from 'twenty-ui/data-display';
+import { Avatar, Tag } from 'twenty-ui/primitives/data-display';
 import {
   IconDotsVertical,
   IconLink,
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

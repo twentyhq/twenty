@@ -62,7 +62,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
       msg({ message: `Workflows`, context: 'navigationMenuItem.name' }),
     ),
     icon: 'IconSettingsAutomation',
-    position: 7,
+    position: 6,
   },
   workflowsFolderAllWorkflows: {
     universalIdentifier: '20202020-b008-4b08-8b08-c0aba11c0008',
@@ -89,44 +89,6 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     position: 2,
   },
-  taskManager: {
-    universalIdentifier: '20202020-b00b-4b0b-8b0b-c0aba11c000b',
-    type: NavigationMenuItemType.LINK,
-    name: 'Task Manager',
-    link: '/task',
-    icon: 'IconLayoutKanban',
-    position: 8,
-  },
-  shiftTracker: {
-    universalIdentifier: '117117dd-9191-411f-98b8-945c61c9c045',
-    type: NavigationMenuItemType.LINK,
-    name: 'Shifts',
-    link: '/shift',
-    icon: 'IconCalendarClock',
-    position: 9,
-  },
-  allShiftTemplates: {
-    universalIdentifier: 'c8404305-c783-4f36-a31e-336570455584',
-    type: NavigationMenuItemType.OBJECT,
-    viewUniversalIdentifier:
-      STANDARD_OBJECTS.shiftTemplate.views.allShiftTemplates
-        .universalIdentifier,
-    position: 10,
-  },
-  allSpecialDays: {
-    universalIdentifier: '9713ecf5-8a52-4159-8206-9909bbae94d3',
-    type: NavigationMenuItemType.OBJECT,
-    viewUniversalIdentifier:
-      STANDARD_OBJECTS.specialDay.views.allSpecialDays.universalIdentifier,
-    position: 11,
-  },
-  allMerchants: {
-    universalIdentifier: '30e9b078-09a8-4bbe-b42f-5dbebe56fe9b',
-    type: NavigationMenuItemType.OBJECT,
-    viewUniversalIdentifier:
-      STANDARD_OBJECTS.merchant.views.allMerchants.universalIdentifier,
-    position: 12,
-  },
 } as const;
 
 export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
@@ -136,13 +98,7 @@ export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
   allPeople: 'blue',
   allTasks: 'turquoise',
   allNotes: 'turquoise',
-  allIssues: 'turquoise',
-  allMerchants: 'green',
   allOpportunities: 'red',
-  taskManager: 'turquoise',
-  shiftTracker: 'turquoise',
-  allShiftTemplates: 'turquoise',
-  allSpecialDays: 'turquoise',
   workflowsFolder: 'orange',
   allMessageCampaigns: 'gray',
   allDashboards: 'gray',

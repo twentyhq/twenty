@@ -29,12 +29,13 @@ export const ObjectOptionsDropdown = ({
   recordIndexId,
   objectMetadataItem,
   viewType,
-  dropdownId = OBJECT_OPTIONS_DROPDOWN_ID,
+  dropdownId: dropdownIdProp,
 }: ObjectOptionsDropdownProps) => {
   const { currentContentId, handleContentChange, handleResetContent } =
     useDropdownContextCurrentContentId<ObjectOptionsContentId>();
 
-  const dropdownId = getObjectOptionsDropdownId(recordIndexId);
+  const dropdownId =
+    dropdownIdProp ?? getObjectOptionsDropdownId(recordIndexId);
 
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,

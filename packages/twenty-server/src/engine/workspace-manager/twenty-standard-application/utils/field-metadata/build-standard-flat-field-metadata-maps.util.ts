@@ -10,8 +10,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { buildAppAccessStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-app-access-standard-flat-field-metadata.util';
-import { buildAppStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-app-standard-flat-field-metadata.util';
 import { buildAttachmentStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util';
 import { buildBlocklistStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util';
 import { buildCalendarChannelEventAssociationStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util';
@@ -21,7 +19,6 @@ import { buildCalendarEventTargetStandardFlatFieldMetadatas } from 'src/engine/w
 import { buildCallRecordingStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util';
 import { buildCompanyStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util';
 import { buildDashboardStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util';
-import { buildEpicStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-epic-standard-flat-field-metadata.util';
 import { buildMessageCampaignStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util';
 import { buildMessageListStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util';
 import { buildMessageListMemberStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-member-standard-flat-field-metadata.util';
@@ -33,14 +30,6 @@ import { buildMessageThreadStandardFlatFieldMetadatas } from 'src/engine/workspa
 import { buildMessageThreadTargetStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util';
 import { buildNoteStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util';
 import { buildNoteTargetStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util';
-import { buildIssueCommentStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-issue-comment-standard-flat-field-metadata.util';
-import { buildIssueMerchantStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-issue-merchant-standard-flat-field-metadata.util';
-import { buildIssueStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-issue-standard-flat-field-metadata.util';
-import { buildIssueStatusStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-issue-status-standard-flat-field-metadata.util';
-import { buildShiftStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-shift-standard-flat-field-metadata.util';
-import { buildShiftTemplateStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-shift-template-standard-flat-field-metadata.util';
-import { buildSpecialDayStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-special-day-standard-flat-field-metadata.util';
-import { buildWorklogStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-worklog-standard-flat-field-metadata.util';
 import { buildOpportunityStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util';
 import { buildPersonStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util';
 import { buildRecordShareStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util';
@@ -89,14 +78,6 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   note: buildNoteStandardFlatFieldMetadatas,
   noteTarget: buildNoteTargetStandardFlatFieldMetadatas,
   opportunity: buildOpportunityStandardFlatFieldMetadatas,
-  issue: buildIssueStandardFlatFieldMetadatas,
-  issueStatus: buildIssueStatusStandardFlatFieldMetadatas,
-  issueComment: buildIssueCommentStandardFlatFieldMetadatas,
-  issueMerchant: buildIssueMerchantStandardFlatFieldMetadatas,
-  worklog: buildWorklogStandardFlatFieldMetadatas,
-  shiftTemplate: buildShiftTemplateStandardFlatFieldMetadatas,
-  specialDay: buildSpecialDayStandardFlatFieldMetadatas,
-  shift: buildShiftStandardFlatFieldMetadatas,
   person: buildPersonStandardFlatFieldMetadatas,
   recordShare: buildRecordShareStandardFlatFieldMetadatas,
   task: buildTaskStandardFlatFieldMetadatas,

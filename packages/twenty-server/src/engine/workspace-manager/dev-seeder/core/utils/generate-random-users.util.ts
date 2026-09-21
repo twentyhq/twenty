@@ -1,3 +1,5 @@
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 export type RandomUserData = {
   id: string;
   firstName: string;

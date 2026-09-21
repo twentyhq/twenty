@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Button, type SelectOption } from 'twenty-ui/input';
+import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
+import { Heading } from 'twenty-ui/primitives/typography';
 
 import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -115,7 +115,7 @@ export const CancelShiftModal = ({
       renderInDocumentBody
     >
       <StyledContent>
-        <H1Title title={t`Cancel shift`} fontColor={H1TitleFontColor.Primary} />
+        <Heading level={1} size="lg">{t`Cancel shift`}</Heading>
         <StyledSubtitle>{shiftName}</StyledSubtitle>
         {isInProgress && (
           <StyledWarning>{t`This shift is in progress.`}</StyledWarning>

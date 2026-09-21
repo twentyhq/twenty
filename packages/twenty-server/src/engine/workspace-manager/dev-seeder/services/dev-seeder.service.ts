@@ -58,8 +58,6 @@ import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } f
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { type ProjectWorkspaceEntity } from 'src/modules/project/standard-objects/project.workspace-entity';
-import { ProjectPostQueryHookService } from 'src/modules/project/query-hooks/project-post-query-hook.service';
 
 @Injectable()
 export class DevSeederService {
@@ -83,8 +81,6 @@ export class DevSeederService {
     private readonly prefillFrontComponentService: PrefillFrontComponentService,
     private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
     private readonly secretEncryptionService: SecretEncryptionService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly projectPostQueryHookService: ProjectPostQueryHookService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     @InjectRepository(WorkspaceEntity)

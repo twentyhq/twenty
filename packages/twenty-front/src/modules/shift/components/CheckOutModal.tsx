@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
+import { Heading } from 'twenty-ui/primitives/typography';
 
 import { TextArea } from '@/ui/input/components/TextArea';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
@@ -69,7 +69,7 @@ export const CheckOutModal = ({
       renderInDocumentBody
     >
       <StyledContent>
-        <H1Title title={t`Check out`} fontColor={H1TitleFontColor.Primary} />
+        <Heading level={1} size="lg">{t`Check out`}</Heading>
         <StyledSubtitle>{shiftName}</StyledSubtitle>
         <TextArea
           textAreaId={`${modalInstanceId}-handover-note`}

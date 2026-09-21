@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Button, type SelectOption } from 'twenty-ui/input';
+import { Button, type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';

@@ -3,8 +3,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { computeStandardAppAccessViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-app-access-view-fields.util';
-import { computeStandardAppViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-app-view-fields.util';
 import { computeStandardAttachmentViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-attachment-view-fields.util';
 import { computeStandardBlocklistViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-blocklist-view-fields.util';
 import { computeStandardCalendarChannelEventAssociationViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-channel-event-association-view-fields.util';
@@ -13,9 +11,7 @@ import { computeStandardCalendarEventViewFields } from 'src/engine/workspace-man
 import { computeStandardCallRecordingViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-call-recording-view-fields.util';
 import { computeStandardCompanyViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-company-view-fields.util';
 import { computeStandardDashboardViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-dashboard-view-fields.util';
-import { computeStandardEpicViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-epic-view-fields.util';
 import { computeStandardMessageCampaignViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-campaign-view-fields.util';
-import { computeStandardMerchantViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-merchant-view-fields.util';
 import { computeStandardMessageChannelMessageAssociationMessageFolderViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-channel-message-association-message-folder-view-fields.util';
 import { computeStandardMessageChannelMessageAssociationViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-channel-message-association-view-fields.util';
 import { computeStandardMessageListViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-list-view-fields.util';
@@ -25,17 +21,8 @@ import { computeStandardMessageThreadViewFields } from 'src/engine/workspace-man
 import { computeStandardMessageViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-view-fields.util';
 import { computeStandardNoteTargetViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-note-target-view-fields.util';
 import { computeStandardNoteViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-note-view-fields.util';
-import { computeStandardIssueCommentViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-issue-comment-view-fields.util';
-import { computeStandardIssueViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-issue-view-fields.util';
-import { computeStandardIssueStatusViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-issue-status-view-fields.util';
-import { computeStandardShiftViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-shift-view-fields.util';
-import { computeStandardShiftTemplateViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-shift-template-view-fields.util';
-import { computeStandardSpecialDayViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-special-day-view-fields.util';
-import { computeStandardWorklogViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-worklog-view-fields.util';
 import { computeStandardOpportunityViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-opportunity-view-fields.util';
 import { computeStandardPersonViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-person-view-fields.util';
-import { computeStandardProjectViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-project-view-fields.util';
-import { computeStandardSprintViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-sprint-view-fields.util';
 import { computeStandardTaskTargetViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-task-target-view-fields.util';
 import { computeStandardTaskViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-task-view-fields.util';
 import { computeStandardTimelineActivityViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-timeline-activity-view-fields.util';
@@ -51,8 +38,6 @@ type StandardViewFieldBuilder<P extends AllStandardObjectName> = (
 ) => Record<string, FlatViewField>;
 
 const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
-  app: computeStandardAppViewFields,
-  appAccess: computeStandardAppAccessViewFields,
   attachment: computeStandardAttachmentViewFields,
   blocklist: computeStandardBlocklistViewFields,
   calendarChannelEventAssociation:
@@ -75,18 +60,7 @@ const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   note: computeStandardNoteViewFields,
   noteTarget: computeStandardNoteTargetViewFields,
   opportunity: computeStandardOpportunityViewFields,
-  issue: computeStandardIssueViewFields,
-  issueStatus: computeStandardIssueStatusViewFields,
-  issueComment: computeStandardIssueCommentViewFields,
-  worklog: computeStandardWorklogViewFields,
-  shiftTemplate: computeStandardShiftTemplateViewFields,
-  specialDay: computeStandardSpecialDayViewFields,
-  shift: computeStandardShiftViewFields,
   person: computeStandardPersonViewFields,
-  project: computeStandardProjectViewFields,
-  merchant: computeStandardMerchantViewFields,
-  sprint: computeStandardSprintViewFields,
-  epic: computeStandardEpicViewFields,
   task: computeStandardTaskViewFields,
   taskTarget: computeStandardTaskTargetViewFields,
   timelineActivity: computeStandardTimelineActivityViewFields,

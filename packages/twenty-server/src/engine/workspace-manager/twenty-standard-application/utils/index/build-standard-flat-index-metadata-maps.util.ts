@@ -8,8 +8,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { buildAppStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-app-standard-flat-index-metadata.util';
-import { buildAppAccessStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-app-access-standard-flat-index-metadata.util';
 import { buildAttachmentStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-attachment-standard-flat-index-metadata.util';
 import { buildBlocklistStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-blocklist-standard-flat-index-metadata.util';
 import { buildCalendarChannelEventAssociationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-channel-event-association-standard-flat-index-metadata.util';
@@ -18,7 +16,6 @@ import { buildCalendarEventTargetStandardFlatIndexMetadatas } from 'src/engine/w
 import { buildCallRecordingStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-call-recording-standard-flat-index-metadata.util';
 import { buildCompanyStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-company-standard-flat-index-metadata.util';
 import { buildDashboardStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-dashboard-standard-flat-index-metadata.util';
-import { buildEpicStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-epic-standard-flat-index-metadata.util';
 import { buildMessageCampaignStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-campaign-standard-flat-index-metadata.util';
 import { buildMessageListStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-list-standard-flat-index-metadata.util';
 import { buildMessageListMemberStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-list-member-standard-flat-index-metadata.util';
@@ -29,14 +26,6 @@ import { buildMessageStandardFlatIndexMetadatas } from 'src/engine/workspace-man
 import { buildMessageThreadTargetStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-thread-target-standard-flat-index-metadata.util';
 import { buildNoteStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-note-standard-flat-index-metadata.util';
 import { buildNoteTargetStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-note-target-standard-flat-index-metadata.util';
-import { buildIssueCommentStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-issue-comment-standard-flat-index-metadata.util';
-import { buildIssueMerchantStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-issue-merchant-standard-flat-index-metadata.util';
-import { buildIssueStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-issue-standard-flat-index-metadata.util';
-import { buildIssueStatusStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-issue-status-standard-flat-index-metadata.util';
-import { buildShiftStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-shift-standard-flat-index-metadata.util';
-import { buildShiftTemplateStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-shift-template-standard-flat-index-metadata.util';
-import { buildSpecialDayStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-special-day-standard-flat-index-metadata.util';
-import { buildWorklogStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-worklog-standard-flat-index-metadata.util';
 import { buildOpportunityStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-opportunity-standard-flat-index-metadata.util';
 import { buildPersonStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-person-standard-flat-index-metadata.util';
 import { buildRecordShareStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-record-share-standard-flat-index-metadata.util';
@@ -83,14 +72,6 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   note: buildNoteStandardFlatIndexMetadatas,
   noteTarget: buildNoteTargetStandardFlatIndexMetadatas,
   opportunity: buildOpportunityStandardFlatIndexMetadatas,
-  issue: buildIssueStandardFlatIndexMetadatas,
-  issueStatus: buildIssueStatusStandardFlatIndexMetadatas,
-  issueComment: buildIssueCommentStandardFlatIndexMetadatas,
-  issueMerchant: buildIssueMerchantStandardFlatIndexMetadatas,
-  worklog: buildWorklogStandardFlatIndexMetadatas,
-  shiftTemplate: buildShiftTemplateStandardFlatIndexMetadatas,
-  specialDay: buildSpecialDayStandardFlatIndexMetadatas,
-  shift: buildShiftStandardFlatIndexMetadatas,
   person: buildPersonStandardFlatIndexMetadatas,
   recordShare: buildRecordShareStandardFlatIndexMetadatas,
   task: buildTaskStandardFlatIndexMetadatas,

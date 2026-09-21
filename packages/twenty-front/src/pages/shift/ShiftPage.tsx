@@ -6,7 +6,7 @@ import { useContext, useMemo } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

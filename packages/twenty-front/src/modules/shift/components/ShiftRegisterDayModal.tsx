@@ -3,9 +3,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/icon';
-import { Button, Checkbox } from 'twenty-ui/input';
+import { Button, Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
+import { Heading } from 'twenty-ui/primitives/typography';
 
 import { type ShiftDayRegistrationResult } from '@/shift/hooks/useShiftRegistration';
 import { type ShiftTemplateRecord } from '@/shift/hooks/useShiftTemplates';
@@ -199,10 +199,7 @@ export const ShiftRegisterDayModal = ({
       renderInDocumentBody
     >
       <StyledContent>
-        <H1Title
-          title={t`Register shifts`}
-          fontColor={H1TitleFontColor.Primary}
-        />
+        <Heading level={1} size="lg">{t`Register shifts`}</Heading>
         <StyledSubtitle>{dayLabel}</StyledSubtitle>
         {templates.length === 0 ? (
           <StyledEmpty>{t`No shifts available for this day.`}</StyledEmpty>

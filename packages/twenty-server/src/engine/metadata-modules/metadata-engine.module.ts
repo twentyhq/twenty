@@ -3,7 +3,6 @@ import { APP_FILTER } from '@nestjs/core';
 
 import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
-import { AppAccessModule } from 'src/engine/metadata-modules/app-access/app-access.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { AiGenerateTextModule } from 'src/engine/metadata-modules/ai/ai-generate-text/ai-generate-text.module';
 import { AiWorkspaceStatsModule } from 'src/engine/metadata-modules/ai/ai-workspace-stats/ai-workspace-stats.module';
@@ -39,7 +38,6 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 
 @Module({
   imports: [
-    AppAccessModule,
     FieldMetadataModule,
     FrontComponentModule,
     ObjectMetadataModule,

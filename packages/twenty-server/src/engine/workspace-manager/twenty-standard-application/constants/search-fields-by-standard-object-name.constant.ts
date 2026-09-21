@@ -43,31 +43,6 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   ],
   noteTarget: [{ name: 'id', type: FieldMetadataType.UUID }],
   opportunity: [{ name: 'name', type: FieldMetadataType.TEXT }],
-  project: [
-    { name: 'name', type: FieldMetadataType.TEXT },
-    { name: 'key', type: FieldMetadataType.TEXT },
-    { name: 'description', type: FieldMetadataType.RICH_TEXT },
-  ],
-  merchant: [{ name: 'name', type: FieldMetadataType.TEXT }],
-  sprint: [
-    { name: 'name', type: FieldMetadataType.TEXT },
-    { name: 'goal', type: FieldMetadataType.TEXT },
-  ],
-  epic: [{ name: 'name', type: FieldMetadataType.TEXT }],
-  issue: [
-    { name: 'title', type: FieldMetadataType.TEXT },
-    { name: 'issueKey', type: FieldMetadataType.TEXT },
-  ],
-  issueStatus: [{ name: 'name', type: FieldMetadataType.TEXT }],
-  issueComment: [{ name: 'bodyV2', type: FieldMetadataType.RICH_TEXT }],
-  issueMerchant: [{ name: 'id', type: FieldMetadataType.UUID }],
-  worklog: [{ name: 'description', type: FieldMetadataType.TEXT }],
-  shiftTemplate: [
-    { name: 'name', type: FieldMetadataType.TEXT },
-    { name: 'code', type: FieldMetadataType.TEXT },
-  ],
-  specialDay: [{ name: 'name', type: FieldMetadataType.TEXT }],
-  shift: [{ name: 'name', type: FieldMetadataType.TEXT }],
   person: [
     { name: 'name', type: FieldMetadataType.FULL_NAME },
     { name: 'emails', type: FieldMetadataType.EMAILS },

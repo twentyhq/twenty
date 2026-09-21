@@ -3,7 +3,7 @@ import { t } from '@lingui/core/macro';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 import { IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
