@@ -61,17 +61,28 @@ export const WorkflowClassifyQuestionCriteria = ({
   onChange,
 }: WorkflowClassifyQuestionCriteriaProps) => {
   const { t } = useLingui();
-  const [rows, setRows] = useState(() => [...criteria, createEmptyCriterion()]);
+  const minimumRows = variant === 'options' ? 2 : 1;
+  const [rows, setRows] = useState(() => [
+    ...criteria,
+    ...Array.from(
+      { length: Math.max(1, minimumRows - criteria.length) },
+      createEmptyCriterion,
+    ),
+  ]);
 
   const updateRows = (updatedRows: WorkflowClassifyCriterion[]) => {
     const filledRows = updatedRows.filter(hasContent);
     const trailingRow = updatedRows[updatedRows.length - 1];
-    setRows([
+    const nextRows = [
       ...updatedRows,
       ...(isDefined(trailingRow) && !hasContent(trailingRow)
         ? []
         : [createEmptyCriterion()]),
-    ]);
+    ];
+    while (nextRows.length < minimumRows) {
+      nextRows.push(createEmptyCriterion());
+    }
+    setRows(nextRows);
     onChange(filledRows);
   };
 
@@ -101,7 +112,11 @@ export const WorkflowClassifyQuestionCriteria = ({
             <FormTextFieldInput
               defaultValue={criterion.name}
               placeholder={
-                variant === 'options' ? t`e.g. Engineer` : t`e.g. Experienced`
+                variant === 'options'
+                  ? index === 0
+                    ? t`e.g. Lawyer`
+                    : t`e.g. Engineer`
+                  : t`e.g. Experienced`
               }
               readonly={readonly}
               VariablePicker={WorkflowVariablePicker}
@@ -111,7 +126,9 @@ export const WorkflowClassifyQuestionCriteria = ({
               defaultValue={criterion.description ?? ''}
               placeholder={
                 variant === 'options'
-                  ? t`e.g. Designs, builds, or maintains software or technical systems.`
+                  ? index === 0
+                    ? t`e.g. Advises clients on legal matters.`
+                    : t`e.g. Designs, builds, or maintains software or technical systems.`
                   : t`e.g. At least two years of regular React use`
               }
               readonly={readonly}
@@ -124,9 +141,7 @@ export const WorkflowClassifyQuestionCriteria = ({
           {!readonly && (
             <StyledActionSlot>
               <Button
-                disabled={
-                  !hasContent(criterion) && index === visibleRows.length - 1
-                }
+                disabled={!hasContent(criterion)}
                 startIcon={<IconTrash />}
                 aria-label={
                   variant === 'options' ? t`Delete option` : t`Delete level`
