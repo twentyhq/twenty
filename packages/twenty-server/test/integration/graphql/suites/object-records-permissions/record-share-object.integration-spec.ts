@@ -1,3 +1,5 @@
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 /* @license Enterprise */
 
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -97,6 +99,33 @@ describe('recordShare object', () => {
           }),
         ),
       );
+      expect(await readShares()).toHaveLength(3);
+      const manager = getAppProviderByClassName<WorkspaceOrmManager>(
+        'WorkspaceOrmManager',
+      );
+      const runTransaction = manager.runInWorkspaceTransaction.bind(manager);
+      const transactionSpy = jest
+        .spyOn(manager, 'runInWorkspaceTransaction')
+        .mockImplementationOnce(
+          <TResult>(
+            work: (scope: WorkspaceTransactionScope) => Promise<TResult>,
+          ): Promise<TResult> =>
+            runTransaction(async (scope: WorkspaceTransactionScope) => {
+              await work(scope);
+              throw new Error('Abort grant transaction');
+            }),
+        );
+      try {
+        await expect(
+          recordShareService.setManualShare({
+            workspaceId,
+            share,
+            enabled: false,
+          }),
+        ).rejects.toThrow('Abort grant transaction');
+      } finally {
+        transactionSpy.mockRestore();
+      }
       expect(await readShares()).toHaveLength(3);
       await recordShareService.setManualShare({
         workspaceId,
