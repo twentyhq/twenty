@@ -103,7 +103,22 @@ describe('Shared conversation access revocation', () => {
           .some((message) => message.id === 'stream-message'),
       ).toBe(true),
     );
-    act(() => sink.error(denial));
+    act(() => {
+      sink.error(denial);
+      sink.next({
+        data: {
+          onAgentChatEvent: {
+            threadId: 'thread',
+            event: { type: 'keepalive' },
+          },
+        },
+      });
+      send({
+        type: 'text-delta',
+        id: 'text',
+        delta: 'Late content after revocation',
+      });
+    });
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 150));
     });

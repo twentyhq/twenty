@@ -453,6 +453,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       },
       {
         next: (value: ExecutionResult<AgentChatEventPayload>) => {
+          if (disposed || accessDenied) {
+            return;
+          }
           if (isChatAccessDenied(value.errors)) {
             handleAccessDenied();
             return;
@@ -461,7 +464,6 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
           if (isDefined(value.data?.onAgentChatEvent?.event)) {
             if (isGraphqlErrorOfType(store.get(errorAtom), 'NOT_FOUND')) {
-              accessDenied = false;
               store.set(errorAtom, null);
               dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
             }
@@ -471,6 +473,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           }
         },
         error: (errors) => {
+          if (disposed || accessDenied) {
+            return;
+          }
           if (Array.isArray(errors) && isChatAccessDenied(errors)) {
             handleAccessDenied();
           }
