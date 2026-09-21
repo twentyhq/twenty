@@ -283,7 +283,7 @@ export class CoreWorkflowVersionWriteService {
         [lockKey],
       )) as { acquired: boolean }[];
 
-      if (lockResult?.acquired !== true) {
+      if (!lockResult?.acquired) {
         throw new WorkflowQueryValidationException(
           `Core workflow version '${coreWorkflowVersionId}' is being edited concurrently`,
           WorkflowQueryValidationExceptionCode.FORBIDDEN,
