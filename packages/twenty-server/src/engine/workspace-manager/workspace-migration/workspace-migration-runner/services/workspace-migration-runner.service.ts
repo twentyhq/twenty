@@ -4,14 +4,18 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
+import { DataSource, type QueryRunner } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { DeferredWorkspaceMigrationActionEntity } from 'src/engine/metadata-modules/deferred-workspace-migration-action/deferred-workspace-migration-action.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entity-maps-exception-context.util';
@@ -25,16 +29,21 @@ import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/wor
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
+import { DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-max-attempts.constant';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
-import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
+import {
+  RunDeferredWorkspaceMigrationActionsJob,
+  type RunDeferredWorkspaceMigrationActionsJobData,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/jobs/run-deferred-workspace-migration-actions.job';
+import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
+import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 import { collectCreatedObjectMetadataUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/collect-created-object-metadata-universal-identifiers.util';
-import { deduplicateAfterCommitSideEffects } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/deduplicate-after-commit-side-effects.util';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -49,6 +58,9 @@ export class WorkspaceMigrationRunnerService {
     private readonly logger: LoggerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   private getLegacyCacheInvalidation(
@@ -191,7 +203,7 @@ export class WorkspaceMigrationRunnerService {
   run = async (args: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
-    deferSchemaOperations?: boolean;
+    deferWorkspaceMigrationActions?: boolean;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -227,11 +239,11 @@ export class WorkspaceMigrationRunnerService {
   private executeRun = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
-    deferSchemaOperations,
+    deferWorkspaceMigrationActions,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
-    deferSchemaOperations?: boolean;
+    deferWorkspaceMigrationActions?: boolean;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -345,14 +357,14 @@ export class WorkspaceMigrationRunnerService {
     const preallocatedIdByUniversalIdentifierByMetadataName =
       buildPreallocatedIdByUniversalIdentifierFromActions(actions);
 
-    const shouldDeferSchemaOperations =
-      deferSchemaOperations ??
+    const shouldDeferWorkspaceMigrationActions =
+      deferWorkspaceMigrationActions ??
       (await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_DEFERRED_SCHEMA_OPERATIONS_ENABLED,
+        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED,
         workspaceId,
       ));
 
-    const deferSchemaOperationsContext = shouldDeferSchemaOperations
+    const deferredActionsContext = shouldDeferWorkspaceMigrationActions
       ? {
           createdObjectMetadataUniversalIdentifiers:
             collectCreatedObjectMetadataUniversalIdentifiers(actions),
@@ -365,7 +377,7 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.startTransaction();
 
     const allMetadataEvents: MetadataEvent[] = [];
-    const allAfterCommitSideEffects: AfterCommitSideEffect[] = [];
+    const allDeferredActions: DeferredWorkspaceMigrationAction[] = [];
 
     const transactionStart = performance.now();
     let slowestActionMs = 0;
@@ -382,11 +394,7 @@ export class WorkspaceMigrationRunnerService {
 
       for (const action of actions) {
         const actionStart = performance.now();
-        const {
-          partialOptimisticCache,
-          metadataEvents,
-          afterCommitSideEffects,
-        } =
+        const { partialOptimisticCache, metadataEvents, deferredActions } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
               action,
@@ -399,7 +407,7 @@ export class WorkspaceMigrationRunnerService {
                 preallocatedIdByUniversalIdentifierByMetadataName,
                 getSearchFieldMetadatasByTsVectorFieldId:
                   searchFieldMetadatasByTsVectorFieldIdAccessor.get,
-                deferSchemaOperations: deferSchemaOperationsContext,
+                deferredActionsContext,
               },
             },
           );
@@ -430,7 +438,16 @@ export class WorkspaceMigrationRunnerService {
         }
 
         allMetadataEvents.push(...metadataEvents);
-        allAfterCommitSideEffects.push(...afterCommitSideEffects);
+        allDeferredActions.push(...deferredActions);
+      }
+
+      if (shouldDeferWorkspaceMigrationActions) {
+        await this.persistDeferredActions({
+          deferredActions: allDeferredActions,
+          workspaceId,
+          applicationUniversalIdentifier,
+          queryRunner,
+        });
       }
 
       const commitStart = performance.now();
@@ -564,27 +581,11 @@ export class WorkspaceMigrationRunnerService {
       'Runner',
     );
 
-    const afterCommitSideEffectsToRun = deduplicateAfterCommitSideEffects(
-      allAfterCommitSideEffects,
-    );
-
-    const sideEffectResults = await Promise.allSettled(
-      afterCommitSideEffectsToRun.map((sideEffect) =>
-        Promise.resolve().then(() => sideEffect.run()),
-      ),
-    );
-
-    sideEffectResults.forEach((result, index) => {
-      if (result.status === 'rejected') {
-        this.logger.warn(
-          `After-commit side effect failed (${afterCommitSideEffectsToRun[index].description}): ${
-            result.reason instanceof Error
-              ? result.reason.message
-              : String(result.reason)
-          }`,
-          'Runner',
-        );
-      }
+    await this.dispatchDeferredActions({
+      deferredActions: allDeferredActions,
+      shouldDeferWorkspaceMigrationActions,
+      workspaceId,
+      applicationUniversalIdentifier,
     });
 
     const hasSchemaMetadataChanged =
@@ -599,4 +600,75 @@ export class WorkspaceMigrationRunnerService {
       hasSchemaMetadataChanged,
     };
   };
+
+  private async persistDeferredActions({
+    deferredActions,
+    workspaceId,
+    applicationUniversalIdentifier,
+    queryRunner,
+  }: {
+    deferredActions: DeferredWorkspaceMigrationAction[];
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    queryRunner: QueryRunner;
+  }): Promise<void> {
+    if (deferredActions.length === 0) {
+      return;
+    }
+
+    await queryRunner.manager
+      .getRepository(DeferredWorkspaceMigrationActionEntity)
+      .insert(
+        deferredActions.map(({ actionHandlerKey, payload }) => ({
+          workspaceId,
+          applicationUniversalIdentifier,
+          actionHandlerKey,
+          payload,
+        })),
+      );
+  }
+
+  private async dispatchDeferredActions({
+    deferredActions,
+    shouldDeferWorkspaceMigrationActions,
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    deferredActions: DeferredWorkspaceMigrationAction[];
+    shouldDeferWorkspaceMigrationActions: boolean;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    if (deferredActions.length === 0) {
+      return;
+    }
+
+    if (!shouldDeferWorkspaceMigrationActions) {
+      await this.deferredWorkspaceMigrationActionRunnerService.executeInProcess(
+        { deferredActions, workspaceId, applicationUniversalIdentifier },
+      );
+
+      return;
+    }
+
+    try {
+      await this.messageQueueService.add<RunDeferredWorkspaceMigrationActionsJobData>(
+        RunDeferredWorkspaceMigrationActionsJob.name,
+        { workspaceId },
+        {
+          id: `deferred-workspace-migration-actions.${workspaceId}`,
+          retryLimit: DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS - 1,
+          backoff: {
+            strategy: 'exponential',
+            initialDelayMilliseconds: 30_000,
+          },
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to enqueue deferred workspace migration actions for workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+        'Runner',
+      );
+    }
+  }
 }

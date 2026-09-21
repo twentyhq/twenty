@@ -10,7 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
-import { DeferredSchemaOperationModule } from 'src/engine/metadata-modules/deferred-schema-operation/deferred-schema-operation.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { CreateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/create-agent-action-handler.service';
 import { DeleteAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/delete-agent-action-handler.service';
@@ -115,7 +115,7 @@ import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
     WorkspaceSchemaManagerModule,
     SecretEncryptionModule,
     MetricsModule,
-    DeferredSchemaOperationModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     CreateWorkflowActionHandlerService,

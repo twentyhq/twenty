@@ -57,8 +57,8 @@ import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WebhookJobModule } from 'src/engine/metadata-modules/webhook/jobs/webhook-job.module';
-import { DeferredSchemaOperationModule } from 'src/engine/metadata-modules/deferred-schema-operation/deferred-schema-operation.module';
-import { ProcessDeferredSchemaOperationsJob } from 'src/engine/metadata-modules/deferred-schema-operation/jobs/process-deferred-schema-operations.job';
+import { RunDeferredWorkspaceMigrationActionsJob } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/jobs/run-deferred-workspace-migration-actions.job';
+import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { CleanOnboardingWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-onboarding-workspaces.job';
 import { CleanSuspendedWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-suspended-workspaces.job';
@@ -119,7 +119,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     OnboardingModule,
     BillingReminderModule,
     ApplicationRecurringChargeModule,
-    DeferredSchemaOperationModule,
+    WorkspaceMigrationRunnerModule,
   ],
   providers: [
     ApplicationRecurringChargeCronJob,
@@ -146,7 +146,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     TriggerInstallApplicationJob,
     TriggerUninstallApplicationJob,
     WarmUpApplicationLogicFunctionsJob,
-    ProcessDeferredSchemaOperationsJob,
+    RunDeferredWorkspaceMigrationActionsJob,
   ],
 })
 export class JobsModule {

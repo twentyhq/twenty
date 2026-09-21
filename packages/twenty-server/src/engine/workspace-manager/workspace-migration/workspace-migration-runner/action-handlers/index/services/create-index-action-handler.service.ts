@@ -5,20 +5,22 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { DeferredSchemaOperationEntity } from 'src/engine/metadata-modules/deferred-schema-operation/deferred-schema-operation.entity';
-import { DeferredSchemaOperationService } from 'src/engine/metadata-modules/deferred-schema-operation/services/deferred-schema-operation.service';
-import { isIndexCreationDeferrable } from 'src/engine/metadata-modules/deferred-schema-operation/utils/is-index-creation-deferrable.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   type FlatCreateIndexAction,
   type UniversalCreateIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
 import { fromUniversalFlatIndexToFlatIndex } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/from-universal-flat-index-to-flat-index.util';
 import { createIndexInWorkspaceSchema } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
-import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
+import { isIndexCreationDeferrable } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/is-index-creation-deferrable.util';
+import { type DeferredWorkspaceMigrationActionPayload } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
+import { type DeferredWorkspaceMigrationActionExecutionArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-execution-args.type';
+import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
   type WorkspaceMigrationActionRunnerArgs,
   type WorkspaceMigrationActionRunnerContext,
@@ -31,7 +33,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
-    private readonly deferredSchemaOperationService: DeferredSchemaOperationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super();
   }
@@ -74,16 +76,6 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     await indexFieldMetadataRepository.insert(
       flatIndexMetadata.flatIndexFieldMetadatas,
     );
-
-    if (this.shouldDeferIndexCreation(context)) {
-      await queryRunner.manager
-        .getRepository(DeferredSchemaOperationEntity)
-        .insert({
-          workspaceId: flatIndexMetadata.workspaceId,
-          type: 'CREATE_INDEX',
-          indexMetadataId: flatIndexMetadata.id,
-        });
-    }
   }
 
   async executeForWorkspaceSchema(
@@ -115,31 +107,112 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     });
   }
 
-  protected override getAfterCommitSideEffects(
+  protected override getDeferredAction(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>,
-  ): AfterCommitSideEffect[] {
+  ) {
     if (!this.shouldDeferIndexCreation(context)) {
-      return [];
+      return undefined;
     }
 
-    return [
-      {
-        description: `Enqueue deferred schema operations for workspace ${context.workspaceId}`,
-        deduplicationKey: `deferred-schema-operations.${context.workspaceId}`,
-        run: () =>
-          this.deferredSchemaOperationService.enqueueWorkspaceProcessing(
-            context.workspaceId,
-          ),
-      },
-    ];
+    return {
+      actionHandlerKey: 'create_index' as const,
+      payload: { indexMetadataId: context.flatAction.flatEntity.id },
+    };
+  }
+
+  override async executeDeferredAction({
+    workspaceId,
+    payload: { indexMetadataId },
+    attempt,
+    queryRunner,
+  }: DeferredWorkspaceMigrationActionExecutionArgs<
+    DeferredWorkspaceMigrationActionPayload<'create_index'>
+  >): Promise<void> {
+    const { flatIndexMetadata, flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.findIndexInWorkspaceCache({ workspaceId, indexMetadataId });
+
+    if (!isDefined(flatIndexMetadata)) {
+      return;
+    }
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: flatIndexMetadata.objectMetadataId,
+    });
+
+    if (attempt > 1) {
+      const { schemaName } = getWorkspaceSchemaContextForMigration({
+        workspaceId,
+        objectMetadata: flatObjectMetadata,
+      });
+
+      await this.workspaceSchemaManagerService.indexManager.dropIndex({
+        queryRunner,
+        schemaName,
+        indexName: flatIndexMetadata.name,
+        concurrently: true,
+      });
+    }
+
+    await createIndexInWorkspaceSchema({
+      flatIndexMetadata,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+      queryRunner,
+      workspaceId,
+      concurrently: true,
+    });
+  }
+
+  private async findIndexInWorkspaceCache({
+    workspaceId,
+    indexMetadataId,
+    hasRecomputedCache = false,
+  }: {
+    workspaceId: string;
+    indexMetadataId: string;
+    hasRecomputedCache?: boolean;
+  }) {
+    const { flatIndexMaps, flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatIndexMaps',
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
+
+    const flatIndexMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatIndexMaps,
+      flatEntityId: indexMetadataId,
+    });
+
+    if (isDefined(flatIndexMetadata) || hasRecomputedCache) {
+      return {
+        flatIndexMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      };
+    }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatIndexMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
+
+    return this.findIndexInWorkspaceCache({
+      workspaceId,
+      indexMetadataId,
+      hasRecomputedCache: true,
+    });
   }
 
   private shouldDeferIndexCreation({
-    deferSchemaOperations,
+    deferredActionsContext,
     allFlatEntityMaps: { flatFieldMetadataMaps },
     flatAction: { flatEntity: flatIndexMetadata },
   }: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>): boolean {
-    if (!isDefined(deferSchemaOperations)) {
+    if (!isDefined(deferredActionsContext)) {
       return false;
     }
 
@@ -152,7 +225,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
         ),
       }),
       createdObjectMetadataUniversalIdentifiers:
-        deferSchemaOperations.createdObjectMetadataUniversalIdentifiers,
+        deferredActionsContext.createdObjectMetadataUniversalIdentifiers,
     });
   }
 }

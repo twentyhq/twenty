@@ -1,6 +1,6 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { isIndexCreationDeferrable } from 'src/engine/metadata-modules/deferred-schema-operation/utils/is-index-creation-deferrable.util';
+import { isIndexCreationDeferrable } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/is-index-creation-deferrable.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';

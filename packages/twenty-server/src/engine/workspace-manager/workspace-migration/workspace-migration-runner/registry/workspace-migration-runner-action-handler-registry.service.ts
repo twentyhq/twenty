@@ -1,6 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
+import { type QueryRunner } from 'typeorm';
+
 import { BaseWorkspaceMigrationRunnerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import {
@@ -14,6 +16,11 @@ import {
   WorkspaceMigrationActionExecutionException,
   WorkspaceMigrationActionExecutionExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
+import {
+  DeferredWorkspaceMigrationActionException,
+  DeferredWorkspaceMigrationActionExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/deferred-workspace-migration-action.exception';
+import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -94,5 +101,36 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService implements OnM
     const handler = this.getActionHandler(action);
 
     await handler.rollback(context);
+  }
+
+  async executeDeferredActionHandler({
+    deferredAction,
+    workspaceId,
+    applicationUniversalIdentifier,
+    attempt,
+    queryRunner,
+  }: {
+    deferredAction: DeferredWorkspaceMigrationAction;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    attempt: number;
+    queryRunner: QueryRunner;
+  }): Promise<void> {
+    const handler = this.actionHandlers.get(deferredAction.actionHandlerKey);
+
+    if (!handler) {
+      throw new DeferredWorkspaceMigrationActionException(
+        `No migration runner action handler found for deferred action: ${deferredAction.actionHandlerKey}`,
+        DeferredWorkspaceMigrationActionExceptionCode.HANDLER_NOT_FOUND,
+      );
+    }
+
+    await handler.executeDeferredAction({
+      workspaceId,
+      applicationUniversalIdentifier,
+      payload: deferredAction.payload,
+      attempt,
+      queryRunner,
+    });
   }
 }

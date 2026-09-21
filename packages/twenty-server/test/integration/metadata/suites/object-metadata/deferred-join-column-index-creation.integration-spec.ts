@@ -40,22 +40,23 @@ const findJoinColumnIndexes = async (
     [APPLE_WORKSPACE_SCHEMA_NAME, `%("${joinColumnName}")%`],
   );
 
-const findPendingOperationTableNames = async (
+const findPendingIndexCreationTableNames = async (
   objectMetadataNameSingular: string,
 ): Promise<string[]> => {
   const rows: { nameSingular: string }[] = await global.testDataSource.query(
     `SELECT "objectMetadata"."nameSingular"
-     FROM core."deferredSchemaOperation" "deferredSchemaOperation"
+     FROM core."deferredWorkspaceMigrationAction" "deferredAction"
      JOIN core."indexMetadata" "indexMetadata"
-       ON "indexMetadata".id = "deferredSchemaOperation"."indexMetadataId"
+       ON "indexMetadata".id = ("deferredAction".payload ->> 'indexMetadataId')::uuid
      JOIN core."indexFieldMetadata" "indexFieldMetadata"
        ON "indexFieldMetadata"."indexMetadataId" = "indexMetadata".id
      JOIN core."fieldMetadata" "fieldMetadata"
        ON "fieldMetadata".id = "indexFieldMetadata"."fieldMetadataId"
      JOIN core."objectMetadata" "objectMetadata"
        ON "objectMetadata".id = "indexMetadata"."objectMetadataId"
-     WHERE "deferredSchemaOperation"."workspaceId" = $1
-       AND "deferredSchemaOperation".status = 'PENDING'
+     WHERE "deferredAction"."workspaceId" = $1
+       AND "deferredAction"."actionHandlerKey" = 'create_index'
+       AND "deferredAction".status = 'PENDING'
        AND "fieldMetadata"."relationTargetObjectMetadataId" = (
          SELECT id FROM core."objectMetadata"
          WHERE "workspaceId" = $1 AND "nameSingular" = $2
@@ -121,7 +122,8 @@ describe('Deferred join column index creation', () => {
   afterEach(async () => {
     await workspaceQueue.resume();
     await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_DEFERRED_SCHEMA_OPERATIONS_ENABLED,
+      featureFlag:
+        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED,
       value: false,
       expectToFail: false,
     });
@@ -141,9 +143,9 @@ describe('Deferred join column index creation', () => {
   it('should build join column indexes inline when the feature flag is disabled', async () => {
     createdObjectMetadataIds.push(await createObject('inlineIndexedGadget'));
 
-    expect(await findPendingOperationTableNames('inlineIndexedGadget')).toEqual(
-      [],
-    );
+    expect(
+      await findPendingIndexCreationTableNames('inlineIndexedGadget'),
+    ).toEqual([]);
     expect(await findJoinColumnIndexes('targetInlineIndexedGadgetId')).toEqual(
       SYSTEM_RELATION_TABLE_NAMES.map((tablename) => ({
         tablename,
@@ -154,7 +156,8 @@ describe('Deferred join column index creation', () => {
 
   it('should defer join column indexes to the worker when the feature flag is enabled', async () => {
     await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_DEFERRED_SCHEMA_OPERATIONS_ENABLED,
+      featureFlag:
+        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED,
       value: true,
       expectToFail: false,
     });
@@ -163,7 +166,7 @@ describe('Deferred join column index creation', () => {
     createdObjectMetadataIds.push(await createObject('deferredIndexedGadget'));
 
     expect(
-      await findPendingOperationTableNames('deferredIndexedGadget'),
+      await findPendingIndexCreationTableNames('deferredIndexedGadget'),
     ).toEqual(SYSTEM_RELATION_TABLE_NAMES);
     expect(
       await findJoinColumnIndexes('targetDeferredIndexedGadgetId'),
@@ -173,7 +176,7 @@ describe('Deferred join column index creation', () => {
     await waitForAllJobsToFinish();
 
     expect(
-      await findPendingOperationTableNames('deferredIndexedGadget'),
+      await findPendingIndexCreationTableNames('deferredIndexedGadget'),
     ).toEqual([]);
     expect(
       await findJoinColumnIndexes('targetDeferredIndexedGadgetId'),
