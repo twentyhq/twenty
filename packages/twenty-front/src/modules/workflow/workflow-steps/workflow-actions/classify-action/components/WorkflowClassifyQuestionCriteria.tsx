@@ -89,48 +89,55 @@ export const WorkflowClassifyQuestionCriteria = ({
 
   return (
     <StyledContainer>
-      <InputLabel>
-        {variant === 'options' ? t`Options` : t`Levels, lowest first`}
-      </InputLabel>
-      {visibleRows.map((criterion) => (
-        <StyledRow key={criterion.id}>
-          <StyledFields>
-            <FormTextFieldInput
-              defaultValue={criterion.name}
-              placeholder={variant === 'options' ? t`Engineer` : t`Experienced`}
-              readonly={readonly}
-              VariablePicker={WorkflowVariablePicker}
-              onChange={(name) => changeCriterion(criterion.id, { name })}
-            />
-            <FormTextFieldInput
-              defaultValue={criterion.description ?? ''}
-              placeholder={
-                variant === 'options'
-                  ? t`Designs and builds technical systems`
-                  : t`At least two years of regular React use`
-              }
-              readonly={readonly}
-              VariablePicker={WorkflowVariablePicker}
-              onChange={(description) =>
-                changeCriterion(criterion.id, { description })
-              }
-            />
-          </StyledFields>
-          {!readonly && (
-            <StyledActionSlot>
-              <Button
-                disabled={!hasContent(criterion)}
-                startIcon={<IconTrash />}
-                aria-label={
-                  variant === 'options' ? t`Delete option` : t`Delete level`
+      {variant === 'levels' && (
+        <InputLabel>{t`Levels, lowest first`}</InputLabel>
+      )}
+      {visibleRows.map((criterion, index) => (
+        <StyledContainer key={criterion.id}>
+          {variant === 'options' && (
+            <InputLabel>{t`Option ${index + 1}`}</InputLabel>
+          )}
+          <StyledRow>
+            <StyledFields>
+              <FormTextFieldInput
+                defaultValue={criterion.name}
+                placeholder={
+                  variant === 'options' ? t`Engineer` : t`Experienced`
                 }
-                onClick={() =>
-                  updateRows(rows.filter((row) => row.id !== criterion.id))
+                readonly={readonly}
+                VariablePicker={WorkflowVariablePicker}
+                onChange={(name) => changeCriterion(criterion.id, { name })}
+              />
+              <FormTextFieldInput
+                defaultValue={criterion.description ?? ''}
+                placeholder={
+                  variant === 'options'
+                    ? t`Designs and builds technical systems`
+                    : t`At least two years of regular React use`
+                }
+                readonly={readonly}
+                VariablePicker={WorkflowVariablePicker}
+                onChange={(description) =>
+                  changeCriterion(criterion.id, { description })
                 }
               />
-            </StyledActionSlot>
-          )}
-        </StyledRow>
+            </StyledFields>
+            {!readonly && (
+              <StyledActionSlot>
+                <Button
+                  disabled={!hasContent(criterion)}
+                  startIcon={<IconTrash />}
+                  aria-label={
+                    variant === 'options' ? t`Delete option` : t`Delete level`
+                  }
+                  onClick={() =>
+                    updateRows(rows.filter((row) => row.id !== criterion.id))
+                  }
+                />
+              </StyledActionSlot>
+            )}
+          </StyledRow>
+        </StyledContainer>
       ))}
     </StyledContainer>
   );
