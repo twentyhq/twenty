@@ -42,6 +42,18 @@ const codesFor = (
   validateWorkflowClassifyStep(buildStep(input)).map((issue) => issue.code);
 
 describe('validateWorkflowClassifyStep', () => {
+  it.each([
+    ['{{trigger.company.name}}', []],
+    ['Company {{trigger.company.name}}', []],
+    ['Company.inc {{trigger.company.name}}', ['CLASSIFY_INCOMPLETE_QUESTION']],
+  ])('validates the literal part of option %s', (name, expectedCodes) => {
+    const step = buildStep({});
+    step.settings.input.questions[0].criteria[0].name = name;
+    expect(
+      validateWorkflowClassifyStep(step).map((issue) => issue.code),
+    ).toEqual(expectedCodes);
+  });
+
   it('should pass a fully configured step', () => {
     expect(codesFor({})).toEqual([]);
   });

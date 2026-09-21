@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { Fragment, Slice } from '@tiptap/pm/model';
 import type { Editor } from '@tiptap/react';
 
@@ -63,6 +63,56 @@ describe('useTextVariableEditor', () => {
     teardown = unmount;
     return editor;
   };
+
+  describe('placeholder updates', () => {
+    it('refreshes placeholder decorations without recreating the editor or losing content', () => {
+      const onUpdate = jest.fn();
+      const { result, rerender, unmount } = renderHook(
+        ({ placeholder }) =>
+          useTextVariableEditor({
+            placeholder,
+            multiline: false,
+            readonly: false,
+            defaultValue: '',
+            onUpdate,
+          }),
+        { initialProps: { placeholder: 'e.g. profession' } },
+      );
+      teardown = unmount;
+      const editor = result.current!;
+      expect(
+        editor.view.dom
+          .querySelector('[data-placeholder]')
+          ?.getAttribute('data-placeholder'),
+      ).toBe('e.g. profession');
+      rerender({ placeholder: 'e.g. react_experience' });
+      expect(result.current).toBe(editor);
+      expect(
+        editor.view.dom
+          .querySelector('[data-placeholder]')
+          ?.getAttribute('data-placeholder'),
+      ).toBe('e.g. react_experience');
+      expect(onUpdate).not.toHaveBeenCalled();
+      act(() => {
+        editor.commands.insertContent('custom_result');
+      });
+      onUpdate.mockClear();
+      const selection = editor.state.selection.toJSON();
+      rerender({ placeholder: 'e.g. uses_react' });
+      expect(content(editor)).toBe('custom_result');
+      expect(editor.state.selection.toJSON()).toEqual(selection);
+      expect(onUpdate).not.toHaveBeenCalled();
+      act(() => {
+        editor.commands.undo();
+      });
+      expect(content(editor)).toBe('');
+      expect(
+        editor.view.dom
+          .querySelector('[data-placeholder]')
+          ?.getAttribute('data-placeholder'),
+      ).toBe('e.g. uses_react');
+    });
+  });
 
   describe('initialization', () => {
     it('should set content from defaultValue', () => {
