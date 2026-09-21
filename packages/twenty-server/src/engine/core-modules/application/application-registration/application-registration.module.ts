@@ -6,6 +6,7 @@ import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationClaimController } from 'src/engine/core-modules/application/application-registration/application-registration-claim.controller';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
+import { ApplicationRegistrationClaimStateCookieService } from 'src/engine/core-modules/application/application-registration/services/application-registration-claim-state-cookie.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationResolver } from 'src/engine/core-modules/application/application-registration/application-registration.resolver';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -55,6 +56,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
   providers: [
     ApplicationRegistrationService,
     ApplicationRegistrationClaimService,
+    ApplicationRegistrationClaimStateCookieService,
     ApplicationRegistrationResolver,
     ApplicationRegistrationSummaryResolver,
     ApplicationTarballService,

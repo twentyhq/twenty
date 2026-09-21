@@ -7,6 +7,7 @@ import { DataSource } from 'typeorm';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -20,15 +21,34 @@ export class CoreWorkflowVersionListService {
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
+    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
   ) {}
 
   async findManyByWorkspaceWorkflowId({
     workspaceId,
+    userWorkspaceId,
     workspaceWorkflowId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowVersionDTO[]> {
+    const parentCoreWorkflow = await this.coreWorkflowRepository.findOne(
+      workspaceId,
+      { where: { workspaceWorkflowId }, select: { id: true } },
+    );
+
+    if (
+      isDefined(parentCoreWorkflow) &&
+      !(await this.coreWorkflowAccessService.isCoreWorkflowAccessible({
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowId: parentCoreWorkflow.id,
+      }))
+    ) {
+      return [];
+    }
+
     const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
       workspaceId,
       {
@@ -36,6 +56,7 @@ export class CoreWorkflowVersionListService {
         order: { createdAt: 'ASC', id: 'ASC' },
         select: {
           id: true,
+          coreWorkflowId: true,
           status: true,
           createdAt: true,
           updatedAt: true,
@@ -47,6 +68,7 @@ export class CoreWorkflowVersionListService {
     return coreWorkflowVersions
       .map((coreWorkflowVersion, index) => ({
         id: coreWorkflowVersion.id,
+        coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
         label: buildCoreWorkflowVersionLabel(index + 1),
         status: coreWorkflowVersion.status,
         workspaceWorkflowVersionId:
@@ -62,9 +84,11 @@ export class CoreWorkflowVersionListService {
 
   async findOneByWorkspaceWorkflowVersionId({
     workspaceId,
+    userWorkspaceId,
     workspaceWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     workspaceWorkflowVersionId: string;
   }): Promise<CoreWorkflowVersionDTO | null> {
     const coreWorkflowVersion =
@@ -79,15 +103,18 @@ export class CoreWorkflowVersionListService {
 
     return this.findOneByCoreWorkflowVersionId({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowVersionId: coreWorkflowVersion.id,
     });
   }
 
   async findManyByCoreWorkflowId({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowId: string;
   }): Promise<CoreWorkflowVersionDTO[]> {
     const coreWorkflow = await this.coreWorkflowRepository.findOne(
@@ -102,6 +129,10 @@ export class CoreWorkflowVersionListService {
       return [];
     }
 
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
+      { workspaceId, userWorkspaceId, coreWorkflowIds: [coreWorkflowId] },
+    );
+
     const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
       workspaceId,
       {
@@ -109,6 +140,7 @@ export class CoreWorkflowVersionListService {
         order: { createdAt: 'ASC', id: 'ASC' },
         select: {
           id: true,
+          coreWorkflowId: true,
           status: true,
           createdAt: true,
           updatedAt: true,
@@ -120,6 +152,7 @@ export class CoreWorkflowVersionListService {
     return coreWorkflowVersions
       .map((coreWorkflowVersion, index) => ({
         id: coreWorkflowVersion.id,
+        coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
         label: buildCoreWorkflowVersionLabel(index + 1),
         status: coreWorkflowVersion.status,
         workspaceWorkflowVersionId:
@@ -135,9 +168,11 @@ export class CoreWorkflowVersionListService {
 
   async findOneByCoreWorkflowVersionId({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<CoreWorkflowVersionDTO | null> {
     const coreWorkflowVersion =
@@ -148,6 +183,14 @@ export class CoreWorkflowVersionListService {
     if (!isDefined(coreWorkflowVersion?.coreWorkflowId)) {
       return null;
     }
+
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowIds: [coreWorkflowVersion.coreWorkflowId],
+      },
+    );
 
     const coreWorkflow = await this.coreWorkflowRepository.findOne(
       workspaceId,
@@ -165,6 +208,7 @@ export class CoreWorkflowVersionListService {
 
     return {
       id: coreWorkflowVersion.id,
+      coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
       label: buildCoreWorkflowVersionLabel(versionRank),
       status: coreWorkflowVersion.status,
       workspaceWorkflowVersionId:

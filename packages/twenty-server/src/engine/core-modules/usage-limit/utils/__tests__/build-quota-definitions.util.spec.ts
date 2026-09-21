@@ -2,19 +2,22 @@ import { buildQuotaDefinitions } from 'src/engine/core-modules/usage-limit/utils
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 describe('buildQuotaDefinitions', () => {
-  it('exposes only the resources that define a quota', () => {
-    const resourceTypes = buildQuotaDefinitions().map(
-      (definition) => definition.resourceType,
-    );
-
-    expect(resourceTypes).toEqual([UsageResourceType.AI]);
+  it('exposes only resources with quota definitions', () => {
+    expect(
+      buildQuotaDefinitions().map(({ resourceType, limitKind }) => [
+        resourceType,
+        limitKind,
+      ]),
+    ).toEqual([[UsageResourceType.AI, 'quota']]);
   });
 
   it('carries the allow lists a form needs to offer a scope', () => {
-    const [definition] = buildQuotaDefinitions();
+    const quota = buildQuotaDefinitions().find(
+      (definition) => definition.limitKind === 'quota',
+    );
 
-    expect(definition.allowedOperationTypes.length).toBeGreaterThan(0);
-    expect(definition.allowedSpenderTypes).toContain('workspace');
-    expect(definition.allowedMeters).toContain('creditsUsedMicro');
+    expect(quota?.allowedOperationTypes.length).toBeGreaterThan(0);
+    expect(quota?.allowedSpenderTypes).toContain('workspace');
+    expect(quota?.allowedMeters).toContain('creditsUsedMicro');
   });
 });

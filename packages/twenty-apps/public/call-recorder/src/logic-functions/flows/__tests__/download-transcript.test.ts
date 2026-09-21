@@ -33,6 +33,30 @@ describe('downloadTranscript', () => {
     vi.restoreAllMocks();
   });
 
+  it('reports a transcript Recall has deleted', async () => {
+    fetchMock.mockImplementation((url: string) => {
+      if (url === RECALL_TRANSCRIPT_URL) {
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({
+              data: { download_url: null },
+              status: { code: 'deleted' },
+            }),
+            { status: 200 },
+          ),
+        );
+      }
+
+      throw new Error(`Unhandled fetch url in test: ${url}`);
+    });
+
+    const result = await downloadTranscript({
+      transcriptId: 'recall-transcript-1',
+    });
+
+    expect(result).toEqual({ outcome: 'deleted' });
+  });
+
   it('downloads transcript content with a timeout', async () => {
     const transcriptContent = [{ participant: { id: 1 }, words: [] }];
 
@@ -92,5 +116,13 @@ describe('downloadTranscript', () => {
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('socket leaked detail'),
     );
+  });
+  it('settles a pending transcript whose provider resource now returns 404', async () => {
+    fetchMock.mockResolvedValue(new Response('{}', { status: 404 }));
+
+    await expect(
+      downloadTranscript({ transcriptId: 'recall-transcript-1' }),
+    ).resolves.toEqual({ outcome: 'deleted' });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

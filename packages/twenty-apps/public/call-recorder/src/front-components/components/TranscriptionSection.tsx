@@ -21,13 +21,7 @@ import { getApplicationVariableValue } from 'src/front-components/utils/get-appl
 import { serializeRichTextMarkdown } from 'src/front-components/utils/serialize-rich-text-markdown.util';
 import { extractRichTextMarkdown } from 'src/logic-functions/utils/extract-rich-text-markdown.util';
 
-type TranscriptionSectionProps = {
-  frontComponentId: string;
-};
-
-export const TranscriptionSection = ({
-  frontComponentId,
-}: TranscriptionSectionProps) => {
+export const TranscriptionSection = () => {
   const inputId = useId();
   const [providerValue, setProviderValue] = useState(() =>
     getApplicationVariableValue(
@@ -51,17 +45,14 @@ export const TranscriptionSection = ({
 
   const { saveImmediately: saveProviderImmediately } =
     useAutosaveApplicationVariable({
-      frontComponentId,
       variableKey: CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.variableKey,
     });
   const { saveImmediately: saveSummaryEnabledImmediately } =
     useAutosaveApplicationVariable({
-      frontComponentId,
       variableKey: CALL_RECORDER_SUMMARY_ENABLED_ROW.variableKey,
     });
   const { saveDebounced: savePromptDebounced } = useAutosaveApplicationVariable(
     {
-      frontComponentId,
       variableKey: CALL_RECORDER_SUMMARY_PROMPT_FIELD.variableKey,
     },
   );

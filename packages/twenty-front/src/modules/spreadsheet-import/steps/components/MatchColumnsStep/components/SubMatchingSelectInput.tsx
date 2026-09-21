@@ -1,11 +1,12 @@
+import { isDefined } from 'twenty-shared/utils';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useMemo, useRef, useState } from 'react';
-import { type TagColor } from 'twenty-ui/primitives/data-display';
+import { useMemo, useRef, useState, createElement } from 'react';
+import { type TagColor, Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItemSelectTag } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 interface SubMatchingSelectInputProps {
@@ -57,14 +58,25 @@ export const SubMatchingSelectInput = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {optionsInDropDown.map((option) => (
-          <MenuItemSelectTag
+          <ListItem
             key={option.value}
-            selected={selectedOption?.value === option.value}
-            text={option.label}
-            color={(option.color as TagColor) ?? 'transparent'}
             onClick={() => handleOptionChange(option)}
-            LeftIcon={option.Icon}
-          />
+            role="option"
+            aria-selected={selectedOption?.value === option.value}
+            selected={selectedOption?.value === option.value}
+            indicator="check"
+          >
+            <Tag
+              color={(option.color as TagColor) ?? 'transparent'}
+              borderStyle="dashed"
+              variant={'soft'}
+              startIcon={
+                isDefined(option.Icon) ? createElement(option.Icon) : undefined
+              }
+            >
+              {option.label}
+            </Tag>
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>

@@ -15,6 +15,8 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { resolveWorkspaceMemberId } from 'src/engine/core-modules/user-workspace/utils/resolve-workspace-member-id.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -49,8 +51,8 @@ export class ApplicationConnectionsListService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(ConnectionProviderEntity)
-    private readonly oauthProviderRepository: Repository<ConnectionProviderEntity>,
+    @InjectWorkspaceScopedRepository(ConnectionProviderEntity)
+    private readonly oauthProviderRepository: WorkspaceScopedRepository<ConnectionProviderEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -61,8 +63,8 @@ export class ApplicationConnectionsListService {
     requestUserWorkspaceId,
     filter,
   }: ListArgs): Promise<AppConnectionDto[]> {
-    const providers = await this.oauthProviderRepository.find({
-      where: { applicationId, workspaceId },
+    const providers = await this.oauthProviderRepository.find(workspaceId, {
+      where: { applicationId },
     });
 
     const providerById = new Map(providers.map((p) => [p.id, p]));
@@ -149,10 +151,10 @@ export class ApplicationConnectionsListService {
       );
     }
 
-    const provider = await this.oauthProviderRepository.findOneByOrFail({
-      id: account.connectionProviderId,
+    const provider = await this.oauthProviderRepository.findOneOrFail(
       workspaceId,
-    });
+      { where: { id: account.connectionProviderId } },
+    );
 
     const dto = await this.refreshAndMap(
       account,

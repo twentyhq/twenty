@@ -1,9 +1,11 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { type RecordTableWidgetLayoutPickerOption } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type RecordTableWidgetLayoutMenuItemsProps = {
   layoutOptions: RecordTableWidgetLayoutPickerOption[];
@@ -31,18 +33,22 @@ export const RecordTableWidgetLayoutMenuItems = ({
             itemId={viewType}
             onEnter={() => onSelect(viewType)}
           >
-            <MenuItemSelect
-              text={t(label)}
-              LeftIcon={Icon}
+            <ListItem
               disabled={isDisabled}
-              contextualText={
-                isDefined(unavailableReason) ? t(unavailableReason) : undefined
-              }
-              contextualTextPosition="right"
-              selected={selectedViewType === viewType}
               focused={focusedItemId === viewType}
               onClick={() => onSelect(viewType)}
-            />
+              role="option"
+              aria-selected={selectedViewType === viewType}
+              selected={selectedViewType === viewType}
+              indicator="check"
+              description={
+                isDefined(unavailableReason) ? t(unavailableReason) : undefined
+              }
+              descriptionPlacement={'end'}
+              startIcon={<SelectOptionIcon Icon={Icon} />}
+            >
+              <OverflowingTextWithTooltip text={t(label)} />
+            </ListItem>
           </SelectableListItem>
         ),
       )}

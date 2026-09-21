@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
@@ -25,6 +24,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import {
   IconArrowsSort,
   IconChevronLeft,
@@ -33,11 +33,7 @@ import {
   IconLayoutList,
   IconPlus,
 } from 'twenty-ui/icon';
-import {
-  MenuItem,
-  MenuItemNavigate,
-  MenuItemSwitch,
-} from 'twenty-ui/primitives/navigation';
+import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { t } = useLingui();
@@ -173,14 +169,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             itemId="HideEmptyGroups"
             onEnter={() => handleHideEmptyRecordGroupChange()}
           >
-            <MenuItemSwitch
+            <SettingsRow
               focused={selectedItemId === 'HideEmptyGroups'}
-              LeftIcon={IconCircleOff}
+              startIcon={<IconCircleOff />}
               onCheckedChange={handleHideEmptyRecordGroupChange}
               checked={shouldHideEmptyGroups}
-              text={t`Hide empty groups`}
-              size="sm"
-            />
+            >{t`Hide empty groups`}</SettingsRow>
           </SelectableListItem>
         </SelectableList>
       </DropdownMenuItemsContainer>
@@ -222,11 +216,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 itemId="HiddenGroups"
                 onEnter={() => onContentChange('hiddenRecordGroups')}
               >
-                <MenuItemNavigate
+                <ListItem
                   onClick={() => onContentChange('hiddenRecordGroups')}
-                  LeftIcon={IconEyeOff}
-                  text={`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}
-                />
+                  startIcon={<IconEyeOff />}
+                  render={<button type="button" />}
+                  hasSubmenu
+                >{`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}</ListItem>
               </SelectableListItem>
             </SelectableList>
           </DropdownMenuItemsContainer>

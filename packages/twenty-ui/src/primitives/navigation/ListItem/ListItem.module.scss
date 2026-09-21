@@ -4,8 +4,11 @@
   --tw-list-item-hover-background: var(--t-background-transparent-light);
 
   align-items: center;
+  appearance: none;
   background: var(--tw-list-item-background);
+  border: 0;
   border-radius: calc(var(--t-border-radius-md) - var(--t-spacing-1));
+  box-sizing: border-box;
   color: var(--tw-list-item-color);
   cursor: pointer;
   display: flex;
@@ -18,6 +21,7 @@
   padding-block: 0;
   padding-inline: var(--t-spacing-1);
   position: relative;
+  text-align: start;
   transition: background duration(instant) ease;
   user-select: none;
 
@@ -54,6 +58,10 @@
   display: inline-flex;
   flex: none;
 
+  &:empty {
+    display: none;
+  }
+
   > svg {
     block-size: calc(var(--t-icon-size-md) * 1px);
     inline-size: calc(var(--t-icon-size-md) * 1px);
@@ -72,6 +80,7 @@
 }
 
 .text {
+  display: block;
   flex-shrink: 0;
   max-inline-size: 100%;
   overflow: hidden;

@@ -1,3 +1,5 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,7 +10,7 @@ import {
   IconTrash,
   IconUsers,
 } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 
 import { USAGE_LIMIT_RESOURCE_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitResourceTypeIcons';
 import { USAGE_LIMIT_RESOURCE_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitResourceTypeLabels';
@@ -82,20 +84,34 @@ export const SettingsBillingLimitsFilterDropdown = ({
     <DropdownContent>
       {renderBackHeader(t`Usage`)}
       <DropdownMenuItemsContainer>
-        <MenuItemSelect
-          LeftIcon={IconList}
-          text={t`All`}
-          selected={!isDefined(selectedResourceType)}
+        <ListItem
           onClick={() => onSelectResourceType(null)}
-        />
+          role="option"
+          aria-selected={!isDefined(selectedResourceType)}
+          selected={!isDefined(selectedResourceType)}
+          indicator="check"
+          startIcon={<SelectOptionIcon Icon={IconList} />}
+        >
+          <OverflowingTextWithTooltip text={t`All`} />
+        </ListItem>
         {resourceTypes.map((resourceType) => (
-          <MenuItemSelect
+          <ListItem
             key={resourceType}
-            LeftIcon={USAGE_LIMIT_RESOURCE_TYPE_ICONS[resourceType]}
-            text={t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[resourceType])}
-            selected={selectedResourceType === resourceType}
             onClick={() => onSelectResourceType(resourceType)}
-          />
+            role="option"
+            aria-selected={selectedResourceType === resourceType}
+            selected={selectedResourceType === resourceType}
+            indicator="check"
+            startIcon={
+              <SelectOptionIcon
+                Icon={USAGE_LIMIT_RESOURCE_TYPE_ICONS[resourceType]}
+              />
+            }
+          >
+            <OverflowingTextWithTooltip
+              text={t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[resourceType])}
+            />
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>
@@ -105,24 +121,38 @@ export const SettingsBillingLimitsFilterDropdown = ({
     <DropdownContent>
       {renderBackHeader(t`Spender`)}
       <DropdownMenuItemsContainer>
-        <MenuItemSelect
-          LeftIcon={IconList}
-          text={t`All`}
-          selected={!isDefined(selectedSpenderType)}
+        <ListItem
           onClick={() => onSelectSpenderType(null)}
-        />
+          role="option"
+          aria-selected={!isDefined(selectedSpenderType)}
+          selected={!isDefined(selectedSpenderType)}
+          indicator="check"
+          startIcon={<SelectOptionIcon Icon={IconList} />}
+        >
+          <OverflowingTextWithTooltip text={t`All`} />
+        </ListItem>
         {spenderTypes.map((spenderType) => (
-          <MenuItemSelect
+          <ListItem
             key={spenderType}
-            LeftIcon={
-              isKeyOfRecord(USAGE_LIMIT_SPENDER_TYPE_ICONS, spenderType)
-                ? USAGE_LIMIT_SPENDER_TYPE_ICONS[spenderType]
-                : undefined
-            }
-            text={getSpenderTypeLabel(spenderType)}
-            selected={selectedSpenderType === spenderType}
             onClick={() => onSelectSpenderType(spenderType)}
-          />
+            role="option"
+            aria-selected={selectedSpenderType === spenderType}
+            selected={selectedSpenderType === spenderType}
+            indicator="check"
+            startIcon={
+              <SelectOptionIcon
+                Icon={
+                  isKeyOfRecord(USAGE_LIMIT_SPENDER_TYPE_ICONS, spenderType)
+                    ? USAGE_LIMIT_SPENDER_TYPE_ICONS[spenderType]
+                    : undefined
+                }
+              />
+            }
+          >
+            <OverflowingTextWithTooltip
+              text={getSpenderTypeLabel(spenderType)}
+            />
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>

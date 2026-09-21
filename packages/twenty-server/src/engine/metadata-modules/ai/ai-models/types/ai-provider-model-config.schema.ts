@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
-import { AI_MODEL_EFFORTS, DATA_RESIDENCY_KEYS } from 'twenty-shared/ai';
+import {
+  AI_EVALUATION_QUESTION_TYPES,
+  AI_MODEL_EFFORTS,
+  DATA_RESIDENCY_KEYS,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AI_MODEL_KINDS } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.const';
@@ -39,6 +43,15 @@ export const aiProviderModelConfigSchema = z
     benchmarkByEffort: z
       .partialRecord(z.enum(AI_MODEL_EFFORTS), aiModelBenchmarkSchema)
       .optional(),
+    // Evaluation models only. A question type the provider cannot answer is
+    // rejected before any I/O rather than failing mid-run.
+    supportedQuestionTypes: z
+      .array(z.enum(AI_EVALUATION_QUESTION_TYPES))
+      .nonempty()
+      .optional(),
+    maxCriteriaPerQuestion: z.number().int().positive().optional(),
+    maxScoreLevels: z.number().int().min(2).optional(),
+    medianLatencyMs: z.number().positive().optional(),
     isDeprecated: z.boolean().optional(),
   })
   .refine(
@@ -49,6 +62,37 @@ export const aiProviderModelConfigSchema = z
       // free model has to say so with an explicit 0.
       message: 'costPerMinute is required for transcription models',
       path: ['costPerMinute'],
+    },
+  )
+  .refine(
+    (model) =>
+      model.kind !== 'evaluation' || model.supportedQuestionTypes !== undefined,
+    {
+      message: 'supportedQuestionTypes is required for evaluation models',
+      path: ['supportedQuestionTypes'],
+    },
+  )
+  .refine(
+    (model) =>
+      model.kind === 'evaluation' || model.supportedQuestionTypes === undefined,
+    {
+      // Declared on a language model it would advertise a capability nothing
+      // reads, and the model would never reach the evaluation registry.
+      message: 'supportedQuestionTypes is only valid on evaluation models',
+      path: ['supportedQuestionTypes'],
+    },
+  )
+  .refine(
+    (model) =>
+      model.kind !== 'evaluation' ||
+      (model.inputCostPerMillionTokens !== undefined &&
+        model.outputCostPerMillionTokens !== undefined),
+    {
+      // Same rule as transcription: an omitted price bills nothing while the
+      // provider still charges. Jev's free output has to say so with a 0.
+      message:
+        'inputCostPerMillionTokens and outputCostPerMillionTokens are required for evaluation models',
+      path: ['inputCostPerMillionTokens'],
     },
   )
   .superRefine((model, context) => {

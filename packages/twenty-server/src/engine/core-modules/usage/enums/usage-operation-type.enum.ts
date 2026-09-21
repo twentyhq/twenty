@@ -16,6 +16,8 @@ export enum UsageOperationType {
   // would spend the workspace's request budget.
   API_REQUEST = 'API_REQUEST',
   WEBHOOK_CALL = 'WEBHOOK_CALL',
+  STORAGE_FILE = 'STORAGE_FILE',
+  RECORD_WRITE = 'RECORD_WRITE',
   // Platform-raised, once per billing period. Also out of
   // USAGE_OPERATION_TYPES: an app declares the amount, it never charges this.
   SUBSCRIPTION = 'SUBSCRIPTION',

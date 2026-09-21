@@ -11,8 +11,10 @@ type GetRecallBotResult =
 
 export const getRecallBot = async ({
   externalBotId,
+  signal,
 }: {
   externalBotId: string;
+  signal?: AbortSignal;
 }): Promise<GetRecallBotResult> => {
   const configResult = getRecallApiConfig();
 
@@ -22,6 +24,7 @@ export const getRecallBot = async ({
 
   const result = await recallBotApiRequest<Record<string, unknown>>({
     config: configResult.config,
+    signal,
     path: `/bot/${externalBotId}/`,
     method: 'GET',
   });

@@ -1,3 +1,4 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -37,11 +38,11 @@ import {
   IconSwitchHorizontal,
   IconUserPlus,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   MenuItem,
-  MenuItemSelectAvatar,
   UndecoratedLink,
+  ListItem,
 } from 'twenty-ui/primitives/navigation';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
@@ -121,10 +122,12 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           <Dropdown
             clickableComponent={
               <LightIconButton
-                Icon={IconDotsVertical}
-                size="small"
-                accent="tertiary"
-              />
+                size="sm"
+                emphasis="subtle"
+                aria-label={t`More options`}
+              >
+                <IconDotsVertical />
+              </LightIconButton>
             }
             dropdownId="multi-workspace-dropdown-context-menu"
             dropdownComponents={
@@ -170,9 +173,12 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     handleChange(availableWorkspace);
                   }}
                 >
-                  <MenuItemSelectAvatar
-                    text={availableWorkspace.displayName ?? t`(No name)`}
-                    avatar={
+                  <ListItem
+                    role="option"
+                    aria-selected={false}
+                    selected={false}
+                    indicator="check"
+                    startIcon={
                       <Avatar
                         name={availableWorkspace.displayName || ''}
                         src={getAbsoluteImageUrl(
@@ -180,8 +186,11 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                         )}
                       />
                     }
-                    selected={false}
-                  />
+                  >
+                    <OverflowingTextWithTooltip
+                      text={availableWorkspace.displayName ?? t`(No name)`}
+                    />
+                  </ListItem>
                 </UndecoratedLink>
               ))}
             {availableWorkspacesCount > 4 && (

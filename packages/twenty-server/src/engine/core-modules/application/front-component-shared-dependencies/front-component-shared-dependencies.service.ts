@@ -33,12 +33,11 @@ export class FrontComponentSharedDependenciesService {
     fileResponse: FileResponse;
     frontComponentSharedDependenciesChecksum: string | null;
   }> {
-    const application = await this.applicationService.findOneApplicationOrThrow(
-      {
+    const application =
+      await this.applicationService.findOneApplicationWithRelationsOrThrow({
         id: applicationId,
         workspaceId,
-      },
-    );
+      });
 
     if (!isDefined(application.frontComponentSharedDependenciesBuiltPath)) {
       throw new ApplicationException(
