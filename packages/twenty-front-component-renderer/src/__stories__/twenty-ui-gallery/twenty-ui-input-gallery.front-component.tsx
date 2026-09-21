@@ -22,7 +22,6 @@ import {
   Switch,
 } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
-
 import {
   ComponentGallery,
   type GalleryEntry,

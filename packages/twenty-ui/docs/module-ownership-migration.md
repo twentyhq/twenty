@@ -1,6 +1,6 @@
 # Breaking module ownership migration
 
-This change removes the previous exports immediately. Release it as a breaking package change and migrate applications together with the library. The package now exposes 41 primitives and 39 shared React components, including the optional code editor.
+This change removes the previous exports immediately. Release it as a breaking package change and migrate applications together with the library. The package now exposes 41 primitives and 36 shared React components, including the optional code editor.
 
 ## Choosing a module
 
@@ -21,7 +21,7 @@ Source folders group shared components by `data-display`, `feedback`, `input`, `
 
 ### Shared components
 
-`CodeEditor`, `CodeEditorHeader`, `IconButton`, `LightButton`, `MainButton`, `Section`, `SettingsRow`, `TabButton`, `AvatarGroup`, `CommandBlock`, `NotificationCounter`, `Pill`, `TintedIconTile`, `Callout`, `Info`, `InlineBanner`, `Toast`, `ToastProvider`, `Toaster`, `AnimatedLightIconButton`, `CardPicker`, `ColorPickerButton`, `ColorSchemePicker`, `FloatingButton`, `FloatingButtonGroup`, `FloatingIconButton`, `FloatingIconButtonGroup`, `LightIconButton`, `SearchInput`, `JsonTree`, `AnimatedIconCrossfade`, `MenuItem`, `MenuItemAvatar`, `MenuItemDraggable`, `MenuItemSuggestion`, `MenuPicker`, `NavigationBar`, `RoundedLink`, `OverflowingTextWithTooltip`.
+`CodeEditor`, `CodeEditorHeader`, `IconButton`, `LightButton`, `MainButton`, `Section`, `SettingsRow`, `TabButton`, `AvatarGroup`, `CommandBlock`, `NotificationCounter`, `Pill`, `TintedIconTile`, `Callout`, `Info`, `InlineBanner`, `Toast`, `ToastProvider`, `Toaster`, `CardPicker`, `ColorPickerButton`, `ColorSchemePicker`, `FloatingButton`, `FloatingButtonGroup`, `LightIconButton`, `SearchInput`, `JsonTree`, `AnimatedIconCrossfade`, `MenuItem`, `MenuItemAvatar`, `MenuItemDraggable`, `MenuItemSuggestion`, `MenuPicker`, `NavigationBar`, `RoundedLink`, `OverflowingTextWithTooltip`.
 
 ## Interface changes
 
@@ -61,6 +61,7 @@ The table records every removed React export. Internal implementation files are 
 | `AnimatedPlaceholderErrorTitle`         | Frontend ErrorState.Title.                                                                    |
 | `AnimatedPlaceholderErrorSubTitle`      | Frontend ErrorState.Description.                                                              |
 | `SidePanelInformationBanner`            | Frontend side-panel/components/SidePanelInformationBanner.                                    |
+| `AnimatedLightIconButton`               | IconButton for icon actions; application-owned disclosure headers for expandable rows.        |
 | `AnimatedButton`                        | Button composed with AnimatedIconCrossfade.                                                   |
 | `ColorSchemeCard`                       | ColorSchemePicker/internal                                                                    |
 | `IconListViewGrip`                      | object-record/record-table internal asset                                                     |

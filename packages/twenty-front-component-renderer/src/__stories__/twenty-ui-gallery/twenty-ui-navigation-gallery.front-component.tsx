@@ -14,7 +14,6 @@ import { IconHome, IconUser } from 'twenty-ui/icon';
 import { ColorSample, Tag } from 'twenty-ui/primitives/data-display';
 import { ClickToActionLink, ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
-
 import {
   ComponentGallery,
   type GalleryEntry,

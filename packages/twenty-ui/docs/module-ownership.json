@@ -44,7 +44,6 @@
   ],
   "components": [
     "AnimatedIconCrossfade",
-    "AnimatedLightIconButton",
     "AvatarGroup",
     "Callout",
     "CardPicker",
@@ -55,8 +54,6 @@
     "CommandBlock",
     "FloatingButton",
     "FloatingButtonGroup",
-    "FloatingIconButton",
-    "FloatingIconButtonGroup",
     "IconButton",
     "Info",
     "InlineBanner",

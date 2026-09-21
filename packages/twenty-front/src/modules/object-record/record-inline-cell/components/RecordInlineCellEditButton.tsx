@@ -1,10 +1,7 @@
 import { AnimatedContainer } from '@/ui/layout/animation/components/internal/AnimatedContainer/AnimatedContainer';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type IconComponent } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
-import { AnimatedContainer } from 'twenty-ui/primitives/layout';
-import { FloatingIconButton } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
 
 const StyledInlineCellButtonContainer = styled.div`

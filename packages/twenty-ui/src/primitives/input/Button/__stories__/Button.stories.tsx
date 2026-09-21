@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconArrowRight, IconPencil, IconPlus, IconX } from '@ui/icon';
-import { AnimatedIconCrossfade } from '@ui/primitives/layout/AnimatedIconCrossfade/AnimatedIconCrossfade';
+import { AnimatedIconCrossfade } from '@ui/components/layout/AnimatedIconCrossfade/AnimatedIconCrossfade';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
