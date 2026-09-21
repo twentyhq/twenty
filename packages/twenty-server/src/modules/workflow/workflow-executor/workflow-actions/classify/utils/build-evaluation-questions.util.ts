@@ -1,5 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type WorkflowClassifyQuestion } from 'twenty-shared/workflow';
+import {
+  CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER,
+  type WorkflowClassifyQuestion,
+} from 'twenty-shared/workflow';
 
 import {
   AiException,
@@ -16,6 +19,13 @@ const buildChoiceCriteria = (
   const criteria: Record<string, string | null> = {};
 
   for (const criterion of question.criteria) {
+    if (criterion.name.includes(CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER)) {
+      throw new AiException(
+        `Question "${question.name}" has an option containing "${CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER}", which separates a variable path`,
+        AiExceptionCode.INVALID_EVALUATION_REQUEST,
+      );
+    }
+
     if (criterion.name in criteria) {
       throw new AiException(
         `Question "${question.name}" lists the option "${criterion.name}" twice`,

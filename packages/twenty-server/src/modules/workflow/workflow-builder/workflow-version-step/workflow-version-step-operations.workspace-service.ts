@@ -21,7 +21,7 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
@@ -587,9 +587,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.CLASSIFY: {
-        const authContext = getWorkspaceAuthContext();
+        const authContext = workspaceAuthContextStorage.getStore();
         const locale =
-          authContext.type === 'user' ? authContext.user.locale : SOURCE_LOCALE;
+          authContext?.type === 'user'
+            ? authContext.user.locale
+            : SOURCE_LOCALE;
         const i18n = this.i18nService.getI18nInstance(locale);
 
         return {
