@@ -22,7 +22,6 @@ export type { CheckboxProps } from './Checkbox/types/CheckboxProps';
 export type { CheckboxShape } from './Checkbox/types/CheckboxShape';
 export type { CheckboxSize } from './Checkbox/types/CheckboxSize';
 export type { CheckboxVariant } from './Checkbox/types/CheckboxVariant';
-export { ColorPickerButton } from './ColorPickerButton/ColorPickerButton';
 export type {
   ColorSchemeSegmentProps,
   ColorSchemeCardProps,
@@ -31,14 +30,6 @@ export { ColorSchemeCard } from './ColorSchemeCard/ColorSchemeCard';
 export type { ColorSchemePickerProps } from './ColorSchemePicker/ColorSchemePicker';
 export { ColorSchemePicker } from './ColorSchemePicker/ColorSchemePicker';
 export { Field } from './Field/Field';
-export type {
-  FloatingButtonSize,
-  FloatingButtonPosition,
-  FloatingButtonProps,
-} from './FloatingButton/FloatingButton';
-export { FloatingButton } from './FloatingButton/FloatingButton';
-export type { FloatingButtonGroupProps } from './FloatingButtonGroup/FloatingButtonGroup';
-export { FloatingButtonGroup } from './FloatingButtonGroup/FloatingButtonGroup';
 export { IconListViewGrip } from './IconListViewGrip/IconListViewGrip';
 export { Input } from './Input/Input';
 export type { InputProps } from './Input/types/InputProps';
