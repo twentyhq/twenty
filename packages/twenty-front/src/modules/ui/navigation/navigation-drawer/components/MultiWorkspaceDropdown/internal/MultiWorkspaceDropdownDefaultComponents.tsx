@@ -1,3 +1,4 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -40,8 +41,8 @@ import {
 import { LightIconButton } from 'twenty-ui/components';
 import {
   MenuItem,
-  MenuItemSelectAvatar,
   UndecoratedLink,
+  ListItem,
 } from 'twenty-ui/primitives/navigation';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
@@ -172,9 +173,12 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     handleChange(availableWorkspace);
                   }}
                 >
-                  <MenuItemSelectAvatar
-                    text={availableWorkspace.displayName ?? t`(No name)`}
-                    avatar={
+                  <ListItem
+                    role="option"
+                    aria-selected={false}
+                    selected={false}
+                    indicator="check"
+                    startIcon={
                       <Avatar
                         name={availableWorkspace.displayName || ''}
                         src={getAbsoluteImageUrl(
@@ -182,8 +186,11 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                         )}
                       />
                     }
-                    selected={false}
-                  />
+                  >
+                    <OverflowingTextWithTooltip
+                      text={availableWorkspace.displayName ?? t`(No name)`}
+                    />
+                  </ListItem>
                 </UndecoratedLink>
               ))}
             {availableWorkspacesCount > 4 && (

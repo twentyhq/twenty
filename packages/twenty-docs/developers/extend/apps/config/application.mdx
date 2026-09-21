@@ -27,6 +27,13 @@ export default defineApplication({
       value: 'Jane Doe',
       isSecret: false,
     },
+    API_KEY: {
+      universalIdentifier: '6b1f5a02-7c4d-4a19-9e63-2f0c8a5d1b47',
+      label: 'API key',
+      description: 'Key used to reach the postcard provider',
+      isSecret: true,
+      isRequired: true,
+    },
   },
 });
 ```
@@ -40,8 +47,9 @@ Notes:
 - Pre-install, post-install, and uninstall functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
 - Passing `defaultRoleUniversalIdentifier` explicitly is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`.
 - `serverVariables` are instance-scoped configuration and secrets (e.g. API keys). Unlike `applicationVariables`, they declare no value in the manifest — the workspace operator fills them in from the app's settings, and they are injected into logic functions only once set.
+- Both kinds of variable accept `isRequired: true`. A required variable the workspace has not filled in yet leaves the app unconfigured: its settings page shows a banner naming the missing variables, with a button that jumps to the tab where they are set. Mark as required only what the app genuinely cannot run without — an optional variable with a sensible default should stay optional.
 - Both kinds of variable accept `isDeprecated: true`. Use it to retire a variable instead of deleting it: keeping the key declared preserves the stored value (deleting it destroys the value the operator entered), and the variable is still injected, so your code can fall back to it — `process.env.NEW_API_KEY ?? process.env.API_KEY`. A deprecated variable disappears from the app's settings once it has no value, and never counts toward the app's configuration check, so `isDeprecated` beats `isRequired`.
-- To render a custom configuration UI as the app's **Settings** tab (in place of the default **Variables** tab), declare a front component with [`defineSettingsFrontComponent()`](/developers/extend/apps/layout/front-components#custom-settings-component) in its own file. Only one is allowed per app. System-managed sections (auto-upgrade, App URL, connections) stay in the app's **General** tab.
+- To render a custom configuration UI as the app's **Settings** tab (in place of the default **Variables** tab), declare a front component with [`defineSettingsFrontComponent()`](/developers/extend/apps/layout/front-components#custom-settings-component) in its own file. Only one is allowed per app. System-managed sections (auto-upgrade, App URL, connections) stay in the app's **General** tab, where App URL only shows with **Advanced mode** on.
 
 ## Variable types
 

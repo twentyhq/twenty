@@ -1,3 +1,4 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -5,7 +6,7 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItemSelectAvatar } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type RecordTableWidgetRelationPickerMenuItemProps = {
@@ -32,12 +33,14 @@ export const RecordTableWidgetRelationPickerMenuItem = ({
       itemId={relationRecord.id}
       onEnter={() => onSelect(relationRecord.id)}
     >
-      <MenuItemSelectAvatar
+      <ListItem
         onClick={() => onSelect(relationRecord.id)}
-        text={relationRecord.name}
-        selected={false}
         focused={isSelectedItemId}
-        avatar={
+        role="option"
+        aria-selected={false}
+        selected={false}
+        indicator="check"
+        startIcon={
           <Avatar
             src={getAbsoluteImageUrl(relationRecord.avatarUrl)}
             colorSeed={relationRecord.id}
@@ -46,7 +49,9 @@ export const RecordTableWidgetRelationPickerMenuItem = ({
             shape={relationRecord.avatarShape ?? 'circle'}
           />
         }
-      />
+      >
+        <OverflowingTextWithTooltip text={relationRecord.name} />
+      </ListItem>
     </SelectableListItem>
   );
 };

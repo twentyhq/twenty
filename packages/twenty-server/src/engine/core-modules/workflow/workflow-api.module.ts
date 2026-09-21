@@ -16,6 +16,7 @@ import { WorkflowVersionStepResolver } from 'src/engine/core-modules/workflow/re
 import { WorkflowVersionResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version.resolver';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
 import { CoreWorkflowServicesModule } from 'src/engine/core-modules/workflow/core-workflow-services.module';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
@@ -45,6 +46,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     CacheLockModule,
     CacheStorageModule,
     CommandMenuItemModule,
+    CoreWorkflowAccessModule,
     WorkflowCoreModule,
     WorkflowTriggerModule,
     WorkflowBuilderModule,

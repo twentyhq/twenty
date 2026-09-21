@@ -41,7 +41,9 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
 
   beforeEach(() => {
     fileStorageService = {
-      copy: jest.fn().mockResolvedValue(undefined),
+      copyFile: jest
+        .fn()
+        .mockImplementation(async ({ fileId }) => ({ id: fileId })),
     } as unknown as jest.Mocked<FileStorageService>;
 
     applicationRepository = {
@@ -59,9 +61,6 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
 
     fileRepository = {
       findOne: jest.fn().mockResolvedValue(null),
-      insertAndReturnOne: jest
-        .fn()
-        .mockImplementation(async (_workspaceId, entity) => entity),
     } as unknown as jest.Mocked<WorkspaceScopedRepository<FileEntity>>;
   });
 
@@ -78,7 +77,7 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
       }),
     ).rejects.toThrow(`File ${chatFileId} not found`);
 
-    expect(fileStorageService.copy).not.toHaveBeenCalled();
+    expect(fileStorageService.copyFile).not.toHaveBeenCalled();
   });
 
   it('should throw when the upload has not been completed', async () => {
@@ -94,7 +93,7 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
       }),
     ).rejects.toThrow(`File ${chatFileId} upload has not been completed`);
 
-    expect(fileStorageService.copy).not.toHaveBeenCalled();
+    expect(fileStorageService.copyFile).not.toHaveBeenCalled();
   });
 
   it('should copy an agent-chat file into the files field partition', async () => {
@@ -106,9 +105,9 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
       fieldMetadataId,
     });
 
-    expect(fileStorageService.copy).toHaveBeenCalledTimes(1);
+    expect(fileStorageService.copyFile).toHaveBeenCalledTimes(1);
 
-    const copyArgs = fileStorageService.copy.mock.calls[0][0];
+    const copyArgs = fileStorageService.copyFile.mock.calls[0][0];
 
     expect(copyArgs.from).toEqual({
       workspaceId,
@@ -125,23 +124,14 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
       /^field-universal-identifier\/[0-9a-f-]{36}\.pdf$/,
     );
 
-    expect(fileRepository.insertAndReturnOne).toHaveBeenCalledTimes(1);
-
-    const [insertWorkspaceId, insertedRow] =
-      fileRepository.insertAndReturnOne.mock.calls[0];
-
-    expect(insertWorkspaceId).toBe(workspaceId);
-    expect(insertedRow.path).toBe(`files-field/${copyArgs.to.resourcePath}`);
-    expect(insertedRow.applicationId).toBe('field-application-id');
-    expect(insertedRow.mimeType).toBe('application/pdf');
-    expect(insertedRow.size).toBe(1234);
-    expect(insertedRow.settings).toEqual({
-      isTemporaryFile: true,
-      toDelete: false,
+    expect(copyArgs).toMatchObject({
+      applicationId: 'field-application-id',
+      mimeType: 'application/pdf',
+      size: 1234,
+      settings: { isTemporaryFile: true, toDelete: false },
     });
-
-    expect(insertedRow.id).not.toBe(chatFileId);
-    expect(result.id).toBe(insertedRow.id);
+    expect(copyArgs.fileId).not.toBe(chatFileId);
+    expect(result.id).toBe(copyArgs.fileId);
   });
 
   it('should keep the source extension when copying', async () => {
@@ -155,8 +145,8 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
       fieldMetadataId,
     });
 
-    expect(fileStorageService.copy.mock.calls[0][0].to.resourcePath).toMatch(
-      /\.csv$/,
-    );
+    expect(
+      fileStorageService.copyFile.mock.calls[0][0].to.resourcePath,
+    ).toMatch(/\.csv$/);
   });
 });

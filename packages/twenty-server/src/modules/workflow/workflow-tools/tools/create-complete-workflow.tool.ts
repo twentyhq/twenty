@@ -125,6 +125,7 @@ Call validate_workflow once when the workflow is complete, before activating.`,
         await deps.coreWorkflowMutationService.createWorkflow({
           workspaceId,
           createdBy: context.actorContext ?? DEFAULT_AGENT_WORKFLOW_ACTOR,
+          userWorkspaceId: undefined,
           name: parameters.name,
         });
 

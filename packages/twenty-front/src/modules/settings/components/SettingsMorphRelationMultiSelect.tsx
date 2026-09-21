@@ -1,3 +1,5 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { Fragment, useMemo, useRef, useState, type MouseEvent } from 'react';
@@ -25,7 +27,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBox, type IconComponent } from 'twenty-ui/icon';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/primitives/navigation';
+import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectSizeVariant = 'small' | 'default';
@@ -244,7 +246,7 @@ export const SettingsMorphRelationMultiSelect = ({
                 <DropdownMenuSeparator />
               )}
               {!!filteredOptions.length && (
-                <DropdownMenuItemsContainer hasMaxHeight>
+                <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
                   <SelectableList
                     selectableListInstanceId={dropdownId}
                     focusId={dropdownId}
@@ -274,20 +276,22 @@ export const SettingsMorphRelationMultiSelect = ({
                             closeDropdown(dropdownId);
                           }}
                         >
-                          <MenuItemMultiSelect
+                          <ListItem
                             className=""
-                            LeftIcon={option.Icon ?? undefined}
-                            iconThemeColor={option.iconThemeColor}
-                            text={option.label}
+                            focused={selectedItemId === option.objectMetadataId}
+                            role="option"
+                            aria-selected={selectedObjectMetadataIds.some(
+                              (selectedObjectMetadataId) =>
+                                selectedObjectMetadataId ===
+                                option.objectMetadataId,
+                            )}
                             selected={selectedObjectMetadataIds.some(
                               (selectedObjectMetadataId) =>
                                 selectedObjectMetadataId ===
                                 option.objectMetadataId,
                             )}
-                            isKeySelected={
-                              selectedItemId === option.objectMetadataId
-                            }
-                            onSelectChange={() => {
+                            indicator="checkbox"
+                            onClick={() => {
                               const newSelectedObjectMetadataIds =
                                 addOrRemoveFromArray(
                                   localSelectedObjectMetadataIds,
@@ -299,7 +303,15 @@ export const SettingsMorphRelationMultiSelect = ({
                               onChange?.(newSelectedObjectMetadataIds);
                               onBlur?.();
                             }}
-                          />
+                            startIcon={
+                              <SelectOptionIcon
+                                Icon={option.Icon ?? undefined}
+                                color={option.iconThemeColor}
+                              />
+                            }
+                          >
+                            <OverflowingTextWithTooltip text={option.label} />
+                          </ListItem>
                         </SelectableListItem>
                       </Fragment>
                     ))}

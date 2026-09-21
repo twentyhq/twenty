@@ -5,6 +5,7 @@ import { type FileStorageDriverFactory } from 'src/engine/core-modules/file-stor
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
@@ -36,6 +37,10 @@ describe('FileStorageService', () => {
       } as unknown as FileStorageDriverFactory,
       fileRepository as unknown as WorkspaceScopedRepository<FileEntity>,
       {} as WorkspaceCacheService,
+      {
+        assertStockAvailable: jest.fn().mockResolvedValue(undefined),
+        acquireStock: jest.fn().mockResolvedValue(undefined),
+      } as unknown as UsageLimitStockService,
     );
 
     return { service, fileRepository, transactionRepository };

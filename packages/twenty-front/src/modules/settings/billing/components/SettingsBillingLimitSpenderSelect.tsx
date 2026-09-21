@@ -1,12 +1,11 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import {
-  MenuItemSelect,
-  MenuItemSelectAvatar,
-} from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingLimitNestedSelect } from '@/settings/billing/components/internal/SettingsBillingLimitNestedSelect';
@@ -150,11 +149,14 @@ export const SettingsBillingLimitSpenderSelect = ({
 
     if (AVATAR_SPENDER_TYPES.includes(kind)) {
       return (
-        <MenuItemSelectAvatar
+        <ListItem
           key={option.id}
-          text={option.label}
+          onClick={() => handleSelect(kind, option.id)}
+          role="option"
+          aria-selected={selected}
           selected={selected}
-          avatar={
+          indicator="check"
+          startIcon={
             <Avatar
               name={option.label}
               src={option.avatarUrl}
@@ -162,31 +164,52 @@ export const SettingsBillingLimitSpenderSelect = ({
               size="md"
             />
           }
-          onClick={() => handleSelect(kind, option.id)}
-        />
+        >
+          <OverflowingTextWithTooltip text={option.label} />
+        </ListItem>
       );
     }
 
     return (
-      <MenuItemSelect
+      <ListItem
         key={option.id}
-        LeftIcon={USAGE_LIMIT_SPENDER_TYPE_ICONS[kind]}
-        text={option.label}
-        selected={selected}
         onClick={() => handleSelect(kind, option.id)}
-      />
+        role="option"
+        aria-selected={selected}
+        selected={selected}
+        indicator="check"
+        startIcon={
+          <SelectOptionIcon Icon={USAGE_LIMIT_SPENDER_TYPE_ICONS[kind]} />
+        }
+      >
+        <OverflowingTextWithTooltip text={option.label} />
+      </ListItem>
     );
   };
 
   const renderOptionList = (kind: UsageLimitSpenderType) => (
     <>
-      <MenuItemSelect
-        text={t(USAGE_LIMIT_SPENDER_TYPE_POOL_LABELS[kind])}
-        selected={spenderType === kind && spenderId === ''}
+      <ListItem
         onClick={() => handleSelect(kind, '')}
-      />
+        role="option"
+        aria-selected={spenderType === kind && spenderId === ''}
+        selected={spenderType === kind && spenderId === ''}
+        indicator="check"
+      >
+        <OverflowingTextWithTooltip
+          text={t(USAGE_LIMIT_SPENDER_TYPE_POOL_LABELS[kind])}
+        />
+      </ListItem>
       {loading ? (
-        <MenuItemSelect text={t`Loading…`} selected={false} disabled />
+        <ListItem
+          disabled
+          role="option"
+          aria-selected={false}
+          selected={false}
+          indicator="check"
+        >
+          <OverflowingTextWithTooltip text={t`Loading…`} />
+        </ListItem>
       ) : (
         listedSpenderOptions.map((option) => renderOption(kind, option))
       )}
@@ -224,11 +247,14 @@ export const SettingsBillingLimitSpenderSelect = ({
     <DropdownContent>
       {isDefined(workspaceGroup) && (
         <DropdownMenuItemsContainer>
-          <MenuItemSelectAvatar
-            text={workspaceName}
-            contextualText={t`Workspace`}
+          <ListItem
+            onClick={() => handleSelect('workspace', '')}
+            role="option"
+            aria-selected={spenderType === 'workspace'}
             selected={spenderType === 'workspace'}
-            avatar={
+            indicator="check"
+            description={t`Workspace`}
+            startIcon={
               <Avatar
                 name={workspaceName}
                 src={workspaceAvatarUrl}
@@ -236,8 +262,9 @@ export const SettingsBillingLimitSpenderSelect = ({
                 size="md"
               />
             }
-            onClick={() => handleSelect('workspace', '')}
-          />
+          >
+            <OverflowingTextWithTooltip text={workspaceName} />
+          </ListItem>
         </DropdownMenuItemsContainer>
       )}
       {isDefined(workspaceGroup) && otherGroups.length > 0 && (
@@ -247,24 +274,32 @@ export const SettingsBillingLimitSpenderSelect = ({
         <DropdownMenuItemsContainer>
           {otherGroups.map((group) =>
             isIntraWorkspaceLimitEntitled ? (
-              <MenuItemSelect
+              <ListItem
                 key={group.id}
-                LeftIcon={group.Icon}
-                text={t(group.label)}
-                selected={false}
-                hasSubMenu
                 onClick={() => setBrowsedSpenderType(group.spenderType)}
-              />
-            ) : (
-              <MenuItemSelect
-                key={group.id}
-                LeftIcon={group.Icon}
-                text={t(group.label)}
+                role="option"
+                aria-selected={false}
                 selected={false}
+                indicator="check"
+                hasSubmenu={true}
+                startIcon={<SelectOptionIcon Icon={group.Icon} />}
+              >
+                <OverflowingTextWithTooltip text={t(group.label)} />
+              </ListItem>
+            ) : (
+              <ListItem
+                key={group.id}
                 disabled
-                contextualText={t`Organization plan`}
-                contextualTextPosition="right"
-              />
+                role="option"
+                aria-selected={false}
+                selected={false}
+                indicator="check"
+                description={t`Organization plan`}
+                descriptionPlacement={'end'}
+                startIcon={<SelectOptionIcon Icon={group.Icon} />}
+              >
+                <OverflowingTextWithTooltip text={t(group.label)} />
+              </ListItem>
             ),
           )}
         </DropdownMenuItemsContainer>
