@@ -29,6 +29,8 @@ import { saveCallRecordingImportProgress } from 'src/logic-functions/data/save-c
 import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
 import { handleCallRecordingArtifactsImportJob } from 'src/logic-functions/flows/handle-call-recording-artifacts-import-job.util';
 import { handlePreJoinCreditCheckJob } from 'src/logic-functions/flows/handle-pre-join-credit-check-job.util';
+import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
+import { PRE_JOIN_CREDIT_CHECK_LEAD_MINUTES } from 'src/logic-functions/constants/pre-join-credit-check-lead-minutes';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
@@ -1158,6 +1160,49 @@ describe('call recorder app lifecycle (integration)', () => {
 
       expect(result).toEqual({ status: 'allowed' });
       expect(recall.deletedBotIds).toEqual([]);
+      expect(callRecording.status).toBe('SCHEDULED');
+      expect(callRecording.externalBotId).toBe(botId);
+    });
+
+    it('runs the queued check through the real worker and leaves a funded bot alone', async ({
+      skip,
+    }) => {
+      const { findManyLogicFunctions } = await new MetadataApiClient().query({
+        findManyLogicFunctions: { name: true },
+      });
+
+      if (
+        !findManyLogicFunctions.some(
+          ({ name }) => name === 'check-credits-before-recall-bot-join',
+        )
+      ) {
+        skip('the installed call recorder predates the credit check');
+      }
+
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      // The worker runs this job, so the enqueue and the job reads must reach the real server.
+      vi.unstubAllGlobals();
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+
+      const joinAt = new Date(
+        Date.now() + PRE_JOIN_CREDIT_CHECK_LEAD_MINUTES * 60 * 1000,
+      ).toISOString();
+      const jobId = `credit-check.${callRecordingId}.${botId}.${new Date(joinAt).getTime()}`;
+
+      await enqueuePreJoinCreditCheck({
+        callRecordingId,
+        externalBotId: botId,
+        joinAt,
+      });
+
+      await expect
+        .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+        .toMatchObject([{ jobId, state: 'COMPLETED' }]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
       expect(callRecording.status).toBe('SCHEDULED');
       expect(callRecording.externalBotId).toBe(botId);
     });

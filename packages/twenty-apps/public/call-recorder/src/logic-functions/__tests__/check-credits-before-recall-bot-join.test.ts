@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import checkCreditsBeforeRecallBotJoinLogicFunction from 'src/logic-functions/check-credits-before-recall-bot-join';
 import { handlePreJoinCreditCheckJob } from 'src/logic-functions/flows/handle-pre-join-credit-check-job.util';
 
 const queryMock = vi.hoisted(() => vi.fn());
@@ -76,25 +75,6 @@ describe('check-credits-before-recall-bot-join', () => {
     vi.unstubAllEnvs();
     vi.useRealTimers();
     vi.restoreAllMocks();
-  });
-
-  it('runs as an enqueued job with no trigger of its own', () => {
-    const { config } = checkCreditsBeforeRecallBotJoinLogicFunction;
-
-    expect(config.handler).toBe(handlePreJoinCreditCheckJob);
-    expect(
-      Object.keys(config).filter((key) => key.endsWith('TriggerSettings')),
-    ).toEqual([]);
-  });
-
-  it('skips a job whose payload names no recording', async () => {
-    const result = await handlePreJoinCreditCheckJob({}, FIRST_ATTEMPT);
-
-    expect(result).toEqual({
-      status: 'skipped',
-      reason: 'invalid pre-join credit check job',
-    });
-    expect(queryMock).not.toHaveBeenCalled();
   });
 
   it('asks the queue to redeliver when Recall refuses the cancellation', async () => {

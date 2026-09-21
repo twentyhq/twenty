@@ -31,6 +31,7 @@ export const enqueuePreJoinCreditCheck = async ({
         },
       ],
       retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
+      // The server rejects a negative delay.
       delayMs: Math.max(0, checkAtMilliseconds - Date.now()),
     });
   } catch (error) {
