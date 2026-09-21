@@ -1,24 +1,13 @@
 import { StepStatus } from 'twenty-shared/workflow';
 
+import { createMockIfElseStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
 
-const ifElseStep = {
-  id: 'ifElse',
-  type: 'IF_ELSE',
-  name: 'If/Else',
-  nextStepIds: [],
-  settings: {
-    input: {
-      branches: [
-        { id: 'ifBranch', filterGroupId: 'fg', nextStepIds: ['ifChild'] },
-        { id: 'elseBranch', nextStepIds: ['elseChild'] },
-      ],
-      stepFilterGroups: [],
-      stepFilters: [],
-    },
-  },
-} as unknown as WorkflowAction;
+const ifElseStep = createMockIfElseStep('ifElse', [
+  { id: 'ifBranch', filterGroupId: 'fg', nextStepIds: ['ifChild'] },
+  { id: 'elseBranch', nextStepIds: ['elseChild'] },
+]);
 
 describe('workflowShouldKeepRunning', () => {
   describe('should return true if', () => {
