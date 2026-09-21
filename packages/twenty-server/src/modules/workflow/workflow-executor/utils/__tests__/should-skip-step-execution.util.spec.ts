@@ -373,14 +373,17 @@ describe('shouldSkipStepExecution', () => {
       body: { status: StepStatus.NOT_STARTED },
     };
 
+    const overlappingSteps: WorkflowAction[] = [overlappingIterator, body];
+    const wellFormedSteps: WorkflowAction[] = [wellFormedIterator, body];
+
     const overlappingResult = shouldSkipStepExecution({
       step: body,
-      steps: [overlappingIterator, body] as WorkflowAction[],
+      steps: overlappingSteps,
       stepInfos,
     });
     const wellFormedResult = shouldSkipStepExecution({
       step: body,
-      steps: [wellFormedIterator, body] as WorkflowAction[],
+      steps: wellFormedSteps,
       stepInfos,
     });
 
