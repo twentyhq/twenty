@@ -7,10 +7,6 @@
  *                              |___/
  */
 
-export { AnimatedButton } from './AnimatedButton/AnimatedButton';
-export type { AnimatedButtonProps } from './AnimatedButton/types/AnimatedButtonProps';
-export type { AnimatedLightIconButtonProps } from './AnimatedLightIconButton/AnimatedLightIconButton';
-export { AnimatedLightIconButton } from './AnimatedLightIconButton/AnimatedLightIconButton';
 export { Button } from './Button/Button';
 export type { ButtonColor } from './Button/types/ButtonColor';
 export type { ButtonProps } from './Button/types/ButtonProps';

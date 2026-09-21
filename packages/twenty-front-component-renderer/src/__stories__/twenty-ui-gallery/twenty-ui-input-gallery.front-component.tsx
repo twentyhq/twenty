@@ -9,8 +9,6 @@ import {
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
-  AnimatedButton,
-  AnimatedLightIconButton,
   Button,
   ButtonGroup,
   ColorPickerButton,
@@ -36,19 +34,6 @@ import {
 } from '../shared/front-components/component-gallery';
 
 const INPUT_ENTRIES: GalleryEntry[] = [
-  {
-    name: 'AnimatedButton',
-    node: (
-      <AnimatedButton
-        title="Animated"
-        animatedSvg={<svg width={16} height={16} />}
-      />
-    ),
-  },
-  {
-    name: 'AnimatedLightIconButton',
-    node: <AnimatedLightIconButton Icon={IconStar} />,
-  },
   {
     name: 'Button',
     node: <Button onClick={() => {}}>{'Button'}</Button>,
