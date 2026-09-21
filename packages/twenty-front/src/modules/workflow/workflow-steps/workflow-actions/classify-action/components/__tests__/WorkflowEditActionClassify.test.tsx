@@ -151,7 +151,7 @@ describe('WorkflowEditActionClassify', () => {
     ).toHaveValue('');
     expect(onUpdate).not.toHaveBeenCalled();
     await user.click(screen.getByRole('button', { name: 'Add question' }));
-    expect(screen.getByPlaceholderText('e.g. profession')).toBeVisible();
+    expect(screen.getByPlaceholderText('e.g. profession')).toHaveValue('');
     expect(
       screen.getByPlaceholderText(
         "e.g. What is this person's current profession, based on the profile?",
