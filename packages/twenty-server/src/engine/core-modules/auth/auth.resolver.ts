@@ -1132,7 +1132,11 @@ export class AuthResolver {
   }
 
   @Mutation(() => InvalidatePasswordDTO)
-  @UseGuards(PasswordAuthEnabledGuard, PublicEndpointGuard, NoPermissionGuard)
+  // Deliberately unguarded: these inputs carry only the passwordResetToken,
+  // which the guard cannot match against the allowlist email. The token is
+  // minted solely by emailPasswordResetLink above (guarded), so possession
+  // already implies an allowlisted mailbox when password auth is off.
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async updatePasswordViaResetToken(
     @Args()
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
@@ -1148,7 +1152,9 @@ export class AuthResolver {
   }
 
   @Query(() => ValidatePasswordResetTokenDTO)
-  @UseGuards(PasswordAuthEnabledGuard, PublicEndpointGuard, NoPermissionGuard)
+  // See updatePasswordViaResetToken: token-gated, minted by the guarded
+  // emailPasswordResetLink mutation.
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async validatePasswordResetToken(
     @Args() args: ValidatePasswordResetTokenInput,
   ): Promise<ValidatePasswordResetTokenDTO> {
