@@ -9,7 +9,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.42.0', 1789744560000)
+@RegisteredWorkspaceCommand('2.42.0', 1789978629000)
 @Command({
   name: 'upgrade:2-42:purge-soft-deleted-row-level-permission-predicates',
   description:
