@@ -183,29 +183,40 @@ export const SettingsApplicationDetails = () => {
   const missingRequiredApplicationVariables =
     getMissingRequiredApplicationVariables(displayedApplicationVariables);
 
+  const hasVariablesTab =
+    !hasCustomSettingsTab && displayedApplicationVariables.length > 0;
+
   const configurationTabId = hasCustomSettingsTab
     ? CUSTOM_SETTINGS_TAB_ID
-    : VARIABLES_TAB_ID;
+    : hasVariablesTab
+      ? VARIABLES_TAB_ID
+      : undefined;
 
-  useApplicationHealthCheck({
+  const goToConfigurationTab = isDefined(configurationTabId)
+    ? () => setActiveTabId(configurationTabId)
+    : undefined;
+
+  const { healthCheckResult } = useApplicationHealthCheck({
     applicationId,
     healthCheckLogicFunctionId: application?.healthCheckLogicFunctionId,
-    refetchApplication: refetch,
   });
 
-  const healthStatus = application?.healthStatus;
-  const healthMessage = application?.healthMessage;
-
-  const shouldDisplayHealthBanner =
+  const healthBannerResult =
     !isNonEmptyArray(missingRequiredApplicationVariables) &&
-    isDefined(healthStatus) &&
-    isNonEmptyString(healthMessage);
+    isDefined(healthCheckResult) &&
+    isNonEmptyString(healthCheckResult.message)
+      ? {
+          status: healthCheckResult.status,
+          message: healthCheckResult.message,
+          actionLabel: healthCheckResult.actionLabel,
+        }
+      : undefined;
 
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
     // A custom settings tab lays out the application variables itself, so
     // exposing them again would duplicate the same fields.
-    ...(!hasCustomSettingsTab && displayedApplicationVariables.length > 0
+    ...(hasVariablesTab
       ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
       : []),
     ...(hasCustomSettingsTab
@@ -310,18 +321,21 @@ export const SettingsApplicationDetails = () => {
         }
       >
         <SettingsPageContainer overflow="visible">
-          {isNonEmptyArray(missingRequiredApplicationVariables) && (
-            <SettingsApplicationMissingConfigurationBanner
-              missingApplicationVariables={missingRequiredApplicationVariables}
-              onConfigure={() => setActiveTabId(configurationTabId)}
-            />
-          )}
-          {shouldDisplayHealthBanner && (
+          {isNonEmptyArray(missingRequiredApplicationVariables) &&
+            isDefined(goToConfigurationTab) && (
+              <SettingsApplicationMissingConfigurationBanner
+                missingApplicationVariables={
+                  missingRequiredApplicationVariables
+                }
+                onConfigure={goToConfigurationTab}
+              />
+            )}
+          {isDefined(healthBannerResult) && (
             <SettingsApplicationHealthBanner
-              healthStatus={healthStatus}
-              healthMessage={healthMessage}
-              healthActionLabel={application?.healthActionLabel}
-              onAction={() => setActiveTabId(configurationTabId)}
+              healthStatus={healthBannerResult.status}
+              healthMessage={healthBannerResult.message}
+              healthActionLabel={healthBannerResult.actionLabel}
+              onAction={goToConfigurationTab}
             />
           )}
           {isApplicationStopped && (

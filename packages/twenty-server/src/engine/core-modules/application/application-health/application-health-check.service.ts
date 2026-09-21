@@ -5,13 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationHealthStatus } from 'src/engine/core-modules/application/enums/application-health-status.enum';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type ApplicationHealthCheckResultDTO } from 'src/engine/core-modules/application/dtos/application-health-check-result.dto';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-
-type PersistedHealth = {
-  healthStatus: ApplicationHealthStatus;
-  healthMessage: string | null;
-  healthActionLabel: string | null;
-};
 
 const REPORTED_STATUS_TO_HEALTH_STATUS = {
   ok: ApplicationHealthStatus.OK,
@@ -19,10 +14,10 @@ const REPORTED_STATUS_TO_HEALTH_STATUS = {
   error: ApplicationHealthStatus.ERROR,
 } as const;
 
-const UNKNOWN_HEALTH: PersistedHealth = {
-  healthStatus: ApplicationHealthStatus.UNKNOWN,
-  healthMessage: null,
-  healthActionLabel: null,
+const UNKNOWN_HEALTH: ApplicationHealthCheckResultDTO = {
+  status: ApplicationHealthStatus.UNKNOWN,
+  message: null,
+  actionLabel: null,
 };
 
 @Injectable()
@@ -40,7 +35,7 @@ export class ApplicationHealthCheckService {
   }: {
     applicationId: string;
     workspaceId: string;
-  }): Promise<ApplicationHealthStatus | null> {
+  }): Promise<ApplicationHealthCheckResultDTO | null> {
     const application =
       await this.applicationService.findOneApplicationWithRelationsOrThrow({
         id: applicationId,
@@ -53,19 +48,11 @@ export class ApplicationHealthCheckService {
       return null;
     }
 
-    const health = await this.executeHealthCheck({
+    return await this.executeHealthCheck({
       healthCheckLogicFunctionId,
       workspaceId,
       version,
     });
-
-    await this.applicationService.update(applicationId, {
-      workspaceId,
-      ...health,
-      healthCheckedAt: new Date(),
-    });
-
-    return health.healthStatus;
   }
 
   private async executeHealthCheck({
@@ -76,7 +63,7 @@ export class ApplicationHealthCheckService {
     healthCheckLogicFunctionId: string;
     workspaceId: string;
     version: string | null;
-  }): Promise<PersistedHealth> {
+  }): Promise<ApplicationHealthCheckResultDTO> {
     const executionResult = await this.logicFunctionExecutorService
       .execute({
         logicFunctionId: healthCheckLogicFunctionId,
@@ -110,16 +97,16 @@ export class ApplicationHealthCheckService {
 
     if (data.status === 'ok') {
       return {
-        healthStatus: ApplicationHealthStatus.OK,
-        healthMessage: null,
-        healthActionLabel: null,
+        status: ApplicationHealthStatus.OK,
+        message: null,
+        actionLabel: null,
       };
     }
 
     return {
-      healthStatus: REPORTED_STATUS_TO_HEALTH_STATUS[data.status],
-      healthMessage: data.message,
-      healthActionLabel: data.action?.label ?? null,
+      status: REPORTED_STATUS_TO_HEALTH_STATUS[data.status],
+      message: data.message,
+      actionLabel: data.action?.label ?? null,
     };
   }
 }

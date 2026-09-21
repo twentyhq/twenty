@@ -12,14 +12,12 @@ const buildService = ({
   healthCheckLogicFunctionId?: string | null;
   execute?: jest.Mock;
 } = {}) => {
-  const update = jest.fn();
   const applicationService = {
     findOneApplicationWithRelationsOrThrow: jest.fn().mockResolvedValue({
       id: APPLICATION_ID,
       version: '1.0.0',
       healthCheckLogicFunctionId,
     }),
-    update,
   };
 
   const service = new ApplicationHealthCheckService(
@@ -27,7 +25,7 @@ const buildService = ({
     { execute } as never,
   );
 
-  return { service, update, execute };
+  return { service, execute };
 };
 
 const run = (service: ApplicationHealthCheckService) =>
@@ -35,33 +33,28 @@ const run = (service: ApplicationHealthCheckService) =>
 
 describe('ApplicationHealthCheckService', () => {
   it('should do nothing when the application declares no health check', async () => {
-    const { service, update, execute } = buildService({
+    const { service, execute } = buildService({
       healthCheckLogicFunctionId: null,
     });
 
     expect(await run(service)).toBeNull();
     expect(execute).not.toHaveBeenCalled();
-    expect(update).not.toHaveBeenCalled();
   });
 
-  it('should store OK without a message when the app reports ok', async () => {
-    const { service, update } = buildService({
+  it('should report OK without a message when the app reports ok', async () => {
+    const { service } = buildService({
       execute: jest.fn().mockResolvedValue({ data: { status: 'ok' } }),
     });
 
-    expect(await run(service)).toBe(ApplicationHealthStatus.OK);
-    expect(update).toHaveBeenCalledWith(
-      APPLICATION_ID,
-      expect.objectContaining({
-        healthStatus: ApplicationHealthStatus.OK,
-        healthMessage: null,
-        healthActionLabel: null,
-      }),
-    );
+    expect(await run(service)).toEqual({
+      status: ApplicationHealthStatus.OK,
+      message: null,
+      actionLabel: null,
+    });
   });
 
-  it('should store the reported message and action label', async () => {
-    const { service, update } = buildService({
+  it('should report the reported message and action label', async () => {
+    const { service } = buildService({
       execute: jest.fn().mockResolvedValue({
         data: {
           status: 'error',
@@ -71,15 +64,11 @@ describe('ApplicationHealthCheckService', () => {
       }),
     });
 
-    expect(await run(service)).toBe(ApplicationHealthStatus.ERROR);
-    expect(update).toHaveBeenCalledWith(
-      APPLICATION_ID,
-      expect.objectContaining({
-        healthStatus: ApplicationHealthStatus.ERROR,
-        healthMessage: 'Your key was revoked',
-        healthActionLabel: 'Reconnect',
-      }),
-    );
+    expect(await run(service)).toEqual({
+      status: ApplicationHealthStatus.ERROR,
+      message: 'Your key was revoked',
+      actionLabel: 'Reconnect',
+    });
   });
 
   it('should map a reported warning to WARNING', async () => {
@@ -89,7 +78,11 @@ describe('ApplicationHealthCheckService', () => {
       }),
     });
 
-    expect(await run(service)).toBe(ApplicationHealthStatus.WARNING);
+    expect(await run(service)).toEqual({
+      status: ApplicationHealthStatus.WARNING,
+      message: 'Expiring',
+      actionLabel: null,
+    });
   });
 
   it.each([
@@ -97,19 +90,15 @@ describe('ApplicationHealthCheckService', () => {
     ['the result is unreadable', { data: { status: 'nope' } }],
     ['the result has no message', { data: { status: 'error' } }],
   ])('should fall back to UNKNOWN when %s', async (_label, executionResult) => {
-    const { service, update } = buildService({
+    const { service } = buildService({
       execute: jest.fn().mockResolvedValue(executionResult),
     });
 
-    expect(await run(service)).toBe(ApplicationHealthStatus.UNKNOWN);
-    expect(update).toHaveBeenCalledWith(
-      APPLICATION_ID,
-      expect.objectContaining({
-        healthStatus: ApplicationHealthStatus.UNKNOWN,
-        healthMessage: null,
-        healthActionLabel: null,
-      }),
-    );
+    expect(await run(service)).toEqual({
+      status: ApplicationHealthStatus.UNKNOWN,
+      message: null,
+      actionLabel: null,
+    });
   });
 
   it('should fall back to UNKNOWN when the executor throws', async () => {
@@ -117,6 +106,10 @@ describe('ApplicationHealthCheckService', () => {
       execute: jest.fn().mockRejectedValue(new Error('unreachable')),
     });
 
-    expect(await run(service)).toBe(ApplicationHealthStatus.UNKNOWN);
+    expect(await run(service)).toEqual({
+      status: ApplicationHealthStatus.UNKNOWN,
+      message: null,
+      actionLabel: null,
+    });
   });
 });

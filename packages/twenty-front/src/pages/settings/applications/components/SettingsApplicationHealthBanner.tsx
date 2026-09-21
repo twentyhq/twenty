@@ -8,7 +8,7 @@ type SettingsApplicationHealthBannerProps = {
   healthStatus: ApplicationHealthStatus;
   healthMessage: string;
   healthActionLabel?: string | null;
-  onAction: () => void;
+  onAction?: () => void;
 };
 
 export const SettingsApplicationHealthBanner = ({
@@ -28,10 +28,16 @@ export const SettingsApplicationHealthBanner = ({
       color={appearance.color}
       LeftIcon={appearance.Icon}
       message={healthMessage}
-      button={{
-        title: isDefined(healthActionLabel) ? healthActionLabel : t`Configure`,
-        onClick: onAction,
-      }}
+      button={
+        isDefined(onAction)
+          ? {
+              title: isDefined(healthActionLabel)
+                ? healthActionLabel
+                : t`Configure`,
+              onClick: onAction,
+            }
+          : undefined
+      }
     />
   );
 };

@@ -2,12 +2,12 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationHealthCheckService } from 'src/engine/core-modules/application/application-health/application-health-check.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { ApplicationHealthCheckResultDTO } from 'src/engine/core-modules/application/dtos/application-health-check-result.dto';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -26,17 +26,15 @@ export class ApplicationHealthResolver {
     private readonly applicationHealthCheckService: ApplicationHealthCheckService,
   ) {}
 
-  @Mutation(() => Boolean)
+  @Mutation(() => ApplicationHealthCheckResultDTO, { nullable: true })
   async runApplicationHealthCheck(
     @Args('applicationId', { type: () => UUIDScalarType })
     applicationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<boolean> {
-    const healthStatus = await this.applicationHealthCheckService.run({
+  ): Promise<ApplicationHealthCheckResultDTO | null> {
+    return await this.applicationHealthCheckService.run({
       applicationId,
       workspaceId,
     });
-
-    return isDefined(healthStatus);
   }
 }

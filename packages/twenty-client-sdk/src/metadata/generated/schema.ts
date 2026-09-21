@@ -364,10 +364,6 @@ export interface Application {
     defaultRoleId?: Scalars['String']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     healthCheckLogicFunctionId?: Scalars['UUID']
-    healthStatus?: ApplicationHealthStatus
-    healthMessage?: Scalars['String']
-    healthActionLabel?: Scalars['String']
-    healthCheckedAt?: Scalars['DateTime']
     defaultLogicFunctionRole?: Role
     agents: Agent[]
     frontComponents: FrontComponent[]
@@ -379,8 +375,6 @@ export interface Application {
     logoUrl?: Scalars['String']
     __typename: 'Application'
 }
-
-export type ApplicationHealthStatus = 'OK' | 'WARNING' | 'ERROR' | 'UNKNOWN'
 
 export interface TwoFactorAuthenticationMethodSummary {
     twoFactorAuthenticationMethodId: Scalars['UUID']
@@ -1989,6 +1983,15 @@ export interface DeletedWorkspaceMember {
     __typename: 'DeletedWorkspaceMember'
 }
 
+export interface ApplicationHealthCheckResult {
+    status: ApplicationHealthStatus
+    message?: Scalars['String']
+    actionLabel?: Scalars['String']
+    __typename: 'ApplicationHealthCheckResult'
+}
+
+export type ApplicationHealthStatus = 'OK' | 'WARNING' | 'ERROR' | 'UNKNOWN'
+
 export interface MarketplaceApp {
     id: Scalars['String']
     name: Scalars['String']
@@ -3492,7 +3495,7 @@ export interface Mutation {
     updateApplication: Application
     uninstallApplication: Scalars['Boolean']
     syncMarketplaceCatalog: Scalars['Boolean']
-    runApplicationHealthCheck: Scalars['Boolean']
+    runApplicationHealthCheck?: ApplicationHealthCheckResult
     createOneField: Field
     updateOneField: Field
     deleteOneField: Field
@@ -4016,10 +4019,6 @@ export interface ApplicationGenqlSelection{
     defaultRoleId?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
     healthCheckLogicFunctionId?: boolean | number
-    healthStatus?: boolean | number
-    healthMessage?: boolean | number
-    healthActionLabel?: boolean | number
-    healthCheckedAt?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
     agents?: AgentGenqlSelection
     frontComponents?: FrontComponentGenqlSelection
@@ -5697,6 +5696,14 @@ export interface DeletedWorkspaceMemberGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationHealthCheckResultGenqlSelection{
+    status?: boolean | number
+    message?: boolean | number
+    actionLabel?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface MarketplaceAppGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -7311,7 +7318,7 @@ export interface MutationGenqlSelection{
     updateApplication?: (ApplicationGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateApplicationInput} })
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
     syncMarketplaceCatalog?: boolean | number
-    runApplicationHealthCheck?: { __args: {applicationId: Scalars['UUID']} }
+    runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     createOneField?: (FieldGenqlSelection & { __args: {input: CreateOneFieldMetadataInput} })
     updateOneField?: (FieldGenqlSelection & { __args: {input: UpdateOneFieldMetadataInput} })
     deleteOneField?: (FieldGenqlSelection & { __args: {input: DeleteOneFieldInput} })
@@ -9230,6 +9237,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const ApplicationHealthCheckResult_possibleTypes: string[] = ['ApplicationHealthCheckResult']
+    export const isApplicationHealthCheckResult = (obj?: { __typename?: any } | null): obj is ApplicationHealthCheckResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationHealthCheckResult"')
+      return ApplicationHealthCheckResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const MarketplaceApp_possibleTypes: string[] = ['MarketplaceApp']
     export const isMarketplaceApp = (obj?: { __typename?: any } | null): obj is MarketplaceApp => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceApp"')
@@ -10475,13 +10490,6 @@ export const enumRowLevelPermissionPredicateOperand = {
    VECTOR_SEARCH: 'VECTOR_SEARCH' as const
 }
 
-export const enumApplicationHealthStatus = {
-   OK: 'OK' as const,
-   WARNING: 'WARNING' as const,
-   ERROR: 'ERROR' as const,
-   UNKNOWN: 'UNKNOWN' as const
-}
-
 export const enumPermissionFlagType = {
    API_KEYS_AND_WEBHOOKS: 'API_KEYS_AND_WEBHOOKS' as const,
    WORKSPACE: 'WORKSPACE' as const,
@@ -10899,6 +10907,13 @@ export const enumSupportDriver = {
 export const enumCaptchaDriverType = {
    GOOGLE_RECAPTCHA: 'GOOGLE_RECAPTCHA' as const,
    TURNSTILE: 'TURNSTILE' as const
+}
+
+export const enumApplicationHealthStatus = {
+   OK: 'OK' as const,
+   WARNING: 'WARNING' as const,
+   ERROR: 'ERROR' as const,
+   UNKNOWN: 'UNKNOWN' as const
 }
 
 export const enumWorkspaceCompanyEnrichmentOutcome = {

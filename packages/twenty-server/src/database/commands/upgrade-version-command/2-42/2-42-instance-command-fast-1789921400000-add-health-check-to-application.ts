@@ -10,21 +10,13 @@ export class AddHealthCheckToApplicationFastInstanceCommand
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."application"
-         ADD COLUMN IF NOT EXISTS "healthCheckLogicFunctionId" uuid,
-         ADD COLUMN IF NOT EXISTS "healthStatus" text,
-         ADD COLUMN IF NOT EXISTS "healthMessage" text,
-         ADD COLUMN IF NOT EXISTS "healthActionLabel" text,
-         ADD COLUMN IF NOT EXISTS "healthCheckedAt" timestamptz`,
+         ADD COLUMN IF NOT EXISTS "healthCheckLogicFunctionId" uuid`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."application"
-         DROP COLUMN IF EXISTS "healthCheckedAt",
-         DROP COLUMN IF EXISTS "healthActionLabel",
-         DROP COLUMN IF EXISTS "healthMessage",
-         DROP COLUMN IF EXISTS "healthStatus",
          DROP COLUMN IF EXISTS "healthCheckLogicFunctionId"`,
     );
   }

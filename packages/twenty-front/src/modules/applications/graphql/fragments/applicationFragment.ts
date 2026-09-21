@@ -26,10 +26,6 @@ export const APPLICATION_FRAGMENT = gql`
     defaultRoleId
     settingsCustomTabFrontComponentId
     healthCheckLogicFunctionId
-    healthStatus
-    healthMessage
-    healthActionLabel
-    healthCheckedAt
     availablePackages
     applicationVariables {
       id

@@ -8,9 +8,11 @@ import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/c
 const renderBanner = ({
   healthStatus = ApplicationHealthStatus.ERROR,
   healthActionLabel,
+  hasConfigurationTab = true,
 }: {
   healthStatus?: ApplicationHealthStatus;
   healthActionLabel?: string | null;
+  hasConfigurationTab?: boolean;
 }) =>
   render(
     <I18nProvider i18n={i18n}>
@@ -18,7 +20,7 @@ const renderBanner = ({
         healthStatus={healthStatus}
         healthMessage="Your key was revoked"
         healthActionLabel={healthActionLabel}
-        onAction={jest.fn()}
+        onAction={hasConfigurationTab ? jest.fn() : undefined}
       />
     </I18nProvider>,
   );
@@ -38,6 +40,16 @@ describe('SettingsApplicationHealthBanner', () => {
     expect(
       screen.getByRole('button', { name: /Configure/ }),
     ).toBeInTheDocument();
+  });
+
+  it('should render the message without a button when there is nowhere to configure', () => {
+    renderBanner({
+      healthActionLabel: 'Reconnect',
+      hasConfigurationTab: false,
+    });
+
+    expect(screen.getByText('Your key was revoked')).toBeInTheDocument();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
   it.each([ApplicationHealthStatus.OK, ApplicationHealthStatus.UNKNOWN])(
