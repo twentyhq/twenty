@@ -132,12 +132,17 @@ Call validate_workflow once when the workflow is complete, before activating.`,
       const coreWorkflowVersionId = await findInitialDraftCoreVersionIdOrThrow({
         deps,
         workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
         coreWorkflowId: coreWorkflow.id,
       });
 
       const { coreWorkflowVersion } =
         await deps.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-          { workspaceId, coreWorkflowVersionId },
+          {
+            workspaceId,
+            userWorkspaceId: context.userWorkspaceId,
+            coreWorkflowVersionId,
+          },
         );
 
       await deps.coreWorkflowVersionWriteService.writeContentAndMirror({
@@ -150,6 +155,7 @@ Call validate_workflow once when the workflow is complete, before activating.`,
 
       for (const edge of parameters.edges ?? []) {
         await deps.coreWorkflowVersionMutationService.createEdge({
+          userWorkspaceId: context.userWorkspaceId,
           source: edge.source,
           target: edge.target,
           sourceConnectionOptions: edge.sourceConnectionOptions,
@@ -159,12 +165,17 @@ Call validate_workflow once when the workflow is complete, before activating.`,
       }
 
       await deps.coreWorkflowVersionMutationService.autoLayoutCoreWorkflowVersion(
-        { workspaceId, coreWorkflowVersionId },
+        {
+          workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          coreWorkflowVersionId,
+        },
       );
 
       if (parameters.activate) {
         await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
           workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
           coreWorkflowVersionId,
         });
       }
@@ -217,16 +228,18 @@ const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
 const findInitialDraftCoreVersionIdOrThrow = async ({
   deps,
   workspaceId,
+  userWorkspaceId,
   coreWorkflowId,
 }: {
   deps: CreateCompleteWorkflowToolDeps;
   workspaceId: string;
+  userWorkspaceId: string | undefined;
   coreWorkflowId: string;
 }): Promise<string> => {
   const coreWorkflowVersions =
     await deps.coreWorkflowVersionListService.findManyByCoreWorkflowId({
       workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
+      userWorkspaceId,
       coreWorkflowId,
     });
 

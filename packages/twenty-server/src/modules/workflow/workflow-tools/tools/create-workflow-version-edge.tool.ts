@@ -37,6 +37,7 @@ export const createCreateWorkflowVersionEdgeTool = (
         target: parameters.target,
         coreWorkflowVersionId: parameters.coreWorkflowVersionId,
         workspaceId: context.workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
         sourceConnectionOptions: parameters.sourceConnectionOptions,
       });
     } catch (error) {

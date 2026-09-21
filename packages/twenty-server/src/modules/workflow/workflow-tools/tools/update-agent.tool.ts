@@ -61,7 +61,15 @@ const resyncAiAgentStepOutputSchemas = async (
     | 'coreWorkflowVersionMutationService'
     | 'flatEntityMapsCacheService'
   >,
-  { workspaceId, agentId }: { workspaceId: string; agentId: string },
+  {
+    workspaceId,
+    userWorkspaceId,
+    agentId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    agentId: string;
+  },
 ): Promise<void> => {
   await deps.flatEntityMapsCacheService.invalidateFlatEntityMaps({
     workspaceId,
@@ -86,6 +94,7 @@ const resyncAiAgentStepOutputSchemas = async (
 
     await deps.coreWorkflowVersionMutationService.updateStep({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowVersionId: draftCoreVersion.id,
       step: matchingStep,
     });
@@ -135,7 +144,11 @@ To find the agentId, look at the AI_AGENT step's settings.input.agentId field.`,
 
       if (isDefined(responseFormat)) {
         try {
-          await resyncAiAgentStepOutputSchemas(deps, { workspaceId, agentId });
+          await resyncAiAgentStepOutputSchemas(deps, {
+            workspaceId,
+            userWorkspaceId: context.userWorkspaceId,
+            agentId,
+          });
         } catch (resyncError) {
           return {
             success: true,

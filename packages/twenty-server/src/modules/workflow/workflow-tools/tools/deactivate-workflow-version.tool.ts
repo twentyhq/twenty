@@ -29,6 +29,7 @@ export const createDeactivateWorkflowVersionTool = (
       return await deps.coreWorkflowLifecycleService.deactivateCoreWorkflowVersion(
         {
           workspaceId: context.workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
           coreWorkflowVersionId: parameters.coreWorkflowVersionId,
         },
       );

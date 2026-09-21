@@ -41,6 +41,7 @@ export const createUpdateWorkflowVersionPositionsTool = (
         coreWorkflowVersionId: parameters.coreWorkflowVersionId,
         positions: parameters.positions,
         workspaceId: context.workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
       });
     } catch (error) {
       return {

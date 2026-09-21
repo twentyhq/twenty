@@ -45,7 +45,9 @@ export const createDeleteWorkflowTool = (
         };
       }
 
-      await deps.coreWorkflowMutationService.deleteWorkflows(workspaceId, {
+      await deps.coreWorkflowMutationService.deleteWorkflows({
+        workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
         coreWorkflowIds: [coreWorkflowId],
       });
 

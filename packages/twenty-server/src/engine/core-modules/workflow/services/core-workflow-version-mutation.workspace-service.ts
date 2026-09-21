@@ -659,9 +659,11 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
   async autoLayoutCoreWorkflowVersion({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<void> {
     const { trigger, steps } =
@@ -671,6 +673,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
     await this.updatePositions({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowVersionId,
       positions: computeWorkflowStepPositions({
         trigger,

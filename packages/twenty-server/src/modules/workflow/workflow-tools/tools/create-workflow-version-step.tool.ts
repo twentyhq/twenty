@@ -111,7 +111,11 @@ export const createCreateWorkflowVersionStepTool = (
       if (!isDefined(effectiveParentStepId)) {
         const { steps } =
           await deps.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-            { workspaceId, coreWorkflowVersionId },
+            {
+              workspaceId,
+              userWorkspaceId: context.userWorkspaceId,
+              coreWorkflowVersionId,
+            },
           );
 
         const existingSteps = steps ?? [];
@@ -131,6 +135,7 @@ export const createCreateWorkflowVersionStepTool = (
 
       const result = await deps.coreWorkflowVersionMutationService.createStep({
         workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
         input: {
           ...parameters,
           parentStepId: effectiveParentStepId,
@@ -138,7 +143,11 @@ export const createCreateWorkflowVersionStepTool = (
       });
 
       await deps.coreWorkflowVersionMutationService.autoLayoutCoreWorkflowVersion(
-        { workspaceId, coreWorkflowVersionId },
+        {
+          workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          coreWorkflowVersionId,
+        },
       );
 
       return enrichResultWithNextStep({
