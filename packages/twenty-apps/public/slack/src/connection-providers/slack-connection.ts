@@ -38,6 +38,7 @@ export default defineConnectionProvider({
       'assistant:write',
       'links:read',
       'links:write',
+      'files:read',
     ],
     clientIdVariable: 'SLACK_CLIENT_ID',
     clientSecretVariable: 'SLACK_CLIENT_SECRET',

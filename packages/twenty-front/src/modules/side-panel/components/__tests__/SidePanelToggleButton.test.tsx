@@ -52,12 +52,7 @@ const renderSidePanelToggleButton = ({
   render(
     <I18nProvider i18n={i18n}>
       <JotaiProvider store={store}>
-        <MemoryRouter
-          future={{
-            v7_relativeSplatPath: true,
-            v7_startTransition: true,
-          }}
-        >
+        <MemoryRouter>
           <SidePanelToggleButton />
         </MemoryRouter>
       </JotaiProvider>

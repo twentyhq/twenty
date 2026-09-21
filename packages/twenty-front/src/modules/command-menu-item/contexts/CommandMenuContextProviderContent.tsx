@@ -1,5 +1,6 @@
 import { useGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import {
   CommandMenuContext,
   type CommandMenuContextType,
@@ -20,9 +21,31 @@ import {
 } from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
-import { type CommandMenuContextApi } from 'twenty-shared/types';
+import {
+  ContextStorePageType,
+  CoreObjectNameSingular,
+  type CommandMenuContextApi,
+} from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
+
+const WORKSPACE_DEFINITION_COMMANDS = new Set<EngineComponentKey>([
+  EngineComponentKey.ADD_TO_FAVORITES,
+  EngineComponentKey.REMOVE_FROM_FAVORITES,
+  EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT,
+  EngineComponentKey.EXPORT_RECORDS,
+  EngineComponentKey.EXPORT_FROM_RECORD_INDEX,
+  EngineComponentKey.EXPORT_VIEW,
+  EngineComponentKey.IMPORT_RECORDS,
+  EngineComponentKey.SEE_DELETED_RECORDS,
+  EngineComponentKey.CREATE_NEW_VIEW,
+  EngineComponentKey.HIDE_DELETED_RECORDS,
+  EngineComponentKey.EXPORT_FROM_RECORD_SHOW,
+  EngineComponentKey.EXPORT_MULTIPLE_RECORDS,
+  EngineComponentKey.UPDATE_MULTIPLE_RECORDS,
+  EngineComponentKey.NAVIGATE_TO_NEXT_RECORD,
+  EngineComponentKey.NAVIGATE_TO_PREVIOUS_RECORD,
+]);
 
 type CommandMenuContextProviderContentProps = {
   displayType: CommandMenuContextType['displayType'];
@@ -39,6 +62,14 @@ export const CommandMenuContextProviderContent = ({
   commandMenuContextApi,
   isInPreviewMode,
 }: CommandMenuContextProviderContentProps) => {
+  const isCore = useIsWorkflowCoreEnabled();
+  const isCoreWorkflow =
+    isCore &&
+    commandMenuContextApi.objectMetadataItem.nameSingular ===
+      CoreObjectNameSingular.Workflow;
+  const isCoreWorkflowIndex =
+    isCoreWorkflow &&
+    commandMenuContextApi.pageType === ContextStorePageType.Index;
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const {
     hasGlobalRecordCreationCommandTemplate,
@@ -78,6 +109,16 @@ export const CommandMenuContextProviderContent = ({
     const contextCommandMenuItems = commandMenuItemsToDisplay
       .filter(
         (item) =>
+          !isCoreWorkflowIndex ||
+          item.engineComponentKey !== EngineComponentKey.DELETE_RECORDS,
+      )
+      .filter(
+        (item) =>
+          !isCoreWorkflow ||
+          !WORKSPACE_DEFINITION_COMMANDS.has(item.engineComponentKey),
+      )
+      .filter(
+        (item) =>
           item.engineComponentKey !==
             EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
           isLayoutCustomizationAllowedOnCurrentPage,
@@ -111,11 +152,13 @@ export const CommandMenuContextProviderContent = ({
     commandMenuContextApiForAvailability,
     globalRecordCreationCommandMenuItems,
     shouldDisplayGlobalRecordCreationCommands,
+    isCoreWorkflow,
     commandMenuItems,
     commandMenuItemsDraft,
     effectivePageLayoutId,
     isInPreviewMode,
     isLayoutCustomizationAllowedOnCurrentPage,
+    isCoreWorkflowIndex,
   ]);
 
   return (

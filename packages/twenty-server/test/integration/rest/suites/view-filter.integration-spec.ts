@@ -328,6 +328,7 @@ describe('View Filter REST API', () => {
 
       assertRestApiSuccessfulResponse(deleteResponse);
       expect(deleteResponse.body.success).toBe(true);
+      testViewFilterId = undefined;
 
       const getResponse = await makeRestAPIRequest({
         method: 'get',

@@ -10,6 +10,7 @@ import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/typ
 import { assertPayloadIsUsable } from './utils/assert-payload-is-usable.util';
 import { buildCatalog } from './utils/build-catalog.util';
 import { carryOverCommittedFields } from './utils/carry-over-committed-fields.util';
+import { mergeEvaluationModels } from './utils/merge-evaluation-models.util';
 import { enrichCatalog } from './utils/enrich-catalog.util';
 import { fetchArtificialAnalysisBenchmarks } from './utils/fetch-artificial-analysis-benchmarks.util';
 import { projectCatalog } from './utils/project-catalog.util';
@@ -32,6 +33,10 @@ const AI_MODELS_DIR = path.resolve(
 );
 
 const MODELS_PATH = path.join(AI_MODELS_DIR, 'ai-models.json');
+const EVALUATION_MODELS_PATH = path.join(
+  AI_MODELS_DIR,
+  'ai-evaluation-models.json',
+);
 const SELF_HOST_SPEC_PATH = path.join(AI_MODELS_DIR, 'ai-self-host-spec.json');
 const CATALOG_PATH = path.join(AI_MODELS_DIR, 'ai-providers.json');
 const BENCHMARKS_PATH = path.join(AI_MODELS_DIR, 'ai-model-benchmarks.json');
@@ -167,6 +172,11 @@ const main = async (): Promise<void> => {
   carryOverCommittedFields({
     catalog,
     committedCatalog: readCommittedModels(MODELS_PATH),
+  });
+
+  mergeEvaluationModels({
+    catalog,
+    evaluationModels: readCommittedModels(EVALUATION_MODELS_PATH),
   });
 
   const overlay = enrichCatalog({

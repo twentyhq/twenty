@@ -7,6 +7,8 @@
  *                              |___/
  */
 
+export type { AiEvaluationQuestionType } from './constants/ai-evaluation-question-type.const';
+export { AI_EVALUATION_QUESTION_TYPES } from './constants/ai-evaluation-question-type.const';
 export { AI_MODEL_EFFORT_LABELS } from './constants/ai-model-effort-labels.const';
 export type { AiModelEffort } from './constants/ai-model-effort.const';
 export { AI_MODEL_EFFORTS } from './constants/ai-model-effort.const';
@@ -70,6 +72,7 @@ export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
+export { isAiEvaluationQuestionType } from './utils/is-ai-evaluation-question-type.util';
 export { isAiModelEffort } from './utils/is-ai-model-effort.util';
 export { isAiModelTier } from './utils/is-ai-model-tier.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';

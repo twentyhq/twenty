@@ -317,4 +317,23 @@ describe('coreWorkflow mutations (e2e)', () => {
     expect(deleteResponse.body.errors).toBeUndefined();
     expect(deleteResponse.body.data.deleteCoreWorkflows).toEqual([]);
   });
+
+  it('should accept the v5 core workflow ids that prefilled workflows use', async () => {
+    const deleteResponse = await graphql(
+      `
+        mutation DeleteCoreWorkflows($input: DeleteCoreWorkflowsInput!) {
+          deleteCoreWorkflows(input: $input) {
+            id
+            workspaceWorkflowId
+          }
+        }
+      `,
+      {
+        input: { coreWorkflowIds: ['00000000-0000-5000-8000-000000000000'] },
+      },
+    );
+
+    expect(deleteResponse.body.errors).toBeUndefined();
+    expect(deleteResponse.body.data.deleteCoreWorkflows).toEqual([]);
+  });
 });

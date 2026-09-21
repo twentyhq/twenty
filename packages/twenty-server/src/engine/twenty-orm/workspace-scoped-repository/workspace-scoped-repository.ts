@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
   type DeepPartial,
   type DeleteResult,
@@ -11,7 +12,6 @@ import {
   type SelectQueryBuilder,
   type UpdateResult,
 } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
@@ -165,6 +165,39 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return this.repository.delete(
       this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
     );
+  }
+
+  async deleteAndReturn(
+    workspaceId: string,
+    criteria: FindOptionsWhere<T>,
+  ): Promise<T[]> {
+    this.assertWorkspaceId(workspaceId);
+
+    const { raw } = await this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(this.repository.target)
+      .where(this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria))
+      .returning('*')
+      .execute();
+
+    return ((raw ?? []) as Record<string, unknown>[]).map((row) =>
+      this.repository.create(this.hydrateRawRow(row)),
+    );
+  }
+
+  // DELETE ... RETURNING hands back raw driver output, which skips the
+  // hydration a find would do, so column transformers have to be applied by
+  // hand: a bigint column would otherwise read back as a string.
+  private hydrateRawRow(row: Record<string, unknown>): DeepPartial<T> {
+    const { driver } = this.repository.manager.connection;
+
+    return Object.fromEntries(
+      this.repository.metadata.columns.map((column) => [
+        column.propertyName,
+        driver.prepareHydratedValue(row[column.databaseName], column),
+      ]),
+    ) as DeepPartial<T>;
   }
 
   softDelete(

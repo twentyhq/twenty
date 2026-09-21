@@ -84,6 +84,15 @@ export class PendingFileCleanupService {
           continue;
         }
 
+        if (isDefined(file.workspaceId)) {
+          await this.fileStorageService.releaseStorageStock({
+            workspaceId: file.workspaceId,
+            applicationId: file.applicationId,
+            bytes: file.size,
+            quantity: 1,
+          });
+        }
+
         await this.deleteStorageObject(file);
 
         deletedCount++;

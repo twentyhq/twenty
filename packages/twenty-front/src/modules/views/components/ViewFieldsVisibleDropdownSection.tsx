@@ -51,10 +51,6 @@ export const ViewFieldsVisibleDropdownSection = () => {
       ? handleBoardFieldVisibilityChange
       : changeRecordFieldVisibility;
 
-  const handleDragEnd = (result: DraggableListDropResult) => {
-    handleReorderFields(result);
-  };
-
   const { getIcon } = useIcons();
 
   const fieldMetadataItemLabelIdentifier =
@@ -78,6 +74,17 @@ export const ViewFieldsVisibleDropdownSection = () => {
     )
     .toSorted(sortByProperty('position'));
 
+  const handleDragEnd = (result: DraggableListDropResult) => {
+    if (!isDefined(result.destination)) {
+      return;
+    }
+
+    handleReorderFields({
+      recordFieldToMove: draggableRecordFields[result.source.index],
+      targetRecordField: draggableRecordFields[result.destination.index],
+    });
+  };
+
   return (
     <>
       <DropdownMenuItemsContainer>
@@ -96,10 +103,6 @@ export const ViewFieldsVisibleDropdownSection = () => {
             draggableItems={
               <>
                 {draggableRecordFields.map((recordField, index) => {
-                  const fieldIndex =
-                    index +
-                    (isDefined(fieldMetadataItemLabelIdentifier) ? 1 : 0);
-
                   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
                     recordField.fieldMetadataItemId,
                   );
@@ -108,7 +111,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                     <DraggableItem
                       key={recordField.fieldMetadataItemId}
                       draggableId={recordField.fieldMetadataItemId}
-                      index={fieldIndex + 1}
+                      index={index}
                       itemComponent={
                         <MenuItemDraggable
                           key={recordField.fieldMetadataItemId}

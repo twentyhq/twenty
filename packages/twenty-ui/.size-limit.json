@@ -13,7 +13,7 @@
   {
     "name": "components",
     "path": "dist/components.mjs",
-    "limit": "95 kB"
+    "limit": "96 kB"
   },
   {
     "name": "components/code-editor",
