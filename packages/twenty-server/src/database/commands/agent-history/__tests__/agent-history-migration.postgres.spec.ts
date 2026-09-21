@@ -469,6 +469,66 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
     });
 
+    it('loads messages chronologically and finds the latest processed message with TypeORM ordering', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      const earlierId = '20202020-1111-4111-8111-000000000001';
+      const laterId = '20202020-1111-4111-8111-000000000002';
+
+      await messages.insert(WORKSPACE_ID, [
+        {
+          id: laterId,
+          threadId: THREAD_ID,
+          role: 'assistant' as AgentMessageEntity['role'],
+          processedAt: new Date('2026-09-20T12:00:00Z'),
+        },
+        {
+          id: earlierId,
+          threadId: THREAD_ID,
+          role: 'user' as AgentMessageEntity['role'],
+          processedAt: new Date('2026-09-20T11:00:00Z'),
+        },
+      ]);
+
+      const chronological = await messages.find(WORKSPACE_ID, {
+        where: { threadId: THREAD_ID },
+        order: { processedAt: { direction: 'ASC', nulls: 'LAST' } },
+        relations: { parts: true },
+      });
+
+      expect(chronological.map(({ id }) => id)).toEqual([
+        earlierId,
+        laterId,
+        MESSAGE_ID,
+      ]);
+      expect(chronological[2].parts[0].textContent).toBe(
+        'Hidden setup context',
+      );
+      expect(
+        (
+          await messages.findOneOrFail(WORKSPACE_ID, {
+            where: { threadId: THREAD_ID },
+            order: {
+              processedAt: { direction: 'DESC', nulls: 'LAST' },
+              createdAt: 'DESC',
+              id: 'DESC',
+            },
+            select: ['id', 'turnId'],
+          })
+        ).id,
+      ).toBe(laterId);
+      expect(
+        (
+          await messages.find(WORKSPACE_ID, {
+            where: { threadId: THREAD_ID },
+            order: { processedAt: { direction: 'desc', nulls: 'first' } },
+          })
+        ).map(({ id }) => id),
+      ).toEqual([MESSAGE_ID, laterId, earlierId]);
+    });
+
     it('increments exact totals only for the owning stream in both stores', async () => {
       for (const target of ['core', 'workspace'] as const) {
         if (target === 'workspace')

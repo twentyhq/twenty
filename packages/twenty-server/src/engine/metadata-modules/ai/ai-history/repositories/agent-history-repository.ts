@@ -3,6 +3,7 @@ import {
   mapAgentHistoryWhereToWorkspace,
 } from 'src/engine/metadata-modules/ai/ai-history/utils/agent-history-workspace-mapping.util';
 import { normalizeAgentHistoryRecord } from 'src/engine/metadata-modules/ai/ai-history/utils/normalize-agent-history-record.util';
+import { mapAgentHistoryOrderToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-history-order-to-workspace.util';
 import { hydrateAgentHistoryFiles } from 'src/engine/metadata-modules/ai/ai-history/utils/hydrate-agent-history-files.util';
 import { removeAgentHistoryFileRelations } from 'src/engine/metadata-modules/ai/ai-history/utils/remove-agent-history-file-relations.util';
 import {
@@ -97,6 +98,7 @@ export class AgentHistoryRepository<
         );
         const records = await repository.find({
           ...options,
+          order: mapAgentHistoryOrderToWorkspace(this.name, options?.order),
           where: mapAgentHistoryWhereToWorkspace<TRecord>(
             this.name,
             options?.where,
@@ -166,6 +168,7 @@ export class AgentHistoryRepository<
       (repository) =>
         repository.count({
           ...options,
+          order: mapAgentHistoryOrderToWorkspace(this.name, options?.order),
           where: mapAgentHistoryWhereToWorkspace<TRecord>(
             this.name,
             options?.where,
