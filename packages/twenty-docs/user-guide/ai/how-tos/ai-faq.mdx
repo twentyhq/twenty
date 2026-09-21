@@ -21,7 +21,11 @@ description: Frequently asked questions about AI features in Twenty.
   </Accordion>
 
   <Accordion title="Can I use my own AI models?">
-    On cloud, you can use only AI models provided by Twenty. On your self-hosted instance, you can use your own AI models after obtaining an Organization license.
+    On cloud, you can use only AI models provided by Twenty.
+
+    On a self-hosted instance, the built-in providers (OpenAI, Anthropic, Google, Mistral, xAI) work on every plan, Free included. Set the matching API key (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `MISTRAL_API_KEY`, `XAI_API_KEY`) in **Settings → Admin Panel → Configuration Variables**, or in your `.env` followed by a server restart. The models then appear under **Settings → Admin Panel → AI**.
+
+    Custom providers (custom endpoints, private gateways, OpenAI-compatible or local models, extra regions), added under **Settings → Admin Panel → AI → Custom Providers**, are complimentary up to 25 seats. Above that, an Organization plan is required.
   </Accordion>
 
   <Accordion title="I don't see a role I assigned to an AI agent, where is it?">
