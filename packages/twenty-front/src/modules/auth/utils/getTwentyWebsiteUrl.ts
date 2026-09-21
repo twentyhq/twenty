@@ -4,11 +4,14 @@ import {
   type DocumentationSupportedLanguage,
 } from 'twenty-shared/constants';
 
-const APP_SITE_HREF = 'https://twenty.com';
+const TWENTY_WEBSITE_HREF = 'https://twenty.com';
 
-type SitePage = 'terms' | 'privacy-policy';
+type TwentyWebsitePage = 'terms' | 'privacy-policy';
 
-export const getSiteUrl = (locale: string, page: SitePage): string => {
+export const getTwentyWebsiteUrl = (
+  locale: string,
+  page: TwentyWebsitePage,
+): string => {
   const language = new Intl.Locale(locale).language;
 
   const isLocalizedWebsitePath =
@@ -20,7 +23,7 @@ export const getSiteUrl = (locale: string, page: SitePage): string => {
 
   const url = new URL(
     isLocalizedWebsitePath ? `/${language}/${page}` : `/${page}`,
-    APP_SITE_HREF,
+    TWENTY_WEBSITE_HREF,
   );
 
   return url.toString();

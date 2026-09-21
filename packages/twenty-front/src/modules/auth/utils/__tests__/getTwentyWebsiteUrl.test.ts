@@ -1,6 +1,6 @@
-import { getSiteUrl } from '@/auth/utils/getSiteUrl';
+import { getTwentyWebsiteUrl } from '@/auth/utils/getTwentyWebsiteUrl';
 
-describe('getSiteUrl', () => {
+describe('getTwentyWebsiteUrl', () => {
   it.each([
     ['ar-SA', 'ar'],
     ['cs-CZ', 'cs'],
@@ -18,16 +18,18 @@ describe('getSiteUrl', () => {
     ['zh-CN', 'zh'],
     ['zh-TW', 'zh'],
   ])('uses the localized Twenty website path for %s', (locale, language) => {
-    expect(getSiteUrl(locale, 'privacy-policy')).toBe(
+    expect(getTwentyWebsiteUrl(locale, 'privacy-policy')).toBe(
       `https://twenty.com/${language}/privacy-policy`,
     );
   });
 
   it('uses the default Twenty website path for English', () => {
-    expect(getSiteUrl('en', 'terms')).toBe('https://twenty.com/terms');
+    expect(getTwentyWebsiteUrl('en', 'terms')).toBe('https://twenty.com/terms');
   });
 
   it('uses English for the pseudo locale', () => {
-    expect(getSiteUrl('pseudo-en', 'terms')).toBe('https://twenty.com/terms');
+    expect(getTwentyWebsiteUrl('pseudo-en', 'terms')).toBe(
+      'https://twenty.com/terms',
+    );
   });
 });
