@@ -91,6 +91,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { PasswordAuthEnabledGuard } from 'src/engine/core-modules/auth/guards/password-auth-enabled.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
@@ -211,7 +212,12 @@ export class AuthResolver {
   }
 
   @Mutation(() => LoginTokenDTO)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(
+    PasswordAuthEnabledGuard,
+    CaptchaGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async getLoginTokenFromCredentials(
     @Args()
     getLoginTokenFromCredentialsInput: UserCredentialsInput,
@@ -246,7 +252,12 @@ export class AuthResolver {
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(
+    PasswordAuthEnabledGuard,
+    CaptchaGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async signIn(
     @Args()
     userCredentials: UserCredentialsInput,
@@ -400,7 +411,12 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(
+    PasswordAuthEnabledGuard,
+    CaptchaGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async getAuthTokensFromOTP(
     @Args()
     twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
@@ -442,7 +458,12 @@ export class AuthResolver {
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(
+    PasswordAuthEnabledGuard,
+    CaptchaGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async signUp(
     @Args() signUpInput: UserCredentialsInput,
     @Context() context: { req: Request },
@@ -505,7 +526,12 @@ export class AuthResolver {
   }
 
   @Mutation(() => SignUpDTO)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(
+    PasswordAuthEnabledGuard,
+    CaptchaGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async signUpInWorkspace(
     @Args() signUpInput: SignUpInput,
   ): Promise<SignUpDTO> {
@@ -1073,7 +1099,12 @@ export class AuthResolver {
   }
 
   @Mutation(() => EmailPasswordResetLinkDTO)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(
+    PasswordAuthEnabledGuard,
+    CaptchaGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
     @Context() context: I18nContext,
@@ -1101,7 +1132,11 @@ export class AuthResolver {
   }
 
   @Mutation(() => InvalidatePasswordDTO)
-  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(
+    PasswordAuthEnabledGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async updatePasswordViaResetToken(
     @Args()
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
@@ -1117,7 +1152,11 @@ export class AuthResolver {
   }
 
   @Query(() => ValidatePasswordResetTokenDTO)
-  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(
+    PasswordAuthEnabledGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async validatePasswordResetToken(
     @Args() args: ValidatePasswordResetTokenInput,
   ): Promise<ValidatePasswordResetTokenDTO> {
