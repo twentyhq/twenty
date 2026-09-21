@@ -447,7 +447,11 @@ export class WorkflowDatabaseEventTriggerListener {
     });
 
     if (target.status === 'UNRESOLVABLE') {
-      await this.captureUnresolvableTrigger({ workspaceId, eventListener });
+      await this.captureUnresolvableTrigger({
+        workspaceId,
+        eventListener,
+        reason: target.reason,
+      });
 
       return null;
     }
@@ -472,13 +476,16 @@ export class WorkflowDatabaseEventTriggerListener {
   private async captureUnresolvableTrigger({
     workspaceId,
     eventListener,
+    reason,
   }: {
     workspaceId: string;
     eventListener: DatabaseEventTriggerListener;
+    reason: string;
   }): Promise<void> {
     await this.metricsService.incrementCounterForEvent({
       key: MetricsKeys.WorkflowTriggerDispatchDropped,
       eventId: `${workspaceId}:${eventListener.workflowId}`,
+      attributes: { reason },
     });
   }
 
