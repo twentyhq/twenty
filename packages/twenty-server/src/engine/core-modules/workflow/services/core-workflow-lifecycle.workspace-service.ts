@@ -800,6 +800,14 @@ export class CoreWorkflowLifecycleWorkspaceService {
           },
         );
       }, buildSystemAuthContext(workspaceId));
+
+      // The forward disable dropped the cron cache entry after its commit, so a
+      // re-armed cron version would stay invisible to the scheduler without this.
+      for (const { resolved, action } of triggersToRestore) {
+        if (action === 'enable') {
+          await this.writeCronTriggerCacheEntryAfterCommit({ resolved });
+        }
+      }
     } catch (revertError) {
       this.exceptionHandlerService.captureExceptions([revertError], {
         additionalData: {

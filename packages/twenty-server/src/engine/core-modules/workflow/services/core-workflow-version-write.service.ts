@@ -272,32 +272,37 @@ export class CoreWorkflowVersionWriteService {
     const lockKey = `core-workflow-version-edit-${coreWorkflowVersionId}`;
     const queryRunner = this.coreDataSource.createQueryRunner();
 
-    await queryRunner.connect();
-
-    const [lockResult] = (await queryRunner.query(
-      'SELECT pg_try_advisory_lock(hashtextextended($1, 0)) AS acquired',
-      [lockKey],
-    )) as { acquired: boolean }[];
-
-    if (lockResult?.acquired !== true) {
-      await queryRunner.release();
-
-      throw new WorkflowQueryValidationException(
-        `Core workflow version '${coreWorkflowVersionId}' is being edited concurrently`,
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Workflow version changed, please reload and retry`,
-        },
-      );
-    }
-
     try {
-      return await run();
-    } finally {
-      await queryRunner.query(
-        'SELECT pg_advisory_unlock(hashtextextended($1, 0))',
+      await queryRunner.connect();
+      // Transaction scoped, so the lock is released by the commit below and by
+      // any failure that rolls back, including a connection that dies holding it.
+      await queryRunner.startTransaction();
+
+      const [lockResult] = (await queryRunner.query(
+        'SELECT pg_try_advisory_xact_lock(hashtextextended($1, 0)) AS acquired',
         [lockKey],
-      );
+      )) as { acquired: boolean }[];
+
+      if (lockResult?.acquired !== true) {
+        throw new WorkflowQueryValidationException(
+          `Core workflow version '${coreWorkflowVersionId}' is being edited concurrently`,
+          WorkflowQueryValidationExceptionCode.FORBIDDEN,
+          {
+            userFriendlyMessage: msg`Workflow version changed, please reload and retry`,
+          },
+        );
+      }
+
+      const result = await run();
+
+      await queryRunner.commitTransaction();
+
+      return result;
+    } finally {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+
       await queryRunner.release();
     }
   }
