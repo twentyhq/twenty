@@ -9,4 +9,5 @@ export enum UsageUnit {
   BYTE = 'BYTE',
   REQUEST = 'REQUEST',
   SEAT = 'SEAT',
+  RECORD = 'RECORD',
 }
