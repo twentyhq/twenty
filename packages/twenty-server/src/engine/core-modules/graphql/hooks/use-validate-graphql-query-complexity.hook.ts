@@ -50,8 +50,6 @@ export const useValidateGraphqlQueryComplexity = ({
       const document = result as DocumentNode;
       const fragmentMap = buildFragmentMap(document);
 
-      // Recorded before the threshold checks below throw: a query rejected for
-      // asking too much is exactly the one worth attributing afterwards.
       captureExecutedRootResolvers({
         request: extractRequest(context),
         topLevelFields: extractTopLevelFieldsSafely(

@@ -3,8 +3,6 @@ import { type DocumentNode, type FieldNode } from 'graphql';
 
 import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
 
-// An ambiguous or unmatched operationName executes nothing, and recording a
-// request must never be what makes it fail.
 export const extractTopLevelFieldsSafely = (
   document: DocumentNode,
   operationName: string | undefined,
@@ -16,8 +14,6 @@ export const extractTopLevelFieldsSafely = (
   }
 };
 
-// Both /graphql pipelines call this: direct execution ends the response before
-// the parsing hooks run, so the parse side alone would miss workspace CRUD.
 export const captureExecutedRootResolvers = ({
   request,
   topLevelFields,

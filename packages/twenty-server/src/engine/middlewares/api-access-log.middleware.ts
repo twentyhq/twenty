@@ -24,12 +24,9 @@ export class ApiAccessLogMiddleware implements NestMiddleware {
     }
 
     const startedAtMs = Date.now();
-    // Captured here rather than on finish: the active span is gone by then.
     const traceContext = computeRequestTraceContext();
 
     let logged = false;
-    // 'close' covers the client aborting mid response, where 'finish' never
-    // fires: an unlogged request is the one an attacker would aim for.
     const log = () => {
       if (logged) {
         return;
@@ -42,8 +39,6 @@ export class ApiAccessLogMiddleware implements NestMiddleware {
           this.buildLine(request, response, startedAtMs, traceContext),
         );
       } catch (error) {
-        // Thrown from a response event handler this would be uncaught and take
-        // the process down, so recording a request can never do that.
         this.logger.warn(
           `Failed to build the access log line: ${error instanceof Error ? error.message : String(error)}`,
         );

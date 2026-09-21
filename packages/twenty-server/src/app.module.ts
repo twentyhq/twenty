@@ -116,8 +116,6 @@ export class AppModule {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   configure(consumer: MiddlewareConsumer) {
-    // Only the ApiPath prefixes reach the server, everything else is the front,
-    // which this instance may also be serving as static files.
     const excludedPaths = new Set<string>([
       ApiPath.Health,
       ...this.twentyConfigService.get('API_ACCESS_LOG_EXCLUDED_PATHS'),

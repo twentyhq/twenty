@@ -4,8 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 export type RequestTraceContext = {
   traceId: string;
   spanId: string;
-  // Says whether the trace was kept: the ids are stamped on every request, but
-  // an unsampled one has no trace to open on the Sentry side.
   sampled: boolean;
 };
 
@@ -23,8 +21,6 @@ export const computeRequestTraceContext = ():
 
   const { traceId, spanId, traceFlags } = span.spanContext();
 
-  // A non recording span carries the all zero context, which would link nowhere
-  // and pollute every query filtering on a trace id.
   if (traceId === INVALID_TRACE_ID || spanId === INVALID_SPAN_ID) {
     return undefined;
   }
