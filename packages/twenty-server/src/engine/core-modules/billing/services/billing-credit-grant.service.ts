@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { And, type EntityManager, IsNull, LessThan, MoreThan } from 'typeorm';
+import { type EntityManager, IsNull, LessThan, MoreThan } from 'typeorm';
 
 import {
   BillingException,
@@ -107,9 +107,34 @@ export class BillingCreditGrantService {
   }
 
   async getActiveCreditsMicro(workspaceId: string): Promise<number> {
+    const { balanceMicro } = await this.getActiveCreditBalance({
+      workspaceId,
+      boundary: null,
+    });
+
+    return balanceMicro;
+  }
+
+  // One statement, so the balance and the expiry that bounds its validity come
+  // from the same snapshot: read separately, a grant lapsing between the two
+  // reads is counted in the balance yet missing from the expiry, and the
+  // counter would keep its credits spendable until the period ends.
+  async getActiveCreditBalance({
+    workspaceId,
+    boundary,
+  }: {
+    workspaceId: string;
+    boundary: Date | null;
+  }): Promise<{ balanceMicro: number; earliestExpiryBefore: Date | null }> {
     const result = await this.billingCreditGrantRepository
       .createQueryBuilder('billingCreditGrant')
       .select('COALESCE(SUM("billingCreditGrant"."amountMicro"), 0)', 'total')
+      .addSelect(
+        isDefined(boundary)
+          ? 'MIN("billingCreditGrant"."expiresAt") FILTER (WHERE "billingCreditGrant"."expiresAt" < :boundary)'
+          : 'NULL',
+        'earliestExpiry',
+      )
       .where('"billingCreditGrant"."workspaceId" = :workspaceId', {
         workspaceId,
       })
@@ -118,20 +143,29 @@ export class BillingCreditGrantService {
       .andWhere(
         '("billingCreditGrant"."expiresAt" IS NULL OR "billingCreditGrant"."expiresAt" > now())',
       )
-      .getRawOne<{ total: string | number | null }>();
+      .setParameters(isDefined(boundary) ? { boundary } : {})
+      .getRawOne<{
+        total: string | number | null;
+        earliestExpiry: Date | string | null;
+      }>();
 
-    const total = Number(result?.total ?? 0);
+    const balanceMicro = Number(result?.total ?? 0);
 
     // Rounding a balance would hand out or withhold credits that were never
     // granted, so refuse rather than serve a number we cannot represent.
-    if (!Number.isSafeInteger(total)) {
+    if (!Number.isSafeInteger(balanceMicro)) {
       throw new BillingException(
-        `Credit balance for workspace ${workspaceId} is not a safe integer (${total})`,
+        `Credit balance for workspace ${workspaceId} is not a safe integer (${balanceMicro})`,
         BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID,
       );
     }
 
-    return total;
+    return {
+      balanceMicro,
+      earliestExpiryBefore: isDefined(result?.earliestExpiry)
+        ? new Date(result.earliestExpiry)
+        : null,
+    };
   }
 
   // Grants that were spendable at any point during the given period.
@@ -162,25 +196,6 @@ export class BillingCreditGrantService {
       ],
       order: { createdAt: 'ASC' },
     });
-  }
-
-  async findEarliestExpiryBefore({
-    workspaceId,
-    boundary,
-  }: {
-    workspaceId: string;
-    boundary: Date;
-  }): Promise<Date | null> {
-    const [row] = await this.billingCreditGrantRepository.find(workspaceId, {
-      where: {
-        revokedAt: IsNull(),
-        expiresAt: And(MoreThan(new Date()), LessThan(boundary)),
-      },
-      order: { expiresAt: 'ASC' },
-      take: 1,
-    });
-
-    return row?.expiresAt ?? null;
   }
 
   // The previous transition pulled every grant it closed back to the instant
