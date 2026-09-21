@@ -86,60 +86,6 @@ export const DocumentationLink = () => (
 
 Buttons default to `type="button"`. Set `type="submit"` or `type="reset"` explicitly for forms. Native props, event handlers, refs, and Base UI's `render` prop pass through to the root.
 
-## Updating floating and color buttons
-
-`FloatingButton`, `FloatingButtonGroup`, and `ColorPickerButton` are removed from
-the public exports, including the package root and `twenty-ui/primitives/input`.
-Update their imports when upgrading Twenty UI. Existing applications pinned to
-an older published version keep that version's API until they upgrade.
-
-| Removed export             | Replacement                                                                                                                                                  |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `FloatingButton`           | `Button elevated` from `twenty-ui/primitives/input`. Use children for the label, `startIcon` for a decorative icon, and `aria-label` for an accessible name. |
-| `FloatingButtonGroup`      | [ButtonGroup](/ui/primitives/input/button-group) with explicit `Button` children. Use `framed` when the group needs a shared surface.                        |
-| `ColorPickerButton`        | [IconButton](/ui/components/input/icon-button) from `twenty-ui/components` with `ColorSample` from `twenty-ui/primitives/data-display`.                      |
-| `FloatingButtonProps`      | `ButtonProps` from `twenty-ui/primitives/input`.                                                                                                             |
-| `FloatingButtonSize`       | `ButtonProps['size']`: change `small` to `sm` and `medium` to `md`.                                                                                          |
-| `FloatingButtonPosition`   | Remove the position prop. `ButtonGroup` handles joined edges.                                                                                                |
-| `FloatingButtonGroupProps` | `ButtonGroupProps` from `twenty-ui/primitives/input`.                                                                                                        |
-
-Set `size="sm"` to preserve the former floating button's default size. Replace
-`to` with `href` or your application's router link through `render`. Use
-`elevated` for the floating appearance; the old `applyShadow`, `applyBlur`, and
-synthetic `focus` props are removed. Keep positioning in your application and
-use native keyboard focus or the appropriate `aria-pressed` or `aria-expanded`
-state for the interaction.
-
-For a color choice, keep selection in the application, provide a localized
-accessible name, and expose the selected state explicitly:
-
-```tsx
-import { IconButton } from 'twenty-ui/components';
-import { ColorSample } from 'twenty-ui/primitives/data-display';
-
-type BlueColorOptionProps = {
-  label: string;
-  isSelected: boolean;
-  onSelect: () => void;
-};
-
-export const BlueColorOption = ({
-  label,
-  isSelected,
-  onSelect,
-}: BlueColorOptionProps) => (
-  <IconButton
-    aria-label={label}
-    aria-pressed={isSelected}
-    variant={isSelected ? 'outline' : 'ghost'}
-    size="md"
-    onClick={onSelect}
-  >
-    <ColorSample colorName="blue" />
-  </IconButton>
-);
-```
-
 ## Props
 
 <ButtonReference />
