@@ -1,6 +1,6 @@
 # Layout
 
-Use this reference for Twenty app views, navigation, page layouts, page layout tabs, and front component registration. Use `standalone-pages.md` when a page layout is meant to host a full-page custom UI.
+Use this reference for Twenty app views, navigation, page layouts, page layout tabs, front component registration, and setting pages. Use `standalone-pages.md` when a page layout is meant to host a full-page custom UI.
 
 ## Views And Navigation
 
