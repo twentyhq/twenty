@@ -7,7 +7,7 @@ describe('computeRequestActor', () => {
         apiKey: { id: 'api-key-id' },
         application: { id: 'application-id' },
         user: { id: 'user-id' },
-      } as Parameters<typeof computeRequestActor>[0]),
+      }),
     ).toEqual({ kind: 'apiKey', id: 'api-key-id' });
   });
 
@@ -16,7 +16,7 @@ describe('computeRequestActor', () => {
       computeRequestActor({
         application: { id: 'application-id' },
         user: { id: 'user-id' },
-      } as Parameters<typeof computeRequestActor>[0]),
+      }),
     ).toEqual({ kind: 'application', id: 'application-id' });
   });
 
@@ -24,7 +24,7 @@ describe('computeRequestActor', () => {
     expect(
       computeRequestActor({
         user: { id: 'user-id' },
-      } as Parameters<typeof computeRequestActor>[0]),
+      }),
     ).toEqual({ kind: 'user', id: 'user-id' });
   });
 

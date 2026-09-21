@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request, type Response } from 'express';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { computeRequestActor } from 'src/engine/utils/compute-request-actor.util';
 import { type RequestTraceContext } from 'src/engine/utils/compute-request-trace-context.util';
@@ -59,7 +59,7 @@ const formatRequestId = (value: string | string[] | undefined) => {
 };
 
 const formatResolvers = (resolvers: string[] | undefined) => {
-  if (!isDefined(resolvers) || resolvers.length === 0) {
+  if (!isNonEmptyArray(resolvers)) {
     return undefined;
   }
 

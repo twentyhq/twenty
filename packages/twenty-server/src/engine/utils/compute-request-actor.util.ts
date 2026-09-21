@@ -1,14 +1,18 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
-
 export type RequestActor = {
   kind: 'apiKey' | 'application' | 'user';
   id: string;
 };
 
+type RequestActorCandidates = {
+  apiKey?: { id: string } | null;
+  application?: { id: string } | null;
+  user?: { id: string } | null;
+};
+
 export const computeRequestActor = (
-  data: Pick<RawAuthContext, 'apiKey' | 'application' | 'user'>,
+  data: RequestActorCandidates,
 ): RequestActor | undefined => {
   if (isDefined(data.apiKey)) {
     return { kind: 'apiKey', id: data.apiKey.id };

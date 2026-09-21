@@ -11,10 +11,8 @@ import { type Request } from 'express';
 import { type Plugin } from 'graphql-yoga';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  captureExecutedRootResolvers,
-  extractTopLevelFieldsSafely,
-} from 'src/engine/api/graphql/utils/capture-executed-root-resolvers.util';
+import { captureExecutedRootResolvers } from 'src/engine/api/graphql/utils/capture-executed-root-resolvers.util';
+import { extractTopLevelFieldsSafely } from 'src/engine/api/graphql/utils/extract-top-level-fields-safely.util';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 type FragmentMetadata = {

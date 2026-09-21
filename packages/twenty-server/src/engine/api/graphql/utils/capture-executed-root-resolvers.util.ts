@@ -1,18 +1,6 @@
 import { type Request } from 'express';
-import { type DocumentNode, type FieldNode } from 'graphql';
-
-import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
-
-export const extractTopLevelFieldsSafely = (
-  document: DocumentNode,
-  operationName: string | undefined,
-): FieldNode[] => {
-  try {
-    return graphQLExtractTopLevelFields(document, operationName);
-  } catch {
-    return [];
-  }
-};
+import { type FieldNode } from 'graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const captureExecutedRootResolvers = ({
   request,
@@ -21,7 +9,7 @@ export const captureExecutedRootResolvers = ({
   request: Request | undefined;
   topLevelFields: FieldNode[];
 }): void => {
-  if (!request || request.executedRootResolvers) {
+  if (!isDefined(request) || isDefined(request.executedRootResolvers)) {
     return;
   }
 
