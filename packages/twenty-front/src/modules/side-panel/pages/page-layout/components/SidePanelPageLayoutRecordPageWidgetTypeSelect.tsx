@@ -9,6 +9,7 @@ import { widgetCreationTargetTabIdComponentState } from '@/page-layout/states/wi
 import { widgetInsertionContextComponentState } from '@/page-layout/states/widgetInsertionContextComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
+import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
@@ -30,10 +31,11 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { SidePanelPages } from 'twenty-shared/types';
+import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
+  IconBlockquote,
   IconListDetails,
   IconListSearch,
   IconNotes,
@@ -90,6 +92,10 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetObjectNameSingular,
   });
+
+  const isTranscriptWidgetSupported =
+    targetObjectNameSingular === CoreObjectNameSingular.CalendarEvent ||
+    targetObjectNameSingular === CoreObjectNameSingular.CallRecording;
 
   const allFieldWidgetFields = useFieldWidgetEligibleFields(
     targetObjectNameSingular,
@@ -284,6 +290,37 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
   };
 
+  const handleCreateTranscriptWidget = () => {
+    const replacePositionIndex = getExistingWidgetPositionIndex();
+    removeExistingWidgetIfReplacing();
+
+    const activeTab = store
+      .get(pageLayoutDraftState)
+      .tabs.find((tab) => tab.id === tabId);
+    const newWidget = buildDraftPageLayoutWidget({
+      id: uuidv4(),
+      pageLayoutTabId: tabId,
+      title: t`Transcript`,
+      type: WidgetType.CALL_RECORDING_TRANSCRIPT,
+      configuration: {
+        __typename: 'CallRecordingTranscriptConfiguration',
+        configurationType: WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
+      },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: replacePositionIndex ?? activeTab?.widgets.length ?? 0,
+      },
+    });
+
+    store.set(pageLayoutDraftState, (previousDraft) => ({
+      ...previousDraft,
+      tabs: addWidgetToTab(previousDraft.tabs, tabId, newWidget),
+    }));
+    setPageLayoutEditingWidgetId(newWidget.id);
+    insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
+    closeSidePanelMenu();
+  };
+
   const handleCreateFrontComponentWidget = useCallback(
     (frontComponent: FrontComponent) => {
       const replacePositionIndex = getExistingWidgetPositionIndex();
@@ -347,6 +384,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     'fields',
     'field',
     'note',
+    ...(isTranscriptWidgetSupported ? ['transcript'] : []),
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
   ];
 
@@ -378,6 +416,20 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
             onClick={handleCreateNoteWidget}
           />
         </SelectableListItem>
+        {isTranscriptWidgetSupported && (
+          <SelectableListItem
+            itemId="transcript"
+            onEnter={handleCreateTranscriptWidget}
+          >
+            <CommandMenuItem
+              Icon={IconBlockquote}
+              label={t`Transcript`}
+              description={t`Render Transcript`}
+              id="transcript"
+              onClick={handleCreateTranscriptWidget}
+            />
+          </SelectableListItem>
+        )}
       </SidePanelGroup>
 
       {frontComponentsWithSelectItemId.length > 0 && (

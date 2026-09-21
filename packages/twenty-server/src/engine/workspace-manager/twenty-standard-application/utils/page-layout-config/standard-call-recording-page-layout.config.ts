@@ -70,9 +70,9 @@ const CALL_RECORDING_PAGE_TABS = {
     universalIdentifier:
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
         .callRecording.universalIdentifier,
-    title: 'Call Recording',
+    title: 'Transcript',
     position: 40,
-    icon: 'IconVideo',
+    icon: 'IconBlockquote',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: {
       transcript: {

@@ -92,9 +92,9 @@ const CALENDAR_EVENT_PAGE_TABS = {
     universalIdentifier:
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
         .callRecording.universalIdentifier,
-    title: 'Call Recording',
+    title: 'Transcript',
     position: 40,
-    icon: 'IconVideo',
+    icon: 'IconBlockquote',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: {
       transcript: {
