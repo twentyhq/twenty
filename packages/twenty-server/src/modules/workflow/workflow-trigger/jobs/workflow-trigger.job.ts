@@ -72,11 +72,18 @@ export class WorkflowTriggerJob {
       );
 
     if (!isDefined(coreWorkflowVersion)) {
+      const diagnostic = await this.describeMissingCoreVersion({
+        workspaceId,
+        workflowId,
+        workspaceWorkflowVersionId,
+      });
+
       await this.captureDroppedDispatch({
         workspaceId,
         workflowId,
-        message: `Core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}`,
+        message: `Core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}. ${diagnostic}`,
       });
+
       return;
     }
 
@@ -161,6 +168,42 @@ export class WorkflowTriggerJob {
       workspaceWorkflowVersionId: data.workspaceWorkflowVersionId ?? undefined,
       payload: data.payload,
     });
+  }
+
+  private async describeMissingCoreVersion({
+    workspaceId,
+    workflowId,
+    workspaceWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    workflowId: string;
+    workspaceWorkflowVersionId?: string;
+  }): Promise<string> {
+    const coreWorkflow =
+      await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
+        workspaceId,
+        workflowId,
+      );
+
+    if (!isDefined(coreWorkflow)) {
+      return 'core workflow not found either';
+    }
+
+    const publishedCoreWorkflowVersionId =
+      coreWorkflow.lastPublishedCoreWorkflowVersionId;
+
+    if (!isDefined(publishedCoreWorkflowVersionId)) {
+      return `core workflow ${coreWorkflow.id} publishes no version, workspace twin ${workspaceWorkflowVersionId ?? 'none'}`;
+    }
+
+    const publishedVersionExists = isDefined(
+      await this.workflowVersionCoreSyncService.findCoreVersionById(
+        workspaceId,
+        publishedCoreWorkflowVersionId,
+      ),
+    );
+
+    return `core workflow ${coreWorkflow.id} publishes ${publishedCoreWorkflowVersionId} which ${publishedVersionExists ? 'exists' : 'is missing too'}, workspace twin ${workspaceWorkflowVersionId ?? 'none'}`;
   }
 
   private async captureDroppedDispatch({

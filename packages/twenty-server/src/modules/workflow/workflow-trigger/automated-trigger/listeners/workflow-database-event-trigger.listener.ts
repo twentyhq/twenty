@@ -38,10 +38,6 @@ import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/u
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
-import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { type QueuedWorkflowTriggerDispatchIds } from 'src/modules/workflow/workflow-trigger/utils/resolve-workflow-trigger-dispatch-mode.util';
-import { resolvePublishedCoreTriggerTarget } from 'src/modules/workflow/workflow-trigger/utils/resolve-published-core-trigger-target.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -83,7 +79,6 @@ export class WorkflowDatabaseEventTriggerListener {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -380,16 +375,6 @@ export class WorkflowDatabaseEventTriggerListener {
     const admittedRecordIds = await this.resolveAdmittedRecordIds(payload);
 
     for (const eventListener of eventListeners) {
-      const dispatchTarget = await this.resolveDispatchTarget({
-        workspaceId,
-        eventListener,
-        databaseEventName,
-      });
-
-      if (!isDefined(dispatchTarget)) {
-        continue;
-      }
-
       for (const eventPayload of payload.events) {
         const shouldTriggerJob = this.shouldTriggerJob({
           eventPayload,
@@ -399,12 +384,15 @@ export class WorkflowDatabaseEventTriggerListener {
         });
 
         if (shouldTriggerJob) {
+          await this.reportCacheDrift({ workspaceId, eventListener });
+
           await this.messageQueueService.add<WorkflowTriggerJobData>(
             WorkflowTriggerJob.name,
             {
               workspaceId,
-              workflowId: dispatchTarget.workflowId,
-              ...buildCoreDispatchIds(dispatchTarget),
+              workflowId:
+                eventListener.legacyWorkflowId ?? eventListener.workflowId,
+              ...buildCoreDispatchIds(eventListener),
               payload: omitInheritedReadabilityChildRecords(eventPayload),
             },
             { retryLimit: 3 },
@@ -414,75 +402,38 @@ export class WorkflowDatabaseEventTriggerListener {
     }
   }
 
-  private async resolveDispatchTarget({
+  private async reportCacheDrift({
     workspaceId,
     eventListener,
-    databaseEventName,
   }: {
     workspaceId: string;
     eventListener: DatabaseEventTriggerListener;
-    databaseEventName: string;
-  }): Promise<
-    ({ workflowId: string } & QueuedWorkflowTriggerDispatchIds) | null
-  > {
+  }): Promise<void> {
+    const cachedCoreWorkflowVersionId = eventListener.coreWorkflowVersionId;
+
+    if (!isDefined(cachedCoreWorkflowVersionId)) {
+      return;
+    }
+
     const workflow =
       await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
         workspaceId,
         eventListener.workflowId,
       );
+    const publishedCoreWorkflowVersionId =
+      workflow?.lastPublishedCoreWorkflowVersionId ?? null;
 
-    const publishedVersion = isDefined(
-      workflow?.lastPublishedCoreWorkflowVersionId,
-    )
-      ? await this.workflowVersionCoreSyncService.findCoreVersionById(
-          workspaceId,
-          workflow.lastPublishedCoreWorkflowVersionId,
-        )
-      : null;
-
-    const target = resolvePublishedCoreTriggerTarget({
-      workflow,
-      publishedVersion,
-      expectedTriggerType: WorkflowTriggerType.DATABASE_EVENT,
-    });
-
-    if (target.status === 'UNRESOLVABLE') {
-      await this.captureUnresolvableTrigger({
-        workspaceId,
-        eventListener,
-        reason: target.reason,
-      });
-
-      return null;
+    if (publishedCoreWorkflowVersionId === cachedCoreWorkflowVersionId) {
+      return;
     }
 
-    if (target.status === 'NOT_APPLICABLE') {
-      return null;
-    }
+    const message = `Automated trigger cache for workflow ${eventListener.workflowId} in workspace ${workspaceId} dispatches core version ${cachedCoreWorkflowVersionId} while core publishes ${publishedCoreWorkflowVersionId ?? 'none'}`;
 
-    if (target.definition.settings.eventName !== databaseEventName) {
-      return null;
-    }
-
-    return {
-      workflowId: target.legacyWorkflowId ?? target.workflowId,
-      ...buildCoreDispatchIds(target),
-    };
-  }
-
-  private async captureUnresolvableTrigger({
-    workspaceId,
-    eventListener,
-    reason,
-  }: {
-    workspaceId: string;
-    eventListener: DatabaseEventTriggerListener;
-    reason: string;
-  }): Promise<void> {
+    this.logger.warn(message);
     await this.metricsService.incrementCounterForEvent({
-      key: MetricsKeys.WorkflowTriggerDispatchDropped,
+      key: MetricsKeys.WorkflowTriggerCacheDrift,
       eventId: `${workspaceId}:${eventListener.workflowId}`,
-      attributes: { reason },
+      debugLog: message,
     });
   }
 

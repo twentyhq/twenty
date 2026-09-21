@@ -16,11 +16,8 @@ import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/
 import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
 import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { isDefined } from 'twenty-shared/utils';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -37,48 +34,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   let recordSharingFeatureService: jest.Mocked<
     Pick<RecordSharingFeatureService, 'isRecordSharingEnabled'>
   >;
-  let workflowCoreSyncService: jest.Mocked<
-    Pick<WorkflowCoreSyncService, 'findCoreWorkflowByIdOrWorkspaceWorkflowId'>
-  >;
-  let workflowVersionCoreSyncService: jest.Mocked<
-    Pick<WorkflowVersionCoreSyncService, 'findCoreVersionById'>
-  >;
-
-  const mockCoreResolution = (
-    entries: Array<{ workflowId: string; settings: object }>,
-  ) => {
-    workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId.mockImplementation(
-      (async (_workspaceId: string, workflowId: string) => {
-        const entry = entries.find((item) => item.workflowId === workflowId);
-
-        return isDefined(entry)
-          ? {
-              id: workflowId,
-              workspaceWorkflowId: null,
-              lastPublishedCoreWorkflowVersionId: `core-version-${workflowId}`,
-            }
-          : null;
-      }) as never,
-    );
-
-    workflowVersionCoreSyncService.findCoreVersionById.mockImplementation(
-      (async (_workspaceId: string, coreWorkflowVersionId: string) => {
-        const entry = entries.find(
-          (item) => `core-version-${item.workflowId}` === coreWorkflowVersionId,
-        );
-
-        return isDefined(entry)
-          ? {
-              id: coreWorkflowVersionId,
-              coreWorkflowId: entry.workflowId,
-              status: WorkflowVersionStatus.ACTIVE,
-              workspaceWorkflowVersionId: `workspace-version-${entry.workflowId}`,
-              triggers: [{ type: 'DATABASE_EVENT', settings: entry.settings }],
-            }
-          : null;
-      }) as never,
-    );
-  };
 
   const setTriggerMap = (
     listeners: Array<{ workflowId: string; settings: object; type?: unknown }>,
@@ -101,8 +56,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         ),
       },
     } as never);
-
-    mockCoreResolution(listeners);
   };
 
   const createMockFlatObjectMetadata = (
@@ -194,12 +147,15 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           provide: WorkflowCoreSyncService,
           useValue: {
-            findCoreWorkflowByIdOrWorkspaceWorkflowId: jest.fn(),
+            findCoreWorkflowByIdOrWorkspaceWorkflowId: jest
+              .fn()
+              .mockImplementation((_workspaceId: string, workflowId: string) =>
+                Promise.resolve({
+                  id: workflowId,
+                  lastPublishedCoreWorkflowVersionId: `core-version-${workflowId}`,
+                }),
+              ),
           },
-        },
-        {
-          provide: WorkflowVersionCoreSyncService,
-          useValue: { findCoreVersionById: jest.fn() },
         },
         {
           provide: MetricsService,
@@ -222,8 +178,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     listener = module.get<WorkflowDatabaseEventTriggerListener>(
       WorkflowDatabaseEventTriggerListener,
     );
-    workflowCoreSyncService = module.get(WorkflowCoreSyncService);
-    workflowVersionCoreSyncService = module.get(WorkflowVersionCoreSyncService);
   });
 
   describe('handleObjectRecordUpdateEvent', () => {
@@ -541,10 +495,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 },
               },
         )) as never);
-
-      mockCoreResolution([
-        { workflowId, settings: { eventName: databaseEventName } },
-      ]);
 
       recordShareService.findByRecordIds.mockResolvedValue([
         {
