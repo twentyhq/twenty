@@ -38,8 +38,10 @@ export class ClassifyWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { modelId, state, questions, allowLanguageModelFallback } =
-      resolveInput(step.settings.input, context) as WorkflowClassifyActionInput;
+    const { state, questions } = resolveInput(
+      step.settings.input,
+      context,
+    ) as WorkflowClassifyActionInput;
 
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
@@ -56,8 +58,6 @@ export class ClassifyWorkflowAction implements WorkflowAction {
     } = await this.aiEvaluationService.evaluate({
       workspaceId: runInfo.workspaceId,
       userWorkspaceId,
-      modelId,
-      allowLanguageModelFallback,
       state,
       questions: buildEvaluationQuestions(questions),
     });
@@ -66,8 +66,6 @@ export class ClassifyWorkflowAction implements WorkflowAction {
       result: {
         answers,
         modelId: resolvedModelId,
-        // Surfaced in the step output so a downstream branch can tell a
-        // calibrated probability from one a language model made up.
         runnerKind,
       },
     };

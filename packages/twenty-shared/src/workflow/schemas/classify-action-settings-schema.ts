@@ -59,13 +59,6 @@ export const workflowClassifyQuestionSchema = z.object({
 export const workflowClassifyActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      allowLanguageModelFallback: z.boolean().optional(),
-      modelId: z
-        .string()
-        .optional()
-        .describe(
-          "Composite model id, or undefined to run on the workspace's default classification model.",
-        ),
       state: z
         .string()
         .describe(

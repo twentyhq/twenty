@@ -1,9 +1,3 @@
-import { useNavigate } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
-import { isNonEmptyString } from '@sniptt/guards';
 import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
@@ -19,9 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import {
   type AiEvaluationQuestionType,
   AI_EVALUATION_QUESTION_TYPES,
-  DEFAULT_AI_AGENT_MODEL_TIER,
 } from 'twenty-shared/ai';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type WorkflowClassifyQuestion } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 import {
@@ -93,7 +85,6 @@ export const WorkflowEditActionClassify = ({
   actionOptions,
 }: WorkflowEditActionClassifyProps) => {
   const { t } = useLingui();
-  const navigate = useNavigate();
 
   const readonly = actionOptions.readonly === true;
   const questions = action.settings.input.questions;
@@ -112,106 +103,15 @@ export const WorkflowEditActionClassify = ({
 
   const aiEvaluationModels = useAtomStateValue(aiEvaluationModelsState);
 
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const aiModels = useAtomStateValue(aiModelsState);
-  const aiModelTiers = useAtomStateValue(aiModelTiersState);
-  const selectedModelId = action.settings.input.modelId;
-  const defaultEvaluationModel =
-    aiEvaluationModels.find(
-      (model) =>
-        model.modelId === currentWorkspace?.aiEvaluationModelId &&
-        model.isAvailable,
-    ) ??
-    aiEvaluationModels.find(
-      (model) => model.isAvailable && !model.isDeprecated,
-    );
-  const defaultLanguageModel = aiModels.find(
-    (model) =>
-      model.modelId ===
-      aiModelTiers.find((tier) => tier.tier === DEFAULT_AI_AGENT_MODEL_TIER)
-        ?.modelId,
+  const effectiveEvaluationModel = aiEvaluationModels.find(
+    (model) => model.modelId === 'typesafe-ai/jev-latest',
   );
-  const effectiveEvaluationModel = isNonEmptyString(selectedModelId)
-    ? aiEvaluationModels.find((model) => model.modelId === selectedModelId)
-    : defaultEvaluationModel;
-  const effectiveLanguageModel = isNonEmptyString(selectedModelId)
-    ? aiModels.find((model) => model.modelId === selectedModelId)
-    : defaultLanguageModel;
-  const needsModelChoice =
-    !isDefined(effectiveEvaluationModel) &&
-    !isNonEmptyString(selectedModelId) &&
-    action.settings.input.allowLanguageModelFallback === false;
-
-  const modelOptions = [
-    {
-      label:
-        (isDefined(defaultEvaluationModel)
-          ? t`${defaultEvaluationModel.label} (default)`
-          : undefined) ??
-        (action.settings.input.allowLanguageModelFallback === false
-          ? t`Choose a model`
-          : (defaultLanguageModel?.label ?? t`Language model`)),
-      value: '',
-    },
-    ...aiEvaluationModels
-      .filter(
-        (model) => !model.isDeprecated || model.modelId === selectedModelId,
-      )
-      .map((model) => ({
-        label: model.label,
-        value: model.modelId,
-        disabled: !model.isAvailable,
-        contextualText: model.isAvailable
-          ? undefined
-          : t`Not configured`,
-      })),
-    ...aiModels
-      .filter(
-        (model) => !model.isDeprecated || model.modelId === selectedModelId,
-      )
-      .map((model) => ({
-        label: model.label,
-        value: model.modelId,
-      })),
-  ];
-
-  if (
-    isNonEmptyString(selectedModelId) &&
-    !modelOptions.some((option) => option.value === selectedModelId)
-  ) {
-    modelOptions.push({
-      label: selectedModelId,
-      value: selectedModelId,
-      contextualText: t`Model unavailable`,
-    });
-  }
-
-  const probabilityAvailable =
-    effectiveEvaluationModel?.isAvailable === true &&
-    effectiveEvaluationModel.supportedQuestionTypes.includes('boolean');
-  const getModelDescription = () => {
-    if (needsModelChoice)
-      return t`Choose a model to continue.`;
-    if (isDefined(effectiveEvaluationModel)) {
-      return effectiveEvaluationModel.isAvailable
-        ? undefined
-        : t`Configure this provider in Settings → AI.`;
-    }
-    if (!isDefined(effectiveLanguageModel))
-      return t`Model unavailable. Choose another model.`;
-    return t`Probabilities unavailable with this model.`;
-  };
 
   const questionTypeOptions = AI_EVALUATION_QUESTION_TYPES.map(
     (questionType) => ({
       label: questionTypeLabels[questionType],
       value: questionType,
       Icon: questionTypeIcons[questionType],
-      disabled: questionType === 'boolean' && !probabilityAvailable,
-      contextualText:
-        questionType === 'boolean' && !probabilityAvailable
-          ? t`Requires an evaluation model such as Jev`
-          : undefined,
     }),
   );
 
@@ -269,41 +169,6 @@ export const WorkflowEditActionClassify = ({
   return (
     <>
       <WorkflowStepBody>
-        <Select
-          dropdownId={`classify-model-${action.id}`}
-          label={t`Model`}
-          value={selectedModelId ?? ''}
-          options={modelOptions}
-          withSearchInput
-          callToActionButton={
-            readonly
-              ? undefined
-              : {
-                  text: t`Model settings`,
-                  onClick: () =>
-                    navigate(
-                      getSettingsPath(
-                        SettingsPath.AI,
-                        undefined,
-                        undefined,
-                        'models',
-                      ),
-                    ),
-                }
-          }
-          onChange={(modelId) =>
-            updateInput({
-              modelId: modelId === '' ? undefined : modelId,
-              allowLanguageModelFallback:
-                modelId === ''
-                  ? false
-                  : action.settings.input.allowLanguageModelFallback,
-            })
-          }
-          disabled={actionOptions.readonly}
-          description={getModelDescription()}
-          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-        />
         <FormTextFieldInput
           label={t`Context`}
           multiline
@@ -360,11 +225,6 @@ export const WorkflowEditActionClassify = ({
               dropdownWidth={GenericDropdownContentWidth.Large}
               value={question.type}
               disabled={readonly}
-              description={
-                question.type === 'boolean' && !probabilityAvailable
-                  ? t`This question requires a compatible evaluation model. Choose one before running this step.`
-                  : undefined
-              }
               onChange={(questionType) =>
                 handleQuestionTypeChange(question.id, questionType)
               }

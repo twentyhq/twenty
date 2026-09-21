@@ -68,7 +68,7 @@ describe('generateClassifyOutputSchema', () => {
             probabilities: {
               isLeaf: false,
               type: 'object',
-              label: 'Probabilities (evaluation models only)',
+              label: 'Probabilities',
               value: {
                 pricing: {
                   isLeaf: true,
@@ -113,7 +113,7 @@ describe('generateClassifyOutputSchema', () => {
       probabilities: {
         isLeaf: false,
         type: 'object',
-        label: 'Probabilities (evaluation models only)',
+        label: 'Probabilities',
         value: {
           '0': { isLeaf: true, type: 'number', label: '0', value: 0 },
           '1': { isLeaf: true, type: 'number', label: '1', value: 0 },
