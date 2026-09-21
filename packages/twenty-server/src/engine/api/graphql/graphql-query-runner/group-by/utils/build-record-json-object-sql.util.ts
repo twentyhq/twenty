@@ -10,8 +10,6 @@ import {
 const POSTGRES_FUNCTION_MAX_ARGUMENTS = 100;
 const JSONB_BUILD_OBJECT_MAX_PAIRS = POSTGRES_FUNCTION_MAX_ARGUMENTS / 2;
 
-// Keys stay SQL literals rather than column aliases: PostgreSQL truncates
-// identifiers at 63 bytes, and a composite or join column name can exceed that.
 export const buildRecordJsonObjectSql = ({
   subQueryAliasByColumnName,
   groupByDefinitions,

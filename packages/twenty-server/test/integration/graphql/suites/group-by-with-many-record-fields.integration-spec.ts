@@ -14,8 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 const OBJECT_NAME_SINGULAR = 'groupByManyFields';
 const OBJECT_NAME_PLURAL = 'groupByManyFieldsRecords';
-// JSON_BUILD_OBJECT caps out at 50 key/value pairs, so the selection below has to
-// stay above 50 columns: 6 address fields x 8 subfields + 5 scalars = 53.
+const JSON_BUILD_OBJECT_MAX_PAIRS = 50;
 const ADDRESS_FIELD_NAMES = [
   'shippingAddress',
   'billingAddress',
@@ -24,8 +23,7 @@ const ADDRESS_FIELD_NAMES = [
   'warehouseAddress',
   'returnAddress',
 ];
-// `record` collides with the alias a ROW_TO_JSON-based projection would need.
-const SHADOWING_FIELD_NAME = 'record';
+const ROW_ALIAS_SHADOWING_FIELD_NAME = 'record';
 const ADDRESS_VALUES = Object.fromEntries(
   ADDRESS_FIELD_NAMES.map((fieldName) => [
     fieldName,
@@ -46,16 +44,23 @@ const RECORDS = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((position) => ({
   name: `Record ${position}`,
   position,
   companyId: null,
-  [SHADOWING_FIELD_NAME]: `Shadowing value ${position}`,
+  [ROW_ALIAS_SHADOWING_FIELD_NAME]: `Shadowing value ${position}`,
   ...ADDRESS_VALUES,
 }));
 const ORDERED_RECORDS = [...RECORDS].reverse();
+const ADDRESS_SUBFIELD_COUNT = Object.keys(
+  ADDRESS_VALUES[ADDRESS_FIELD_NAMES[0]],
+).length;
+const SCALAR_FIELD_COUNT =
+  Object.keys(RECORDS[0]).length - ADDRESS_FIELD_NAMES.length;
+const SELECTED_RECORD_COLUMN_COUNT =
+  SCALAR_FIELD_COUNT + ADDRESS_FIELD_NAMES.length * ADDRESS_SUBFIELD_COUNT;
 const RECORD_GQL_FIELDS = `
   id
   name
   position
   companyId
-  ${SHADOWING_FIELD_NAME}
+  ${ROW_ALIAS_SHADOWING_FIELD_NAME}
   ${ADDRESS_FIELD_NAMES.map(
     (fieldName) => `
       ${fieldName} {
@@ -110,8 +115,8 @@ describe('group-by with more than 50 selected record columns', () => {
       input: {
         objectMetadataId,
         type: FieldMetadataType.TEXT,
-        name: SHADOWING_FIELD_NAME,
-        label: SHADOWING_FIELD_NAME,
+        name: ROW_ALIAS_SHADOWING_FIELD_NAME,
+        label: ROW_ALIAS_SHADOWING_FIELD_NAME,
         isLabelSyncedWithName: false,
       },
     });
@@ -166,6 +171,12 @@ describe('group-by with more than 50 selected record columns', () => {
       expectToFail: false,
       input: { idToDelete: objectMetadataId },
     });
+  });
+
+  it('selects more record columns than JSON_BUILD_OBJECT accepts as pairs', () => {
+    expect(SELECTED_RECORD_COLUMN_COUNT).toBeGreaterThan(
+      JSON_BUILD_OBJECT_MAX_PAIRS,
+    );
   });
 
   it.each([
