@@ -33,29 +33,6 @@ const StyledQuestion = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledQuestionHeader = styled.div`
-  column-gap: ${themeCssVariables.spacing[2]};
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-
-  & > *:first-child {
-    display: grid;
-    grid-column: 1;
-    grid-row: 1 / 4;
-    grid-template-rows: subgrid;
-  }
-
-  & > button {
-    align-self: center;
-    grid-column: 2;
-    grid-row: 2;
-  }
-
-  & > :only-child {
-    grid-column: 1 / -1;
-  }
-`;
-
 type WorkflowEditActionClassifyProps = {
   action: WorkflowClassifyAction;
   actionOptions:
@@ -188,35 +165,36 @@ export const WorkflowEditActionClassify = ({
           <StyledQuestion key={question.id}>
             <HorizontalSeparator noMargin />
 
-            <StyledQuestionHeader>
-              <FormTextFieldInput
-                label={t`Name`}
-                hint={t`Use this name to find the answer in later workflow steps.`}
-                defaultValue={question.name}
-                placeholder={
-                  question.type === 'choice'
-                    ? t`profession`
-                    : question.type === 'score'
-                      ? t`customer_satisfaction`
-                      : t`would_recommend`
-                }
-                readonly={readonly}
-                onChange={(name) => updateQuestion(question.id, { name })}
-              />
-              {!readonly && questions.length > 1 && (
-                <Button
-                  startIcon={<IconTrash />}
-                  aria-label={t`Delete`}
-                  onClick={() =>
-                    updateInput({
-                      questions: questions.filter(
-                        (candidate) => candidate.id !== question.id,
-                      ),
-                    })
-                  }
-                />
-              )}
-            </StyledQuestionHeader>
+            <FormTextFieldInput
+              label={t`Name`}
+              hint={t`Use this name to find the answer in later workflow steps.`}
+              defaultValue={question.name}
+              placeholder={
+                question.type === 'choice'
+                  ? t`profession`
+                  : question.type === 'score'
+                    ? t`customer_satisfaction`
+                    : t`would_recommend`
+              }
+              readonly={readonly}
+              onChange={(name) => updateQuestion(question.id, { name })}
+              action={
+                !readonly &&
+                questions.length > 1 && (
+                  <Button
+                    startIcon={<IconTrash />}
+                    aria-label={t`Delete`}
+                    onClick={() =>
+                      updateInput({
+                        questions: questions.filter(
+                          (candidate) => candidate.id !== question.id,
+                        ),
+                      })
+                    }
+                  />
+                )
+              }
+            />
 
             <Select
               dropdownId={`workflow-classify-question-type-${question.id}`}
@@ -254,8 +232,9 @@ export const WorkflowEditActionClassify = ({
                 criteria={question.criteria}
                 maxCriteria={
                   question.type === 'score'
-                    ? (effectiveEvaluationModel?.maxScoreLevels ?? 10)
-                    : (effectiveEvaluationModel?.maxCriteriaPerQuestion ?? 255)
+                    ? (effectiveEvaluationModel?.maxScoreLevels ?? undefined)
+                    : (effectiveEvaluationModel?.maxCriteriaPerQuestion ??
+                      undefined)
                 }
                 variant={question.type === 'choice' ? 'options' : 'levels'}
                 readonly={readonly}

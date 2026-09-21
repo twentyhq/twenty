@@ -7,13 +7,27 @@ import { useTextVariableEditor } from '@/object-record/record-field/ui/form-type
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { Field } from 'twenty-ui/primitives/input';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
-import { useId } from 'react';
+import { type ReactNode, useId } from 'react';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
+
+const StyledInputWithAction = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledInputRow = styled(FormFieldInputRowContainer)`
+  flex: 1;
+  min-width: 0;
+`;
 
 type FormTextFieldInputProps = {
   label?: string;
   error?: string;
   hint?: string;
+  action?: ReactNode;
   defaultValue: string | undefined | null;
   onChange: (value: string) => void;
   onBlur?: () => void;
@@ -27,6 +41,7 @@ export const FormTextFieldInput = ({
   label,
   error,
   hint,
+  action,
   defaultValue,
   placeholder,
   onChange,
@@ -68,29 +83,32 @@ export const FormTextFieldInput = ({
     <FormFieldInputContainer>
       {label ? <Field.Label>{label}</Field.Label> : null}
 
-      <FormFieldInputRowContainer multiline={multiline}>
-        <FormFieldInputInnerContainer
-          formFieldInputInstanceId={instanceId}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
-          multiline={multiline}
-          onBlur={onBlur}
-        >
-          <TextVariableEditor
-            placeholder={placeholder ?? t`Enter text`}
-            editor={editor}
+      <StyledInputWithAction>
+        <StyledInputRow multiline={multiline}>
+          <FormFieldInputInnerContainer
+            formFieldInputInstanceId={instanceId}
+            hasRightElement={isDefined(VariablePicker) && !readonly}
             multiline={multiline}
-            readonly={readonly}
-          />
-        </FormFieldInputInnerContainer>
+            onBlur={onBlur}
+          >
+            <TextVariableEditor
+              placeholder={placeholder ?? t`Enter text`}
+              editor={editor}
+              multiline={multiline}
+              readonly={readonly}
+            />
+          </FormFieldInputInnerContainer>
 
-        {VariablePicker && !readonly ? (
-          <VariablePicker
-            instanceId={instanceId}
-            multiline={multiline}
-            onVariableSelect={handleVariableTagInsert}
-          />
-        ) : null}
-      </FormFieldInputRowContainer>
+          {VariablePicker && !readonly ? (
+            <VariablePicker
+              instanceId={instanceId}
+              multiline={multiline}
+              onVariableSelect={handleVariableTagInsert}
+            />
+          ) : null}
+        </StyledInputRow>
+        {action}
+      </StyledInputWithAction>
       {hint && <Field.Description>{hint}</Field.Description>}
       {error && <Field.Error match>{error}</Field.Error>}
     </FormFieldInputContainer>
