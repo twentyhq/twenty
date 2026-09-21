@@ -12,6 +12,7 @@ import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-function
 import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
 import { type UninstallLogicFunctionConfig } from '@/sdk/define/logic-functions/uninstall-logic-function-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
+import { type SettingPageConfig } from '@/sdk/define/setting-pages/setting-page-config';
 import {
   type AgentManifest,
   type ConnectionProviderManifest,
@@ -50,7 +51,8 @@ export type DefinableEntity =
   | PageLayoutTabConfig
   | StandalonePageLayoutWidgetManifest
   | PermissionFlagConfig
-  | CommandMenuItemConfig;
+  | CommandMenuItemConfig
+  | SettingPageConfig;
 
 export type DefineEntity<T extends DefinableEntity = DefinableEntity> = (
   config: T,

@@ -39,6 +39,10 @@ export { defineTimelineActivityType } from '@/sdk/define/timeline-activity-types
 export type { TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 export type { TimelineActivityTypeManifest } from 'twenty-shared/application';
 
+export { defineSettingPage } from '@/sdk/define/setting-pages/define-setting-page';
+export type { SettingPageConfig } from '@/sdk/define/setting-pages/setting-page-config';
+export type { SettingPageManifest, SettingPageScope } from 'twenty-shared/application';
+
 export {
   canAccessFullAdminPanel,
   canImpersonate,
