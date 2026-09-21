@@ -3,7 +3,6 @@ import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { ApplicationApi } from '@/cli/utilities/api/application-api';
 import { FileApi } from '@/cli/utilities/api/file-api';
 import { LogicFunctionApi } from '@/cli/utilities/api/logic-function-api';
-import { SchemaApi } from '@/cli/utilities/api/schema-api';
 import { type ApplicationExport } from '@/cli/utilities/pull/application-export-type';
 import { type Manifest } from 'twenty-shared/application';
 import {
@@ -21,14 +20,12 @@ type ApiServiceOptions = {
 export class ApiService {
   private apiClient: ApiClient;
   private applicationApi: ApplicationApi;
-  private schemaApi: SchemaApi;
   private logicFunctionApi: LogicFunctionApi;
   private fileApi: FileApi;
 
   constructor(options?: ApiServiceOptions) {
     this.apiClient = new ApiClient(options);
     this.applicationApi = new ApplicationApi(this.apiClient.client);
-    this.schemaApi = new SchemaApi(this.apiClient.client);
     this.logicFunctionApi = new LogicFunctionApi(this.apiClient);
     this.fileApi = new FileApi(this.apiClient.client);
   }
@@ -61,26 +58,10 @@ export class ApiService {
     return this.applicationApi.createApplicationRegistration(...args);
   }
 
-  rotateApplicationRegistrationClientSecret(
-    ...args: Parameters<
-      ApplicationApi['rotateApplicationRegistrationClientSecret']
-    >
-  ) {
-    return this.applicationApi.rotateApplicationRegistrationClientSecret(
-      ...args,
-    );
-  }
-
   createDevelopmentApplication(
     ...args: Parameters<ApplicationApi['createDevelopmentApplication']>
   ) {
     return this.applicationApi.createDevelopmentApplication(...args);
-  }
-
-  generateApplicationToken(
-    ...args: Parameters<ApplicationApi['generateApplicationToken']>
-  ) {
-    return this.applicationApi.generateApplicationToken(...args);
   }
 
   syncApplication(
@@ -112,16 +93,10 @@ export class ApiService {
     return this.applicationApi.syncMarketplaceCatalog();
   }
 
-  getSchema(options?: {
-    appAccessToken?: string;
-  }): Promise<ApiResponse<string>> {
-    return this.schemaApi.getSchema(options);
-  }
-
-  getMetadataSchema(options?: {
-    appAccessToken?: string;
-  }): Promise<ApiResponse<string>> {
-    return this.schemaApi.getMetadataSchema(options);
+  getApplicationCoreGraphqlSchema(
+    ...args: Parameters<ApplicationApi['getApplicationCoreGraphqlSchema']>
+  ) {
+    return this.applicationApi.getApplicationCoreGraphqlSchema(...args);
   }
 
   findLogicFunctions(
