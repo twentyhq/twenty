@@ -7,7 +7,7 @@ import { type AiEvaluationRequest } from 'src/engine/metadata-modules/ai/ai-eval
 import { type AiEvaluationResult } from 'src/engine/metadata-modules/ai/ai-evaluation/types/ai-evaluation-result.type';
 import { assertEvaluationQuestionsAreWellFormed } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/assert-evaluation-questions-are-well-formed.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { resolveJevEvaluationModelId } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/resolve-jev-evaluation-model-id.util';
+import { resolveJevEvaluationModelIdOrThrow } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/resolve-jev-evaluation-model-id-or-throw.util';
 import { JEV_MODEL_ID } from 'twenty-shared/ai';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class AiEvaluationService {
   }: Omit<AiEvaluationRequest, 'modelId'>): Promise<AiEvaluationResult> {
     assertEvaluationQuestionsAreWellFormed(questions);
 
-    const modelId = resolveJevEvaluationModelId({
+    const modelId = resolveJevEvaluationModelIdOrThrow({
       isModelAvailable:
         this.aiModelRegistryService.isModelAdminAllowed(JEV_MODEL_ID) &&
         isDefined(this.aiModelRegistryService.getEvaluationModel(JEV_MODEL_ID)),

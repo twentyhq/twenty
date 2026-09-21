@@ -5,7 +5,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-export const resolveJevEvaluationModelId = ({
+export const resolveJevEvaluationModelIdOrThrow = ({
   isModelAvailable,
 }: {
   isModelAvailable: boolean;
