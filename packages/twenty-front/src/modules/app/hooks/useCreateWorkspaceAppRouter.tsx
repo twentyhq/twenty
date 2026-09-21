@@ -3,6 +3,7 @@ import { lazy, useMemo } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
+import { DpaRedirect } from '@/app/components/DpaRedirect';
 import { LazyRoute } from '@/app/components/LazyRoute';
 import { WorkspaceAppProviders } from '@/app/components/WorkspaceAppProviders';
 import { WorkspaceRouteObjectsProvider } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
@@ -124,6 +125,10 @@ const createWorkspaceAppRouter = ({
           element: <WorkspaceAppProviders />,
           loader: async () => Promise.resolve(null),
           children: [
+            {
+              path: AppPath.Dpa,
+              element: <DpaRedirect />,
+            },
             {
               element: <MinimalMetadataGate />,
               children: [
