@@ -53,12 +53,17 @@ export const FrontComponentMediaSessionTooltipRow = ({
     : sessions.flatMap((session) => session.pendingMediaTypes);
   const usesAudio = mediaTypes.includes('audio');
   const usesVideo = mediaTypes.includes('video');
-  const mediaLabel =
-    usesAudio && usesVideo
-      ? t`Microphone and camera`
-      : usesVideo
-        ? t`Camera`
-        : t`Microphone`;
+  const getMediaLabel = () => {
+    if (usesAudio && usesVideo) {
+      return t`Microphone and camera`;
+    }
+
+    if (usesVideo) {
+      return t`Camera`;
+    }
+
+    return t`Microphone`;
+  };
   const { applicationName } = firstSession;
   const MediaIcon = usesVideo ? IconVideo : IconMicrophone;
   const handleStop = () => {
@@ -73,7 +78,7 @@ export const FrontComponentMediaSessionTooltipRow = ({
       <StyledDetails>
         <StyledApplicationName>{applicationName}</StyledApplicationName>
         <StyledMediaType>
-          {isCapturing ? mediaLabel : t`Waiting for permission`}
+          {isCapturing ? getMediaLabel() : t`Waiting for permission`}
         </StyledMediaType>
       </StyledDetails>
       <Button
