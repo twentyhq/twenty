@@ -3,10 +3,14 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
+import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ThemeProvider } from 'twenty-ui/theme';
 
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
+import { isStayOnDefaultDomainRequested } from '@/domain-manager/utils/isStayOnDefaultDomainRequested';
+import { rememberStayOnDefaultDomainRequest } from '@/domain-manager/utils/rememberStayOnDefaultDomainRequest';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -113,5 +117,51 @@ describe('SignInUpGlobalScopeForm', () => {
     fireEvent.click(forgotPasswordLink);
 
     expect(resetPasswordClickMock).toHaveBeenCalledTimes(1);
+  });
+  it('forgets the stay-on-default-domain request when a workspace is picked', () => {
+    window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
+    rememberStayOnDefaultDomainRequest();
+    window.history.replaceState(null, '', '/welcome');
+
+    buildWorkspaceUrlMock.mockReturnValue('https://apple.twenty.com/verify');
+    jotaiStore.set(signInUpStepState.atom, SignInUpStep.WorkspaceSelection);
+    jotaiStore.set(availableWorkspacesState.atom, {
+      availableWorkspacesForSignIn: [
+        {
+          id: 'workspace-id',
+          displayName: 'Apple',
+          loginToken: 'login-token',
+          inviteHash: null,
+          personalInviteToken: null,
+          logo: null,
+          sso: [],
+          workspaceUrls: {
+            subdomainUrl: 'https://apple.twenty.com',
+            customUrl: null,
+          },
+        },
+      ],
+      availableWorkspacesForSignUp: [],
+    });
+
+    render(
+      <MockedProvider mocks={[]}>
+        <JotaiProvider store={jotaiStore}>
+          <ThemeProvider colorScheme="light">
+            <I18nProvider i18n={i18n}>
+              <MemoryRouter>
+                <SignInUpGlobalScopeForm />
+              </MemoryRouter>
+            </I18nProvider>
+          </ThemeProvider>
+        </JotaiProvider>
+      </MockedProvider>,
+    );
+
+    expect(isStayOnDefaultDomainRequested()).toBe(true);
+
+    fireEvent.click(screen.getByText('Apple'));
+
+    expect(isStayOnDefaultDomainRequested()).toBe(false);
   });
 });
