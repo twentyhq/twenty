@@ -3,8 +3,12 @@ import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
   STANDARD_OBJECTS,
 } from 'twenty-shared/metadata';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import {
+  FieldMetadataType,
+  MetadataWritability,
+  RelationOnDeleteAction,
+} from 'twenty-shared/types';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -17,12 +21,15 @@ import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 type DefaultRelationStandardObjectNameSingular =
-  (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number];
+  | (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number]
+  | 'agentChatThreadTarget';
 
 const MORPH_ID_BY_STANDARD_OBJECT_NAME_SINGULAR = {
   timelineActivity:
     STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
   attachment: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
+  agentChatThreadTarget:
+    STANDARD_OBJECTS.agentChatThreadTarget.morphIds.targetMorphId.morphId,
   noteTarget: STANDARD_OBJECTS.noteTarget.morphIds.targetMorphId.morphId,
   taskTarget: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
 } satisfies Record<DefaultRelationStandardObjectNameSingular, string | null>;
@@ -35,10 +42,13 @@ export type SystemRelationFlatFieldMetadataBundle = {
 
 type BuildSystemRelationFlatFieldMetadatasForObjectArgs = {
   sourceFlatObjectMetadata: UniversalFlatObjectMetadata;
-  standardTargetFlatObjectMetadataByNameSingular: Record<
-    DefaultRelationStandardObjectNameSingular,
-    UniversalFlatObjectMetadata
+  standardTargetFlatObjectMetadataByNameSingular: Partial<
+    Record<
+      DefaultRelationStandardObjectNameSingular,
+      UniversalFlatObjectMetadata
+    >
   >;
+  standardObjectNames?: readonly DefaultRelationStandardObjectNameSingular[];
   applicationUniversalIdentifier: string;
 };
 
@@ -46,12 +56,19 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
   sourceFlatObjectMetadata,
   standardTargetFlatObjectMetadataByNameSingular,
   applicationUniversalIdentifier,
+  standardObjectNames = DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
 }: BuildSystemRelationFlatFieldMetadatasForObjectArgs): SystemRelationFlatFieldMetadataBundle[] =>
-  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map((standardObjectNameSingular) => {
+  standardObjectNames.map((standardObjectNameSingular) => {
     const targetFlatObjectMetadata =
       standardTargetFlatObjectMetadataByNameSingular[
         standardObjectNameSingular
       ];
+
+    if (!isDefined(targetFlatObjectMetadata)) {
+      throw new Error(
+        `Missing system relation object ${standardObjectNameSingular}`,
+      );
+    }
 
     const reverseFieldName = `target${capitalize(
       sourceFlatObjectMetadata.nameSingular,
@@ -115,6 +132,19 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
 
     const [forwardFlatFieldMetadata, reverseFlatFieldMetadata] =
       flatFieldMetadatas;
+
+    if (standardObjectNameSingular === 'agentChatThreadTarget') {
+      // Linking a record must not expose the owner's private conversation through CRUD or audit logs.
+      for (const field of flatFieldMetadatas) {
+        field.writability = MetadataWritability.SYSTEM;
+        field.isAuditLogged = false;
+        field.isUIEditable = false;
+      }
+      reverseFlatFieldMetadata.universalSettings = {
+        ...reverseFlatFieldMetadata.universalSettings,
+        onDelete: RelationOnDeleteAction.CASCADE,
+      };
+    }
 
     return {
       forwardFlatFieldMetadata,

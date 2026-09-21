@@ -1,3 +1,4 @@
+import { type AgentChatThreadTargetWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-target.workspace-entity';
 import { type ActorMetadata, FieldMetadataType } from 'twenty-shared/types';
 
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata.constants';
@@ -19,6 +20,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
   createdBy: ActorMetadata;
   updatedBy: ActorMetadata;
+  agentChatThreadTargets: AgentChatThreadTargetWorkspaceEntity[];
   noteTargets: NoteTargetWorkspaceEntity[];
   taskTargets: TaskTargetWorkspaceEntity[];
   attachments: AttachmentWorkspaceEntity[];

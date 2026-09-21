@@ -78,10 +78,25 @@ export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends Metad
       };
     }
 
+    const agentChatThreadTarget =
+      relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier
+      ];
+
     const systemRelationBundles =
       buildSystemRelationFlatFieldMetadatasForObject({
         sourceFlatObjectMetadata,
-        standardTargetFlatObjectMetadataByNameSingular,
+        standardTargetFlatObjectMetadataByNameSingular: {
+          ...standardTargetFlatObjectMetadataByNameSingular,
+          agentChatThreadTarget,
+        },
+        // Older upgrade steps create custom objects before the thread-target schema exists.
+        standardObjectNames: [
+          ...DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
+          ...(isDefined(agentChatThreadTarget)
+            ? ['agentChatThreadTarget' as const]
+            : []),
+        ],
         applicationUniversalIdentifier:
           sourceFlatObjectMetadata.applicationUniversalIdentifier,
       });
