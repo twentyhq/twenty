@@ -27,11 +27,12 @@ const StyledActionSlot = styled.div`
   flex: 0 0 ${themeCssVariables.spacing[8]};
 `;
 
-const StyledFields = styled.div`
-  display: flex;
+const StyledFields = styled.div<{ variant: 'options' | 'levels' }>`
+  display: grid;
   flex: 1;
-  flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
+  grid-template-columns: ${({ variant }) =>
+    variant === 'levels' ? 'minmax(0, 1fr) minmax(0, 2fr)' : 'minmax(0, 1fr)'};
   min-width: 0;
 `;
 
@@ -97,41 +98,29 @@ export const WorkflowClassifyQuestionCriteria = ({
       </InputLabel>
       {visibleRows.map((criterion, index) => (
         <StyledRow key={criterion.id}>
-          {variant === 'levels' && <InputLabel>{index}</InputLabel>}
-          <StyledFields>
+          <StyledFields variant={variant}>
             <FormTextFieldInput
-              defaultValue={
-                variant === 'levels'
-                  ? criterion.description || criterion.name
-                  : criterion.name
+              defaultValue={criterion.name}
+              placeholder={
+                variant === 'options' ? t`e.g. Engineer` : t`e.g. Experienced`
               }
+              readonly={readonly}
+              VariablePicker={WorkflowVariablePicker}
+              onChange={(name) => changeCriterion(criterion.id, { name })}
+            />
+            <FormTextFieldInput
+              defaultValue={criterion.description ?? ''}
               placeholder={
                 variant === 'options'
-                  ? t`e.g. Engineer`
+                  ? t`e.g. Designs, builds, or maintains software or technical systems.`
                   : t`e.g. At least two years of regular React use`
               }
               readonly={readonly}
               VariablePicker={WorkflowVariablePicker}
-              onChange={(value) =>
-                changeCriterion(
-                  criterion.id,
-                  variant === 'levels'
-                    ? { name: value, description: value }
-                    : { name: value },
-                )
+              onChange={(description) =>
+                changeCriterion(criterion.id, { description })
               }
             />
-            {variant === 'options' && (
-              <FormTextFieldInput
-                defaultValue={criterion.description ?? ''}
-                placeholder={t`e.g. Designs, builds, or maintains software or technical systems.`}
-                readonly={readonly}
-                VariablePicker={WorkflowVariablePicker}
-                onChange={(description) =>
-                  changeCriterion(criterion.id, { description })
-                }
-              />
-            )}
           </StyledFields>
           {!readonly && (
             <StyledActionSlot>

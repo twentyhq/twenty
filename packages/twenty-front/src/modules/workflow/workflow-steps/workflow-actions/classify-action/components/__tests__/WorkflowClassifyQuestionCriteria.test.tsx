@@ -122,11 +122,10 @@ describe('WorkflowClassifyQuestionCriteria', () => {
         onChange={onChange}
       />,
     );
+    expect(screen.getByDisplayValue('Low')).toBeVisible();
     expect(screen.getByDisplayValue('No React experience')).toBeVisible();
     await user.type(
-      screen.getAllByPlaceholderText(
-        'e.g. At least two years of regular React use',
-      )[1],
+      screen.getAllByPlaceholderText('e.g. Experienced')[1],
       'Experienced',
     );
     expect(
@@ -138,7 +137,20 @@ describe('WorkflowClassifyQuestionCriteria', () => {
       { id: 'low', name: 'Low', description: 'No React experience' },
       expect.objectContaining({
         name: 'Experienced',
-        description: 'Experienced',
+        description: '',
+      }),
+    ]);
+    await user.type(
+      screen.getAllByPlaceholderText(
+        'e.g. At least two years of regular React use',
+      )[1],
+      'Two years of React',
+    );
+    expect(onChange).toHaveBeenLastCalledWith([
+      { id: 'low', name: 'Low', description: 'No React experience' },
+      expect.objectContaining({
+        name: 'Experienced',
+        description: 'Two years of React',
       }),
     ]);
   });
