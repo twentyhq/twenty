@@ -46,7 +46,11 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
       aggregateOperation as AggregateOperations,
     )
   ) {
-    return formatNumber(Number(aggregateRawValue), { format: numberFormat });
+    const countValue = Number(aggregateRawValue);
+
+    return chartNumberFormat === ChartNumberFormat.SHORT
+      ? formatToShortNumber(countValue)
+      : formatNumber(countValue, { format: numberFormat });
   } else if (!isDefined(aggregateFieldMetadataItem)) {
     return '-';
   } else if (

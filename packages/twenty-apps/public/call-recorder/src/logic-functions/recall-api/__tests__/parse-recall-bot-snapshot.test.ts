@@ -10,6 +10,11 @@ describe('parseRecallBotSnapshot', () => {
         metadata: { twentyWorkspaceId: 'workspace-1' },
         status_changes: [
           { code: 'in_call_recording', created_at: '2026-01-01T13:02:00.000Z' },
+          {
+            code: 'call_ended',
+            sub_code: 'timeout_exceeded_everyone_left',
+            created_at: '2026-01-01T14:00:00.000Z',
+          },
         ],
         recordings: [
           {
@@ -24,6 +29,11 @@ describe('parseRecallBotSnapshot', () => {
       metadata: { twentyWorkspaceId: 'workspace-1' },
       statusChanges: [
         { code: 'in_call_recording', createdAt: '2026-01-01T13:02:00.000Z' },
+        {
+          code: 'call_ended',
+          subCode: 'timeout_exceeded_everyone_left',
+          createdAt: '2026-01-01T14:00:00.000Z',
+        },
       ],
       recordings: [
         {

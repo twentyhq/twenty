@@ -8,10 +8,9 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { Section } from 'twenty-ui/components';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTableRows = styled.div`
@@ -42,9 +41,13 @@ const StyledFooter = styled.div`
 
 const HEADER_PADDING = `0 ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[2]}`;
 
+// an auto track resolves differently in the header and in the rows, so the chevron column is fixed
+const CHEVRON_COLUMN_WIDTH = themeCssVariables.spacing[8];
+
 export type SettingsTableListSectionColumn<Item> = {
   label: string;
   align?: 'left' | 'right';
+  overflow?: string;
   Cell: ComponentType<{ item: Item }>;
 };
 
@@ -78,12 +81,12 @@ export const SettingsTableListSection = <
   onFooterButtonClick,
 }: SettingsTableListSectionProps<Item>) => {
   const resolvedGridAutoColumns = showRowChevron
-    ? `${gridAutoColumns} auto`
+    ? `${gridAutoColumns} ${CHEVRON_COLUMN_WIDTH}`
     : gridAutoColumns;
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={title}
         description={description}
         adornment={headerAdornment}
@@ -111,7 +114,11 @@ export const SettingsTableListSection = <
                   onClick={onRowClick ? () => onRowClick(item) : undefined}
                 >
                   {columns.map((column) => (
-                    <TableCell key={column.label} align={column.align}>
+                    <TableCell
+                      key={column.label}
+                      align={column.align}
+                      overflow={column.overflow}
+                    >
                       <column.Cell item={item} />
                     </TableCell>
                   ))}
@@ -132,14 +139,15 @@ export const SettingsTableListSection = <
       {isDefined(footerButtonLabel) && isDefined(onFooterButtonClick) && (
         <StyledFooter>
           <Button
-            Icon={IconPlus}
-            title={footerButtonLabel}
-            variant="secondary"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={onFooterButtonClick}
-          />
+            variant="outline"
+          >
+            {footerButtonLabel}
+          </Button>
         </StyledFooter>
       )}
-    </Section>
+    </Section.Root>
   );
 };

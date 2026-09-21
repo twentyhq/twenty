@@ -1,3 +1,4 @@
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
@@ -21,12 +22,11 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
-import { Button, Toggle } from 'twenty-ui/input';
+import { Button, Switch } from 'twenty-ui/primitives/input';
 import { generateColumns } from './components/columns';
 import { type ImportedStructuredRowMetadata } from './types';
 
@@ -61,13 +61,13 @@ const StyledButtonContainer = styled.div`
   }
 `;
 
-const StyledErrorToggle = styled.div`
+const StyledErrorSwitch = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
 `;
 
-const StyledErrorToggleDescription = styled.span`
+const StyledErrorSwitchDescription = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
@@ -277,7 +277,7 @@ export const ValidationStep = ({
           { title: t`Cancel` },
           {
             title: t`Submit`,
-            variant: 'primary',
+            variant: 'outline',
             onClick: submitData,
             role: 'confirm',
           },
@@ -288,7 +288,14 @@ export const ValidationStep = ({
 
   return (
     <>
-      <ModalContent noPadding>
+      <Dialog.Body
+        style={{
+          display: 'flex',
+          flex: '1 1 0%',
+          flexDirection: 'column',
+          padding: 0,
+        }}
+      >
         <StyledContentWrapper>
           {filterByErrors && tableData.length === 0 ? (
             <StyledNoRowsWithErrorsContainer>
@@ -317,28 +324,27 @@ export const ValidationStep = ({
             </StyledScrollContainer>
           )}
           <StyledToolbar>
-            <StyledErrorToggle>
-              <Toggle
-                value={filterByErrors}
-                onChange={() => setFilterByErrors(!filterByErrors)}
-                toggleSize="small"
+            <StyledErrorSwitch>
+              <Switch
+                aria-label={t`Show only rows with errors`}
+                checked={filterByErrors}
+                onCheckedChange={() => setFilterByErrors(!filterByErrors)}
+                size="sm"
               />
-              <StyledErrorToggleDescription>
+              <StyledErrorSwitchDescription>
                 <Trans>Show only rows with errors</Trans>
-              </StyledErrorToggleDescription>
-            </StyledErrorToggle>
+              </StyledErrorSwitchDescription>
+            </StyledErrorSwitch>
             <StyledButtonContainer>
               <Button
-                Icon={IconTrash}
-                title={t`Remove`}
-                accent="default"
+                startIcon={<IconTrash />}
                 onClick={deleteSelectedRows}
                 disabled={selectedRows.size === 0}
-              />
+              >{t`Remove`}</Button>
             </StyledButtonContainer>
           </StyledToolbar>
         </StyledContentWrapper>
-      </ModalContent>
+      </Dialog.Body>
       <StepNavigationButton
         onContinue={onContinue}
         onBack={onBack}

@@ -77,6 +77,7 @@ describe('ApplicationRegistrationVariable (integration)', () => {
       expect(variable.description).toBe('Third-party API key');
       expect(variable.isSecret).toBe(true);
       expect(variable.isRequired).toBe(false);
+      expect(variable.isDeprecated).toBe(false);
       expect(variable.isFilled).toBe(true);
 
       variableId = variable.id;

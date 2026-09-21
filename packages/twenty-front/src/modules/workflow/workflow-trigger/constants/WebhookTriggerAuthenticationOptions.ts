@@ -1,4 +1,4 @@
-import { type IconComponent, IconLockOpen, IconFlag } from 'twenty-ui/icon';
+import { type IconComponent, IconKey, IconLockOpen } from 'twenty-ui/icon';
 export type AuthenticationMethods = 'API_KEY' | null;
 
 export const WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS: Array<{
@@ -14,6 +14,6 @@ export const WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS: Array<{
   {
     label: 'API key',
     value: 'API_KEY',
-    Icon: IconFlag,
+    Icon: IconKey,
   },
 ];

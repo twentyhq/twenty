@@ -2,10 +2,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
-import { Button, Checkbox } from 'twenty-ui/input';
-import { HorizontalSeparator, Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/components';
+import { Button, Checkbox } from 'twenty-ui/primitives/input';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 
@@ -54,54 +54,72 @@ const StyledTopicRow = styled.div`
 
 export const SettingsUnsubscribePreview = () => {
   const { t } = useLingui();
-  const { unsubscribeTopics } = useUnsubscribeTopics();
+  const { unsubscribeTopics, loading } = useUnsubscribeTopics();
 
   const publicTopics = unsubscribeTopics.filter(
     (topic) => topic.visibility === UnsubscribeTopicVisibility.PUBLIC,
   );
 
+  const hasPublicTopics = publicTopics.length > 0;
+
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Unsubscribe page`}
-        description={t`Preview of the page recipients see when they unsubscribe`}
+        description={
+          hasPublicTopics
+            ? t`Preview of the page recipients see when they unsubscribe`
+            : t`Recipients can only unsubscribe from everything. Add a public topic to let them choose what they keep receiving.`
+        }
       />
       <StyledViewport>
-        <StyledCard rounded>
-          <StyledHeader>
-            <H2Title
-              title={t`Do you want to unsubscribe?`}
-              description={t`Confirm your preferences:`}
-            />
-          </StyledHeader>
-          <StyledTopics>
-            {publicTopics.map((topic) => (
-              <StyledTopicRow key={topic.id}>
-                <Checkbox
-                  checked
-                  onChange={() => {}}
-                  aria-label={topic.name ?? t`Untitled topic`}
-                />
-                {topic.name ?? t`Untitled topic`}
-              </StyledTopicRow>
-            ))}
-          </StyledTopics>
-          <Button
-            title={t`Update`}
-            variant="primary"
-            accent="blue"
-            fullWidth
-            justify="center"
-          />
-          <HorizontalSeparator text={t`Or`} noMargin />
-          <Button
-            title={t`Unsubscribe all`}
-            variant="secondary"
-            fullWidth
-            justify="center"
-          />
-        </StyledCard>
+        {!loading && (
+          <StyledCard rounded>
+            <StyledHeader>
+              <Section.Header
+                title={t`Do you want to unsubscribe?`}
+                description={
+                  hasPublicTopics
+                    ? t`Confirm your preferences:`
+                    : t`You will stop receiving these emails.`
+                }
+              />
+            </StyledHeader>
+            {hasPublicTopics ? (
+              <>
+                <StyledTopics>
+                  {publicTopics.map((topic) => (
+                    <StyledTopicRow key={topic.id}>
+                      <Checkbox
+                        checked
+                        onCheckedChange={() => {}}
+                        aria-label={topic.name ?? t`Untitled topic`}
+                      />
+                      {topic.name ?? t`Untitled topic`}
+                    </StyledTopicRow>
+                  ))}
+                </StyledTopics>
+                <Button
+                  fullWidth
+                  variant="solid"
+                  color="accent"
+                >{t`Update`}</Button>
+                <HorizontalSeparator text={t`Or`} noMargin />
+                <Button
+                  fullWidth
+                  variant="outline"
+                >{t`Unsubscribe all`}</Button>
+              </>
+            ) : (
+              <Button
+                fullWidth
+                variant="solid"
+                color="accent"
+              >{t`Unsubscribe`}</Button>
+            )}
+          </StyledCard>
+        )}
       </StyledViewport>
-    </Section>
+    </Section.Root>
   );
 };

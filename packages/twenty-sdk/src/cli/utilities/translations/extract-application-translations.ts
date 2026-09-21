@@ -3,7 +3,6 @@ import path from 'path';
 
 import { type Manifest } from 'twenty-shared/application';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
 
 import {
   getTranslationCatalogKey,
@@ -18,23 +17,23 @@ import {
 import { collectFrontComponentStrings } from '@/cli/utilities/translations/collect-front-component-strings';
 import { collectTranslatableStrings } from '@/cli/utilities/translations/collect-translatable-strings';
 import { LOCALES_DIR } from '@/cli/utilities/translations/constants';
+import {
+  buildLocaleCatalog,
+  flattenLocaleCatalog,
+} from '@/cli/utilities/translations/locale-catalog-format';
 
 type ExtractApplicationTranslationsResult = {
   sourceCount: number;
   updatedLocaleFiles: string[];
 };
 
-const collectSourceEntries = async ({
+const collectSourceDescriptors = async ({
   manifest,
   frontComponentSourcePaths,
 }: {
   manifest: Manifest;
   frontComponentSourcePaths: string[];
-}): Promise<Map<string, MessageDescriptor>> => {
-  const manifestDescriptors: MessageDescriptor[] = collectTranslatableStrings(
-    manifest,
-  ).map((message) => ({ message }));
-
+}): Promise<MessageDescriptor[]> => {
   const frontComponentDescriptors = await collectFrontComponentStrings(
     frontComponentSourcePaths,
   );
@@ -42,7 +41,7 @@ const collectSourceEntries = async ({
   const descriptorByKey = new Map<string, MessageDescriptor>();
 
   for (const descriptor of [
-    ...manifestDescriptors,
+    ...collectTranslatableStrings(manifest),
     ...frontComponentDescriptors,
   ]) {
     descriptorByKey.set(
@@ -51,7 +50,7 @@ const collectSourceEntries = async ({
     );
   }
 
-  return descriptorByKey;
+  return [...descriptorByKey.values()];
 };
 
 export const extractApplicationTranslations = async ({
@@ -65,29 +64,26 @@ export const extractApplicationTranslations = async ({
   frontComponentSourcePaths?: string[];
   scaffoldLocale?: AppLocale;
 }): Promise<ExtractApplicationTranslationsResult> => {
-  const descriptorByKey = await collectSourceEntries({
+  const descriptors = await collectSourceDescriptors({
     manifest,
     frontComponentSourcePaths,
   });
 
-  const sortedKeys = [...descriptorByKey.keys()].sort();
   const localesDir = path.join(appPath, LOCALES_DIR);
 
   await ensureDir(localesDir);
 
-  const sourceCatalog: Record<string, string> = {};
-
-  for (const key of sortedKeys) {
-    const descriptor = descriptorByKey.get(key);
-
-    if (isDefined(descriptor)) {
-      sourceCatalog[key] = descriptor.message;
-    }
-  }
-
+  // The source file carries the message as its own translation, so a
+  // translator sees the original next to every hole they are filling.
   await writeJson(
     path.join(localesDir, `${SOURCE_LOCALE}.json`),
-    sourceCatalog,
+    buildLocaleCatalog(
+      descriptors.map(({ message, context }) => ({
+        message,
+        context,
+        translation: message,
+      })),
+    ),
   );
 
   if (scaffoldLocale !== undefined && scaffoldLocale !== SOURCE_LOCALE) {
@@ -105,19 +101,30 @@ export const extractApplicationTranslations = async ({
   for (const localeFile of existingLocaleFiles) {
     const filePath = path.join(localesDir, localeFile);
     const existing = (await readJson<Record<string, unknown>>(filePath)) ?? {};
-    const merged: Record<string, string> = {};
+    const existingTranslationByKey = new Map(
+      flattenLocaleCatalog(existing).map((entry) => [
+        getTranslationCatalogKey(entry.message, entry.context),
+        entry.translation,
+      ]),
+    );
 
-    for (const key of sortedKeys) {
-      const existingValue = existing[key];
-
-      merged[key] = typeof existingValue === 'string' ? existingValue : '';
-    }
-
-    await writeJson(filePath, merged);
+    await writeJson(
+      filePath,
+      buildLocaleCatalog(
+        descriptors.map(({ message, context }) => ({
+          message,
+          context,
+          translation:
+            existingTranslationByKey.get(
+              getTranslationCatalogKey(message, context),
+            ) ?? '',
+        })),
+      ),
+    );
   }
 
   return {
-    sourceCount: sortedKeys.length,
+    sourceCount: descriptors.length,
     updatedLocaleFiles: existingLocaleFiles,
   };
 };

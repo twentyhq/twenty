@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { type Note } from '@/activities/types/Note';
+import { FieldDescriptionTooltipProvider } from '@/object-record/record-field/ui/components/FieldDescriptionTooltipProvider';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NoteTile } from './NoteTile';
@@ -15,7 +16,6 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[6]};
 `;
 
 const StyledNoteContainer = styled.div`
@@ -30,17 +30,19 @@ export const NoteList = ({ notes }: NoteListProps) => {
   return (
     <>
       {notes.length > 0 && (
-        <StyledContainer>
-          <StyledNoteContainer>
-            {notes.map((note) => (
-              <NoteTile
-                key={note.id}
-                note={note}
-                isSingleNote={notes.length === 1}
-              />
-            ))}
-          </StyledNoteContainer>
-        </StyledContainer>
+        <FieldDescriptionTooltipProvider>
+          <StyledContainer>
+            <StyledNoteContainer>
+              {notes.map((note) => (
+                <NoteTile
+                  key={note.id}
+                  note={note}
+                  isSingleNote={notes.length === 1}
+                />
+              ))}
+            </StyledNoteContainer>
+          </StyledContainer>
+        </FieldDescriptionTooltipProvider>
       )}
     </>
   );

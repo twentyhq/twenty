@@ -34,28 +34,29 @@ your-app/
 
 ## 엔티티 유형
 
-| 엔티티             | 목적                        | 문서                                                                            |
-| --------------- | ------------------------- | ----------------------------------------------------------------------------- |
-| **애플리케이션**      | 앱 식별, 기본 역할, 변수           | [Application Config](/l/ko/developers/extend/apps/config/application)              |
-| **역할**          | 객체와 필드에 대한 권한 세트          | [Roles & Permissions](/l/ko/developers/extend/apps/config/roles)                   |
-| **객체**          | 필드가 있는 사용자 정의 레코드 타입      | [Objects](/l/ko/developers/extend/apps/data/objects)                               |
-| **필드**          | 다른 앱의 객체에 필드를 추가          | [Extending Objects](/l/ko/developers/extend/apps/data/extending-objects)           |
-| **관계**          | 객체 간 양방향 링크               | [Relations](/l/ko/developers/extend/apps/data/relations)                           |
-| **로직 함수**       | 트리거가 있는 서버 측 TypeScript   | [로직 함수](/l/ko/developers/extend/apps/logic/logic-functions)                        |
-| **스킬**          | 재사용 가능한 AI 에이전트 지침        | [스킬 및 에이전트](/l/ko/developers/extend/apps/logic/skills-and-agents)                  |
-| **에이전트**        | 사용자 지정 프롬프트를 사용하는 AI 에이전트 | [스킬 및 에이전트](/l/ko/developers/extend/apps/logic/skills-and-agents)                  |
-| **연결 제공자**      | 서드파티 API용 OAuth 자격 증명     | [Connections](/l/ko/developers/extend/apps/logic/connections)                      |
-| **뷰**           | 사전 구성된 레코드 목록 뷰           | [Views](/l/ko/developers/extend/apps/layout/views)                                 |
-| **내비게이션 메뉴 항목** | 사용자 정의 사이드바 항목            | [Navigation Menu Items](/l/ko/developers/extend/apps/layout/navigation-menu-items) |
-| **페이지 레이아웃**    | 레코드 상세 페이지의 탭과 위젯         | [Page Layouts](/l/ko/developers/extend/apps/layout/page-layouts)                   |
-| **프런트 컴포넌트**    | Twenty 내부의 샌드박스 React UI  | [프런트 컴포넌트](/l/ko/developers/extend/apps/layout/front-components)                   |
-| **명령 메뉴 항목**    | 빠른 작업 및 Cmd+K 항목          | [Command Menu Items](/l/ko/developers/extend/apps/layout/command-menu-items)       |
+| 엔티티             | 목적                                       | 문서                                                                                                     |
+| --------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **애플리케이션**      | 앱 식별, 기본 역할, 변수                          | [Application Config](/l/ko/developers/extend/apps/config/application)                                       |
+| **역할**          | 객체와 필드에 대한 권한 세트                         | [Roles & Permissions](/l/ko/developers/extend/apps/config/roles)                                            |
+| **객체**          | 필드가 있는 사용자 정의 레코드 타입                     | [Objects](/l/ko/developers/extend/apps/data/objects)                                                        |
+| **필드**          | 다른 앱의 객체에 필드를 추가                         | [Extending Objects](/l/ko/developers/extend/apps/data/extending-objects)                                    |
+| **관계**          | 객체 간 양방향 링크                              | [Relations](/l/ko/developers/extend/apps/data/relations)                                                    |
+| **로직 함수**       | 트리거가 있는 서버 측 TypeScript                  | [로직 함수](/l/ko/developers/extend/apps/logic/logic-functions)                                                 |
+| **스킬**          | 재사용 가능한 AI 에이전트 지침                       | [스킬 및 에이전트](/l/ko/developers/extend/apps/logic/skills-and-agents)                                           |
+| **에이전트**        | 사용자 지정 프롬프트를 사용하는 AI 에이전트                | [스킬 및 에이전트](/l/ko/developers/extend/apps/logic/skills-and-agents)                                           |
+| **연결 제공자**      | 서드파티 API용 OAuth 자격 증명                    | [Connections](/l/ko/developers/extend/apps/logic/connections)                                               |
+| **뷰**           | 사전 구성된 레코드 목록 뷰                          | [Views](/l/ko/developers/extend/apps/layout/views)                                                          |
+| **내비게이션 메뉴 항목** | 사용자 정의 사이드바 항목                           | [Navigation Menu Items](/l/ko/developers/extend/apps/layout/navigation-menu-items)                          |
+| **페이지 레이아웃**    | 레코드 상세 페이지의 탭과 위젯                        | [Page Layouts](/l/ko/developers/extend/apps/layout/page-layouts)                                            |
+| **프런트 컴포넌트**    | Twenty 내부의 샌드박스 React UI                 | [프런트 컴포넌트](/l/ko/developers/extend/apps/layout/front-components)                                            |
+| **공유 의존성**      | 앱의 프런트 컴포넌트에서 공유되고 package.json에 선언된 의존성 | [공유 의존성](/l/ko/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components) |
+| **명령 메뉴 항목**    | 빠른 작업 및 Cmd+K 항목                         | [Command Menu Items](/l/ko/developers/extend/apps/layout/command-menu-items)                                |
 
 ## 샌드박싱
 
-* **로직 함수**는 서버의 격리된 Node.js 프로세스에서 실행됩니다. 이들은 앱의 역할 권한 범위로 제한된 타입이 지정된 API 클라이언트를 통해서만 데이터에 접근합니다.
+* **로직 함수**는 서버의 격리된 Node.js 프로세스에서 실행됩니다. 이들은 타입이 지정된 API 클라이언트를 통해서만 데이터에 액세스하며, 이 클라이언트는 실행을 트리거한 사람 또는 앱 자체로 작동합니다. [호출에 사용되는 액세스 권한](/l/ko/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses)을 참조하세요.
 * **프런트 컴포넌트**는 Remote DOM을 사용하는 Web Worker에서 실행됩니다 — 메인 페이지와는 샌드박스로 격리되어 있지만 네이티브 DOM 요소를 렌더링합니다(iframe이 아님). 이들은 메시지 전달 호스트 API를 통해 Twenty와 통신합니다.
-* **권한**은 API 수준에서 강제 적용됩니다. 런타임 토큰(`TWENTY_APP_ACCESS_TOKEN`)은 `defineApplication()`에 정의된 역할에서 파생됩니다.
+* **권한**은 API 수준에서 강제 적용됩니다. `defineApplicationRole()`로 선언된 역할에서 파생된 두 개의 런타임 토큰이 주입됩니다. 기본 토큰은 실행 뒤에 사람이 있는 경우마다 실행을 트리거한 사람이 할 수 있는 작업으로 더 제한됩니다.
 
 ## 앱 라이프사이클
 

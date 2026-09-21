@@ -1,44 +1,61 @@
+import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
+import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
-import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
-const StyledContainer = styled.div<{ isExpanded: boolean }>`
-  align-items: ${({ isExpanded }) => (isExpanded ? 'center' : 'flex-start')};
-  display: flex;
-  flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
+const StyledContainer = styled.div`
   flex-shrink: 0;
-  gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[4])};
-  min-height: ${PAGE_BAR_MIN_HEIGHT}px;
-  padding-right: ${themeCssVariables.spacing[2]};
-  transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   user-select: none;
+`;
+
+const StyledHeaderRow = styled.div`
+  align-items: center;
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+  box-sizing: border-box;
+  display: flex;
+  height: ${APP_HEADER_HEIGHT}px;
+  padding: 0 ${themeCssVariables.spacing[2]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-left: ${themeCssVariables.spacing[5]};
-    padding-right: ${themeCssVariables.spacing[5]};
+    padding: 0 ${themeCssVariables.spacing[7]};
   }
 `;
 
-const StyledRightActions = styled.div<{ isExpanded: boolean }>`
-  align-items: center;
-  align-self: ${({ isExpanded }) => (isExpanded ? 'auto' : 'flex-end')};
+const StyledCollapsedSearch = styled.div`
+  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]}
+    ${themeCssVariables.spacing[1]};
+`;
+
+const StyledSearchButtonContainer = styled.div<{ isExpanded: boolean }>`
   display: flex;
-  flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
+
+  > button {
+    height: ${({ isExpanded }) =>
+      isExpanded
+        ? themeCssVariables.spacing[6]
+        : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
+    width: ${({ isExpanded }) =>
+      isExpanded
+        ? themeCssVariables.spacing[6]
+        : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
+  }
+`;
+
+const StyledRightActions = styled.div`
+  align-items: center;
+  display: flex;
   flex-shrink: 0;
-  gap: ${({ isExpanded }) =>
-    isExpanded ? '2px' : themeCssVariables.spacing[1]};
-  margin-left: ${({ isExpanded }) => (isExpanded ? 'auto' : '0')};
-  transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
+  gap: ${themeCssVariables.spacing['0.5']};
+  margin-left: auto;
 `;
 
 const StyledNavigationDrawerCollapseButtonContainer = styled.div`
@@ -50,55 +67,55 @@ const StyledNavigationDrawerCollapseButtonContainer = styled.div`
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     > * {
-      height: ${themeCssVariables.spacing[8]};
+      height: ${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px;
       padding-right: 0;
-      width: ${themeCssVariables.spacing[8]};
+      width: ${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px;
     }
   }
 `;
 
 const StyledWorkspaceDropdownContainer = styled.div`
-  align-items: center;
   display: flex;
   flex: 1 1 auto;
-  min-height: ${themeCssVariables.spacing[8]};
   min-width: 0;
 `;
 
-type NavigationDrawerHeaderProps = {
-  showCollapseButton: boolean;
-};
-
-export const NavigationDrawerHeader = ({
-  showCollapseButton,
-}: NavigationDrawerHeaderProps) => {
+export const NavigationDrawerHeader = () => {
   const isMobile = useIsMobile();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
-  const isNavigationDrawerExpanded = useAtomStateValue(
-    isNavigationDrawerExpandedState,
+  const isExpanded = useIsNavigationDrawerContentExpanded();
+
+  const searchButton = !isMobile && (
+    <StyledSearchButtonContainer isExpanded={isExpanded}>
+      <LightIconButton
+        emphasis="standard"
+        size="sm"
+        onClick={openRecordsSearchPage}
+        aria-label={t`Search`}
+      >
+        <IconSearch />
+      </LightIconButton>
+    </StyledSearchButtonContainer>
   );
 
   return (
-    <StyledContainer isExpanded={isNavigationDrawerExpanded}>
-      <StyledWorkspaceDropdownContainer>
-        <MultiWorkspaceDropdownButton />
-      </StyledWorkspaceDropdownContainer>
-      <StyledRightActions isExpanded={isNavigationDrawerExpanded}>
-        {!isMobile && (
-          <LightIconButton
-            Icon={IconSearch}
-            accent="secondary"
-            size="small"
-            onClick={openRecordsSearchPage}
-            aria-label={t`Search`}
-          />
+    <StyledContainer>
+      <StyledHeaderRow>
+        <StyledWorkspaceDropdownContainer>
+          <MultiWorkspaceDropdownButton />
+        </StyledWorkspaceDropdownContainer>
+        {isExpanded && (
+          <StyledRightActions>
+            {searchButton}
+            <StyledNavigationDrawerCollapseButtonContainer>
+              <NavigationDrawerCollapseButton direction="left" />
+            </StyledNavigationDrawerCollapseButtonContainer>
+          </StyledRightActions>
         )}
-        {isNavigationDrawerExpanded && showCollapseButton && (
-          <StyledNavigationDrawerCollapseButtonContainer>
-            <NavigationDrawerCollapseButton direction="left" />
-          </StyledNavigationDrawerCollapseButtonContainer>
-        )}
-      </StyledRightActions>
+      </StyledHeaderRow>
+      {!isExpanded && !isMobile && (
+        <StyledCollapsedSearch>{searchButton}</StyledCollapsedSearch>
+      )}
     </StyledContainer>
   );
 };

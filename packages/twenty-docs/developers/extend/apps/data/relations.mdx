@@ -84,9 +84,34 @@ export default defineField({
 **Circular imports:** both relation fields reference each other's `universalIdentifier`. To avoid circular import issues, export your field IDs as named constants from each file and import them in the other. The build system resolves these at compile time.
 </Note>
 
+## Junction relations
+
+A junction object connects one source record to one or more target records. For example, `PostCardRecipient` can hold both a `postCard` relation and a `recipient` relation. On the source object's `ONE_TO_MANY` field, set `junctionTargetFieldUniversalIdentifier` to the relation field on the junction object that points to the target:
+
+```ts
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_FIELD_ID,
+  },
+});
+```
+
+`RECIPIENT_FIELD_ID` must identify a `MANY_TO_ONE` or morph relation on the junction object. It tells Twenty which related record is the target when a feature such as [timeline activity fan-out](/developers/extend/apps/data/timeline-activity-types#automatic-and-explicit-events) traverses the junction.
+
 ## Relating to standard objects
 
-To create a relation with a built-in Twenty object (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+To create a relation with a built-in Twenty object (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`.
+
+A relation is always declared on both objects, and this does not change when one side is a standard object: the manifest must also define the reverse field on the standard object, with the standard object's `universalIdentifier` as `objectUniversalIdentifier`. If the reverse field is missing, the app fails to sync with `Relation field target metadata not found`.
 
 ```ts src/fields/person-on-self-hosting-user.field.ts
 import {
@@ -120,6 +145,35 @@ export default defineField({
 });
 ```
 
+```ts src/fields/self-hosting-users-on-person.field.ts
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
+import {
+  PERSON_FIELD_ID,
+  SELF_HOSTING_USER_REVERSE_FIELD_ID,
+} from './person-on-self-hosting-user.field';
+
+export default defineField({
+  universalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  type: FieldType.RELATION,
+  name: 'selfHostingUsers',
+  label: 'Self hosting users',
+  relationTargetObjectMetadataUniversalIdentifier:
+    SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: PERSON_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
+});
+```
+
 ## Relation field properties
 
 | Property | Required | Description |
@@ -130,6 +184,7 @@ export default defineField({
 | `universalSettings.relationType` | Yes | `RelationType.MANY_TO_ONE` or `RelationType.ONE_TO_MANY` |
 | `universalSettings.onDelete` | MANY_TO_ONE only | What happens when the referenced record is deleted: `CASCADE`, `SET_NULL`, `RESTRICT`, or `NO_ACTION` |
 | `universalSettings.joinColumnName` | MANY_TO_ONE only | Database column name for the foreign key (e.g., `postCardId`) |
+| `universalSettings.junctionTargetFieldUniversalIdentifier` | Junction ONE_TO_MANY only | Relation field on the junction object that points to the fan-out target |
 
 ## Inline relation fields
 

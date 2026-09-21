@@ -36,7 +36,6 @@ const toAutomaticTaxJson = (
   };
 };
 
-// Converts Stripe CancellationDetails to serialized JSON for JSONB storage
 const toCancellationDetailsJson = (
   value: Stripe.Subscription.CancellationDetails | null | undefined,
 ): CancellationDetailsJson | undefined => {

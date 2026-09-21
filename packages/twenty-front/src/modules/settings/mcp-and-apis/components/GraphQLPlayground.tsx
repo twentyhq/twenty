@@ -1,4 +1,3 @@
-import '@/settings/mcp-and-apis/utils/setupGraphiqlMonacoWorkers';
 import {
   isPlaygroundApiKeyFresh,
   playgroundApiKeyState,

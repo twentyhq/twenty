@@ -12,20 +12,21 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewApiUpdate } from '@/views/hooks/internal/usePerformViewApiUpdate';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
-import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { computeViewPickerVisibleViews } from '@/views/view-picker/utils/computeViewPickerVisibleViews';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ViewVisibility } from '~/generated-metadata/graphql';
+import { FeatureFlagKey, ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 const StyledBoldDropdownMenuItemsContainerWrapper = styled.div`
@@ -42,20 +43,30 @@ export const ViewPickerListContent = () => {
     { objectMetadataItemId: objectMetadataItem.id },
   );
 
-  const workspaceViews = viewsOnCurrentObject.filter(
+  const { currentView } = useGetCurrentViewOnly();
+
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+  );
+
+  const visibleViews = computeViewPickerVisibleViews({
+    views: viewsOnCurrentObject,
+    currentViewId: currentView?.id,
+    isInitialObjectViewEnabled,
+  });
+
+  const workspaceViews = visibleViews.filter(
     (view) => view.visibility === ViewVisibility.WORKSPACE,
   );
 
-  const unlistedViews = viewsOnCurrentObject.filter(
+  const unlistedViews = visibleViews.filter(
     (view) => view.visibility === ViewVisibility.UNLISTED,
   );
 
-  const isLastView = viewsOnCurrentObject.length <= 1;
+  const isLastView = visibleViews.length <= 1;
 
   const shouldShowSectionLabels =
     workspaceViews.length > 0 && unlistedViews.length > 0;
-
-  const { currentView } = useGetCurrentViewOnly();
 
   const setViewPickerReferenceViewId = useSetAtomComponentState(
     viewPickerReferenceViewIdComponentState,
@@ -63,14 +74,14 @@ export const ViewPickerListContent = () => {
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
+  const { performViewApiUpdate } = usePerformViewApiUpdate();
   const { changeView } = useChangeView();
 
   const { closeDropdown } = useCloseDropdown();
 
   const handleViewSelect = (viewId: string) => {
     changeView(viewId);
-    closeDropdown(VIEW_PICKER_DROPDOWN_ID);
+    closeDropdown();
   };
 
   const { openCreateViewDropdown } = useOpenCreateViewDropdown();
@@ -100,7 +111,7 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await performViewAPIUpdate({
+            await performViewApiUpdate({
               id: view.id,
               input: { position: index },
             });
@@ -108,7 +119,7 @@ export const ViewPickerListContent = () => {
         }),
       );
     },
-    [performViewAPIUpdate, workspaceViews],
+    [performViewApiUpdate, workspaceViews],
   );
 
   const handleUnlistedDragEnd = useCallback(
@@ -123,7 +134,7 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await performViewAPIUpdate({
+            await performViewApiUpdate({
               id: view.id,
               input: { position: index },
             });
@@ -131,7 +142,7 @@ export const ViewPickerListContent = () => {
         }),
       );
     },
-    [performViewAPIUpdate, unlistedViews],
+    [performViewApiUpdate, unlistedViews],
   );
 
   return (

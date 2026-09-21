@@ -19,6 +19,9 @@ export class AdminWorkspaceChatThreadDTO {
   @Field(() => Int)
   conversationSize: number;
 
+  @Field(() => Int)
+  messageCount: number;
+
   @Field(() => Date)
   createdAt: Date;
 

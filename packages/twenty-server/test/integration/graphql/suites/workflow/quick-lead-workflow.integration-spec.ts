@@ -5,6 +5,7 @@ import {
   runWorkflowVersion,
   waitForWorkflowCompletion,
   waitForWorkflowRunStatus,
+  waitForWorkflowRunStepStatus,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -83,18 +84,15 @@ describe('Quick Lead Workflow (e2e)', () => {
       expect(workflowVersion).toBeDefined();
       expect(workflowVersion.status).toBe('ACTIVE');
 
-      // Verify trigger structure
       const trigger = workflowVersion.trigger;
 
       expect(trigger.type).toBe('MANUAL');
       expect(trigger.nextStepIds).toContain(FORM_STEP_ID);
 
-      // Verify steps structure
       const steps = workflowVersion.steps;
 
       expect(steps).toHaveLength(3);
 
-      // Form step
       const formStep = steps.find(
         (step: { id: string }) => step.id === FORM_STEP_ID,
       );
@@ -103,7 +101,6 @@ describe('Quick Lead Workflow (e2e)', () => {
       expect(formStep.type).toBe('FORM');
       expect(formStep.name).toBe('Quick Lead Form');
 
-      // Create Company step
       const createCompanyStep = steps.find(
         (step: { id: string }) =>
           step.id === '0715b6cd-7cc1-4b98-971b-00f54dfe643b',
@@ -113,7 +110,6 @@ describe('Quick Lead Workflow (e2e)', () => {
       expect(createCompanyStep.type).toBe('CREATE_RECORD');
       expect(createCompanyStep.name).toBe('Create Company');
 
-      // Create Person step
       const createPersonStep = steps.find(
         (step: { id: string }) =>
           step.id === '6f553ea7-b00e-4371-9d88-d8298568a246',
@@ -131,9 +127,12 @@ describe('Quick Lead Workflow (e2e)', () => {
 
       createdWorkflowRunId = workflowRunId;
 
-      const workflowRun = await waitForWorkflowRunStatus(
+      await waitForWorkflowRunStatus(workflowRunId, 'RUNNING');
+
+      const workflowRun = await waitForWorkflowRunStepStatus(
         workflowRunId,
-        'RUNNING',
+        FORM_STEP_ID,
+        'PENDING',
       );
 
       expect(workflowRun).toBeDefined();

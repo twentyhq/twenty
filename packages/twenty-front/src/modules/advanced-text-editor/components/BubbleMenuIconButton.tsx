@@ -1,46 +1,36 @@
-import { styled } from '@linaria/react';
 import React from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import type { IconComponent } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { LightIconButton } from 'twenty-ui/components';
 
 type BubbleMenuIconButtonProps = {
+  label: string;
   className?: string;
   Icon?: IconComponent;
   disabled?: boolean;
-  focus?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   isActive?: boolean;
 };
 
-const StyledBubbleMenuIconButtonContainer = styled.div`
-  border: none;
-  border-radius: ${themeCssVariables.spacing[1.5]};
-  height: ${themeCssVariables.spacing[6]};
-  width: ${themeCssVariables.spacing[6]};
-`;
-
 export const BubbleMenuIconButton = ({
+  label,
   className,
   Icon,
   disabled = false,
-  focus = false,
   onClick,
   isActive,
 }: BubbleMenuIconButtonProps) => {
   return (
-    <StyledBubbleMenuIconButtonContainer className={className}>
-      <FloatingIconButton
-        Icon={Icon}
-        disabled={disabled}
-        focus={focus}
-        onClick={onClick}
-        isActive={isActive}
-        applyShadow={false}
-        applyBlur={false}
-        size="medium"
-        position="standalone"
-      />
-    </StyledBubbleMenuIconButtonContainer>
+    <LightIconButton
+      className={className}
+      disabled={disabled}
+      aria-pressed={isActive}
+      onClick={onClick}
+      emphasis={isActive === true ? 'standard' : 'subtle'}
+      size="sm"
+      aria-label={label}
+    >
+      {isDefined(Icon) && <Icon />}
+    </LightIconButton>
   );
 };

@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -22,11 +23,13 @@ import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@Controller('rest/sdk-client')
+@Controller(`${ApiPath.Rest}/sdk-client`)
+@AllowSuspendedWorkspace()
 @UseGuards(WorkspaceAuthGuard)
 export class SdkClientController {
   constructor(

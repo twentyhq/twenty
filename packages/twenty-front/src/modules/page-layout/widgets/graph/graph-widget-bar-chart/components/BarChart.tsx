@@ -32,6 +32,7 @@ type BarChartProps = {
   effectiveValueRange: { minimum: number; maximum: number };
   hasExplicitRangeBounds: boolean;
   formatOptions: GraphValueFormatOptions;
+  axisFormatOptions?: GraphValueFormatOptions;
   axisConfig?: {
     xAxisLabel?: string;
     yAxisLabel?: string;
@@ -69,6 +70,7 @@ export const BarChart = ({
   effectiveValueRange,
   hasExplicitRangeBounds,
   formatOptions,
+  axisFormatOptions,
   axisConfig,
   rightTickLabels,
   dataLabelsConfig,
@@ -107,7 +109,7 @@ export const BarChart = ({
     data,
     effectiveValueRange,
     hasExplicitRangeBounds,
-    formatOptions,
+    formatOptions: axisFormatOptions ?? formatOptions,
     groupMode,
     indexBy,
     keys,

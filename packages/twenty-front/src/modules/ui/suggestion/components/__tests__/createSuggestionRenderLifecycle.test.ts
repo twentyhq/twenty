@@ -169,7 +169,6 @@ describe('createSuggestionRenderLifecycle', () => {
 
       lifecycle.onStart(createMockCallbackProps({ command: originalCommand }));
 
-      // Extract the onSelect callback from the props passed to ReactRenderer
       const { ReactRenderer } = jest.requireMock('@tiptap/react');
       const constructorCall = ReactRenderer.mock.calls[0];
       const menuProps = constructorCall[1].props;

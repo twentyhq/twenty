@@ -1,6 +1,7 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
 import { AGENT_CHAT_THREAD_GROUP_BY_LABELS } from '@/ai/constants/AgentChatThreadGroupByLabels';
@@ -44,15 +45,21 @@ export const AiChatThreadFilterDropdownGroupByMenu = ({
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {AGENT_CHAT_THREAD_GROUP_BY_OPTIONS.map((option) => (
-          <MenuItemSelect
+          <ListItem
             key={option}
-            text={t(AGENT_CHAT_THREAD_GROUP_BY_LABELS[option])}
-            selected={agentChatThreadGroupBy === option}
             onClick={() => {
               setAgentChatThreadGroupBy(option);
               closeDropdown();
             }}
-          />
+            role="option"
+            aria-selected={agentChatThreadGroupBy === option}
+            selected={agentChatThreadGroupBy === option}
+            indicator="check"
+          >
+            <OverflowingTextWithTooltip
+              text={t(AGENT_CHAT_THREAD_GROUP_BY_LABELS[option])}
+            />
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>

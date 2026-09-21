@@ -12,6 +12,7 @@ export const impersonationSchema = z.strictObject({
       'attempt',
       'attempted',
       'issued',
+      'ended',
       'login_token_attempt',
       'login_token_generated',
       'login_token_failed',

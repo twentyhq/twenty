@@ -1,5 +1,6 @@
-import { Avatar } from 'twenty-ui/data-display';
-import { MenuItemSelectAvatar, UndecoratedLink } from 'twenty-ui/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { UndecoratedLink, ListItem } from 'twenty-ui/primitives/navigation';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -45,18 +46,24 @@ export const AvailableWorkspaceItem = ({
         handleChange();
       }}
     >
-      <MenuItemSelectAvatar
-        text={availableWorkspace.displayName ?? t`(No name)`}
-        avatar={
+      <ListItem
+        role="option"
+        aria-selected={isSelected}
+        selected={isSelected}
+        indicator="check"
+        startIcon={
           <Avatar
-            placeholder={availableWorkspace.displayName || ''}
-            avatarUrl={getAbsoluteImageUrl(
+            name={availableWorkspace.displayName || ''}
+            src={getAbsoluteImageUrl(
               availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
             )}
           />
         }
-        selected={isSelected}
-      />
+      >
+        <OverflowingTextWithTooltip
+          text={availableWorkspace.displayName ?? t`(No name)`}
+        />
+      </ListItem>
     </UndecoratedLink>
   );
 };

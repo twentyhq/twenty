@@ -2,10 +2,16 @@ import { isNotEmptyObject, type ValidationError } from 'class-validator';
 
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
+import { CallRecordingSummaryConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/call-recording-summary-configuration.dto';
+import { CallRecordingTranscriptConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/call-recording-transcript-configuration.dto';
+import { EmailThreadConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/email-thread-configuration.dto';
+import { FormFieldConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/form-field-configuration.dto';
 import { FieldConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-configuration.dto';
 import { FrontComponentConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/front-component-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
+import { MessageCampaignBodyConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/message-campaign-body-configuration.dto';
+import { MessageCampaignDetailsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/message-campaign-details-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
 import { RecordTableConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/record-table-configuration.dto';
 import { StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
@@ -121,6 +127,36 @@ export const validateWidgetConfigurationInput = ({
         configuration,
       );
       break;
+    case WidgetConfigurationType.EMAIL_THREAD:
+      errors = validateWidgetConfigurationByDto(
+        EmailThreadConfigurationDTO,
+        configuration,
+      );
+      break;
+    case WidgetConfigurationType.CALL_RECORDING_SUMMARY:
+      errors = validateWidgetConfigurationByDto(
+        CallRecordingSummaryConfigurationDTO,
+        configuration,
+      );
+      break;
+    case WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT:
+      errors = validateWidgetConfigurationByDto(
+        CallRecordingTranscriptConfigurationDTO,
+        configuration,
+      );
+      break;
+    case WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY:
+      errors = validateWidgetConfigurationByDto(
+        MessageCampaignBodyConfigurationDTO,
+        configuration,
+      );
+      break;
+    case WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS:
+      errors = validateWidgetConfigurationByDto(
+        MessageCampaignDetailsConfigurationDTO,
+        configuration,
+      );
+      break;
     case WidgetConfigurationType.VIEW:
       throw new PageLayoutWidgetException(
         'View configuration is not supported yet',
@@ -129,6 +165,12 @@ export const validateWidgetConfigurationInput = ({
     case WidgetConfigurationType.FIELD:
       errors = validateWidgetConfigurationByDto(
         FieldConfigurationDTO,
+        configuration,
+      );
+      break;
+    case WidgetConfigurationType.FORM_FIELD:
+      errors = validateWidgetConfigurationByDto(
+        FormFieldConfigurationDTO,
         configuration,
       );
       break;

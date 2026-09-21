@@ -1,3 +1,4 @@
+import { type CalendarEventCallRecording } from '@/activities/calendar/types/CalendarEventCallRecording';
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { type CalendarChannelVisibility } from '~/generated/graphql';
 
@@ -18,5 +19,6 @@ export type CalendarEvent = {
   title?: string;
   visibility: CalendarChannelVisibility;
   calendarEventParticipants?: CalendarEventParticipant[];
+  callRecordings?: CalendarEventCallRecording[];
   __typename: 'CalendarEvent';
 };

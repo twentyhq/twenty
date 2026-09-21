@@ -1,5 +1,5 @@
-// AUTO-GENERATED from the source DPA template (Twenty DPA — Universal Template.docx).
-// The legal text is VERBATIM from the executed template — do not edit wording here.
+// Generated from the source DPA template (Twenty DPA — Universal Template.docx).
+// Legal wording changes must be reviewed and accompanied by a template-version bump.
 // Merge fields use {{DOUBLE_BRACES}} and are resolved at render time.
 
 import { type DpaTemplateBlock } from 'src/engine/core-modules/dpa/types/dpa.types';
@@ -7,7 +7,7 @@ import { type DpaTemplateBlock } from 'src/engine/core-modules/dpa/types/dpa.typ
 export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   {
     kind: 'paragraph',
-    text: 'This Data Processing Agreement (“DPA”) is incorporated into and forms part of the master services agreement or Terms of Service (“Agreement”) between {{PROCESSOR_ENTITY}} (“Twenty” or “Processor”) and the customer entity (“Customer” or “Controller”) using Twenty’s services. This DPA reflects the parties’ agreement on the processing of personal data by Twenty on behalf of Customer in providing the Twenty CRM platform services. In case of any conflict between this DPA and the Agreement, the terms of this DPA will prevail to the extent of that conflict. The term of this DPA shall follow the term of the Agreement. Capitalized terms not defined herein have the meanings given in the Agreement.',
+    text: 'This Data Processing Agreement (“DPA”) is incorporated into and forms part of the master services agreement or Terms of Service (“Agreement”) between {{PROCESSOR_ENTITY}} (“Twenty PBC” or “Processor”) and the customer entity (“Customer” or “Controller”) using Twenty’s services. {{EU_AFFILIATE_ENTITY}} (“Twenty SAS” or “EU Affiliate”) joins this DPA as Twenty’s European affiliate and privacy contact and agrees to be bound by the obligations of this DPA applicable to any Processing it performs. Twenty SAS does not replace Twenty PBC as the Processor or become a party to the Agreement solely by joining this DPA. Twenty PBC and Twenty SAS are together referred to as “Twenty” in this DPA. Twenty PBC remains responsible to Customer for the acts and omissions of Twenty SAS under this DPA to the same extent as for its own acts and omissions. This DPA reflects the parties’ agreement on the processing of personal data by Twenty on behalf of Customer in providing the Twenty CRM platform services. In case of any conflict between this DPA and the Agreement, the terms of this DPA will prevail to the extent of that conflict. The term of this DPA shall follow the term of the Agreement. Capitalized terms not defined herein have the meanings given in the Agreement.',
   },
   {
     kind: 'paragraph',
@@ -28,7 +28,7 @@ export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   },
   {
     kind: 'paragraph',
-    text: '“Processor” means the entity that Processes Personal Data on behalf of a Controller. For purposes of this DPA, Twenty is the Processor acting on behalf of Customer.',
+    text: '“Processor” means the entity that Processes Personal Data on behalf of a Controller. For purposes of this DPA, Twenty PBC is the Processor acting on behalf of Customer. Twenty SAS is bound as described in the introductory paragraph to the extent it performs Processing.',
   },
   {
     kind: 'paragraph',
@@ -238,7 +238,7 @@ export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   { kind: 'heading', text: '7. International Data Transfers' },
   {
     kind: 'paragraph',
-    text: '7.1 Data Hosting and Localization: Twenty offers EU-based hosting (Frankfurt, Germany) by default and, as an option, US-based hosting for customers who select a US deployment. The Twenty contracting entity (the “Processor”) and the hosting region applicable to Customer are those identified in the Order Form or Customer’s workspace configuration. To the extent the Processor is established in, and Customer Personal Data is hosted within, the EEA and accessed only by EEA-based personnel, providing the services does not require any transfer of Customer Personal Data to a third country, and the international-transfer provisions in Sections 7.2–7.5 apply only to the extent any such transfer nevertheless occurs. As of the effective date, Customer Personal Data in the Twenty cloud service is hosted in data centers in the {{HOSTING_REGION}} via Amazon Web Services (AWS). Customer acknowledges that Twenty and its Sub-Processors may access and Process Personal Data on a global basis as needed to provide the services, including for support and technical operations. This may involve transferring Customer Personal Data outside the country or region where it was originally collected, including to the United States. Twenty will ensure that all such transfers are made in compliance with Data Protection Laws governing cross-border data transfers. For regions with data residency commitments (if offered under the Agreement), Twenty will abide by those terms (for example, hosting EU Customer data in the EU region).',
+    text: '7.1 Data Hosting and Localization: Twenty offers EU-based hosting (Frankfurt, Germany) by default and, as an option, US-based hosting for customers who select a US deployment. Twenty PBC is the Processor and Twenty SAS is the EU Affiliate for every hosting region; those legal roles do not change based on Customer’s workspace configuration. The hosting region applicable to Customer is identified in the Order Form or Customer’s workspace configuration. As of the effective date, Customer Personal Data in the Twenty cloud service is hosted in data centers in the {{HOSTING_REGION}} via Amazon Web Services (AWS). EU hosting does not by itself exclude an international transfer where Customer Personal Data is made available to Twenty PBC or another recipient outside the EEA. Customer acknowledges that Twenty and its Sub-Processors may access and Process Personal Data on a global basis as needed to provide the services, including for support and technical operations. This may involve transferring Customer Personal Data outside the country or region where it was originally collected, including to the United States. Twenty will ensure that all such transfers are made in compliance with Data Protection Laws governing cross-border data transfers. For regions with data residency commitments (if offered under the Agreement), Twenty will abide by those terms (for example, hosting EU Customer data in the EU region).',
   },
   {
     kind: 'paragraph',
@@ -460,7 +460,11 @@ export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   },
   {
     kind: 'paragraph',
-    text: 'Data Importer (Processor): {{PROCESSOR_ENTITY}}, {{PROCESSOR_LEGAL_FORM}}. Registered office: {{PROCESSOR_ADDRESS}}. {{PROCESSOR_ENTITY}} provides cloud-based CRM software and related services and Processes Customer Personal Data in the {{HOSTING_REGION}}. Contact for privacy inquiries: privacy@twenty.com. {{PROCESSOR_ENTITY}} acts as Processor (and, where applicable, Service Provider under the CCPA and data importer under the SCCs). The applicable Processor entity, hosting region, and governing law are those specified in the Order Form or Customer’s workspace configuration.',
+    text: 'Data Importer (Processor): {{PROCESSOR_ENTITY}}, {{PROCESSOR_LEGAL_FORM}}. Registered office: {{PROCESSOR_ADDRESS}}. {{PROCESSOR_ENTITY}} provides cloud-based CRM software and related services and Processes Customer Personal Data hosted in the {{HOSTING_REGION}}. Contact for privacy inquiries: privacy@twenty.com. {{PROCESSOR_ENTITY}} acts as Processor (and, where applicable, Service Provider under the CCPA and data importer under the SCCs). The Processor entity and governing law do not change based on hosting region.',
+  },
+  {
+    kind: 'paragraph',
+    text: 'EU Affiliate: {{EU_AFFILIATE_ENTITY}}, {{EU_AFFILIATE_LEGAL_FORM}}. Registered office: {{EU_AFFILIATE_ADDRESS}}. {{EU_AFFILIATE_ENTITY}} joins this DPA as Twenty’s European affiliate and privacy contact and is bound by the obligations applicable to any Processing it performs, without replacing {{PROCESSOR_ENTITY}} as Processor or data importer.',
   },
   {
     kind: 'paragraph',
@@ -500,7 +504,7 @@ export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   },
   {
     kind: 'paragraph',
-    text: 'Cross-Border Transfers: For the default EU deployment (Processor: Twenty.com SAS; hosting in Frankfurt, Germany; EEA-based personnel), no transfer of Customer Personal Data to a third country is required to provide the services. Where Customer selects US hosting, or otherwise contracts with a Twenty entity established outside the EEA, Customer Personal Data may be transferred to and Processed in the United States; such transfers are governed by the SCCs and, where applicable, the UK Addendum and Swiss/Brazil terms in Section 7. Onward transfers to Sub-Processors are made under equivalent safeguards.',
+    text: 'Cross-Border Transfers: Twenty.com PBC is the Processor and, where applicable, the data importer for both EU and US deployments; Twenty.com SAS participates as the EU Affiliate described above. For an EU deployment, Customer Personal Data is hosted in Frankfurt, Germany. To the extent Customer Personal Data is made available to Twenty.com PBC or another recipient outside the EEA, or where Customer selects US hosting, the resulting transfer is governed by the SCCs and, where applicable, the UK Addendum and Swiss/Brazil terms in Section 7. Onward transfers to Sub-Processors are made under equivalent safeguards.',
   },
   {
     kind: 'paragraph',

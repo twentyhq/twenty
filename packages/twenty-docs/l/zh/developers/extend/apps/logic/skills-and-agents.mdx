@@ -100,7 +100,7 @@ export default defineAgent({
 </Accordion>
 <Accordion title="runAgent" description="从逻辑函数中运行代理">
 
-`runAgent()` 允许逻辑函数运行你的应用的某个代理（及其技能和工具）。 通过你传递给 `defineAgent()` 的 `universalIdentifier` 来标识该代理：
+`runAgent()` 允许逻辑函数运行你的应用的某个代理（及其技能和工具）。 通过你传递给 `defineAgent()` 的 `universalIdentifier` 来标识该代理。 只传入 `prompt` 字符串或 `messages` 会话历史其中之一，不要同时传入两者：
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +111,23 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+对于多轮对话机器人（Slack、Discord、Teams 等），将线程历史作为 `messages` 传入，而不是单个 `prompt`：
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 关键点：
+* 提供 `prompt`（字符串）或 `messages`（1 到 100 个 `{ role: 'user' | 'assistant', content: string }` 条目）中的 **恰好一个**。
 * 代理以**同步**方式运行，并且可以通过其自身的工具读取/更新记录 —— `runAgent()` 会在运行完成后才 resolve。
 * 一个应用只能运行它自己的代理。
 * 应用的[默认角色](/l/zh/developers/extend/apps/config/roles)必须授予 `AI` 权限标记 —— 在其 `permissionFlagUniversalIdentifiers` 中添加 `SystemPermissionFlag.AI`（或设置 `canAccessAllTools: true`）。
@@ -132,6 +148,31 @@ export default defineApplicationRole({
 
 <Warning>
   \*\*避免循环：\*\*如果你从 `*.updated` 数据库事件触发器中调用 `runAgent()`，而代理又会更新同一条记录，请将触发器的 `updatedFields` 限定为代理永远不会写入的字段（例如来源 URL），或者在调用 `runAgent()` 之前检查任何目标字段是否仍为空。
+</Warning>
+
+### 以工作区成员身份运行
+
+当运行是由某个用户触发时（例如，一个聊天机器人在回复消息），传入 `runAsWorkspaceMemberId`，这样智能体就会以该成员的身份而不是以应用自身的身份执行：
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+然后，此运行将以**成员自身的角色**执行：它可以执行该成员能够执行的所有操作且仅限于此，它创建的记录将归属于该成员，并且会应用该成员的行级权限。 智能体的角色不会参与——它是针对没有任何成员在背后参与的运行所使用的应用默认角色。 对于自主运行（计划任务、数据库事件触发器），省略该字段：这类运行会保持智能体自身的角色。 为保持来源追溯，执行操作的应用会附着在该运行的上下文中，但不会收窄该成员的权限。
+
+你的应用负责将触发运行的用户映射到一个工作区成员。 要为某个成员命名，需要一个应用访问令牌，而令牌可以为谁命名，取决于它是否携带用户：
+
+* **未绑定任何用户** 的令牌可以为任意成员命名。 逻辑函数使用这类令牌运行，通过 `client_credentials` 或由 API 密钥签发的令牌也属于此类。
+* **代表某个用户签发的令牌**（例如前端组件接收到的令牌），只能为该用户自己的成员命名。
+
+除此之外的任何情况——普通用户会话、没有应用访问令牌的 API 密钥——都不能为任何成员命名。
+
+<Warning>
+  当工作区成员无法解析时——例如未知或已移除的成员，或者没有角色的成员——`runAgent()` 会抛出异常。 它绝不会回退到代理自身的角色，因为那样会授予比调用方请求更多的访问权限。
 </Warning>
 
 </Accordion>

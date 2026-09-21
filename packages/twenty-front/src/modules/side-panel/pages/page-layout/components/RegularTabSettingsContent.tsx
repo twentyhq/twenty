@@ -1,20 +1,16 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { TabSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/TabSettingsPlacementSection';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { getTabSettingsPlacementItems } from '@/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
-import {
-  IconChevronLeft,
-  IconChevronRight,
-  IconCopyPlus,
-  IconPinned,
-  IconRefreshDot,
-  IconTrash,
-} from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/surfaces';
+import { IconCopyPlus, IconRefreshDot, IconTrash } from 'twenty-ui/icon';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID = 'reset-regular-tab-to-default-modal';
 const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID =
@@ -22,6 +18,7 @@ const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID =
 
 type RegularTabSettingsContentProps = {
   canSetAsPinned: boolean;
+  canUnpin: boolean;
   canMoveLeft: boolean;
   canMoveRight: boolean;
   isResetToDefaultDisabled: boolean;
@@ -29,6 +26,7 @@ type RegularTabSettingsContentProps = {
   onMoveLeft: () => void;
   onMoveRight: () => void;
   onSetAsPinned: () => void;
+  onUnpin: () => void;
   onDuplicate: () => void;
   onResetToDefault: () => void;
   onDelete: () => void;
@@ -36,6 +34,7 @@ type RegularTabSettingsContentProps = {
 
 export const RegularTabSettingsContent = ({
   canSetAsPinned,
+  canUnpin,
   canMoveLeft,
   canMoveRight,
   isResetToDefaultDisabled,
@@ -43,24 +42,34 @@ export const RegularTabSettingsContent = ({
   onMoveLeft,
   onMoveRight,
   onSetAsPinned,
+  onUnpin,
   onDuplicate,
   onResetToDefault,
   onDelete,
 }: RegularTabSettingsContentProps) => {
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const handleResetToDefault = () => {
     if (isResetToDefaultDisabled) {
       return;
     }
-    openModal(RESET_TAB_TO_DEFAULT_MODAL_ID);
+    openDialog(RESET_TAB_TO_DEFAULT_MODAL_ID);
   };
 
+  const placementItems = getTabSettingsPlacementItems({
+    canSetAsPinned,
+    canUnpin,
+    canMoveLeft,
+    canMoveRight,
+    onSetAsPinned,
+    onUnpin,
+    onMoveLeft,
+    onMoveRight,
+  });
+
   const selectableItemIds = [
-    ...(canMoveLeft ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT] : []),
-    ...(canMoveRight ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT] : []),
-    ...(canSetAsPinned ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED] : []),
+    ...placementItems.map((item) => item.id),
     TAB_SETTINGS_SELECTABLE_ITEM_IDS.DUPLICATE,
     TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     ...(canDelete ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE] : []),
@@ -69,46 +78,8 @@ export const RegularTabSettingsContent = ({
   return (
     <>
       <SidePanelList selectableItemIds={selectableItemIds}>
-        <SidePanelGroup heading={t`Settings`}>
-          {canMoveLeft && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
-              onEnter={onMoveLeft}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
-                Icon={IconChevronLeft}
-                label={t`Move left`}
-                onClick={onMoveLeft}
-              />
-            </SelectableListItem>
-          )}
-          {canMoveRight && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT}
-              onEnter={onMoveRight}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT}
-                Icon={IconChevronRight}
-                label={t`Move right`}
-                onClick={onMoveRight}
-              />
-            </SelectableListItem>
-          )}
-          {canSetAsPinned && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED}
-              onEnter={onSetAsPinned}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED}
-                Icon={IconPinned}
-                label={t`Set as pinned tab`}
-                onClick={onSetAsPinned}
-              />
-            </SelectableListItem>
-          )}
+        <TabSettingsPlacementSection items={placementItems} />
+        <SidePanelGroup heading={t`Manage`}>
           <SelectableListItem
             itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DUPLICATE}
             onEnter={onDuplicate}
@@ -120,28 +91,28 @@ export const RegularTabSettingsContent = ({
               onClick={onDuplicate}
             />
           </SelectableListItem>
-          <div id={RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}>
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-              onEnter={handleResetToDefault}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-                Icon={IconRefreshDot}
-                label={t`Reset to default`}
-                onClick={handleResetToDefault}
-                disabled={isResetToDefaultDisabled}
-              />
-            </SelectableListItem>
-          </div>
-          {isResetToDefaultDisabled && (
-            <AppTooltip
-              anchorSelect={`#${RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}`}
-              content={t`No default configuration available for this tab`}
-              noArrow
-              place="bottom"
-            />
-          )}
+          <Tooltip
+            delay={TooltipDelay.mediumDelay}
+            content={t`No default configuration available for this tab`}
+            side="bottom"
+            disabled={!isResetToDefaultDisabled}
+          >
+            <div id={RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}>
+              <SelectableListItem
+                itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+                onEnter={handleResetToDefault}
+              >
+                <CommandMenuItem
+                  id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+                  Icon={IconRefreshDot}
+                  label={t`Reset to default`}
+                  onClick={handleResetToDefault}
+                  disabled={isResetToDefaultDisabled}
+                />
+              </SelectableListItem>
+            </div>
+          </Tooltip>
+
           {canDelete && (
             <SelectableListItem
               itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE}
@@ -157,13 +128,13 @@ export const RegularTabSettingsContent = ({
           )}
         </SidePanelGroup>
       </SidePanelList>
-      <ConfirmationModal
-        modalInstanceId={RESET_TAB_TO_DEFAULT_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={RESET_TAB_TO_DEFAULT_MODAL_ID}
         title={t`Reset to default`}
         subtitle={t`This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone.`}
         onConfirmClick={onResetToDefault}
         confirmButtonText={t`Reset`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
       />
     </>
   );

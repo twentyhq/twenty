@@ -63,13 +63,11 @@ describe('placeApi types', () => {
     });
 
     it('should enforce string types for required fields', () => {
-      // This test ensures TypeScript compilation catches type errors
       const variables: PlaceAutocompleteVariables = {
         address: 'Test Address',
         token: 'test-token',
       };
 
-      // These should be strings
       expect(typeof variables.address).toBe('string');
       expect(typeof variables.token).toBe('string');
     });
@@ -218,7 +216,6 @@ describe('placeApi types', () => {
 
   describe('type compatibility', () => {
     it('should work with API response patterns', () => {
-      // Simulating API response structure
       const apiResponse = {
         getAutoCompleteAddress: [
           {
@@ -261,7 +258,6 @@ describe('placeApi types', () => {
         isFieldCity: false,
       };
 
-      // This should be compatible with PlaceAutocompleteVariables structure
       expect(queryVariables.address).toBe('Test');
       expect(queryVariables.token).toBe('token');
     });

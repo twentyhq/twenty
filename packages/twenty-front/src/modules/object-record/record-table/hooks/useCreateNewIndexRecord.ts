@@ -1,28 +1,17 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
+import { useCreateNewRecord } from '@/object-record/hooks/useCreateNewRecord';
+import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useBuildRecordInputFromFilters } from '@/object-record/record-table/hooks/useBuildRecordInputFromFilters';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { AppPath } from 'twenty-shared/types';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type UseCreateNewIndexRecordProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -50,81 +39,13 @@ export const useCreateNewIndexRecord = ({
     instanceId,
   );
 
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-
-  const { closeSidePanelMenu } = useSidePanelMenu();
-
-  const { createOneRecord } = useCreateOneRecord({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    shouldMatchRootQueryFilter: true,
-  });
-
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
-
-  const navigate = useNavigateApp();
-
   const { buildRecordInputFromFilters } = useBuildRecordInputFromFilters({
     objectMetadataItem,
     instanceId,
   });
 
-  const { buildRecordInputFromRLSPredicates } =
-    useBuildRecordInputFromRLSPredicates({
-      objectMetadataItem,
-    });
-
-  const createNewIndexRecord = useCallback(
-    async (recordInput?: Partial<ObjectRecord>) => {
-      const recordId = v4();
-      const recordInputFromRLSPredicates = buildRecordInputFromRLSPredicates();
-      const recordInputFromFilters = buildRecordInputFromFilters();
-
-      const mergedRecordInput = {
-        ...recordInputFromRLSPredicates,
-        ...recordInputFromFilters,
-        ...recordInput,
-      };
-
-      const recordIndexOpenRecordIn = store.get(
-        recordIndexOpenRecordInState.atom,
-      );
-
-      const createdRecord = await createOneRecord({
-        id: recordId,
-        ...mergedRecordInput,
-      });
-
-      if (
-        recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL &&
-        canOpenObjectInSidePanel(objectMetadataItem.nameSingular)
-      ) {
-        openRecordInSidePanel({
-          recordId,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          isNewRecord: true,
-        });
-      } else {
-        const labelIdentifierFieldMetadataItem =
-          getLabelIdentifierFieldMetadataItem(objectMetadataItem);
-
-        closeSidePanelMenu();
-        navigate(
-          AppPath.RecordShowPage,
-          {
-            objectNameSingular: objectMetadataItem.nameSingular,
-            objectRecordId: recordId,
-          },
-          undefined,
-          {
-            state: {
-              isNewRecord: true,
-              objectRecordId: recordId,
-              labelIdentifierFieldName: labelIdentifierFieldMetadataItem?.name,
-            },
-          },
-        );
-      }
-
+  const onRecordCreated = useCallback(
+    (createdRecord: ObjectRecord, recordInput?: Partial<ObjectRecord>) => {
       if (isDefined(recordIndexGroupFieldMetadataItem)) {
         const recordGroup = recordGroupDefinitions.find(
           findByProperty(
@@ -159,28 +80,20 @@ export const useCreateNewIndexRecord = ({
           }
         }
       }
-
-      upsertRecordsInStore({ partialRecords: [createdRecord] });
-
-      return createdRecord;
     },
     [
       store,
-      buildRecordInputFromRLSPredicates,
-      buildRecordInputFromFilters,
-      createOneRecord,
-      navigate,
-      objectMetadataItem,
-      openRecordInSidePanel,
       recordGroupDefinitions,
       recordIndexGroupFieldMetadataItem,
       recordIndexRecordIdsByGroupCallbackState,
-      upsertRecordsInStore,
-      closeSidePanelMenu,
     ],
   );
 
-  return {
-    createNewIndexRecord,
-  };
+  const { createNewRecord } = useCreateNewRecord({
+    objectMetadataItem,
+    buildRecordInput: buildRecordInputFromFilters,
+    onRecordCreated,
+  });
+
+  return { createNewIndexRecord: createNewRecord };
 };

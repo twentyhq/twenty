@@ -25,6 +25,7 @@ export const useSetAsPinnedTab = (pageLayoutIdFromProps?: string) => {
 
         return {
           ...prev,
+          isFirstTabPinned: true,
           tabs: prev.tabs.map((t) =>
             t.id === tabId ? { ...t, position: minPosition - 1 } : t,
           ),

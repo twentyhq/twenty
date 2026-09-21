@@ -14,8 +14,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { IconButton } from 'twenty-ui/components';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type AdvancedFilterRecordFilterOptionsDropdownProps = {
   recordFilterId: string;
@@ -68,11 +68,9 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <IconButton
-          aria-label={t`Record filter rule options`}
-          variant="tertiary"
-          Icon={IconDotsVertical}
-        />
+        <IconButton aria-label={t`Record filter rule options`} variant="ghost">
+          <IconDotsVertical />
+        </IconButton>
       }
       dropdownComponents={
         <DropdownContent>

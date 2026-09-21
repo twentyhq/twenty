@@ -1,9 +1,11 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
-import { TintedIconTile } from 'twenty-ui/data-display';
+import { SettingsRow } from 'twenty-ui/components';
+import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { IconCube } from 'twenty-ui/icon';
-import { MenuItemSelectAvatar, MenuItemToggle } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
@@ -91,13 +93,17 @@ export const SidePanelObjectFilterDropdownContent = ({
             itemId={ALL_OBJECTS_ITEM_ID}
             onEnter={() => handleSelect(null)}
           >
-            <MenuItemSelectAvatar
-              avatar={<TintedIconTile Icon={IconCube} />}
-              text={t`All objects`}
-              selected={selectedObjectNameSingular === null}
+            <ListItem
               onClick={() => handleSelect(null)}
               focused={selectedItemId === ALL_OBJECTS_ITEM_ID}
-            />
+              role="option"
+              aria-selected={selectedObjectNameSingular === null}
+              selected={selectedObjectNameSingular === null}
+              indicator="check"
+              startIcon={<TintedIconTile Icon={IconCube} />}
+            >
+              <OverflowingTextWithTooltip text={t`All objects`} />
+            </ListItem>
           </SelectableListItem>
           {displayedObjects.map((objectMetadataItem) => {
             return (
@@ -106,20 +112,29 @@ export const SidePanelObjectFilterDropdownContent = ({
                 itemId={objectMetadataItem.nameSingular}
                 onEnter={() => handleSelect(objectMetadataItem.nameSingular)}
               >
-                <MenuItemSelectAvatar
-                  avatar={
-                    <ObjectMetadataIcon
-                      objectMetadataItem={objectMetadataItem}
-                    />
+                <ListItem
+                  onClick={() => handleSelect(objectMetadataItem.nameSingular)}
+                  focused={selectedItemId === objectMetadataItem.nameSingular}
+                  role="option"
+                  aria-selected={
+                    selectedObjectNameSingular ===
+                    objectMetadataItem.nameSingular
                   }
-                  text={objectMetadataItem.labelPlural}
                   selected={
                     selectedObjectNameSingular ===
                     objectMetadataItem.nameSingular
                   }
-                  onClick={() => handleSelect(objectMetadataItem.nameSingular)}
-                  focused={selectedItemId === objectMetadataItem.nameSingular}
-                />
+                  indicator="check"
+                  startIcon={
+                    <ObjectMetadataIcon
+                      objectMetadataItem={objectMetadataItem}
+                    />
+                  }
+                >
+                  <OverflowingTextWithTooltip
+                    text={objectMetadataItem.labelPlural}
+                  />
+                </ListItem>
               </SelectableListItem>
             );
           })}
@@ -127,15 +142,13 @@ export const SidePanelObjectFilterDropdownContent = ({
       </SelectableList>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <MenuItemToggle
-          LeftIcon={IconCube}
-          onToggleChange={() =>
+        <SettingsRow
+          startIcon={<IconCube />}
+          onCheckedChange={() =>
             setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
           }
-          toggled={sidePanelShowHiddenObjects}
-          text={t`Show hidden objects`}
-          toggleSize="small"
-        />
+          checked={sidePanelShowHiddenObjects}
+        >{t`Show hidden objects`}</SettingsRow>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

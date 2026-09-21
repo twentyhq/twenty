@@ -1,5 +1,10 @@
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import {
+  MetadataReadability,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
+import {
   capitalize,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
@@ -60,6 +65,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       updatedAt: createdAt,
       duplicateCriteria: null,
       color: createObjectInput.color ?? null,
+      openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
       description: createObjectInput.description ?? null,
       icon: createObjectInput.icon ?? null,
       isActive: true,
@@ -69,6 +75,9 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       isSearchable: true,
       isUIEditable: true,
       isUICreatable: true,
+      writability: MetadataWritability.OPEN,
+      readability: MetadataReadability.OPEN,
+      readabilityParentFieldUniversalIdentifiers: null,
       isSystem: false,
       labelPlural: capitalize(createObjectInput.labelPlural),
       labelSingular: capitalize(createObjectInput.labelSingular),
@@ -84,6 +93,9 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       viewUniversalIdentifiers: [],
       indexMetadataUniversalIdentifiers: [],
       searchFieldMetadataUniversalIdentifiers: [],
+      pageLayoutUniversalIdentifiers: [],
+      navigationMenuItemUniversalIdentifiers: [],
+      commandMenuItemUniversalIdentifiers: [],
       labelIdentifierFieldMetadataUniversalIdentifier,
       imageIdentifierFieldMetadataUniversalIdentifier: null,
     };

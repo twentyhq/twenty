@@ -73,7 +73,4 @@ export class BillingSubscriptionItemEntity {
 
   @Column({ nullable: true, type: 'numeric' })
   quantity: number | null;
-
-  @Column({ type: 'boolean', default: false })
-  hasReachedCurrentPeriodCap: boolean;
 }

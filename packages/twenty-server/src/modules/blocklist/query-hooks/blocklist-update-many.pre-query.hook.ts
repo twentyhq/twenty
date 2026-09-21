@@ -8,7 +8,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { type BlocklistItem } from 'src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service';
+import { type BlocklistItem } from 'src/modules/blocklist/types/blocklist-item.type';
 
 @WorkspaceQueryHook(`blocklist.updateMany`)
 export class BlocklistUpdateManyPreQueryHook implements WorkspacePreQueryHookInstance {

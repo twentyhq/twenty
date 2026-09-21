@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 // Recursively removes undefined values from an object
 // This is needed because workflows/tools may pass partial composite fields
 // with undefined sub-properties, but the validation layer expects either
@@ -10,7 +8,7 @@ export const removeUndefinedFromRecord = <T extends Record<string, unknown>>(
   const result: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(record)) {
-    if (!isDefined(value)) {
+    if (value === undefined) {
       continue;
     }
 
@@ -21,7 +19,6 @@ export const removeUndefinedFromRecord = <T extends Record<string, unknown>>(
         value as Record<string, unknown>,
       );
 
-      // Only include the nested object if it has at least one defined property
       if (Object.keys(cleaned).length > 0) {
         result[key] = cleaned;
       }

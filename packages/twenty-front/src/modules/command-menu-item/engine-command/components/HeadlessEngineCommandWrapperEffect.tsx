@@ -1,9 +1,10 @@
 import { useIsHeadlessEngineCommandEffectInitialized } from '@/command-menu-item/engine-command/hooks/useIsHeadlessEngineCommandEffectInitialized';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useEffect } from 'react';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 export type HeadlessEngineCommandWrapperEffectProps = {
   execute: () => void | Promise<unknown>;
@@ -23,7 +24,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
 
   const unmountCommand = useUnmountCommand();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   useEffect(() => {
     if (isInitializedRef.current || !ready) {
@@ -33,9 +34,15 @@ export const HeadlessEngineCommandWrapperEffect = ({
     setIsInitialized(true);
 
     const run = async () => {
-      await execute();
-
-      unmountCommand(commandMenuItemId);
+      try {
+        await execute();
+      } catch (error) {
+        enqueueToast(getToastOptionsFromError({ error }));
+      } finally {
+        // Unmount even on failure, otherwise the headless command stays mounted
+        // and can never be triggered again.
+        unmountCommand(commandMenuItemId);
+      }
     };
 
     run();
@@ -46,7 +53,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
     setIsInitialized,
     commandMenuItemId,
     unmountCommand,
-    enqueueErrorSnackBar,
+    enqueueToast,
   ]);
 
   return null;

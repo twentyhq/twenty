@@ -1,153 +1,57 @@
 ---
 title: Хранилище ключ-значение
-description: Сохраняйте промежуточные результаты, кэшируйте данные и разделяйте состояние между запусками логических функций с помощью простого объекта ключ-значение.
+description: Сохраняйте промежуточные результаты, кэшируйте данные и разделяйте состояние между запусками логических функций с помощью встроенного в приложение хранилища ключ-значение.
 icon: database
 ---
 
-Логические функции выполняются в изолированной среде во временных процессах Node.js — после завершения запуска в памяти ничего не сохраняется. Когда вам нужно **что-то запомнить между запусками** (кэшировать дорогой ответ API, сохранить курсор для инкрементальной синхронизации, «задебаунсить» работу или передать состояние от одной функции к другой), сохраняйте это в базе данных рабочего пространства.
+Логические функции выполняются в изолированной среде во временных процессах Node.js — после завершения запуска в памяти ничего не сохраняется. Когда вам нужно **что-то запомнить между запусками** (кэшировать дорогой ответ API, сохранить курсор для инкрементальной синхронизации, «задебаунсить» работу или передать состояние от одной функции к другой), сохраняйте это во встроенном хранилище ключ-значение.
 
-Для этого не нужен отдельный примитив хранилища: небольшой **технический объект** с полем `key` и полем `value` даёт вам надёжное key-value-хранилище, ограниченное рабочим пространством и доступное для запросов через тот же [типизированный API-клиент](/l/ru/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk), который вы уже используете для записей.
+Каждое приложение получает собственное изолированное пространство имён: записи привязаны к аутентифицированному приложению, поэтому ваши ключи никогда не могут конфликтовать с ключами другого приложения или быть прочитаны другим приложением.
 
 ```text
-  ┌─────────────────┐   set(key, value)    ┌──────────────────────────┐
-  │ Logic function  │ ───────────────────▶ │ "KV Store" object        │
-  │ (your handler)  │ ◀─────────────────── │  key (unique)  │  value  │
-  └─────────────────┘   get(key)           └──────────────────────────┘
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
 ```
 
-## Определите объект хранилища
+## Получение, установка, удаление
 
-Объявите настраиваемый объект с двумя полями — `key` (уникальный `TEXT`) и `value` (`RAW_JSON`, чтобы можно было сохранять любые JSON-сериализуемые данные). См. [Objects](/l/ru/developers/extend/apps/data/objects) для полной справки по `defineObject`.
+Импортируйте `kv` из `twenty-sdk/logic-function`. Значения могут быть любыми JSON-сериализуемыми данными.
 
-```ts src/objects/kv-store.object.ts
-import { defineObject, FieldType } from 'twenty-sdk/define';
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
 
-export const KV_STORE_UNIVERSAL_IDENTIFIER =
-  '2f1c8a90-3b6d-4e2a-9c47-7d0e5a1b9f33';
-export const KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER =
-  '4a7e2d11-9c83-4f60-b5a2-1e6c8d0f4b21';
-export const KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER =
-  '8b3f6c02-5d19-47ae-9f31-2c4a7e0b6d58';
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
 
-export default defineObject({
-  universalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  nameSingular: 'kvStore',
-  namePlural: 'kvStores',
-  labelSingular: 'KV Store',
-  labelPlural: 'KV Store',
-  description: 'Key-value storage for logic functions',
-  icon: 'IconDatabase',
-  fields: [
-    {
-      universalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'key',
-      type: FieldType.TEXT,
-      label: 'Key',
-      description: 'Unique lookup key',
-      icon: 'IconKey',
-    },
-    {
-      universalIdentifier: KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'value',
-      type: FieldType.RAW_JSON,
-      label: 'Value',
-      description: 'Stored JSON payload',
-      icon: 'IconJson',
-    },
-  ],
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## Области действия
+
+У каждой записи есть область видимости (scope), которая передаётся как опция при каждом вызове. По умолчанию используется `WORKSPACE`.
+
+* **`WORKSPACE`** (по умолчанию) — запись доступна только для текущей установки вашего приложения в рабочем пространстве. Каждое рабочее пространство, в которое устанавливается приложение, получает собственный независимый набор ключей. Это то, что вам нужно для кэшей, курсоров и состояния на уровне рабочего пространства.
+* **`SERVER`** — запись разделяется между **всеми установками** вашего приложения на сервере. Серверные записи ведут себя как механизм резервирования: сохраняемым значением всегда является workspaceId, зарезервировавший ключ (опустите `value` при вызове `set`, чтобы зарезервировать ключ для текущего рабочего пространства), и только это рабочее пространство может перезаписать или удалить запись. Любая установка может прочитать эту запись.
+
+Резервирования на сервере используются для маршрутизации между рабочими пространствами. [Резолвер серверного маршрута](/l/ru/developers/extend/apps/logic/logic-functions#server-route-trigger) выполняется в рабочем пространстве владельца регистрации приложения, но входящий вебхук обычно содержит только внешний идентификатор аккаунта, а не workspaceId в Twenty. Пусть каждое рабочее пространство зарезервирует свой внешний идентификатор в момент подключения, а затем разрешайте его в маршруте:
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
 });
 ```
 
-### Обеспечьте уникальность ключей
-
-Добавьте **уникальный индекс** на `key`, чтобы один и тот же ключ никогда не мог иметь две строки. Это рекомендуемый примитив для обеспечения уникальности — см. [Data → Unique indexes](/l/ru/developers/extend/apps/data/overview#unique-indexes).
-
-```ts src/indexes/kv-store-key.index.ts
-import { defineIndex } from 'twenty-sdk/define';
-import {
-  KV_STORE_UNIVERSAL_IDENTIFIER,
-  KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-} from '../objects/kv-store.object';
-
-export default defineIndex({
-  universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e14',
-  objectUniversalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  isUnique: true,
-  fields: [
-    {
-      universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e15',
-      fieldUniversalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-    },
-  ],
-});
-```
-
-## Чтение и запись из логической функции
-
-Спрячьте объект за несколькими небольшими вспомогательными функциями, чтобы остальной код выглядел как key-value API — `get`, `set` и `del`. Они используют [`CoreApiClient`](/l/ru/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk), который генерируется из схемы вашего рабочего пространства и полностью типизирован относительно объекта `kvStore`.
-
-```ts src/logic-functions/handlers/kv-store.ts
-import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
-
-const client = new CoreApiClient();
-
-// Look up a single row by its key.
-const findByKey = async (key: string) => {
-  const { kvStores } = await client.query({
-    kvStores: {
-      __args: { filter: { key: { eq: key } }, first: 1 },
-      edges: { node: { id: true, value: true } },
-    },
-  });
-
-  return kvStores.edges[0]?.node;
-};
-
-// Read a value. Returns undefined when the key is missing.
-export const get = async <TValue>(key: string): Promise<TValue | undefined> => {
-  const row = await findByKey(key);
-
-  return isDefined(row) ? (row.value as TValue) : undefined;
-};
-
-// Write a value. Creates the row on first write, updates it afterwards (upsert).
-export const set = async (key: string, value: unknown): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      updateKvStore: {
-        __args: { id: existing.id, data: { value } },
-        id: true,
-      },
-    });
-    return;
-  }
-
-  await client.mutation({
-    createKvStore: {
-      __args: { data: { key, value } },
-      id: true,
-    },
-  });
-};
-
-// Delete a value. No-op when the key is missing.
-export const del = async (key: string): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      deleteKvStore: { __args: { id: existing.id }, id: true },
-    });
-  }
-};
-```
-
-<Note>
-Уникальный индекс защищает от дубликатов, но два запуска, записывающие **один и тот же новый ключ** в один и тот же момент, всё ещё могут войти в гонку между поиском и созданием. Рассматривайте создание, которое завершилось сбоем по ограничению уникальности, как «кто-то другой успел первым» — перехватите его и перечитайте, или повторите попытку как обновление.
-</Note>
+Поскольку серверный ключ может быть занят только для собственного рабочего пространства вызывающего кода и никогда не может быть перезаписан другим, рабочее пространство не может перехватить сопоставление, принадлежащее кому-то ещё. `kv.set` выбрасывает ошибку, если ключ уже занят другим рабочим пространством.
 
 ## Использование: кэширование дорогого вызова
 
@@ -155,15 +59,15 @@ export const del = async (key: string): Promise<void> => {
 
 ```ts src/logic-functions/getExchangeRate.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { get, set } from './handlers/kv-store';
+import { kv } from 'twenty-sdk/logic-function';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 type CachedRate = { rate: number; fetchedAt: number };
 
 const handler = async (params: { from: string; to: string }) => {
-  const cacheKey = `exchange-rate:${params.from}:${params.to}`;
-  const cached = await get<CachedRate>(cacheKey);
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
 
   if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
     return { rate: cached.rate, cached: true };
@@ -174,7 +78,7 @@ const handler = async (params: { from: string; to: string }) => {
   );
   const { rate } = (await response.json()) as { rate: number };
 
-  await set(cacheKey, { rate, fetchedAt: Date.now() });
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
 
   return { rate, cached: false };
 };
@@ -189,12 +93,18 @@ export default defineLogicFunction({
 
 ## Шаблоны и советы
 
-* **Пространства имён.** Добавляйте префиксы к ключам, чтобы разделять разные задачи и упростить массовые выборки — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`. Фильтруйте по `key: { like: 'cache:%' }`, чтобы перечислить или очистить целое пространство имён.
-* **Срок жизни (TTL).** У хранилища нет встроенного механизма истечения срока действия. Сохраняйте метку времени внутри `value` (как в примере с кэшем) и проверяйте её при чтении, или добавьте поле `DATE_TIME` и периодически очищайте устаревшие строки из [функции, запускаемой по cron](/l/ru/developers/extend/apps/logic/logic-functions).
-* **Что хранить.** `RAW_JSON` может содержать любое JSON-сериализуемое значение — числа, строки, массивы, объекты. Держите записи небольшими; это для координации и кэширования, а не для больших блобов или файлов. Для файлов используйте поле `FILES` и [`uploadFile`](/l/ru/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Пространства имён.** Добавляйте префиксы к ключам, чтобы разделять разные задачи — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
+* **Срок жизни (TTL).** У хранилища нет встроенного механизма истечения срока действия. Сохраняйте метку времени внутри значения (как в примере с кэшем) и проверяйте её при чтении или очищайте устаревшие ключи из [функции, запускаемой по cron](/l/ru/developers/extend/apps/logic/logic-functions).
+* **Что хранить.** Любое JSON-сериализуемое значение — числа, строки, массивы, объекты. Держите записи небольшими; это для координации и кэширования, а не для больших блобов или файлов. Для файлов используйте поле `FILES` и [`uploadFile`](/l/ru/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Видимость.** Записи хранятся в базе данных экземпляра, а не как записи рабочего пространства — они никогда не отображаются в интерфейсе рабочего пространства, не являются частью модели данных вашего приложения и не требуют ролей или прав доступа к объектам.
+
+## Альтернатива: объект-хранилище с возможностью запросов
+
+Встроенное хранилище намеренно сделано непрозрачным: записи не являются записями объектов, поэтому вы не можете просматривать их в интерфейсе, связывать их с другими объектами или фильтровать их с помощью запросов к записям. Когда вам нужно что-то из этого — например, видимый журнал синхронизаций или состояние на уровне записи, — вместо этого определите небольшой **технический объект** с уникальным полем `key` и полем `value` типа `RAW_JSON`, и выполняйте к нему запросы через [типизированный API-клиент](/l/ru/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk). См. [Objects](/l/ru/developers/extend/apps/data/objects) для справки по `defineObject` и [Data → Unique indexes](/l/ru/developers/extend/apps/data/overview#unique-indexes) по обеспечению уникальности ключей.
+
+* **Привязка к записи.** Добавьте [relation](/l/ru/developers/extend/apps/data/relations) от объекта-хранилища к целевому объекту вместо кодирования идентификатора в ключе.
 * **Видимость и разрешения.** Строки живут в базе данных рабочего пространства как любые другие записи, поэтому к ним можно обращаться через API, и они подчиняются [ролям](/l/ru/developers/extend/apps/config/roles) вашего приложения. Чтобы скрыть хранилище из основного пользовательского интерфейса, не добавляйте его в [навигационное меню](/l/ru/developers/extend/apps/layout/navigation-menu-items).
-* **Привязка к записи.** Нужно состояние на уровне отдельной записи вместо глобальных ключей? Добавьте [relation](/l/ru/developers/extend/apps/data/relations) из объекта хранилища к целевому объекту вместо кодирования идентификатора в ключе.
 
 <Note>
-Это соглашение, а не отдельная функция — «KV Store» — это просто обычный настраиваемый объект, который вы определяете и к которому обращаетесь с помощью стандартного API. Это значит, что он получает преимущества той же синхронизации, системы разрешений и инструментов, что и остальные данные вашего приложения.
+В отличие от встроенного хранилища, пользовательский объект всегда ограничен одним рабочим пространством — он не может разделять записи между установками так, как это делают ключи `SERVER`.
 </Note>

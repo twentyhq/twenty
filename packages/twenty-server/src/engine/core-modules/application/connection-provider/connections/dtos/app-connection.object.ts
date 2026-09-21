@@ -22,6 +22,9 @@ export class AppConnectionObjectDto implements AppConnection {
   @Field()
   userWorkspaceId: string;
 
+  @Field(() => String, { nullable: true })
+  workspaceMemberId: string | null;
+
   @Field()
   accessToken: string;
 
@@ -30,4 +33,7 @@ export class AppConnectionObjectDto implements AppConnection {
 
   @Field(() => String, { nullable: true })
   authFailedAt: string | null;
+
+  @Field(() => String, { nullable: true })
+  authFailedReason: string | null;
 }

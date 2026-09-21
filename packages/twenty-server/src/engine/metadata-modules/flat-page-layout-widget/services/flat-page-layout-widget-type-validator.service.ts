@@ -21,7 +21,7 @@ import { validateSimpleRecordPageWidgetForUpdate } from 'src/engine/metadata-mod
 import { validateStandaloneRichTextFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util';
 import { validateStandaloneRichTextFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-update.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { WidgetType } from 'twenty-shared/types';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
@@ -95,6 +95,21 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       EMAIL_THREAD: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.EMAIL_THREAD,
       ),
+      CALL_RECORDING_SUMMARY: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.CALL_RECORDING_SUMMARY,
+      ),
+      CALL_RECORDING_TRANSCRIPT: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
+      ),
+      MESSAGE_CAMPAIGN_BODY: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,
+      ),
+      MESSAGE_CAMPAIGN_DETAILS: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS,
+      ),
+      FORM_FIELD: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.FORM_FIELD,
+      ),
     };
 
   private readonly PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_UPDATE_HASHMAP: FlatPageLayoutWidgetTypeValidatorForUpdate =
@@ -148,6 +163,21 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       ),
       EMAIL_THREAD: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.EMAIL_THREAD,
+      ),
+      CALL_RECORDING_SUMMARY: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.CALL_RECORDING_SUMMARY,
+      ),
+      CALL_RECORDING_TRANSCRIPT: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
+      ),
+      MESSAGE_CAMPAIGN_BODY: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,
+      ),
+      MESSAGE_CAMPAIGN_DETAILS: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS,
+      ),
+      FORM_FIELD: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.FORM_FIELD,
       ),
     };
 

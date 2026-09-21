@@ -8,6 +8,7 @@ export const GET_ADMIN_WORKSPACE_CHAT_THREADS = gql`
       totalInputTokens
       totalOutputTokens
       conversationSize
+      messageCount
       createdAt
       updatedAt
     }

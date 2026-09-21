@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
@@ -41,6 +42,7 @@ type GraphWidgetPieChartProps = {
   onSliceClick?: (datum: PieChartDataItemWithColor) => void;
   showDataLabels?: boolean;
   showCenterMetric?: boolean;
+  tooltipDisplayType?: GraphValueFormatOptions['displayType'];
 } & GraphValueFormatOptions;
 
 const emptyStateData: PieChartDataItemWithColor[] = [
@@ -80,6 +82,7 @@ export const GraphWidgetPieChart = ({
   configuration,
   colorMode,
   displayType,
+  tooltipDisplayType,
   decimals,
   prefix,
   suffix,
@@ -95,12 +98,20 @@ export const GraphWidgetPieChart = ({
     graphWidgetPieTooltipComponentState,
   );
 
+  const { formatNumber } = useNumberFormat();
+
   const formatOptions: GraphValueFormatOptions = {
     displayType,
     decimals,
     prefix,
     suffix,
     customFormatter,
+    formatNumberFn: formatNumber,
+  };
+
+  const tooltipFormatOptions: GraphValueFormatOptions = {
+    ...formatOptions,
+    displayType: tooltipDisplayType ?? displayType,
   };
 
   const { enrichedData, legendItems } = usePieChartData({
@@ -229,8 +240,8 @@ export const GraphWidgetPieChart = ({
       <GraphPieChartTooltip
         containerRef={containerRef}
         enrichedData={enrichedData}
-        formatOptions={formatOptions}
-        displayType={displayType}
+        formatOptions={tooltipFormatOptions}
+        displayType={tooltipDisplayType ?? displayType}
         onSliceClick={onSliceClick}
       />
       {showLegend && data.length > 0 && (

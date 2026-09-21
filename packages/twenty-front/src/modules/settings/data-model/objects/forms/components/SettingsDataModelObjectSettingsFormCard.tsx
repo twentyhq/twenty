@@ -8,7 +8,7 @@ import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/field
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { SettingsDataModelObjectIdentifiersForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { Trans } from '@lingui/react/macro';
-import { Card, CardContent } from 'twenty-ui/surfaces';
+import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
@@ -16,7 +16,7 @@ type SettingsDataModelObjectSettingsFormCardProps = {
 };
 
 const StyledTopCardContentContainer = styled.div`
-  > * {
+  > div {
     background-color: ${themeCssVariables.background.transparent.lighter};
   }
 `;
@@ -24,14 +24,14 @@ const StyledTopCardContentContainer = styled.div`
 const StyledObjectSummaryCardContainer = styled.div`
   max-width: 480px;
 
-  > * {
+  > div {
     border-radius: ${themeCssVariables.border.radius.md};
     color: ${themeCssVariables.font.color.primary};
   }
 `;
 
 const StyledObjectSummaryCardContentContainer = styled.div`
-  > * {
+  > div {
     padding: ${themeCssVariables.spacing[2]};
   }
 `;

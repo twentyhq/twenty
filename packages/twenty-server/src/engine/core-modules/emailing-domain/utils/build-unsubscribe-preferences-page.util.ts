@@ -25,15 +25,18 @@ export const buildUnsubscribePreferencesPage = ({
   unsubscribeAllPath,
 }: BuildUnsubscribePreferencesPageArgs): string => {
   const safeToken = escapeHtml(token);
+  const tokenField = `<input type="hidden" name="t" value="${safeToken}" />`;
 
-  const updateSection =
+  // Without topics there is nothing to pick from, so the page collapses to a
+  // single confirmation instead of offering an empty preferences form.
+  const body =
     topics.length > 0
-      ? `<form method="post" action="${updatePath}"><input type="hidden" name="t" value="${safeToken}" /><div class="topics">${topics
+      ? `<p class="subtitle">Confirm your preferences:</p><form method="post" action="${updatePath}">${tokenField}<div class="topics">${topics
           .map(buildTopicCheckbox)
           .join(
             '',
-          )}</div><button type="submit" class="primary">Update</button></form><p class="divider">Or</p>`
-      : '';
+          )}</div><button type="submit" class="primary">Update</button></form><p class="divider">Or</p><form method="post" action="${unsubscribeAllPath}">${tokenField}<button type="submit" class="secondary">Unsubscribe all</button></form>`
+      : `<p class="subtitle">You will stop receiving these emails.</p><form method="post" action="${unsubscribeAllPath}">${tokenField}<button type="submit" class="primary">Unsubscribe</button></form>`;
 
-  return `<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Email preferences</title><style>${PAGE_STYLE}</style></head><body><div class="card"><h1>Do you want to unsubscribe?</h1><p class="subtitle">Confirm your preferences:</p>${updateSection}<form method="post" action="${unsubscribeAllPath}"><input type="hidden" name="t" value="${safeToken}" /><button type="submit" class="secondary">Unsubscribe All</button></form></div></body></html>`;
+  return `<!doctype html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Email preferences</title><style>${PAGE_STYLE}</style></head><body><div class="card"><h1>Do you want to unsubscribe?</h1>${body}</div></body></html>`;
 };

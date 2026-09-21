@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 
@@ -11,8 +12,8 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AnimatePresence } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { LightIconButton } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -115,11 +116,13 @@ export const PageHeader = ({
           )}
           {hasClosePageButton && (
             <LightIconButton
-              Icon={IconX}
-              size="small"
-              accent="tertiary"
+              size="sm"
+              emphasis="subtle"
               onClick={() => onClosePage?.()}
-            />
+              aria-label={t`Close page`}
+            >
+              <IconX />
+            </LightIconButton>
           )}
 
           <StyledTopBarIconStyledTitleContainer>

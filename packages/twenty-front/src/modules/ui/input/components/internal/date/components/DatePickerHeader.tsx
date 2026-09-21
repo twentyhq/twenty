@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { Select } from '@/ui/input/components/Select';
@@ -6,7 +7,7 @@ import { DatePickerInput } from '@/ui/input/components/internal/date/components/
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
@@ -93,17 +94,21 @@ export const DatePickerHeader = ({
           />
         </ClickOutsideListenerContext.Provider>
         <LightIconButton
-          Icon={IconChevronLeft}
           onClick={onSubtractMonth}
-          size="medium"
+          size="md"
           disabled={prevMonthButtonDisabled}
-        />
+          aria-label={t`Previous`}
+        >
+          <IconChevronLeft />
+        </LightIconButton>
         <LightIconButton
-          Icon={IconChevronRight}
           onClick={onAddMonth}
-          size="medium"
+          size="md"
           disabled={nextMonthButtonDisabled}
-        />
+          aria-label={t`Next`}
+        >
+          <IconChevronRight />
+        </LightIconButton>
       </StyledCustomDatePickerHeader>
     </>
   );

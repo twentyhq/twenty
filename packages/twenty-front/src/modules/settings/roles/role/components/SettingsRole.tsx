@@ -1,5 +1,7 @@
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/SettingsRoleSettings';
@@ -9,20 +11,19 @@ import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRo
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/icon';
+import { useToast } from 'twenty-ui/primitives/feedback';
+import { IconLock, IconSettings, IconUserPlus } from 'twenty-ui/icon';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
@@ -34,9 +35,13 @@ type SettingsRoleProps = {
 };
 
 export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
+  const tabsComponentInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
+  );
+
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
-    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
+    tabsComponentInstanceId,
   );
 
   const navigateSettings = useNavigateSettings();
@@ -61,7 +66,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const { loadCurrentUser } = useLoadCurrentUser();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
     isCreateMode,
@@ -79,7 +84,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS,
       title: t`Permissions`,
-      Icon: IconLockOpen,
+      Icon: IconLock,
     },
     {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT,
@@ -115,8 +120,9 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     );
 
     if (isDefined(dirtyFields.label) && dirtyFields.label === '') {
-      enqueueErrorSnackBar({
-        message: t`Role name cannot be empty`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Role name cannot be empty`,
       });
       return;
     }
@@ -136,12 +142,12 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   return (
     <SettingsPageLayout
       title={<SettingsRoleLabelContainer roleId={roleId} />}
+      pageTitle={settingsDraftRole.label}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Role settings`}
           tabs={tabs}
-          componentInstanceId={
-            SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId
-          }
+          componentInstanceId={tabsComponentInstanceId}
         />
       }
       links={[

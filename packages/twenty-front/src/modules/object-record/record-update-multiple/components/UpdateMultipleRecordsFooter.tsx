@@ -8,7 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Key } from 'ts-key-enum';
 import { IconBoxMultiple } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 const StyledFooterContainer = styled.div`
   align-items: flex-end;
@@ -59,22 +59,22 @@ export const UpdateMultipleRecordsFooter = ({
     <StyledFooterContainer>
       <StyledFooterActions>
         <Button
-          title={t`Cancel`}
-          variant="secondary"
-          size="small"
+          size="sm"
           onClick={onCancel}
-        />
+          variant="outline"
+        >{t`Cancel`}</Button>
         <Button
-          title={isUpdating ? t`Apply${progressText}` : t`Apply`}
-          variant="primary"
-          accent="blue"
-          size="small"
-          Icon={IconBoxMultiple}
-          isLoading={isUpdating && !progressText}
+          size="sm"
+          startIcon={<IconBoxMultiple />}
+          loading={isUpdating && !progressText}
           hotkeys={isUpdating ? undefined : ['⌘', '⏎']}
           onClick={onUpdate}
           disabled={isUpdating || isUpdateDisabled}
-        />
+          variant="solid"
+          color="accent"
+        >
+          {isUpdating ? t`Apply${progressText}` : t`Apply`}
+        </Button>
       </StyledFooterActions>
     </StyledFooterContainer>
   );

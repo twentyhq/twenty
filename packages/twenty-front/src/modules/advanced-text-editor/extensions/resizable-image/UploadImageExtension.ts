@@ -3,8 +3,9 @@ import {
   type UploadImagePluginProps,
 } from '@/advanced-text-editor/extensions/resizable-image/UploadImagePlugin';
 import { Extension } from '@tiptap/core';
+import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
 
-type UploadImageOptions = Omit<UploadImagePluginProps, 'editor'> & {};
+type UploadImageOptions = Omit<UploadImagePluginProps, 'editor'>;
 
 type UploadImageStorage = {
   placeholderImages: Set<string>;
@@ -24,13 +25,7 @@ export const UploadImageExtension = Extension.create<
 
   addOptions: () => {
     return {
-      allowedMimeTypes: [
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'image/webp',
-        'image/svg+xml',
-      ],
+      allowedMimeTypes: EMAIL_IMAGE_MIME_TYPES,
       onImageUpload: undefined,
       onImageUploadError: undefined,
     };

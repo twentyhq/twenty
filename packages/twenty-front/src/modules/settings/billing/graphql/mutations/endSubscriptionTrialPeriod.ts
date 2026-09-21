@@ -6,6 +6,12 @@ export const END_SUBSCRIPTION_TRIAL_PERIOD = gql`
       status
       hasPaymentMethod
       billingPortalUrl
+      currentBillingSubscription {
+        ...CurrentBillingSubscriptionFragment
+      }
+      billingSubscriptions {
+        ...BillingSubscriptionFragment
+      }
     }
   }
 `;

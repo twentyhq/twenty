@@ -1,3 +1,4 @@
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { styled } from '@linaria/react';
 import { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -16,8 +17,7 @@ import {
   IconDatabase,
   IconUserCircle,
 } from 'twenty-ui/icon';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
-import { ModalContent } from 'twenty-ui/surfaces';
+import { Heading } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AuthorizeAppDocument,
@@ -57,7 +57,7 @@ const StyledHeader = styled.div`
   width: 100%;
 `;
 
-const StyledOAuthTitle = styled(H1Title)`
+const StyledOAuthTitle = styled(Heading)`
   margin: 0;
   max-width: min(100%, var(--oauth-modal-content-max-width));
   padding-bottom: ${themeCssVariables.spacing[1]};
@@ -152,6 +152,7 @@ export const Authorize = () => {
   const redirectUrl =
     searchParam.get('redirect_uri') ?? searchParam.get('redirectUrl');
   const state = searchParam.get('state');
+  const issuer = searchParam.get('iss');
 
   const {
     data,
@@ -199,6 +200,7 @@ export const Authorize = () => {
           codeChallenge: codeChallenge ?? undefined,
           redirectUrl,
           state: state ?? undefined,
+          issuer: issuer ?? undefined,
         },
         onCompleted: (responseData) => {
           redirect(appendThemeToUrl(responseData.authorizeApp.redirectUrl));
@@ -242,19 +244,20 @@ export const Authorize = () => {
 
   if (isDefined(queryError)) {
     return (
-      <ModalContent isVerticallyCentered isHorizontallyCentered>
+      <StyledAuthContent>
         <StyledCardWrapper>
-          <ModalContent contentPadding={10}>
-            <StyledOAuthTitle
-              title={<Trans>Something went wrong</Trans>}
-              fontColor={H1TitleFontColor.Primary}
-            />
+          <StyledAuthContent
+            style={{ alignItems: 'stretch', justifyContent: 'flex-start' }}
+          >
+            <StyledOAuthTitle level={2} size="lg">
+              <Trans>Something went wrong</Trans>
+            </StyledOAuthTitle>
             <StyledErrorText>
               {t`Unable to load application details. Please try again later.`}
             </StyledErrorText>
-          </ModalContent>
+          </StyledAuthContent>
         </StyledCardWrapper>
-      </ModalContent>
+      </StyledAuthContent>
     );
   }
 
@@ -267,16 +270,17 @@ export const Authorize = () => {
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
 
   return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
+    <StyledAuthContent>
       <StyledCardWrapper>
         <StyledHeader>
           <AppConnectionHeader appLogoUrl={appLogoUrl} appName={appName} />
         </StyledHeader>
-        <ModalContent contentPadding={10}>
-          <StyledOAuthTitle
-            title={<Trans>Connect {appName} to your account</Trans>}
-            fontColor={H1TitleFontColor.Primary}
-          />
+        <StyledAuthContent
+          style={{ alignItems: 'stretch', justifyContent: 'flex-start' }}
+        >
+          <StyledOAuthTitle level={2} size="lg">
+            <Trans>Connect {appName} to your account</Trans>
+          </StyledOAuthTitle>
           {requestedScopes.length > 0 && (
             <StyledPermissionSection>
               <StyledPermissionIntro>
@@ -309,8 +313,8 @@ export const Authorize = () => {
             onAuthorize={handleAuthorize}
             isLoading={isAuthorizing}
           />
-        </ModalContent>
+        </StyledAuthContent>
       </StyledCardWrapper>
-    </ModalContent>
+    </StyledAuthContent>
   );
 };

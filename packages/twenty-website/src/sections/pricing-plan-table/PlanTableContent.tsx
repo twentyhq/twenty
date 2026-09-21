@@ -26,6 +26,7 @@ import {
   type PlanTableCellType,
   type PlanTableFeatureRowDataType,
   type PlanTableTierColumnType,
+  type PlanTableTierId,
 } from './plan-table-types';
 import { resolveVisibleRows } from './plan-table-visible-rows';
 
@@ -41,7 +42,7 @@ const TableScope = styled.div`
 
 const GridRow = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
   width: 100%;
 `;
 
@@ -134,6 +135,20 @@ const CtaRow = styled.div`
   width: 100%;
 `;
 
+// Enterprise inherits the Organization cell unless a row overrides it: the
+// tier is a superset, so unmarked rows read as "same as Organization".
+function resolveCell(
+  row: PlanTableFeatureRowDataType,
+  columnId: PlanTableTierId,
+): PlanTableCellType {
+  return (
+    row.tiers[columnId] ??
+    (columnId === 'enterprise' ? row.tiers.organization : undefined) ?? {
+      kind: 'dash',
+    }
+  );
+}
+
 function CellValue({ cell }: { cell: PlanTableCellType }) {
   const { i18n } = useLingui();
 
@@ -167,7 +182,7 @@ function FeatureRow({
       <FeatureLabel>{i18n._(row.featureLabel)}</FeatureLabel>
       {tierColumns.map((column) => (
         <TierCell key={column.id}>
-          <CellValue cell={row.tiers[column.id]} />
+          <CellValue cell={resolveCell(row, column.id)} />
         </TierCell>
       ))}
     </GridRow>
@@ -182,6 +197,7 @@ function CategoryRow({ title }: { title: MessageDescriptor }) {
       <CategoryBand>
         <CategoryTitle>{i18n._(title)}</CategoryTitle>
       </CategoryBand>
+      <CategoryBand aria-hidden="true" />
       <CategoryBand aria-hidden="true" />
       <CategoryBand aria-hidden="true" />
     </GridRow>
@@ -234,7 +250,7 @@ export function PlanTableContent() {
         <HeadCell>{i18n._(PLAN_TABLE_DATA.featureColumnLabel)}</HeadCell>
         {PLAN_TABLE_DATA.tierColumns.map((column) => (
           <HeadCell data-tier key={column.id}>
-            {i18n._(column.label)}
+            {i18n._(column.label[hosting])}
           </HeadCell>
         ))}
       </GridRow>

@@ -5,7 +5,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 
-import { type AiSdkPackage } from 'twenty-shared/ai';
+import { type AiModelTier, type AiSdkPackage } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -13,7 +13,8 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
-import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
+import { type AiModelKind } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.const';
+import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 
@@ -23,10 +24,6 @@ registerEnumType(FeatureFlagKey, {
 
 registerEnumType(ModelFamily, {
   name: 'ModelFamily',
-});
-
-registerEnumType(AiModelRole, {
-  name: 'AiModelRole',
 });
 
 @ObjectType()
@@ -68,9 +65,6 @@ export class ClientAiModelConfig {
   @Field(() => Boolean, { nullable: true })
   isDeprecated?: boolean;
 
-  @Field(() => Boolean, { nullable: true })
-  isRecommended?: boolean;
-
   @Field(() => String, { nullable: true })
   providerName?: string;
 
@@ -85,6 +79,83 @@ export class ClientAiModelConfig {
 
   @Field(() => String, { nullable: true })
   dataResidency?: string;
+
+  @Field(() => Number, { nullable: true })
+  intelligenceIndex?: number;
+
+  @Field(() => Number, { nullable: true })
+  outputTokensPerSecond?: number;
+
+  @Field(() => Number, { nullable: true })
+  costPerTask?: number;
+
+  // Reasoning levels a pin may name as `modelId@effort`; empty for a model
+  // that takes none, unset on a variant that already names its own.
+  @Field(() => [String], { nullable: true })
+  efforts?: string[];
+
+  @Field(() => String, { nullable: true })
+  effort?: string;
+
+  // A pinned effort without a reading of its own shows the base model's
+  // figures until the benchmark sync measures it.
+  @Field(() => Boolean, { nullable: true })
+  isBenchmarkInherited?: boolean;
+}
+
+@ObjectType()
+// Evaluation models are kept in their own list rather than mixed into
+// aiModels: every existing picker reads that list, and a model that cannot
+// answer a chat turn must not be offered by one that forgot to filter.
+export class ClientAiEvaluationModelConfig {
+  @Field(() => String)
+  modelId: string;
+
+  @Field(() => String)
+  label: string;
+
+  @Field(() => String, { nullable: true })
+  description?: string;
+
+  @Field(() => String, { nullable: true })
+  providerLabel?: string;
+
+  // False when the catalog declares the model but the instance holds no key
+  // for its provider. The picker still shows it, so an operator can see what
+  // configuring the provider would buy.
+  @Field(() => Boolean)
+  isAvailable: boolean;
+
+  @Field(() => [String])
+  supportedQuestionTypes: string[];
+
+  @Field(() => Number, { nullable: true })
+  maxCriteriaPerQuestion?: number;
+
+  @Field(() => Number, { nullable: true })
+  maxScoreLevels?: number;
+
+  @Field(() => Number, { nullable: true })
+  medianLatencyMs?: number;
+
+  @Field(() => Number, { nullable: true })
+  inputCostPerMillionTokens?: number;
+
+  @Field(() => Number, { nullable: true })
+  outputCostPerMillionTokens?: number;
+
+  @Field(() => Boolean, { nullable: true })
+  isDeprecated?: boolean;
+}
+
+@ObjectType()
+export class ClientAiModelTierConfig {
+  @Field(() => AiModelTierEnum)
+  tier: AiModelTier;
+
+  // The model this instance resolves the tier to when a workspace has no pin.
+  @Field(() => String)
+  modelId: ModelId;
 }
 
 @ObjectType()
@@ -95,6 +166,12 @@ export class AdminAiModelConfig {
 
   @Field(() => String)
   label: string;
+
+  // What the model is for. An evaluation model answers typed questions and
+  // cannot be chatted with, so the table has to say which is which rather than
+  // list them side by side as interchangeable.
+  @Field(() => String)
+  kind: AiModelKind;
 
   @Field(() => ModelFamily, { nullable: true })
   modelFamily?: ModelFamily;
@@ -113,9 +190,6 @@ export class AdminAiModelConfig {
 
   @Field(() => Boolean, { nullable: true })
   isDeprecated?: boolean;
-
-  @Field(() => Boolean, { nullable: true })
-  isRecommended?: boolean;
 
   @Field(() => Number, { nullable: true })
   contextWindowTokens?: number;
@@ -141,6 +215,20 @@ export class AdminAiModelConfig {
 
   @Field(() => String, { nullable: true })
   dataResidency?: string;
+
+  @Field(() => [String], { nullable: true })
+  efforts?: string[];
+}
+
+@ObjectType()
+export class AdminAiModelTierDefault {
+  @Field(() => AiModelTierEnum)
+  tier: AiModelTier;
+
+  // The model the tier resolves to on this instance; unset when no model is
+  // available.
+  @Field(() => String, { nullable: true })
+  modelId?: string;
 }
 
 @ObjectType('AdminAiModels')
@@ -148,13 +236,8 @@ export class AdminAiModelsDTO {
   @Field(() => [AdminAiModelConfig])
   models: AdminAiModelConfig[];
 
-  @Field(() => String, { nullable: true })
-  // Composite model id for the default “smart” role (`provider/modelName`).
-  defaultSmartModelId?: string;
-
-  @Field(() => String, { nullable: true })
-  // Composite model id for the default “fast” role (`provider/modelName`).
-  defaultFastModelId?: string;
+  @Field(() => [AdminAiModelTierDefault])
+  defaultModelByTier: AdminAiModelTierDefault[];
 }
 
 @ObjectType()
@@ -191,6 +274,9 @@ export class Sentry {
 
   @Field(() => String, { nullable: true })
   dsn?: string;
+
+  @Field(() => Number, { nullable: true })
+  tracesSampleRate?: number;
 }
 
 @ObjectType()
@@ -225,6 +311,9 @@ export class PublicFeatureFlagMetadata {
 
   @Field(() => String)
   description: string;
+
+  @Field(() => String)
+  icon: string;
 
   @Field(() => String, { nullable: true })
   imagePath?: string;
@@ -265,6 +354,12 @@ export class ClientConfig {
   @Field(() => [ClientAiModelConfig])
   aiModels: ClientAiModelConfig[];
 
+  @Field(() => [ClientAiEvaluationModelConfig])
+  aiEvaluationModels: ClientAiEvaluationModelConfig[];
+
+  @Field(() => [ClientAiModelTierConfig])
+  aiModelTiers: ClientAiModelTierConfig[];
+
   @Field(() => Boolean)
   signInPrefilled: boolean;
 
@@ -301,13 +396,18 @@ export class ClientConfig {
   @Field(() => ApiConfig)
   api: ApiConfig;
 
-  onboarding: OnboardingConfig;
+  onboarding: OnboardingConfig | null;
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;
 
   @Field(() => [PublicFeatureFlag])
   publicFeatureFlags: PublicFeatureFlag[];
+
+  // Always true now that cookie sessions are the only web auth path. Kept in
+  // the schema because removing a field breaks the public API contract.
+  @Field(() => Boolean)
+  isCookieSessionEnabled: boolean;
 
   @Field(() => Boolean)
   isMicrosoftMessagingEnabled: boolean;
@@ -337,6 +437,12 @@ export class ClientConfig {
   calendarBookingPageId?: string;
 
   @Field(() => Boolean)
+  isBookCallOnboardingStepEnabled: boolean;
+
+  @Field(() => Boolean)
+  isCompanyEnrichmentEnabled: boolean;
+
+  @Field(() => Boolean)
   isCloudflareIntegrationEnabled: boolean;
 
   @Field(() => Boolean)
@@ -344,6 +450,9 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isWorkspaceSchemaDDLLocked: boolean;
+
+  @Field(() => Boolean)
+  isOnboardingAiChatEnabled: boolean;
 
   @Field(() => String)
   enterpriseInstanceType: string;

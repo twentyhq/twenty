@@ -7,7 +7,7 @@ import { MessageChannelSyncStage } from 'twenty-shared/types';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
@@ -26,7 +26,7 @@ export class MessagingMessagesImportJob {
   constructor(
     private readonly messagingMessagesImportService: MessagingMessagesImportService,
     private readonly messagingMonitoringService: MessagingMonitoringService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
   ) {}
@@ -43,7 +43,7 @@ export class MessagingMessagesImportJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageChannel = await this.messageChannelRepository.findOne({
           where: {

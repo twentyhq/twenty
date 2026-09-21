@@ -35,18 +35,22 @@ icon: database
   <Card title="Vztahy" icon="diagram-project" href="/l/cs/developers/extend/apps/data/relations">
     Obousměrná `MANY_TO_ONE` / `ONE_TO_MANY` propojení mezi objekty.
   </Card>
+  <Card title="Typy aktivit na časové ose" icon="clock-rotate-left" href="/l/cs/developers/extend/apps/data/timeline-activity-types">
+    Definujte automatické události auditu a explicitní události aplikace pro časové osy záznamů.
+  </Card>
 </CardGroup>
 
 ## Entity v kostce
 
-| Entita     | Účel                                                                                                                               | Definováno pomocí                      |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| **Objekt** | Nový vlastní typ záznamu (např. PostCard, Invoice) s vlastními poli                                                                | `defineObject()`                       |
-| **Pole**   | Sloupec v objektu. Samostatná pole mohou rozšiřovat objekty, které jste nevytvořili (např. přidat `loyaltyTier` k objektu Company) | `defineField()`                        |
-| **Vztah**  | Obousměrné propojení mezi dvěma objekty — obě strany deklarované jako pole                                                         | `defineField()` s `FieldType.RELATION` |
-| **Index**  | Databázový index pro zrychlení opakovaného dotazu na jeden z vašich objektů                                                        | `defineIndex()`                        |
+| Entita                         | Účel                                                                                                                               | Definováno pomocí                      |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| **Objekt**                     | Nový vlastní typ záznamu (např. PostCard, Invoice) s vlastními poli                                                                | `defineObject()`                       |
+| **Pole**                       | Sloupec v objektu. Samostatná pole mohou rozšiřovat objekty, které jste nevytvořili (např. přidat `loyaltyTier` k objektu Company) | `defineField()`                        |
+| **Vztah**                      | Obousměrné propojení mezi dvěma objekty — obě strany deklarované jako pole                                                         | `defineField()` s `FieldType.RELATION` |
+| **Index**                      | Databázový index pro zrychlení opakovaného dotazu na jeden z vašich objektů                                                        | `defineIndex()`                        |
+| **Typ aktivity na časové ose** | Automatická událost auditu nebo explicitní událost domény zobrazená na časových osách záznamů                                      | `defineTimelineActivityType()`         |
 
-SDK je detekuje pomocí analýzy AST v době buildu, takže organizace souborů je na vás — zažitou konvencí je `src/objects/`, `src/fields/` a `src/indexes/`. Stabilní UUID `universalIdentifier` vše propojují napříč nasazeními.
+SDK je detekuje pomocí analýzy AST v době buildu, takže organizace souborů je na vás — zažitou konvencí je `src/objects/`, `src/fields/`, `src/indexes/` a `src/timeline-activity-types/`. Stabilní UUID `universalIdentifier` vše propojují napříč nasazeními.
 
 ## Indexy (volitelné)
 

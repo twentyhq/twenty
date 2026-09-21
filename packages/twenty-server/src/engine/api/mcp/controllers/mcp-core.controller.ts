@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 
 import { type Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
@@ -20,6 +21,7 @@ import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { writeSseEvent } from 'src/engine/api/mcp/utils/write-sse-event.util';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -29,10 +31,16 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-suspended.guard';
 
-@Controller('mcp')
-@UseGuards(McpAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
-@UseFilters(RestApiExceptionFilter)
+@Controller(ApiPath.Mcp)
+@UseGuards(
+  McpAuthGuard,
+  WorkspaceAuthGuard,
+  WorkspaceNotSuspendedGuard,
+  NoPermissionGuard,
+)
+@UseFilters(RestApiExceptionFilter, AuthRestApiExceptionFilter)
 export class McpCoreController {
   constructor(private readonly mcpProtocolService: McpProtocolService) {}
 

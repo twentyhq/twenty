@@ -6,12 +6,10 @@ export const kebabCase = <T>(text: T) =>
   lodashKebabCase(text as unknown as string) as KebabCase<T>;
 
 export const kebabCaseDeep = <T>(value: T): KebabCasedPropertiesDeep<T> => {
-  // Check if it's an array
   if (Array.isArray(value)) {
     return value.map(kebabCaseDeep) as KebabCasedPropertiesDeep<T>;
   }
 
-  // Check if it's an object
   if (isObject(value)) {
     // oxlint-disable-next-line typescript/no-explicit-any
     const result: Record<string, any> = {};

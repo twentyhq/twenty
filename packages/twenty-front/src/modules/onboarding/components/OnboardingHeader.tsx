@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconCoins, IconInfoCircle } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   MOBILE_VIEWPORT,
   themeCssVariables,
@@ -80,6 +80,7 @@ const StyledCreditsTag = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
   border-top-left-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
+  corner-shape: round;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};
@@ -103,6 +104,7 @@ const StyledInfoTag = styled.div`
   border-bottom-right-radius: ${themeCssVariables.border.radius.rounded};
   border-top-right-radius: ${themeCssVariables.border.radius.rounded};
   box-sizing: border-box;
+  corner-shape: round;
   display: flex;
   height: ${themeCssVariables.spacing[6]};
   justify-content: center;
@@ -112,11 +114,13 @@ const StyledInfoTag = styled.div`
 
 type OnboardingHeaderProps = {
   onBack?: () => void;
+  isBackDisabled?: boolean;
   freeCredits?: number;
 };
 
 export const OnboardingHeader = ({
   onBack,
+  isBackDisabled,
   freeCredits,
 }: OnboardingHeaderProps) => {
   const { t } = useLingui();
@@ -127,12 +131,14 @@ export const OnboardingHeader = ({
       <StyledLeftSide>
         {isDefined(onBack) && (
           <LightIconButton
-            Icon={IconChevronLeft}
-            accent="tertiary"
-            size="small"
+            emphasis="subtle"
+            size="sm"
             onClick={onBack}
+            disabled={isBackDisabled}
             aria-label={t`Go back`}
-          />
+          >
+            <IconChevronLeft />
+          </LightIconButton>
         )}
       </StyledLeftSide>
       <StyledCenter>

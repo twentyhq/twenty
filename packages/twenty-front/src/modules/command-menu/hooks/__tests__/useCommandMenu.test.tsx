@@ -5,8 +5,6 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -90,13 +88,12 @@ describe('useSidePanelMenu', () => {
       });
     });
 
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.CommandMenuDisplay,
-    );
-    expect(jotaiStore.get(sidePanelPageInfoState.atom).title).toBe(
-      'First Page',
-    );
-    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toMatchObject([
+      {
+        page: SidePanelPages.CommandMenuDisplay,
+        pageTitle: 'First Page',
+      },
+    ]);
 
     act(() => {
       result.current.commandMenu.navigateSidePanelMenu({
@@ -118,12 +115,11 @@ describe('useSidePanelMenu', () => {
       });
     });
 
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.CommandMenuDisplay,
-    );
-    expect(jotaiStore.get(sidePanelPageInfoState.atom).title).toBe(
-      'Reset Page',
-    );
-    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toMatchObject([
+      {
+        page: SidePanelPages.CommandMenuDisplay,
+        pageTitle: 'Reset Page',
+      },
+    ]);
   });
 });

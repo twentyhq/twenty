@@ -56,7 +56,7 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       description: catalogCard.description ?? '',
       author: catalogCard.author ?? 'Unknown',
       category: catalogCard.category ?? '',
-      logo: catalogCard.logoUrl ?? undefined,
+      logoUrl: catalogCard.logoUrl ?? undefined,
       sourcePackage: catalogCard.sourcePackage ?? undefined,
       isVetted: catalogCard.isVetted,
     };

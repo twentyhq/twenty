@@ -45,6 +45,9 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -124,6 +127,42 @@ A partir daí, use `getConnection(connectedAccountId)` para ler o token de acess
 
 </Accordion>
 
+<Accordion title="Execute uma função lógica ao desconectar" description="Limpar quando uma conexão for removida">
+
+Tudo o que um app reivindica no momento da conexão precisa ser liberado quando a conexão é encerrada. Uma integração do Slack que reivindica um `team_id` ao conectar, por exemplo, precisa liberar essa reivindicação para que outro espaço de trabalho possa conectar a mesma equipe do Slack. Defina `onDisconnectLogicFunction` para fazer referência a uma função lógica no mesmo app, e ela será executada logo após o `ConnectedAccount` ser excluído.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+Assim como o hook de on-connect, ele é executado **assincronamente no espaço de trabalho que está sendo desconectado** e nunca bloqueia a desconexão. O handler recebe o mesmo formato de payload:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+O `ConnectedAccount` já não existe mais quando o hook é executado, então `getConnection(connectedAccountId)` não retorna mais resultado. Tudo o que a limpeza precisar (um `team_id`, um id de assinatura externa) deve ter sido gravado no [key-value store](/l/pt/developers/extend/apps/logic/key-value-store) no momento da conexão, indexado por `connectedAccountId`.
+
+O hook é disparado quando uma conexão é removida por conta própria. A desinstalação do app remove suas conexões por meio de uma cascata de banco de dados; portanto, o hook não é executado nesse caso. Declare um `uninstallLogicFunction` em `defineApplication` para esse caminho: ele é executado antes de os metadados do app serem excluídos, então ainda pode chamar `listConnections` e limpar o que tiver restado.
+
+</Accordion>
+
 <Accordion title="listConnections / getConnection" description="Use conexões a partir de uma função de lógica">
 
 Dentro de um handler de função de lógica, `listConnections({ providerName })` retorna as linhas `ConnectedAccount` deste app para o provedor fornecido, com tokens de acesso atualizados.
@@ -173,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 Cada conexão tem:
 
-| Campo             | Descrição                                                                                                                  |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `id`              | ID de linha exclusivo; passe para `getConnection(id)` para buscar novamente um único registro                              |
-| `visibility`      | `'user'` (privada para um membro do workspace) ou `'workspace'` (compartilhada com todos os membros)                       |
-| `scopes`          | Permissões OAuth concedidas pelo provedor de origem (distintas de `visibility` — não têm relação)                          |
-| `userWorkspaceId` | O id de userWorkspace do proprietário — útil para selecionar "a conexão do usuário da requisição" em gatilhos de rota HTTP |
-| `accessToken`     | Token de acesso OAuth recente (atualizado automaticamente se estiver expirado)                                             |
-| `name` / `handle` | O nome de exibição da conexão (derivado automaticamente no callback do OAuth, renomeável pelo usuário)                     |
-| `authFailedAt`    | Definido quando a atualização mais recente falhou; o usuário deve reconectar                                               |
+| Campo             | Descrição                                                                                                                                                                                           |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | ID de linha exclusivo; passe para `getConnection(id)` para buscar novamente um único registro                                                                                                       |
+| `visibility`      | `'user'` (privada para um membro do workspace) ou `'workspace'` (compartilhada com todos os membros)                                                                                                |
+| `scopes`          | Permissões OAuth concedidas pelo provedor de origem (distintas de `visibility` — não têm relação)                                                                                                   |
+| `userWorkspaceId` | O id de userWorkspace do proprietário — útil para selecionar "a conexão do usuário da requisição" em gatilhos de rota HTTP                                                                          |
+| `accessToken`     | Token de acesso OAuth recente (atualizado automaticamente se estiver expirado)                                                                                                                      |
+| `nome`            | O nome de exibição da conexão (derivado automaticamente no callback do OAuth, renomeável pelo usuário)                                                                                              |
+| `ligar`           | O e-mail da conta de upstream foi atualizado em cada reconexão; resolvido do OIDC `id_token` retornado na troca de token, retornando para o e-mail de 20 usuários quando o provedor não retornar um |
+| `authFailedAt`    | Definido quando a atualização mais recente falhou; o usuário deve reconectar                                                                                                                        |
 
 Pontos-chave:
 

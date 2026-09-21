@@ -60,28 +60,24 @@ describe('searchVariableInOutputSchema - form output schema', () => {
   };
 
   const mockFormSchema: FormOutputSchema = {
-    // Simple text field
     companyName: {
       isLeaf: true,
       type: FieldMetadataType.TEXT,
       label: 'Company Name',
       value: 'Acme Corp',
     },
-    // Number field
     revenue: {
       isLeaf: true,
       type: FieldMetadataType.NUMBER,
       label: 'Annual Revenue',
       value: 1000000,
     },
-    // Email field
     contactEmail: {
       isLeaf: true,
       type: FieldMetadataType.EMAILS,
       label: 'Contact Email',
       value: 'contact@acme.com',
     },
-    // Record field (nested record)
     contactPerson: {
       isLeaf: false,
       label: 'Contact Person',

@@ -1,3 +1,4 @@
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -5,7 +6,10 @@ import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateReco
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { renderHook } from '@testing-library/react';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  MetadataWritability,
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
@@ -56,6 +60,8 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   isSystem: false,
   isUIEditable: true,
   isUICreatable: true,
+  writability: MetadataWritability.OPEN,
+  openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
 };
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({

@@ -136,7 +136,6 @@ const COMPANY_NOTE_TEMPLATES = [
   },
 ];
 
-// Generate note data seeds
 const GENERATE_NOTE_SEEDS = (): NoteDataSeed[] => {
   const NOTE_SEEDS: NoteDataSeed[] = [];
 

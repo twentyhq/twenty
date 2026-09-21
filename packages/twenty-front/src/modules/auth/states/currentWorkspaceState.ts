@@ -36,19 +36,20 @@ export type CurrentWorkspace = Pick<
   | 'isTwoFactorAuthenticationEnforced'
   | 'trashRetentionDays'
   | 'eventLogRetentionDays'
-  | 'fastModel'
-  | 'smartModel'
+  | 'aiChatModelTier'
+  | 'aiAgentModelTier'
+  | 'isAutoModelSelectionEnabled'
+  | 'aiModelIdByTier'
+  | 'aiEvaluationModelId'
   | 'aiAdditionalInstructions'
   | 'editableProfileFields'
-  | 'enabledAiModelIds'
-  | 'useRecommendedModels'
   | 'isInternalMessagesImportEnabled'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
   workspaceCustomApplication: Pick<Application, 'id'> | null;
   installedApplications: Pick<
     Application,
-    'id' | 'name' | 'universalIdentifier' | 'logo' | 'logoUrl'
+    'id' | 'name' | 'universalIdentifier' | 'logoUrl'
   >[];
 };
 

@@ -24,7 +24,8 @@ export const fromViewFilterManifestToUniversalFlatViewFilter = ({
     operand: viewFilterManifest.operand,
     value: viewFilterManifest.value,
     subFieldName: viewFilterManifest.subFieldName ?? null,
-    relationTargetFieldMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier:
+      viewFilterManifest.relationTargetFieldMetadataUniversalIdentifier ?? null,
     positionInViewFilterGroup:
       viewFilterManifest.positionInViewFilterGroup ?? null,
     createdAt: now,

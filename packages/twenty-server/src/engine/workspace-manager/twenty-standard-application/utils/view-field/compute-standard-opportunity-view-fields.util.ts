@@ -10,7 +10,6 @@ export const computeStandardOpportunityViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'opportunity'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
-    // allOpportunities view fields
     allOpportunitiesName: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'opportunity',
@@ -86,7 +85,6 @@ export const computeStandardOpportunityViewFields = (
       },
     }),
 
-    // byStage view fields
     byStageName: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'opportunity',
@@ -260,7 +258,6 @@ export const computeStandardOpportunityViewFields = (
           viewFieldGroupName: 'deal',
         },
       }),
-    // Relations group
     opportunityRecordPageFieldsCompany: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'opportunity',
@@ -301,7 +298,6 @@ export const computeStandardOpportunityViewFields = (
         viewFieldGroupName: 'relations',
       },
     }),
-    // System group
     opportunityRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'opportunity',

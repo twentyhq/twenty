@@ -2,6 +2,7 @@ import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-ex
 import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
 import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
 import { validatePackageJsonDependencies } from '@/cli/utilities/build/manifest/utils/validate-package-json-dependencies';
+import { validateYarnLock } from '@/cli/utilities/build/manifest/utils/validate-yarn-lock';
 import { type Manifest } from 'twenty-shared/application';
 
 export type BuildAndValidateManifestSuccess = {
@@ -41,6 +42,15 @@ export const buildAndValidateManifest = async (
     return {
       success: false,
       errors: validation.errors,
+    };
+  }
+
+  const yarnLockErrors = await validateYarnLock(appPath);
+
+  if (yarnLockErrors.length > 0) {
+    return {
+      success: false,
+      errors: yarnLockErrors,
     };
   }
 

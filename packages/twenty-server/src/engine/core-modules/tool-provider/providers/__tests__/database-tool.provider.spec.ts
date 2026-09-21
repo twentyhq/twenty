@@ -1,6 +1,7 @@
 import { type ObjectPermissions } from 'twenty-shared/types';
 
 import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -35,8 +36,23 @@ const createFlatObject = (
     ...overrides,
   });
 
+type ExplicitPermissionRow = {
+  objectMetadataId: string;
+  canReadObjectRecords?: boolean;
+  canUpdateObjectRecords?: boolean;
+  canSoftDeleteObjectRecords?: boolean;
+};
+
+type GenerateDescriptorsTestOptions = {
+  requireExplicitObjectGrants?: boolean;
+  explicitPermissionRows?: ExplicitPermissionRow[];
+};
+
 describe('DatabaseToolProvider', () => {
-  const generateDescriptors = async (objects: FlatObjectMetadata[]) => {
+  const generateDescriptors = async (
+    objects: FlatObjectMetadata[],
+    options?: GenerateDescriptorsTestOptions,
+  ) => {
     const flatObjectMetadataMaps =
       createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>;
 
@@ -47,11 +63,28 @@ describe('DatabaseToolProvider', () => {
         object.universalIdentifier;
     }
 
+    const explicitPermissionRows =
+      options?.explicitPermissionRows ??
+      objects.map((object) => ({
+        objectMetadataId: object.id,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: true,
+      }));
+
     const workspaceCacheService = {
       getOrRecompute: jest.fn().mockResolvedValue({
         rolesPermissions: {
           [roleId]: Object.fromEntries(
             objects.map((object) => [object.id, allObjectPermissions]),
+          ),
+        },
+        flatObjectPermissionMaps: {
+          byUniversalIdentifier: Object.fromEntries(
+            explicitPermissionRows.map((row, index) => [
+              `object-permission-${index}`,
+              { roleId, ...row },
+            ]),
           ),
         },
       }),
@@ -79,10 +112,20 @@ describe('DatabaseToolProvider', () => {
       })),
     } as unknown as I18nService;
 
+    const applicationTranslationCatalogService = {
+      getApplicationAuthorIdentifiers: jest.fn().mockResolvedValue({
+        standardApplicationId: 'standard-application-id',
+        workspaceCustomApplicationUniversalIdentifier:
+          'workspace-custom-application-universal-identifier',
+        universalIdentifierByApplicationId: {},
+      }),
+    } as unknown as ApplicationTranslationCatalogService;
+
     const provider = new DatabaseToolProvider(
       workspaceCacheService,
       flatEntityMapsCacheService,
       i18nService,
+      applicationTranslationCatalogService,
     );
 
     return (await provider.generateDescriptors(
@@ -90,13 +133,17 @@ describe('DatabaseToolProvider', () => {
         workspaceId,
         roleId,
         rolePermissionConfig: { unionOf: [roleId] },
+        requireExplicitObjectGrants: options?.requireExplicitObjectGrants,
       },
       { includeSchemas: false },
     )) as (ToolIndexEntry | ToolDescriptor)[];
   };
 
-  const generateDescriptorNames = async (objects: FlatObjectMetadata[]) => {
-    const descriptors = await generateDescriptors(objects);
+  const generateDescriptorNames = async (
+    objects: FlatObjectMetadata[],
+    options?: GenerateDescriptorsTestOptions,
+  ) => {
+    const descriptors = await generateDescriptors(objects, options);
 
     return descriptors.map((descriptor) => descriptor.name);
   };
@@ -250,5 +297,81 @@ describe('DatabaseToolProvider', () => {
       expect(descriptor.label).toBeDefined();
       expect(descriptor.label.length).toBeGreaterThan(0);
     }
+  });
+
+  it('names the records widget on every record descriptor but group_by', async () => {
+    const descriptors = await generateDescriptors([
+      createFlatObject({
+        nameSingular: 'task',
+        namePlural: 'tasks',
+        labelSingular: 'Task',
+        labelPlural: 'Tasks',
+      }),
+    ]);
+
+    for (const descriptor of descriptors) {
+      if (descriptor.operation === 'group_by') {
+        expect(descriptor.widgetName).toBeUndefined();
+        continue;
+      }
+
+      expect(descriptor.widgetName).toBe('records');
+    }
+  });
+
+  describe('requireExplicitObjectGrants', () => {
+    const personObject = createFlatObject({
+      nameSingular: 'person',
+      namePlural: 'people',
+    });
+    const companyObject = createFlatObject({
+      nameSingular: 'company',
+      namePlural: 'companies',
+    });
+
+    it('emits no tools for objects without an explicit permission row', async () => {
+      const descriptorNames = await generateDescriptorNames(
+        [personObject, companyObject],
+        {
+          requireExplicitObjectGrants: true,
+          explicitPermissionRows: [
+            {
+              objectMetadataId: personObject.id,
+              canReadObjectRecords: true,
+            },
+          ],
+        },
+      );
+
+      expect(descriptorNames).toContain('find_many_people');
+      expect(descriptorNames).not.toContain('find_many_companies');
+    });
+
+    it('emits only the verbs granted by the explicit row', async () => {
+      const descriptorNames = await generateDescriptorNames([personObject], {
+        requireExplicitObjectGrants: true,
+        explicitPermissionRows: [
+          {
+            objectMetadataId: personObject.id,
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: false,
+            canSoftDeleteObjectRecords: false,
+          },
+        ],
+      });
+
+      expect(descriptorNames).toContain('find_many_people');
+      expect(descriptorNames).not.toContain('create_one_person');
+      expect(descriptorNames).not.toContain('delete_one_person');
+    });
+
+    it('keeps composed permissions when the flag is not set even without explicit rows', async () => {
+      const descriptorNames = await generateDescriptorNames([personObject], {
+        explicitPermissionRows: [],
+      });
+
+      expect(descriptorNames).toContain('find_many_people');
+      expect(descriptorNames).toContain('create_one_person');
+    });
   });
 });

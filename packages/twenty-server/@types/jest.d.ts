@@ -1,3 +1,4 @@
+import { type createWorkflowTestServices } from '../test/integration/utils/create-workflow-test-services';
 import { type INestApplication } from '@nestjs/common';
 
 import 'jest';
@@ -31,8 +32,8 @@ declare global {
   const API_KEY_ACCESS_TOKEN: string;
   const APPLE_SARAH_IMPERSONATE_TIM_INVALID_ACCESS_TOKEN: string;
 
-  // Additional global properties set during test setup
   var testDataSource: DataSource;
+  var workflowTestServices: ReturnType<typeof createWorkflowTestServices>;
   var app: INestApplication;
   var dataSourceService: DataSourceService;
 }

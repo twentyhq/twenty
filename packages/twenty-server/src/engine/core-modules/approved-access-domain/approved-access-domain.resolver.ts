@@ -11,6 +11,7 @@ import { DeleteApprovedAccessDomainInput } from 'src/engine/core-modules/approve
 import { ValidateApprovedAccessDomainInput } from 'src/engine/core-modules/approved-access-domain/dtos/validate-approved-access-domain.input';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -18,7 +19,7 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -30,11 +31,12 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @UseFilters(
   ApprovedAccessDomainExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 @MetadataResolver()
 export class ApprovedAccessDomainResolver {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly approvedAccessDomainService: ApprovedAccessDomainService,
   ) {}
 
@@ -47,23 +49,19 @@ export class ApprovedAccessDomainResolver {
     const authContext = buildSystemAuthContext(currentWorkspace.id);
 
     const workspaceMember =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              currentWorkspace.id,
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceMemberRepository =
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
 
-          return workspaceMemberRepository.findOneOrFail({
-            where: {
-              userId: currentUser.id,
-            },
-          });
-        },
-        authContext,
-      );
+        return workspaceMemberRepository.findOneOrFail({
+          where: {
+            userId: currentUser.id,
+          },
+        });
+      }, authContext);
 
     return this.approvedAccessDomainService.createApprovedAccessDomain(
       domain,

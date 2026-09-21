@@ -11,9 +11,9 @@ const StyledContainer = styled.div`
   background: ${themeCssVariables.background.noisy};
   box-sizing: border-box;
   display: flex;
-  height: 100vh;
+  height: calc(100vh / var(--t-zoom, 1));
   padding: 12px;
-  width: 100vw;
+  width: calc(100vw / var(--t-zoom, 1));
 `;
 
 const StyledPanel = styled.div`

@@ -1,3 +1,4 @@
+import { objectColorsDraftState } from '@/layout-customization/states/objectColorsDraftState';
 import { useCommandMenuItemsDraftState } from '@/command-menu-item/hooks/useCommandMenuItemsDraftState';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
@@ -9,13 +10,14 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
-import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
+import { toDraftPageLayout } from '@/page-layout/utils/toDraftPageLayout';
 import { atom, useAtomValue } from 'jotai';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useIsLayoutCustomizationDirty = () => {
+  const objectColorsDraft = useAtomValue(objectColorsDraftState.atom);
   const { isDirty: isNavigationDirty } = useNavigationMenuItemsDraftState();
   const { isDirty: isCommandMenuItemsDirty } = useCommandMenuItemsDraftState();
 
@@ -43,17 +45,7 @@ export const useIsLayoutCustomizationDirty = () => {
             continue;
           }
 
-          const persistedAsDraft: DraftPageLayout = {
-            id: persisted.id,
-            name: persisted.name,
-            type: persisted.type,
-            objectMetadataId: persisted.objectMetadataId,
-            tabs: persisted.tabs,
-            defaultTabToFocusOnMobileAndSidePanelId:
-              persisted.defaultTabToFocusOnMobileAndSidePanelId,
-          };
-
-          if (!isDeeplyEqual(draft, persistedAsDraft)) {
+          if (!isDeeplyEqual(draft, toDraftPageLayout(persisted))) {
             return true;
           }
 
@@ -119,6 +111,9 @@ export const useIsLayoutCustomizationDirty = () => {
 
   return {
     isDirty:
-      isNavigationDirty || isAnyPageLayoutDirty || isCommandMenuItemsDirty,
+      Object.keys(objectColorsDraft).length > 0 ||
+      isNavigationDirty ||
+      isAnyPageLayoutDirty ||
+      isCommandMenuItemsDirty,
   };
 };

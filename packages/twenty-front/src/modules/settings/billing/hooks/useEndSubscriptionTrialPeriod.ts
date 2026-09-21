@@ -1,28 +1,34 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { START_SUBSCRIPTION_AFTER_PAYMENT_METHOD_QUERY_PARAM } from '@/settings/billing/constants/StartSubscriptionAfterPaymentMethodQueryParam';
+import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { useLazyQuery, useMutation } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   BillingPortalSessionDocument,
   EndSubscriptionTrialPeriodDocument,
+  GetResourceCreditUsageDocument,
 } from '~/generated-metadata/graphql';
 
 export const useEndSubscriptionTrialPeriod = () => {
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar, enqueueInfoSnackBar } =
-    useSnackBar();
+  const { enqueueToast } = useToast();
   const [endSubscriptionTrialPeriod] = useMutation(
     EndSubscriptionTrialPeriodDocument,
+    {
+      refetchQueries: [GetResourceCreditUsageDocument],
+    },
   );
   const [getBillingPortalSession] = useLazyQuery(BillingPortalSessionDocument);
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
+  const { applyCurrentWorkspaceBillingUpdate } =
+    useApplyCurrentWorkspaceBillingUpdate();
   const [isLoading, setIsLoading] = useState(false);
   const { redirect } = useRedirect();
   const location = useLocation();
@@ -59,8 +65,9 @@ export const useEndSubscriptionTrialPeriod = () => {
       }
     }
 
-    enqueueErrorSnackBar({
-      message: t`No payment method found. Please update your billing details.`,
+    enqueueToast({
+      variant: 'error',
+      children: t`No payment method found. Please update your billing details.`,
     });
   };
 
@@ -72,8 +79,9 @@ export const useEndSubscriptionTrialPeriod = () => {
       setIsLoading(true);
 
       if (options?.skipPaymentMethodRedirect === true) {
-        enqueueInfoSnackBar({
-          message: t`Activating subscription...`,
+        enqueueToast({
+          variant: 'info',
+          children: t`Activating subscription...`,
         });
       }
 
@@ -96,8 +104,23 @@ export const useEndSubscriptionTrialPeriod = () => {
         return { success: false, hasPaymentMethod: false };
       }
 
+      const updatedCurrentBillingSubscription =
+        endTrialPeriodOutput?.currentBillingSubscription;
+      const updatedBillingSubscriptions =
+        endTrialPeriodOutput?.billingSubscriptions;
+
+      const hasAppliedFullBillingUpdate =
+        isDefined(updatedCurrentBillingSubscription) &&
+        isDefined(updatedBillingSubscriptions)
+          ? applyCurrentWorkspaceBillingUpdate({
+              currentBillingSubscription: updatedCurrentBillingSubscription,
+              billingSubscriptions: updatedBillingSubscriptions,
+            })
+          : false;
+
       const updatedSubscriptionStatus = endTrialPeriodOutput?.status;
       if (
+        !hasAppliedFullBillingUpdate &&
         isDefined(updatedSubscriptionStatus) &&
         isDefined(currentWorkspace?.currentBillingSubscription)
       ) {
@@ -117,14 +140,29 @@ export const useEndSubscriptionTrialPeriod = () => {
         });
       }
 
-      enqueueSuccessSnackBar({
-        message: t`Subscription activated.`,
+      setCurrentWorkspace((previousWorkspace) =>
+        isDefined(previousWorkspace) &&
+        isDefined(previousWorkspace.billingCustomer)
+          ? {
+              ...previousWorkspace,
+              billingCustomer: {
+                ...previousWorkspace.billingCustomer,
+                hasPaymentMethod: true,
+              },
+            }
+          : previousWorkspace,
+      );
+
+      enqueueToast({
+        variant: 'success',
+        children: t`Subscription activated.`,
       });
 
       return { success: true, hasPaymentMethod: true };
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error while ending trial period. Please contact Twenty team.`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Error while ending trial period. Please contact Twenty team.`,
       });
       return { success: false };
     } finally {

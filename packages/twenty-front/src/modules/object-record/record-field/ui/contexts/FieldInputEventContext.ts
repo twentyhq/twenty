@@ -3,6 +3,7 @@ import { createContext } from 'react';
 export type FieldInputEventArgs = {
   newValue?: unknown;
   skipPersist?: boolean;
+  skipClose?: boolean;
 };
 
 export type FieldInputEvent = (args: FieldInputEventArgs) => void;

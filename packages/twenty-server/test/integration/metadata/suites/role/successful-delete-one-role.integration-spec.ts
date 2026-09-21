@@ -4,7 +4,6 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 
 describe('Role deletion should succeed', () => {
   it('should successfully delete a custom editable role', async () => {
-    // Create a custom role that CAN be deleted
     const { data: createData, errors: createErrors } = await createOneRole({
       expectToFail: false,
       input: {
@@ -24,7 +23,6 @@ describe('Role deletion should succeed', () => {
 
     const customRoleId = createData.createOneRole.id;
 
-    // Delete the custom role
     const { data, errors } = await deleteOneRole({
       expectToFail: false,
       input: {
@@ -40,7 +38,6 @@ describe('Role deletion should succeed', () => {
   it('should delete a custom role and verify it can no longer be found', async () => {
     const testLabel = 'Role To Be Deleted And Verified';
 
-    // Create the role
     const { data: createData } = await createOneRole({
       expectToFail: false,
       input: {
@@ -56,13 +53,11 @@ describe('Role deletion should succeed', () => {
 
     const roleId = createData.createOneRole.id;
 
-    // Verify role exists before deletion
     const roleBefore = await findOneRoleByLabel({ label: testLabel });
 
     expect(roleBefore).toBeDefined();
     expect(roleBefore.id).toBe(roleId);
 
-    // Delete the role
     const { data, errors } = await deleteOneRole({
       expectToFail: false,
       input: {
@@ -73,7 +68,6 @@ describe('Role deletion should succeed', () => {
     expect(errors).toBeUndefined();
     expect(data.deleteOneRole).toBe(roleId);
 
-    // Verify role no longer exists after deletion
     await expect(findOneRoleByLabel({ label: testLabel })).rejects.toThrow(
       `Role with label "${testLabel}" not found`,
     );

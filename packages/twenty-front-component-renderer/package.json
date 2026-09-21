@@ -33,6 +33,7 @@
     "@chakra-ui/react": "^3.33.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@monaco-editor/react": "^4.7.0",
     "@mui/material": "^7.3.8",
     "@storybook/addon-vitest": "^10.4.6",
     "@storybook/react-vite": "^10.4.6",
@@ -41,8 +42,10 @@
     "@types/react-dom": "^19.2.0",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "@vitest/browser-playwright": "^4.1.0",
+    "monaco-editor": "0.52.2",
     "playwright": "^1.60.0",
     "prettier": "^3.1.1",
+    "recharts": "^3.9.2",
     "storybook": "^10.4.6",
     "styled-components": "^6.1.0",
     "ts-morph": "^25.0.0",
@@ -50,8 +53,7 @@
     "tsx": "^4.7.0",
     "twenty-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*",
-    "vite-plugin-dts": "^4.5.4"
+    "twenty-ui": "workspace:*"
   },
   "engines": {
     "node": "^24.5.0",

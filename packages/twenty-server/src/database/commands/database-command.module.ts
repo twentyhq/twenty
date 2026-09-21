@@ -1,3 +1,4 @@
+import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -17,13 +18,15 @@ import { WorkspaceExportModule } from 'src/database/commands/workspace-export/wo
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
+import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/stale-registration-cleanup.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
+import { ApplicationRecurringChargeModule } from 'src/engine/core-modules/billing/app-billing/application-recurring-charge.module';
 import { BillingReminderModule } from 'src/engine/core-modules/billing/reminders/billing-reminder.module';
-import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/enterprise-key-validation.cron.command';
+import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/organization-key-validation.cron.command';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogCleanupModule } from 'src/engine/core-modules/event-logs/cleanup/event-log-cleanup.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -31,9 +34,11 @@ import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { UpgradeStatusCommand } from 'src/engine/core-modules/upgrade/commands/upgrade-status.command';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -50,6 +55,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-version/workspace-version.module';
 import { WebhookSubscriptionModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module';
 import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
+import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
@@ -57,19 +63,19 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
 
 @Module({
   imports: [
+    AgentHistoryMigrationModule,
     UpgradeVersionCommandModule,
     TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity]),
     WorkspaceExportModule,
-    // Cron command dependencies
     MessagingImportManagerModule,
     CalendarEventImportManagerModule,
     WebhookSubscriptionModule,
+    EmailingModule,
     AutomatedTriggerModule,
     WorkflowCoreConsistencyModule,
     FileModule,
     WorkspaceModule,
     WorkflowRunQueueModule,
-    // Data seeding dependencies
     TypeORMModule,
     FieldMetadataModule,
     ObjectMetadataModule,
@@ -82,12 +88,14 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     WorkspaceMigrationModule,
     TrashCleanupModule,
     BillingReminderModule,
+    ApplicationRecurringChargeModule,
     CodeInterpreterSessionCleanupModule,
     PublicDomainModule,
     EventLogCleanupModule,
     EnterpriseModule,
     TwentyConfigModule,
     MarketplaceModule,
+    ApplicationInstallModule,
     ApplicationUpgradeModule,
     StaleRegistrationCleanupModule,
     PreInstalledAppsModule,
@@ -97,6 +105,8 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     WorkspaceVersionModule,
     UpgradeModule,
     SecretEncryptionRotationModule,
+    UserSessionModule,
+    EmailingDomainModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,

@@ -35,18 +35,22 @@ La **couche de données** d’une application Twenty correspond aux données que
   <Card title="Relations" icon="diagram-project" href="/l/fr/developers/extend/apps/data/relations">
     Connexions bidirectionnelles `MANY_TO_ONE` / `ONE_TO_MANY` entre objets.
   </Card>
+  <Card title="Types d'activités de la chronologie" icon="clock-rotate-left" href="/l/fr/developers/extend/apps/data/timeline-activity-types">
+    Définissez des événements d'audit automatiques et des événements d'application explicites pour les chronologies d'enregistrements.
+  </Card>
 </CardGroup>
 
 ## Aperçu des entités
 
-| Entité       | Objectif                                                                                                                                    | Défini avec                               |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Objet**    | Un nouveau type d’enregistrement personnalisé (par ex. PostCard, Invoice) avec ses propres champs                                           | `defineObject()`                          |
-| **Champ**    | Une colonne d’un objet. Les champs autonomes peuvent étendre des objets que vous n’avez pas créés (par ex. ajouter `loyaltyTier` à Company) | `defineField()`                           |
-| **Relation** | Un lien bidirectionnel entre deux objets — les deux côtés étant déclarés comme des champs                                                   | `defineField()` avec `FieldType.RELATION` |
-| **Index**    | Un index de base de données pour accélérer une requête récurrente sur l’un de vos objets                                                    | `defineIndex()`                           |
+| Entité                                | Objectif                                                                                                                                    | Défini avec                               |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Objet**                             | Un nouveau type d’enregistrement personnalisé (par ex. PostCard, Invoice) avec ses propres champs                                           | `defineObject()`                          |
+| **Champ**                             | Une colonne d’un objet. Les champs autonomes peuvent étendre des objets que vous n’avez pas créés (par ex. ajouter `loyaltyTier` à Company) | `defineField()`                           |
+| **Relation**                          | Un lien bidirectionnel entre deux objets — les deux côtés étant déclarés comme des champs                                                   | `defineField()` avec `FieldType.RELATION` |
+| **Index**                             | Un index de base de données pour accélérer une requête récurrente sur l’un de vos objets                                                    | `defineIndex()`                           |
+| **Type d'activité de la chronologie** | Un événement d'audit automatique ou un événement de domaine explicite affiché dans les chronologies des enregistrements.                    | `defineTimelineActivityType()`            |
 
-Le SDK les détecte via une analyse AST au moment de la compilation, donc l’organisation des fichiers vous appartient — la convention est `src/objects/`, `src/fields/` et `src/indexes/`. Des UUID `universalIdentifier` stables relient tout d’un déploiement à l’autre.
+Le SDK les détecte via une analyse AST au moment de la compilation, donc l’organisation des fichiers vous appartient — la convention est `src/objects/`, `src/fields/`, `src/indexes/` et `src/timeline-activity-types/`. Des UUID `universalIdentifier` stables relient tout d’un déploiement à l’autre.
 
 ## Index (optionnels)
 

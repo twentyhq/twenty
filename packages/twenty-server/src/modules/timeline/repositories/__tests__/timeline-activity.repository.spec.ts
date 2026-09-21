@@ -1,138 +1,169 @@
-import { Test, type TestingModule } from '@nestjs/testing';
+import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
 
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 
-const WORKSPACE_ID = 'workspace-id';
-const TIMELINE_ACTIVITY_OBJECT_ID = 'timeline-activity-object-id';
-const TIMELINE_ACTIVITY_UNIVERSAL_ID = 'timeline-activity-universal-id';
-const TARGET_ISSUE_FIELD_ID = 'target-issue-field-id';
-const TARGET_ISSUE_FIELD_UNIVERSAL_ID = 'target-issue-field-universal-id';
-
-const buildFlatEntityMaps = () =>
-  createEmptyFlatEntityMaps() as ReturnType<
-    typeof createEmptyFlatEntityMaps
-  > & {
-    byUniversalIdentifier: Record<string, unknown>;
-    universalIdentifierById: Record<string, string>;
-  };
-
-// Only 'targetIssueId' is wired on timelineActivity, mirroring the real schema
-// gap: 'issueComment' has no matching 'targetIssueComment' field.
-const buildFlatObjectMetadataMaps = () => {
-  const maps = buildFlatEntityMaps();
-
-  maps.byUniversalIdentifier[TIMELINE_ACTIVITY_UNIVERSAL_ID] = {
-    id: TIMELINE_ACTIVITY_OBJECT_ID,
-    universalIdentifier: TIMELINE_ACTIVITY_UNIVERSAL_ID,
-    nameSingular: 'timelineActivity',
-    namePlural: 'timelineActivities',
-    fieldIds: [TARGET_ISSUE_FIELD_ID],
-  };
-  maps.universalIdentifierById[TIMELINE_ACTIVITY_OBJECT_ID] =
-    TIMELINE_ACTIVITY_UNIVERSAL_ID;
-
-  return maps;
-};
-
-// Field metadata is named after the relation ('targetIssue'), not the
-// 'Id'-suffixed join column used at the database/ORM layer.
-const buildFlatFieldMetadataMaps = () => {
-  const maps = buildFlatEntityMaps();
-
-  maps.byUniversalIdentifier[TARGET_ISSUE_FIELD_UNIVERSAL_ID] = {
-    id: TARGET_ISSUE_FIELD_ID,
-    universalIdentifier: TARGET_ISSUE_FIELD_UNIVERSAL_ID,
-    name: 'targetIssue',
-  };
-  maps.universalIdentifierById[TARGET_ISSUE_FIELD_ID] =
-    TARGET_ISSUE_FIELD_UNIVERSAL_ID;
-
-  return maps;
+const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
+const RECORD_ID = '20202020-0000-4000-8000-000000000002';
+const WORKSPACE_MEMBER_ID = '20202020-0000-4000-8000-000000000003';
+const TIMELINE_ACTIVITY_TYPE_ID = '20202020-0000-4000-8000-000000000004';
+const TIMELINE_ACTIVITY_TYPE_SNAPSHOT: TimelineActivityTypeSnapshot = {
+  id: TIMELINE_ACTIVITY_TYPE_ID,
+  universalIdentifier: '20202020-0000-4000-8000-000000000005',
+  name: 'recordUpdated',
+  label: 'was updated by',
+  action: 'updated',
+  icon: 'IconPencil',
+  objectUniversalIdentifier: null,
+  frontComponentUniversalIdentifier: null,
 };
 
 describe('TimelineActivityRepository', () => {
-  let repository: TimelineActivityRepository;
-  let ormManager: jest.Mocked<GlobalWorkspaceOrmManager>;
-  let cacheService: jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        TimelineActivityRepository,
-        {
-          provide: GlobalWorkspaceOrmManager,
-          useValue: {
-            executeInWorkspaceContext: jest.fn(),
-            getRepository: jest.fn(),
-          },
-        },
-        {
-          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
-          useValue: {
-            getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
-              flatObjectMetadataMaps: buildFlatObjectMetadataMaps(),
-              flatFieldMetadataMaps: buildFlatFieldMetadataMaps(),
-              // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-            } as any),
-          },
-        },
-      ],
-    }).compile();
-
-    repository = module.get(TimelineActivityRepository);
-    ormManager = module.get(GlobalWorkspaceOrmManager);
-    cacheService = module.get(WorkspaceManyOrAllFlatEntityMapsCacheService);
-  });
-
-  it('skips without querying the database when timelineActivity has no matching target field', async () => {
-    await repository.upsertTimelineActivities({
-      objectSingularName: 'issueComment',
-      workspaceId: WORKSPACE_ID,
-      payloads: [
-        {
-          name: 'issueComment.created',
-          recordId: 'comment-id',
-          workspaceMemberId: 'member-id',
-          properties: {},
-        },
-      ],
-    });
-
-    expect(
-      cacheService.getOrRecomputeManyOrAllFlatEntityMaps,
-    ).toHaveBeenCalled();
-    expect(ormManager.executeInWorkspaceContext).not.toHaveBeenCalled();
-  });
-
-  it('proceeds when timelineActivity has a matching target field', async () => {
-    ormManager.executeInWorkspaceContext.mockImplementation(async (callback) =>
-      callback(),
-    );
-
-    const find = jest.fn().mockResolvedValue([]);
+  it('merges and stamps a recent row written without a snapshot', async () => {
+    const update = jest.fn().mockResolvedValue(undefined);
     const insert = jest.fn().mockResolvedValue(undefined);
-
-    ormManager.getRepository.mockResolvedValue({ find, insert } as never);
+    const workspaceRepository = {
+      find: jest.fn().mockResolvedValue([
+        {
+          id: '20202020-0000-4000-8000-000000000006',
+          targetPersonId: RECORD_ID,
+          workspaceMemberId: WORKSPACE_MEMBER_ID,
+          timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
+          timelineActivityTypeSnapshot: null,
+          linkedRecordId: null,
+          properties: {
+            diff: { name: { before: 'Before', after: 'First' } },
+          },
+        },
+      ]),
+      update,
+      insert,
+    };
+    const workspaceOrmManager = {
+      executeInWorkspaceContext: jest.fn(
+        async (callback: () => Promise<void>) => callback(),
+      ),
+      runInWorkspaceTransaction: jest.fn(
+        async (
+          callback: (transactionScope: {
+            getRepository: () => typeof workspaceRepository;
+            executeRawQuery: () => Promise<never[]>;
+          }) => Promise<void>,
+        ) =>
+          callback({
+            getRepository: () => workspaceRepository,
+            executeRawQuery: jest.fn().mockResolvedValue([]),
+          }),
+      ),
+    } as unknown as WorkspaceOrmManager;
+    const repository = new TimelineActivityRepository(workspaceOrmManager);
 
     await repository.upsertTimelineActivities({
-      objectSingularName: 'issue',
+      objectSingularName: 'person',
       workspaceId: WORKSPACE_ID,
       payloads: [
         {
-          name: 'issue.created',
-          recordId: 'issue-id',
-          workspaceMemberId: 'member-id',
-          properties: {},
+          happensAt: new Date('2026-08-23T09:00:00.000Z'),
+          properties: {
+            diff: { name: { before: 'First', after: 'Second' } },
+          },
+          recordId: RECORD_ID,
+          workspaceMemberId: WORKSPACE_MEMBER_ID,
+          timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
+          timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
         },
       ],
     });
 
-    expect(ormManager.executeInWorkspaceContext).toHaveBeenCalled();
-    expect(insert).toHaveBeenCalledWith([
-      expect.objectContaining({ targetIssueId: 'issue-id' }),
+    expect(insert).not.toHaveBeenCalled();
+    expect(update).toHaveBeenCalledWith(
+      '20202020-0000-4000-8000-000000000006',
+      {
+        properties: {
+          diff: { name: { before: 'Before', after: 'Second' } },
+        },
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
+      },
+    );
+  });
+
+  it('locks merge identities in a stable order before reading recent rows', async () => {
+    const executeRawQuery = jest.fn().mockResolvedValue([]);
+    const workspaceRepository = {
+      find: jest.fn().mockResolvedValue([]),
+      update: jest.fn().mockResolvedValue(undefined),
+      insert: jest.fn().mockResolvedValue(undefined),
+    };
+    const workspaceOrmManager = {
+      executeInWorkspaceContext: jest.fn(
+        async (callback: () => Promise<void>) => callback(),
+      ),
+      runInWorkspaceTransaction: jest.fn(
+        async (
+          callback: (transactionScope: {
+            getRepository: () => typeof workspaceRepository;
+            executeRawQuery: typeof executeRawQuery;
+          }) => Promise<void>,
+        ) =>
+          callback({
+            getRepository: () => workspaceRepository,
+            executeRawQuery,
+          }),
+      ),
+    } as unknown as WorkspaceOrmManager;
+    const repository = new TimelineActivityRepository(workspaceOrmManager);
+
+    await repository.upsertTimelineActivities({
+      objectSingularName: 'person',
+      workspaceId: WORKSPACE_ID,
+      payloads: [
+        {
+          happensAt: new Date('2026-08-23T09:00:00.000Z'),
+          properties: {},
+          recordId: 'record-z',
+          workspaceMemberId: WORKSPACE_MEMBER_ID,
+          timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
+          timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
+        },
+        {
+          happensAt: new Date('2026-08-23T09:00:00.000Z'),
+          properties: {},
+          recordId: 'record-a',
+          workspaceMemberId: WORKSPACE_MEMBER_ID,
+          timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
+          timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
+        },
+      ],
+    });
+
+    const lockStatement = `SELECT pg_advisory_xact_lock(hashtextextended("lockName", 0))
+   FROM unnest($1::text[]) WITH ORDINALITY AS "locks"("lockName", "ordinality")
+   ORDER BY "ordinality"`;
+
+    expect(executeRawQuery).toHaveBeenCalledTimes(1);
+    expect(executeRawQuery).toHaveBeenCalledWith(lockStatement, [
+      [
+        JSON.stringify([
+          'timeline-activity-merge',
+          WORKSPACE_ID,
+          'person',
+          'record-a',
+          WORKSPACE_MEMBER_ID,
+          TIMELINE_ACTIVITY_TYPE_ID,
+        ]),
+        JSON.stringify([
+          'timeline-activity-merge',
+          WORKSPACE_ID,
+          'person',
+          'record-z',
+          WORKSPACE_MEMBER_ID,
+          TIMELINE_ACTIVITY_TYPE_ID,
+        ]),
+      ],
     ]);
+    expect(
+      workspaceRepository.find.mock.invocationCallOrder[0],
+    ).toBeGreaterThan(executeRawQuery.mock.invocationCallOrder[0]);
   });
 });

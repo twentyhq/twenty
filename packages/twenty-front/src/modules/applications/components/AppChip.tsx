@@ -1,8 +1,8 @@
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { styled } from '@linaria/react';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import { Avatar, type AvatarSize } from 'twenty-ui/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { Avatar, type AvatarSize } from 'twenty-ui/primitives/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppChipProps = {
@@ -12,11 +12,13 @@ type AppChipProps = {
   // over the logo computed from the installed application.
   logoUrl?: string | null;
   fallbackApplicationData?: {
-    logo?: string | null;
+    logoUrl?: string | null;
     name?: string | null;
   };
   className?: string;
   chipOnly?: boolean;
+  rounded?: boolean;
+  pulsing?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -38,6 +40,8 @@ export const AppChip = ({
   fallbackApplicationData,
   className,
   chipOnly = false,
+  rounded = false,
+  pulsing = false,
 }: AppChipProps) => {
   const { applicationChipData } = useApplicationChipData({
     applicationId,
@@ -47,14 +51,16 @@ export const AppChip = ({
   return (
     <StyledContainer className={className}>
       <Avatar
-        type="app"
+        shape={rounded ? 'circle' : 'square'}
+        variant={rounded ? 'soft' : 'outline'}
         size={size}
-        avatarUrl={getAbsoluteImageUrl(logoUrl ?? applicationChipData.logo)}
-        placeholder={applicationChipData.name}
-        placeholderColorSeed={applicationChipData.seed}
+        src={getAbsoluteImageUrl(logoUrl ?? applicationChipData.logo)}
+        name={applicationChipData.name}
+        colorSeed={applicationChipData.seed}
         color={applicationChipData.colors?.color}
         backgroundColor={applicationChipData.colors?.backgroundColor}
         borderColor={applicationChipData.colors?.borderColor}
+        pulsing={pulsing}
       />
       {!chipOnly && (
         <OverflowingTextWithTooltip text={applicationChipData.name} />

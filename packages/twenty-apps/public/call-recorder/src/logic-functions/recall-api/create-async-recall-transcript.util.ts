@@ -3,6 +3,7 @@ import { isString } from '@sniptt/guards';
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
+import { getRecallAsyncTranscriptProvider } from 'src/logic-functions/utils/get-recall-async-transcript-provider.util';
 
 type CreateAsyncRecallTranscriptResult =
   | { ok: true; transcriptId: string }
@@ -10,8 +11,10 @@ type CreateAsyncRecallTranscriptResult =
 
 export const createAsyncRecallTranscript = async ({
   externalRecordingId,
+  signal,
 }: {
   externalRecordingId: string;
+  signal?: AbortSignal;
 }): Promise<CreateAsyncRecallTranscriptResult> => {
   const configResult = getRecallApiConfig();
 
@@ -21,13 +24,14 @@ export const createAsyncRecallTranscript = async ({
 
   const result = await recallBotApiRequest<{ id?: unknown }>({
     config: configResult.config,
+    signal,
     path: `/recording/${externalRecordingId}/create_transcript/`,
     method: 'POST',
     body: {
-      provider: { recallai_async: { language_code: 'auto' } },
+      provider: getRecallAsyncTranscriptProvider(),
       diarization: { use_separate_streams_when_available: true },
     },
-    maxAttempts: 1,
+    idempotencyKey: `create-transcript:${externalRecordingId}`,
   });
 
   if (!result.ok) {

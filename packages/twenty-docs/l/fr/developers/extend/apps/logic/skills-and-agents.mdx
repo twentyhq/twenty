@@ -100,7 +100,9 @@ Remarques sur le schéma :
 </Accordion>
 <Accordion title="runAgent" description="Exécuter un agent depuis une fonction logique">
 
-`runAgent()` permet à une fonction logique d'exécuter l'un des agents de votre application (avec ses compétences et ses outils). Identifiez l'agent par le `universalIdentifier` que vous avez passé à `defineAgent()` :
+`runAgent()` permet à une fonction logique d'exécuter l'un des agents de votre application (avec ses compétences et ses outils). Identifiez l'agent à l'aide du `universalIdentifier` que vous avez passé
+à `defineAgent()`. Passez soit une chaîne de caractères `prompt`, soit un historique de conversation `messages`,
+mais pas les deux :
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +113,25 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+Pour les bots multi-tours (Slack, Discord, Teams, …), passez l'historique du fil de discussion en
+`messages` au lieu d'un seul `prompt` :
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 Points clés :
+* Fournissez **exactement l'un des deux** : `prompt` (string) ou `messages` (1 à 100 entrées
+  de `{ role: 'user' | 'assistant', content: string }`).
 * L'agent s'exécute **de manière synchrone** et peut lire/mettre à jour lui-même des enregistrements via ses propres outils — `runAgent()` se résout une fois l'exécution terminée.
 * Une application ne peut exécuter que ses propres agents.
 * Le [rôle par défaut](/l/fr/developers/extend/apps/config/roles) de l'application doit accorder l'indicateur d'autorisation `AI` — ajoutez `SystemPermissionFlag.AI` à ses `permissionFlagUniversalIdentifiers` (ou définissez `canAccessAllTools: true`).
@@ -132,6 +152,38 @@ export default defineApplicationRole({
 
 <Warning>
   **Évitez les boucles :** si vous appelez `runAgent()` à partir d'un déclencheur d'événement de base de données `*.updated` et que l'agent met à jour le même enregistrement, limitez le déclencheur avec `updatedFields` à un champ que l'agent n'écrit jamais (par exemple l'URL source), ou vérifiez si un champ cible est encore vide avant d'appeler `runAgent()`.
+</Warning>
+
+### Exécution au nom d’un membre de l’espace de travail
+
+Passez `runAsWorkspaceMemberId` lorsque l’exécution est déclenchée par une personne — par exemple un chatbot répondant à un message — afin que l’agent agisse comme ce membre plutôt qu’en tant qu’application :
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+L’exécution agit alors avec **le propre rôle du membre** : elle peut faire tout ce que ce membre peut faire et rien de plus, les enregistrements qu’elle crée lui sont attribués, et ses permissions au niveau des lignes s’appliquent. Le rôle de l’agent ne participe pas — il s’agit de la valeur par défaut de l’application pour les exécutions sans personne derrière. Omettez ce champ pour les exécutions autonomes (tâches planifiées, déclencheurs d’événements de base de données) : celles-ci conservent le rôle propre de l’agent. L’application qui agit reste rattachée au contexte de l’exécution à des fins de traçabilité, sans restreindre les permissions du membre.
+
+Votre application est responsable de faire correspondre la personne qui a déclenché l’exécution à un membre de l’espace de travail. Nommer un membre nécessite un jeton d’accès de l’application, et ce qu’un jeton peut
+nommer dépend du fait qu’il soit ou non associé à un utilisateur :
+
+* Un jeton **sans utilisateur associé** peut nommer n’importe quel membre. Une fonction logique s’exécute
+  avec un tel jeton, tout comme les jetons créés via `client_credentials` ou à partir d’une clé
+  d’API.
+* Un jeton émis **au nom d’un utilisateur**, comme en reçoit un composant frontal, ne peut
+  nommer que le membre de cet utilisateur lui-même.
+
+Tout autre type — une simple session utilisateur, une clé d’API sans jeton d’application — ne peut pas
+nommer de membre du tout.
+
+<Warning>
+  `runAgent()` lève une exception lorsque le membre de l’espace de travail ne peut pas être résolu — un
+  membre inconnu ou supprimé, ou un membre sans rôle. Elle ne revient jamais au rôle
+  propre de l’agent, car cela accorderait plus d’accès que ce que l’appelant a demandé.
 </Warning>
 
 </Accordion>

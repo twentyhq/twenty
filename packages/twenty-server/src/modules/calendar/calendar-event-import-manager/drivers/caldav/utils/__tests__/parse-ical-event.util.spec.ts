@@ -239,6 +239,42 @@ describe('parseICalEvents', () => {
     expect(parseICalEvents('not a calendar', HREF)).toEqual([]);
   });
 
+  it('parses calendar data with bare CR line breaks as served by Kerio Connect', () => {
+    const ics = buildVEvent([
+      'UID:abc',
+      'SUMMARY:Kerio event',
+      'DTSTART:20260901T100000Z',
+      'DTEND:20260901T110000Z',
+    ]).replace(/\r\n/g, '\r');
+
+    const [event] = parseICalEvents(ics, HREF);
+
+    expect(event).toMatchObject({
+      iCalUid: 'abc',
+      title: 'Kerio event',
+      startsAt: '2026-09-01T10:00:00.000Z',
+      endsAt: '2026-09-01T11:00:00.000Z',
+    });
+  });
+
+  it('parses calendar data with bare LF line breaks', () => {
+    const ics = buildVEvent([
+      'UID:abc',
+      'SUMMARY:LF event',
+      'DTSTART:20260901T100000Z',
+      'DTEND:20260901T110000Z',
+    ]).replace(/\r\n/g, '\n');
+
+    const [event] = parseICalEvents(ics, HREF);
+
+    expect(event).toMatchObject({
+      iCalUid: 'abc',
+      title: 'LF event',
+      startsAt: '2026-09-01T10:00:00.000Z',
+      endsAt: '2026-09-01T11:00:00.000Z',
+    });
+  });
+
   it('skips a VEVENT missing DTSTART without dropping its siblings', () => {
     const ics = buildVCalendar([
       ['UID:no-start', 'SUMMARY:Broken'],

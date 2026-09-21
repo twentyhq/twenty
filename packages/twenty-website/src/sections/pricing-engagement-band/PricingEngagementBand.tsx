@@ -12,9 +12,7 @@ export function PricingEngagementBand() {
       body={i18n._(
         msg`Find the right partner to implement, customize, and tailor Twenty to your team.`,
       )}
-      actions={
-        <Button href="/partners/list" label={i18n._(msg`Browse partners`)} />
-      }
+      actions={<Button href="/partners" label={i18n._(msg`Browse partners`)} />}
     />
   );
 }

@@ -1,4 +1,5 @@
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 type RecordShowPageSSESubscribeEffectProps = {
   objectNameSingular: string;
@@ -9,7 +10,9 @@ export const RecordShowPageSSESubscribeEffect = ({
   objectNameSingular,
   recordId,
 }: RecordShowPageSSESubscribeEffectProps) => {
-  const queryId = `record-show-${objectNameSingular}-${recordId}`;
+  const queryId = useWorkspaceSurfaceScopedComponentInstanceId(
+    `record-show-${objectNameSingular}-${recordId}`,
+  );
 
   useListenToEventsForQuery({
     queryId,

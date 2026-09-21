@@ -25,7 +25,7 @@ export const useWorkspaceSubdomainField = ({
   isSubdomainEnabled = true,
 }: { isSubdomainEnabled?: boolean } = {}) => {
   const apolloClient = useApolloClient();
-  const subdomainSchema = useMemo(() => getSubdomainValidationSchema(), []);
+  const subdomainSchema = getSubdomainValidationSchema();
 
   const defaults = useMemo(
     () =>

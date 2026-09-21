@@ -366,6 +366,64 @@ describe('RestToCommonSelectedFieldsHandler', () => {
       });
     });
 
+    it('should not include the relation when the relation field itself is restricted', () => {
+      const companyRelationField = createMockField({
+        id: 'field-1',
+        name: 'company',
+        type: FieldMetadataType.RELATION,
+        objectMetadataId: 'person-id',
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+        },
+        relationTargetObjectMetadataId: 'company-id',
+      });
+      const companyNameField = createMockField({
+        id: 'field-2',
+        name: 'name',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId: 'company-id',
+      });
+
+      const personObject = createMockObjectMetadata({
+        id: 'person-id',
+        nameSingular: 'person',
+        fieldIds: ['field-1'],
+      });
+      const companyObject = createMockObjectMetadata({
+        id: 'company-id',
+        nameSingular: 'company',
+        fieldIds: ['field-2'],
+      });
+
+      const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
+        companyRelationField,
+        companyNameField,
+      ]);
+      const flatObjectMetadataMaps = buildFlatObjectMetadataMaps([
+        personObject,
+        companyObject,
+      ]);
+
+      const objectsPermissions = createObjectsPermissions([
+        'person-id',
+        'company-id',
+      ]);
+
+      objectsPermissions['person-id'].restrictedFields = {
+        'field-1': { canRead: false, canUpdate: false },
+      };
+
+      const result = handler.computeFromDepth({
+        objectsPermissions,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatObjectMetadata: personObject,
+        depth: 1,
+      });
+
+      expect(result).toEqual({});
+    });
+
     it('should handle nested relations up to MAX_DEPTH', () => {
       const personCompanyRelation = createMockField({
         id: 'field-1',

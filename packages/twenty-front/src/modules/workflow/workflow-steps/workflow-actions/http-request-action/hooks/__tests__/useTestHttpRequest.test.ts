@@ -6,7 +6,6 @@ import React from 'react';
 import { resolveInput } from 'twenty-shared/utils';
 import { useTestHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest';
 
-// Mock Apollo Client
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
   useMutation: jest.fn(),
@@ -16,11 +15,9 @@ jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: jest.fn(),
 }));
 
-// Mock the resolveInput function
 jest.mock('twenty-shared/utils', () => ({
   ...jest.requireActual('twenty-shared/utils'),
   resolveInput: jest.fn((input, context) => {
-    // For testing purposes, we'll actually do the replacement for simple cases
     if (typeof input === 'string') {
       return input.replace(/{{([^}]+)}}/g, (match, path) => {
         const parts = path.split('.');
@@ -40,7 +37,6 @@ jest.mock('twenty-shared/utils', () => ({
         return current;
       });
     } else if (typeof input === 'object' && input !== null) {
-      // Handle object replacement recursively
       const result = { ...input };
       for (const [key, value] of Object.entries(input)) {
         if (typeof value === 'string') {
@@ -277,7 +273,6 @@ describe('useTestHttpRequest', () => {
   });
 
   it('should set isTesting to true during request', async () => {
-    // Create a promise that we can control
     let resolvePromise: (value: any) => void;
     const mockPromise = new Promise((resolve) => {
       resolvePromise = resolve;
@@ -289,15 +284,12 @@ describe('useTestHttpRequest', () => {
       wrapper,
     });
 
-    // Start the request
     act(() => {
       result.current.testHttpRequest(mockFormData, mockVariableValues);
     });
 
-    // Should be testing now
     expect(result.current.isTesting).toBe(true);
 
-    // Complete the request
     await act(async () => {
       resolvePromise!({
         data: {
@@ -312,7 +304,6 @@ describe('useTestHttpRequest', () => {
       await mockPromise;
     });
 
-    // Should no longer be testing
     expect(result.current.isTesting).toBe(false);
   });
 
@@ -351,7 +342,6 @@ describe('useTestHttpRequest', () => {
       );
     });
 
-    // The mocked resolveInput should have been called with nested context
     expect(resolveInput).toHaveBeenCalledWith('https://api.example.com/users', {
       auth: { token: 'test-token-123' },
       trigger: { properties: { after: { name: 'Yo' } } },

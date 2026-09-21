@@ -35,7 +35,7 @@ const toCandidates = <T extends { universalIdentifier?: string }>(
       label: getLabel(entity),
     }));
 
-const MANIFEST_ENTITY_REGISTRY: Record<
+export const MANIFEST_ENTITY_REGISTRY: Record<
   AllMetadataName,
   ManifestEntityRegistryEntry
 > = {
@@ -84,6 +84,14 @@ const MANIFEST_ENTITY_REGISTRY: Record<
         (connectionProvider) => connectionProvider.displayName,
       ),
   },
+  timelineActivityType: {
+    entityKind: 'timeline activity type',
+    getCandidates: (manifest) =>
+      toCandidates(
+        manifest.timelineActivityTypes,
+        (timelineActivityType) => timelineActivityType.label,
+      ),
+  },
   view: {
     entityKind: 'view',
     getCandidates: (manifest) =>
@@ -109,6 +117,7 @@ const MANIFEST_ENTITY_REGISTRY: Record<
   pageLayoutWidget: {
     entityKind: 'page layout widget',
     getCandidates: (manifest) => [
+      ...toCandidates(manifest.pageLayoutWidgets, (widget) => widget.title),
       ...(manifest.pageLayoutTabs ?? []).flatMap((pageLayoutTab) =>
         toCandidates(pageLayoutTab.widgets, (widget) => widget.title),
       ),

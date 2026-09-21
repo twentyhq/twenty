@@ -1,25 +1,35 @@
-import type { JSONContent } from '@tiptap/core';
-
 import {
-  isDefined,
+  isEmailDocumentShape,
+  parseEmailDocument,
   parseJson,
-  resolveRichTextVariables,
 } from 'twenty-shared/utils';
 
-import { renderRichTextToHtml } from 'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util';
+import { resolveEmailDocumentBindings } from 'src/engine/core-modules/email/utils/resolve-email-document-bindings.util';
+import { resolveWorkflowEmailTemplateString } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-workflow-email-template-string.util';
 
 export const resolveEmailBody = async (
   body: string,
   context: Record<string, unknown>,
 ): Promise<string> => {
-  const bodyWithResolvedVariables = resolveRichTextVariables(body, context);
-  const tipTapDocument = isDefined(bodyWithResolvedVariables)
-    ? parseJson<JSONContent>(bodyWithResolvedVariables)
-    : null;
+  const unresolvedDocument = parseJson<unknown>(body);
 
-  if (isDefined(tipTapDocument) && tipTapDocument.type === 'doc') {
-    return renderRichTextToHtml(tipTapDocument);
+  if (!isEmailDocumentShape(unresolvedDocument)) {
+    return resolveWorkflowEmailTemplateString(body, context, {
+      escapeValues: false,
+    });
   }
 
-  return bodyWithResolvedVariables ?? body;
+  const parseResult = parseEmailDocument(unresolvedDocument);
+
+  if (!parseResult.success) {
+    throw new Error(`Invalid workflow email document: ${parseResult.error}`);
+  }
+
+  return JSON.stringify(
+    resolveEmailDocumentBindings(parseResult.document, (value, stringContext) =>
+      resolveWorkflowEmailTemplateString(value, context, {
+        escapeValues: stringContext === 'html',
+      }),
+    ),
+  );
 };

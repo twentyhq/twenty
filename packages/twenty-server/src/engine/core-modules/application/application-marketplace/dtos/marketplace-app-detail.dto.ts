@@ -1,6 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { type Manifest } from 'twenty-shared/application';
 
@@ -63,7 +69,7 @@ export class MarketplaceAppDetailDTO {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
-  logo?: string;
+  logoUrl?: string;
 
   @IsOptional()
   @IsString()
@@ -74,6 +80,11 @@ export class MarketplaceAppDetailDTO {
   @IsString()
   @Field({ nullable: true })
   aboutDescription?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  pricingDescription?: string;
 
   @IsOptional()
   @IsString()
@@ -97,6 +108,10 @@ export class MarketplaceAppDetailDTO {
 
   @Field(() => [String])
   galleryImages: string[];
+
+  @IsInt()
+  @Field(() => Int)
+  installCount: number;
 
   @IsOptional()
   @IsString()

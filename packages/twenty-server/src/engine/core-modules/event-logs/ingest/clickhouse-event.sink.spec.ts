@@ -1,4 +1,4 @@
-import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
+import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { ClickHouseEventSink } from 'src/engine/core-modules/event-logs/ingest/clickhouse-event.sink';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 
@@ -68,8 +68,20 @@ describe('ClickHouseEventSink', () => {
   });
 
   it('throws when a ClickHouse insert fails so the consumer retries', async () => {
-    insert.mockResolvedValue({ success: false });
+    insert.mockResolvedValue({ success: false, error: new Error('boom') });
 
     await expect(sink.write([makePageview('a')])).rejects.toThrow();
+  });
+
+  it('surfaces the underlying ClickHouse error in the message and cause', async () => {
+    const error = new Error('socket hang up');
+
+    insert.mockResolvedValue({ success: false, error });
+
+    await expect(sink.write([makePageview('a')])).rejects.toMatchObject({
+      message:
+        'Failed to insert 1 pageview row(s) into ClickHouse: socket hang up',
+      cause: error,
+    });
   });
 });

@@ -1,3 +1,4 @@
+import { LightIconButton } from 'twenty-ui/components';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
@@ -12,7 +13,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconEye, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
@@ -104,12 +105,14 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
           <MenuItem
             key={fieldMetadataItem.id}
             LeftIcon={getIcon(fieldMetadataItem.icon)}
-            iconButtons={[
-              {
-                Icon: IconEye,
-                onClick: () => handleShowField(fieldMetadataItem.id),
-              },
-            ]}
+            iconButtons={
+              <LightIconButton
+                aria-label={t`Show field`}
+                onClick={() => handleShowField(fieldMetadataItem.id)}
+              >
+                <IconEye />
+              </LightIconButton>
+            }
             text={fieldMetadataItem.label}
           />
         ))}

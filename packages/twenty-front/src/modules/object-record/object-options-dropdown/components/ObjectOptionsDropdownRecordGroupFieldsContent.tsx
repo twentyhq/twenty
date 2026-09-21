@@ -1,3 +1,5 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useEffect } from 'react';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -6,6 +8,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useSearchRecordGroupField';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
+import { isRecordGroupingOptionalForViewType } from '@/object-record/record-group/utils/isRecordGroupingOptionalForViewType';
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -18,7 +21,6 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -26,9 +28,9 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
 import {
   MenuItem,
-  MenuItemSelect,
   UndecoratedLink,
-} from 'twenty-ui/navigation';
+  ListItem,
+} from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
@@ -127,23 +129,35 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        {viewType === ViewType.TABLE && (
-          <MenuItemSelect
-            text={t`None`}
-            selected={!isDefined(recordIndexGroupFieldMetadataItem)}
+        {isRecordGroupingOptionalForViewType(viewType) && (
+          <ListItem
             onClick={handleResetRecordGroupField}
-          />
+            role="option"
+            aria-selected={!isDefined(recordIndexGroupFieldMetadataItem)}
+            selected={!isDefined(recordIndexGroupFieldMetadataItem)}
+            indicator="check"
+          >
+            <OverflowingTextWithTooltip text={t`None`} />
+          </ListItem>
         )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
-          <MenuItemSelect
+          <ListItem
             key={fieldMetadataItem.id}
+            onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
+            role="option"
+            aria-selected={
+              fieldMetadataItem.id === recordIndexGroupFieldMetadataItem?.id
+            }
             selected={
               fieldMetadataItem.id === recordIndexGroupFieldMetadataItem?.id
             }
-            onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
-            LeftIcon={getIcon(fieldMetadataItem.icon)}
-            text={fieldMetadataItem.label}
-          />
+            indicator="check"
+            startIcon={
+              <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+            }
+          >
+            <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />

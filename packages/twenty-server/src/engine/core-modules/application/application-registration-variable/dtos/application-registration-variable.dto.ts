@@ -4,7 +4,7 @@ import { IsBoolean, IsOptional, IsString } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
 
-@ObjectType()
+@ObjectType('ApplicationRegistrationVariable')
 export class ApplicationRegistrationVariableDTO {
   @Field(() => UUIDScalarType)
   id: string;
@@ -28,6 +28,10 @@ export class ApplicationRegistrationVariableDTO {
   @IsBoolean()
   @Field()
   isRequired: boolean;
+
+  @IsBoolean()
+  @Field()
+  isDeprecated: boolean;
 
   @IsBoolean()
   @Field()

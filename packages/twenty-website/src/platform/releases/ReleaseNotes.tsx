@@ -5,6 +5,612 @@ import { type ReleaseNote } from './release-note';
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    release: '2.40.0',
+    date: '2026-09-15',
+    highlights: [
+      {
+        title: msg`Pick an AI model by tier`,
+        description: (
+          <Trans>
+            Choose how your AI should behave on a single slider, from Extra Fast
+            to Extra Smart, instead of picking a model by name. Each tier shows
+            what it trades in speed, cost, and intelligence.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`See what a model costs and where it runs`,
+        description: (
+          <Trans>
+            AI settings now show each model’s provider, price per million
+            tokens, context window, maximum output, and data residency.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Arabic and Hebrew read right to left`,
+        description: (
+          <Trans>
+            The interface now mirrors for right-to-left languages, so Arabic and
+            Hebrew workspaces read in their own direction.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Reference records and skills in AI chat`,
+        description: (
+          <Trans>
+            Type <code>@</code> to point the chat at a record, or <code>/</code>{' '}
+            to pick one of your workspace’s skills. Both suggest matches as you
+            type.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.39.0',
+    date: '2026-09-09',
+    highlights: [
+      {
+        title: msg`Field descriptions on hover`,
+        description: (
+          <Trans>
+            Hover a column header or a field label to read that field’s
+            description, instead of opening settings to find it.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Pause the recording bot`,
+        description: (
+          <Trans>
+            Stop the call recorder from joining calendar meetings with one
+            workspace setting, rather than uninstalling the app. The Recording
+            Bot preference now reads On only when a bot is really scheduled.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Play audio-only recordings`,
+        description: (
+          <Trans>
+            Call recordings that have no video now come with an audio player, so
+            click-to-seek and transcript highlighting work there too.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.38.1',
+    date: '2026-09-06',
+    highlights: [
+      {
+        title: msg`More flexible record pages`,
+        description: (
+          <Trans>
+            Add shared instructions, playbooks, and other rich text with the new
+            Note widget. Insert widgets exactly where you want them, and unpin
+            the first tab when your layout needs more room.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Easier workflow editing`,
+        description: (
+          <Trans>
+            Insert actions into existing branches and drag connections to a
+            different step without losing your configuration. Find variables
+            faster by searching fields across all workflow steps.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`List view`,
+        description: (
+          <Trans>
+            Browse your records in a compact list, now available to everyone.
+            Group records and see the fields that matter in a layout that adapts
+            to desktop and mobile.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`More ways to work with AI`,
+        description: (
+          <Trans>
+            Dictate prompts in supported browsers, and get suggested actions
+            based on the page you are viewing.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.37.0',
+    date: '2026-08-28',
+    highlights: [
+      {
+        title: msg`Attach files to records with AI`,
+        description: (
+          <Trans>
+            Ask AI to attach files you upload in chat directly to records.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Day and week calendar views`,
+        description: (
+          <Trans>
+            Switch between day, week, and month views to explore your calendar.
+            Day and week views are now available by default.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.35.0',
+    date: '2026-08-26',
+    highlights: [
+      {
+        title: msg`Interactive call recordings`,
+        description: (
+          <Trans>
+            Watch recordings alongside their transcripts. Click a transcript
+            entry to jump to that moment, and follow along with highlighted
+            words and automatic scrolling during playback.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Schedule meetings from records`,
+        description: (
+          <Trans>
+            Create calendar events directly from a record’s timeline, with the
+            current contact prefilled as a guest.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Send email from aliases`,
+        description: (
+          <Trans>
+            Send outbound emails using a verified alias on your connected
+            account.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.34.0',
+    date: '2026-08-24',
+    highlights: [
+      {
+        title: msg`A proper home on mobile`,
+        description: (
+          <Trans>
+            The navigation menu is now a page of its own, with a real address
+            and a way back. Create actions appear as icons in page headers, and
+            the bottom bar no longer sits on top of your content.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Edit deactivated objects`,
+        description: (
+          <Trans>
+            Open a deactivated object from Settings and change it, instead of
+            deleting it and building it again.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Delete a workflow step from the diagram`,
+        description: (
+          <Trans>
+            Remove a step from its node in the diagram, without opening the side
+            panel first.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.28.0',
+    date: '2026-08-11',
+    highlights: [
+      {
+        title: msg`See related records across relationships`,
+        description: (
+          <Trans>
+            Display records two relationships away directly on a record page—for
+            example, opportunities associated with a company’s contacts.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.27.0',
+    date: '2026-08-04',
+    highlights: [
+      {
+        title: msg`See the devices on your account`,
+        description: (
+          <Trans>
+            Settings &gt; Profile now lists every device with an active session,
+            marks the one you are on, and lets you sign out any of the others.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Choose where records open`,
+        description: (
+          <Trans>
+            Decide whether records open in the side panel or as a full page, set
+            per object and as your own preference in Settings &gt; Experience.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.26.0',
+    date: '2026-07-31',
+    highlights: [
+      {
+        title: msg`Richer relation layouts`,
+        description: (
+          <Trans>
+            Display related records as a table, kanban board, calendar, or
+            grouped table directly inside a record page.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Preview records while you search`,
+        description: (
+          <Trans>
+            Move through command bar results to see the fields that matter
+            before opening a record.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.24.0',
+    date: '2026-07-24',
+    highlights: [
+      {
+        title: msg`More visual dashboard views`,
+        description: (
+          <Trans>
+            Show records in dashboard widgets as grouped tables, kanban boards,
+            or calendars instead of flat tables only.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Drag widgets between tabs`,
+        description: (
+          <Trans>
+            Move widgets between record page tabs with drag and drop, including
+            directly onto an empty tab.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Share call insights`,
+        description: (
+          <Trans>
+            Copy a call recording's transcript or video link directly from the
+            record page.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.22.0',
+    date: '2026-07-17',
+    highlights: [
+      {
+        title: msg`Reorder kanban columns`,
+        description: (
+          <Trans>
+            Drag kanban column headers into the order that works best for your
+            team.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.20.0',
+    date: '2026-07-10',
+    highlights: [
+      {
+        title: msg`Build dashboards with AI`,
+        description: (
+          <Trans>
+            Ask AI to build or reconfigure dashboards and views from your
+            workspace data.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Featured apps`,
+        description: (
+          <Trans>
+            Find and install featured apps such as People Data Labs, Last
+            Contact, and Call Recorder directly from the marketplace.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Smarter email recipients`,
+        description: (
+          <Trans>
+            Add recipients with autocomplete, person matching, duplicate
+            detection, and inline email validation.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.18.0',
+    date: '2026-07-02',
+    highlights: [
+      {
+        title: msg`A new onboarding experience`,
+        description: (
+          <Trans>
+            A rebuilt setup flow guides new teams through workspace creation,
+            contact import, and teammate invitations.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Reliable AI data imports`,
+        description: (
+          <Trans>
+            Import larger CSV and spreadsheet files through AI chat with more
+            reliable relation matching and bulk updates.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Create synced calendar events`,
+        description: (
+          <Trans>
+            Create events on connected Google or Microsoft calendars from AI and
+            workflows, with optional Meet or Teams links.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Group records by relationships`,
+        description: (
+          <Trans>
+            Group table and kanban views by a related record, such as an account
+            owner or company.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.16.0',
+    date: '2026-06-25',
+    highlights: [
+      {
+        title: msg`Live email and calendar tabs`,
+        description: (
+          <Trans>
+            New emails and calendar events now appear on record pages without a
+            manual refresh.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Resizable kanban columns`,
+        description: (
+          <Trans>
+            Drag a column edge to resize every column in a kanban view, with the
+            width saved for that view.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Smarter record assignment`,
+        description: (
+          <Trans>
+            Workflows can pick records randomly, in round-robin order, or by
+            choosing the least-loaded assignee.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.14.0',
+    date: '2026-06-15',
+    highlights: [
+      {
+        title: msg`Retry failed workflows`,
+        description: (
+          <Trans>
+            Restart a failed workflow run from the step that failed instead of
+            running everything again.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Clearer dashboard numbers`,
+        description: (
+          <Trans>
+            Choose between abbreviated and full values for number widgets on
+            dashboards.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.12.0',
+    date: '2026-06-12',
+    highlights: [
+      {
+        title: msg`Inline image previews`,
+        description: (
+          <Trans>
+            Image attachments now show a thumbnail inside file field chips, so
+            they are easier to identify at a glance.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Better sorted kanban boards`,
+        description: (
+          <Trans>
+            Move cards between kanban columns without removing the view's active
+            sort.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.9.0',
+    date: '2026-06-05',
+    highlights: [
+      {
+        title: msg`Relation tables on record pages`,
+        description: (
+          <Trans>
+            Display related records as a full table directly inside a record
+            page layout.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Easier favorites`,
+        description: (
+          <Trans>
+            Add objects, views, records, links, and folders to Favorites from a
+            dedicated sidebar panel.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Step-by-step workflow logs`,
+        description: (
+          <Trans>
+            Inspect AI calls, code output, HTTP requests, and emails for every
+            step of a workflow run.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.8.0',
+    date: '2026-05-26',
+    highlights: [
+      {
+        title: msg`Editable text widgets`,
+        description: (
+          <Trans>
+            Edit long-form text directly inside record page widgets with
+            automatic saving.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.6.0',
+    date: '2026-05-19',
+    highlights: [
+      {
+        title: msg`Filter through relationships`,
+        description: (
+          <Trans>
+            Filter records using fields from a related object, such as People
+            whose Company name contains a specific value.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Sort composite fields`,
+        description: (
+          <Trans>
+            Choose which part of a name or address field a view should sort by
+            directly from the sort chip.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.4.0',
+    date: '2026-05-14',
+    highlights: [
+      {
+        title: msg`Email forwarding`,
+        description: (
+          <Trans>
+            Forward shared inboxes such as support@yourcompany.com into Twenty
+            without connecting a full mailbox.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.2.0',
+    date: '2026-05-04',
+    highlights: [
+      {
+        title: msg`Recurring Google Calendar events`,
+        description: (
+          <Trans>
+            Recurring events from connected Google calendars now stay in sync
+            with Twenty.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Organized AI chats`,
+        description: (
+          <Trans>
+            Filter, archive, and manage conversations from the AI chat list.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.1.0',
+    date: '2026-04-24',
+    highlights: [
+      {
+        title: msg`Ready-to-use object pages`,
+        description: (
+          <Trans>
+            New objects now start with a record page layout and fields view
+            ready to customize.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
     release: '2.0.0',
     date: '2026-04-21',
     highlights: [
@@ -504,7 +1110,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     date: '2025-08-29',
     highlights: [
       {
-        title: msg`Field Level Permission`,
+        title: msg`Field-Level Permissions`,
         description: (
           <Trans>
             You can now control which fields a role can view or edit. This adds
@@ -525,7 +1131,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
         image: '/images/releases/1.4/1.4-workflow-filters.webp',
       },
       {
-        title: msg`Two Factor Authentication`,
+        title: msg`Two-Factor Authentication`,
         description: (
           <Trans>
             Enabled two-factor authentication with authenticator apps like

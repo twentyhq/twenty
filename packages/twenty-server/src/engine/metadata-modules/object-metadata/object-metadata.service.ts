@@ -1,60 +1,50 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import {
-  ViewKey,
-  ViewOpenRecordIn,
-  ViewType,
-  ViewVisibility,
-} from 'twenty-shared/types';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { v4, v5 } from 'uuid';
+import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import {
-  buildNavigationFlatCommandMenuItem,
-  NAVIGATION_COMMAND_UUID_NAMESPACE,
-} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { computeInitialObjectViewOperationsOnObjectCreation } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-operations-on-object-creation.util';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata-and-related-flat-entities.util';
-import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
-import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { validateUpdateObjectInputs } from 'src/engine/metadata-modules/object-metadata/utils/validate-update-object-inputs.util';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
-import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
-import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
-import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
+
+const MAX_OBJECTS_PER_BATCH_UPDATE = 100;
+
+const NON_BATCHABLE_UPDATE_PROPERTIES = [
+  'nameSingular',
+  'namePlural',
+  'labelIdentifierFieldMetadataId',
+] as const;
 
 @Injectable()
-export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
+export class ObjectMetadataService {
   constructor(
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -62,20 +52,82 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
-  ) {
-    super(objectMetadataRepository);
-  }
+  ) {}
 
-  async updateOneObject({
-    updateObjectInput,
+  // One migration for the whole batch: one update per item would validate, build
+  // and run a migration each time, and refetch the flat entity maps with it.
+  async updateManyObjects({
+    updateObjectInputs,
     workspaceId,
     ownerFlatApplication,
   }: {
     workspaceId: string;
-    updateObjectInput: UpdateOneObjectInput;
+    updateObjectInputs: UpdateOneObjectInput[];
     ownerFlatApplication?: FlatApplication;
-  }): Promise<FlatObjectMetadata> {
-    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
+  }): Promise<FlatObjectMetadata[]> {
+    if (updateObjectInputs.length === 0) {
+      return [];
+    }
+
+    if (updateObjectInputs.length > MAX_OBJECTS_PER_BATCH_UPDATE) {
+      throw new ObjectMetadataException(
+        `Cannot update more than ${MAX_OBJECTS_PER_BATCH_UPDATE} objects in one batch`,
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      );
+    }
+
+    validateUpdateObjectInputs(updateObjectInputs);
+
+    const objectMetadataIds = updateObjectInputs.map(({ id }) => id);
+
+    if (new Set(objectMetadataIds).size !== objectMetadataIds.length) {
+      throw new ObjectMetadataException(
+        'Cannot update the same object twice in one batch',
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      );
+    }
+
+    // These rewrite state beyond the object itself, so several of them in one
+    // migration either collide or hold locks across tables: a rename rewrites
+    // indexes and morph fields on related objects and can emit the same index
+    // twice, and a new label identifier rebuilds the search vector, rewriting
+    // the table and holding it locked until the whole batch commits. Splitting
+    // into one migration per object would commit each separately and leave the
+    // workspace half updated on a later failure, so the batch is refused.
+    const [nonBatchableUpdatedProperty] = updateObjectInputs.flatMap(
+      ({ update }) =>
+        NON_BATCHABLE_UPDATE_PROPERTIES.filter((property) =>
+          isDefined(update[property]),
+        ),
+    );
+
+    if (
+      isDefined(nonBatchableUpdatedProperty) &&
+      updateObjectInputs.length > 1
+    ) {
+      throw new ObjectMetadataException(
+        `Cannot update ${nonBatchableUpdatedProperty} in a batch of several objects, send it one at a time`,
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      );
+    }
+
+    return await this.updateObjectsInOneMigration({
+      updateObjectInputs,
+      workspaceId,
+      ownerFlatApplication,
+    });
+  }
+
+  private async updateObjectsInOneMigration({
+    updateObjectInputs,
+    workspaceId,
+    ownerFlatApplication,
+  }: {
+    workspaceId: string;
+    updateObjectInputs: UpdateOneObjectInput[];
+    ownerFlatApplication?: FlatApplication;
+  }): Promise<FlatObjectMetadata[]> {
+    const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
@@ -89,7 +141,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps: existingFlatViewMaps,
-      flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
       flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
@@ -100,59 +151,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           'flatFieldMetadataMaps',
           'flatViewFieldMaps',
           'flatViewMaps',
-          'flatCommandMenuItemMaps',
           'flatSearchFieldMetadataMaps',
         ],
       },
     );
 
-    const {
-      otherObjectFlatFieldMetadatasToUpdate,
-      flatObjectMetadataToUpdate,
-      flatIndexMetadatasToUpdate,
-      flatViewFieldsToCreate,
-      flatViewFieldsToUpdate,
-      searchFieldMetadatasToCreate,
-    } = fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities({
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      updateObjectInput,
-      flatIndexMaps: existingFlatIndexMaps,
-      flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
-    });
-
-    const existingFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityMaps: existingFlatObjectMetadataMaps,
-      flatEntityId: updateObjectInput.id,
-    });
-
-    const isActiveChangeDefined = isDefined(updateObjectInput.update.isActive);
-
-    const isBeingEnabled =
-      isActiveChangeDefined &&
-      updateObjectInput.update.isActive === true &&
-      isDefined(existingFlatObjectMetadata) &&
-      !existingFlatObjectMetadata.isActive;
-
-    const isBeingDisabled =
-      isActiveChangeDefined &&
-      updateObjectInput.update.isActive === false &&
-      isDefined(existingFlatObjectMetadata) &&
-      existingFlatObjectMetadata.isActive;
-
-    const { commandMenuItemsToCreate, commandMenuItemsToUpdate } =
-      this.computeCommandMenuItemChangesForActiveToggle({
-        isBeingEnabled,
-        isBeingDisabled,
-        existingFlatObjectMetadata,
-        flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
-        workspaceId,
-        applicationId: resolvedOwnerFlatApplication.id,
-        applicationUniversalIdentifier:
-          resolvedOwnerFlatApplication.universalIdentifier,
-      });
+    const conversions = updateObjectInputs.map((updateObjectInput) =>
+      fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities({
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        updateObjectInput,
+        flatIndexMaps: existingFlatIndexMaps,
+        flatViewFieldMaps: existingFlatViewFieldMaps,
+        flatViewMaps: existingFlatViewMaps,
+        flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
+    );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -161,32 +177,41 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             objectMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [flatObjectMetadataToUpdate],
+              flatEntityToUpdate: conversions.map(
+                ({ flatObjectMetadataToUpdate }) => flatObjectMetadataToUpdate,
+              ),
             },
             index: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: flatIndexMetadatasToUpdate,
+              flatEntityToUpdate: conversions.flatMap(
+                ({ flatIndexMetadatasToUpdate }) => flatIndexMetadatasToUpdate,
+              ),
             },
             fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [...otherObjectFlatFieldMetadatasToUpdate],
+              flatEntityToUpdate: conversions.flatMap(
+                ({ otherObjectFlatFieldMetadatasToUpdate }) =>
+                  otherObjectFlatFieldMetadatasToUpdate,
+              ),
             },
             viewField: {
-              flatEntityToCreate: flatViewFieldsToCreate,
+              flatEntityToCreate: conversions.flatMap(
+                ({ flatViewFieldsToCreate }) => flatViewFieldsToCreate,
+              ),
               flatEntityToDelete: [],
-              flatEntityToUpdate: flatViewFieldsToUpdate,
+              flatEntityToUpdate: conversions.flatMap(
+                ({ flatViewFieldsToUpdate }) => flatViewFieldsToUpdate,
+              ),
             },
             searchFieldMetadata: {
-              flatEntityToCreate: searchFieldMetadatasToCreate,
+              flatEntityToCreate: conversions.flatMap(
+                ({ searchFieldMetadatasToCreate }) =>
+                  searchFieldMetadatasToCreate,
+              ),
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            },
-            commandMenuItem: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: commandMenuItemsToUpdate,
             },
           },
           workspaceId,
@@ -199,33 +224,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while updating object',
+        `Multiple validation errors occurred while updating object${updateObjectInputs.length > 1 ? 's' : ''}`,
       );
-    }
-
-    if (commandMenuItemsToCreate.length > 0) {
-      const commandMenuItemMigrationResult =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-          {
-            allFlatEntityOperationByMetadataName: {
-              commandMenuItem: {
-                flatEntityToCreate: commandMenuItemsToCreate,
-                flatEntityToDelete: [],
-                flatEntityToUpdate: [],
-              },
-            },
-            workspaceId,
-            applicationUniversalIdentifier:
-              twentyStandardFlatApplication.universalIdentifier,
-          },
-        );
-
-      if (commandMenuItemMigrationResult.status === 'fail') {
-        throw new WorkspaceMigrationBuilderException(
-          commandMenuItemMigrationResult,
-          'Multiple validation errors occurred while updating command menu items',
-        );
-      }
     }
 
     const { flatObjectMetadataMaps: recomputedFlatObjectMetadataMaps } =
@@ -236,30 +236,58 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
       );
 
-    const updatedFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: flatObjectMetadataToUpdate.universalIdentifier,
-      flatEntityMaps: recomputedFlatObjectMetadataMaps,
-    });
+    const updatedFlatObjectMetadatas = conversions.map(
+      ({ flatObjectMetadataToUpdate }) => {
+        const updatedFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
+          universalIdentifier: flatObjectMetadataToUpdate.universalIdentifier,
+          flatEntityMaps: recomputedFlatObjectMetadataMaps,
+        });
 
-    if (!isDefined(updatedFlatObjectMetadata)) {
-      throw new ObjectMetadataException(
-        'Updated object metadata not found in recomputed cache',
-        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
+        if (!isDefined(updatedFlatObjectMetadata)) {
+          throw new ObjectMetadataException(
+            'Updated object metadata not found in recomputed cache',
+            ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+          );
+        }
 
-    if (isDefined(updateObjectInput.update.labelIdentifierFieldMetadataId)) {
+        return updatedFlatObjectMetadata;
+      },
+    );
+
+    if (
+      updateObjectInputs.some(({ update }) =>
+        isDefined(update.labelIdentifierFieldMetadataId),
+      )
+    ) {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'rolesPermissions',
       ]);
     }
 
-    if (isActiveChangeDefined) {
+    if (updateObjectInputs.some(({ update }) => isDefined(update.isActive))) {
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
         flatMapsKeys: ['flatNavigationMenuItemMaps', 'flatCommandMenuItemMaps'],
       });
     }
+
+    return updatedFlatObjectMetadatas;
+  }
+
+  async updateOneObject({
+    updateObjectInput,
+    workspaceId,
+    ownerFlatApplication,
+  }: {
+    workspaceId: string;
+    updateObjectInput: UpdateOneObjectInput;
+    ownerFlatApplication?: FlatApplication;
+  }): Promise<FlatObjectMetadata> {
+    const [updatedFlatObjectMetadata] = await this.updateManyObjects({
+      updateObjectInputs: [updateObjectInput],
+      workspaceId,
+      ownerFlatApplication,
+    });
 
     return updatedFlatObjectMetadata;
   }
@@ -317,12 +345,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         )
       ).workspaceCustomFlatApplication;
 
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatIndexMaps,
-      flatCommandMenuItemMaps,
-    } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -330,7 +353,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             'flatObjectMetadataMaps',
             'flatIndexMaps',
             'flatFieldMetadataMaps',
-            'flatCommandMenuItemMaps',
           ],
         },
       );
@@ -412,16 +434,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         }),
     );
 
-    const flatCommandMenuItemsToDelete = flatObjectMetadatasToDelete
-      .map((flatObjectMetadataToDelete) =>
-        this.findNavigationCommandMenuItemForObject({
-          objectUniversalIdentifier:
-            flatObjectMetadataToDelete.universalIdentifier,
-          flatCommandMenuItemMaps,
-        }),
-      )
-      .filter(isDefined);
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -439,11 +451,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatFieldMetadatasToDelete,
-              flatEntityToUpdate: [],
-            },
-            commandMenuItem: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: flatCommandMenuItemsToDelete,
               flatEntityToUpdate: [],
             },
           },
@@ -489,38 +496,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         flatApplication: resolvedOwnerFlatApplication,
       });
 
-    // Default view fields reference the caller-provided fields (reused as-is from
-    // the transpiler output) plus the engine-owned reserved system fields, whose
-    // deterministic identifiers we re-derive here (searchVector is never shown).
-    // TODO: remove once default view fields move to the metadata side effect engine.
-    const defaultFlatFieldMetadatasForViewFields: UniversalFlatFieldMetadata[] =
-      [
-        ...flatFieldMetadataToCreateOnObject,
-        ...Object.values(
-          buildReservedSystemFlatFieldMetadatasForCustomObject({
-            flatObjectMetadata: {
-              applicationUniversalIdentifier:
-                resolvedOwnerFlatApplication.universalIdentifier,
-              universalIdentifier:
-                flatObjectMetadataToCreate.universalIdentifier,
-            },
-          }),
-        ),
-      ];
-
-    const flatDefaultViewToCreate = this.computeFlatViewToCreate({
-      objectMetadata: flatObjectMetadataToCreate,
-      flatApplication: resolvedOwnerFlatApplication,
-    });
-
-    const flatDefaultViewFieldsToCreate = computeFlatViewFieldsToCreate({
-      flatApplication: resolvedOwnerFlatApplication,
-      objectFlatFieldMetadatas: defaultFlatFieldMetadatasForViewFields,
-      labelIdentifierFieldMetadataUniversalIdentifier:
-        flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
-      viewUniversalIdentifier: flatDefaultViewToCreate.universalIdentifier,
-    });
-
     const flatNavigationMenuItemToCreate =
       await this.computeFlatNavigationMenuItemToCreate({
         objectMetadata: flatObjectMetadataToCreate,
@@ -530,49 +505,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceCustomFlatApplication.universalIdentifier,
       });
 
-    const { flatCommandMenuItemMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatCommandMenuItemMaps'],
-        },
-      );
+    const isWorkspaceCustomApplicationBuild =
+      resolvedOwnerFlatApplication.universalIdentifier ===
+      workspaceCustomFlatApplication.universalIdentifier;
 
-    const flatCommandMenuItemToCreate = this.buildFlatNavigationCommandMenuItem(
-      {
-        objectMetadata: flatObjectMetadataToCreate,
-        workspaceId,
-        applicationId: resolvedOwnerFlatApplication.id,
-        applicationUniversalIdentifier:
-          resolvedOwnerFlatApplication.universalIdentifier,
-        flatCommandMenuItemMaps,
-      },
-    );
-
-    const flatRecordPageFieldsViewToCreate =
-      this.computeFlatRecordPageFieldsViewToCreate({
-        objectMetadata: flatObjectMetadataToCreate,
-        flatApplication: resolvedOwnerFlatApplication,
-      });
-
-    const flatRecordPageFieldsViewFieldsToCreate =
-      computeFlatViewFieldsToCreate({
-        flatApplication: resolvedOwnerFlatApplication,
-        objectFlatFieldMetadatas: defaultFlatFieldMetadatasForViewFields,
-        labelIdentifierFieldMetadataUniversalIdentifier:
-          flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
-        viewUniversalIdentifier:
-          flatRecordPageFieldsViewToCreate.universalIdentifier,
-        excludeLabelIdentifier: true,
-      });
-
-    const flatDefaultRecordPageLayoutsToCreate =
-      this.computeFlatDefaultRecordPageLayoutToCreate({
-        objectMetadata: flatObjectMetadataToCreate,
-        flatApplication: resolvedOwnerFlatApplication,
-        recordPageFieldsView: flatRecordPageFieldsViewToCreate,
-        workspaceId,
-      });
+    const initialObjectViewOperations = isWorkspaceCustomApplicationBuild
+      ? computeInitialObjectViewOperationsOnObjectCreation({
+          flatObjectMetadataToCreate,
+          callerFlatFieldMetadatasToCreate: flatFieldMetadataToCreateOnObject,
+        })
+      : undefined;
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -593,45 +535,23 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
-            view: {
-              flatEntityToCreate: [
-                flatDefaultViewToCreate,
-                flatRecordPageFieldsViewToCreate,
-              ],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            viewField: {
-              flatEntityToCreate: [
-                ...flatDefaultViewFieldsToCreate,
-                ...flatRecordPageFieldsViewFieldsToCreate,
-              ],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            commandMenuItem: {
-              flatEntityToCreate: [flatCommandMenuItemToCreate],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            pageLayout: {
-              flatEntityToCreate:
-                flatDefaultRecordPageLayoutsToCreate.pageLayouts,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            pageLayoutTab: {
-              flatEntityToCreate:
-                flatDefaultRecordPageLayoutsToCreate.pageLayoutTabs,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            pageLayoutWidget: {
-              flatEntityToCreate:
-                flatDefaultRecordPageLayoutsToCreate.pageLayoutWidgets,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
+            ...(isDefined(initialObjectViewOperations)
+              ? {
+                  view: {
+                    flatEntityToCreate: [
+                      initialObjectViewOperations.flatInitialViewToCreate,
+                    ],
+                    flatEntityToDelete: [],
+                    flatEntityToUpdate: [],
+                  },
+                  viewField: {
+                    flatEntityToCreate:
+                      initialObjectViewOperations.flatInitialViewFieldsToCreate,
+                    flatEntityToDelete: [],
+                    flatEntityToUpdate: [],
+                  },
+                }
+              : {}),
             ...(isDefined(flatNavigationMenuItemToCreate)
               ? {
                   navigationMenuItem: {
@@ -677,90 +597,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
 
     return createdFlatObjectMetadata;
-  }
-
-  private computeFlatViewToCreate({
-    objectMetadata,
-    flatApplication,
-  }: {
-    flatApplication: FlatApplication;
-    objectMetadata: UniversalFlatObjectMetadata & { id: string };
-  }): UniversalFlatView & { id: string } {
-    const createdAt = new Date().toISOString();
-
-    return {
-      id: v4(),
-      objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
-      name: `All {objectLabelPlural}`,
-      key: ViewKey.INDEX,
-      icon: 'IconList',
-      type: ViewType.TABLE,
-      createdAt,
-      updatedAt: createdAt,
-      deletedAt: null,
-      isCustom: true,
-      anyFieldFilterValue: null,
-      calendarFieldMetadataUniversalIdentifier: null,
-      calendarEndFieldMetadataUniversalIdentifier: null,
-      calendarLayout: null,
-      isCompact: false,
-      shouldHideEmptyGroups: false,
-      kanbanColumnWidth: null,
-      kanbanAggregateOperation: null,
-      kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
-      mainGroupByFieldMetadataUniversalIdentifier: null,
-      openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-      position: 0,
-      universalIdentifier: v4(),
-      visibility: ViewVisibility.WORKSPACE,
-      createdByUserWorkspaceId: null,
-      isActive: true,
-      isSystemSideEffect: true,
-      universalOverrides: null,
-      viewFieldUniversalIdentifiers: [],
-      viewFieldGroupUniversalIdentifiers: [],
-      viewFilterUniversalIdentifiers: [],
-      viewGroupUniversalIdentifiers: [],
-      viewFilterGroupUniversalIdentifiers: [],
-      viewSortUniversalIdentifiers: [],
-      applicationUniversalIdentifier: flatApplication.universalIdentifier,
-    };
-  }
-
-  private computeFlatRecordPageFieldsViewToCreate({
-    objectMetadata,
-    flatApplication,
-  }: {
-    flatApplication: FlatApplication;
-    objectMetadata: UniversalFlatObjectMetadata & { id: string };
-  }): UniversalFlatView & { id: string } {
-    return computeFlatRecordPageFieldsViewToCreate({
-      objectMetadata,
-      flatApplication,
-    });
-  }
-
-  private computeFlatDefaultRecordPageLayoutToCreate({
-    objectMetadata,
-    flatApplication,
-    recordPageFieldsView,
-    workspaceId,
-  }: {
-    flatApplication: FlatApplication;
-    objectMetadata: UniversalFlatObjectMetadata & { id: string };
-    recordPageFieldsView: UniversalFlatView & { id: string };
-    workspaceId: string;
-  }): {
-    pageLayouts: FlatPageLayout[];
-    pageLayoutTabs: FlatPageLayoutTab[];
-    pageLayoutWidgets: FlatPageLayoutWidget[];
-  } {
-    return computeFlatDefaultRecordPageLayoutToCreate({
-      objectMetadata,
-      flatApplication,
-      recordPageFieldsView,
-      workspaceId,
-    });
   }
 
   private async computeFlatNavigationMenuItemToCreate({
@@ -820,153 +656,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createdAt: now,
       updatedAt: now,
     };
-  }
-
-  private buildFlatNavigationCommandMenuItem({
-    objectMetadata,
-    workspaceId,
-    applicationId,
-    applicationUniversalIdentifier,
-    flatCommandMenuItemMaps,
-  }: {
-    objectMetadata: {
-      id: string;
-      universalIdentifier: string;
-      labelPlural: string;
-      icon: string | null;
-      nameSingular: string;
-      shortcut: string | null;
-    };
-    workspaceId: string;
-    applicationId: string;
-    applicationUniversalIdentifier: string;
-    flatCommandMenuItemMaps: {
-      byUniversalIdentifier: Record<string, FlatCommandMenuItem | undefined>;
-    };
-  }): FlatCommandMenuItem {
-    const existingItems = Object.values(
-      flatCommandMenuItemMaps.byUniversalIdentifier,
-    ).filter(isDefined);
-
-    const nextPosition =
-      existingItems.length > 0
-        ? Math.max(...existingItems.map((item) => item.position)) + 1
-        : 0;
-
-    return buildNavigationFlatCommandMenuItem({
-      objectMetadata,
-      commandMenuItemId: v4(),
-      applicationId,
-      applicationUniversalIdentifier,
-      workspaceId,
-      position: nextPosition,
-      now: new Date().toISOString(),
-    });
-  }
-
-  private findNavigationCommandMenuItemForObject({
-    objectUniversalIdentifier,
-    flatCommandMenuItemMaps,
-  }: {
-    objectUniversalIdentifier: string;
-    flatCommandMenuItemMaps: {
-      byUniversalIdentifier: Record<string, FlatCommandMenuItem | undefined>;
-    };
-  }): FlatCommandMenuItem | undefined {
-    const commandMenuItemUniversalIdentifier = v5(
-      objectUniversalIdentifier,
-      NAVIGATION_COMMAND_UUID_NAMESPACE,
-    );
-
-    return findFlatEntityByUniversalIdentifier({
-      flatEntityMaps: flatCommandMenuItemMaps,
-      universalIdentifier: commandMenuItemUniversalIdentifier,
-    });
-  }
-
-  private computeCommandMenuItemChangesForActiveToggle({
-    isBeingEnabled,
-    isBeingDisabled,
-    existingFlatObjectMetadata,
-    flatCommandMenuItemMaps,
-    workspaceId,
-    applicationId,
-    applicationUniversalIdentifier,
-  }: {
-    isBeingEnabled: boolean;
-    isBeingDisabled: boolean;
-    existingFlatObjectMetadata: FlatObjectMetadata | undefined;
-    flatCommandMenuItemMaps: {
-      byUniversalIdentifier: Record<string, FlatCommandMenuItem | undefined>;
-    };
-    workspaceId: string;
-    applicationId: string;
-    applicationUniversalIdentifier: string;
-  }): {
-    commandMenuItemsToCreate: FlatCommandMenuItem[];
-    commandMenuItemsToUpdate: FlatCommandMenuItem[];
-  } {
-    if (!isDefined(existingFlatObjectMetadata)) {
-      return { commandMenuItemsToCreate: [], commandMenuItemsToUpdate: [] };
-    }
-
-    const now = new Date().toISOString();
-
-    if (isBeingEnabled) {
-      const existingCommandMenuItem =
-        this.findNavigationCommandMenuItemForObject({
-          objectUniversalIdentifier:
-            existingFlatObjectMetadata.universalIdentifier,
-          flatCommandMenuItemMaps,
-        });
-
-      if (!isDefined(existingCommandMenuItem)) {
-        return {
-          commandMenuItemsToCreate: [
-            this.buildFlatNavigationCommandMenuItem({
-              objectMetadata: existingFlatObjectMetadata,
-              workspaceId,
-              applicationId,
-              applicationUniversalIdentifier,
-              flatCommandMenuItemMaps,
-            }),
-          ],
-          commandMenuItemsToUpdate: [],
-        };
-      }
-
-      if (!existingCommandMenuItem.isActive) {
-        return {
-          commandMenuItemsToCreate: [],
-          commandMenuItemsToUpdate: [
-            { ...existingCommandMenuItem, isActive: true, updatedAt: now },
-          ],
-        };
-      }
-    }
-
-    if (isBeingDisabled) {
-      const commandMenuItemToDeactivate =
-        this.findNavigationCommandMenuItemForObject({
-          objectUniversalIdentifier:
-            existingFlatObjectMetadata.universalIdentifier,
-          flatCommandMenuItemMaps,
-        });
-
-      if (
-        isDefined(commandMenuItemToDeactivate) &&
-        commandMenuItemToDeactivate.isActive
-      ) {
-        return {
-          commandMenuItemsToCreate: [],
-          commandMenuItemsToUpdate: [
-            { ...commandMenuItemToDeactivate, isActive: false, updatedAt: now },
-          ],
-        };
-      }
-    }
-
-    return { commandMenuItemsToCreate: [], commandMenuItemsToUpdate: [] };
   }
 
   public async findOneWithinWorkspace(

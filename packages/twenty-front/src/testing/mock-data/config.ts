@@ -3,6 +3,8 @@ import { CaptchaDriverType, SupportDriver } from '~/generated-metadata/graphql';
 
 export const mockedClientConfig: ClientConfig = {
   aiModels: [],
+  aiEvaluationModels: [],
+  aiModelTiers: [],
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
   isEmailVerificationRequired: false,
@@ -66,4 +68,7 @@ export const mockedClientConfig: ClientConfig = {
   isCloudflareIntegrationEnabled: false,
   isClickHouseConfigured: false,
   isWorkspaceSchemaDDLLocked: false,
+  isOnboardingAiChatEnabled: false,
+  isBookCallOnboardingStepEnabled: false,
+  isCompanyEnrichmentEnabled: false,
 };

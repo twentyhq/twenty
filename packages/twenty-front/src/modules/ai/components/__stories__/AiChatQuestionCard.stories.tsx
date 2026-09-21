@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
 import { type ReactNode, useEffect } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
@@ -10,8 +11,9 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 
 import { styled } from '@linaria/react';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const StyledContainer = styled.div`
   max-width: 400px;
@@ -75,6 +77,23 @@ const longQuestion: AgentChatPendingQuestion = {
   ],
 };
 
+const multiSelectQuestion: AgentChatPendingQuestion = {
+  messageId: 'assistant-1',
+  toolCallId: 'call-4',
+  questions: [
+    {
+      header: 'Channels',
+      question: 'Which channels should the outreach campaign use?',
+      allowMultiSelect: true,
+      options: [
+        { label: 'Email', isRecommended: true },
+        { label: 'LinkedIn' },
+        { label: 'Phone' },
+      ],
+    },
+  ],
+};
+
 const StoreSeeder = ({ children }: { children: ReactNode }) => {
   const store = useStore();
 
@@ -101,8 +120,9 @@ const meta: Meta<typeof AiChatQuestionCard> = {
         </StoreSeeder>
       </AgentChatComponentInstanceContext.Provider>
     ),
-    SnackBarDecorator,
+    ToastDecorator,
     ComponentDecorator,
+    MemoryRouterDecorator,
     RootDecorator,
   ],
 };
@@ -121,4 +141,31 @@ export const MultipleQuestions: Story = {
 
 export const LongQuestion: Story = {
   args: { pendingQuestion: longQuestion },
+};
+
+export const MultiSelectQuestion: Story = {
+  args: { pendingQuestion: multiSelectQuestion },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const emailOption = await canvas.findByRole('button', { name: /Email/ });
+    await userEvent.click(emailOption);
+
+    const otherOption = await canvas.findByRole('button', { name: 'Other' });
+    expect(otherOption).toHaveAttribute('aria-pressed', 'false');
+
+    const otherTextArea = canvas.getByPlaceholderText(
+      'Type your own answer here',
+    );
+    otherTextArea.focus();
+    await userEvent.type(otherTextArea, 'Carrier pigeon', { skipClick: true });
+    expect(otherOption).toHaveAttribute('aria-pressed', 'true');
+
+    await userEvent.click(otherOption);
+    expect(otherOption).toHaveAttribute('aria-pressed', 'false');
+    expect(otherTextArea).toHaveValue('Carrier pigeon');
+
+    await userEvent.click(otherOption);
+    expect(otherOption).toHaveAttribute('aria-pressed', 'true');
+  },
 };

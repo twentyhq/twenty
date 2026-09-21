@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -21,7 +21,7 @@ export class MessagingDeleteFolderMessagesService {
 
   constructor(
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async deleteFolderMessages(
@@ -37,17 +37,15 @@ export class MessagingDeleteFolderMessagesService {
 
     let totalDeletedCount = 0;
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageFolderAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
-            workspaceId,
+          this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
             'messageChannelMessageAssociationMessageFolder',
           );
 
         const messageChannelMessageAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-            workspaceId,
+          this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
           );
 

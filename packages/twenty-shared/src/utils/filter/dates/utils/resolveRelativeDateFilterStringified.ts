@@ -1,7 +1,7 @@
 import { relativeDateFilterStringifiedSchema } from '@/utils/filter/dates/utils/relativeDateFilterStringifiedSchema';
 import { resolveRelativeDateFilter } from '@/utils/filter/dates/utils/resolveRelativeDateFilter';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'class-validator';
+import { isDefined } from '@/utils/validation/isDefined';
 import { Temporal } from 'temporal-polyfill';
 
 export const resolveRelativeDateFilterStringified = (

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -8,10 +9,9 @@ import { ApplicationRegistrationModule } from 'src/engine/core-modules/applicati
 import { ApplicationUpgradeResolver } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.resolver';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import { UpgradeApplicationCommand } from 'src/engine/core-modules/application/application-upgrade/commands/upgrade-application.command';
-import { ApplicationVersionCheckCronJob } from 'src/engine/core-modules/application/application-upgrade/crons/application-version-check.cron.job';
-import { ApplicationVersionCheckCronCommand } from 'src/engine/core-modules/application/application-upgrade/crons/commands/application-version-check.cron.command';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-version/workspace-version.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
@@ -21,18 +21,21 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
       ApplicationRegistrationEntity,
     ]),
     ApplicationInstallModule,
+    // Nothing here injects from these two modules any more, but the generated
+    // metadata GraphQL schema follows Nest's module registration order, so
+    // dropping them reorders the checked-in client schema.
     ApplicationRegistrationModule,
     FeatureFlagModule,
     PermissionsModule,
     TwentyConfigModule,
+    WorkspaceIteratorModule,
+    WorkspaceVersionModule,
   ],
   providers: [
     ApplicationUpgradeService,
     ApplicationUpgradeResolver,
-    ApplicationVersionCheckCronJob,
-    ApplicationVersionCheckCronCommand,
     UpgradeApplicationCommand,
   ],
-  exports: [ApplicationUpgradeService, ApplicationVersionCheckCronCommand],
+  exports: [ApplicationUpgradeService],
 })
 export class ApplicationUpgradeModule {}

@@ -14,7 +14,6 @@ const mockedOpportunityObjectMetadataItem =
 
 describe('getMultiSelectFieldPreviewValue', () => {
   it('returns null if the field is not a Multi-Select field', () => {
-    // Given
     const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
       ({ type }) => type !== FieldMetadataType.MULTI_SELECT,
     );
@@ -23,10 +22,8 @@ describe('getMultiSelectFieldPreviewValue', () => {
       throw new Error('Field not found');
     }
 
-    // When
     const previewValue = getMultiSelectFieldPreviewValue({ fieldMetadataItem });
 
-    // Then
     expect(previewValue).toBeNull();
   });
 
@@ -46,19 +43,16 @@ describe('getMultiSelectFieldPreviewValue', () => {
   };
 
   it("returns the defaultValue as an option value if a valid defaultValue is found in the field's metadata", () => {
-    // Given
     const defaultValue = ["'MEDIUM'", "'LOW'"];
     const fieldMetadataItemWithDefaultValue = {
       ...fieldMetadataItem,
       defaultValue,
     };
 
-    // When
     const previewValue = getMultiSelectFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithDefaultValue,
     });
 
-    // Then
     expect(previewValue).toEqual([
       'NEW',
       'SCREENING',
@@ -69,19 +63,16 @@ describe('getMultiSelectFieldPreviewValue', () => {
   });
 
   it("returns all option values if no defaultValue was found in the field's metadata", () => {
-    // Given
     const defaultValue = null;
     const fieldMetadataItemWithDefaultValue = {
       ...fieldMetadataItem,
       defaultValue,
     };
 
-    // When
     const previewValue = getMultiSelectFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithDefaultValue,
     });
 
-    // Then
     expect(previewValue).toEqual([
       'NEW',
       'SCREENING',
@@ -95,19 +86,16 @@ describe('getMultiSelectFieldPreviewValue', () => {
   });
 
   it("returns the first option value if the defaultValue found in the field's metadata is invalid", () => {
-    // Given
     const defaultValue = false;
     const fieldMetadataItemWithDefaultValue = {
       ...fieldMetadataItem,
       defaultValue,
     };
 
-    // When
     const previewValue = getMultiSelectFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithDefaultValue,
     });
 
-    // Then
     expect(previewValue).toEqual([
       'NEW',
       'SCREENING',
@@ -121,34 +109,28 @@ describe('getMultiSelectFieldPreviewValue', () => {
   });
 
   it('returns null if options are not defined', () => {
-    // Given
     const fieldMetadataItemWithNoOptions = {
       ...fieldMetadataItem,
       options: undefined,
     };
 
-    // When
     const previewValue = getMultiSelectFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithNoOptions,
     });
 
-    // Then
     expect(previewValue).toBeNull();
   });
 
   it('returns null if options array is empty', () => {
-    // Given
     const fieldMetadataItemWithEmptyOptions = {
       ...fieldMetadataItem,
       options: [],
     };
 
-    // When
     const previewValue = getMultiSelectFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithEmptyOptions,
     });
 
-    // Then
     expect(previewValue).toBeNull();
   });
 });

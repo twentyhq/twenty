@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
+import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -13,11 +14,14 @@ import {
   getValidTimeZoneOrUndefined,
   isDefined,
 } from 'twenty-shared/utils';
-import { H2Title, H3Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
 import { formatNumber } from '~/utils/format/formatNumber';
+
+const StyledSectionHeader = styled(Section.Header)`
+  margin-block-end: 0;
+`;
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -100,16 +104,19 @@ export const SettingsAiPrompts = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
+        <Section.Root>
           <StyledTitleContainer>
-            <H3Title
+            <StyledSectionHeader
               title={t`System Prompt`}
               description={[t`Read-only`, totalTokenCount]
                 .filter(Boolean)
                 .join(' ')}
+              level={3}
+              size="lg"
+              descriptionLineClamp={2}
             />
           </StyledTitleContainer>
-        </Section>
+        </Section.Root>
         {promptSections.map((section) => {
           const sectionTokenCount = t`~ ${formatNumber(
             section.estimatedTokenCount,
@@ -120,8 +127,8 @@ export const SettingsAiPrompts = () => {
           )} tokens`;
 
           return (
-            <Section key={section.title}>
-              <H2Title
+            <Section.Root key={section.title}>
+              <Section.Header
                 title={section.title}
                 description={[t`Read-only`, sectionTokenCount]
                   .filter(Boolean)
@@ -135,7 +142,7 @@ export const SettingsAiPrompts = () => {
                   label={section.title}
                   readonly={true}
                   defaultValue={section.content}
-                  contentType="markdown"
+                  profile={AI_INSTRUCTIONS_EDITOR_PROFILE}
                   onChange={() => {}}
                   enableFullScreen={true}
                   fullScreenBreadcrumbs={[
@@ -148,15 +155,14 @@ export const SettingsAiPrompts = () => {
                     },
                   ]}
                   minHeight={120}
-                  maxWidth={700}
                 />
               </StyledFormContainer>
-            </Section>
+            </Section.Root>
           );
         })}
 
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`User Context`}
             description={t`Information about the current user (auto-generated and included in each request)`}
           />
@@ -165,14 +171,13 @@ export const SettingsAiPrompts = () => {
               label={t`User Information`}
               readonly={true}
               defaultValue={userContextPreview}
-              contentType="markdown"
+              profile={AI_INSTRUCTIONS_EDITOR_PROFILE}
               onChange={() => {}}
               enableFullScreen={false}
               minHeight={80}
-              maxWidth={700}
             />
           </StyledFormContainer>
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

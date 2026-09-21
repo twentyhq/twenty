@@ -85,12 +85,6 @@ describe('buildHttpRequestStepLog', () => {
   });
 
   it('truncates non-ASCII bodies by UTF-8 bytes, not UTF-16 code units', () => {
-    // CJK characters take 3 UTF-8 bytes each but 1 UTF-16 code unit.
-    // Before the byte-aware fix, `redacted.slice(0, 32_000)` on this payload
-    // would emit ~96 KB of UTF-8 (three times the intended cap). After the
-    // fix the truncated payload stays within the cap, plus at most one
-    // U+FFFD replacement char (~3 bytes) for a multi-byte sequence cut at
-    // the boundary.
     const longCjkPayload = '日'.repeat(40_000);
 
     const stepLog = buildHttpRequestStepLog({
@@ -197,9 +191,6 @@ describe('buildHttpRequestStepLog', () => {
   });
 
   it('redacts sensitive query params even when the URL is unparseable (regression)', () => {
-    // Whitespace in the host trips up the WHATWG URL parser, so this URL
-    // is rejected by `new URL()`. Before the fallback was added, the catch
-    // branch returned the raw URL with secrets intact.
     const unparseableUrl =
       'https://api example.com/data?page=1&api_key=AKIA-leaked&token=oauth-leaked&safe=ok';
 
@@ -226,8 +217,6 @@ describe('buildHttpRequestStepLog', () => {
   });
 
   it('redacts percent-encoded sensitive param names in unparseable URLs', () => {
-    // `api%5Fkey` decodes to `api_key` — the fallback must decode before
-    // matching against the sensitive-name set.
     const unparseableUrl = 'https://api example.com/x?api%5Fkey=leaked';
 
     expect(() => new URL(unparseableUrl)).toThrow();

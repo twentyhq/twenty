@@ -5,7 +5,6 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import testTokens from './test/integration/constants/test-tokens.json';
 
-// Load .env vars at jest boot time
 if (process.env.NODE_ENV === 'test') {
   dotenv.config({ path: '.env.test', override: true });
 } else {
@@ -30,20 +29,26 @@ const jestConfig: JestConfigWithTsJest = {
   testPathIgnorePatterns: [
     ...(isBillingEnabled ? [] : ['<rootDir>/test/integration/billing']),
     ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/audit']),
+    // Requires an app booted as a secure deployment; run through
+    // jest-integration-secure.config.ts (nx test:integration:secure).
+    '<rootDir>/test/integration/secure-deployment',
   ],
   testRegex: '\\.integration-spec\\.ts$',
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
-  setupFilesAfterEnv: ['<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts'],
+  setupFilesAfterEnv: [
+    '<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts',
+  ],
   testTimeout: 20000,
   maxWorkers: 1,
   // jsdom 29 and msw ship ESM-only transitive deps (parse5, entities,
   // tough-cookie, @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp
-  // css engine, @mswjs/interceptors and friends); let swc transform them
+  // css engine, @mswjs/interceptors and friends), and ai, @ai-sdk/* and their
+  // @workflow/serde dependency ship ESM only; let swc transform them
   // (and .mjs below) so jest can require them.
   transformIgnorePatterns: [
-    '/node_modules/(?!(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser)/)',
+    '/node_modules/(?!(.*/node_modules/)?(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser|ai|@ai-sdk|@workflow|htmlparser2|domhandler|domutils|dom-serializer|domelementtype|@faker-js)/)',
   ],
   transform: {
     '^.+\\.(t|j|mj)s$': [

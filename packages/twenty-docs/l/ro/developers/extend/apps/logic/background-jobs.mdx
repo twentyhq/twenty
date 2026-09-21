@@ -1,0 +1,197 @@
+---
+title: Sarcini în fundal
+description: Predă munca de durată sau supusă limitării ratei către lucrătorii Twenty, punând în coadă o altă execuție a unei funcții logice, în loc să rulezi totul inline.
+icon: layer-group
+---
+
+O rulare a unei funcții de logică este limitată de `timeoutSeconds` (maximum 900 de secunde). Orice lucru care nu poate fi finalizat în acel interval — o resincronizare completă, un fan-out per înregistrare, un API de la o terță parte care aplică limitare de rată — trebuie împărțit în execuții mai mici.
+
+`enqueueJobs` face exact asta: le cere lucrătorilor Twenty să ruleze mai târziu una dintre funcțiile de logică ale aplicației tale, o dată pentru fiecare payload, fiecare rulare în propriul său proces, cu propriul său buget de timeout. Apelantul returnează imediat.
+
+```text
+  ┌─────────────────┐  enqueueJobs(...)  ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## Pune rulările în coadă
+
+Importă `enqueueJobs` din `twenty-sdk/logic-function`, indică-l către `universalIdentifier` al funcției logice de rulat și transmite câte un payload pentru fiecare rulare funcției enqueue.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJobs } from 'twenty-sdk/logic-function';
+
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payloads: [{ page: 1 }],
+});
+```
+
+Fiecare rulare primește payloadul său ca argument al handlerului, exact ca orice alt declanșator. Ținta trebuie să aparțină **aceleiași aplicații** ca apelantul — punerea în coadă a funcției altei aplicații este respinsă cu `Logic function not found` și nu se pune nimic în coadă. Un singur apel acceptă până la `200` payloaduri.
+
+<Note>
+`enqueueJobs` revine imediat ce joburile sunt acceptate, nu când au fost rulate. Nu întoarce rezultatele țintelor — fă ca fiecare țintă să scrie ce produce în [magazinul cheie-valoare](/l/ro/developers/extend/apps/logic/key-value-store) sau într-o înregistrare din spațiul de lucru dacă trebuie să le citești ulterior.
+</Note>
+
+<Note>
+Ajutorul mai vechi `enqueueJob`, care pune în coadă un singur job per apel, este depreciat. Folosește în schimb `enqueueJobs` cu o listă `payloads` cu un element.
+</Note>
+
+## Opțiuni job
+
+Opțiunile se aplică fiecărei rulări din lot.
+
+| Opțiune      | Implicit | Interval                 | Ce face                                                                                                                                                                                           |
+| ------------ | -------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`      | `0`–`10`                 | Numărul total de încercări suplimentare în coadă. Reîncercările solicitate de aplicație sunt limitate la `3`. Crește această valoare numai pentru handleri care sunt siguri de rulat de două ori. |
+| `delayMs`    | `0`      | `0`–`604800000` (7 zile) | Așteaptă atât timp înainte ca rulările să devină eligibile.                                                                                                                                       |
+
+```ts
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payloads: [{ page: 1 }],
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**Prioritatea nu este încă configurabilă.** Joburile puse în coadă rulează întotdeauna cu cea mai joasă prioritate, astfel încât activitatea platformei să nu fie niciodată întârziată de joburile aplicației. Controlul asupra priorității va fi disponibil în curând.
+</Note>
+
+Rularea pusă în coadă moștenește utilizatorul activ al funcției care a pus-o în coadă, astfel încât acționează cu aceleași permisiuni.
+
+## Reîncercați după un eșec temporar
+
+Twenty nu reîncearcă fiecare excepție din codul aplicației. O eroare obișnuită lansată este tratată ca un eșec permanent. Pentru un eșec temporar, o funcție logică pusă în coadă poate solicita până la trei reîncercări prin lansarea `RetryableLogicFunctionError`.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Lansați direct `RetryableLogicFunctionError` atunci când este posibil. Dacă o extindeți, nu îi înlocuiți `name`: Twenty recunoaște numele serializat `RetryableLogicFunctionError` în toate mediile de execuție.
+
+`retryCount` este `0` pentru execuția inițială și crește doar atunci când codul aplicației solicită o reîncercare. `maxRetries` este cel mult `3` și poate fi mai mic atunci când sarcina din coadă are o limită totală de reîncercări mai mică. Eșecurile platformei nu cresc `retryCount`, deși consumă în continuare bugetul general de siguranță al cozii.
+
+Coada întârzie încercările de reîncercare folosind backoff exponențial și jitter. Întârzierea exactă nu este garantată în mod intenționat, astfel că codul aplicației nu ar trebui să depindă de producerea unei reîncercări la un moment precis. După ce se atinge `maxRetries`, o altă `RetryableLogicFunctionError` este înregistrată ca eșecul final al aplicației, fără o altă execuție.
+
+<Warning>
+Reîncercările rulează din nou întregul handler și se pot produce după ce unele efecte secundare au reușit. Faceți handlerul idempotent înainte de a solicita reîncercări.
+</Warning>
+
+## Folosește-l: parcurge pe pagini o sincronizare lungă
+
+Forma clasică este o funcție care pune în coadă *ea însăși* cu următorul cursor. Fiecare rulare procesează o pagină de lucru bine în interiorul propriului timeout, iar lanțul se oprește când nu mai rămâne nimic.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payloads: [{ cursor: nextCursor }],
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## Dispersare pe înregistrare
+
+Când munca este în mod natural pe element, pune în coadă un job per element într-un singur apel și lasă workerii să le proceseze în paralel în loc să iterezi inline.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  payloads: companies.map((company) => ({ companyId: company.id })),
+  retryLimit: 2,
+});
+```
+
+## Bune practici pentru muncă de lungă durată
+
+Două reguli acoperă aproape orice job lung: folosește recursie în locul buclelor și procesează un segment limitat per rulare.
+
+O rulare care încearcă să facă totul este modul de eșec — atinge timeout-ul, iar la o reîncercare începe din nou totul de la zero. În schimb, dimensionează un segment astfel încât să se termine confortabil în interiorul `timeoutSeconds`, persistă-ți poziția și pune în coadă următoarea rulare.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJobs, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payloads: [{ offset: offset + CHUNK_SIZE }],
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Ce îl face robust:
+
+* **Dimensionează segmentul pornind de la cel mai lent element, nu de la medie.** `CHUNK_SIZE × worst-case item time` trebuie să încapă în `timeoutSeconds` cu marjă, altfel „coada” unui segment se pierde când rularea este întreruptă.
+* **Fă condiția de terminare explicită.** Apelează recursiv doar cât timp a revenit un segment complet. Un lanț care se oprește doar pe baza „niciun rezultat” va continua la nesfârșit dacă sursa returnează vreodată o pagină scurtă la mijloc.
+* **Păstrează progresul înainte de a pune în coadă următoarea rulare**, astfel încât o verigă eșuată să repornească de la ultimul segment finalizat în loc de la început.
+* **Păstrează fiecare segment idempotent.** Reprocesarea unui segment după o reîncercare nu trebuie să ducă la scrieri duble — leagă scrierile de înregistrarea sau ID-ul extern pe care îl procesezi.
+* **Preferă un lanț segmentat în locul unei dispersări uriașe** atunci când munca lovește o terță parte cu limită de rată: un lanț cu `delayMs` își dozează singur ritmul, în timp ce mii de joburi puse în coadă deodată devin toate eligibile imediat.

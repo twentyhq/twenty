@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
+msgstr "{actorName} uppdaterade serveradministratörsåtkomsten för {targetName} ({targetEmail})."
+
+#. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
 msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
 msgstr "{senderName} (<0>{senderEmail}</0>) har bjudit in dig att gå med i en arbetsyta som kallas <1>{workspaceName}</1>."
@@ -31,7 +36,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Var vänlig och validera denna dom�
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
-msgstr "En påminnelse innan din testperiod slutar"
+msgstr "En förvarning innan din testperiod slutar"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -89,6 +94,11 @@ msgid "Enabled"
 msgstr "Aktiverad"
 
 #. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Full admin panel access: {fullAdminStatus}"
+msgstr "Fullständig åtkomst till administratörspanelen: {fullAdminStatus}"
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Github"
 msgstr "Github"
@@ -96,7 +106,7 @@ msgstr "Github"
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
-msgstr "Goda nyheter först: din arbetsyta <0>{workspaceDisplayName}</0> är bara pausad — ingen av dina data har försvunnit."
+msgstr "Goda nyheter först: din arbetsyta <0>{workspaceDisplayName}</0> är bara pausad — inga av dina data har försvunnit."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -123,6 +133,11 @@ msgid "If Twenty is working for you, you're all set — there's nothing to do. I
 msgstr "Om Twenty fungerar bra för dig är allt klart — du behöver inte göra någonting. Om det inte är rätt för dig kan du säga upp med ett klick innan dess och du kommer inte att debiteras."
 
 #. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "If you did not expect this change, review your server administrators immediately."
+msgstr "Om du inte förväntade dig den här ändringen ska du omedelbart granska dina serveradministratörer."
+
+#. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
 msgid "If you did not initiate this change, please contact your workspace owner immediately."
 msgstr "Om du inte initierade denna förändring, vänligen kontakta ägaren av ditt arbetsutrymme omedelbart."
@@ -136,6 +151,11 @@ msgstr "Om du inte gör någonting pausar vi din arbetsyta och håller dina data
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back."
 msgstr "Om du någon gång vill ge Twenty en ny chans kan du starta en ny arbetsyta på några minuter — vi skulle bli glada att få tillbaka dig."
+
+#. js-lingui-explicit-id
+#: src/emails/server-admin-access-changed.email.tsx
+msgid "Impersonation: {impersonateStatus}"
+msgstr "Personifiering: {impersonateStatus}"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
@@ -206,27 +226,7 @@ msgstr "San Francisco / Paris"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
-msgstr "Serveradministratörsåtkomst har ändrats"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.fullAdmin"
-msgstr "serverAdminAccessChanged.fullAdmin"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.impersonation"
-msgstr "serverAdminAccessChanged.impersonation"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.summary"
-msgstr "serverAdminAccessChanged.summary"
-
-#. js-lingui-explicit-id
-#: src/emails/server-admin-access-changed.email.tsx
-msgid "serverAdminAccessChanged.warning"
-msgstr "serverAdminAccessChanged.warning"
+msgstr "Serveradministratörsbehörighet har ändrats"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -261,7 +261,7 @@ msgstr "Den här länken är bara giltig under de nästa {duration}. Om länken 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
-msgstr "För att behålla din arbetsyta och allt du har byggt, lägg till en betalningsmetod och välj ett paket."
+msgstr "För att behålla din arbetsyta och allt du har byggt, lägg till en betalningsmetod och välj en plan."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -337,7 +337,7 @@ msgstr "Din kostnadsfria testperiod för <0>{workspaceDisplayName}</0> slutar de
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
-msgstr "Din plan förnyas snart"
+msgstr "Ditt abonnemang förnyas snart"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx

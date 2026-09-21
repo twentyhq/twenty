@@ -44,6 +44,13 @@ export class LocalPrebuiltBundleService {
 
     await this.cacheLockService.withLock(
       async () => {
+        if (
+          (await this.getInstalledBundleChecksum(flatLogicFunction)) ===
+          checksum
+        ) {
+          return;
+        }
+
         const prebuiltDir = getLocalPrebuiltBundleDir(flatLogicFunction);
 
         await fs.mkdir(prebuiltDir, { recursive: true });

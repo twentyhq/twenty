@@ -5,7 +5,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
   align-items: center;
@@ -41,16 +41,16 @@ export const SidePanelContextRecordChipAvatars = ({
   );
   return (
     <StyledIconWrapper
-      withIconBackground={recordChipData.avatarType !== 'rounded'}
+      withIconBackground={recordChipData.avatarShape !== 'circle'}
     >
       {Icon ? (
         <Icon color={IconColor} size={theme.icon.size.sm} />
       ) : (
         <Avatar
-          avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl)}
-          placeholderColorSeed={recordChipData.recordId}
-          placeholder={recordChipData.name}
-          type={recordChipData.avatarType}
+          src={getAbsoluteImageUrl(recordChipData.avatarUrl)}
+          colorSeed={recordChipData.recordId}
+          name={recordChipData.name}
+          shape={recordChipData.avatarShape}
           size="sm"
         />
       )}

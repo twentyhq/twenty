@@ -121,5 +121,6 @@ Bir şeyler ters gittiğinde, üst veri farkı ve adlandırılmış hatalar, hat
 
 * **Manifest derleme hatası** — CLI, senkronizasyondan önce başarısız olur (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); uygulama kaynağınızı düzeltin.
 * **Senkronizasyon / geçiş hatası** — derleme başarılı olur ancak farkı uygulama işlemi, varlığı ve `universalIdentifier` değerini adlandırarak başarısız olur; çakışan üst veriyi düzeltin.
+* **Bağımlılık boyutu hatası** — senkronizasyon veya kurulum, uygulamanın üretim `dependencies` bağımlılıklarının çalışma zamanı katmanı olarak kurulamayacak kadar büyük olması nedeniyle başarısız olur (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); mantık fonksiyonlarınızın çalışma zamanında içe aktarmadığı paketleri (UI kitaplıkları, geliştirme araçları) `devDependencies` içine taşıyın.
 * **Uygulama kodu çalışma zamanı hatası** — senkronizasyon başarılı olur ancak mantık fonksiyonlarınız veya bileşenleriniz çalışma zamanında beklenmedik şekilde davranır; [function logs](/l/tr/developers/extend/apps/operations/cli) bölümünü kontrol edin.
 * **Yerel örnek durumu** — yukarıdakilerin hiçbiri geçerli değil ve çalışma alanı hâlâ hatalı görünüyorsa; kurtarma merdiveninde aşağı doğru ilerleyin.

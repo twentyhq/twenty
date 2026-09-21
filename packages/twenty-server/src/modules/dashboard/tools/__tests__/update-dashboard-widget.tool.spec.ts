@@ -1,7 +1,11 @@
-import { AggregateOperations, ViewFilterOperand } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  PageLayoutTabLayoutMode,
+  ViewFilterOperand,
+  WidgetType,
+} from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { createUpdateDashboardWidgetTool } from 'src/modules/dashboard/tools/update-dashboard-widget.tool';
 
@@ -51,7 +55,13 @@ const buildDeps = () => ({
       id: WIDGET_ID,
       title: 'Widget',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 0,
+        rowSpan: 4,
+        columnSpan: 4,
+      },
       configuration: updateData.configuration,
     })),
   },

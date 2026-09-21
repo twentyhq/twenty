@@ -1,3 +1,4 @@
+import { EmailOperation } from 'twenty-shared/types';
 import {
   ForbiddenException,
   Logger,
@@ -50,14 +51,14 @@ export class SendEmailResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<SendEmailOutputDTO> {
     try {
-      await this.connectedAccountMetadataService.verifyOwnership({
+      await this.connectedAccountMetadataService.verifyUsableByCaller({
         id: input.connectedAccountId,
         userWorkspaceId,
         workspaceId: workspace.id,
       });
 
-      const result = await this.emailComposerService.composeEmail(
-        {
+      const result = await this.emailComposerService.composeEmail({
+        parameters: {
           recipients: {
             to: input.to,
             cc: input.cc ?? '',
@@ -66,11 +67,13 @@ export class SendEmailResolver {
           subject: input.subject,
           body: input.body,
           connectedAccountId: input.connectedAccountId,
+          fromHandle: input.fromHandle,
           files: input.files ?? [],
           inReplyTo: input.inReplyTo,
         },
-        { workspaceId: workspace.id },
-      );
+        context: { workspaceId: workspace.id },
+        operation: EmailOperation.SEND,
+      });
 
       if (!result.success) {
         return {

@@ -1,26 +1,24 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+import { isConfiguredJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isConfiguredJunctionRelationField';
 
 type IsFieldMetadataAvailableForViewFieldArgs = {
-  objectNameSingular: string;
-  fieldMetadata: Pick<FieldMetadataItem, 'name' | 'isSystem' | 'isActive'>;
+  fieldMetadata: Pick<
+    FieldMetadataItem,
+    'name' | 'isSystem' | 'isActive' | 'type' | 'settings'
+  >;
 };
 
 export const isActiveFieldMetadataItem = ({
-  objectNameSingular,
   fieldMetadata,
 }: IsFieldMetadataAvailableForViewFieldArgs) => {
   if (fieldMetadata.isActive === false) {
     return false;
   }
 
-  if (
-    (objectNameSingular === CoreObjectNameSingular.Note &&
-      fieldMetadata.name === 'noteTargets') ||
-    (objectNameSingular === CoreObjectNameSingular.Task &&
-      fieldMetadata.name === 'taskTargets')
-  ) {
+  // A junction relation is a system field that must stay visible, since it is the only
+  // way to reach the records it links to.
+  if (isConfiguredJunctionRelationField(fieldMetadata)) {
     return true;
   }
 

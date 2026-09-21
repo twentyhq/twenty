@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 import {
   IconArchive,
   IconArchiveOff,
@@ -6,8 +7,8 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { LightIconButton } from 'twenty-ui/components';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useChatThreadArchiveActions } from '@/ai/hooks/useChatThreadArchiveActions';
@@ -18,7 +19,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 type AiChatThreadItemMenuProps = {
@@ -27,6 +28,7 @@ type AiChatThreadItemMenuProps = {
   isArchived: boolean;
   surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
+  clickableComponent?: ReactNode;
 };
 
 export const AiChatThreadItemMenu = ({
@@ -35,11 +37,12 @@ export const AiChatThreadItemMenu = ({
   isArchived,
   surface,
   onRenameRequested,
+  clickableComponent,
 }: AiChatThreadItemMenuProps) => {
   const { t } = useLingui();
   const dropdownId = getAiChatThreadItemMenuDropdownId(threadId, surface);
   const { closeDropdown } = useCloseDropdown();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { archiveChatThread, unarchiveChatThread } =
     useChatThreadArchiveActions();
   const setAiChatThreadPendingDelete = useSetAtomFamilyState(
@@ -67,7 +70,7 @@ export const AiChatThreadItemMenu = ({
     event.stopPropagation();
     closeDropdown(dropdownId);
     setAiChatThreadPendingDelete({ threadId, threadTitle });
-    openModal(getAiChatThreadDeleteModalId(surface));
+    openDialog(getAiChatThreadDeleteModalId(surface));
   };
 
   return (
@@ -75,11 +78,11 @@ export const AiChatThreadItemMenu = ({
       dropdownId={dropdownId}
       dropdownPlacement="bottom-end"
       clickableComponent={
-        <LightIconButton
-          aria-label={t`Chat actions`}
-          Icon={IconDotsVertical}
-          accent="tertiary"
-        />
+        clickableComponent ?? (
+          <LightIconButton aria-label={t`Chat actions`} emphasis="subtle">
+            <IconDotsVertical />
+          </LightIconButton>
+        )
       }
       dropdownComponents={
         <DropdownContent>

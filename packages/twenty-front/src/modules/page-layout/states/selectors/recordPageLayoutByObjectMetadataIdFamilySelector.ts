@@ -14,10 +14,16 @@ export const recordPageLayoutByObjectMetadataIdFamilySelector =
       ({ get }) => {
         const pageLayouts = get(pageLayoutsWithRelationsSelector);
 
-        return pageLayouts.find(
+        const recordPageLayouts = pageLayouts.filter(
           (pageLayout) =>
             pageLayout.type === PageLayoutType.RECORD_PAGE &&
             pageLayout.objectMetadataId === objectMetadataId,
         );
+
+        const customRecordPageLayout = recordPageLayouts.find(
+          (pageLayout) => !pageLayout.isSystemSideEffect,
+        );
+
+        return customRecordPageLayout ?? recordPageLayouts[0];
       },
   });

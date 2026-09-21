@@ -1,5 +1,6 @@
 import { useStore } from 'jotai';
 
+import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -15,6 +16,7 @@ import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDr
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 import { useMutation } from '@apollo/client/react';
 import { CreateChatThreadDocument } from '~/generated-metadata/graphql';
@@ -26,6 +28,7 @@ export const useCreateAgentChatThread = () => {
   const setAgentChatDraftsByThreadId = useSetAtomState(
     agentChatDraftsByThreadIdState,
   );
+  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
   const store = useStore();
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
@@ -40,6 +43,7 @@ export const useCreateAgentChatThread = () => {
         contextWindowTokens: null,
         totalInputTokens: 0,
         totalOutputTokens: 0,
+        totalCacheReadTokens: 0,
         totalInputCredits: 0,
         totalOutputCredits: 0,
       };
@@ -72,15 +76,11 @@ export const useCreateAgentChatThread = () => {
         store.set(shouldFocusChatEditorState.atom, true);
         store.set(skipMessagesSkeletonUntilLoadedState.atom, true);
         store.set(threadIdCreatedFromDraftState.atom, newThreadId);
-      } else {
-        setAgentChatDraftsByThreadId((previousDrafts) => ({
-          ...previousDrafts,
-          [previousDraftKey]: store.get(agentChatInputState.atom),
-        }));
       }
 
       setCurrentAiChatThread(newThreadId);
-      setAgentChatInput(newDraft);
+      projectAiChatThreadToUrl(newThreadId);
+      setAgentChatInput(tipTapDocumentToMarkdown(newDraft));
     },
     onError: () => {
       setIsCreatingChatThread(false);

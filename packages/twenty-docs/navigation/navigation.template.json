@@ -145,6 +145,14 @@
               "label": "How-Tos"
             }
           }
+        },
+        "legal": {
+          "label": "Legal",
+          "groups": {
+            "legalHowTos": {
+              "label": "How-Tos"
+            }
+          }
         }
       }
     },
@@ -177,9 +185,6 @@
             },
             "appsOperations": {
               "label": "Operations"
-            },
-            "appsTranslations": {
-              "label": "Translations"
             }
           }
         },
@@ -191,6 +196,40 @@
         },
         "contribute": {
           "label": "Contribute"
+        },
+        "uiLibrary": {
+          "label": "UI Library",
+          "groups": {
+            "uiGuides": {
+              "label": "Guides"
+            },
+            "uiPrimitives": {
+              "label": "Primitives",
+              "groups": {
+                "uiDataDisplay": {
+                  "label": "Data display"
+                },
+                "uiForms": {
+                  "label": "Forms"
+                },
+                "uiNavigation": {
+                  "label": "Navigation"
+                },
+                "uiSurfaces": {
+                  "label": "Surfaces"
+                },
+                "uiFeedback": {
+                  "label": "Feedback"
+                },
+                "uiTypography": {
+                  "label": "Typography"
+                }
+              }
+            },
+            "uiComponents": {
+              "label": "Components"
+            }
+          }
         }
       }
     }

@@ -7,6 +7,7 @@ import { DATA_LABELS_SETTING } from '@/side-panel/pages/page-layout/constants/se
 import { DATE_GRANULARITY_SETTING } from '@/side-panel/pages/page-layout/constants/settings/DateGranularitySetting';
 import { EACH_SLICE_REPRESENTS_SETTING } from '@/side-panel/pages/page-layout/constants/settings/EachSliceRepresentsSetting';
 import { FILTER_SETTING } from '@/side-panel/pages/page-layout/constants/settings/FilterSetting';
+import { FORMAT_SETTING } from '@/side-panel/pages/page-layout/constants/settings/FormatSetting';
 import { HIDE_EMPTY_CATEGORY_SETTING } from '@/side-panel/pages/page-layout/constants/settings/HideEmptyCategorySetting';
 import { PRIMARY_SORT_BY_SETTING } from '@/side-panel/pages/page-layout/constants/settings/PrimarySortBySetting';
 import { SHOW_LEGEND_SETTING } from '@/side-panel/pages/page-layout/constants/settings/ShowLegendSetting';
@@ -32,6 +33,7 @@ export const PIE_CHART_SETTINGS: ChartSettingsGroup[] = [
     items: [
       COLORS_SETTING,
       DATA_LABELS_SETTING,
+      FORMAT_SETTING,
       SHOW_LEGEND_SETTING,
       CENTER_METRIC_SETTING,
     ],

@@ -8,6 +8,22 @@ const pdfBuffer = Buffer.from('%PDF-1.4\n', 'utf-8');
 const textBuffer = Buffer.from('Hello, world!', 'utf-8');
 const zipBuffer = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
 
+const pdfWithIndirectLengthXmpBuffer = Buffer.from(
+  `%PDF-1.4
+1 0 obj
+<< /Type /Metadata /Subtype /XML /Length 5 0 R >>
+stream
+this is not valid xml, just padding so the (wrongly parsed) length is plausible
+endstream
+endobj
+5 0 obj
+250
+endobj
+%%EOF
+`,
+  'utf-8',
+);
+
 describe('extractFileInfoOrThrow', () => {
   it.each([
     {
@@ -104,6 +120,15 @@ describe('extractFileInfoOrThrow', () => {
       );
     },
   );
+
+  it('should detect PDF when an XMP metadata stream has an indirect /Length reference', async () => {
+    const result = await extractFileInfoOrThrow({
+      file: pdfWithIndirectLengthXmpBuffer,
+      filename: 'document.pdf',
+    });
+
+    expect(result).toEqual({ mimeType: 'application/pdf', ext: 'pdf' });
+  });
 
   describe('TWENTY_MIME_POLICY (Twenty deviates from IANA)', () => {
     it.each([

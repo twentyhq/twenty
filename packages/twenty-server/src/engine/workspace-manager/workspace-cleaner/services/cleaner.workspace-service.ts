@@ -2,11 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { differenceInDays } from 'date-fns';
 import {
   CleanSuspendedWorkspaceEmail,
   WarnSuspendedWorkspaceEmail,
+  renderEmail,
 } from 'twenty-emails';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -16,6 +16,10 @@ import { In, Repository } from 'typeorm';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import {
+  KeyValuePairEntity,
+  KeyValuePairType,
+} from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -62,6 +66,8 @@ export class CleanerWorkspaceService {
     private readonly emailService: EmailService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(KeyValuePairEntity)
+    private readonly keyValuePairRepository: Repository<KeyValuePairEntity>,
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -96,25 +102,6 @@ export class CleanerWorkspaceService {
     return null;
   }
 
-  async checkIfAtLeastOneWorkspaceMemberWarned(
-    workspaceMembers: WorkspaceMemberWorkspaceEntity[],
-    workspaceId: string,
-  ) {
-    for (const workspaceMember of workspaceMembers) {
-      const workspaceMemberWarned = await this.userVarsService.get({
-        userId: workspaceMember.userId,
-        workspaceId: workspaceId,
-        key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
-      });
-
-      if (workspaceMemberWarned) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   async sendWarningEmail(
     workspaceMember: WorkspaceMemberWorkspaceEntity,
     workspaceDisplayName: string | undefined,
@@ -130,8 +117,8 @@ export class CleanerWorkspaceService {
       locale: workspaceMember.locale,
     };
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
-    const html = await render(emailTemplate, { pretty: true });
-    const text = await render(emailTemplate, { plainText: true });
+    const html = await renderEmail(emailTemplate, { pretty: true });
+    const text = await renderEmail(emailTemplate, { plainText: true });
 
     const workspaceDeletionMsg = msg`Your workspace is paused — reactivate to keep your data`;
     const i18n = this.i18nService.getI18nInstance(workspaceMember.locale);
@@ -159,20 +146,6 @@ export class CleanerWorkspaceService {
   ) {
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
-
-    const workspaceMembersWarned =
-      await this.checkIfAtLeastOneWorkspaceMemberWarned(
-        workspaceMembers,
-        workspace.id,
-      );
-
-    if (workspaceMembersWarned) {
-      this.logger.log(
-        `${dryRun ? 'DRY RUN - ' : ''}Workspace ${workspace.id} ${workspace.displayName} already warned`,
-      );
-
-      return;
-    }
 
     this.logger.log(
       `${dryRun ? 'DRY RUN - ' : ''}Sending ${workspace.id} ${
@@ -220,8 +193,8 @@ export class CleanerWorkspaceService {
       locale: workspaceMember.locale,
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
-    const html = await render(emailTemplate, { pretty: true });
-    const text = await render(emailTemplate, { plainText: true });
+    const html = await renderEmail(emailTemplate, { pretty: true });
+    const text = await renderEmail(emailTemplate, { plainText: true });
 
     if (!isDefined(workspaceMember.userEmail)) {
       throw new Error('Workspace member email is missing');
@@ -420,6 +393,18 @@ export class CleanerWorkspaceService {
       withDeleted: true,
     });
 
+    const warnedUserVars = await this.keyValuePairRepository.find({
+      select: ['workspaceId'],
+      where: {
+        workspaceId: In(workspaces.map((workspace) => workspace.id)),
+        type: KeyValuePairType.USER_VARIABLE,
+        key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
+      },
+    });
+    const alreadyWarnedWorkspaceIds = new Set(
+      warnedUserVars.map((userVar) => userVar.workspaceId),
+    );
+
     let deletedWorkspacesCount = 0;
 
     for (const [index, workspace] of workspaces.entries()) {
@@ -475,6 +460,7 @@ export class CleanerWorkspaceService {
 
         if (
           (!isDefined(onlyOperation) || onlyOperation === 'warn') &&
+          !alreadyWarnedWorkspaceIds.has(workspace.id) &&
           inactiveDaysSinceSuspended > this.inactiveDaysBeforeWarn &&
           inactiveDaysSinceSuspended <= this.inactiveDaysBeforeSoftDelete
         ) {

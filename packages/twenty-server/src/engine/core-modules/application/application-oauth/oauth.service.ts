@@ -3,14 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import ms from 'ms';
-import { Repository } from 'typeorm';
-import { base64UrlEncode } from 'twenty-shared/utils';
+import { IsNull, Repository } from 'typeorm';
+import { base64UrlEncode, isDefined } from 'twenty-shared/utils';
 
 import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -18,6 +20,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { OAuthErrorResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-error-response.type';
 import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
+import { isConfidentialApplicationOAuthClient } from 'src/engine/core-modules/application/application-oauth/utils/is-confidential-application-oauth-client.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -34,6 +37,7 @@ export class OAuthService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly applicationTokenService: ApplicationTokenService,
+    private readonly applicationAuthorizationService: ApplicationAuthorizationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationService: ApplicationService,
     private readonly applicationInstallService: ApplicationInstallService,
@@ -70,7 +74,10 @@ export class OAuthService {
 
     const applicationRegistration = clientValidation;
 
-    if (applicationRegistration.oAuthClientSecretHash && !clientSecret) {
+    if (
+      isConfidentialApplicationOAuthClient(applicationRegistration) &&
+      !isNonEmptyString(clientSecret)
+    ) {
       return this.errorResponse(
         'invalid_client',
         'Client authentication required for confidential clients',
@@ -189,9 +196,22 @@ export class OAuthService {
       );
     }
 
-    await this.appTokenRepository.update(authCodeToken.id, {
-      revokedAt: new Date(),
-    });
+    // Atomic single-use consume: only the request that flips revokedAt from null proceeds, closing the check-then-use race.
+    const consumeResult = await this.appTokenRepository.update(
+      { id: authCodeToken.id, revokedAt: IsNull() },
+      { revokedAt: new Date() },
+    );
+
+    if (!consumeResult.affected) {
+      this.logger.warn(
+        `Authorization code replay detected for client ${clientId} (concurrent redemption).`,
+      );
+
+      return this.errorResponse(
+        'invalid_grant',
+        'Authorization code has already been used',
+      );
+    }
 
     if (!authCodeToken.userId || !authCodeToken.workspaceId) {
       return this.errorResponse(
@@ -219,6 +239,20 @@ export class OAuthService {
       );
     }
 
+    const grantedScope =
+      authCodeToken.context?.scope ??
+      applicationRegistration.oAuthScopes.join(' ');
+
+    // Recorded before the tokens exist, so a refresh token is never handed out
+    // without the grant that makes it redeemable and revocable.
+    await this.applicationAuthorizationService.recordAuthorization({
+      userId: authCodeToken.userId,
+      workspaceId: authCodeToken.workspaceId,
+      userWorkspaceId: userWorkspace.id,
+      applicationId: application.id,
+      scopes: this.parseScopes(grantedScope),
+    });
+
     const { applicationAccessToken, applicationRefreshToken } =
       await this.applicationTokenService.generateApplicationTokenPair({
         workspaceId: authCodeToken.workspaceId,
@@ -226,10 +260,6 @@ export class OAuthService {
         userId: authCodeToken.userId,
         userWorkspaceId: userWorkspace.id,
       });
-
-    const grantedScope =
-      authCodeToken.context?.scope ??
-      applicationRegistration.oAuthScopes.join(' ');
 
     this.logger.log(
       `Authorization code exchanged: client=${clientId} workspace=${authCodeToken.workspaceId} user=${authCodeToken.userId}`,
@@ -321,7 +351,10 @@ export class OAuthService {
     const applicationRegistration = clientValidation;
 
     // Confidential clients (those with a secret) must authenticate
-    if (applicationRegistration.oAuthClientSecretHash && !clientSecret) {
+    if (
+      isConfidentialApplicationOAuthClient(applicationRegistration) &&
+      !isNonEmptyString(clientSecret)
+    ) {
       return this.errorResponse(
         'invalid_client',
         'Client authentication required for confidential clients',
@@ -360,6 +393,18 @@ export class OAuthService {
         );
       }
 
+      if (isDefined(payload.userId)) {
+        const authorizationError = await this.consumeUserAuthorization({
+          userId: payload.userId,
+          workspaceId: payload.workspaceId,
+          applicationId: application.id,
+        });
+
+        if (authorizationError) {
+          return authorizationError;
+        }
+      }
+
       const { applicationAccessToken, applicationRefreshToken } =
         await this.applicationTokenService.renewApplicationTokens(payload);
 
@@ -393,6 +438,8 @@ export class OAuthService {
   }): Promise<{ success: boolean }> {
     const { token, clientId, clientSecret } = params;
 
+    let applicationRegistration: ApplicationRegistrationEntity | undefined;
+
     if (clientId) {
       const clientValidation = await this.validateClient(clientId);
 
@@ -410,15 +457,34 @@ export class OAuthService {
           return { success: false };
         }
       }
+
+      applicationRegistration = clientValidation;
     }
 
-    // Since our tokens are stateless JWTs, we can't truly revoke them.
-    // We validate the token to log that revocation was requested.
     try {
       const payload =
         await this.applicationTokenService.validateApplicationRefreshToken(
           token,
         );
+
+      // RFC 7009 §2.1: revoking a refresh token invalidates the authorization
+      // behind it, and only the client the token was issued to may ask for
+      // that. Access tokens stay stateless and live out their few minutes.
+      if (isDefined(applicationRegistration) && isDefined(payload.userId)) {
+        const application = await this.applicationRepository.findOne({
+          where: { id: payload.applicationId },
+        });
+
+        if (
+          application?.applicationRegistrationId === applicationRegistration.id
+        ) {
+          await this.revokeUserAuthorization({
+            userId: payload.userId,
+            workspaceId: payload.workspaceId,
+            applicationId: payload.applicationId,
+          });
+        }
+      }
 
       this.logger.log(
         `Token revocation requested for application ${payload.applicationId}`,
@@ -442,6 +508,14 @@ export class OAuthService {
     const clientValidation = await this.validateClient(clientId);
 
     if ('error' in clientValidation) {
+      return { active: false };
+    }
+
+    // RFC 7662 §2.1: a confidential client must authenticate to introspect; without its secret we disclose nothing.
+    if (
+      isConfidentialApplicationOAuthClient(clientValidation) &&
+      !isNonEmptyString(clientSecret)
+    ) {
       return { active: false };
     }
 
@@ -477,6 +551,16 @@ export class OAuthService {
         return { active: false };
       }
 
+      if (
+        isDefined(decoded.userId) &&
+        (await this.isAuthorizationRevoked({
+          userId: decoded.userId,
+          applicationId: decoded.applicationId,
+        }))
+      ) {
+        return { active: false };
+      }
+
       return {
         active: true,
         sub: decoded.sub,
@@ -489,7 +573,6 @@ export class OAuthService {
         iat: decoded.iat,
       };
     } catch {
-      // Try as access token (with signature verification)
       try {
         const payload =
           await this.applicationTokenService.validateApplicationAccessToken(
@@ -550,6 +633,126 @@ export class OAuthService {
     }
 
     return null;
+  }
+
+  // Refresh tokens issued before authorizations were recorded have no row to
+  // check against. Rejecting them would sign every live integration out the
+  // moment this ships, so the first refresh backfills the grant that was always
+  // implied. A revoked authorization keeps its row, so this never resurrects
+  // access the user turned off.
+  private async consumeUserAuthorization({
+    userId,
+    workspaceId,
+    applicationId,
+  }: {
+    userId: string;
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<OAuthErrorResponse | null> {
+    const authorization =
+      await this.applicationAuthorizationService.findByUserAndApplication({
+        userId,
+        applicationId,
+      });
+
+    if (isDefined(authorization?.revokedAt)) {
+      return this.errorResponse(
+        'invalid_grant',
+        'The user revoked this application access',
+      );
+    }
+
+    // Rechecked on every refresh, not just when backfilling: removing a member
+    // soft-deletes the membership, so an existing grant outlives it and nothing
+    // else in this path would notice.
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId, workspaceId },
+    });
+
+    if (!userWorkspace) {
+      return this.errorResponse(
+        'invalid_grant',
+        'User no longer has access to this workspace',
+      );
+    }
+
+    if (!isDefined(authorization)) {
+      await this.applicationAuthorizationService.backfillAuthorizationFromRefreshToken(
+        {
+          userId,
+          workspaceId,
+          userWorkspaceId: userWorkspace.id,
+          applicationId,
+        },
+      );
+
+      return null;
+    }
+
+    await this.applicationAuthorizationService.touchLastUsedAt(
+      authorization.id,
+    );
+
+    return null;
+  }
+
+  // A token predating the authorization record has no row to mark revoked, and
+  // the refresh path would then happily backfill a fresh active one. Lay the
+  // row down first so the revocation has something to stick to. If the
+  // membership is gone the refresh already fails on that, so there is nothing
+  // worth recording.
+  private async revokeUserAuthorization({
+    userId,
+    workspaceId,
+    applicationId,
+  }: {
+    userId: string;
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<void> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId, workspaceId },
+    });
+
+    if (isDefined(userWorkspace)) {
+      await this.applicationAuthorizationService.backfillAuthorizationFromRefreshToken(
+        {
+          userId,
+          workspaceId,
+          userWorkspaceId: userWorkspace.id,
+          applicationId,
+        },
+      );
+    }
+
+    await this.applicationAuthorizationService.revokeAuthorizationForApplication(
+      {
+        userId,
+        applicationId,
+      },
+    );
+  }
+
+  private async isAuthorizationRevoked({
+    userId,
+    applicationId,
+  }: {
+    userId: string;
+    applicationId: string;
+  }): Promise<boolean> {
+    const authorization =
+      await this.applicationAuthorizationService.findByUserAndApplication({
+        userId,
+        applicationId,
+      });
+
+    return isDefined(authorization?.revokedAt);
+  }
+
+  // RFC 6749 §3.3: scope is a space-delimited list, so an empty value has to
+  // collapse to no scopes rather than to one blank one.
+  private parseScopes(scope: string): string[] {
+    return scope.split(' ').filter((entry) => entry.length > 0);
   }
 
   private async findOrInstallApplication(

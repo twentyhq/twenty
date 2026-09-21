@@ -76,4 +76,4 @@ Nástroj pro scaffolding připne `twenty-sdk` a `twenty-client-sdk` ke své vlas
 
 Ponechání kteréhokoli balíčku pod `dependencies` ho vtáhne do runtime balíčku nainstalované aplikace, kde je jen mrtvou vahou. `twenty dev:build` vypíše varování, pokud je kterýkoli z nich stále uveden pod `dependencies`.
 
-Vlastní runtime závislosti vaší aplikace (knihovny, které vaše logické funkce skutečně importují za běhu) přidejte jako obvykle pod `dependencies`.
+Vlastní runtime závislosti vaší aplikace (knihovny, které vaše logické funkce skutečně importují za běhu) přidejte jako obvykle pod `dependencies`. Udržujte strom štíhlý: `dependencies` se instalují do běhové vrstvy s limitem 250 MB po rozbalení a při jeho překročení synchronizace nebo instalace selže s chybou překročení velikosti závislostí — UI knihovny a vývojářské nástroje patří do `devDependencies`.

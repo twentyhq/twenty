@@ -4,6 +4,7 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { act, renderHook } from '@testing-library/react';
+import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import {
@@ -25,35 +26,49 @@ describe('useCreateWidgetFromClick', () => {
     });
   });
 
-  it('should set dragged area and navigate to widget selection when called with a cellId', () => {
-    const { result } = renderHook(
-      () => ({
-        createWidget: useCreateWidgetFromClick(PAGE_LAYOUT_TEST_INSTANCE_ID),
-        draggedArea: useAtomComponentStateValue(
-          pageLayoutDraggedAreaComponentState,
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        ),
-        editingWidgetId: useAtomComponentStateValue(
-          pageLayoutEditingWidgetIdComponentState,
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        ),
-      }),
-      {
-        wrapper: ({ children }: { children: ReactNode }) => (
-          <PageLayoutTestWrapper>{children}</PageLayoutTestWrapper>
-        ),
-      },
-    );
+  it.each([false, true])(
+    'keeps the clicked area when interrupting a closing panel: %s',
+    (isPanelClosing) => {
+      const store = createStore();
+      const draggedAreaAtom = pageLayoutDraggedAreaComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      });
+      if (isPanelClosing) {
+        mockNavigatePageLayoutSidePanel.mockImplementationOnce(() => {
+          store.set(draggedAreaAtom, null);
+        });
+      }
+      const { result } = renderHook(
+        () => ({
+          createWidget: useCreateWidgetFromClick(PAGE_LAYOUT_TEST_INSTANCE_ID),
+          draggedArea: useAtomComponentStateValue(
+            pageLayoutDraggedAreaComponentState,
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+          editingWidgetId: useAtomComponentStateValue(
+            pageLayoutEditingWidgetIdComponentState,
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        }),
+        {
+          wrapper: ({ children }: { children: ReactNode }) => (
+            <PageLayoutTestWrapper store={store}>
+              {children}
+            </PageLayoutTestWrapper>
+          ),
+        },
+      );
 
-    act(() => {
-      result.current.createWidget.createWidgetFromClick('cell-2-3');
-    });
+      act(() => {
+        result.current.createWidget.createWidgetFromClick('cell-2-3');
+      });
 
-    expect(result.current.draggedArea).toEqual({ x: 2, y: 3, w: 1, h: 1 });
-    expect(result.current.editingWidgetId).toBeNull();
-    expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
-      sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
-      resetNavigationStack: true,
-    });
-  });
+      expect(result.current.draggedArea).toEqual({ x: 2, y: 3, w: 1, h: 1 });
+      expect(result.current.editingWidgetId).toBeNull();
+      expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
+        sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
+        resetNavigationStack: true,
+      });
+    },
+  );
 });

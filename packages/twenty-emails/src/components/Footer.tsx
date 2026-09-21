@@ -1,5 +1,5 @@
 import { type I18n } from '@lingui/core';
-import { Column, Container, Row } from '@react-email/components';
+import { Column, Container, Row } from 'react-email';
 import { Link } from 'src/components/Link';
 import { ShadowText } from 'src/components/ShadowText';
 

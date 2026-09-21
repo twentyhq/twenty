@@ -215,7 +215,6 @@ describe('compareDimensionValues', () => {
         direction: 'ASC',
       });
 
-      // Uses localeCompare on formatted values
       expect(result).toBeLessThan(0);
     });
   });

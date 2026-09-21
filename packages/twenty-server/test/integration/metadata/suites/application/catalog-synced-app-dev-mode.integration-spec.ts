@@ -3,17 +3,18 @@ import crypto from 'crypto';
 import request from 'supertest';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { type DataSource } from 'typeorm';
 
 // A published npm app lands on an instance through the marketplace catalog
-// sync as an instance-global, unowned registration (sourceType 'npm'). A dev
-// iterating locally on that app with `twenty app dev` must be able to sync it
-// into their own workspace without claiming ownership, without rotating the
-// shared OAuth client secret, and without mutating the shared registration
-// (which would delist the app from the marketplace for every workspace and
-// fight with the catalog sync cron).
+// sync as an instance-global, unowned registration (sourceType 'npm').
+// Uploading code under an application identity is an authorship claim, so dev
+// mode requires ownership of the registration. Once the workspace owns it, the
+// dev sync must still leave the shared registration untouched, without
+// rotating the shared OAuth client secret and without delisting the app from
+// the marketplace for every workspace or fighting with the catalog sync cron.
 describe('CLI dev mode on a catalog-synced (npm) app', () => {
   const baseUrl = `http://localhost:${APP_PORT}`;
 
@@ -106,7 +107,26 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
     expect(res.body.errors[0].message).toContain('not found');
   });
 
-  it('lets a workspace dev-sync the app and mint a dev token without claiming ownership or touching the shared registration', async () => {
+  it('refuses dev mode while no workspace owns the registration', async () => {
+    const res = await gqlRequest(
+      `mutation CreateDevApp($universalIdentifier: String!, $name: String!) {
+        createDevelopmentApplication(universalIdentifier: $universalIdentifier, name: $name) {
+          id
+        }
+      }`,
+      { universalIdentifier, name: 'Published Catalog App (dev)' },
+    ).expect(200);
+
+    expect(res.body.errors).toBeDefined();
+    expect(res.body.errors[0].message).toContain('claimed by no workspace');
+  });
+
+  it('lets a workspace dev-sync the app and mint a dev token once it owns the registration, without touching the shared registration', async () => {
+    await ds.query(
+      `UPDATE core."applicationRegistration" SET "workspaceId" = $1 WHERE id = $2`,
+      [SEED_APPLE_WORKSPACE_ID, registrationId],
+    );
+
     const createDevAppRes = await gqlRequest(
       `mutation CreateDevApp($universalIdentifier: String!, $name: String!) {
         createDevelopmentApplication(universalIdentifier: $universalIdentifier, name: $name) {
@@ -154,13 +174,11 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
 
     expect(syncRes.errors).toBeUndefined();
 
-    // The shared registration is untouched: still npm-sourced, unowned,
-    // listed in the marketplace catalog, and carrying the published name and
-    // manifest.
+    // The shared registration is untouched: still npm-sourced, still listed in
+    // the marketplace catalog, and carrying the published name and manifest.
     const registrationRow = await fetchRegistrationRow();
 
     expect(registrationRow.sourceType).toBe('npm');
-    expect(registrationRow.workspaceId).toBeNull();
     expect(registrationRow.name).toBe('Published Catalog App');
     expect(registrationRow.isListed).toBe(true);
     expect(registrationRow.manifest).toEqual({

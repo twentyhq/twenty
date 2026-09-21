@@ -1,13 +1,12 @@
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
-import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
+import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export type UseAiChatThreadClickOptions = {
   resetNavigationStack?: boolean;
@@ -20,12 +19,9 @@ export const useAiChatThreadClick = (
   const setThreadIdCreatedFromDraft = useSetAtomState(
     threadIdCreatedFromDraftState,
   );
-  const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
+  const { selectAiChatThread } = useSelectAiChatThread();
   const threadTitleFamilyCallback = useAtomComponentFamilyStateCallbackState(
     currentAiChatThreadTitleComponentFamilyState,
-  );
-  const agentChatUsageFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatUsageComponentFamilyState,
   );
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
@@ -33,7 +29,7 @@ export const useAiChatThreadClick = (
   const handleThreadClick = (thread: AgentChatThread) => {
     setThreadIdCreatedFromDraft(null);
 
-    switchThreadWithDraft(thread.id);
+    selectAiChatThread(thread.id);
 
     const clickedFamilyKey = { threadId: thread.id };
 
@@ -42,23 +38,9 @@ export const useAiChatThreadClick = (
       thread.title ?? null,
     );
 
-    const hasUsageData =
-      (thread.conversationSize ?? 0) > 0 &&
-      isDefined(thread.contextWindowTokens);
-    store.set(
-      agentChatUsageFamilyCallback(clickedFamilyKey),
-      hasUsageData
-        ? {
-            lastMessage: null,
-            conversationSize: thread.conversationSize ?? 0,
-            contextWindowTokens: thread.contextWindowTokens ?? 0,
-            inputTokens: thread.totalInputTokens,
-            outputTokens: thread.totalOutputTokens,
-            inputCredits: thread.totalInputCredits,
-            outputCredits: thread.totalOutputCredits,
-          }
-        : null,
-    );
+    if (isCurrentPathAiChatPage()) {
+      return;
+    }
 
     openAskAiPage({
       resetNavigationStack,

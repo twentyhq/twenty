@@ -5,7 +5,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -38,7 +38,7 @@ const DEFAULT_ACTION = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,
@@ -62,7 +62,7 @@ const meta: Meta<typeof WorkflowEditActionFormBuilder> = {
     ComponentDecorator,
     RouterDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
 };
 

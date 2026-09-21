@@ -1,4 +1,4 @@
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useIsOnAuthOrOnboardingPage } from '@/auth/hooks/useIsOnAuthOrOnboardingPage';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -12,7 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { isWorkspaceProvisioned } from 'twenty-shared/workspace';
 
 export const MinimalMetadataLoadEffect = () => {
-  const hasAccessTokenPair = useHasAccessTokenPair();
+  const isLogged = useIsLogged();
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -26,7 +26,7 @@ export const MinimalMetadataLoadEffect = () => {
 
   const isProvisionedWorkspace = isWorkspaceProvisioned(currentWorkspace);
   const shouldLoadRealMetadata =
-    hasAccessTokenPair && isProvisionedWorkspace && !isOnAuthOrOnboardingPage;
+    isLogged && isProvisionedWorkspace && !isOnAuthOrOnboardingPage;
 
   useEffect(() => {
     if (!isCurrentUserLoaded && !isDefined(currentUser)) {

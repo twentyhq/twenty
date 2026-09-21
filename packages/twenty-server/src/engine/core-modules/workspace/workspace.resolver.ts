@@ -20,6 +20,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -58,6 +59,7 @@ import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -84,6 +86,7 @@ const OriginHeader = createParamDecorator(
 @UseFilters(
   PreventNestToAutoLogGraphqlErrorsFilter,
   PermissionsGraphqlApiExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 export class WorkspaceResolver {
   constructor(
@@ -147,13 +150,6 @@ export class WorkspaceResolver {
     }
   }
 
-  @ResolveField(() => String, { nullable: true })
-  async routerModel(
-    @Parent() _workspace: WorkspaceEntity,
-  ): Promise<string | null> {
-    return 'auto';
-  }
-
   @ResolveField(() => [FeatureFlagDTO], { nullable: true })
   async featureFlags(
     @Parent() workspace: WorkspaceEntity,
@@ -172,6 +168,7 @@ export class WorkspaceResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
+  @AllowSuspendedWorkspace()
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: WorkspaceEntity) {
     await this.workspaceService.suspendWorkspace(id);
     return this.workspaceService.deleteWorkspace(id, true);
@@ -210,34 +207,6 @@ export class WorkspaceResolver {
     return isDefined(defaultRoleEntity)
       ? fromRoleEntityToRoleDto(defaultRoleEntity)
       : null;
-  }
-
-  @ResolveField(() => String, { nullable: true })
-  async fastModel(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<string | null> {
-    return workspace.fastModel;
-  }
-
-  @ResolveField(() => String, { nullable: true })
-  async smartModel(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<string | null> {
-    return workspace.smartModel;
-  }
-
-  @ResolveField(() => [String], { nullable: true })
-  async enabledAiModelIds(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<string[]> {
-    return workspace.enabledAiModelIds;
-  }
-
-  @ResolveField(() => Boolean, { nullable: false })
-  async useRecommendedModels(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    return workspace.useRecommendedModels;
   }
 
   @ResolveField(() => ApplicationDTO, { nullable: true })
@@ -379,6 +348,7 @@ export class WorkspaceResolver {
 
   @Query(() => PublicWorkspaceDataDTO)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @AllowSuspendedWorkspace()
   async getPublicWorkspaceDataByDomain(
     @OriginHeader() originHeader: string,
     @Args('origin', { nullable: true }) origin?: string,

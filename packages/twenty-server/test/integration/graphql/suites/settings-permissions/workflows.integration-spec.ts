@@ -55,7 +55,6 @@ describe('workflowsPermissions', () => {
         'Test Workflow Admin',
       );
 
-      // Clean up - delete the created workflow
       const destroyWorkflowOperation = destroyOneOperationFactory({
         objectMetadataSingularName: 'workflow',
         gqlFields: `
@@ -87,7 +86,6 @@ describe('workflowsPermissions', () => {
         'Test Workflow API Key',
       );
 
-      // Clean up - delete the created workflow
       const destroyWorkflowOperation = destroyOneOperationFactory({
         objectMetadataSingularName: 'workflow',
         gqlFields: `

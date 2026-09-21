@@ -6,7 +6,7 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'twenty-shared/types';
 
 type TestContext = {
   input: {

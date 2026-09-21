@@ -15,7 +15,7 @@ import { isEmail } from 'class-validator';
 import { type Request } from 'express';
 import { z } from 'zod';
 
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 
 const WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA = z.object({
   workspaceInviteHash: z.string().optional(),
@@ -39,7 +39,7 @@ const RELAY_STATE_BODY_SCHEMA = z.object({
     .pipe(WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA),
 });
 
-export type SAMLRequest = Omit<
+export type SamlRequest = Omit<
   Request,
   'user' | 'workspace' | 'workspaceMetadataVersion'
 > & {
@@ -55,16 +55,16 @@ export class SamlAuthStrategy extends PassportStrategy(
   MultiSamlStrategy,
   'saml',
 ) {
-  constructor(private readonly ssoService: SSOService) {
+  constructor(private readonly ssoService: SsoService) {
     super(
       {
         getSamlOptions: (req, callback) => {
           this.ssoService
-            .findSSOIdentityProviderById(req.params.identityProviderId)
+            .findSsoIdentityProviderById(req.params.identityProviderId)
             .then((identityProvider) => {
               if (
                 identityProvider &&
-                this.ssoService.isSAMLIdentityProvider(identityProvider)
+                this.ssoService.isSamlIdentityProvider(identityProvider)
               ) {
                 // IdP metadata XML typically has whitespace-formatted certificates
                 const sanitizedCertificate =

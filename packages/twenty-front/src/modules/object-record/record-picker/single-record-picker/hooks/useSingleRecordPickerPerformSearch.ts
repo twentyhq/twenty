@@ -1,3 +1,4 @@
+import { type ErrorLike } from '@apollo/client';
 import { useEffect, useMemo } from 'react';
 import { useStore } from 'jotai';
 
@@ -31,6 +32,9 @@ export const useSingleRecordPickerPerformSearch = ({
 }): {
   pickableMorphItems: RecordPickerPickableMorphItem[];
   loading: boolean;
+  selectedRecordsError: ErrorLike | undefined;
+  filteredSelectedRecordsError: ErrorLike | undefined;
+  recordsToSelectError: ErrorLike | undefined;
 } => {
   const store = useStore();
   const singleRecordPickerInstanceId = useAvailableComponentInstanceIdOrThrow(
@@ -64,17 +68,21 @@ export const useSingleRecordPickerPerformSearch = ({
     ? { id: { in: selectedIds } }
     : undefined;
 
-  const { loading: selectedRecordsLoading, searchRecords: selectedRecords } =
-    useObjectRecordSearchRecords({
-      objectNameSingulars: readableObjectNameSingulars,
-      filter: selectedIdsFilter,
-      skip: !hasSelectedIds,
-      searchInput: '',
-    });
+  const {
+    loading: selectedRecordsLoading,
+    searchRecords: selectedRecords,
+    error: selectedRecordsError,
+  } = useObjectRecordSearchRecords({
+    objectNameSingulars: readableObjectNameSingulars,
+    filter: selectedIdsFilter,
+    skip: !hasSelectedIds,
+    searchInput: '',
+  });
 
   const {
     loading: filteredSelectedRecordsLoading,
     searchRecords: filteredSelectedRecords,
+    error: filteredSelectedRecordsError,
   } = useObjectRecordSearchRecords({
     objectNameSingulars: readableObjectNameSingulars,
     filter: selectedIdsFilter,
@@ -86,19 +94,17 @@ export const useSingleRecordPickerPerformSearch = ({
   const notFilter = notFilterIds.length
     ? { not: { id: { in: notFilterIds } } }
     : undefined;
-  // `filter` only narrows the pool of NEW candidates to pick from — the
-  // already-selected value is looked up unfiltered above so it still
-  // renders even if it's since fallen out of scope.
-  const recordsToSelectFilter =
-    notFilter && filter ? { and: [notFilter, filter] } : (notFilter ?? filter);
-  const { loading: recordsToSelectLoading, searchRecords: recordsToSelect } =
-    useObjectRecordSearchRecords({
-      objectNameSingulars: readableObjectNameSingulars,
-      filter: recordsToSelectFilter,
-      limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
-      searchInput: searchFilter,
-      fetchPolicy: 'cache-and-network',
-    });
+  const {
+    loading: recordsToSelectLoading,
+    searchRecords: recordsToSelect,
+    error: recordsToSelectError,
+  } = useObjectRecordSearchRecords({
+    objectNameSingulars: readableObjectNameSingulars,
+    filter: notFilter,
+    limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
+    searchInput: searchFilter,
+    fetchPolicy: 'cache-and-network',
+  });
 
   const allSearchRecords = useMemo(
     () => [...selectedRecords, ...filteredSelectedRecords, ...recordsToSelect],
@@ -168,6 +174,9 @@ export const useSingleRecordPickerPerformSearch = ({
     });
 
   return {
+    selectedRecordsError,
+    filteredSelectedRecordsError,
+    recordsToSelectError,
     pickableMorphItems,
     loading:
       recordsToSelectLoading ||

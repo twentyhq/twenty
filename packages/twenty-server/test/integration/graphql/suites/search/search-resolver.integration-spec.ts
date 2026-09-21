@@ -177,7 +177,6 @@ describe('SearchResolver', () => {
     await deleteAllRecords('_pet');
     await deleteAllRecords('_surveyResult');
     await deleteAllRecords('_rocket');
-    ///
 
     await createManyOperation({
       objectMetadataSingularName: 'pet',
@@ -225,6 +224,8 @@ describe('SearchResolver', () => {
             'employmentHistory',
             'petCareAgreement',
             'workflow',
+            'messageCampaign',
+            'messageList',
           ],
           limit: 50,
         },
@@ -332,6 +333,8 @@ describe('SearchResolver', () => {
             'employmentHistory',
             'petCareAgreement',
             'workflow',
+            'messageCampaign',
+            'messageList',
           ],
           limit: 50,
         },

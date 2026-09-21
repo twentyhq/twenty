@@ -50,25 +50,25 @@ jobs:
           gh api "repos/$REPO/statuses/$HEAD_SHA" \
             -f state=pending \
             -f context=app-prod-parity-e2e \
-            -f description="Dispatching prod-parity e2e to ci-privileged"
+            -f description="Dispatching prod-parity e2e to twenty-factory"
 
-      - name: Mint ci-privileged dispatch token
+      - name: Mint twenty-factory dispatch token
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
           private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
           owner: twentyhq
-          repositories: ci-privileged
+          repositories: twenty-factory
           permission-actions: write
 
-      - name: Dispatch to ci-privileged
+      - name: Dispatch to twenty-factory
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           HEAD_SHA: ${{ steps.sha.outputs.head_sha }}
         run: |
           gh workflow run app-prod-parity-e2e.yaml \
-            --repo twentyhq/ci-privileged \
+            --repo twentyhq/twenty-factory \
             --ref main \
             -f head_sha="$HEAD_SHA"
 
@@ -82,4 +82,4 @@ jobs:
           gh api "repos/$REPO/statuses/$HEAD_SHA" \
             -f state=failure \
             -f context=app-prod-parity-e2e \
-            -f description="Failed to dispatch prod-parity e2e to ci-privileged"
+            -f description="Failed to dispatch prod-parity e2e to twenty-factory"

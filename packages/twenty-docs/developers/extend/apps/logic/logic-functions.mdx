@@ -79,6 +79,10 @@ yarn twenty dev:function:logs
 ```
 </Note>
 
+<Note>
+On the cloud, each run consumes workspace credits: a flat charge per invocation plus a per-millisecond charge for the time the function runs, so keeping `timeoutSeconds` tight and code fast keeps costs down. See [Credits](/user-guide/billing/capabilities/credits) for the rates.
+</Note>
+
 #### Route trigger payload
 
 When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the
@@ -171,6 +175,10 @@ For security reasons, response headers are restricted to an allow-list. Any head
 <Note>
 The status code must be a valid HTTP status code (between 100 and 599). Response header names are matched case-insensitively.
 </Note>
+
+#### Platform error responses
+
+Beyond your handler's own responses, the platform answers route calls directly in some situations: `404` when the route or function does not exist, `403` when the application is stopped, `429` when the execution rate limit is hit, and `422` when the application's production `dependencies` are too large to install — see [dependencies size limits](/developers/extend/apps/getting-started/project-structure#dependencies).
 
 #### Server route trigger
 
@@ -278,8 +286,30 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 The identifier is the resolver's `universalIdentifier` from your manifest. Register that URL with the provider.
 
+**Answering a verification GET.** Some providers verify an endpoint before they deliver to it, by sending a `GET` carrying a challenge to the same URL they will later `POST` events to — Meta's WhatsApp Cloud API is one. A server route answers `POST` only unless you say otherwise, so declare both methods:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+The challenge arrives in `event.queryStringParameters`, and returning a `Response` echoes it back to the provider on the same request. A string body is sent as `text/plain`, which is what these providers expect:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` replaces the default rather than adding to it, so `['GET']` alone makes the route reject `POST`. Only `GET` and `POST` are supported. Leave it unset unless the provider needs the second verb: a route that declares `GET` will have its resolver executed by any unauthenticated caller, including the crawlers and link unfurlers that send `GET` unprompted. Anything the platform does not have a method for is answered `405` without the resolver ever running.
+
 <Note>
-**The application must be claimed and installed on its owner workspace.** Because the resolver runs in the **owner workspace** (the workspace that owns the application registration), a server route trigger only works once the application has been *claimed* — i.e. it has an owner workspace — **and** that application is **installed on the owner workspace**. Until both are true the resolver has nowhere to run, so the route cannot be dispatched. An application that exposes a `serverRouteTriggerSettings` logic function therefore cannot be listed in the marketplace until it is claimed and installed on its owner workspace.
+**The application must be claimed and installed on its owner workspace.** Follow [Claiming your app](/developers/extend/apps/operations/publishing#claiming-your-app) to assign an owner, then install the app in that workspace. Until both are true, the resolver has nowhere to run and the server route returns `404` (`LOGIC_FUNCTION_NOT_FOUND`), even if the app is installed elsewhere. Marketplace search hides apps with server routes until this setup and all required server variables are complete. See [owner workspace costs and availability](/developers/extend/apps/operations/publishing#owner-workspace-costs-and-availability) for billing and operational details.
 </Note>
 
 **Resolver contract.** The SDK's `LogicFunctionConfig` type enforces this at compile time: as soon as you set `serverRouteTriggerSettings`, your handler is constrained to return either a `Response`, or `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (or a `Promise` of either). On the dispatch path, the `workspaceId` must be a workspace where the target function is installed, otherwise the request is rejected with `404`. A result that matches neither shape — including one whose identifiers are not UUIDs — is rejected with `502`.
@@ -314,10 +344,11 @@ When the caller must read the response body on the same request (challenge hands
 
 #### Database event trigger payload
 
-When a database event trigger invokes your logic function, it receives one `DatabaseEventPayload` per changed record. The payload combines metadata about the source workspace and object with the record-level event.
+When a database event trigger invokes your logic function, it receives one `DatabaseEventPayload` per changed record (or a `DatabaseEventBatchPayload` covering several records when `batchMode` is enabled). The payload combines metadata about the source workspace and object with the record-level event.
 
 ```ts
 import type {
+  DatabaseEventBatchPayload,
   DatabaseEventPayload,
   ObjectRecordCreateEvent,
   ObjectRecordDestroyEvent,
@@ -354,6 +385,14 @@ For permanent deletes, use `.destroyed`.
 `databaseEventTriggerSettings.updatedFields` filters which update events trigger the function.
 `event.properties.updatedFields` tells you which fields actually changed on the current event.
 </Note>
+
+`databaseEventTriggerSettings` accepts:
+
+| Property | Description |
+|----------|-------------|
+| `eventName` | Event to listen on, such as `person.updated`. Supports `*` for the object name, the operation, or both. |
+| `updatedFields` | Optional list of field names. On `.updated` events, only changes touching one of them trigger the function. |
+| `batchMode` | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
 
 Created event example:
 
@@ -420,6 +459,116 @@ const handler = async (event: PersonDestroyedEvent) => {
   };
 };
 ```
+
+#### Batching database events
+
+A bulk write emits many events at once: importing a mailbox, for instance, can update thousands of records in a single operation, and one call per record floods the queue. Set `batchMode` to receive them together:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    batchMode: true,
+  },
+});
+```
+
+The handler then receives a `DatabaseEventBatchPayload`, which carries the same metadata as `DatabaseEventPayload` but replaces the record-level fields with an `events` array:
+
+```ts
+type PeopleUpdatedBatch = DatabaseEventBatchPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (batch: PeopleUpdatedBatch) => {
+  const updatedEmails = batch.events.map(
+    (event) => event.properties.after.emails?.primaryEmail,
+  );
+
+  return { workspaceId: batch.workspaceId, updatedEmails };
+};
+```
+
+<Note>
+Batch size is not something a handler can rely on. The server decides how many events a call carries, capped at 200, and a batch holds anything from a single event up to that ceiling depending on how many the originating write produced. Write the handler to loop over `events` whatever its length.
+</Note>
+
+Events are grouped by the user who caused them before being batched, so every call covers a single actor and `context.workspaceMemberId` stays meaningful. `updatedFields` filtering is applied before batching, so a batch only contains records you asked for.
+
+Without `batchMode`, the handler keeps receiving one `DatabaseEventPayload` per record.
+
+#### Execution context
+
+Every handler receives a second argument describing the run itself, whatever triggered it. Where the first argument changes shape per trigger, this one does not:
+
+```ts
+import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+const handler = async (
+  event: DatabaseEventPayload,
+  { workspaceId, workspaceMemberId }: LogicFunctionExecutionContext,
+) => {
+  if (workspaceMemberId === null) {
+    throw new Error('This function must be triggered by a person');
+  }
+
+  return { reviewedBy: workspaceMemberId, workspaceId };
+};
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `workspaceId` | `string` | The workspace the run belongs to. |
+| `userWorkspaceId` | `string \| null` | The person who triggered the run, as their membership of this workspace. |
+| `workspaceMemberId` | `string \| null` | The same person as a workspace member record, which is what you link records to. |
+| `retryCount` | `number` | `0` on the first attempt. See [Background jobs](/developers/extend/apps/logic/background-jobs). |
+| `maxRetries` | `number` | Upper bound on application-requested retries. |
+
+`userWorkspaceId` and `workspaceMemberId` are `null` when nobody triggered the run: cron schedules, install hooks and unauthenticated webhooks have no person behind them. They are also `null` when the person has no workspace member record, or theirs has been deleted.
+
+<Note>
+**The context tells you who triggered the run.** What the run may *do* is a separate declaration, below.
+</Note>
+
+#### Whose access a call uses
+
+Every client — `CoreApiClient`, `MetadataApiClient` and `RestApiClient` — acts as the person who triggered the run: their role intersected with your application's, so the call can never do more than either of you. That is the default, and it means a person can never use your app to exceed their own permissions.
+
+When nobody triggered the run there is no person to act as, so the same client falls back to your application's own access: cron schedules, install hooks and unauthenticated webhooks need no special handling.
+
+Some calls legitimately need the application's own access even when a person *is* behind the run — reading your app's configuration records, or doing work that person could not do themselves. Build a second client for those:
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const asPerson = new CoreApiClient();
+const asApplication = new CoreApiClient({ runAs: 'application' });
+
+const handler = async (event: DatabaseEventPayload) => {
+  // config records only your app may read
+  const { slackUserLinks } = await asApplication.query({ ... });
+
+  // created as the person, so it is attributed and permission-checked
+  await asPerson.mutation({ createNote: { ... } });
+};
+```
+
+Build both once, at module scope, and every call site then says which access it uses by which client it calls. `RestApiClient` takes the same option:
+
+```ts
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const asApplication = new RestApiClient({ runAs: 'application' });
+```
+
+<Note>
+**A run nobody triggered acts as your application.** Cron schedules, install hooks and unauthenticated webhooks have no person behind them, so the default client falls back to your application's own access and keeps working. `runAs: 'application'` is only needed when you want that access in a run a person *did* trigger.
+
+Check `context.workspaceMemberId` when a function behaves differently depending on whether someone is behind it, for instance to attribute a record.
+</Note>
+
+The SDK helpers that reach your application's own resources always use its access and ignore `runAs`: the [key-value store](/developers/extend/apps/logic/key-value-store), [connections](/developers/extend/apps/logic/connections), [messaging channels](/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` and [credit charging](/developers/extend/apps/logic/credits).
 
 #### Exposing a function as an AI tool or workflow action
 
@@ -519,6 +668,60 @@ export default defineLogicFunction({
 });
 ```
 
+##### Rendering a tool call with a front component
+
+By default a tool call shows up in the AI chat as a step row: the tool's name, and a spinner until it returns. Point `toolTriggerSettings.frontComponentUniversalIdentifier` at one of your [front components](/developers/extend/apps/layout/front-components) and the chat renders that component inline instead, for every call to this tool.
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  },
+});
+```
+
+The component reads the call it is rendering with `useToolCall()`:
+
+```tsx src/front-components/invoice-preview.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useToolCall } from 'twenty-sdk/front-component';
+
+const InvoicePreview = () => {
+  const toolCall = useToolCall();
+
+  if (toolCall === null) {
+    return null;
+  }
+
+  if (toolCall.status !== 'output-available') {
+    return <p>Generating the invoice...</p>;
+  }
+
+  const { invoiceUrl } = toolCall.output ?? {};
+
+  return typeof invoiceUrl === 'string' ? (
+    <a href={invoiceUrl}>Open the invoice</a>
+  ) : (
+    <p>The invoice could not be generated.</p>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'invoice-preview',
+  component: InvoicePreview,
+});
+```
+
+The component mounts as soon as the agent has finished streaming its arguments, so it owns the whole call, not just the result. `toolCall.status` walks through `input-available`, the approval states when the tool needs one, and then `output-available`, `output-denied` or `output-error`; `input` is what the agent proposed, `output` what your handler returned. Render each state you care about, since the step row is no longer there to cover them.
+
+Both `input` and `output` are typed `Record<string, unknown>`, so narrow each field before you use it rather than casting. That matters most for anything you hand to the DOM: a value you drop into an `href` without checking it is a string is a link the tool's output controls.
+
+<Note>
+If the identifier matches no front component in the app, the chat falls back to the default step row. Front components in the AI chat run under the same [role your app declares](/developers/extend/apps/config/roles), so a widget can only read and write what the app itself is allowed to.
+</Note>
+
 ##### A complete workflow action example
 
 `workflowActionTriggerSettings` accepts four fields:
@@ -615,6 +818,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **Install hooks** — pre-install, post-install, and uninstall handlers — share this runtime but are declared with their own define functions and don't take trigger settings. See [Install Hooks](/developers/extend/apps/config/install-hooks) for `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, and `defineUninstallLogicFunction`.
 </Note>
 
+## Create a timeline activity
+
+Use `createTimelineActivity()` to publish an explicit domain event from a logic function. Define the event first as a [timeline activity type](/developers/extend/apps/data/timeline-activity-types), then address the type and objects by their stable universal identifiers:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty resolves universal identifiers to the installation-specific metadata IDs, validates that the timeline activity type belongs to the calling app, and snapshots its presentation metadata on the new activity.
+
+The required inputs are `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier`, and `targetRecordId`. You can also provide `happensAt`, `properties`, and `workspaceMemberId`. `happensAt` controls the event's position and displayed time in the timeline; it defaults to the creation time.
+
+To associate another record with the event, provide `linkedRecordId` and `linkedObjectMetadataUniversalIdentifier` together. You can additionally provide `linkedRecordCachedName` as a historical display fallback:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+The logic function's role needs write permission on the standard `timelineActivity` object. Keep explicit event types unbound from an `action`; an action-bound type already receives automatic audit events and would otherwise produce duplicate rows.
+
 ## Typed API clients (twenty-client-sdk)
 
 The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components.
@@ -662,7 +904,27 @@ const { createCompany } = await client.mutation({
     name: true,
   },
 });
+
+// Only on an object whose readability is PRIVATE: choose who can read the created record
+const { createContract } = await client.mutation({
+  createContract: {
+    __args: {
+      data: {
+        name: 'Acme Corp renewal',
+      },
+      shareWith: [
+        {
+          roleId: '7f0c1b6e-2d4a-4c8e-9b3f-5a6d7e8f9a0b',
+          accessLevel: 'READ_WRITE',
+        },
+      ],
+    },
+    id: true,
+  },
+});
 ```
+
+`shareWith` only matters on an object whose readability is `PRIVATE`; every object is `OPEN` by default, and on an `OPEN` object the argument is ignored. On a `PRIVATE` object it lists who gets access to the created record: each entry targets exactly one of `workspaceMemberId`, `roleId` or `everyone: true` with an `accessLevel` of `READ`, `READ_WRITE` or `FULL`. A workspace member creating a record always receives a `FULL` owner grant, so the argument is optional for them; a logic function acting as its application or an API key also receives a `FULL` grant for its role, and on a workspace where record sharing is enabled (`IS_RECORD_SHARING_ENABLED`) such callers, like a system caller, must pass `shareWith` or the create is rejected — while the flag is off a create without `shareWith` grants `FULL` access to everyone instead, so the record stays as open as it is today. Rows written while the flag is off are kept and take effect the moment the flag is turned on. Every entry must name a member or a role of the workspace. A logic function or API key shares through its role, so every holder of that role gets the same access to the records it creates; give a key whose records must stay private to it a role of its own.
 
 The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
 
@@ -696,7 +958,9 @@ setCompany(result.company);
 </Accordion>
 <Accordion title="MetadataApiClient" description="Workspace config, applications, and file uploads">
 
-`MetadataApiClient` ships pre-built with the SDK (no generation required). It queries the `/metadata` endpoint for workspace configuration, applications, and file uploads.
+`MetadataApiClient` ships pre-built with the SDK (no generation required). It queries the `/metadata` endpoint for workspace configuration, applications, and file uploads. It takes the same `runAs` option as `CoreApiClient` — see [Whose access a call uses](#whose-access-a-call-uses).
+
+It is also how an app reads and updates its own [application variables](/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime), in a logic function as in a front component. An application token only ever reaches its own application, in its own workspace.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -765,7 +1029,8 @@ Key points:
   When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
 
   - `TWENTY_API_URL` — Base URL of the Twenty API
-  - `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to your application's default function role
+  - `TWENTY_APP_ACCESS_TOKEN` — Short-lived key for the default access: a person's role intersected with your application's when someone is behind the run, your application's own role when nobody is. The person is whoever triggered the run in a logic function, whoever is looking at the page in a front component.
+  - `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Short-lived key scoped to your application's own role alone. Logic functions only, always injected there, and what `runAs: 'application'` uses.
 
-  You do **not** need to pass these to the clients — they read from `process.env` automatically. The API key's permissions are determined by the role declared with `defineApplicationRole()` (or referenced via `defaultRoleUniversalIdentifier` in `application-config.ts`).
+  You do **not** need to pass these to the clients — they read from `process.env` automatically, and [Whose access a call uses](#whose-access-a-call-uses) covers picking between them. Your application's own permissions are determined by the role declared with `defineApplicationRole()` (or referenced via `defaultRoleUniversalIdentifier` in `application-config.ts`); a run acting as a person can never exceed that role, nor theirs.
 </Note>

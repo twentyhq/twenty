@@ -94,6 +94,55 @@ describe('RestApiClient', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('should act as the application when asked to', async () => {
+    (globalThis as Record<string, unknown>).process = {
+      env: {
+        TWENTY_API_URL: 'https://api.twenty.test',
+        TWENTY_APP_ACCESS_TOKEN: 'delegated-token',
+        TWENTY_APP_APPLICATION_ACCESS_TOKEN: 'application-token',
+      },
+    };
+    const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
+
+    await new RestApiClient({ fetch: fetchMock, runAs: 'application' }).get(
+      '/rest/people',
+    );
+
+    expect(
+      (fetchMock.mock.calls[0][1].headers as Headers).get('Authorization'),
+    ).toBe('Bearer application-token');
+  });
+
+  it('should act as the triggering person by default', async () => {
+    (globalThis as Record<string, unknown>).process = {
+      env: {
+        TWENTY_API_URL: 'https://api.twenty.test',
+        TWENTY_APP_ACCESS_TOKEN: 'delegated-token',
+        TWENTY_APP_APPLICATION_ACCESS_TOKEN: 'application-token',
+      },
+    };
+    const fetchMock = vi.fn().mockResolvedValue(buildResponse('{}'));
+
+    await new RestApiClient({ fetch: fetchMock }).get('/rest/people');
+
+    expect(
+      (fetchMock.mock.calls[0][1].headers as Headers).get('Authorization'),
+    ).toBe('Bearer delegated-token');
+  });
+
+  it('should name the application token when it is the one missing', async () => {
+    (globalThis as Record<string, unknown>).process = {
+      env: { TWENTY_API_URL: 'https://api.twenty.test' },
+    };
+
+    await expect(
+      new RestApiClient({
+        fetch: vi.fn(),
+        runAs: 'application',
+      }).get('/rest/people'),
+    ).rejects.toThrow(/TWENTY_APP_APPLICATION_ACCESS_TOKEN/);
+  });
+
   it('should throw a RestApiClientError when the access token is missing', async () => {
     (globalThis as Record<string, unknown>).process = {
       env: { TWENTY_API_URL: 'https://api.twenty.test' },

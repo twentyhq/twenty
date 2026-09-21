@@ -76,4 +76,4 @@ Lo scaffolder blocca `twenty-sdk` e `twenty-client-sdk` alla propria versione �
 
 Mantenere uno qualsiasi dei pacchetti sotto `dependencies` lo inserisce nel bundle di runtime dell'app installata, dove rappresenta solo zavorra. `twenty dev:build` emette un avviso quando uno dei due è ancora elencato sotto `dependencies`.
 
-Aggiungi come di consueto le dipendenze di runtime proprie della tua app (librerie che le tue funzioni di logica importano effettivamente a runtime) sotto `dependencies`.
+Aggiungi come di consueto le dipendenze di runtime proprie della tua app (librerie che le tue funzioni di logica importano effettivamente a runtime) sotto `dependencies`. Mantieni l'albero snello: le `dependencies` vengono installate in un livello di runtime con un limite di 250 MB non compressi e una sincronizzazione o un'installazione non va a buon fine con un errore di dimensione delle dipendenze oltre tale soglia — le librerie UI e gli strumenti di sviluppo appartengono a `devDependencies`.

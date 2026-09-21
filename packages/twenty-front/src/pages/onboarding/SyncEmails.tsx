@@ -79,7 +79,7 @@ export const SyncEmails = () => {
   };
 
   const handleSkip = async () => {
-    await skipSyncEmailOnboardingStep();
+    await skipSyncEmailOnboardingStep({ isAutoSkipped: false });
 
     setOnboardingFreeCredits((current) => ({
       ...current,

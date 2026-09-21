@@ -15,7 +15,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowRunStatus,
@@ -43,7 +43,7 @@ export class WorkflowCleanWorkflowRunsCronJob {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
@@ -137,14 +137,12 @@ export class WorkflowCleanWorkflowRunsCronJob {
   private async hasRunsToClean(workspaceId: string): Promise<boolean> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workflowRunRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            WorkflowRunWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
+        const workflowRunRepository = this.workspaceOrmManager.getRepository(
+          WorkflowRunWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
 
         const hasOldRuns = await workflowRunRepository.exists({
           where: getRunsToCleanFindOptions(),

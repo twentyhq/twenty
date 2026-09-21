@@ -21,9 +21,9 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -69,7 +69,7 @@ const SETTINGS_OBJECT_RELATION_TABLE_METADATA: TableMetadata<FieldMetadataItem> 
     ],
     initialSort: {
       fieldName: 'label',
-      orderBy: 'AscNullsLast',
+      direction: 'asc',
     },
   };
 
@@ -207,23 +207,20 @@ export const SettingsObjectRelationsTable = ({
           dropdownOffset={{ x: 0, y: 8 }}
           clickableComponent={
             <Button
-              Icon={IconFilter}
-              size="medium"
-              variant="secondary"
-              accent="default"
-              ariaLabel={t`Filter`}
+              startIcon={<IconFilter />}
+              size="md"
+              aria-label={t`Filter`}
+              variant="outline"
             />
           }
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <MenuItemToggle
-                  LeftIcon={IconArchive}
-                  onToggleChange={() => setShowInactive(!showInactive)}
-                  toggled={showInactive}
-                  text={t`Inactive`}
-                  toggleSize="small"
-                />
+                <SettingsRow
+                  startIcon={<IconArchive />}
+                  onCheckedChange={() => setShowInactive(!showInactive)}
+                  checked={showInactive}
+                >{t`Inactive`}</SettingsRow>
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }

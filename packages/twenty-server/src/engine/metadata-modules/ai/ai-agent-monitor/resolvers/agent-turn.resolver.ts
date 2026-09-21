@@ -1,4 +1,6 @@
-import { Logger, UseGuards } from '@nestjs/common';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { Logger, UseGuards, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
@@ -22,21 +24,21 @@ import { RunEvaluationInputJob } from 'src/engine/metadata-modules/ai/ai-agent-m
 import { AgentTurnGraderService } from 'src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 @UseGuards(
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
 )
 @MetadataResolver()
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class AgentTurnResolver {
   private readonly logger = new Logger(AgentTurnResolver.name);
 
   constructor(
-    @InjectWorkspaceScopedRepository(AgentTurnEntity)
-    private readonly turnRepository: WorkspaceScopedRepository<AgentTurnEntity>,
-    @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
-    private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
+    @InjectAgentHistoryRepository('agentTurn')
+    private readonly turnRepository: AgentHistoryRepository<AgentTurnEntity>,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly graderService: AgentTurnGraderService,
@@ -70,23 +72,28 @@ export class AgentTurnResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<AgentTurnEntity> {
-    // Resolver-level ownership check: throws if the agent doesn't belong
-    // to the caller's workspace. Defense in depth: the job also re-fetches
-    // the agent through a workspace-scoped repository.
+    // Defense in depth: the job also re-fetches the agent through a
+    // workspace-scoped repository.
     await this.agentService.findOneAgentById({
       id: agentId,
       workspaceId: workspace.id,
     });
 
-    const savedThread = await this.threadRepository.save(workspace.id, {
-      userWorkspaceId,
-      title: `Eval: ${input.substring(0, 50)}...`,
-    });
+    const savedThread = await this.threadRepository.insertAndReturnOne(
+      workspace.id,
+      {
+        userWorkspaceId,
+        title: `Eval: ${input.substring(0, 50)}...`,
+      },
+    );
 
-    const savedTurn = await this.turnRepository.save(workspace.id, {
-      threadId: savedThread.id,
-      agentId,
-    });
+    const savedTurn = await this.turnRepository.insertAndReturnOne(
+      workspace.id,
+      {
+        threadId: savedThread.id,
+        agentId,
+      },
+    );
 
     await this.messageQueueService.add<{
       turnId: string;

@@ -3,12 +3,13 @@ import { type ReactNode } from 'react';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 
 export type TabListProps = {
+  'aria-label': string;
   tabs: SingleTabProps[];
   loading?: boolean;
   behaveAsLinks?: boolean;
   className?: string;
-  isInSidePanel?: boolean;
   componentInstanceId: string;
   onChangeTab?: (tabId: string) => void;
   rightComponent?: ReactNode;
+  centerTabs?: boolean;
 };

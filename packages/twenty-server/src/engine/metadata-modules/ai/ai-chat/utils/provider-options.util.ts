@@ -32,17 +32,24 @@ export const getCallLevelProviderOptions = ({
     case AI_SDK_ANTHROPIC:
       return {
         ...(providerOptions ?? {}),
-        anthropic: { cacheControl: { type: 'ephemeral' } },
+        anthropic: {
+          ...(providerOptions?.anthropic ?? {}),
+          cacheControl: { type: 'ephemeral' },
+        },
       };
     case AI_SDK_OPENAI:
       return {
         ...(providerOptions ?? {}),
-        openai: { store: false, ...(promptCacheKey ? { promptCacheKey } : {}) },
+        openai: {
+          ...(providerOptions?.openai ?? {}),
+          store: false,
+          ...(promptCacheKey ? { promptCacheKey } : {}),
+        },
       };
     case AI_SDK_AZURE:
       return {
         ...(providerOptions ?? {}),
-        azure: { store: false },
+        azure: { ...(providerOptions?.azure ?? {}), store: false },
       };
     default:
       return providerOptions;

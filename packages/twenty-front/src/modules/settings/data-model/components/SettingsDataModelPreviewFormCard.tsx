@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 
 import { StyledFormCardTitle } from '@/settings/data-model/fields/components/StyledFormCardTitle';
 import { Trans } from '@lingui/react/macro';
-import { Card, CardContent } from 'twenty-ui/surfaces';
+import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -15,13 +15,13 @@ type SettingsDataModelPreviewFormCardProps = {
 };
 
 const StyledPreviewContainerWrapper = styled.div`
-  > * {
+  > div {
     background-color: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 
 const StyledFormContainerWrapper = styled.div`
-  > * {
+  > div {
     padding: 0;
   }
 `;

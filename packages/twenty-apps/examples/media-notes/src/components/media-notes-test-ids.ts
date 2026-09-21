@@ -1,0 +1,15 @@
+export const MEDIA_NOTES_TEST_IDS = {
+  root: 'media-notes-root',
+  recordAudioButton: 'media-notes-record-audio',
+  recordVideoButton: 'media-notes-record-video',
+  recordingTimer: 'media-notes-recording-timer',
+  stopRecordingButton: 'media-notes-stop-recording',
+  cancelRecordingButton: 'media-notes-cancel-recording',
+  captureStatus: 'media-notes-capture-status',
+  capturedFile: 'media-notes-captured-file',
+  capturedAudio: 'media-notes-captured-audio',
+  capturedVideo: 'media-notes-captured-video',
+  savedRecord: 'media-notes-saved-record',
+  attachError: 'media-notes-attach-error',
+  retryAttachButton: 'media-notes-retry-attach',
+};

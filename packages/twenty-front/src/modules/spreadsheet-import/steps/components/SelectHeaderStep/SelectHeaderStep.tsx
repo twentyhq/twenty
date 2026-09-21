@@ -1,3 +1,4 @@
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCallback, useState } from 'react';
@@ -5,8 +6,6 @@ import { useCallback, useState } from 'react';
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { type ImportedRow } from '@/spreadsheet-import/types';
-
-import { ModalContent } from 'twenty-ui/surfaces';
 
 import { useComputeColumnSuggestionsAndAutoMatch } from '@/spreadsheet-import/hooks/useComputeColumnSuggestionsAndAutoMatch';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -44,9 +43,7 @@ export const SelectHeaderStep = ({
   onBack,
   currentStepState,
 }: SelectHeaderStepProps) => {
-  const [selectedRowIndexes, setSelectedRowIndexes] = useState<
-    ReadonlySet<number>
-  >(new Set([0]));
+  const [selectedRowIndex, setSelectedRowIndex] = useState(0);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -89,7 +86,6 @@ export const SelectHeaderStep = ({
   );
 
   const handleOnContinue = useCallback(async () => {
-    const [selectedRowIndex] = Array.from(new Set(selectedRowIndexes));
     // We consider data above header to be redundant
     const trimmedData = importedRows.slice(selectedRowIndex + 1);
 
@@ -98,24 +94,31 @@ export const SelectHeaderStep = ({
     await handleContinue(importedRows[selectedRowIndex], trimmedData);
 
     setIsLoading(false);
-  }, [handleContinue, importedRows, selectedRowIndexes]);
+  }, [handleContinue, importedRows, selectedRowIndex]);
 
   const { t } = useLingui();
 
   return (
     <>
-      <ModalContent>
+      <Dialog.Body
+        style={{
+          display: 'flex',
+          flex: '1 1 0%',
+          flexDirection: 'column',
+          padding: 'var(--t-spacing-10)',
+        }}
+      >
         <StyledHeadingContainer>
           <Heading title={t`Select header row`} />
         </StyledHeadingContainer>
         <StyledTableContainer>
           <SelectHeaderTable
             importedRows={importedRows}
-            selectedRowIndexes={selectedRowIndexes}
-            setSelectedRowIndexes={setSelectedRowIndexes}
+            selectedRowIndex={selectedRowIndex}
+            onSelectedRowChange={setSelectedRowIndex}
           />
         </StyledTableContainer>
-      </ModalContent>
+      </Dialog.Body>
       <StepNavigationButton
         onContinue={handleOnContinue}
         onBack={onBack}

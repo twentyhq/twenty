@@ -37,6 +37,7 @@ export default defineApplication({
 * 설치 전, 설치 후, 제거 함수는 매니페스트 빌드 중 자동으로 감지됩니다 — `defineApplication()`에서 별도로 참조할 필요가 없습니다.
 * 하위 호환성을 위해 `defaultRoleUniversalIdentifier`를 명시적으로 전달하는 방식도 계속 지원되지만, 이제는 `defineApplicationRole()` 사용을 권장하며 이전 방식은 더 이상 권장되지 않습니다.
 * `serverVariables`는 인스턴스 범위의 구성 및 비밀(예: API 키)입니다. `applicationVariables`와 달리, 매니페스트에는 값을 선언하지 않으며, 워크스페이스 운영자가 앱 설정에서 값을 채워 넣으면 설정된 이후에만 로직 함수에 주입됩니다.
+* 두 종류의 변수 모두 `isDeprecated: true`를 허용합니다. 변수를 삭제하는 대신 사용 중지할 때 사용하십시오. 키 선언을 유지하면 저장된 값이 보존되고(삭제하면 운영자가 입력한 값이 사라집니다), 변수는 여전히 주입되므로 코드에서 `process.env.NEW_API_KEY ?? process.env.API_KEY`로 폴백할 수 있습니다. 더 이상 사용되지 않는 변수는 값이 없어지면 앱 설정에서 사라지며, 앱의 구성 검사에 절대 포함되지 않습니다. 따라서 `isDeprecated`가 `isRequired`보다 우선합니다.
 * 앱의 **Settings** 탭에서 기본 변수 구성 섹션 대신 사용자 지정 구성 UI를 렌더링하려면, 별도의 파일에서 [`defineSettingsFrontComponent()`](/l/ko/developers/extend/apps/layout/front-components#custom-settings-component)를 사용하여 프론트 컴포넌트를 선언하세요. 앱당 하나만 허용됩니다. 시스템에서 관리하는 섹션(auto-upgrade, App URL, connections)은 항상 표시된 상태로 유지됩니다.
 
 ## 변수 유형
@@ -96,7 +97,7 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 
 [`defineApplicationRole()`](/l/ko/developers/extend/apps/config/roles)로 선언된 역할은 앱의 로직 함수와 프런트엔드 컴포넌트가 무엇에 접근할 수 있는지를 제어합니다:
 
-* `TWENTY_APP_ACCESS_TOKEN`로 주입되는 런타임 토큰은 이 역할에서 파생됩니다.
+* 로직 함수에 주입되는 런타임 토큰은 이 역할에서 파생됩니다. 사용자 권한으로 작동하는 호출은 해당 사용자가 할 수 있는 작업으로 더욱 제한되므로, 어느 쪽의 권한도 초과할 수 없습니다. [호출이 사용하는 액세스 권한](/l/ko/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses)을 참조하세요.
 * 타입드 API 클라이언트는 해당 역할에 부여된 권한으로 제한됩니다.
 * 최소 권한 원칙을 따르세요: 함수에 필요한 권한만 선언하세요.
 

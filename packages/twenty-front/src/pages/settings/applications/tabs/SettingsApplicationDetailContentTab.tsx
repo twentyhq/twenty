@@ -7,15 +7,17 @@ import { useState } from 'react';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/typography';
-import { SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
+import { SearchInput } from 'twenty-ui/primitives/input';
 import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
 import { type Application } from '~/generated-metadata/graphql';
 import {
   type ApplicationContentRow,
   SettingsApplicationContentSubtable,
 } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
+import { useInstalledTimelineActivityTypes } from '~/pages/settings/applications/hooks/useInstalledTimelineActivityTypes';
+import { getSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/getSettingsApplicationTimelineActivityTypes';
+import { filterSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/filterSettingsApplicationTimelineActivityTypes';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<
@@ -59,6 +61,11 @@ export const SettingsApplicationDetailContentTab = ({
   applicationInfo,
 }: SettingsApplicationDetailContentTabProps) => {
   const { t } = useLingui();
+  const isInstalledApplication = isDefined(installedApplication);
+
+  const { installedTimelineActivityTypes } = useInstalledTimelineActivityTypes({
+    isInstalledApplication,
+  });
 
   const { objectRows, fieldRows } =
     useComputeObjectAndFieldsContentForApplication({
@@ -80,7 +87,7 @@ export const SettingsApplicationDetailContentTab = ({
   });
 
   const fallbackApplicationData = {
-    logo: applicationInfo?.logo,
+    logoUrl: applicationInfo?.logoUrl,
     name: applicationInfo?.name,
   };
 
@@ -152,6 +159,33 @@ export const SettingsApplicationDetailContentTab = ({
   const [searchTerm, setSearchTerm] = useState('');
   const normalizedSearch = normalizeSearchText(searchTerm);
 
+  const timelineActivityTypes = getSettingsApplicationTimelineActivityTypes({
+    applicationId,
+    isInstalledApplication,
+    installedTimelineActivityTypes,
+    manifestTimelineActivityTypes: manifestContent?.timelineActivityTypes ?? [],
+  });
+  const filteredTimelineActivityTypes =
+    filterSettingsApplicationTimelineActivityTypes({
+      timelineActivityTypes,
+      searchTerm,
+    });
+  const timelineActivityTypeRows: ApplicationContentRow[] =
+    filteredTimelineActivityTypes.map((timelineActivityType) => ({
+      key: timelineActivityType.id,
+      name: timelineActivityType.label,
+      icon: timelineActivityType.icon ?? undefined,
+      secondary: isDefined(timelineActivityType.action)
+        ? `${timelineActivityType.name} · ${timelineActivityType.action}`
+        : timelineActivityType.name,
+      link: isInstalledApplication
+        ? getSettingsPath(SettingsPath.ApplicationTimelineActivityTypeDetail, {
+            applicationId,
+            timelineActivityTypeId: timelineActivityType.id,
+          })
+        : undefined,
+    }));
+
   const filtered = {
     objects: filterRows(objectRows, normalizedSearch),
     fields: filterRows(fieldRows, normalizedSearch),
@@ -179,7 +213,8 @@ export const SettingsApplicationDetailContentTab = ({
     filtered.agents.length > 0 ||
     filtered.skills.length > 0 ||
     filtered.roles.length > 0 ||
-    filtered.connectionProviders.length > 0;
+    filtered.connectionProviders.length > 0 ||
+    timelineActivityTypeRows.length > 0;
 
   if (!hasData && !hasLayout && !hasLogic && normalizedSearch === '') {
     return null;
@@ -187,17 +222,17 @@ export const SettingsApplicationDetailContentTab = ({
 
   return (
     <>
-      <Section>
+      <Section.Root>
         <SearchInput
           placeholder={t`Search...`}
           value={searchTerm}
           onChange={setSearchTerm}
         />
-      </Section>
+      </Section.Root>
 
       {hasData && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Data`}
             description={t`Schema this app contributes to your workspace`}
           />
@@ -215,12 +250,12 @@ export const SettingsApplicationDetailContentTab = ({
               fallbackApplicationData={fallbackApplicationData}
             />
           </Table>
-        </Section>
+        </Section.Root>
       )}
 
       {hasLayout && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Layout`}
             description={t`How records, pages, and navigation are displayed`}
           />
@@ -256,12 +291,12 @@ export const SettingsApplicationDetailContentTab = ({
               fallbackApplicationData={fallbackApplicationData}
             />
           </Table>
-        </Section>
+        </Section.Root>
       )}
 
       {hasLogic && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Logic`}
             description={t`Automation, AI, and access this app provides`}
           />
@@ -296,8 +331,14 @@ export const SettingsApplicationDetailContentTab = ({
               applicationId={applicationId}
               fallbackApplicationData={fallbackApplicationData}
             />
+            <SettingsApplicationContentSubtable
+              title={t`Timeline activity types`}
+              rows={timelineActivityTypeRows}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
+            />
           </Table>
-        </Section>
+        </Section.Root>
       )}
     </>
   );

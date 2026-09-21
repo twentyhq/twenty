@@ -8,9 +8,16 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { RecordTableWidgetContextStoreInitEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetContextStoreInitEffect';
 import { RecordTableWidgetViewLoadEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetViewLoadEffect';
-import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID } from '@/object-record/record-table-widget/constants/MissingRecordTableWidgetPageLayoutId';
+import {
+  RecordTableWidgetContext,
+  type RecordTableWidgetJunctionCreateThrough,
+  type RecordTableWidgetNestedRelationCreateThrough,
+} from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { useRecordTableWidgetFieldUpdate } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldUpdate';
+import { useUpdateRecordTableWidgetViewDraft } from '@/page-layout/widgets/record-table/hooks/useUpdateRecordTableWidgetViewDraft';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -26,6 +33,8 @@ type RecordTableWidgetProviderProps = PropsWithChildren<{
   recordLimit?: number;
   instanceIdSuffix?: string;
   contextStoreViewType?: ContextStoreViewType;
+  nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
+  junctionCreateThrough?: RecordTableWidgetJunctionCreateThrough;
 }>;
 
 export const RecordTableWidgetProvider = ({
@@ -35,6 +44,8 @@ export const RecordTableWidgetProvider = ({
   recordLimit,
   instanceIdSuffix,
   contextStoreViewType,
+  nestedRelationCreateThrough,
+  junctionCreateThrough,
   children,
 }: RecordTableWidgetProviderProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -85,16 +96,38 @@ export const RecordTableWidgetProvider = ({
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
+  const pageLayoutId = pageLayoutComponentInstanceContext?.instanceId;
+
+  const { handleFieldUpdated: updateViewDraftField } =
+    useRecordTableWidgetFieldUpdate({
+      pageLayoutId: pageLayoutId ?? MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID,
+      widgetId,
+    });
+
+  const { updateRecordTableWidgetViewDraft: updateViewDraft } =
+    useUpdateRecordTableWidgetViewDraft({
+      pageLayoutId: pageLayoutId ?? MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID,
+      widgetId,
+    });
+
   const recordTableWidgetContext = useMemo(
     () => ({
       isPageLayoutInEditMode,
-      pageLayoutId: pageLayoutComponentInstanceContext?.instanceId,
+      pageLayoutId,
       widgetId,
+      nestedRelationCreateThrough,
+      junctionCreateThrough,
+      updateViewDraftField,
+      updateViewDraft,
     }),
     [
       isPageLayoutInEditMode,
-      pageLayoutComponentInstanceContext?.instanceId,
+      pageLayoutId,
       widgetId,
+      nestedRelationCreateThrough,
+      junctionCreateThrough,
+      updateViewDraftField,
+      updateViewDraft,
     ],
   );
 

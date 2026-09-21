@@ -25,7 +25,6 @@ export const parseCronExpression = (
   try {
     CronExpressionParser.parse(normalized, { tz: 'UTC' });
 
-    // Handle different cron formats that cron-parser accepts
     if (parts.length === 4) {
       // Reduced format: hour day month dayOfWeek (minute defaults to 0)
       return {

@@ -11,10 +11,10 @@ import { type OnboardingInstallableApp } from '@/onboarding/types/OnboardingInst
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { IconButton, MainButton } from 'twenty-ui/components';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
-import { IconButton, MainButton } from 'twenty-ui/input';
-import { AnimatedIconCrossfade } from 'twenty-ui/layout';
+import { AnimatedIconCrossfade } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -97,7 +97,7 @@ const StyledInstallButton = styled.div`
 `;
 
 type InstallAppsContentProps = {
-  apps: (OnboardingInstallableApp & { logo: string | null })[];
+  apps: (OnboardingInstallableApp & { logoUrl: string | null })[];
   selectedUniversalIdentifiers: string[];
   creditsRewardPerApp?: number;
   isCompleting: boolean;
@@ -160,11 +160,11 @@ export const InstallAppsContent = ({
               return (
                 <StyledAppRow key={app.universalIdentifier}>
                   <Avatar
-                    avatarUrl={getAbsoluteImageUrl(app.logo)}
-                    placeholder={labelText}
-                    placeholderColorSeed={app.universalIdentifier}
+                    src={getAbsoluteImageUrl(app.logoUrl)}
+                    name={labelText}
+                    colorSeed={app.universalIdentifier}
                     size="lg"
-                    type="squared"
+                    shape="square"
                   />
                   <StyledAppText>
                     <StyledAppLabel>{labelText}</StyledAppLabel>
@@ -173,10 +173,10 @@ export const InstallAppsContent = ({
                     </StyledAppDescription>
                   </StyledAppText>
                   <IconButton
-                    size="small"
-                    variant="secondary"
-                    accent={isSelected ? 'blue' : 'default'}
-                    ariaLabel={
+                    size="sm"
+                    variant="outline"
+                    color={isSelected ? 'accent' : 'neutral'}
+                    aria-label={
                       isSelected
                         ? t`Deselect ${labelText}`
                         : t`Select ${labelText}`
@@ -202,13 +202,12 @@ export const InstallAppsContent = ({
           {hasApps && (
             <StyledInstallButton>
               <MainButton
-                title={t`Install`}
                 onClick={onInstall}
                 disabled={
                   isCompleting || !isNonEmptyArray(selectedUniversalIdentifiers)
                 }
                 fullWidth
-              />
+              >{t`Install`}</MainButton>
             </StyledInstallButton>
           )}
           <OnboardingSkipButton onClick={onSkip} disabled={isCompleting} />

@@ -1,3 +1,5 @@
+import { objectColorsDraftState } from '@/layout-customization/states/objectColorsDraftState';
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { useSaveCommandMenuItemsDraft } from '@/command-menu-item/edit/hooks/useSaveCommandMenuItemsDraft';
 import { useCommandMenuItemsDraftState } from '@/command-menu-item/hooks/useCommandMenuItemsDraftState';
 import { useExitLayoutCustomizationMode } from '@/layout-customization/hooks/useExitLayoutCustomizationMode';
@@ -13,21 +15,22 @@ import { useUpdatePageLayoutWithTabsAndWidgets } from '@/page-layout/hooks/useUp
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
-import { isDefaultPageLayoutId } from '@/page-layout/utils/isDefaultPageLayoutId';
+import { toDraftPageLayout } from '@/page-layout/utils/toDraftPageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
 export const useSaveLayoutCustomization = () => {
+  const { updateOneObjectMetadataItem, refetchCommandMenuItems } =
+    useUpdateOneObjectMetadataItem();
   const [isSaving, setIsSaving] = useState(false);
   const store = useStore();
   const { t } = useLingui();
@@ -35,7 +38,7 @@ export const useSaveLayoutCustomization = () => {
   const { saveDraft } = useSaveNavigationMenuItemsDraft();
   const { saveCommandMenuItemsDraft } = useSaveCommandMenuItemsDraft();
   const { isDirty: isCommandMenuItemsDirty } = useCommandMenuItemsDraftState();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { updatePageLayoutWithTabsAndWidgets } =
     useUpdatePageLayoutWithTabsAndWidgets();
   const { createPendingFieldsWidgetViews } =
@@ -48,6 +51,50 @@ export const useSaveLayoutCustomization = () => {
   const save = useCallback(async () => {
     setIsSaving(true);
     try {
+      const objectColorEntries = Object.entries(
+        store.get(objectColorsDraftState.atom),
+      );
+
+      if (objectColorEntries.length > 0) {
+        // TODO: replace with an updateManyObjectMetadataItems endpoint, landing
+        // in its own PR after this one, so saving colours is a single request.
+        // Each update otherwise refetches the command menu, so send them
+        // together and refetch once.
+        const colorResults = await Promise.all(
+          objectColorEntries.map(async ([objectId, color]) => ({
+            objectId,
+            color,
+            result: await updateOneObjectMetadataItem({
+              idToUpdate: objectId,
+              updatePayload: { color },
+              shouldRefetchCommandMenuItems: false,
+            }),
+          })),
+        );
+
+        const savedColorByObjectId = new Map(
+          colorResults
+            .filter(({ result }) => result.status === 'successful')
+            .map(({ objectId, color }) => [objectId, color]),
+        );
+
+        // The picker stays live while these run, so only drop an entry the user
+        // has not changed again since it was sent.
+        store.set(objectColorsDraftState.atom, (draft) =>
+          Object.fromEntries(
+            Object.entries(draft).filter(
+              ([objectId, color]) =>
+                savedColorByObjectId.get(objectId) !== color,
+            ),
+          ),
+        );
+
+        await refetchCommandMenuItems();
+
+        if (savedColorByObjectId.size !== objectColorEntries.length) {
+          return;
+        }
+      }
       const navigationDraft = store.get(navigationMenuItemsDraftState.atom);
       const prefetchItems = store.get(navigationMenuItemsSelector.atom);
       const workspaceItems = filterWorkspaceNavigationMenuItems(prefetchItems);
@@ -73,10 +120,6 @@ export const useSaveLayoutCustomization = () => {
       let hasAnyFailure = false;
 
       for (const pageLayoutId of activePageLayoutIds) {
-        if (isDefaultPageLayoutId(pageLayoutId)) {
-          continue;
-        }
-
         const draft = store.get(
           pageLayoutDraftComponentState.atomFamily({
             instanceId: pageLayoutId,
@@ -93,19 +136,9 @@ export const useSaveLayoutCustomization = () => {
           continue;
         }
 
-        const persistedAsDraft: DraftPageLayout = {
-          id: persisted.id,
-          name: persisted.name,
-          type: persisted.type,
-          objectMetadataId: persisted.objectMetadataId,
-          tabs: persisted.tabs,
-          defaultTabToFocusOnMobileAndSidePanelId:
-            persisted.defaultTabToFocusOnMobileAndSidePanelId,
-        };
-
         const isPageLayoutStructureDirty = !isDeeplyEqual(
           draft,
-          persistedAsDraft,
+          toDraftPageLayout(persisted),
         );
 
         await createPendingFieldsWidgetViews(pageLayoutId);
@@ -150,8 +183,9 @@ export const useSaveLayoutCustomization = () => {
       }
 
       if (hasAnyFailure) {
-        enqueueErrorSnackBar({
-          message: t`Some layout changes could not be saved`,
+        enqueueToast({
+          variant: 'error',
+          children: t`Some layout changes could not be saved`,
         });
         return;
       }
@@ -159,13 +193,16 @@ export const useSaveLayoutCustomization = () => {
       exitLayoutCustomizationMode();
     } catch (error) {
       logError(error);
-      enqueueErrorSnackBar({
-        message: t`Failed to save layout customization`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to save layout customization`,
       });
     } finally {
       setIsSaving(false);
     }
   }, [
+    updateOneObjectMetadataItem,
+    refetchCommandMenuItems,
     saveDraft,
     saveCommandMenuItemsDraft,
     isCommandMenuItemsDirty,
@@ -174,7 +211,7 @@ export const useSaveLayoutCustomization = () => {
     updatePageLayoutWithTabsAndWidgets,
     savePageLayoutWidgetsData,
     exitLayoutCustomizationMode,
-    enqueueErrorSnackBar,
+    enqueueToast,
     store,
     t,
   ]);

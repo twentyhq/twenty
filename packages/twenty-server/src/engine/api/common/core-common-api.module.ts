@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CommonArgsProcessors } from 'src/engine/api/common/common-args-processors/common-args-processors';
 import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
-import { ProcessNestedRelationsV2Helper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations-v2.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonQueryRunners } from 'src/engine/api/common/common-query-runners/common-query-runners';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
@@ -18,6 +17,8 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
+import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -25,6 +26,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 import { ViewFilterGroupModule } from 'src/engine/metadata-modules/view-filter-group/view-filter-group.module';
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
+import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -40,8 +42,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ViewFilterModule,
     ViewFilterGroupModule,
     ThrottlerModule,
+    UsageLimitModule,
+    UsageModule,
     MetricsModule,
     RecordPositionModule,
+    RecordShareModule,
     RecordTransformerModule,
     FeatureFlagModule,
     WorkspaceCacheModule,
@@ -49,7 +54,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   providers: [
     ProcessNestedRelationsHelper,
-    ProcessNestedRelationsV2Helper,
     ...CommonArgsProcessors,
     ProcessAggregateHelper,
     ...CommonQueryRunners,

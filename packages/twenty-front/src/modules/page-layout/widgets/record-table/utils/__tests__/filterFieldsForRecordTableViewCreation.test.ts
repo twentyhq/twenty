@@ -12,12 +12,10 @@ describe('filterFieldsForRecordTableViewCreation', () => {
     objectMetadataItem,
     fieldName: 'domainName',
   });
-  // id is a hidden system field
   const systemField = getMockFieldMetadataItemOrThrow({
     objectMetadataItem,
     fieldName: 'id',
   });
-  // position is a hidden system field
   const hiddenSystemField = getMockFieldMetadataItemOrThrow({
     objectMetadataItem,
     fieldName: 'position',

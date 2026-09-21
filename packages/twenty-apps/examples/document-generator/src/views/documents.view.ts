@@ -1,4 +1,4 @@
-import { defineView, ViewKey } from 'twenty-sdk/define';
+import { defineView } from 'twenty-sdk/define';
 
 import {
   DOCUMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
@@ -16,7 +16,6 @@ export default defineView({
   name: 'All documents',
   objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconFile',
-  key: ViewKey.INDEX,
   position: 0,
   fields: [
     {

@@ -14,9 +14,12 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconSend } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { IconPaperclip, IconSend, IconTrash } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
+
+import { useAttachEmailFiles } from '@/activities/emails/hooks/useAttachEmailFiles';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -58,11 +61,17 @@ export const SidePanelComposeEmailPage = () => {
     onSent: goBackFromSidePanel,
   });
 
+  const { openAttachmentPicker, isUploadingAttachments } = useAttachEmailFiles({
+    onFilesAttached: composerState.setFiles,
+  });
+
+  const canSend = composerState.canSend && !isUploadingAttachments;
+
   const handleSendHotkey = useCallback(() => {
-    if (composerState.canSend) {
+    if (canSend) {
       composerState.handleSend();
     }
-  }, [composerState]);
+  }, [canSend, composerState]);
 
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],
@@ -85,24 +94,34 @@ export const SidePanelComposeEmailPage = () => {
       </StyledContent>
       <SidePanelFooter
         actions={[
-          <Button
-            key="cancel"
-            size="small"
-            variant="secondary"
-            title={t`Cancel`}
+          <IconButton
+            key="discard"
+            size="sm"
+            variant="outline"
+            aria-label={t`Discard`}
             onClick={goBackFromSidePanel}
-          />,
+          >
+            <IconTrash />
+          </IconButton>,
+          <IconButton
+            key="attach"
+            size="sm"
+            variant="outline"
+            aria-label={t`Attach files`}
+            onClick={openAttachmentPicker}
+          >
+            <IconPaperclip />
+          </IconButton>,
           <Button
             key="send"
-            size="small"
-            variant="primary"
-            accent="blue"
-            title={t`Send`}
-            Icon={IconSend}
+            size="sm"
+            startIcon={<IconSend />}
             hotkeys={[getOsControlSymbol(), '⏎']}
             onClick={composerState.handleSend}
-            disabled={!composerState.canSend}
-          />,
+            disabled={!canSend}
+            variant="solid"
+            color="accent"
+          >{t`Send`}</Button>,
         ]}
       />
     </StyledContainer>

@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
+import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
 import { CommandMenuItemResolver } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.resolver';
 import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
@@ -11,12 +12,15 @@ import { FlatCommandMenuItemModule } from 'src/engine/metadata-modules/flat-comm
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 
 @Module({
   imports: [
+    ApplicationTranslationCatalogModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
     ApplicationModule,
+    CoreWorkflowAccessModule,
     FlatCommandMenuItemModule,
     FrontComponentModule,
     FeatureFlagModule,

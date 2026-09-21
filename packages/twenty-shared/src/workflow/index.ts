@@ -11,6 +11,7 @@ export { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from './constants/CaptureAllVari
 export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/ContentTypeValuesHttpRequest';
 export { IF_ELSE_BRANCH_POSITION_OFFSETS } from './constants/IfElseBranchPositionOffsets';
 export { OBJECTS_BLOCKED_FROM_AUTOMATION } from './constants/ObjectsBlockedFromAutomation';
+export { STEP_RETRY_DELAYS_MS } from './constants/StepRetryDelaysMs';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
 export { WORKFLOW_TRIGGER_METADATA_KEY } from './constants/WorkflowTriggerMetadataKey';
 export { WORKFLOW_TRIGGER_METADATA_LABEL } from './constants/WorkflowTriggerMetadataLabel';
@@ -33,6 +34,14 @@ export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-s
 export { baseTriggerSchema } from './schemas/base-trigger-schema';
 export { baseWorkflowActionSchema } from './schemas/base-workflow-action-schema';
 export { baseWorkflowActionSettingsSchema } from './schemas/base-workflow-action-settings-schema';
+export { workflowClassifyActionSchema } from './schemas/classify-action-schema';
+export {
+  CLASSIFY_ANSWER_NAME_PATTERN,
+  CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER,
+  workflowClassifyCriterionSchema,
+  workflowClassifyQuestionSchema,
+  workflowClassifyActionSettingsSchema,
+} from './schemas/classify-action-settings-schema';
 export { workflowCodeActionSchema } from './schemas/code-action-schema';
 export { workflowCodeActionSettingsSchema } from './schemas/code-action-settings-schema';
 export { workflowCreateCalendarEventActionSchema } from './schemas/create-calendar-event-action-schema';
@@ -99,6 +108,7 @@ export {
 } from './schemas/workflow-run-step-log-schema';
 export { workflowRunStepStatusSchema } from './schemas/workflow-run-step-status-schema';
 export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
+export { workflowVariableReferenceSchema } from './schemas/workflow-variable-reference-schema';
 export type { EmailRecipients } from './types/EmailRecipients';
 export type { FunctionInput } from './types/FunctionInput';
 export type {
@@ -110,6 +120,10 @@ export type {
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export { WorkflowActionType } from './types/WorkflowActionType';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
+export type {
+  WorkflowClassifyCriterion,
+  WorkflowClassifyQuestion,
+} from './types/WorkflowClassifyQuestion';
 export type { BodyType } from './types/workflowHttpRequestStep';
 export type {
   WorkflowRunStepInfo,
@@ -126,6 +140,7 @@ export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAuto
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
+export { isStandaloneVariableString } from './utils/isStandaloneVariableString';
 export { parseBooleanFromStringValue } from './utils/parseBooleanFromStringValue';
 export { parseDataFromContentType } from './utils/parseDataFromContentType';
 export {
@@ -134,6 +149,8 @@ export {
   joinVariablePath,
   parseVariablePath,
 } from './utils/variable-path.util';
+export { MALFORMED_WORKFLOW_VALIDATION_ISSUE_CODES } from './validation/constants/malformed-workflow-validation-issue-codes.constant';
+export { NON_ACTIVABLE_WORKFLOW_VALIDATION_ISSUE_CODES } from './validation/constants/non-activable-workflow-validation-issue-codes.constant';
 export { isIfElseStepInput } from './validation/guards/isIfElseStepInput';
 export { isIteratorStepInput } from './validation/guards/isIteratorStepInput';
 export type {

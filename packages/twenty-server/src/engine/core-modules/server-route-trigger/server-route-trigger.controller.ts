@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Param,
   Post,
   Req,
@@ -9,6 +10,7 @@ import {
 } from '@nestjs/common';
 
 import { Request, Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 
 import { sendRouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import { ServerRouteTriggerRestApiExceptionFilter } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger-rest-api-exception-filter';
@@ -16,13 +18,41 @@ import { ServerRouteTriggerService } from 'src/engine/core-modules/server-route-
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-@Controller('webhooks/server')
+@Controller(`${ApiPath.Webhooks}/server`)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 @UseFilters(ServerRouteTriggerRestApiExceptionFilter)
 export class ServerRouteTriggerController {
   constructor(
     private readonly serverRouteTriggerService: ServerRouteTriggerService,
   ) {}
+
+  private async handleRequest(
+    resolverLogicFunctionUniversalIdentifier: string,
+    request: Request,
+    response: Response,
+  ) {
+    sendRouteTriggerResponse(
+      response,
+      await this.serverRouteTriggerService.handle({
+        request,
+        resolverLogicFunctionUniversalIdentifier,
+      }),
+    );
+  }
+
+  @Get(':resolverLogicFunctionUniversalIdentifier')
+  async get(
+    @Param('resolverLogicFunctionUniversalIdentifier')
+    resolverLogicFunctionUniversalIdentifier: string,
+    @Req() request: Request,
+    @Res() response: Response,
+  ) {
+    await this.handleRequest(
+      resolverLogicFunctionUniversalIdentifier,
+      request,
+      response,
+    );
+  }
 
   @Post(':resolverLogicFunctionUniversalIdentifier')
   async post(
@@ -31,12 +61,10 @@ export class ServerRouteTriggerController {
     @Req() request: Request,
     @Res() response: Response,
   ) {
-    sendRouteTriggerResponse(
+    await this.handleRequest(
+      resolverLogicFunctionUniversalIdentifier,
+      request,
       response,
-      await this.serverRouteTriggerService.handle({
-        request,
-        resolverLogicFunctionUniversalIdentifier,
-      }),
     );
   }
 }

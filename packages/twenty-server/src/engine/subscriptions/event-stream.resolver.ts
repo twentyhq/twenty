@@ -1,19 +1,28 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Subscription } from '@nestjs/graphql';
 
+import { mapAsyncIterator } from '@graphql-tools/utils';
+
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -28,20 +37,27 @@ import {
   EventStreamExceptionCode,
 } from 'src/engine/subscriptions/event-stream.exception';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
+import { MetadataEventResolutionService } from 'src/engine/subscriptions/metadata-event/services/metadata-event-resolution.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { eventStreamIdToChannelId } from 'src/engine/subscriptions/utils/get-channel-id-from-event-stream-id';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 
 @MetadataResolver()
+@AllowSuspendedWorkspace()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(EventStreamExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
+@UseFilters(
+  EventStreamExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+  AuthGraphqlApiExceptionFilter,
+)
 export class EventStreamResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly eventStreamService: EventStreamService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly metadataEventResolutionService: MetadataEventResolutionService,
   ) {}
 
   @Subscription(() => EventSubscriptionDTO, {
@@ -54,16 +70,21 @@ export class EventStreamResolver {
         eventStreamId: variables.eventStreamId,
         objectRecordEventsWithQueryIds: payload.objectRecordEventsWithQueryIds,
         metadataEvents: payload.metadataEvents,
+        queueJobEvents: payload.queueJobEvents ?? [],
       };
     },
   })
   async onEventSubscription(
     @Args('eventStreamId') eventStreamId: string,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @AuthApplication({ allowUndefined: true })
+    application: FlatApplication | undefined,
   ) {
     const eventStreamChannelId = eventStreamIdToChannelId(eventStreamId);
 
@@ -78,6 +99,7 @@ export class EventStreamResolver {
         authContext: {
           userWorkspaceId,
           apiKeyId: apiKey?.id,
+          applicationId: application?.id,
         },
       });
 
@@ -100,17 +122,33 @@ export class EventStreamResolver {
       authContext: {
         userId: user?.id,
         userWorkspaceId,
+        workspaceMemberId,
         apiKeyId: apiKey?.id,
+        applicationId: application?.id,
       },
     });
 
     let iterator: AsyncIterableIterator<EventStreamPayload>;
 
     try {
-      iterator = await this.subscriptionService.subscribeToEventStream({
-        workspaceId: workspace.id,
-        eventStreamChannelId,
-      });
+      const rawIterator = await this.subscriptionService.subscribeToEventStream(
+        {
+          workspaceId: workspace.id,
+          eventStreamChannelId,
+        },
+      );
+
+      // Events are published once per workspace, so the locale can only be
+      // applied here, where the subscriber is known.
+      iterator = mapAsyncIterator(rawIterator, async (payload) => ({
+        ...payload,
+        metadataEvents:
+          await this.metadataEventResolutionService.resolveMetadataEvents({
+            metadataEvents: payload.metadataEvents,
+            locale,
+            workspaceId: workspace.id,
+          }),
+      }));
     } catch (error) {
       await this.eventStreamService.destroyEventStream({
         workspaceId: workspace.id,
@@ -121,7 +159,9 @@ export class EventStreamResolver {
 
     let lastTtlRefreshAt = 0;
 
-    return wrapAsyncIteratorWithLifecycle(iterator, {
+    return wrapAsyncIteratorWithLifecycle(() => iterator, {
+      heartbeatStart: 'on-first-next',
+      heartbeatErrorBehavior: 'ignore',
       initialValue: {
         objectRecordEventsWithQueryIds: [],
         metadataEvents: [],
@@ -170,6 +210,8 @@ export class EventStreamResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @AuthApplication({ allowUndefined: true })
+    application: FlatApplication | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
     const streamData = await this.eventStreamService.getStreamData(
@@ -186,6 +228,7 @@ export class EventStreamResolver {
       authContext: {
         userWorkspaceId,
         apiKeyId: apiKey?.id,
+        applicationId: application?.id,
       },
     });
 
@@ -214,6 +257,8 @@ export class EventStreamResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @AuthApplication({ allowUndefined: true })
+    application: FlatApplication | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
 
@@ -231,6 +276,7 @@ export class EventStreamResolver {
       authContext: {
         userWorkspaceId,
         apiKeyId: apiKey?.id,
+        applicationId: application?.id,
       },
     });
 

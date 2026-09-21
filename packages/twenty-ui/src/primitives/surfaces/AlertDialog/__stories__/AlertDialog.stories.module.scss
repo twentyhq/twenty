@@ -1,0 +1,37 @@
+.button {
+  align-items: center;
+  background: var(--t-background-primary);
+  border: 1px solid var(--t-border-color-strong);
+  border-radius: var(--t-border-radius-sm);
+  color: var(--t-font-color-primary);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-md);
+  font-weight: var(--t-font-weight-medium);
+  justify-content: center;
+  min-block-size: var(--t-spacing-8);
+  padding: var(--t-spacing-1) var(--t-spacing-3);
+
+  @include focus-ring;
+
+  &:hover {
+    background: var(--t-background-tertiary);
+  }
+
+  &[data-danger] {
+    color: var(--t-color-red11);
+  }
+
+  &:disabled {
+    color: var(--t-font-color-tertiary);
+    cursor: not-allowed;
+  }
+}
+
+.record {
+  background: var(--t-background-secondary);
+  border: 1px solid var(--t-border-color-medium);
+  border-radius: var(--t-border-radius-sm);
+  padding: var(--t-spacing-3);
+}

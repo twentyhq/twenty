@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { type RoleManifest } from 'twenty-shared/application';
+import {
+  getFieldPermissionUniversalIdentifier,
+  getObjectPermissionUniversalIdentifier,
+  type RoleManifest,
+} from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -15,6 +19,7 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 
 @Injectable()
 export class MarketplaceQueryService {
@@ -22,6 +27,7 @@ export class MarketplaceQueryService {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async findManyMarketplaceApps({
@@ -66,7 +72,7 @@ export class MarketplaceQueryService {
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration =
-      await this.applicationRegistrationService.findOneByUniversalIdentifier(
+      await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
         universalIdentifier,
       );
 
@@ -80,12 +86,18 @@ export class MarketplaceQueryService {
     return registration;
   }
 
-  private toMarketplaceAppDetailDTO(
+  private async toMarketplaceAppDetailDTO(
     registration: ApplicationRegistrationEntity,
-  ): MarketplaceAppDetailDTO {
+  ): Promise<MarketplaceAppDetailDTO> {
     const galleryImageUrls =
       this.applicationRegistrationAssetUrlService.buildGalleryImageUrls(
         registration,
+      );
+    const manifest = registration.manifest;
+
+    const installCount =
+      await this.applicationService.countInstalledWorkspacesForApplication(
+        registration.universalIdentifier,
       );
 
     return {
@@ -109,7 +121,7 @@ export class MarketplaceQueryService {
         registration.category ??
         registration.manifest?.application?.category ??
         undefined,
-      logo:
+      logoUrl:
         this.applicationRegistrationAssetUrlService.buildLogoUrl(
           registration,
         ) ?? undefined,
@@ -120,6 +132,10 @@ export class MarketplaceQueryService {
       aboutDescription:
         registration.aboutDescription ??
         registration.manifest?.application?.aboutDescription ??
+        undefined,
+      pricingDescription:
+        registration.pricingDescription ??
+        registration.manifest?.application?.billing?.description ??
         undefined,
       termsUrl:
         registration.termsUrl ??
@@ -135,16 +151,30 @@ export class MarketplaceQueryService {
         undefined,
       screenshots: galleryImageUrls,
       galleryImages: galleryImageUrls,
+      installCount,
       defaultRoleUniversalIdentifier:
         registration.manifest?.application?.defaultRoleUniversalIdentifier,
-      roles: registration.manifest?.roles?.map((role) =>
-        this.toMarketplaceAppRoleDTO(role),
-      ),
+      roles: isDefined(manifest)
+        ? manifest.roles?.map((role) =>
+            this.toMarketplaceAppRoleDTO({
+              role,
+              applicationUniversalIdentifier:
+                manifest.application?.universalIdentifier ??
+                registration.universalIdentifier,
+            }),
+          )
+        : undefined,
       manifest: registration.manifest ?? undefined,
     };
   }
 
-  private toMarketplaceAppRoleDTO(role: RoleManifest): MarketplaceAppRoleDTO {
+  private toMarketplaceAppRoleDTO({
+    role,
+    applicationUniversalIdentifier,
+  }: {
+    role: RoleManifest;
+    applicationUniversalIdentifier: string;
+  }): MarketplaceAppRoleDTO {
     return {
       universalIdentifier: role.universalIdentifier,
       label: role.label,
@@ -159,7 +189,13 @@ export class MarketplaceQueryService {
       permissionFlagUniversalIdentifiers:
         role.permissionFlagUniversalIdentifiers,
       objectPermissions: role.objectPermissions?.map((permission) => ({
-        universalIdentifier: permission.universalIdentifier,
+        universalIdentifier:
+          permission.universalIdentifier ??
+          getObjectPermissionUniversalIdentifier({
+            applicationUniversalIdentifier,
+            roleUniversalIdentifier: role.universalIdentifier,
+            objectUniversalIdentifier: permission.objectUniversalIdentifier,
+          }),
         objectUniversalIdentifier: permission.objectUniversalIdentifier,
         canReadObjectRecords: permission.canReadObjectRecords,
         canUpdateObjectRecords: permission.canUpdateObjectRecords,
@@ -167,7 +203,13 @@ export class MarketplaceQueryService {
         canDestroyObjectRecords: permission.canDestroyObjectRecords,
       })),
       fieldPermissions: role.fieldPermissions?.map((permission) => ({
-        universalIdentifier: permission.universalIdentifier,
+        universalIdentifier:
+          permission.universalIdentifier ??
+          getFieldPermissionUniversalIdentifier({
+            applicationUniversalIdentifier,
+            roleUniversalIdentifier: role.universalIdentifier,
+            fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
+          }),
         objectUniversalIdentifier: permission.objectUniversalIdentifier,
         fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
         canReadFieldValue: permission.canReadFieldValue,

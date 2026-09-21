@@ -63,7 +63,11 @@ describe.each([
     });
 
     afterAll(async () => {
-      await Promise.all(seededIds.map(cleanupTestField));
+      // Field deletion runs schema migrations that acquire exclusive locks.
+      // Keep teardown serial so the suite cannot deadlock against itself.
+      for (const id of seededIds) {
+        await cleanupTestField(id);
+      }
       seededIds.length = 0;
     });
 
@@ -75,13 +79,16 @@ describe.each([
       });
 
       assertRestApiSuccessfulResponse(response);
+
       if (isNewFormat) {
         expect(response.body).not.toHaveProperty('data.fields');
         expect(Array.isArray(response.body.data)).toBe(true);
       } else {
-        expect(Array.isArray(response.body.data?.fields)).toBe(true);
+        expect(Array.isArray(response.body.data.fields)).toBe(true);
       }
+
       expect(response.body).toHaveProperty('pageInfo.hasNextPage');
+      expect(response.body).toHaveProperty('pageInfo.hasPreviousPage');
       expect(response.body).toHaveProperty('pageInfo.startCursor');
       expect(response.body).toHaveProperty('pageInfo.endCursor');
       expect(typeof response.body.totalCount).toBe('number');
@@ -103,6 +110,7 @@ describe.each([
 
       expect(items.length).toBe(1);
       expect(pageInfo.hasNextPage).toBe(true);
+      expect(pageInfo.hasPreviousPage).toBe(false);
     });
 
     it('paginates forward with starting_after without overlap', async () => {
@@ -174,12 +182,23 @@ describe.each([
       const backIds = backPayload.items.map((f) => f.id);
 
       expect(backIds.every((id) => firstIds.includes(id))).toBe(true);
+      expect(backPayload.pageInfo.hasNextPage).toBe(true);
     });
 
     it('rejects combining starting_after and ending_before with 400', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
         path: `/metadata/fields?starting_after=${NON_EXISTENT_UUID}&ending_before=${NON_EXISTENT_UUID}`,
+        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      assertRestApiErrorResponse(response, 400);
+    });
+
+    it('rejects malformed cursor IDs with 400', async () => {
+      const response = await makeRestAPIRequest({
+        method: 'get',
+        path: '/metadata/fields?starting_after=not-a-uuid',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 

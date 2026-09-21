@@ -13,7 +13,6 @@ import { type TableCellPosition } from '@/object-record/record-table/types/Table
 import { type ReactNode } from 'react';
 
 type RecordTableRecordGroupBodyContextProviderProps = {
-  recordGroupId: string;
   children?: ReactNode;
 };
 

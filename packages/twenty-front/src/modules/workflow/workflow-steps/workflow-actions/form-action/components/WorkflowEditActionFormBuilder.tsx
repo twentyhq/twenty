@@ -1,10 +1,12 @@
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import {
   type WorkflowFormAction,
@@ -21,7 +23,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/feedback';
+import { Callout } from 'twenty-ui/primitives/feedback';
 import {
   IconAlertTriangle,
   IconChevronDown,
@@ -29,7 +31,6 @@ import {
   IconPlus,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
@@ -298,10 +299,11 @@ export const WorkflowEditActionFormBuilder = ({
 
                         {showButtons && (
                           <StyledGripButtonContainer>
-                            <LightIconButton
-                              Icon={IconGripVertical}
-                              aria-label={t`Reorder field`}
-                            />
+                            <DragDropItemSortableHandle>
+                              <LightIconButton aria-label={t`Reorder field`}>
+                                <IconGripVertical />
+                              </LightIconButton>
+                            </DragDropItemSortableHandle>
                           </StyledGripButtonContainer>
                         )}
 
@@ -346,7 +348,6 @@ export const WorkflowEditActionFormBuilder = ({
                         {showButtons && (
                           <StyledTrashButtonContainer>
                             <LightIconButton
-                              Icon={IconTrash}
                               aria-label={t`Delete field`}
                               onClick={() => {
                                 const updatedFormData = formData.filter(
@@ -364,7 +365,9 @@ export const WorkflowEditActionFormBuilder = ({
                                   },
                                 });
                               }}
-                            />
+                            >
+                              <IconTrash />
+                            </LightIconButton>
                           </StyledTrashButtonContainer>
                         )}
 

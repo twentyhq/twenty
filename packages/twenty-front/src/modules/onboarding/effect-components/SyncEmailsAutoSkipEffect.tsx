@@ -21,7 +21,7 @@ export const SyncEmailsAutoSkipEffect = ({
 
     const skip = async () => {
       try {
-        await skipSyncEmailOnboardingStep();
+        await skipSyncEmailOnboardingStep({ isAutoSkipped: true });
       } catch {
         onError();
       }

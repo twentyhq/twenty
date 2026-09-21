@@ -19,6 +19,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { KANBAN_COLUMN_MAX_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-max-width.constant';
 import { KANBAN_COLUMN_MIN_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-min-width.constant';
+import { VIEW_OPEN_RECORD_IN_DEPRECATION } from 'src/engine/metadata-modules/view/constants/view-open-record-in-deprecation.constant';
 
 @InputType()
 export class UpsertViewWidgetViewSettingsInput {
@@ -27,7 +28,7 @@ export class UpsertViewWidgetViewSettingsInput {
   @Field(() => ViewType, {
     nullable: true,
     description:
-      'The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) are allowed.',
+      'The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) are allowed.',
   })
   type?: ViewType;
 
@@ -43,7 +44,10 @@ export class UpsertViewWidgetViewSettingsInput {
 
   @IsOptional()
   @IsEnum(ViewOpenRecordIn)
-  @Field(() => ViewOpenRecordIn, { nullable: true })
+  @Field(() => ViewOpenRecordIn, {
+    nullable: true,
+    description: `Deprecated: ${VIEW_OPEN_RECORD_IN_DEPRECATION}`,
+  })
   openRecordIn?: ViewOpenRecordIn;
 
   @IsOptional()

@@ -48,7 +48,6 @@ describe('useGetUpdatableWorkflowVersionOrThrow', () => {
   });
 
   it('should create draft from active version when current version is active', async () => {
-    // Mock the workflow to have an active version
     const mockActiveWorkflow = {
       ...mockWorkflow,
       currentVersion: {

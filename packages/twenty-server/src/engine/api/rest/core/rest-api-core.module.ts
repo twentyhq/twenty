@@ -27,7 +27,6 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -56,7 +55,6 @@ const restApiCoreResolvers = [
     AuthModule,
     ApiKeyModule,
     UserRoleModule,
-    TwentyORMModule,
     RecordTransformerModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ActorModule,

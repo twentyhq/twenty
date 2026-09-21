@@ -13,25 +13,25 @@ Créditos são um saldo único que alimenta tudo o que executamos em seu nome e 
 
 O custo escala com o trabalho. Automações do dia a dia e mensagens de IA rápidas custam uma pequena fração de um crédito; tarefas grandes de agentes de IA com várias etapas custam mais. Aqui está uma visão aproximada:
 
-| O que você faz                                                                                                              | Custa aproximadamente            | O que significa                   |
-| --------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | --------------------------------- |
-| Executar uma etapa padrão de fluxo de trabalho (pesquisar, criar, atualizar registros) ou acionar a função lógica de um app | $0.0001                          | **10.000 execuções por crédito**  |
-| Chamar uma API externa ou executar um nó de código                                                                          | Uma pequena fração de um crédito | Milhares por crédito              |
-| Enviar uma mensagem de chat de IA rápida ou uma etapa simples de IA                                                         | Uma fração de centavo            | Centenas por crédito              |
-| Executar uma grande tarefa de agente de IA (por exemplo, "configurar 10 objetos do espaço de trabalho")                     | Pode chegar a **~$1 ou mais**    | Alguns por crédito                |
-| Executar uma pesquisa na web com IA                                                                                         | Um custo fixo por pesquisa       | Centenas de pesquisas por crédito |
+| O que você faz                                                                                                                     | Custa aproximadamente            | O que significa                   |
+| ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | --------------------------------- |
+| Executa uma etapa padrão de fluxo de trabalho (pesquisar, criar ou atualizar registros) ou aciona a função lógica de um aplicativo | $0.0001                          | **10.000 execuções por crédito**  |
+| Chamar uma API externa ou executar um nó de código                                                                                 | Uma pequena fração de um crédito | Milhares por crédito              |
+| Enviar uma mensagem de chat de IA rápida ou uma etapa simples de IA                                                                | Uma fração de centavo            | Centenas por crédito              |
+| Executar uma grande tarefa de agente de IA (por exemplo, "configurar 10 objetos do espaço de trabalho")                            | Pode chegar a **~$1 ou mais**    | Alguns por crédito                |
+| Executar uma pesquisa na web com IA                                                                                                | Um custo fixo por pesquisa       | Centenas de pesquisas por crédito |
 
 <Note>
 Para a maioria das equipes, as automações padrão são praticamente gratuitas — você só vai notar um impacto no seu saldo quando depender de recursos de IA ou executar nós de código pesados. Isso é intencional: os créditos incluídos são pensados para permitir que você crie sem ficar de olho no medidor.
 </Note>
 
 <Note>
-Nem todo app cobra por suas execuções. Call Recorder e Last contact reagem a todos os e-mails e eventos de calendário importados para o seu espaço de trabalho, portanto as execuções de suas funções lógicas são gratuitas. Você ainda será cobrado pelo trabalho medido que eles realizam, como minutos de chamadas gravadas.
+Nem todo app cobra por suas execuções. O Gravador de Chamadas e o último contato reagem a todos os e-mails e eventos do calendário importados para a sua área de trabalho, para que suas funções lógicas sejam gratuitas. Você ainda será cobrado pelo trabalho medido que eles realizam, como minutos de chamadas gravadas.
 </Note>
 
 ## Como o uso de IA é medido
 
-Quando uma ação chama um modelo de IA, medimos exatamente os tokens usados e os cobramos pelas **tarifas publicadas pelo provedor do modelo**, depois convertemos esse valor em dólares diretamente em créditos — assim, o que você gasta acompanha o custo real do trabalho, não uma taxa interna com acréscimo. Uma mensagem de chat curta custa uma fração de centavo. Uma grande tarefa de agente — por exemplo, configurar dez objetos do espaço de trabalho — faz muitas chamadas de modelo em um contexto crescente, então pode somar até um dólar ou mais. Você é cobrado apenas pelo que realmente usa, até o nível de token.
+Quando uma ação chama um modelo de IA, medimos exatamente os tokens usados e os cobramos pelas **tarifas publicadas pelo provedor do modelo**, depois convertemos esse valor em dólares diretamente em créditos — assim, o que você gasta acompanha o custo real do trabalho, não uma taxa interna com acréscimo. Uma mensagem de chat curta custa uma fração de centavo. Uma tarefa grande de agente — configurando 10 objetos do espaço de trabalho — faz muitos modelos chamar num contexto crescente, para que possa somar até um dólar ou mais. Você é cobrado apenas pelo que realmente usa, até o nível de token.
 
 O custo varia de acordo com o modelo: um modelo leve é dramaticamente mais barato por mensagem do que um modelo de raciocínio de nível superior. Você pode ver o detalhamento por ação — incluindo qual modelo foi usado — em **Configurações → Cobrança**.
 
@@ -44,16 +44,16 @@ Toda assinatura inclui créditos, e o valor depende do seu **ciclo de cobrança*
 | Mensal            | 5 / mês            | ~$5 de uso por mês  |
 | Anual             | 50 / ano           | ~$50 de uso por ano |
 
-Esses créditos são projetados para cobrir confortavelmente as automações do dia a dia. Cinco créditos cobrem dezenas de milhares de etapas de automação padrão ou centenas de mensagens rápidas de IA — embora algumas tarefas grandes de agentes com várias etapas possam consumi-los mais rápido. Você pode recarregar a qualquer momento (veja abaixo).
+Esses créditos são projetados para cobrir confortavelmente as automações do dia a dia. Cinco créditos cobrem dezenas de milhares de etapas padrão de automação ou centenas de rápidas mensagens de IA - embora um punhado de grandes, tarefas de agentes de várias etapas podem usá-las mais rápido. Você pode recarregar a qualquer momento (veja abaixo).
 
 ## Acúmulo de créditos
 
 Créditos não utilizados são automaticamente acumulados para o próximo período de cobrança.
 
-* **Limite**: O valor de acúmulo é limitado à alocação total de um período, então você nunca poderá acumular mais créditos do que o seu plano fornece por período.
+* **Caps**: A Rollover é limitada à alocação total de uma menstruação, então você nunca vai transferir mais do que o seu ciclo de faturação fornece por menstruação.
 * **Visibilidade**: Quando houver créditos acumulados, eles aparecerão como uma linha separada chamada **Créditos acumulados** em **Configurações → Cobrança**, juntamente com o saldo de **Total disponível**.
 
-## Monitoramento do uso
+## Monitoramento de uso
 
 Acompanhe o seu saldo e para onde ele está indo:
 
@@ -69,6 +69,6 @@ Se você ficar sem créditos — ou quiser uma folga antes de uma grande onda de
 
 1. Vá para **Configurações → Cobrança**
 2. Clique no botão **Aumentar**
-3. Selecione o valor de que você precisa e aceite as alterações
+3. Selecione a quantidade que você precisa e aceite as alterações
 
 Os créditos comprados são adicionados imediatamente ao seu saldo disponível.

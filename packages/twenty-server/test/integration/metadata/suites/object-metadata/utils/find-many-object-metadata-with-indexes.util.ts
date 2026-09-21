@@ -27,6 +27,7 @@ export const findManyObjectMetadataWithIndexes = async ({
           id
           type
           name
+          applicationId
           description
           icon
           label

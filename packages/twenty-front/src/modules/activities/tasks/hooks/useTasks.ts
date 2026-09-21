@@ -15,17 +15,26 @@ export const useTasks = ({ targetableObjects }: UseTasksProps) => {
     fetchMoreActivities: fetchMoreTasks,
     hasNextPage,
     totalCountActivities,
-  } = useActivities<Task>({
+  } = useActivities({
     objectNameSingular: CoreObjectNameSingular.Task,
     targetableObjects,
     activityTargetsOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
     limit: 200,
   });
 
+  const filteredTasks = tasks.filter(
+    (activity): activity is Task => activity.__typename === 'Task',
+  );
+
+  const fetchMoreFilteredTasks = async () =>
+    (await fetchMoreTasks()).filter(
+      (activity): activity is Task => activity.__typename === 'Task',
+    );
+
   return {
-    tasks: (tasks ?? []) as Task[],
+    tasks: filteredTasks,
     tasksLoading,
-    fetchMoreTasks,
+    fetchMoreTasks: fetchMoreFilteredTasks,
     hasNextPage,
     totalCountTasks: totalCountActivities,
   };

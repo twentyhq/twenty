@@ -3,18 +3,19 @@ import {
   Get,
   Logger,
   Param,
+  Query,
   Req,
   Res,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
+import { Request, Response } from 'express';
 import { pipeline } from 'node:stream/promises';
 import { join } from 'path';
 import { type Readable } from 'stream';
-
-import { Request, Response } from 'express';
-import { FileFolder, ServerFileFolder } from 'twenty-shared/types';
+import { ApiPath, FileFolder, ServerFileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FileStorageException,
@@ -26,16 +27,25 @@ import {
   FileException,
   FileExceptionCode,
 } from 'src/engine/core-modules/file/file.exception';
-import { PUBLIC_ASSET_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import {
   FileByIdGuard,
   SupportedFileFolder,
 } from 'src/engine/core-modules/file/guards/file-by-id.guard';
+import { PUBLIC_ASSET_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
+import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
+import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+
+// workspaceId is bound onto the request by FileByIdGuard.
+type FileByIdRequest = Request & { workspaceId: string };
 
 @Controller()
 @UseFilters(FileApiExceptionFilter)
@@ -43,6 +53,7 @@ export class FileController {
   private readonly logger = new Logger(FileController.name);
 
   constructor(
+    private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
     private readonly fileService: FileService,
     private readonly serverFileStorageService: ServerFileStorageService,
   ) {}
@@ -51,7 +62,9 @@ export class FileController {
   // public folder path. These are instance-global marketplace resources, also
   // displayed on the public OAuth authorize page, hence no auth token, unlike
   // the workspace-scoped /file/:folder/:id.
-  @Get('files/application-registrations/:applicationRegistrationId/*path')
+  @Get(
+    `${ApiPath.Files}/application-registrations/:applicationRegistrationId/*path`,
+  )
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getApplicationRegistrationAsset(
     @Res() res: Response,
@@ -94,6 +107,7 @@ export class FileController {
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error(
         'Application registration file stream failed mid-transfer',
         { error },
@@ -110,7 +124,7 @@ export class FileController {
     }
   }
 
-  @Get('public-assets/:workspaceId/:applicationId/*path')
+  @Get(`${ApiPath.PublicAssets}/:workspaceId/:applicationId/*path`)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getPublicAssets(
     @Res() res: Response,
@@ -170,6 +184,7 @@ export class FileController {
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error('Public asset stream failed mid-transfer', { error });
 
       if (!res.headersSent) {
@@ -183,24 +198,62 @@ export class FileController {
     }
   }
 
-  @Get('file/:fileFolder/:id')
+  @Get(`${ApiPath.File}/${FileFolder.RecordExport}/:id`)
+  @UseGuards(
+    JwtAuthGuard,
+    WorkspaceAuthGuard,
+    UserAuthGuard,
+    CustomPermissionGuard,
+  )
+  @UseFilters(PermissionsRestApiExceptionFilter)
+  async downloadRecordExport(
+    @Param('id') id: string,
+    @Query('token') token: string,
+    @Req() request: Request,
+    @Res() response: Response,
+  ): Promise<void> {
+    const { stream, filename, cleanup } =
+      await this.recordExportWorkspaceService.openDownload({
+        id,
+        token,
+        request,
+      });
+    try {
+      setFileResponseHeaders(
+        response,
+        'text/csv; charset=utf-8',
+        FileFolder.RecordExport,
+      );
+      response.attachment(filename);
+      await pipeline(stream, response);
+    } finally {
+      stream.destroy();
+      await cleanup();
+    }
+  }
+
+  @Get(`${ApiPath.File}/:fileFolder/:id`)
   @UseGuards(FileByIdGuard, NoPermissionGuard)
   async getFileById(
     @Res() res: Response,
-    @Req() req: Request,
+    @Req() req: FileByIdRequest,
     @Param('fileFolder') fileFolder: SupportedFileFolder,
     @Param('id') fileId: string,
   ) {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const workspaceId = (req as any)?.workspaceId;
+    const workspaceId = req.workspaceId;
 
     const fileResponse = await this.fileService
       .getFilePresignedUrlOrStreamById({
         fileId,
         workspaceId,
         fileFolder,
+        rangeHeader: req.headers.range,
       })
       .catch((error) => {
+        if (error instanceof FileException) {
+          throw error;
+        }
+
         this.logger.error(
           'getFilePresignedUrlOrStreamById failed unexpectedly',
           {
@@ -226,10 +279,23 @@ export class FileController {
     }
 
     setFileResponseHeaders(res, fileResponse.mimeType, fileFolder);
+    res.setHeader('Accept-Ranges', 'bytes');
+
+    if (isDefined(fileResponse.contentRange)) {
+      const { startByte, endByte, fileSizeInBytes } = fileResponse.contentRange;
+
+      res.status(206);
+      res.setHeader(
+        'Content-Range',
+        `bytes ${startByte}-${endByte}/${fileSizeInBytes}`,
+      );
+      res.setHeader('Content-Length', String(endByte - startByte + 1));
+    }
 
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error('File-by-id stream failed mid-transfer', { error });
 
       if (!res.headersSent) {

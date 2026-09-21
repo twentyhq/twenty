@@ -1,14 +1,19 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const SEND_MESSAGE_CAMPAIGN = gql`
   mutation SendMessageCampaign($input: SendMessageCampaignInput!) {
     sendMessageCampaign(input: $input) {
       campaignId
       queuedCount
-      skipped {
-        noEmail
-        deduped
+      audience {
+        totalMembers
+        withoutEmail
+        duplicateEmails
         overCap
+        hardSuppressed
+        globallyUnsubscribed
+        topicUnsubscribed
+        sendable
       }
     }
   }

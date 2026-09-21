@@ -1,0 +1,22 @@
+declare const classNames: {
+  readonly closeButton: 'closeButton';
+  readonly container: 'container';
+  readonly containerInfo: 'containerInfo';
+  readonly containerWarning: 'containerWarning';
+  readonly containerSuccess: 'containerSuccess';
+  readonly containerError: 'containerError';
+  readonly containerNeutral: 'containerNeutral';
+  readonly header: 'header';
+  readonly iconContainer: 'iconContainer';
+  readonly iconContainerInfo: 'iconContainerInfo';
+  readonly iconContainerWarning: 'iconContainerWarning';
+  readonly iconContainerSuccess: 'iconContainerSuccess';
+  readonly iconContainerError: 'iconContainerError';
+  readonly iconContainerNeutral: 'iconContainerNeutral';
+  readonly title: 'title';
+  readonly descriptionWrapper: 'descriptionWrapper';
+  readonly descriptionWrapperWithAction: 'descriptionWrapperWithAction';
+  readonly description: 'description';
+  readonly footer: 'footer';
+};
+export default classNames;

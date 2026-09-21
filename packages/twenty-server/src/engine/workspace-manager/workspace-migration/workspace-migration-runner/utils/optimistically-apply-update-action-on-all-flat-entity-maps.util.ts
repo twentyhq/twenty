@@ -68,6 +68,7 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = ({
     case 'webhook':
     case 'applicationVariable':
     case 'connectionProvider':
+    case 'timelineActivityType':
     case 'searchFieldMetadata': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         flatAction.metadataName,

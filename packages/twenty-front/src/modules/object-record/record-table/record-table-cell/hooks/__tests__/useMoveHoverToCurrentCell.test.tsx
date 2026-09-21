@@ -15,44 +15,65 @@ import {
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 
-const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <RecordTableComponentInstance recordTableId="test-record-table-instance-id">
-      <RecordTableRowContextProvider value={recordTableRowContextValue}>
-        <RecordTableRowDraggableContextProvider
-          value={recordTableRowDraggableContextValue}
-        >
-          <RecordTableCellContext.Provider value={recordTableCellContextValue}>
-            {children}
-          </RecordTableCellContext.Provider>
-        </RecordTableRowDraggableContextProvider>
-      </RecordTableRowContextProvider>
-    </RecordTableComponentInstance>
-  </JotaiProvider>
-);
+jest.mock('react-responsive', () => ({
+  useMediaQuery: jest.fn(),
+}));
+
+const mockUseMediaQuery = jest.requireMock('react-responsive')
+  .useMediaQuery as jest.Mock;
+
+const mockIsTouchDevice = (isTouchDevice: boolean) => {
+  mockUseMediaQuery.mockImplementation(({ query }: { query: string }) =>
+    query.includes('hover: none') ? isTouchDevice : false,
+  );
+};
+
+const createWrapper =
+  (recordTableId: string) =>
+  ({ children }: { children: React.ReactNode }) => (
+    <JotaiProvider store={jotaiStore}>
+      <RecordTableComponentInstance recordTableId={recordTableId}>
+        <RecordTableRowContextProvider value={recordTableRowContextValue}>
+          <RecordTableRowDraggableContextProvider
+            value={recordTableRowDraggableContextValue}
+          >
+            <RecordTableCellContext.Provider
+              value={recordTableCellContextValue}
+            >
+              {children}
+            </RecordTableCellContext.Provider>
+          </RecordTableRowDraggableContextProvider>
+        </RecordTableRowContextProvider>
+      </RecordTableComponentInstance>
+    </JotaiProvider>
+  );
+
+const renderMoveHoverToCurrentCell = (recordTableId: string) =>
+  renderHook(
+    () => {
+      const recordTableHoverPosition = useAtomValue(
+        recordTableHoverPositionComponentState.atomFamily({
+          instanceId: recordTableId,
+        }),
+      );
+      const { moveHoverToCurrentCell } =
+        useMoveHoverToCurrentCell(recordTableId);
+
+      return {
+        moveHoverToCurrentCell,
+        recordTableHoverPosition,
+      };
+    },
+    {
+      wrapper: createWrapper(recordTableId),
+    },
+  );
 
 describe('useMoveHoverToCurrentCell', () => {
   it('should work as expected', () => {
-    const { result } = renderHook(
-      () => {
-        const recordTableHoverPosition = useAtomValue(
-          recordTableHoverPositionComponentState.atomFamily({
-            instanceId: 'test-record-table-instance-id',
-          }),
-        );
-        const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(
-          'test-record-table-instance-id',
-        );
+    mockIsTouchDevice(false);
 
-        return {
-          moveHoverToCurrentCell,
-          recordTableHoverPosition,
-        };
-      },
-      {
-        wrapper: Wrapper,
-      },
-    );
+    const { result } = renderMoveHoverToCurrentCell('test-pointer-fine');
 
     act(() => {
       result.current.moveHoverToCurrentCell({
@@ -65,5 +86,20 @@ describe('useMoveHoverToCurrentCell', () => {
       column: 3,
       row: 2,
     });
+  });
+
+  it('should not track hover on touch devices', () => {
+    mockIsTouchDevice(true);
+
+    const { result } = renderMoveHoverToCurrentCell('test-pointer-coarse');
+
+    act(() => {
+      result.current.moveHoverToCurrentCell({
+        column: 1,
+        row: 1,
+      });
+    });
+
+    expect(result.current.recordTableHoverPosition).toBeNull();
   });
 });

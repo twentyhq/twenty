@@ -11,7 +11,7 @@ import {
 import { pipeline } from 'stream/promises';
 
 import { Response } from 'express';
-import { FileFolder } from 'twenty-shared/types';
+import { ApiPath, FileFolder } from 'twenty-shared/types';
 
 import {
   FileStorageException,
@@ -22,6 +22,7 @@ import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-f
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
@@ -34,7 +35,8 @@ import { FrontComponentService } from 'src/engine/metadata-modules/front-compone
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
-@Controller('rest/front-components')
+@Controller(`${ApiPath.Rest}/front-components`)
+@AllowSuspendedWorkspace()
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
@@ -100,6 +102,7 @@ export class FrontComponentController {
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error('Front component stream failed mid-transfer', {
         error,
       });

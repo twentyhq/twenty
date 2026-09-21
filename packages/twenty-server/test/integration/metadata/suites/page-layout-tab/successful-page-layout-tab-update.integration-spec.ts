@@ -8,11 +8,13 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 type TestContext = {
   input: {
     title?: string;
     position?: number;
+    layoutMode?: PageLayoutTabLayoutMode;
   };
 };
 
@@ -30,6 +32,14 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
     context: {
       input: {
         position: 10,
+      },
+    },
+  },
+  {
+    title: 'update page layout tab layout mode',
+    context: {
+      input: {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       },
     },
   },

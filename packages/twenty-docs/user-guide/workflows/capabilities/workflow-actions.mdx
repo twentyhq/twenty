@@ -17,7 +17,7 @@ Actions define what happens after a trigger fires. You can chain multiple action
 ## Record Actions
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}}/>
 
-### Create a Record
+### Create Record
 Adds a new record to a selected object.
 
 **Configuration**:
@@ -93,11 +93,11 @@ Creates a new record or updates an existing one based on matching criteria. This
 **Loops through an array of records** returned from a previous step, allowing you to perform actions on each record individually.
 
 **Configuration**:
-- Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a code node). When a Code or Logic Function step returns a top-level array, select its **Whole list** option to loop over the entire output.
+- Select the array of records from a previous step (e.g., results from Search Records, from a Manual trigger with Bulk availability, from a Code node). When a Code or Logic Function step returns a top-level array, select its **Whole list** option to loop over the entire output.
 - Define the actions to perform on each record in the loop.
 <Note>
-- You can add several actions within an iterator.
-- When using branches inside an iterator, make sure the last step of each branch connects back to the iterator to close the loop.
+- You can add several actions within an Iterator.
+- When using branches inside an Iterator, make sure the last step of each branch connects back to the Iterator to close the loop.
 </Note>
 
 - Access `Current Item` Fields: to use fields from the record currently being processed, click on the **Iterator** step, then select **Current item**. The list of available fields from that record will be displayed and can be selected for use in subsequent actions. You can also select **Use the whole item** to pass the entire current item into a downstream step.
@@ -153,7 +153,7 @@ The scheduled date cannot be in the past. If a date field from a previous step i
 
 ### Send Email
 Sends an email from your workflow. This is great for templated group emails. Emails will look like the ones you send from your mailbox.
-Not suited for newsletters (which require richer formatting) or automated email sequences.
+It's not suited for newsletters (which require richer formatting) or automated email sequences.
 
 **Prerequisites**: Add an email account in Settings → Accounts
 
@@ -170,7 +170,7 @@ For all the following steps, you can reference variables from previous steps for
 Only one recipient is possible at the moment.
 </Note>
 - Set subject line.
-- Compose message body. You can format links, create numbered list, bullet point lists, add attachments.
+- Compose message body. You can format links, create numbered lists, bullet point lists, and add attachments.
 <Note>
 Adding HTML signatures is not possible at the moment.
 </Note>
@@ -178,21 +178,21 @@ Adding HTML signatures is not possible at the moment.
 ### Form
 Prompts a form during workflow execution to collect user input. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
 <Warning>
-**Forms are designed for manual triggers only**. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface, which is not the expected user experience. A notifications center will be released in 2026 to properly support forms in automated workflows.
+**Forms are designed for manual triggers only**. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface, which is not the expected user experience. A notification center will be released in 2026 to properly support forms in automated workflows.
 </Warning>
 **Configuration**:
 - Configure the fields that users will be asked to fill. For each field, choose
-  - a type among text, number, date, a given record, a select field. Select fields from all objects are available.
+  - a type among text, number, date, a given record, a select field. Fields from all objects are available for selection.
   - a label
   - a default value under `Placeholder` (optional)
 - Edit the form title
 
 **Output**: Form responses are available for use in subsequent steps.
 
-**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd + K`.
+**Example**: The "Quick Lead" workflow is available by default in all workspaces, available anywhere in the Command Menu `Cmd+K`.
 
 **How to fill the form**:
-- Trigger your manual workflow from the command menu `Cmd K`
+- Trigger your manual workflow from the Command Menu `Cmd+K`
 - Fill the form that is displayed in the side panel and click `Submit`.
 <Note>
 The fields cannot be made mandatory.
@@ -210,7 +210,7 @@ Runs custom JavaScript within your workflow.
 Behind the scenes, each Code action is backed by its own **logic function** — a server-side TypeScript function that runs on the Twenty platform. When you add a Code action, Twenty creates a dedicated logic function for that step and exposes its editor inline, so the code you write lives with the workflow.
 
 **Configuration**:
-- Access variables from previous steps. You can edit the variables names dynamically.
+- Access variables from previous steps. You can edit the variables' names dynamically.
 <VimeoEmbed videoId="1147281795" title="Video demonstration" />
 - Write JavaScript code in the editor
 - Return variables for use in subsequent steps

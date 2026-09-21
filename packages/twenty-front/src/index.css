@@ -1,3 +1,5 @@
+@import './viewport-zoom.css';
+
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
@@ -5,11 +7,29 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: var(--t-background-tertiary);
   color: var(--t-font-color-primary);
+  touch-action: manipulation;
 }
 
 html {
   font-size: 13px;
   background: var(--t-background-tertiary);
+  /* The interface scale preference. Standardized CSS zoom multiplies every
+     used length uniformly, exactly like browser zoom, while computed styles,
+     offset and scroll geometry stay in design pixels. Viewport units are the
+     one exception: they are divided by --t-zoom wherever they must fit the
+     visual viewport, so the divisor has to be the effective zoom, mobile
+     base included, not the bare user preference. */
+  --t-zoom: var(--t-scale-user, 1);
+
+  zoom: var(--t-zoom);
+}
+
+/* Phones get a slightly larger base, mirroring native apps. 1.0769… is 14/13,
+   precomputed because media queries cannot read custom properties. */
+@media (max-width: 768px) {
+  html {
+    --t-zoom: calc(var(--t-scale-user, 1) * 1.0769230769230769);
+  }
 }
 
 button {
@@ -18,6 +38,17 @@ button {
 
 form {
   display: contents;
+}
+
+:root {
+  --dnd-drag-feedback-opacity: 0.6;
+  --dnd-drag-source-opacity: 0.3;
+}
+
+[data-dnd-dragging='true'] {
+  /* dnd-kit can reuse the source node as its moving feedback. In that case,
+     feedback opacity must win over the source fade applied by the component. */
+  opacity: var(--dnd-drag-feedback-opacity) !important;
 }
 
 /* https://stackoverflow.com/questions/44543157/how-to-hide-the-google-invisible-recaptcha-badge */

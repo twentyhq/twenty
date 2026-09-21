@@ -1,409 +1,136 @@
+import { EventEmitter } from 'events';
 import * as http from 'http';
 import * as https from 'https';
+import { type Duplex } from 'stream';
 
-import axiosRetry from 'axios-retry';
+import { Logger } from '@nestjs/common';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-jest.mock('axios-retry', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
-
-jest.mock('@lifeomic/axios-fetch', () => ({
-  buildAxiosFetch: jest.fn(() => jest.fn()),
-}));
-
-import { buildAxiosFetch } from '@lifeomic/axios-fetch';
-
-const mockBuildAxiosFetch = jest.mocked(buildAxiosFetch);
-
-jest.mock(
-  'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util',
-  () => ({
-    resolveAndValidateHostname: jest.fn(),
-  }),
-);
-
-import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
-
-const mockResolveAndValidate = jest.mocked(resolveAndValidateHostname);
-
-const createMockConfigService = (
-  overrides: Record<string, unknown> = {},
-): TwentyConfigService => {
-  const defaults: Record<string, unknown> = {
-    OUTBOUND_HTTP_SAFE_MODE_ENABLED: false,
-  };
-  const config = { ...defaults, ...overrides };
-
-  return {
-    get: jest.fn((key: string) => config[key]),
-  } as unknown as TwentyConfigService;
-};
-
 describe('SecureHttpClientService', () => {
-  describe('getHttpClient', () => {
-    it('should return a plain axios instance when safe mode is off', () => {
-      const service = new SecureHttpClientService(createMockConfigService());
-      const client = service.getHttpClient();
+  const buildService = (config: {
+    OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: string[];
+    OUTBOUND_HTTP_SAFE_MODE_ENABLED?: boolean;
+  }) =>
+    new SecureHttpClientService({
+      get: (key: keyof typeof config) => config[key],
+    } as unknown as TwentyConfigService);
 
-      expect(client).toBeDefined();
-      expect(client.defaults.httpAgent).toBeUndefined();
-      expect(client.defaults.httpsAgent).toBeUndefined();
-    });
-
-    it('should return an axios instance with SSRF-safe agents when safe mode is on', () => {
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-      const client = service.getHttpClient();
-
-      expect(client).toBeDefined();
-      expect(client.defaults.httpAgent).toBeInstanceOf(http.Agent);
-      expect(client.defaults.httpsAgent).toBeInstanceOf(https.Agent);
-    });
-
-    it('should default maxRedirects to 5 when safe mode is on', () => {
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-      const client = service.getHttpClient();
-
-      expect(client.defaults.maxRedirects).toBe(5);
-    });
-
-    it('should cap maxRedirects when caller requests more', () => {
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-      const client = service.getHttpClient({ maxRedirects: 100 });
-
-      expect(client.defaults.maxRedirects).toBe(5);
-    });
-
-    it('should respect caller maxRedirects when lower than cap', () => {
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-      const client = service.getHttpClient({ maxRedirects: 2 });
-
-      expect(client.defaults.maxRedirects).toBe(2);
-    });
-
-    it('should not set maxRedirects when safe mode is off', () => {
-      const service = new SecureHttpClientService(createMockConfigService());
-      const client = service.getHttpClient();
-
-      expect(client.defaults.maxRedirects).toBeUndefined();
-    });
-
-    it('should pass through axios config like baseURL', () => {
-      const service = new SecureHttpClientService(createMockConfigService());
-      const client = service.getHttpClient({
-        baseURL: 'https://example.com/api',
+  describe('getSsrfSafeAgent', () => {
+    it('returns an agent matching the URL protocol', () => {
+      const service = buildService({
+        OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: [],
       });
 
-      expect(client.defaults.baseURL).toBe('https://example.com/api');
+      expect(
+        service.getSsrfSafeAgent(new URL('https://idp.example.com')),
+      ).toBeInstanceOf(https.Agent);
+      expect(
+        service.getSsrfSafeAgent(new URL('http://idp.example.com')),
+      ).toBeInstanceOf(http.Agent);
     });
 
-    it('should configure axios-retry when retries is greater than 0', () => {
-      jest.mocked(axiosRetry).mockClear();
-      const service = new SecureHttpClientService(createMockConfigService());
-      const client = service.getHttpClient({
-        retries: 2,
-        shouldResetTimeout: true,
+    it('returns an agent that blocks a private address', () => {
+      const service = buildService({
+        OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: [],
       });
 
-      expect(axiosRetry).toHaveBeenCalledWith(client, {
-        retries: 2,
-        shouldResetTimeout: true,
-        retryCondition: expect.any(Function),
-      });
-    });
-
-    it('should not configure axios-retry when retries is 0', () => {
-      jest.mocked(axiosRetry).mockClear();
-      const service = new SecureHttpClientService(createMockConfigService());
-
-      service.getHttpClient({ retries: 0 });
-
-      expect(axiosRetry).not.toHaveBeenCalled();
-    });
-
-    it('should not leak retry config into axios defaults', () => {
-      const service = new SecureHttpClientService(createMockConfigService());
-      const client = service.getHttpClient({
-        retries: 2,
-        shouldResetTimeout: true,
-        baseURL: 'https://example.com',
-      });
-
-      expect(client.defaults.baseURL).toBe('https://example.com');
-      expect(client.defaults).not.toHaveProperty('retries');
-      expect(client.defaults).not.toHaveProperty('shouldResetTimeout');
-    });
-  });
-
-  describe('getInternalHttpClient', () => {
-    it('should return a plain axios instance regardless of safe mode', () => {
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-      const client = service.getInternalHttpClient();
-
-      expect(client).toBeDefined();
-    });
-
-    it('should pass through axios config like baseURL', () => {
-      const service = new SecureHttpClientService(createMockConfigService());
-      const client = service.getInternalHttpClient({
-        baseURL: 'http://localhost:3000',
-      });
-
-      expect(client.defaults.baseURL).toBe('http://localhost:3000');
-    });
-  });
-
-  describe('protocol validation interceptor', () => {
-    it('should allow http URLs when safe mode is on', () => {
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-      const client = service.getHttpClient();
-
-      const interceptorHandlers = (
-        client.interceptors.request as unknown as {
-          handlers: Array<{ fulfilled: Function }>;
-        }
-      ).handlers;
-
-      const protocolInterceptor = interceptorHandlers[0].fulfilled;
+      const agent = service.getSsrfSafeAgent(
+        new URL('http://169.254.169.254/latest/meta-data/'),
+      ) as http.Agent;
 
       expect(() =>
-        protocolInterceptor({ url: 'http://example.com/api' }),
-      ).not.toThrow();
-    });
-
-    it('should allow https URLs when safe mode is on', () => {
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-      const client = service.getHttpClient();
-
-      const interceptorHandlers = (
-        client.interceptors.request as unknown as {
-          handlers: Array<{ fulfilled: Function }>;
-        }
-      ).handlers;
-
-      const protocolInterceptor = interceptorHandlers[0].fulfilled;
-
-      expect(() =>
-        protocolInterceptor({ url: 'https://example.com/api' }),
-      ).not.toThrow();
-    });
-
-    it('should reject ftp URLs when safe mode is on', () => {
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-      const client = service.getHttpClient();
-
-      const interceptorHandlers = (
-        client.interceptors.request as unknown as {
-          handlers: Array<{ fulfilled: Function }>;
-        }
-      ).handlers;
-
-      const protocolInterceptor = interceptorHandlers[0].fulfilled;
-
-      expect(() =>
-        protocolInterceptor({ url: 'ftp://internal-server/data' }),
-      ).toThrow('Protocol ftp: is not allowed');
-    });
-
-    it('should reject file URLs when safe mode is on', () => {
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-      const client = service.getHttpClient();
-
-      const interceptorHandlers = (
-        client.interceptors.request as unknown as {
-          handlers: Array<{ fulfilled: Function }>;
-        }
-      ).handlers;
-
-      const protocolInterceptor = interceptorHandlers[0].fulfilled;
-
-      expect(() => protocolInterceptor({ url: 'file:///etc/passwd' })).toThrow(
-        'Protocol file: is not allowed',
+        agent.createConnection(
+          { host: '169.254.169.254' } as http.ClientRequestArgs,
+          jest.fn(),
+        ),
+      ).toThrow(
+        'Request to internal IP address 169.254.169.254 is not allowed.',
       );
     });
 
-    it('should reject non-http baseURL when url is empty string', () => {
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-      const client = service.getHttpClient();
+    it('returns undefined when all internal hosts are allowed', () => {
+      const service = buildService({
+        OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: ['*'],
+      });
 
-      const interceptorHandlers = (
-        client.interceptors.request as unknown as {
-          handlers: Array<{ fulfilled: Function }>;
-        }
-      ).handlers;
-
-      const protocolInterceptor = interceptorHandlers[0].fulfilled;
-
-      expect(() =>
-        protocolInterceptor({
-          url: '',
-          baseURL: 'ftp://internal-server/data',
-        }),
-      ).toThrow('Protocol ftp: is not allowed');
+      expect(
+        service.getSsrfSafeAgent(new URL('http://keycloak:8080')),
+      ).toBeUndefined();
     });
 
-    it('should not add protocol interceptor when safe mode is off', () => {
-      const service = new SecureHttpClientService(createMockConfigService());
-      const client = service.getHttpClient();
+    it('honours the deprecated OUTBOUND_HTTP_SAFE_MODE_ENABLED=false and warns once', () => {
+      const warnSpy = jest
+        .spyOn(Logger.prototype, 'warn')
+        .mockImplementation(() => undefined);
+      const service = buildService({
+        OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: ['keycloak'],
+        OUTBOUND_HTTP_SAFE_MODE_ENABLED: false,
+      });
 
-      const interceptorHandlers = (
-        client.interceptors.request as unknown as {
-          handlers: Array<{ fulfilled: Function }>;
-        }
-      ).handlers;
+      expect(
+        service.getSsrfSafeAgent(new URL('http://keycloak:8080')),
+      ).toBeUndefined();
+      expect(
+        service.getSsrfSafeAgent(new URL('http://10.0.0.1')),
+      ).toBeUndefined();
+      expect(warnSpy).toHaveBeenCalledTimes(1);
 
-      expect(interceptorHandlers.length).toBe(0);
+      warnSpy.mockRestore();
+    });
+
+    it('accepts a full URL or host:port entry and matches on the hostname', () => {
+      const socket = new EventEmitter();
+      const createConnectionSpy = jest
+        .spyOn(http.Agent.prototype, 'createConnection')
+        .mockReturnValue(socket as unknown as Duplex);
+      const service = buildService({
+        OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: [
+          'http://Keycloak:8080/realms/twenty',
+          '[::1]:993',
+        ],
+      });
+
+      const agent = service.getSsrfSafeAgent(
+        new URL('http://keycloak:8080'),
+      ) as http.Agent;
+
+      agent.createConnection(
+        { host: '::1' } as http.ClientRequestArgs,
+        jest.fn(),
+      );
+      agent.createConnection(
+        { host: 'keycloak' } as http.ClientRequestArgs,
+        jest.fn(),
+      );
+      socket.emit('lookup', null, '172.18.0.5', 4, 'keycloak');
+
+      expect(createConnectionSpy).toHaveBeenCalledTimes(2);
+
+      createConnectionSpy.mockRestore();
     });
   });
 
   describe('getValidatedHost', () => {
-    it('should return the original hostname when safe mode is off', async () => {
-      const service = new SecureHttpClientService(createMockConfigService());
-
-      const result = await service.getValidatedHost(
-        'https://caldav.icloud.com/principals/',
-      );
-
-      expect(result).toBe('https://caldav.icloud.com/principals/');
-      expect(mockResolveAndValidate).not.toHaveBeenCalled();
-    });
-
-    it('should validate and return resolved IP when safe mode is on', async () => {
-      mockResolveAndValidate.mockResolvedValue('17.248.239.66');
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-
-      const result = await service.getValidatedHost(
-        'https://caldav.icloud.com/principals/',
-      );
-
-      expect(mockResolveAndValidate).toHaveBeenCalledWith(
-        'https://caldav.icloud.com/principals/',
-      );
-      expect(result).toBe('17.248.239.66');
-    });
-
-    it('should throw when hostname resolves to a private IP', async () => {
-      mockResolveAndValidate.mockRejectedValue(
-        new Error(
-          'Connection to internal IP address 192.168.1.1 is not allowed.',
-        ),
-      );
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-
-      await expect(
-        service.getValidatedHost('https://my-local-server.local/'),
-      ).rejects.toThrow('internal IP address');
-    });
-  });
-
-  describe('createSsrfSafeFetch', () => {
-    beforeEach(() => {
-      mockBuildAxiosFetch.mockClear();
-    });
-
-    it('should return globalThis.fetch when safe mode is off', () => {
-      const service = new SecureHttpClientService(createMockConfigService());
-
-      const result = service.createSsrfSafeFetch();
-
-      expect(result).toBe(globalThis.fetch);
-      expect(mockBuildAxiosFetch).not.toHaveBeenCalled();
-    });
-
-    it('should wrap an SSRF-protected axios client when safe mode is on', () => {
-      const service = new SecureHttpClientService(
-        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
-      );
-
-      service.createSsrfSafeFetch();
-
-      expect(mockBuildAxiosFetch).toHaveBeenCalledTimes(1);
-      const axiosClient = mockBuildAxiosFetch.mock.calls[0][0] as ReturnType<
-        SecureHttpClientService['getHttpClient']
-      >;
-
-      expect(axiosClient.defaults.httpAgent).toBeInstanceOf(http.Agent);
-      expect(axiosClient.defaults.httpsAgent).toBeInstanceOf(https.Agent);
-    });
-  });
-
-  describe('logging interceptor', () => {
-    it('should add a request interceptor when context is provided', () => {
-      const service = new SecureHttpClientService(createMockConfigService());
-      const client = service.getHttpClient(undefined, {
-        workspaceId: 'ws-123',
-        source: 'webhook',
+    it('lets an allowed private IP through, ignoring surrounding whitespace', async () => {
+      const service = buildService({
+        OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: [' 192.168.1.10 '],
       });
 
-      const interceptorHandlers = (
-        client.interceptors.request as unknown as {
-          handlers: Array<{ fulfilled: Function }>;
-        }
-      ).handlers;
-
-      expect(interceptorHandlers.length).toBe(1);
+      await expect(service.getValidatedHost('192.168.1.10')).resolves.toBe(
+        '192.168.1.10',
+      );
     });
 
-    it('should not add a request interceptor when context is not provided', () => {
-      const service = new SecureHttpClientService(createMockConfigService());
-      const client = service.getHttpClient();
-
-      const interceptorHandlers = (
-        client.interceptors.request as unknown as {
-          handlers: Array<{ fulfilled: Function }>;
-        }
-      ).handlers;
-
-      expect(interceptorHandlers.length).toBe(0);
-    });
-
-    it('should pass config through the interceptor and return it', () => {
-      const service = new SecureHttpClientService(createMockConfigService());
-      const client = service.getHttpClient(undefined, {
-        workspaceId: 'ws-456',
-        source: 'workflow-http',
-        userId: 'user-789',
+    it('still blocks a private IP that is not allowed', async () => {
+      const service = buildService({
+        OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: ['192.168.1.10'],
       });
 
-      const interceptorHandlers = (
-        client.interceptors.request as unknown as {
-          handlers: Array<{ fulfilled: Function }>;
-        }
-      ).handlers;
-
-      const interceptorFn = interceptorHandlers[0].fulfilled;
-      const mockConfig = { method: 'GET', url: 'https://example.com/api' };
-
-      const result = interceptorFn(mockConfig);
-
-      expect(result).toBe(mockConfig);
+      await expect(service.getValidatedHost('10.0.0.1')).rejects.toThrow(
+        'Connection to internal IP address 10.0.0.1 is not allowed.',
+      );
     });
   });
 });

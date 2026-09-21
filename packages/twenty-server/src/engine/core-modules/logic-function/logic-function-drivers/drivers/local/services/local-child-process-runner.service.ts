@@ -2,6 +2,8 @@ import { promises as fs } from 'fs';
 import { spawn } from 'node:child_process';
 import { join } from 'path';
 
+import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
+
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getLocalDepsLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-deps-layer-path.util';
 import { getLocalSdkLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-sdk-layer-path.util';
@@ -92,7 +94,7 @@ export class LocalChildProcessRunnerService {
             process.on('message', async (msg) => {
               if (!msg || msg.type !== 'run') return;
               try {
-                const out = await handlerFn(msg.payload);
+                const out = await handlerFn(msg.payload, msg.context);
                 // Wait for the async IPC flush before exiting, otherwise results
                 // larger than the OS pipe buffer are dropped before delivery.
                 if (process.send) {
@@ -100,27 +102,39 @@ export class LocalChildProcessRunnerService {
                 } else {
                   process.exit(0);
                 }
-              } catch (err) {
+              } catch (error) {
                 if (process.send) {
-                  process.send({ ok: false, error: String(err), stack: err?.stack }, () => process.exit(1));
+                  process.send({
+                    ok: false,
+                    errorType: error instanceof Error ? error.name : 'Error',
+                    error: error instanceof Error ? error.message : String(error),
+                    stack: error?.stack,
+                  }, () => process.exit(1));
                 } else {
                   process.exit(1);
                 }
               }
             });
           } else {
-            // Fallback: read payload from argv[2] (JSON) and print to stdout
+            // Fallback for a runner started without IPC: the context travels as
+            // argv[3] because the script is written once, before any run exists.
             const json = process.argv[2];
             payload = json ? JSON.parse(json) : undefined;
-            const out = await handlerFn(payload);
+            const contextJson = process.argv[3];
+            const out = await handlerFn(payload, contextJson ? JSON.parse(contextJson) : undefined);
             process.stdout.write(JSON.stringify({ ok: true, result: out }), () => process.exit(0));
           }
-        } catch (err) {
-          const msg = String(err);
+        } catch (error) {
+          const errorMessage = String(error);
           if (process.send) {
-            process.send({ ok: false, error: msg, stack: err?.stack }, () => process.exit(1));
+            process.send({
+              ok: false,
+              errorType: error instanceof Error ? error.name : 'Error',
+              error: error instanceof Error ? error.message : errorMessage,
+              stack: error?.stack,
+            }, () => process.exit(1));
           } else {
-            process.stdout.write(msg, () => process.exit(1));
+            process.stdout.write(errorMessage, () => process.exit(1));
           }
         }
       })();
@@ -135,13 +149,15 @@ export class LocalChildProcessRunnerService {
     runnerPath: string;
     env: Record<string, string>;
     payload: unknown;
+    context: LogicFunctionExecutionContext;
     timeoutMs: number;
   }) {
-    const { runnerPath, env, payload, timeoutMs } = options;
+    const { runnerPath, env, payload, context, timeoutMs } = options;
 
     return new Promise<{
       ok: boolean;
       result?: unknown;
+      errorType?: string;
       error?: string;
       stack?: string;
       stdout: string;
@@ -175,6 +191,7 @@ export class LocalChildProcessRunnerService {
               }
             | {
                 ok: false;
+                errorType?: string;
                 error: string;
                 stack?: string;
                 stdout?: string;
@@ -214,7 +231,7 @@ export class LocalChildProcessRunnerService {
         });
       }, timeoutMs);
 
-      child.send?.({ type: 'run', payload });
+      child.send?.({ type: 'run', payload, context });
 
       child.on('close', () => clearTimeout(t));
     });

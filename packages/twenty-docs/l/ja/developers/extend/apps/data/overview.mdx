@@ -35,18 +35,22 @@ Twenty アプリの**データレイヤー**とは、アプリがワークスペ
   <Card title="関連" icon="diagram-project" href="/l/ja/developers/extend/apps/data/relations">
     オブジェクト間の双方向 `MANY_TO_ONE` / `ONE_TO_MANY` 接続。
   </Card>
+  <Card title="タイムライン活動タイプ" icon="clock-rotate-left" href="/l/ja/developers/extend/apps/data/timeline-activity-types">
+    レコードタイムライン用の自動監査イベントと明示的なアプリイベントを定義します。
+  </Card>
 </CardGroup>
 
 ## エンティティの概要
 
-| エンティティ     | 目的                                                                              | 定義方法                                   |
-| ---------- | ------------------------------------------------------------------------------- | -------------------------------------- |
-| **オブジェクト** | 固有のフィールドを持つ新しいカスタムレコードタイプ（例: PostCard、Invoice）                                  | `defineObject()`                       |
-| **フィールド**  | オブジェクト上のカラム。 スタンドアロンフィールドは、作成していないオブジェクトも拡張できます（例: Company に `loyaltyTier` を追加） | `defineField()`                        |
-| **リレーション** | 2 つのオブジェクト間の双方向リンク ― 両側がフィールドとして宣言されます                                          | `defineField()` と `FieldType.RELATION` |
-| **インデックス** | オブジェクトの 1 つに対する定期的なクエリを高速化するためのデータベースインデックス                                     | `defineIndex()`                        |
+| エンティティ          | 目的                                                                              | 定義方法                                   |
+| --------------- | ------------------------------------------------------------------------------- | -------------------------------------- |
+| **オブジェクト**      | 固有のフィールドを持つ新しいカスタムレコードタイプ（例: PostCard、Invoice）                                  | `defineObject()`                       |
+| **フィールド**       | オブジェクト上のカラム。 スタンドアロンフィールドは、作成していないオブジェクトも拡張できます（例: Company に `loyaltyTier` を追加） | `defineField()`                        |
+| **リレーション**      | 2 つのオブジェクト間の双方向リンク ― 両側がフィールドとして宣言されます                                          | `defineField()` と `FieldType.RELATION` |
+| **インデックス**      | オブジェクトの 1 つに対する定期的なクエリを高速化するためのデータベースインデックス                                     | `defineIndex()`                        |
+| **タイムライン活動タイプ** | レコードタイムラインに表示される自動監査イベントまたは明示的なドメインイベント                                         | `defineTimelineActivityType()`         |
 
-SDK はビルド時に AST 解析を通じてこれらを検出するため、ファイル構成は自由です ― 慣例としては `src/objects/`、`src/fields/`、`src/indexes/` です。 安定した `universalIdentifier` UUID が、デプロイをまたいであらゆるものを結び付けます。
+SDK はビルド時に AST 解析を通じてこれらを検出するため、ファイル構成は自由です — 慣例としては `src/objects/`、`src/fields/`、`src/indexes/`、`src/timeline-activity-types/` です。 安定した `universalIdentifier` UUID が、デプロイをまたいであらゆるものを結び付けます。
 
 ## インデックス（任意）
 

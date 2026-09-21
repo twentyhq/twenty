@@ -1,3 +1,4 @@
+import { type DialogProps } from '@/ui/feedback/dialog-manager/types/DialogProps';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { Key } from 'ts-key-enum';
@@ -10,19 +11,19 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDialogOverlayBase = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.overlayPrimary};
   display: flex;
-  height: 100dvh;
+  height: calc(100dvh / var(--t-zoom, 1));
   justify-content: center;
   left: 0;
   position: fixed;
   top: 0;
-  width: 100vw;
+  width: calc(100vw / var(--t-zoom, 1));
   z-index: ${RootStackingContextZIndices.Dialog};
 `;
 const StyledDialogOverlay = motion.create(StyledDialogOverlayBase);
@@ -60,25 +61,6 @@ const StyledDialogButtonContainer = styled.div`
   justify-content: center;
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
-
-export type DialogButtonOptions = Omit<
-  React.ComponentProps<typeof Button>,
-  'fullWidth'
-> & {
-  onClick?: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent,
-  ) => void;
-  role?: 'confirm';
-};
-
-export type DialogProps = React.ComponentPropsWithoutRef<typeof motion.div> & {
-  title?: string;
-  message?: string;
-  buttons?: DialogButtonOptions[];
-  children?: React.ReactNode;
-  className?: string;
-  onClose?: () => void;
-};
 
 export const Dialog = ({
   title,
@@ -157,7 +139,7 @@ export const Dialog = ({
         {title && <StyledDialogTitle>{title}</StyledDialogTitle>}
         {message && <StyledDialogMessage>{message}</StyledDialogMessage>}
         {children}
-        {buttons.map(({ accent, onClick, role, title: key, variant }) => (
+        {buttons.map(({ color, onClick, title: key, variant }) => (
           <StyledDialogButtonContainer key={key}>
             <Button
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -165,10 +147,11 @@ export const Dialog = ({
                 onClick?.(event);
               }}
               fullWidth={true}
-              variant={variant ?? 'secondary'}
-              title={key}
-              {...{ accent, role }}
-            />
+              color={color}
+              variant={variant ?? 'outline'}
+            >
+              {key}
+            </Button>
           </StyledDialogButtonContainer>
         ))}
       </StyledDialogContainer>

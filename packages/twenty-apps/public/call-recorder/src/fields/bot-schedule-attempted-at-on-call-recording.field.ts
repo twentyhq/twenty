@@ -4,7 +4,7 @@ import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
-import { BOT_SCHEDULE_ATTEMPTED_AT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/bot-schedule-attempted-at-field-universal-identifier';
+import { BOT_SCHEDULE_ATTEMPTED_AT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export default defineField({
   universalIdentifier: BOT_SCHEDULE_ATTEMPTED_AT_FIELD_UNIVERSAL_IDENTIFIER,

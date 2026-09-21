@@ -19,6 +19,7 @@ import { computeStandardMerchantViews } from 'src/engine/workspace-manager/twent
 import { computeStandardMessageChannelMessageAssociationMessageFolderViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-message-folder-views.util';
 import { computeStandardMessageChannelMessageAssociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-views.util';
 import { computeStandardMessageListViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-list-views.util';
+import { computeStandardMessageListMemberViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-list-member-views.util';
 import { computeStandardMessageParticipantViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-participant-views.util';
 import { computeStandardMessageThreadViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-thread-views.util';
 import { computeStandardMessageViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-views.util';
@@ -68,6 +69,7 @@ const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   messageChannelMessageAssociationMessageFolder:
     computeStandardMessageChannelMessageAssociationMessageFolderViews,
   messageList: computeStandardMessageListViews,
+  messageListMember: computeStandardMessageListMemberViews,
   messageParticipant: computeStandardMessageParticipantViews,
   messageThread: computeStandardMessageThreadViews,
   note: computeStandardNoteViews,

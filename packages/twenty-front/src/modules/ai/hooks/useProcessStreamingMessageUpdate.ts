@@ -1,10 +1,14 @@
 import { useProcessUIToolCallMessage } from '@/ai/hooks/useProcessUIToolCallMessage';
+import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import { isUIToolCallMessage } from '@/ai/utils/isUIToolCallMessage';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Temporal } from 'temporal-polyfill';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  type ExtendedUIMessage,
+  isSucceededCompleteWorkspaceSetupToolPart,
+} from 'twenty-shared/ai';
 
 export const useProcessStreamingMessageUpdate = () => {
   const agentChatUISessionStartTime = useAtomStateValue(
@@ -12,6 +16,9 @@ export const useProcessStreamingMessageUpdate = () => {
   );
 
   const { processUIToolCallMessage } = useProcessUIToolCallMessage();
+
+  const { processWorkspaceSetupCompletion } =
+    useProcessWorkspaceSetupCompletion();
 
   const processStreamingMessageUpdate = (
     streamingMessage: ExtendedUIMessage,
@@ -38,6 +45,14 @@ export const useProcessStreamingMessageUpdate = () => {
 
     if (messageIsUIToolCall) {
       processUIToolCallMessage(streamingMessage);
+    }
+
+    const messageCompletesWorkspaceSetup = streamingMessage.parts.some(
+      isSucceededCompleteWorkspaceSetupToolPart,
+    );
+
+    if (messageCompletesWorkspaceSetup) {
+      processWorkspaceSetupCompletion(streamingMessage);
     }
   };
 

@@ -1,11 +1,18 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
-import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
+import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { useRecordTableWidgetFieldCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldCallbacks';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
+import { getRecordTableWidgetIsUIEditable } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetIsUIEditable';
+import {
+  getRecordTableWidgetLayoutViewType,
+  isRecordTableWidgetContentEditingSupported,
+  RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
+} from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -24,9 +31,9 @@ import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWid
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowBarToDownDashed,
@@ -36,13 +43,11 @@ import {
   IconCalendarEvent,
   IconEyeOff,
   IconFilter,
-  IconLayoutKanban,
   IconLayoutList,
   IconListDetails,
-  IconTable,
+  IconPencil,
 } from 'twenty-ui/icon';
 import {
-  FeatureFlagKey,
   ViewCalendarLayout,
   ViewType,
   WidgetConfigurationType,
@@ -62,7 +67,13 @@ const StyledSettingsContainer = styled.div`
 `;
 
 export const SidePanelDashboardRecordTableSettings = () => {
+  const { t } = useLingui();
+
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const pageLayoutDraft = useAtomComponentStateValue(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
 
@@ -86,6 +97,11 @@ export const SidePanelDashboardRecordTableSettings = () => {
       ? (configuration.recordLimit as number)
       : undefined;
 
+  const isUIEditable = getRecordTableWidgetIsUIEditable(
+    configuration,
+    pageLayoutDraft.type,
+  );
+
   const {
     sourceDescription,
     fieldsDescription,
@@ -105,6 +121,14 @@ export const SidePanelDashboardRecordTableSettings = () => {
 
     updateCurrentWidgetConfig({
       configToUpdate: { recordLimit: nextLimit },
+    });
+  };
+
+  const handleIsUIEditableChange = (nextIsUIEditable: boolean) => {
+    updateCurrentWidgetConfig({
+      configToUpdate: {
+        isUIEditable: nextIsUIEditable,
+      },
     });
   };
 
@@ -131,19 +155,18 @@ export const SidePanelDashboardRecordTableSettings = () => {
     widgetView?.mainGroupByFieldMetadataId ?? null;
   const shouldHideEmptyGroups = widgetView?.shouldHideEmptyGroups ?? false;
 
-  const isKanbanLayout = widgetView?.type === ViewType.KANBAN_WIDGET;
-  const isCalendarLayout = widgetView?.type === ViewType.CALENDAR_WIDGET;
-  const currentLayoutViewType = isKanbanLayout
-    ? ViewType.KANBAN_WIDGET
-    : isCalendarLayout
-      ? ViewType.CALENDAR_WIDGET
-      : ViewType.TABLE_WIDGET;
+  const currentLayoutViewType = getRecordTableWidgetLayoutViewType(
+    widgetView?.type,
+  );
+  const isKanbanLayout = currentLayoutViewType === ViewType.KANBAN_WIDGET;
+  const isCalendarLayout = currentLayoutViewType === ViewType.CALENDAR_WIDGET;
+
+  const { Icon: CurrentLayoutIcon, label: currentLayoutLabel } =
+    RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[currentLayoutViewType];
+  const isWidgetContentEditingSupported =
+    isRecordTableWidgetContentEditingSupported(widgetView?.type);
 
   const calendarFieldMetadataId = widgetView?.calendarFieldMetadataId ?? null;
-
-  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-  );
 
   const currentCalendarLayout =
     widgetView?.calendarLayout ?? ViewCalendarLayout.MONTH;
@@ -189,17 +212,15 @@ export const SidePanelDashboardRecordTableSettings = () => {
           'record-table-filter',
           'record-table-sort',
           ...(isCalendarLayout
-            ? [
-                'record-table-calendar-field',
-                ...(isCalendarWeekViewEnabled
-                  ? ['record-table-calendar-layout']
-                  : []),
-              ]
+            ? ['record-table-calendar-field', 'record-table-calendar-layout']
             : ['record-table-group-by']),
           ...(!isCalendarLayout && hasGroupBy
             ? ['record-table-hide-empty-groups']
             : []),
           ...(!isCalendarLayout && !hasGroupBy ? ['record-table-limit'] : []),
+          ...(isWidgetContentEditingSupported
+            ? ['record-table-allow-editing']
+            : []),
         ]
       : []),
   ];
@@ -239,13 +260,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
               </SelectableListItem>
               <SelectableListItem itemId="object-view-layout">
                 <CommandMenuItemDropdown
-                  Icon={
-                    isKanbanLayout
-                      ? IconLayoutKanban
-                      : isCalendarLayout
-                        ? IconCalendar
-                        : IconTable
-                  }
+                  Icon={CurrentLayoutIcon}
                   label={t`Layout`}
                   id="object-view-layout"
                   dropdownId="object-view-layout"
@@ -265,13 +280,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                   }
                   dropdownPlacement="bottom-end"
                   hasSubMenu={hasViewId}
-                  description={
-                    isKanbanLayout
-                      ? t`Kanban`
-                      : isCalendarLayout
-                        ? t`Calendar`
-                        : t`Table`
-                  }
+                  description={t(currentLayoutLabel)}
                   disabled={!hasViewId}
                   contextualTextPosition="right"
                 />
@@ -354,7 +363,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       />
                     </SelectableListItem>
                   )}
-                  {isCalendarLayout && isCalendarWeekViewEnabled && (
+                  {isCalendarLayout && (
                     <SelectableListItem itemId="record-table-calendar-layout">
                       <CommandMenuItemDropdown
                         Icon={IconCalendar}
@@ -408,12 +417,12 @@ export const SidePanelDashboardRecordTableSettings = () => {
                   )}
                   {!isCalendarLayout && hasGroupBy && (
                     <SelectableListItem itemId="record-table-hide-empty-groups">
-                      <CommandMenuItemToggle
+                      <CommandMenuItemSwitch
                         LeftIcon={IconEyeOff}
                         text={t`Hide empty groups`}
                         id="record-table-hide-empty-groups"
-                        toggled={shouldHideEmptyGroups}
-                        onToggleChange={handleShouldHideEmptyGroupsChange}
+                        checked={shouldHideEmptyGroups}
+                        onCheckedChange={handleShouldHideEmptyGroupsChange}
                       />
                     </SelectableListItem>
                   )}
@@ -426,6 +435,17 @@ export const SidePanelDashboardRecordTableSettings = () => {
                         value={isDefined(limit) ? `${limit}` : ''}
                         onChange={handleLimitChange}
                         placeholder={t`No limit`}
+                      />
+                    </SelectableListItem>
+                  )}
+                  {isWidgetContentEditingSupported && (
+                    <SelectableListItem itemId="record-table-allow-editing">
+                      <CommandMenuItemSwitch
+                        LeftIcon={IconPencil}
+                        text={t`Allow editing`}
+                        id="record-table-allow-editing"
+                        checked={isUIEditable}
+                        onCheckedChange={handleIsUIEditableChange}
                       />
                     </SelectableListItem>
                   )}

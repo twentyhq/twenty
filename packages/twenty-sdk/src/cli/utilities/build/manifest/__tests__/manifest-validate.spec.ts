@@ -8,6 +8,7 @@ import {
 import {
   AggregateOperations,
   FieldMetadataType,
+  PageLayoutTabLayoutMode,
   RelationType,
 } from 'twenty-shared/types';
 import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
@@ -32,6 +33,7 @@ const validField: FieldManifest = {
 
 const validManifest: Manifest = {
   commandMenuItems: [],
+  timelineActivityTypes: [],
   application: validApplication,
   objects: [],
   frontComponents: [],
@@ -47,6 +49,7 @@ const validManifest: Manifest = {
   navigationMenuItems: [],
   pageLayouts: [],
   pageLayoutTabs: [],
+  pageLayoutWidgets: [],
 };
 
 describe('manifestValidate', () => {
@@ -197,36 +200,39 @@ describe('manifestValidate', () => {
       );
     });
 
-    it('should not flag a connection provider referencing a logic function via onConnectLogicFunction as a duplicate', () => {
-      const logicFunctionId = '550e8400-e29b-41d4-a716-446655440040';
+    it.each(['onConnectLogicFunction', 'onDisconnectLogicFunction'] as const)(
+      'should not flag a connection provider referencing a logic function via %s as a duplicate',
+      (lifecycleHookKey) => {
+        const logicFunctionId = '550e8400-e29b-41d4-a716-446655440040';
 
-      const logicFunction = {
-        universalIdentifier: logicFunctionId,
-        name: 'onConnect',
-        sourceHandlerPath: 'src/logic-functions/on-connect.ts',
-        builtHandlerPath: 'dist/on-connect.js',
-        builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
-        handlerName: 'handler',
-      } as unknown as Manifest['logicFunctions'][number];
+        const logicFunction = {
+          universalIdentifier: logicFunctionId,
+          name: lifecycleHookKey,
+          sourceHandlerPath: 'src/logic-functions/lifecycle-hook.ts',
+          builtHandlerPath: 'dist/lifecycle-hook.js',
+          builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
+          handlerName: 'handler',
+        } as unknown as Manifest['logicFunctions'][number];
 
-      const connectionProvider = {
-        universalIdentifier: '550e8400-e29b-41d4-a716-446655440041',
-        name: 'slack',
-        displayName: 'Slack',
-        type: 'oauth',
-        oauth: {},
-        onConnectLogicFunction: { universalIdentifier: logicFunctionId },
-      } as unknown as NonNullable<Manifest['connectionProviders']>[number];
+        const connectionProvider = {
+          universalIdentifier: '550e8400-e29b-41d4-a716-446655440041',
+          name: 'slack',
+          displayName: 'Slack',
+          type: 'oauth',
+          oauth: {},
+          [lifecycleHookKey]: { universalIdentifier: logicFunctionId },
+        } as unknown as NonNullable<Manifest['connectionProviders']>[number];
 
-      const result = manifestValidate({
-        ...validManifest,
-        logicFunctions: [logicFunction],
-        connectionProviders: [connectionProvider],
-      });
+        const result = manifestValidate({
+          ...validManifest,
+          logicFunctions: [logicFunction],
+          connectionProviders: [connectionProvider],
+        });
 
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-    });
+        expect(result.isValid).toBe(true);
+        expect(result.errors).toHaveLength(0);
+      },
+    );
 
     it('should not flag a front component referenced via settingsFrontComponent as a duplicate', () => {
       const frontComponentId = '550e8400-e29b-41d4-a716-446655440050';
@@ -626,18 +632,14 @@ describe('manifestValidate', () => {
 
       expect(result.isValid).toBe(false);
       expect(result.errors).toContainEqual(
-        expect.stringContaining(
-          'not "aggregateFieldMetadataId"',
-        ),
+        expect.stringContaining('not "aggregateFieldMetadataId"'),
       );
     });
 
     it('should ignore non-graph widgets that have no aggregate field', () => {
       const result = manifestValidate({
         ...validManifest,
-        pageLayoutTabs: [
-          makeGraphWidgetTab({ configurationType: 'TIMELINE' }),
-        ],
+        pageLayoutTabs: [makeGraphWidgetTab({ configurationType: 'TIMELINE' })],
       });
 
       expect(result.isValid).toBe(true);
@@ -654,6 +656,478 @@ describe('manifestValidate', () => {
       });
 
       expect(result.isValid).toBe(true);
+    });
+  });
+
+  describe('page layout deprecation warnings', () => {
+    it.each(['nested', 'standalone'])(
+      'warns without changing a legacy %s manifest',
+      (location) => {
+        const legacyTab: PageLayoutTabManifest = {
+          universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000012',
+          title: 'Legacy canvas',
+          position: 0,
+          layoutMode: PageLayoutTabLayoutMode.CANVAS,
+          widgets: [],
+        };
+        const manifest: Manifest = {
+          ...validManifest,
+          pageLayouts:
+            location === 'nested'
+              ? [
+                  {
+                    universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000010',
+                    name: 'Record page',
+                    type: 'RECORD_PAGE',
+                    tabs: [legacyTab],
+                  },
+                ]
+              : [],
+          pageLayoutTabs: location === 'standalone' ? [legacyTab] : [],
+        };
+        const original = JSON.stringify(manifest);
+        const result = manifestValidate(manifest);
+
+        expect(result.isValid).toBe(true);
+        expect(result.warnings).toEqual([
+          expect.stringContaining('uses deprecated CANVAS'),
+        ]);
+        expect(result.warnings[0]).toContain(
+          "heightBehavior to 'TAB_VIEWPORT'",
+        );
+        expect(JSON.stringify(manifest)).toBe(original);
+      },
+    );
+
+    it.each(['position', 'gridPosition'])(
+      'warns about legacy %s with a replacement',
+      (positionKey) => {
+        const result = manifestValidate({
+          ...validManifest,
+          pageLayoutTabs: [
+            {
+              universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000012',
+              title: 'Details',
+              position: 0,
+              layoutMode:
+                positionKey === 'position'
+                  ? PageLayoutTabLayoutMode.VERTICAL_LIST
+                  : PageLayoutTabLayoutMode.GRID,
+              widgets: [
+                {
+                  universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000013',
+                  title: 'Timeline',
+                  type: 'TIMELINE',
+                  configuration: { configurationType: 'TIMELINE' },
+                  [positionKey]:
+                    positionKey === 'position'
+                      ? {
+                          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                          index: 99,
+                        }
+                      : { row: 2, column: 3, rowSpan: 4, columnSpan: 5 },
+                },
+              ],
+            },
+          ],
+        });
+
+        expect(result.isValid).toBe(true);
+        expect(result.warnings).toHaveLength(1);
+        expect(result.warnings[0]).toContain(
+          positionKey === 'position'
+            ? 'Order the widgets array by position.index'
+            : "Use position with layoutMode: 'GRID'",
+        );
+      },
+    );
+  });
+
+  describe('page layout widget height behavior validation', () => {
+    const makePageLayout = (
+      layoutMode: PageLayoutTabLayoutMode,
+    ): Manifest['pageLayouts'][number] => ({
+      universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000010',
+      name: 'Record page',
+      type: 'RECORD_PAGE',
+      objectUniversalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000011',
+      tabs: [
+        {
+          universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000012',
+          title: 'Details',
+          position: 0,
+          layoutMode,
+          widgets: [
+            {
+              universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000013',
+              title: 'App',
+              type: 'FRONT_COMPONENT',
+              heightBehavior: 'TAB_VIEWPORT',
+              configuration: {
+                configurationType: 'FRONT_COMPONENT',
+                frontComponentUniversalIdentifier:
+                  'a0a1a2a3-a4a5-4000-8000-000000000014',
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    it('should accept heightBehavior on a VERTICAL_LIST tab', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        pageLayouts: [makePageLayout(PageLayoutTabLayoutMode.VERTICAL_LIST)],
+      });
+
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it.each(['nested', 'standalone'])(
+      'rejects invalid heightBehavior in a %s tab',
+      (location) => {
+        const pageLayout = makePageLayout(
+          PageLayoutTabLayoutMode.VERTICAL_LIST,
+        );
+        const pageLayoutTab = {
+          ...pageLayout.tabs![0],
+          widgets: pageLayout.tabs![0].widgets!.map((widget) => ({
+            ...widget,
+            heightBehavior: 'TAB_VIEPORT',
+          })),
+        };
+        const manifest: Manifest = JSON.parse(
+          JSON.stringify({
+            ...validManifest,
+            pageLayouts: [
+              {
+                ...pageLayout,
+                tabs: location === 'nested' ? [pageLayoutTab] : [],
+              },
+            ],
+            pageLayoutTabs:
+              location === 'standalone'
+                ? [
+                    {
+                      ...pageLayoutTab,
+                      pageLayoutUniversalIdentifier:
+                        pageLayout.universalIdentifier,
+                    },
+                  ]
+                : [],
+          }),
+        );
+
+        const result = manifestValidate(manifest);
+        expect(result.isValid).toBe(false);
+        expect(result.errors).toContain(
+          'Page layout widget "App" defines unsupported heightBehavior "TAB_VIEPORT". Expected FIT_CONTENT or TAB_VIEWPORT.',
+        );
+      },
+    );
+
+    it.each([PageLayoutTabLayoutMode.GRID, PageLayoutTabLayoutMode.CANVAS])(
+      'should reject heightBehavior on a %s tab',
+      (layoutMode) => {
+        const result = manifestValidate({
+          ...validManifest,
+          pageLayouts: [makePageLayout(layoutMode)],
+        });
+
+        expect(result.errors).toContain(
+          `Page layout widget "App" defines heightBehavior, but its parent tab "Details" uses ${layoutMode}. heightBehavior is only supported for VERTICAL_LIST tabs.`,
+        );
+      },
+    );
+  });
+
+  describe('timeline activity type validation', () => {
+    const sourceObjectUniversalIdentifier =
+      '1a111111-1111-4111-8111-111111111111';
+    const relationFieldUniversalIdentifier =
+      '2a222222-2222-4222-8222-222222222222';
+    const triggerFieldUniversalIdentifier =
+      '3a333333-3333-4333-8333-333333333333';
+    const frontComponentUniversalIdentifier =
+      '4a444444-4444-4444-8444-444444444444';
+
+    const buildTimelineManifest = (): Manifest => ({
+      ...validManifest,
+      objects: [
+        {
+          universalIdentifier: sourceObjectUniversalIdentifier,
+          nameSingular: 'deployment',
+          namePlural: 'deployments',
+          labelSingular: 'Deployment',
+          labelPlural: 'Deployments',
+          labelIdentifierFieldMetadataUniversalIdentifier:
+            triggerFieldUniversalIdentifier,
+          fields: [],
+        },
+      ],
+      fields: [
+        {
+          universalIdentifier: relationFieldUniversalIdentifier,
+          objectUniversalIdentifier: sourceObjectUniversalIdentifier,
+          type: FieldMetadataType.RELATION,
+          name: 'owner',
+          label: 'Owner',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '5a555555-5555-4555-8555-555555555555',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '6a666666-6666-4666-8666-666666666666',
+          universalSettings: {
+            relationType: RelationType.MANY_TO_ONE,
+            joinColumnName: 'ownerId',
+          },
+        },
+        {
+          universalIdentifier: triggerFieldUniversalIdentifier,
+          objectUniversalIdentifier: sourceObjectUniversalIdentifier,
+          type: FieldMetadataType.TEXT,
+          name: 'status',
+          label: 'Status',
+        },
+      ],
+      frontComponents: [
+        {
+          universalIdentifier: frontComponentUniversalIdentifier,
+          sourceComponentPath: 'src/front-components/deployment.tsx',
+          builtComponentPath: 'dist/front-components/deployment.mjs',
+          builtComponentChecksum: 'checksum',
+          componentName: 'DeploymentTimelineActivity',
+        },
+      ],
+      timelineActivityTypes: [
+        {
+          universalIdentifier: '7a777777-7777-4777-8777-777777777777',
+          name: 'deploymentUpdated',
+          label: 'updated a deployment',
+          emit: {
+            on: 'updated',
+            objectUniversalIdentifier: sourceObjectUniversalIdentifier,
+            through: {
+              relationFieldUniversalIdentifier,
+              triggerFieldUniversalIdentifiers: [
+                triggerFieldUniversalIdentifier,
+              ],
+            },
+          },
+          frontComponentUniversalIdentifier,
+        },
+      ],
+    });
+
+    it('accepts references to source metadata and front components in the application', () => {
+      const result = manifestValidate(buildTimelineManifest());
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('reports references that cannot be resolved inside the application', () => {
+      const manifest = buildTimelineManifest();
+      const [timelineActivityType] = manifest.timelineActivityTypes;
+
+      timelineActivityType.frontComponentUniversalIdentifier =
+        '8a888888-8888-4888-8888-888888888888';
+      timelineActivityType.emit!.through!.relationFieldUniversalIdentifier =
+        '9a999999-9999-4999-8999-999999999999';
+      timelineActivityType.emit!.through!.triggerFieldUniversalIdentifiers = [
+        '0aaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      ];
+
+      const result = manifestValidate(manifest);
+
+      expect(result.errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('references front component'),
+          expect.stringContaining('references relation field'),
+          expect.stringContaining('references trigger fields'),
+        ]),
+      );
+    });
+
+    it('requires external-object emitters to declare the type they replace', () => {
+      const manifest = buildTimelineManifest();
+      const [timelineActivityType] = manifest.timelineActivityTypes;
+
+      timelineActivityType.emit!.objectUniversalIdentifier =
+        '0bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+
+      expect(manifestValidate(manifest).errors).toContainEqual(
+        expect.stringContaining(
+          'must declare replacesTimelineActivityTypeUniversalIdentifier',
+        ),
+      );
+
+      timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier =
+        '0ccccccc-cccc-4ccc-8ccc-cccccccccccc';
+
+      expect(manifestValidate(manifest).errors).toHaveLength(0);
+    });
+
+    it('validates external-object route identifiers without resolving their metadata', () => {
+      const manifest = buildTimelineManifest();
+      const [timelineActivityType] = manifest.timelineActivityTypes;
+
+      timelineActivityType.emit!.objectUniversalIdentifier =
+        '0bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+      timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier =
+        '0ccccccc-cccc-4ccc-8ccc-cccccccccccc';
+      timelineActivityType.emit!.through!.relationFieldUniversalIdentifier =
+        'not-a-relation-field-uuid';
+      timelineActivityType.emit!.through!.triggerFieldUniversalIdentifiers = [
+        'not-a-trigger-field-uuid',
+      ];
+
+      expect(manifestValidate(manifest).errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining(
+            'invalid through relation field universal identifier',
+          ),
+          expect.stringContaining(
+            'invalid trigger field universal identifiers',
+          ),
+        ]),
+      );
+    });
+
+    it('rejects an invalid emit object universal identifier', () => {
+      const manifest = buildTimelineManifest();
+      const [timelineActivityType] = manifest.timelineActivityTypes;
+
+      timelineActivityType.emit!.objectUniversalIdentifier = 'POST_CARD_TYPO';
+      timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier =
+        '0ccccccc-cccc-4ccc-8ccc-cccccccccccc';
+
+      expect(manifestValidate(manifest).errors).toContainEqual(
+        expect.stringContaining('invalid object universal identifier'),
+      );
+    });
+
+    it('rejects replacement contracts that cannot be valid locally', () => {
+      const explicitManifest = buildTimelineManifest();
+      const [explicitTimelineActivityType] =
+        explicitManifest.timelineActivityTypes;
+
+      explicitTimelineActivityType.emit = undefined;
+      explicitTimelineActivityType.replacesTimelineActivityTypeUniversalIdentifier =
+        '0ccccccc-cccc-4ccc-8ccc-cccccccccccc';
+
+      expect(manifestValidate(explicitManifest).errors).toContainEqual(
+        expect.stringContaining(
+          'declares replacesTimelineActivityTypeUniversalIdentifier without an automatic emit contract',
+        ),
+      );
+
+      const localObjectManifest = buildTimelineManifest();
+      localObjectManifest.timelineActivityTypes[0].replacesTimelineActivityTypeUniversalIdentifier =
+        '0ccccccc-cccc-4ccc-8ccc-cccccccccccc';
+
+      expect(manifestValidate(localObjectManifest).errors).toContainEqual(
+        expect.stringContaining("must not replace another application's type"),
+      );
+
+      const invalidIdentifierManifest = buildTimelineManifest();
+      const invalidIdentifierTimelineActivityType =
+        invalidIdentifierManifest.timelineActivityTypes[0];
+
+      invalidIdentifierTimelineActivityType.emit!.objectUniversalIdentifier =
+        '0bbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+      invalidIdentifierTimelineActivityType.replacesTimelineActivityTypeUniversalIdentifier =
+        'not-a-uuid';
+
+      expect(manifestValidate(invalidIdentifierManifest).errors).toContainEqual(
+        expect.stringContaining('invalid replacement universal identifier'),
+      );
+    });
+
+    it.each([
+      {
+        action: 'updated' as const,
+        triggerFieldUniversalIdentifiers: [],
+      },
+      {
+        action: 'updated' as const,
+        triggerFieldUniversalIdentifiers: [
+          triggerFieldUniversalIdentifier,
+          triggerFieldUniversalIdentifier,
+        ],
+      },
+      {
+        action: 'created' as const,
+        triggerFieldUniversalIdentifiers: [triggerFieldUniversalIdentifier],
+      },
+    ])(
+      'rejects invalid trigger constraints for $action events',
+      ({ action, triggerFieldUniversalIdentifiers }) => {
+        const manifest = buildTimelineManifest();
+        const [timelineActivityType] = manifest.timelineActivityTypes;
+
+        timelineActivityType.emit!.on = action;
+        timelineActivityType.emit!.through!.triggerFieldUniversalIdentifiers =
+          triggerFieldUniversalIdentifiers;
+
+        expect(manifestValidate(manifest).errors).toContainEqual(
+          expect.stringContaining(
+            'trigger fields must be a non-empty list of unique fields on an updated through event',
+          ),
+        );
+      },
+    );
+
+    it('requires linked and unlinked emitters to declare a through relation', () => {
+      const manifest = buildTimelineManifest();
+      const [timelineActivityType] = manifest.timelineActivityTypes;
+
+      timelineActivityType.emit!.on = 'linked';
+      timelineActivityType.emit!.through = undefined;
+
+      expect(manifestValidate(manifest).errors).toContainEqual(
+        expect.stringContaining('must declare emit.through for a linked event'),
+      );
+    });
+
+    it('rejects duplicate names and unsupported through relations', () => {
+      const manifest = buildTimelineManifest();
+      const [timelineActivityType] = manifest.timelineActivityTypes;
+
+      manifest.timelineActivityTypes.push({
+        ...timelineActivityType,
+        universalIdentifier: '0ddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      });
+      manifest.fields[0].universalSettings = {
+        relationType: RelationType.ONE_TO_MANY,
+      };
+
+      const result = manifestValidate(manifest);
+
+      expect(result.errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining(
+            'Timeline activity type name "deploymentUpdated" is used more than once',
+          ),
+          expect.stringContaining(
+            'must route through a MANY_TO_ONE relation or a junction-backed ONE_TO_MANY relation',
+          ),
+        ]),
+      );
+    });
+
+    it('reports a relation with missing universal settings without crashing', () => {
+      const manifest = buildTimelineManifest();
+
+      manifest.fields[0].universalSettings = undefined as never;
+
+      expect(manifestValidate(manifest).errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('is missing relationType'),
+          expect.stringContaining(
+            'must route through a MANY_TO_ONE relation or a junction-backed ONE_TO_MANY relation',
+          ),
+        ]),
+      );
     });
   });
 });

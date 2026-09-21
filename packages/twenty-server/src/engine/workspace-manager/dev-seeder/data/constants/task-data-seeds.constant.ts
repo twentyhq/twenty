@@ -34,7 +34,6 @@ export const TASK_DATA_SEED_COLUMNS: (keyof TaskDataSeed)[] = [
   'updatedByName',
 ];
 
-// Generate all task IDs
 const GENERATE_TASK_IDS = (): Record<string, string> => {
   const TASK_IDS: Record<string, string> = {};
 
@@ -57,7 +56,6 @@ const GENERATE_TASK_IDS = (): Record<string, string> => {
 
 export const TASK_DATA_SEED_IDS = GENERATE_TASK_IDS();
 
-// Sample credible task titles and contents for person-related tasks
 const PERSON_TASK_TEMPLATES = [
   {
     title: 'Schedule follow-up call',
@@ -109,7 +107,6 @@ const PERSON_TASK_TEMPLATES = [
   },
 ];
 
-// Sample credible task titles and contents for company-related tasks
 const COMPANY_TASK_TEMPLATES = [
   {
     title: 'Conduct vendor evaluation',
@@ -183,7 +180,6 @@ const FORMAT_DUE_DATE = (daysFromNow: number | null): string | null => {
   return DATE.toISOString();
 };
 
-// Generate task data seeds
 const GENERATE_TASK_SEEDS = (): TaskDataSeed[] => {
   const TASK_SEEDS: TaskDataSeed[] = [];
 

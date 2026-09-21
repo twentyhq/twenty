@@ -1,0 +1,1 @@
+export const SLACK_UNFURL_MAX_ENTITIES = 3;

@@ -1,12 +1,13 @@
 import { useCallback, useMemo } from 'react';
 
-import { useLinkedObjectsTitle } from '@/activities/timeline-activities/hooks/useLinkedObjectsTitle';
+import { useLinkedRecordsIdentifiers } from '@/activities/timeline-activities/hooks/useLinkedRecordsIdentifiers';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { getTimelineActivityRecordGqlFields } from '@/activities/timeline-activities/utils/getTimelineActivityRecordGqlFields';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import {
@@ -15,7 +16,6 @@ import {
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
-// do we need to test this?
 export const useTimelineActivities = (
   targetableObject: ActivityTargetableObject,
 ) => {
@@ -36,16 +36,8 @@ export const useTimelineActivities = (
     });
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
-
-  const noteObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === CoreObjectNameSingular.Note,
-  );
-
-  const taskObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === CoreObjectNameSingular.Task,
-  );
+  const { objectMetadataItems: allObjectMetadataItems } =
+    useObjectMetadataItems();
 
   const hasTimelineActivityField = timelineActivityMetadata.fields.some(
     (field) =>
@@ -57,11 +49,14 @@ export const useTimelineActivities = (
       ),
   );
 
-  const { recordGqlFields: depthOneRecordGqlFields } =
-    useGenerateDepthRecordGqlFieldsFromObject({
-      objectNameSingular: CoreObjectNameSingular.TimelineActivity,
-      depth: 1,
-    });
+  const recordGqlFields = useMemo(
+    () =>
+      getTimelineActivityRecordGqlFields({
+        objectMetadataItems: allObjectMetadataItems,
+        fields: timelineActivityMetadata.fields,
+      }),
+    [allObjectMetadataItems, timelineActivityMetadata.fields],
+  );
 
   const {
     records: timelineActivities,
@@ -74,10 +69,10 @@ export const useTimelineActivities = (
     filter,
     orderBy: [
       {
-        createdAt: 'DescNullsFirst',
+        happensAt: 'DescNullsFirst',
       },
     ],
-    recordGqlFields: depthOneRecordGqlFields,
+    recordGqlFields,
     fetchPolicy: 'cache-and-network',
   });
 
@@ -110,24 +105,8 @@ export const useTimelineActivities = (
     objectMetadataItemId: timelineActivityMetadata.id,
   });
 
-  const noteAndTaskObjectMetadataIds = [
-    noteObjectMetadataItem?.id,
-    taskObjectMetadataItem?.id,
-  ].filter(isDefined);
-
-  // Notes and tasks expose a title that we resolve to label their timeline rows.
-  const noteAndTaskLinkedRecordIds = timelineActivities
-    .filter(
-      (timelineActivity) =>
-        isDefined(timelineActivity.linkedObjectMetadataId) &&
-        noteAndTaskObjectMetadataIds.includes(
-          timelineActivity.linkedObjectMetadataId,
-        ),
-    )
-    .map((timelineActivity) => timelineActivity.linkedRecordId)
-    .filter(isDefined);
-
-  useLinkedObjectsTitle(noteAndTaskLinkedRecordIds);
+  const { result: linkedRecordsByObjectNamePlural } =
+    useLinkedRecordsIdentifiers({ timelineActivities, objectMetadataItems });
 
   const firstQueryLoading =
     loadingTimelineActivities && timelineActivities.length === 0;
@@ -140,5 +119,6 @@ export const useTimelineActivities = (
     firstQueryLoading,
     loadingMore,
     fetchMoreRecords,
+    linkedRecords: Object.values(linkedRecordsByObjectNamePlural).flat(),
   };
 };

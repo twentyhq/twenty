@@ -7,18 +7,31 @@ import {
 } from '@nestjs/graphql';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type PageLayoutTabOverrides } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 
 registerEnumType(PageLayoutTabLayoutMode, {
   name: 'PageLayoutTabLayoutMode',
+  valuesMap: {
+    CANVAS: {
+      deprecationReason:
+        'Use VERTICAL_LIST with TAB_VIEWPORT widget height behavior.',
+    },
+  },
 });
 
 @ObjectType('PageLayoutTab')
 export class PageLayoutTabDTO {
   @Field(() => UUIDScalarType)
   id: string;
+
+  @Field(() => UUIDScalarType, { nullable: false })
+  universalIdentifier: string;
+
+  @Field({ nullable: false })
+  isSystemSideEffect: boolean;
 
   @Field(() => UUIDScalarType, { nullable: false })
   applicationId: string;
@@ -63,5 +76,5 @@ export class PageLayoutTabDTO {
   isOverridden?: boolean;
 
   @HideField()
-  overrides?: PageLayoutTabOverrides | null;
+  overrides?: AuthoredOverrides<PageLayoutTabOverrides> | null;
 }

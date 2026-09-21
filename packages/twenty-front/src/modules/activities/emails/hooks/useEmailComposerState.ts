@@ -7,6 +7,7 @@ import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailR
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
+import { type ConnectedAccountSender } from '@/accounts/types/ConnectedAccountSender';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 
 type UseEmailComposerStateArgs = {
@@ -37,9 +38,19 @@ export const useEmailComposerState = ({
   const initialSubject = draftPrefill?.subject ?? defaultSubject;
   const initialBody = draftPrefill?.body ?? '';
 
-  const [connectedAccountId, setConnectedAccountId] = useState(
+  const [sender, setSender] = useState<ConnectedAccountSender>({
+    connectedAccountId: initialConnectedAccountId,
+  });
+  const [previousConnectedAccountId, setPreviousConnectedAccountId] = useState(
     initialConnectedAccountId,
   );
+
+  if (previousConnectedAccountId !== initialConnectedAccountId) {
+    setPreviousConnectedAccountId(initialConnectedAccountId);
+    setSender({ connectedAccountId: initialConnectedAccountId });
+  }
+
+  const { connectedAccountId, fromHandle } = sender;
   const [to, setTo] = useState<EmailRecipient[]>(() =>
     parseEmailRecipients(initialTo),
   );
@@ -87,6 +98,7 @@ export const useEmailComposerState = ({
 
     const { success, messageThreadId } = await sendEmail({
       connectedAccountId,
+      fromHandle,
       to: serializeEmailRecipients(to),
       cc: serializedCc || undefined,
       bcc: serializedBcc || undefined,
@@ -103,6 +115,7 @@ export const useEmailComposerState = ({
   }, [
     canSend,
     connectedAccountId,
+    fromHandle,
     to,
     cc,
     bcc,
@@ -117,7 +130,8 @@ export const useEmailComposerState = ({
 
   return {
     connectedAccountId,
-    setConnectedAccountId,
+    fromHandle,
+    setSender,
     to,
     setTo,
     cc,

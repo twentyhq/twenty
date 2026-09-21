@@ -22,7 +22,7 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import {
   PermissionFlagType,
   ViewVisibility,

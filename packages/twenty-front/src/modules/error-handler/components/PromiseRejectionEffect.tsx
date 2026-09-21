@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
 import {
   CombinedGraphQLErrors,
   CombinedProtocolErrors,
@@ -11,6 +12,7 @@ import {
   UnconventionalError,
 } from '@apollo/client/errors';
 import { isDefined, type CustomError } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const isApolloError = (error: unknown): boolean =>
   CombinedGraphQLErrors.is(error) ||
@@ -28,15 +30,13 @@ const hasErrorCode = (
 };
 
 export const PromiseRejectionEffect = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const handlePromiseRejection = useCallback(
     async (event: PromiseRejectionEvent) => {
       const error = event.reason;
       if (isApolloError(error)) {
-        enqueueErrorSnackBar({
-          apolloError: error,
-        });
+        enqueueToast(getToastOptionsFromError({ error }));
         return; // already handled by apolloLink
       }
 
@@ -44,10 +44,12 @@ export const PromiseRejectionEffect = () => {
         error?.networkError?.name === 'AbortError' ||
         error?.name === 'AbortError';
 
-      if (!isAbortError) {
-        enqueueErrorSnackBar(
-          error instanceof Error ? { message: error.message } : {},
-        );
+      const isViteStaleChunkLazyLoadingError =
+        error instanceof Error &&
+        checkIfItsAViteStaleChunkLazyLoadingError(error);
+
+      if (!isAbortError && !isViteStaleChunkLazyLoadingError) {
+        enqueueToast(getToastOptionsFromError({ error }));
       }
 
       try {
@@ -65,7 +67,7 @@ export const PromiseRejectionEffect = () => {
         console.error('Failed to capture exception with Sentry:', sentryError);
       }
     },
-    [enqueueErrorSnackBar],
+    [enqueueToast],
   );
 
   useEffect(() => {

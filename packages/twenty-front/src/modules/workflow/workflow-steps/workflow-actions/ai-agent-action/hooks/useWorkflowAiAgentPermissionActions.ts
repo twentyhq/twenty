@@ -2,17 +2,18 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
 import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
+import { workflowAiAgentPermissionsIsSystemObjectsListOpenState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsSystemObjectsListOpenState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { v4 } from 'uuid';
-import { useMutation } from '@apollo/client/react';
 import {
   type Agent,
   type ObjectPermission,
@@ -35,10 +36,10 @@ export const useWorkflowAiAgentPermissionActions = ({
   permissionFlagKeys,
   refetchAgentAndRoles,
 }: UseWorkflowAiAgentPermissionActionsParams) => {
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
-  const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
+  const { activeObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
   const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },
@@ -52,6 +53,9 @@ export const useWorkflowAiAgentPermissionActions = ({
   );
   const [, setWorkflowAiAgentPermissionsIsAddingPermission] = useAtomState(
     workflowAiAgentPermissionsIsAddingPermissionState,
+  );
+  const [, setWorkflowAiAgentPermissionsIsSystemObjectsListOpen] = useAtomState(
+    workflowAiAgentPermissionsIsSystemObjectsListOpenState,
   );
 
   const [createRole] = useMutation(CreateOneRoleDocument);
@@ -97,7 +101,7 @@ export const useWorkflowAiAgentPermissionActions = ({
           id: generatedRoleId,
           label: roleName,
           description: t`Auto-generated role for ${agentDisplayName}`,
-          icon: 'IconRobot',
+          icon: 'IconLego',
           canAccessAllTools: false,
           canUpdateAllSettings: false,
           canReadAllObjectRecords: false,
@@ -201,6 +205,7 @@ export const useWorkflowAiAgentPermissionActions = ({
     await refetchAgentAndRoles();
     setWorkflowAiAgentPermissionsIsAddingPermission(false);
     setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
+    setWorkflowAiAgentPermissionsIsSystemObjectsListOpen(false);
   };
 
   const handleDeletePermission = async (
@@ -289,8 +294,9 @@ export const useWorkflowAiAgentPermissionActions = ({
     )?.label(objectMetadata.labelPlural);
 
     if (isDefined(permissionLabel)) {
-      enqueueSuccessSnackBar({
-        message: t`${permissionLabel} Permission removed`,
+      enqueueToast({
+        variant: 'success',
+        children: t`${permissionLabel} Permission removed`,
       });
     }
   };
@@ -318,6 +324,7 @@ export const useWorkflowAiAgentPermissionActions = ({
     await refetchAgentAndRoles();
     setWorkflowAiAgentPermissionsIsAddingPermission(false);
     setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
+    setWorkflowAiAgentPermissionsIsSystemObjectsListOpen(false);
   };
 
   const handleDeletePermissionFlag = async (permissionFlagKey: string) => {
@@ -347,8 +354,9 @@ export const useWorkflowAiAgentPermissionActions = ({
     const permissionLabel = permissionFlagLabelMap[permissionFlagKey];
 
     if (isDefined(permissionLabel)) {
-      enqueueSuccessSnackBar({
-        message: t`${permissionLabel} permission removed`,
+      enqueueToast({
+        variant: 'success',
+        children: t`${permissionLabel} permission removed`,
       });
     }
   };

@@ -30,14 +30,15 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { SearchInput } from 'twenty-ui/primitives/input';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -73,6 +74,7 @@ export const SettingsObjectTable = ({
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+  const navigate = useNavigateSettings();
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
@@ -174,25 +176,21 @@ export const SettingsObjectTable = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <MenuItemToggle
-                        LeftIcon={IconArchive}
-                        onToggleChange={() =>
+                      <SettingsRow
+                        startIcon={<IconArchive />}
+                        onCheckedChange={() =>
                           setShowDeactivated(!showDeactivated)
                         }
-                        toggled={showDeactivated}
-                        text={t`Deactivated`}
-                        toggleSize="small"
-                      />
+                        checked={showDeactivated}
+                      >{t`Deactivated`}</SettingsRow>
                       {isAdvancedModeEnabled && (
-                        <MenuItemToggle
-                          LeftIcon={IconSettings}
-                          onToggleChange={() =>
+                        <SettingsRow
+                          startIcon={<IconSettings />}
+                          onCheckedChange={() =>
                             setShowSystemObjects(!showSystemObjects)
                           }
-                          toggled={showSystemObjects}
-                          text={t`System objects`}
-                          toggleSize="small"
-                        />
+                          checked={showSystemObjects}
+                        >{t`System objects`}</SettingsRow>
                       )}
                     </DropdownMenuItemsContainer>
                   </DropdownContent>
@@ -261,13 +259,21 @@ export const SettingsObjectTable = ({
                               stroke={theme.icon.stroke.sm}
                             />
                           </StyledIconChevronRightContainer>
-                        ) : isDDLLocked ? null : (
+                        ) : (
                           <SettingsObjectInactiveMenuDropDown
                             isCustomObject={getIsMetadataItemCustom(
                               objectSettingsItem.objectMetadataItem,
                             )}
+                            isReadOnly={isDDLLocked}
                             objectMetadataItemNamePlural={
                               objectSettingsItem.objectMetadataItem.namePlural
+                            }
+                            onEdit={() =>
+                              navigate(SettingsPath.ObjectDetail, {
+                                objectNamePlural:
+                                  objectSettingsItem.objectMetadataItem
+                                    .namePlural,
+                              })
                             }
                             onActivate={() =>
                               updateOneObjectMetadataItem({

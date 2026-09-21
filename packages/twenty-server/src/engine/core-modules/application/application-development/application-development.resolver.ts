@@ -4,18 +4,27 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { Args, Mutation } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import bytes from 'bytes';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { settings } from 'src/engine/constants/settings';
 import { ApplicationDevelopmentService } from 'src/engine/core-modules/application/application-development/application-development.service';
+import { ApplicationFileUploadService } from 'src/engine/core-modules/application/application-development/application-file-upload.service';
+import { ApplicationExportDTO } from 'src/engine/core-modules/application/application-development/dtos/application-export.dto';
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
+import { CompleteApplicationFileUploadsResultDTO } from 'src/engine/core-modules/application/application-development/dtos/complete-application-file-uploads-result.dto';
+import { CompleteApplicationFileUploadsInput } from 'src/engine/core-modules/application/application-development/dtos/complete-application-file-uploads.input';
+import { CreateApplicationFileUploadsResultDTO } from 'src/engine/core-modules/application/application-development/dtos/create-application-file-uploads-result.dto';
+import { CreateApplicationFileUploadsInput } from 'src/engine/core-modules/application/application-development/dtos/create-application-file-uploads.input';
 import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
 import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
+import { ExportApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/export-application.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
@@ -27,11 +36,12 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
-@UseFilters(ApplicationExceptionFilter)
+@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
@@ -39,6 +49,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 export class ApplicationDevelopmentResolver {
   constructor(
     private readonly applicationDevelopmentService: ApplicationDevelopmentService,
+    private readonly applicationFileUploadService: ApplicationFileUploadService,
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
@@ -53,14 +64,27 @@ export class ApplicationDevelopmentResolver {
     });
   }
 
+  @Query(() => ApplicationExportDTO)
+  async exportApplication(
+    @Args() { universalIdentifier }: ExportApplicationInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationExportDTO> {
+    return this.applicationDevelopmentService.exportApplication({
+      universalIdentifier,
+      workspaceId,
+    });
+  }
+
   @Mutation(() => WorkspaceMigrationDTO)
   async syncApplication(
-    @Args() { manifest, dryRun }: ApplicationInput,
+    @Args()
+    { manifest, dryRun, inferDeletionFromMissingEntities }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<WorkspaceMigrationDTO> {
     return this.applicationDevelopmentService.syncApplication({
       manifest,
       dryRun,
+      inferDeletionFromMissingEntities,
       workspaceId,
     });
   }
@@ -83,7 +107,43 @@ export class ApplicationDevelopmentResolver {
       applicationUniversalIdentifier,
       fileFolder,
       filePath,
-      getFileBuffer: () => streamToBuffer(createReadStream()),
+      getFileBuffer: () =>
+        streamToBuffer(
+          createReadStream(),
+          bytes(settings.storage.maxFileSize) ?? undefined,
+        ),
+    });
+  }
+
+  @Mutation(() => CreateApplicationFileUploadsResultDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  async createApplicationFileUploads(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args() {
+      applicationUniversalIdentifier,
+      files,
+    }: CreateApplicationFileUploadsInput,
+  ): Promise<CreateApplicationFileUploadsResultDTO> {
+    return this.applicationFileUploadService.createApplicationFileUploads({
+      workspaceId,
+      applicationUniversalIdentifier,
+      files,
+    });
+  }
+
+  @Mutation(() => CompleteApplicationFileUploadsResultDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  async completeApplicationFileUploads(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args() {
+      applicationUniversalIdentifier,
+      fileIds,
+    }: CompleteApplicationFileUploadsInput,
+  ): Promise<CompleteApplicationFileUploadsResultDTO> {
+    return this.applicationFileUploadService.completeApplicationFileUploads({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileIds,
     });
   }
 }

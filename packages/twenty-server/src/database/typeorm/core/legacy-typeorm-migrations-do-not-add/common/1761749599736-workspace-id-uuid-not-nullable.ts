@@ -4,7 +4,6 @@ export class WorkspaceIdUuidNotNullable1761749599736 implements MigrationInterfa
   name = 'WorkspaceIdUuidNotNullable1761749599736';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Delete orphaned rows without workspaceId before migration
     await queryRunner.query(
       `DELETE FROM "core"."indexMetadata" WHERE "workspaceId" IS NULL`,
     );
@@ -19,7 +18,6 @@ export class WorkspaceIdUuidNotNullable1761749599736 implements MigrationInterfa
       `ALTER TABLE "core"."indexMetadata" DROP CONSTRAINT "IDX_INDEX_METADATA_NAME_WORKSPACE_ID_OBJECT_METADATA_ID_UNIQUE"`,
     );
 
-    // Convert column type from varchar to uuid while preserving data
     await queryRunner.query(
       `ALTER TABLE "core"."indexMetadata" ALTER COLUMN "workspaceId" TYPE uuid USING "workspaceId"::uuid`,
     );
@@ -49,7 +47,6 @@ export class WorkspaceIdUuidNotNullable1761749599736 implements MigrationInterfa
       `DROP INDEX "core"."IDX_b27c681286ac581f81498c5d4b"`,
     );
 
-    // Convert column type from uuid back to varchar while preserving data
     await queryRunner.query(
       `ALTER TABLE "core"."indexMetadata" ALTER COLUMN "workspaceId" DROP NOT NULL`,
     );

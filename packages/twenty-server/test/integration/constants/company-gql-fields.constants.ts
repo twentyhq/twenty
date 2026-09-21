@@ -4,12 +4,18 @@ export const COMPANY_GQL_FIELDS = `
     domainName {
       primaryLinkLabel
       primaryLinkUrl
-      secondaryLinks
+      secondaryLinks {
+        label
+        url
+      }
     }
     linkedinLink {
       primaryLinkLabel
       primaryLinkUrl
-      secondaryLinks
+      secondaryLinks {
+        label
+        url
+      }
     }
     createdAt
     deletedAt

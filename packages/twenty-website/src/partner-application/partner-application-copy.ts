@@ -48,7 +48,7 @@ export const PARTNER_APPLICATION_COPY = {
     twentyExperienceNotesHint: msg`Describe a real Twenty project (customer or internal): who it was for, what you built, and how you used the areas you selected. Min. ${TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters.`,
     twentyExperienceNotesPlaceholder: msg`Who it was for, what you built, which of the four areas you used…`,
     twentyExperienceProofLink: msg`Proof URL *`,
-    twentyExperienceProofLinkHint: msg`Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom.`,
+    twentyExperienceProofLinkHint: msg`Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review.`,
     hourlyRate: msg`Hourly rate *`,
     hourlyRatePlaceholder: msg`150`,
     projectBudgetMin: msg`Minimum project budget *`,

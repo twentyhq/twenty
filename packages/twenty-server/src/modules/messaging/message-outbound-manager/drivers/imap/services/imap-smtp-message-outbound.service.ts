@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import MailComposer from 'nodemailer/lib/mail-composer';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -13,12 +14,14 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFindDraftsFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-drafts-folder.service';
 import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
+import { isImapFlowError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-flow-error.util';
 import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { extractMessageIdFromBuffer } from 'src/modules/messaging/message-outbound-manager/utils/extract-message-id-from-buffer.util';
 import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
+import { getConnectedAccountSendableHandleOrThrow } from 'src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util';
 import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-manager/utils/to-mail-composer-options.util';
 
 @Injectable()
@@ -48,7 +51,12 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
     this.assertHandleIsDefined(handle);
 
     const from = formatMessageFromHeader({
-      fromEmail: handle,
+      fromEmail: isNonEmptyString(sendMessageInput.fromHandle)
+        ? getConnectedAccountSendableHandleOrThrow({
+            connectedAccount,
+            requestedFromHandle: sendMessageInput.fromHandle,
+          })
+        : handle,
       fromName: connectionParameters?.name,
     });
 
@@ -85,7 +93,10 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
         });
       }
 
-      const sentFolderPath = getImapFolderPath(sentFolder?.externalId);
+      const sentFolderPath = getImapFolderPath(
+        sentFolder?.externalId,
+        imapClient,
+      );
 
       if (isDefined(sentFolderPath)) {
         await imapClient.append(sentFolderPath, messageBuffer);
@@ -112,7 +123,12 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
     }
 
     const from = formatMessageFromHeader({
-      fromEmail: handle,
+      fromEmail: isNonEmptyString(sendMessageInput.fromHandle)
+        ? getConnectedAccountSendableHandleOrThrow({
+            connectedAccount,
+            requestedFromHandle: sendMessageInput.fromHandle,
+          })
+        : handle,
       fromName: connectionParameters?.name,
     });
 
@@ -134,6 +150,12 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       const DRAFT_FLAG = '\\Draft';
 
       await imapClient.append(draftsFolder.path, messageBuffer, [DRAFT_FLAG]);
+    } catch (error) {
+      if (isImapFlowError(error) && isNonEmptyString(error.responseText)) {
+        throw new Error(`Failed to create draft: ${error.responseText}`);
+      }
+
+      throw error;
     } finally {
       await this.imapClientProvider.closeClient(imapClient);
     }

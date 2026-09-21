@@ -35,18 +35,22 @@ Bir Twenty uygulamasının **veri katmanı**, uygulamanızın bir çalışma ala
   <Card title="İlişkiler" icon="diagram-project" href="/l/tr/developers/extend/apps/data/relations">
     Nesneler arasında çift yönlü `MANY_TO_ONE` / `ONE_TO_MANY` bağlantıları.
   </Card>
+  <Card title="Zaman Çizelgesi Aktivite Türleri" icon="clock-rotate-left" href="/l/tr/developers/extend/apps/data/timeline-activity-types">
+    Kayıt zaman çizelgeleri için otomatik denetim olaylarını ve açık uygulama olaylarını tanımlayın.
+  </Card>
 </CardGroup>
 
 ## Varlıklara genel bakış
 
-| Varlık     | Amaç                                                                                                                                  | Şununla tanımlanır                       |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| **Nesne**  | Kendi alanlarına sahip yeni bir özel kayıt türü (ör. PostCard, Invoice)                                                               | `defineObject()`                         |
-| **Alan**   | Bir nesne üzerindeki sütun. Bağımsız alanlar, oluşturmadığınız nesneleri genişletebilir (ör. Company nesnesine `loyaltyTier` ekleyin) | `defineField()`                          |
-| **İlişki** | İki nesne arasında, her iki tarafı da alan olarak bildirilmiş çift yönlü bir bağlantı                                                 | `defineField()` ile `FieldType.RELATION` |
-| **Dizin**  | Nesnelerinizden biri üzerinde yinelenen bir sorguyu hızlandırmak için bir veritabanı dizini                                           | `defineIndex()`                          |
+| Varlık                            | Amaç                                                                                                                                  | Şununla tanımlanır                       |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **Nesne**                         | Kendi alanlarına sahip yeni bir özel kayıt türü (ör. PostCard, Invoice)                                                               | `defineObject()`                         |
+| **Alan**                          | Bir nesne üzerindeki sütun. Bağımsız alanlar, oluşturmadığınız nesneleri genişletebilir (ör. Company nesnesine `loyaltyTier` ekleyin) | `defineField()`                          |
+| **İlişki**                        | İki nesne arasında, her iki tarafı da alan olarak bildirilmiş çift yönlü bir bağlantı                                                 | `defineField()` ile `FieldType.RELATION` |
+| **Dizin**                         | Nesnelerinizden biri üzerinde yinelenen bir sorguyu hızlandırmak için bir veritabanı dizini                                           | `defineIndex()`                          |
+| **Zaman Çizelgesi Aktivite Türü** | Kayıt zaman çizelgelerinde gösterilen otomatik denetim olayı veya açık etki alanı olayı.                                              | `defineTimelineActivityType()`           |
 
-SDK bunları derleme zamanında AST analiziyle algılar, bu yüzden dosya organizasyonu size kalmıştır — kullanılan gelenek `src/objects/`, `src/fields/` ve `src/indexes/` dizinleridir. Kararlı `universalIdentifier` UUID’leri, dağıtımlar arasında her şeyi birbirine bağlar.
+SDK bunları derleme zamanında AST analizi aracılığıyla algılar; dolayısıyla dosya organizasyonu size kalmıştır — gelenek `src/objects/`, `src/fields/`, `src/indexes/` ve `src/timeline-activity-types/` dizinlerini kullanmaktır. Kararlı `universalIdentifier` UUID’leri, dağıtımlar arasında her şeyi birbirine bağlar.
 
 ## Dizinler (İsteğe bağlı)
 

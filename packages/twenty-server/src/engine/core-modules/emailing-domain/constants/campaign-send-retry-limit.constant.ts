@@ -1,0 +1,1 @@
+export const CAMPAIGN_SEND_RETRY_LIMIT = 3;

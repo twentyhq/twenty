@@ -51,7 +51,6 @@ describe('Skill creation should fail', () => {
   });
 
   const failingSkillCreationTestCases: CreateSkillTestingContext = [
-    // Missing required properties tests
     {
       title: 'when label is missing',
       context: {
@@ -99,7 +98,6 @@ describe('Skill creation should fail', () => {
         },
       },
     },
-    // Name uniqueness test
     {
       title: 'when name already exists',
       context: {

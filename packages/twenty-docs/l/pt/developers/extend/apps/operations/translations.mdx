@@ -1,0 +1,143 @@
+---
+title: Traduções
+description: Publique seu aplicativo em vários idiomas — traduza rótulos do manifesto e strings da interface do usuário por meio de um único catálogo de localidades.
+icon: language
+---
+
+Os aplicativos Twenty são escritos em **inglês**: as strings no seu código-fonte e no manifesto
+são o texto-fonte em inglês, `en` é a localidade de origem a partir da qual você traduz, e
+qualquer localidade deixada sem tradução reverte para essa localidade.
+
+Seu aplicativo tem dois tipos de texto traduzível, e ambos passam pelo mesmo
+catálogo `locales/`:
+
+* **Rótulos do manifesto** — nomes de objetos e campos, títulos de exibição, itens de menu e
+  outras strings declaradas nos metadados do seu aplicativo.
+* **Front-component strings** — A interface do usuário que processa seus componentes frontais do React.
+
+Você marca as strings traduzíveis, extraa-as em catálogos por localidade,
+traduza os catálogos, e a compilação serve a linguagem certa para o usuário atual
+— sem asas extras.
+
+## Marcando strings front-component
+
+Importe os auxiliares de tradução de `vinte e sdk/front-component`:
+
+```tsx
+import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
+
+const STATUSES = [
+  { id: 'draft', label: msg('Draft') },
+  { id: 'sent', label: msg('Sent') },
+];
+
+const Card = ({ count, name }: { count: number; name: string }) => {
+  const { t } = useTranslate();
+
+  return (
+    <section>
+      {/* Static text — reactive to the user's locale */}
+      <Trans>Loading postcard…</Trans>
+
+      {/* Disambiguate identical sources with a context */}
+      <Trans context="card-title">Untitled</Trans>
+
+      {/* Interpolation: pass values explicitly */}
+      <p>{t('Hi {name}', { name })}</p>
+      <p>{t('Saved {count} cards', { count })}</p>
+
+      {/* Resolve a lazily-declared descriptor */}
+      <ul>{STATUSES.map((s) => <li key={s.id}>{t(s.label)}</li>)}</ul>
+    </section>
+  );
+};
+```
+
+### Quando usar qual
+
+* **`Trans`** — texto estático em JSX. Use as props `message` e `values` para
+  interpolação, como em `Trans message="Hi {name}" values={{ name }}`;
+  a interpolação diretamente em children não pode ser extraída estaticamente.
+* **`useTranslate().t`** — strings dinâmicas dentro de um componente. Rerenderiza quando o usuário
+  muda de linguagem. Prefere isso dentro de renderização.
+* **`t(...)`** (importado diretamente) — tradução ávida utilizável **em qualquer lugar**,
+  incluindo manipuladores de eventos, auxiliares e escopo de módulo — não apenas dentro de renderização.
+* **`msg(...)`** — um descritor preguiçoso para frases declaradas como dados (constantes,
+  config). Resolva-o mais tarde com `t(descriptor)`.
+
+### Contexto
+
+Passe `context` para desambiguar sequências de caracteres de origem idênticas que traduzem
+de forma diferente:
+
+```tsx
+t({ message: 'Open', context: 'door' });
+t({ message: 'Open', context: 'window' });
+<Trans context="card-title">Untitled</Trans>
+```
+
+Strings contextuais aparecem nos catálogos de configurações regionais como um grupo indexado pelo seu
+contexto: `"\<context>": { "\<message>": "\<translation>" }`. Os rótulos do manifesto são
+contextuais por definição — cada um traz o papel de metadados que desempenha
+(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), por isso
+a mesma palavra pode ser traduzida de forma diferente como nome de objeto e como nome de visualização.
+
+## Extraindo e traduzindo
+
+Execute o comando extracto a partir do diretório do seu aplicativo:
+
+```bash
+twenty dev:translations-extract                  # collect strings into locales/en.json
+twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
+```
+
+A extração coleta tanto os rótulos do seu manifesto quanto as strings de `t()`/`msg()`/`Trans`
+no código-fonte do seu front-component em `locales/\<locale>.json`, indexadas pela
+string de origem. Preencha as traduções:
+
+```json
+// locales/fr-FR.json
+{
+  "Loading postcard…": "Chargement de la carte…",
+  "Hi {name}": "Bonjour {name}",
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
+}
+```
+
+Strings sem contexto são entradas simples; strings contextuais — incluindo cada rótulo de manifesto — são aninhadas sob sua chave de contexto.
+
+Espaços reservados como `{name}` são substituídos no tempo de execução — mantenha-os na tradução
+. Qualquer cadeia de caracteres deixada vazia retorna ao texto de origem.
+
+## Como ele funciona
+
+`twenty dev:build` compila os catálogos e fornece o idioma correto para o
+usuário atual: os rótulos do manifesto são resolvidos no lado do servidor e os catálogos de componentes de front-end
+são incorporados em cada pacote de componente. No tempo de execução, um componente lê a localidade
+de seu contexto de execução (o idioma atual do host) e resolve
+cada seqüência de caracteres contra seu catálogo, voltando à fonte quando uma tradução
+estiver faltando. Mudar o idioma no host faz com que as strings de `Trans` e
+`useTranslate().t` sejam renderizadas novamente em tempo real.
+
+Os rótulos do manifesto são compilados a cada sincronização — `twenty dev:build`, `twenty apply`
+e também durante a observação contínua de `twenty dev` — portanto, editar um arquivo de localidade e
+sincronizar é suficiente para ver o novo texto. Os catálogos de componentes do front-end são incorporados a
+cada pacote de componentes no momento da compilação, portanto, alterar um deles ainda exige
+executar novamente `twenty dev:build` (e reimplantar).
+
+O conteúdo de texto (children) de `Trans` pode se estender por várias linhas — os espaços em branco são colapsados da
+mesma forma que o JSX os colapsa, portanto, ambos são extraídos para a chave `Welcome back`:
+
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

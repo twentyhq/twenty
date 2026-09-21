@@ -1,6 +1,4 @@
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import {
   type AnimationControls,
@@ -21,14 +19,7 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
   children: React.ReactNode;
 }) => {
   const { theme } = useContext(ThemeContext);
-  const isSettingsPage = useIsSettingsPage();
-  const isNavigationDrawerExpanded = useAtomStateValue(
-    isNavigationDrawerExpandedState,
-  );
-
-  if (isSettingsPage) {
-    return children;
-  }
+  const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
 
   const animate: AnimationControls | TargetAndTransition =
     isNavigationDrawerExpanded
@@ -47,6 +38,7 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
 
   return (
     <StyledAnimatedContainer
+      inert={!isNavigationDrawerExpanded || undefined}
       initial={false}
       animate={animate}
       transition={{

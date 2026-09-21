@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/event-log-live.module';
@@ -12,8 +13,10 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
+import { LogicFunctionPrebuiltWarmUpModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -25,10 +28,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     SecretEncryptionModule,
     SubscriptionsModule,
     WorkspaceCacheModule,
+    LogicFunctionPrebuiltWarmUpModule,
     BillingModule,
     FeatureFlagModule,
     WorkspaceDomainsModule,
     ApplicationModule,
+    ApplicationVariableEntityModule,
+    UsageModule,
     TypeOrmModule.forFeature([
       ApplicationRegistrationVariableEntity,
       WorkspaceEntity,

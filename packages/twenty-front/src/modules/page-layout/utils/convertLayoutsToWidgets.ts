@@ -1,10 +1,10 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { type Layouts } from 'react-grid-layout';
+import { type ResponsiveLayouts } from 'react-grid-layout';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const convertLayoutsToWidgets = (
   widgets: PageLayoutWidget[],
-  layouts: Layouts,
+  layouts: ResponsiveLayouts,
 ): PageLayoutWidget[] => {
   const activeLayouts = layouts.desktop ?? layouts.mobile ?? [];
 
@@ -18,12 +18,6 @@ export const convertLayoutsToWidgets = (
 
     return {
       ...widget,
-      gridPosition: {
-        row,
-        column,
-        rowSpan,
-        columnSpan,
-      },
       position: {
         __typename: 'PageLayoutWidgetGridPosition' as const,
         layoutMode: PageLayoutTabLayoutMode.GRID,

@@ -34,6 +34,19 @@ export default defineFrontComponent({
 });
 `;
 
+const SETTINGS_COMPONENT_SOURCE = `import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+import { APP_SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { AppSettings } from 'src/front-components/components/AppSettings';
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: APP_SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  name: 'app-settings',
+  description: 'Custom settings tab',
+  component: AppSettings,
+});
+`;
+
 describe('unwrapDefineFrontComponentToDirectExport', () => {
   it('renders the component when component is an inline factory call', () => {
     const output = unwrapDefineFrontComponentToDirectExport(
@@ -74,6 +87,18 @@ describe('unwrapDefineFrontComponentToDirectExport', () => {
 
     expect(inlineOutput).toContain(renderer);
     expect(identifierOutput).toContain(renderer);
+  });
+
+  it('renders the component when defined with defineSettingsFrontComponent', () => {
+    const output = unwrapDefineFrontComponentToDirectExport(
+      SETTINGS_COMPONENT_SOURCE,
+    );
+
+    expect(output).toContain('component: AppSettings,');
+    expect(output).toContain(
+      '__frontComponentJsx(__frontComponentDefinition.component, {})',
+    );
+    expect(output).not.toContain('defineSettingsFrontComponent');
   });
 
   it('leaves a source without a defineFrontComponent default export untouched', () => {

@@ -1,5 +1,5 @@
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewsByIdMapSelector } from '@/views/states/selectors/viewsByIdMapSelector';
 import { type View } from '@/views/types/View';
 
 export const viewFromViewIdFamilySelector = createAtomFamilySelector<
@@ -10,7 +10,7 @@ export const viewFromViewIdFamilySelector = createAtomFamilySelector<
   get:
     ({ viewId }) =>
     ({ get }) => {
-      const views = get(viewsSelector);
-      return views?.find((view) => view.id === viewId);
+      return get(viewsByIdMapSelector).get(viewId);
     },
+  areEqual: (previous, next) => previous === next,
 });

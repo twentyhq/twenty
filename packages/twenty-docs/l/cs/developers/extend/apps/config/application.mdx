@@ -37,6 +37,7 @@ Poznámky:
 * Předinstalační, postinstalační a odinstalační funkce jsou při sestavení manifestu detekovány automaticky — není třeba na ně odkazovat v `defineApplication()`.
 * Předávání `defaultRoleUniversalIdentifier` explicitně je stále podporováno kvůli zpětné kompatibilitě, ale je zastaralé ve prospěch `defineApplicationRole()`.
 * `serverVariables` představují konfiguraci a tajné údaje vázané na instanci (např. klíče API). Na rozdíl od `applicationVariables` neuvádějí v manifestu žádnou hodnotu — operátor pracovního prostoru je vyplní v nastavení aplikace a do logických funkcí jsou injektovány až poté, co jsou nastaveny.
+* Oba druhy proměnných přijímají `isDeprecated: true`. Použijte ji k vyřazení proměnné místo jejího smazání: ponechání deklarovaného klíče zachová uloženou hodnotu (jejím smazáním se zničí hodnota, kterou zadal uživatel) a proměnná se stále injektuje, takže ji váš kód může použít jako záložní hodnotu — `process.env.NEW_API_KEY ?? process.env.API_KEY`. Zastaralá proměnná zmizí z nastavení aplikace, jakmile nemá žádnou hodnotu, a nikdy se nezapočítává do kontroly konfigurace aplikace, takže `isDeprecated` má přednost před `isRequired`.
 * Chcete-li vykreslit vlastní konfigurační uživatelské rozhraní na kartě **Settings** aplikace (namísto výchozí sekce pro konfiguraci proměnných), deklarujte frontovou komponentu pomocí [`defineSettingsFrontComponent()`](/l/cs/developers/extend/apps/layout/front-components#custom-settings-component) v jejím vlastním souboru. Na jednu aplikaci je povolena pouze jedna instance. Sekce spravované systémem (automatická aktualizace, App URL, připojení) zůstávají vždy viditelné.
 
 ## Typy proměnných
@@ -96,7 +97,7 @@ Totéž platí pro frontendové komponenty, které čtou hodnoty pomocí `getApp
 
 Role deklarovaná pomocí [`defineApplicationRole()`](/l/cs/developers/extend/apps/config/roles) určuje, k čemu mají přístup logické funkce a front-endové komponenty aplikace:
 
-* Běhový token vložený jako `TWENTY_APP_ACCESS_TOKEN` je odvozen z této role.
+* Běhové tokeny vložené do vašich logických funkcí jsou odvozeny z této role. Volání jednající jako osoba je dále omezeno tím, co tato osoba může dělat, takže nikdy nemůže překročit ani jedno z těchto oprávnění. Vizte [Čí přístup volání používá](/l/cs/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * Typovaný klient API je omezen na oprávnění udělená této roli.
 * Dodržujte princip nejmenších oprávnění: deklarujte pouze ta oprávnění, která vaše funkce potřebují.
 

@@ -15,9 +15,9 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 import { type WidgetConfiguration } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
@@ -104,11 +104,9 @@ export const ChartManualSortSubMenuContent = ({
                       gripMode="always"
                       isDragDisabled={sortedOptions.length === 1}
                       text={
-                        <Tag
-                          preventShrink
-                          color={option.color}
-                          text={option.label}
-                        />
+                        <Tag preventShrink color={option.color}>
+                          {option.label}
+                        </Tag>
                       }
                     />
                   }

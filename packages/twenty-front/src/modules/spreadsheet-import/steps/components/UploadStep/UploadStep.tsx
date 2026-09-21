@@ -1,8 +1,7 @@
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
 import { type WorkBook } from 'xlsx-ugnis';
-
-import { ModalContent } from 'twenty-ui/surfaces';
 
 import { useComputeColumnSuggestionsAndAutoMatch } from '@/spreadsheet-import/hooks/useComputeColumnSuggestionsAndAutoMatch';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -58,7 +57,6 @@ export const UploadStep = ({
               data: mappedWorkbook,
             });
           } else {
-            // Automatically select first row as header
             const trimmedData = mappedWorkbook.slice(1);
 
             const { importedRows: data, headerRow: headerValues } =
@@ -112,8 +110,15 @@ export const UploadStep = ({
   );
 
   return (
-    <ModalContent contentPadding={6}>
+    <Dialog.Body
+      style={{
+        display: 'flex',
+        flex: '1 1 0%',
+        flexDirection: 'column',
+        padding: 'var(--t-spacing-6)',
+      }}
+    >
       <DropZone onContinue={handleOnContinue} isLoading={isLoading} />
-    </ModalContent>
+    </Dialog.Body>
   );
 };

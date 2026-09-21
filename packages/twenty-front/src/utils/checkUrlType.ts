@@ -1,4 +1,7 @@
-import { LinkType, SOCIAL_LINK_PROVIDERS } from 'twenty-ui/navigation';
+import {
+  LinkType,
+  SOCIAL_LINK_PROVIDERS,
+} from 'twenty-ui/primitives/navigation';
 
 export const checkUrlType = (url: string) => {
   const provider = SOCIAL_LINK_PROVIDERS.find((socialLinkProvider) =>

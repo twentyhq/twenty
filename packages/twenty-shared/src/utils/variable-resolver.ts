@@ -1,11 +1,12 @@
+import { isObject, isString } from '@sniptt/guards';
+
 import { evalFromContext } from '@/utils/evalFromContext';
 import { isDefined } from '@/utils/validation';
 
-const isString = (value: unknown): value is string => {
-  return typeof value === 'string';
-};
-
 const VARIABLE_PATTERN = RegExp('\\{\\{([^{}]+)\\}\\}', 'g');
+
+export const isVariableReference = (input: unknown): boolean =>
+  isString(input) && isDefined(input.match(VARIABLE_PATTERN));
 
 export const resolveInput = (
   unresolvedInput: unknown,
@@ -23,7 +24,7 @@ export const resolveInput = (
     return resolveArray(unresolvedInput, context);
   }
 
-  if (typeof unresolvedInput === 'object' && unresolvedInput !== null) {
+  if (isObject(unresolvedInput)) {
     return resolveObject(unresolvedInput, context);
   }
 
@@ -52,7 +53,7 @@ const resolveObject = (
       const resolvedKey = resolveInput(key, context);
 
       resolvedObject[
-        typeof resolvedKey === 'string' ? resolvedKey : String(resolvedKey)
+        isString(resolvedKey) ? resolvedKey : String(resolvedKey)
       ] = resolveInput(value, context);
 
       return resolvedObject;
@@ -61,10 +62,27 @@ const resolveObject = (
   );
 };
 
-const resolveString = (
+export const resolveStringTemplate = (
   input: string,
   context: Record<string, unknown>,
 ): string => {
+  return input.replace(VARIABLE_PATTERN, (matchedToken, _) => {
+    const processedToken = evalFromContext(matchedToken, context);
+
+    if (isObject(processedToken)) {
+      return JSON.stringify(processedToken);
+    }
+
+    return String(processedToken);
+  });
+};
+
+// Returns the resolved value itself when the whole string is one variable, so
+// `{{step.amount}}` keeps its type instead of being stringified
+const resolveString = (
+  input: string,
+  context: Record<string, unknown>,
+): unknown => {
   const matchedTokens = input.match(VARIABLE_PATTERN);
 
   if (!matchedTokens || matchedTokens.length === 0) {
@@ -75,13 +93,5 @@ const resolveString = (
     return evalFromContext(input, context);
   }
 
-  return input.replace(VARIABLE_PATTERN, (matchedToken, _) => {
-    const processedToken = evalFromContext(matchedToken, context);
-
-    if (typeof processedToken === 'object' && processedToken !== null) {
-      return JSON.stringify(processedToken);
-    }
-
-    return processedToken;
-  });
+  return resolveStringTemplate(input, context);
 };

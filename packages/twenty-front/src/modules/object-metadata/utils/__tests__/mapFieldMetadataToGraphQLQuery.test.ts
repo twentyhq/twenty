@@ -57,19 +57,28 @@ xLink
 {
   primaryLinkUrl
   primaryLinkLabel
-  secondaryLinks
+  secondaryLinks {
+    label
+    url
+  }
 }
 linkedinLink
 {
   primaryLinkUrl
   primaryLinkLabel
-  secondaryLinks
+  secondaryLinks {
+    label
+    url
+  }
 }
 domainName
 {
   primaryLinkUrl
   primaryLinkLabel
-  secondaryLinks
+  secondaryLinks {
+    label
+    url
+  }
 }
 annualRecurringRevenue
 {
@@ -135,7 +144,10 @@ xLink
 {
   primaryLinkUrl
   primaryLinkLabel
-  secondaryLinks
+  secondaryLinks {
+    label
+    url
+  }
 }
 accountOwner
 {
@@ -151,13 +163,19 @@ linkedinLink
 {
   primaryLinkUrl
   primaryLinkLabel
-  secondaryLinks
+  secondaryLinks {
+    label
+    url
+  }
 }
 domainName
 {
   primaryLinkUrl
   primaryLinkLabel
-  secondaryLinks
+  secondaryLinks {
+    label
+    url
+  }
 }
 annualRecurringRevenue
 {
@@ -186,7 +204,10 @@ xLink
 {
   primaryLinkUrl
   primaryLinkLabel
-  secondaryLinks
+  secondaryLinks {
+    label
+    url
+  }
 }
 id
 createdAt
@@ -212,7 +233,10 @@ linkedinLink
 {
   primaryLinkUrl
   primaryLinkLabel
-  secondaryLinks
+  secondaryLinks {
+    label
+    url
+  }
 }
 updatedAt
 avatarUrl

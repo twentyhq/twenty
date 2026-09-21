@@ -39,7 +39,7 @@ describe('useTimelineActivities', () => {
         },
         workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
         createdAt: '2024-03-22T08:28:44.830Z',
-        name: 'updated.company',
+        timelineActivityTypeId: '20202020-0000-4000-8000-000000000001',
         companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
         properties: '{"diff": {"address": {"after": "Paris", "before": ""}}}',
         updatedAt: '2024-03-22T08:28:44.830Z',
@@ -69,13 +69,18 @@ describe('useTimelineActivities', () => {
     const wrongMockedTimelineActivities = [
       {
         ...mockedTimelineActivities[0],
-        name: 'wrong.updated.company',
+        timelineActivityTypeId: '20202020-0000-4000-8000-000000000002',
       },
     ];
 
     expect(result.current.timelineActivities).toEqual(mockedTimelineActivities);
     expect(result.current.timelineActivities).not.toEqual(
       wrongMockedTimelineActivities,
+    );
+    expect(useFindManyRecordsMock.useFindManyRecords).toHaveBeenCalledWith(
+      expect.objectContaining({
+        orderBy: [{ happensAt: 'DescNullsFirst' }],
+      }),
     );
   });
 });

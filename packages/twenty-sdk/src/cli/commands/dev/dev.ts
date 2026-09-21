@@ -17,6 +17,7 @@ export type AppDevOptions = {
   verbose?: boolean;
   debounceMs?: number;
   force?: boolean;
+  inferDeletionFromMissingEntities?: boolean;
 };
 
 export class AppDevCommand {
@@ -75,6 +76,8 @@ export class AppDevCommand {
       verbose: options.verbose,
       debounceMs: options.debounceMs,
       force: options.force,
+      inferDeletionFromMissingEntities:
+        options.inferDeletionFromMissingEntities,
       interactive: !options.headless && process.stdout.isTTY === true,
       onExit: ({ code, message }) => {
         if (options.headless) {

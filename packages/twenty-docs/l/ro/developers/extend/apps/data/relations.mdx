@@ -84,6 +84,29 @@ export default defineField({
 **Importuri circulare:** ambele câmpuri de relație se referă unul la celălalt prin `universalIdentifier`. Pentru a evita problemele de import circular, exportați ID-urile câmpurilor ca constante denumite din fiecare fișier și importați-le în celălalt. Sistemul de build le rezolvă în timpul compilării.
 </Note>
 
+## Relații de joncțiune
+
+Un obiect de joncțiune conectează o înregistrare sursă la una sau mai multe înregistrări-țintă. De exemplu, `PostCardRecipient` poate conține atât o relație `postCard`, cât și o relație `recipient`. În câmpul `ONE_TO_MANY` al obiectului sursă, setează `junctionTargetFieldUniversalIdentifier` la câmpul de relație de pe obiectul de joncțiune care indică spre țintă:
+
+```ts
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_FIELD_ID,
+  },
+});
+```
+
+`RECIPIENT_FIELD_ID` trebuie să identifice o relație `MANY_TO_ONE` sau morfă pe obiectul de joncțiune. Acesta indică lui Twenty care înregistrare asociată este ținta atunci când o funcționalitate precum [distribuirea activității din cronologie](/l/ro/developers/extend/apps/data/timeline-activity-types#automatic-and-explicit-events) parcurge joncțiunea.
+
 ## Relaționarea cu obiectele standard
 
 Pentru a crea o relație cu un obiect Twenty încorporat (Person, Company etc.), utilizați `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
@@ -122,14 +145,15 @@ export default defineField({
 
 ## Proprietăți ale câmpului de relație
 
-| Proprietate                                       | Obligatoriu      | Descriere                                                                                                             |
-| ------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `type`                                            | Da               | Trebuie să fie `FieldType.RELATION`                                                                                   |
-| `relationTargetObjectMetadataUniversalIdentifier` | Da               | `universalIdentifier` al obiectului țintă                                                                             |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Da               | `universalIdentifier` al câmpului corespunzător de pe obiectul țintă                                                  |
-| `universalSettings.relationType`                  | Da               | `RelationType.MANY_TO_ONE` sau `RelationType.ONE_TO_MANY`                                                             |
-| `universalSettings.onDelete`                      | Doar MANY_TO_ONE | Ce se întâmplă atunci când înregistrarea referențiată este ștearsă: `CASCADE`, `SET_NULL`, `RESTRICT` sau `NO_ACTION` |
-| `universalSettings.joinColumnName`                | Doar MANY_TO_ONE | Numele coloanei din baza de date pentru cheia străină (de ex., `postCardId`)                                          |
+| Proprietate                                                | Obligatoriu                   | Descriere                                                                                                             |
+| ---------------------------------------------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `type`                                                     | Da                            | Trebuie să fie `FieldType.RELATION`                                                                                   |
+| `relationTargetObjectMetadataUniversalIdentifier`          | Da                            | `universalIdentifier` al obiectului țintă                                                                             |
+| `relationTargetFieldMetadataUniversalIdentifier`           | Da                            | `universalIdentifier` al câmpului corespunzător de pe obiectul țintă                                                  |
+| `universalSettings.relationType`                           | Da                            | `RelationType.MANY_TO_ONE` sau `RelationType.ONE_TO_MANY`                                                             |
+| `universalSettings.onDelete`                               | Doar MANY_TO_ONE              | Ce se întâmplă atunci când înregistrarea referențiată este ștearsă: `CASCADE`, `SET_NULL`, `RESTRICT` sau `NO_ACTION` |
+| `universalSettings.joinColumnName`                         | Doar MANY_TO_ONE              | Numele coloanei din baza de date pentru cheia străină (de ex., `postCardId`)                                          |
+| `universalSettings.junctionTargetFieldUniversalIdentifier` | Doar ONE_TO_MANY de joncțiune | Câmp de relație pe obiectul de joncțiune care indică spre ținta distribuției                                          |
 
 ## Câmpuri de relație inline
 

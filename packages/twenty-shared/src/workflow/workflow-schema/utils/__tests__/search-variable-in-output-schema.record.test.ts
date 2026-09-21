@@ -52,7 +52,6 @@ describe('searchVariableInOutputSchema - record output schema', () => {
           },
         },
       },
-      // Record field (nested record)
       owner: {
         isLeaf: false,
         label: 'Owner',

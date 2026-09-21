@@ -34,6 +34,12 @@ type HandleFlatObjectMetadataUpdateSideEffectArgs = FromTo<
     | 'flatSearchFieldMetadataMaps'
   >;
 
+// Transitional: the label identifier view-field recompute below duplicates the
+// engine's objectIndexViewLabelIdentifierOnUpdate on the engine INDEX view and
+// mutates caller-owned view rows directly on every other view. Once the
+// override mechanism ships, this per-view maintenance is expected to be
+// re-expressed as overrides instead of direct row mutations; the exact shape
+// is not settled yet.
 export const handleFlatObjectMetadataUpdateSideEffect = ({
   flatIndexMaps,
   flatFieldMetadataMaps,

@@ -2,7 +2,7 @@ import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.c
 import { TEST_PERSON_1_ID } from 'test/integration/constants/test-person-ids.constants';
 import {
   TEST_PRIMARY_LINK_URL,
-  TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+  TEST_PRIMARY_LINK_URL_AS_DOMAIN,
 } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
@@ -147,7 +147,7 @@ describe('Core REST API Create One endpoint', () => {
 
         expect(createdPerson.company).toBeDefined();
         expect(createdPerson.company.domainName.primaryLinkUrl).toBe(
-          TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+          TEST_PRIMARY_LINK_URL_AS_DOMAIN,
         );
         expect(createdPerson.company.people).not.toBeDefined();
       });

@@ -4,6 +4,7 @@ import { assertUnreachable, CustomError } from 'twenty-shared/utils';
 
 import { type FlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { formatWorkspaceMigrationRunnerExecutionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/format-workspace-migration-runner-execution-errors.util';
 
 export const WorkspaceMigrationRunnerExceptionCode = {
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
@@ -88,9 +89,14 @@ export class WorkspaceMigrationRunnerException extends CustomError {
         args.action,
       );
       const identifierClause = ` (universalIdentifier: ${universalIdentifier})`;
+      const executionErrorsSummary =
+        formatWorkspaceMigrationRunnerExecutionErrors(args.errors);
+      const causeClause = executionErrorsSummary
+        ? `: ${executionErrorsSummary}`
+        : '';
 
       super(
-        `Migration action '${args.action.type}' for '${args.action.metadataName}'${identifierClause} failed`,
+        `Migration action '${args.action.type}' for '${args.action.metadataName}'${identifierClause} failed${causeClause}`,
       );
 
       this.code = args.code;

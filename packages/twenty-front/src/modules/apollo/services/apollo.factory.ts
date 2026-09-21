@@ -7,20 +7,17 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { ErrorLink } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
-import { from, switchMap, throwError } from 'rxjs';
 import { RestLink } from 'apollo-link-rest';
 import UploadHttpLink from 'apollo-upload-client/UploadHttpLink.mjs';
 
-import { renewToken } from '@/auth/services/AuthService';
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { type AuthTokenPair } from '~/generated-metadata/graphql';
+import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
 import { logDebug } from '~/utils/logDebug';
-import { retryWithBackoff } from '~/utils/retryWithBackoff';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
-import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
 import { loggerLink } from '@/apollo/utils/loggerLink';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 import { i18n } from '@lingui/core';
@@ -33,34 +30,8 @@ import {
 } from 'graphql';
 import isEmpty from 'lodash.isempty';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const logger = loggerLink(() => 'Twenty');
-
-// Shared across all ApolloFactory instances so concurrent
-// UNAUTHENTICATED errors from /graphql and /metadata clients
-// deduplicate into a single renewal request.
-let renewalPromise: Promise<boolean> | null = null;
-
-const TOKEN_RENEWAL_MAX_RETRIES = 3;
-const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
-
-// Error codes returned by the renewToken mutation when the server
-// definitively rejects the refresh token (expired, revoked or unknown).
-const TOKEN_RENEWAL_REJECTION_CODES = [
-  'UNAUTHENTICATED',
-  'FORBIDDEN',
-  'BAD_USER_INPUT',
-];
-
-const isTokenRenewalRejection = (error: unknown): boolean =>
-  CombinedGraphQLErrors.is(error) &&
-  error.errors.some((graphQLError) =>
-    TOKEN_RENEWAL_REJECTION_CODES.includes(
-      graphQLError.extensions?.code as string,
-    ),
-  );
 
 export interface Options {
   uri: string;
@@ -70,7 +41,6 @@ export interface Options {
   devtools?: { enabled?: boolean };
   onError?: (err: readonly GraphQLFormattedError[] | undefined) => void;
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
-  onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
   onAppVersionMismatch?: (message: string) => void;
   onPayloadTooLarge?: (message: string) => void;
@@ -96,7 +66,6 @@ export class ApolloFactory implements ApolloManager {
       devtools,
       onError: onErrorCb,
       onNetworkError,
-      onTokenPairChange,
       onUnauthenticatedError,
       onAppVersionMismatch,
       onPayloadTooLarge,
@@ -114,40 +83,31 @@ export class ApolloFactory implements ApolloManager {
     const buildApolloLink = (): ApolloLink => {
       const uploadLink = new UploadHttpLink({
         uri,
+        credentials: 'include',
       });
 
       const streamingRestLink = new StreamingRestLink({
         uri: REST_API_BASE_URL,
+        credentials: 'include',
       });
 
       const restLink = new RestLink({
         uri: REST_API_BASE_URL,
+        credentials: 'include',
       });
 
       const authLink = setContext(async (_, { headers }) => {
-        const tokenPair = getTokenPair();
-
         const locale = this.currentWorkspaceMember?.locale ?? i18n.locale;
 
-        if (isUndefinedOrNull(tokenPair)) {
-          return {
-            headers: {
-              ...headers,
-              ...optionHeaders,
-              'x-locale': locale,
-            },
-          };
-        }
-
-        const token = tokenPair.accessOrWorkspaceAgnosticToken?.token;
-
         return {
+          sessionGeneration: getSessionGeneration(),
           headers: {
             ...headers,
             ...optionHeaders,
-            authorization: token ? `Bearer ${token}` : '',
             'x-locale': locale,
-            ...(this.appVersion && { 'X-App-Version': this.appVersion }),
+            ...(isDefined(this.appVersion) && {
+              'X-App-Version': this.appVersion,
+            }),
           },
         };
       });
@@ -158,9 +118,15 @@ export class ApolloFactory implements ApolloManager {
         },
         attempts: {
           max: 2,
-          retryIf: (error) => {
+          retryIf: (error, operation) => {
             // oxlint-disable-next-line no-console
             console.log('retryIf error from retryLink', error);
+            // A retry is a fresh request seconds later, so it carries whatever
+            // cookie exists by then rather than the one that was current when
+            // the operation was issued. See PendingServerSignOutEffect.
+            if (operation.getContext().skipRetry === true) {
+              return false;
+            }
             if (this.isAuthenticationError(error)) {
               return false;
             }
@@ -171,68 +137,6 @@ export class ApolloFactory implements ApolloManager {
           },
         },
       });
-
-      const attemptTokenRenewal = async (): Promise<void> => {
-        const graphqlUri = `${REACT_APP_SERVER_BASE_URL}/metadata`;
-
-        const tokens = await retryWithBackoff(
-          () => renewToken(graphqlUri, getTokenPair()),
-          {
-            maxRetries: TOKEN_RENEWAL_MAX_RETRIES,
-            baseDelayMs: TOKEN_RENEWAL_RETRY_DELAY_MS,
-            shouldRetry: (error) =>
-              !CombinedGraphQLErrors.is(error) && isDefined(getTokenPair()),
-          },
-        );
-
-        if (isDefined(tokens)) {
-          onTokenPairChange?.(tokens);
-        }
-      };
-
-      const handleTokenRenewal = (
-        operation: ApolloLink.Operation,
-        forward: ApolloLink.ForwardFunction,
-        error: ErrorLike,
-      ) => {
-        if (!getTokenPair()?.refreshToken?.token) {
-          onUnauthenticatedError?.();
-
-          return throwError(() => error);
-        }
-
-        if (!renewalPromise) {
-          renewalPromise = attemptTokenRenewal()
-            .then(() => true)
-            .catch((renewalError) => {
-              if (isTokenRenewalRejection(renewalError)) {
-                // oxlint-disable-next-line no-console
-                console.log(
-                  'Refresh token rejected by the server, triggering unauthenticated error',
-                  renewalError,
-                );
-                onUnauthenticatedError?.();
-              } else {
-                // oxlint-disable-next-line no-console
-                console.log(
-                  'Token renewal failed transiently, keeping session for retry',
-                  renewalError,
-                );
-              }
-
-              return false;
-            })
-            .finally(() => {
-              renewalPromise = null;
-            });
-        }
-
-        return from(renewalPromise).pipe(
-          switchMap((succeeded) =>
-            succeeded ? forward(operation) : throwError(() => error),
-          ),
-        );
-      };
 
       const sendToSentry = ({
         graphQLError,
@@ -292,14 +196,23 @@ export class ApolloFactory implements ApolloManager {
           });
       };
 
-      const errorLink = new ErrorLink(({ error, operation, forward }) => {
+      const errorLink = new ErrorLink(({ error, operation }) => {
+        const requestSessionGeneration =
+          operation.getContext().sessionGeneration;
+        // Missing context must keep sign-out behavior if the link chain changes.
+        const isResponseFromCurrentSession =
+          requestSessionGeneration === undefined ||
+          requestSessionGeneration === getSessionGeneration();
+
         if (CombinedGraphQLErrors.is(error)) {
           onErrorCb?.(error.errors);
           for (const graphQLError of error.errors) {
-            if (graphQLError.message === 'Unauthorized') {
-              // oxlint-disable-next-line no-console
-              console.log('Unauthorized, triggering token renewal');
-              return handleTokenRenewal(operation, forward, error);
+            if (isUnauthenticatedGraphQLError(graphQLError)) {
+              if (isResponseFromCurrentSession) {
+                onUnauthenticatedError?.();
+              }
+
+              return;
             }
 
             switch (graphQLError?.extensions?.code) {
@@ -310,16 +223,13 @@ export class ApolloFactory implements ApolloManager {
                 );
                 return;
               }
-              case 'UNAUTHENTICATED': {
-                // oxlint-disable-next-line no-console
-                console.log('UNAUTHENTICATED, triggering token renewal');
-                return handleTokenRenewal(operation, forward, error);
-              }
               case 'NOT_FOUND':
               case 'BAD_USER_INPUT':
               case 'FORBIDDEN':
               case 'CONFLICT':
-              case 'METADATA_VALIDATION_FAILED': {
+              case 'METADATA_VALIDATION_FAILED':
+              case 'RATE_LIMITED':
+              case 'QUOTA_EXHAUSTED': {
                 return;
               }
               case 'USER_INPUT_ERROR': {
@@ -341,11 +251,11 @@ export class ApolloFactory implements ApolloManager {
             this.isRestOperation(operation) &&
             this.isAuthenticationError(error)
           ) {
-            // oxlint-disable-next-line no-console
-            console.log(
-              'Authentication error, triggering token renewal from errorLink',
-            );
-            return handleTokenRenewal(operation, forward, error);
+            if (isResponseFromCurrentSession) {
+              onUnauthenticatedError?.();
+            }
+
+            return;
           }
 
           if (this.isPayloadTooLargeError(error)) {

@@ -37,6 +37,7 @@ Notlar:
 * Kurulum öncesi, kurulum sonrası ve kaldırma fonksiyonları manifest derlemesi sırasında otomatik olarak algılanır — bunlara `defineApplication()` içinde referans vermeniz gerekmez.
 * Geriye dönük uyumluluk için `defaultRoleUniversalIdentifier` değerini açıkça geçmek hâlâ desteklenmektedir, ancak `defineApplicationRole()` lehine kullanımdan kaldırılmıştır.
 * `serverVariables`, API anahtarları gibi örnek düzeyindeki yapılandırmalar ve gizli bilgilerdir. `applicationVariables`'ın aksine, manifest içinde herhangi bir değer belirtmezler — çalışma alanı operatörü bunları uygulamanın ayarlarından doldurur ve yalnızca ayarlandıklarında mantık fonksiyonlarına enjekte edilirler.
+* Her iki tür değişken de `isDeprecated: true` kabul eder. Bir değişkeni silmek yerine devre dışı bırakmak için kullanın: anahtarın tanımlı kalması, saklanan değeri korur (silmek, operatörün girdiği değeri yok eder) ve değişken hâlâ enjekte edilir, böylece kodunuz buna geri dönebilir — `process.env.NEW_API_KEY ?? process.env.API_KEY`. Artık kullanılmayan bir değişkenin değeri kalmadığında uygulamanın ayarlarından kaybolur ve hiçbir zaman uygulamanın yapılandırma kontrolüne dahil edilmez; bu yüzden `isDeprecated`, `isRequired` seçeneğine üstün gelir.
 * Uygulamanın **Ayarlar** sekmesinde (varsayılan değişken yapılandırma bölümünün yerine) özel bir yapılandırma arayüzü oluşturmak için, kendi dosyasında [`defineSettingsFrontComponent()`](/l/tr/developers/extend/apps/layout/front-components#custom-settings-component) ile bir ön bileşen tanımlayın. Her uygulama için yalnızca bir tane olabilir. Sistem tarafından yönetilen bölümler (otomatik yükseltme, App URL, bağlantılar) her zaman görünür durumda kalır.
 
 ## Değişken türleri
@@ -96,7 +97,7 @@ Aynısı, `getApplicationVariable('VARIABLE_NAME')` ile değerleri okuyan ön bi
 
 [`defineApplicationRole()`](/l/tr/developers/extend/apps/config/roles) ile bildirilen rol, uygulamanın iş mantığı işlevlerinin ve ön uç bileşenlerinin neye erişebileceğini kontrol eder:
 
-* `TWENTY_APP_ACCESS_TOKEN` olarak enjekte edilen çalışma zamanı belirteci bu rolden türetilir.
+* Mantık işlevlerinize enjekte edilen çalışma zamanı belirteçleri bu rolden türetilir. Bir kişi olarak davranan çağrı, o kişinin yapabilecekleriyle daha da sınırlandırılır; dolayısıyla hiçbir zaman ikisinden birini aşamaz. Bkz. [Bir çağrının kullandığı erişim](/l/tr/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * Türlendirilmiş API istemcisi, o role tanınan izinlerle sınırlandırılır.
 * En az ayrıcalık ilkesini izleyin: yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri bildirin.
 

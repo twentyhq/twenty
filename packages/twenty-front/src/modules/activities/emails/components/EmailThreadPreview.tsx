@@ -2,13 +2,14 @@ import { styled } from '@linaria/react';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
+import { getEmailParticipantAvatarColorSeed } from '@/activities/emails/utils/getEmailParticipantAvatarColorSeed';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useContext } from 'react';
 
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, Tag } from 'twenty-ui/data-display';
+import { Avatar, Tag } from 'twenty-ui/primitives/data-display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   MessageChannelVisibility,
@@ -78,6 +79,13 @@ type EmailThreadPreviewProps = {
   thread: TimelineThread;
 };
 
+type LastAvatar = {
+  displayedName: string | undefined;
+  avatarUrl: string | undefined;
+  isCountIcon: boolean;
+  placeholderColorSeed: string | undefined;
+};
+
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
   const { theme } = useContext(ThemeContext);
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
@@ -93,14 +101,29 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       ? `, ${thread.lastTwoParticipants?.[1]?.displayName}`
       : '');
 
-  const [finalDisplayedName, finalAvatarUrl, isCountIcon] =
+  const lastParticipant = thread?.lastTwoParticipants?.[1];
+
+  const {
+    displayedName,
+    avatarUrl,
+    isCountIcon,
+    placeholderColorSeed,
+  }: LastAvatar =
     thread.participantCount > 3
-      ? [`${thread.participantCount}`, '', true]
-      : [
-          thread?.lastTwoParticipants?.[1]?.displayName,
-          thread?.lastTwoParticipants?.[1]?.avatarUrl,
-          false,
-        ];
+      ? {
+          displayedName: `${thread.participantCount}`,
+          avatarUrl: '',
+          isCountIcon: true,
+          placeholderColorSeed: undefined,
+        }
+      : {
+          displayedName: lastParticipant?.displayName,
+          avatarUrl: lastParticipant?.avatarUrl,
+          isCountIcon: false,
+          placeholderColorSeed: isDefined(lastParticipant)
+            ? getEmailParticipantAvatarColorSeed(lastParticipant)
+            : undefined,
+        };
 
   const handleThreadClick = () => {
     const canOpen =
@@ -120,35 +143,34 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(thread?.firstParticipant?.avatarUrl)}
-            placeholder={thread.firstParticipant.displayName}
-            placeholderColorSeed={
-              thread.firstParticipant.workspaceMemberId ||
-              thread.firstParticipant.personId
-            }
-            type="rounded"
+            src={getAbsoluteImageUrl(thread?.firstParticipant?.avatarUrl)}
+            name={thread.firstParticipant.displayName}
+            colorSeed={getEmailParticipantAvatarColorSeed(
+              thread.firstParticipant,
+            )}
+            shape="circle"
           />
           {isDefined(thread?.lastTwoParticipants?.[0]) && (
             <StyledAvatarWrapper>
               <Avatar
-                avatarUrl={getAbsoluteImageUrl(
+                src={getAbsoluteImageUrl(
                   thread.lastTwoParticipants[0].avatarUrl,
                 )}
-                placeholder={thread.lastTwoParticipants[0].displayName}
-                placeholderColorSeed={
-                  thread.lastTwoParticipants[0].workspaceMemberId ||
-                  thread.lastTwoParticipants[0].personId
-                }
-                type="rounded"
+                name={thread.lastTwoParticipants[0].displayName}
+                colorSeed={getEmailParticipantAvatarColorSeed(
+                  thread.lastTwoParticipants[0],
+                )}
+                shape="circle"
               />
             </StyledAvatarWrapper>
           )}
-          {finalDisplayedName && (
+          {displayedName && (
             <StyledAvatarWrapper>
               <Avatar
-                avatarUrl={getAbsoluteImageUrl(finalAvatarUrl)}
-                placeholder={finalDisplayedName}
-                type="rounded"
+                src={getAbsoluteImageUrl(avatarUrl)}
+                name={displayedName}
+                colorSeed={placeholderColorSeed}
+                shape="circle"
                 color={isCountIcon ? theme.grayScale.gray11 : undefined}
                 backgroundColor={
                   isCountIcon ? theme.grayScale.gray2 : undefined
@@ -174,9 +196,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
         )}
         {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
           <>
-            {thread.lastMessageIsDraft && (
-              <Tag color="orange" text={t`Draft`} />
-            )}
+            {thread.lastMessageIsDraft && <Tag color="orange">{t`Draft`}</Tag>}
             <StyledSubject>{thread.subject}</StyledSubject>
             <StyledBody>{thread.lastMessageBody}</StyledBody>
           </>

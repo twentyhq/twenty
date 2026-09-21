@@ -13,7 +13,7 @@ import { type SecretEncryptionService } from 'src/engine/core-modules/secret-enc
 const V2_ENVELOPE_REGEX = /^enc:v2:[0-9a-f]{8}:[A-Za-z0-9+/=]+$/;
 const CONSTRAINT_NAME =
   'CHK_applicationRegistrationVariable_encryptedValue_encrypted';
-const CONSTRAINT_EXPR = `"encryptedValue" = '' OR "encryptedValue" LIKE 'enc:v2:%'`;
+const CONSTRAINT_EXPR = `"encryptedValue" LIKE 'enc:v2:%'`;
 
 describe('ApplicationRegistrationVariable encryption (integration)', () => {
   let dataSource: DataSource;

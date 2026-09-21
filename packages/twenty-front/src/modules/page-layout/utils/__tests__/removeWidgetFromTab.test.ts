@@ -3,6 +3,7 @@ import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import {
   AggregateOperations,
   GraphOrderBy,
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -10,6 +11,8 @@ import {
 describe('removeWidgetFromTab', () => {
   const mockTabs: PageLayoutTab[] = [
     {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       id: 'tab-1',
       applicationId: '',
       isActive: true,
@@ -18,6 +21,8 @@ describe('removeWidgetFromTab', () => {
       pageLayoutId: 'layout-1',
       widgets: [
         {
+          isSystemSideEffect: false,
+          universalIdentifier: 'universal-identifier-mock',
           __typename: 'PageLayoutWidget' as const,
           id: 'widget-1',
           applicationId: '',
@@ -31,13 +36,22 @@ describe('removeWidgetFromTab', () => {
             aggregateFieldMetadataId: 'id',
             displayDataLabel: false,
           },
-          gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
+          position: {
+            __typename: 'PageLayoutWidgetGridPosition' as const,
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 0,
+            rowSpan: 2,
+            columnSpan: 2,
+          },
           objectMetadataId: null,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
         },
         {
+          isSystemSideEffect: false,
+          universalIdentifier: 'universal-identifier-mock',
           __typename: 'PageLayoutWidget' as const,
           id: 'widget-2',
           applicationId: '',
@@ -53,7 +67,14 @@ describe('removeWidgetFromTab', () => {
             orderBy: GraphOrderBy.VALUE_DESC,
             displayDataLabel: false,
           },
-          gridPosition: { row: 2, column: 0, rowSpan: 2, columnSpan: 2 },
+          position: {
+            __typename: 'PageLayoutWidgetGridPosition' as const,
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 2,
+            column: 0,
+            rowSpan: 2,
+            columnSpan: 2,
+          },
           objectMetadataId: null,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
@@ -65,6 +86,8 @@ describe('removeWidgetFromTab', () => {
       deletedAt: null,
     },
     {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       id: 'tab-2',
       applicationId: '',
       isActive: true,
@@ -73,6 +96,8 @@ describe('removeWidgetFromTab', () => {
       pageLayoutId: 'layout-1',
       widgets: [
         {
+          isSystemSideEffect: false,
+          universalIdentifier: 'universal-identifier-mock',
           __typename: 'PageLayoutWidget' as const,
           id: 'widget-3',
           applicationId: '',
@@ -84,7 +109,14 @@ describe('removeWidgetFromTab', () => {
             configurationType: WidgetConfigurationType.IFRAME,
             url: 'https://example.com',
           },
-          gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
+          position: {
+            __typename: 'PageLayoutWidgetGridPosition' as const,
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 0,
+            rowSpan: 2,
+            columnSpan: 2,
+          },
           objectMetadataId: null,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',

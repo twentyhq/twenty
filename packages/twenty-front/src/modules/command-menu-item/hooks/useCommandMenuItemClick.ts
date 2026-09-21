@@ -1,5 +1,8 @@
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useMountCommand } from '@/command-menu-item/engine-command/hooks/useMountCommand';
+import { isPathCommandMenuItemPayload } from '@/command-menu-item/engine-command/utils/isPathCommandMenuItemPayload';
 import { isEngineCommandMountedFamilySelector } from '@/command-menu-item/engine-command/selectors/isEngineCommandMountedFamilySelector';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
@@ -8,20 +11,25 @@ import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFron
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useContext } from 'react';
+import { isValidElement, useContext } from 'react';
+import { ENGINE_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap';
+import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemClick = ({
   item,
   Icon,
   label,
 }: {
-  item: CommandMenuItemFieldsFragment;
+  item: CommandMenuItemDefinition;
   Icon: IconComponent;
   label: string;
 }) => {
+  const isAsyncCsvExportEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
+  );
   const { commandMenuContextApi } = useContext(CommandMenuContext);
   const mountCommand = useMountCommand();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
@@ -70,7 +78,15 @@ export const useCommandMenuItemClick = ({
         return;
       }
 
-      closeCommandMenu();
+      const engineComponent = isDefined(item.engineComponentKey)
+        ? ENGINE_COMPONENT_KEY_COMPONENT_MAP[item.engineComponentKey]
+        : undefined;
+      const isExport =
+        isValidElement(engineComponent) &&
+        engineComponent.type === ExportRecordsCommand;
+      if (!isExport || !isAsyncCsvExportEnabled) {
+        closeCommandMenu();
+      }
 
       await mountCommand({
         engineCommandId: item.id,
@@ -78,9 +94,15 @@ export const useCommandMenuItemClick = ({
         engineComponentKey: item.engineComponentKey,
         frontComponentId: item.frontComponentId ?? undefined,
         workflowVersionId: item.workflowVersionId ?? undefined,
+        coreWorkflowVersionId: item.coreWorkflowVersionId ?? undefined,
         availabilityType: item.availabilityType,
         availabilityObjectMetadataId: item.availabilityObjectMetadataId,
-        payload: item.payload ?? undefined,
+        payload:
+          isDefined(item.payload) && isPathCommandMenuItemPayload(item.payload)
+            ? item.payload
+            : undefined,
+        navigationTargetObjectMetadataId: item.navigationTargetObjectMetadataId,
+        creationTargetObjectMetadataId: item.creationTargetObjectMetadataId,
         isInSidePanel: commandMenuContextApi.isInSidePanel,
       });
 

@@ -1,6 +1,10 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isArray, isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recall-api-not-found-status';
+import { TRANSCRIPT_EXPIRED_SUB_CODE } from 'src/logic-functions/constants/transcript-expired-sub-code';
+import { buildEmptyTranscriptMarker } from 'src/logic-functions/domain/build-empty-transcript-marker.util';
 import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
 import { buildPendingTranscriptMarker } from 'src/logic-functions/domain/build-pending-transcript-marker.util';
 import { buildTranscriptFailureReason } from 'src/logic-functions/domain/build-transcript-failure-reason.util';
@@ -8,6 +12,10 @@ import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-ca
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/create-async-recall-transcript.util';
 import { listRecallTranscripts } from 'src/logic-functions/recall-api/list-recall-transcripts.util';
+import {
+  isRecallAccountStatus,
+  isRetryableRecallApiStatus,
+} from 'src/logic-functions/recall-api/recall-api-retry-policy.util';
 import { type RecallTranscriptSummary } from 'src/logic-functions/recall-api/recall-transcript-summary.type';
 import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
 import { type ImportCallRecordingTranscriptResult } from 'src/logic-functions/flows/import-call-recording-transcript-result.type';
@@ -21,40 +29,77 @@ export const importCallRecordingTranscript = async ({
   externalRecordingId,
   requestedAt,
   transcript,
+  isMediaExpired,
+  signal,
 }: {
   callRecordingId: string;
   currentStatus: string | undefined;
-  externalRecordingId: string;
+  externalRecordingId: string | undefined;
   requestedAt: string;
   transcript: unknown;
+  isMediaExpired: boolean;
+  signal?: AbortSignal;
 }): Promise<ImportCallRecordingTranscriptResult> => {
   const existingTranscriptMarker = parseTranscriptMarker(transcript);
 
+  if (isDefined(transcript) && isUndefined(existingTranscriptMarker)) {
+    return buildEmptyTranscriptArtifactResult();
+  }
+
   if (
-    !isNull(transcript) &&
-    !isUndefined(transcript) &&
-    isUndefined(existingTranscriptMarker)
+    existingTranscriptMarker?.status === 'FAILED' ||
+    existingTranscriptMarker?.status === 'EMPTY'
   ) {
     return buildEmptyTranscriptArtifactResult();
   }
 
-  if (existingTranscriptMarker?.status === 'FAILED') {
-    return buildEmptyTranscriptArtifactResult();
+  if (isUndefined(externalRecordingId)) {
+    return isMediaExpired
+      ? buildExpiredTranscriptArtifactResult({
+          recallTranscriptId:
+            existingTranscriptMarker?.recallTranscriptId ?? null,
+        })
+      : buildEmptyTranscriptArtifactResult();
   }
 
-  const listResult = await listRecallTranscripts({ externalRecordingId });
+  const listResult = await listRecallTranscripts({
+    externalRecordingId,
+    signal,
+  });
 
   if (!listResult.ok) {
     console.warn(
       `[call-recorder] failed to list Recall transcripts for recording ${externalRecordingId}: ${listResult.errorMessage}`,
     );
 
-    return buildEmptyTranscriptArtifactResult();
+    if (listResult.status === RECALL_API_NOT_FOUND_STATUS) {
+      return buildExpiredTranscriptArtifactResult({
+        recallTranscriptId:
+          existingTranscriptMarker?.recallTranscriptId ?? null,
+      });
+    }
+
+    return buildEmptyTranscriptArtifactResult({
+      hasRetryableFailure:
+        isNull(listResult.status) ||
+        isRetryableRecallApiStatus(listResult.status),
+    });
   }
 
   const transcriptArtifact = selectRecallTranscriptArtifact(
     listResult.transcripts,
   );
+
+  if (
+    isNonEmptyArray(listResult.transcripts) &&
+    isUndefined(transcriptArtifact)
+  ) {
+    return buildExpiredTranscriptArtifactResult({
+      recallTranscriptId:
+        existingTranscriptMarker?.recallTranscriptId ??
+        listResult.transcripts[0].id,
+    });
+  }
   const pendingTranscriptMarkerRecallTranscriptId =
     existingTranscriptMarker?.status === 'PENDING'
       ? (existingTranscriptMarker.recallTranscriptId ?? undefined)
@@ -66,8 +111,13 @@ export const importCallRecordingTranscript = async ({
     isUndefined(transcriptArtifact) &&
     isUndefined(pendingTranscriptMarkerRecallTranscriptId)
   ) {
+    if (isMediaExpired) {
+      return buildExpiredTranscriptArtifactResult({ recallTranscriptId: null });
+    }
+
     const createResult = await createAsyncRecallTranscript({
       externalRecordingId,
+      signal,
     });
 
     if (!createResult.ok) {
@@ -75,7 +125,36 @@ export const importCallRecordingTranscript = async ({
         `[call-recorder] failed to request transcript for Recall recording ${externalRecordingId}: ${createResult.errorMessage}`,
       );
 
-      return buildEmptyTranscriptArtifactResult();
+      // The idempotency key makes a retried create safe, so a lost response
+      // is retried now instead of waiting for the next run.
+      if (
+        isNull(createResult.status) ||
+        isRetryableRecallApiStatus(createResult.status)
+      ) {
+        return buildEmptyTranscriptArtifactResult({
+          hasRetryableFailure: true,
+        });
+      }
+
+      if (createResult.status === RECALL_API_NOT_FOUND_STATUS) {
+        return buildExpiredTranscriptArtifactResult({
+          recallTranscriptId: null,
+        });
+      }
+
+      if (isRecallAccountStatus(createResult.status)) {
+        return buildEmptyTranscriptArtifactResult();
+      }
+
+      return {
+        updateData: {
+          transcript: buildEmptyTranscriptMarker({
+            recallTranscriptId: null,
+            subCode: `transcript_request_rejected:${createResult.status}`,
+          }),
+        },
+        hasRetryableFailure: false,
+      };
     }
 
     return {
@@ -85,7 +164,7 @@ export const importCallRecordingTranscript = async ({
           requestedAt,
         }),
       },
-      requestedTranscript: true,
+      hasRetryableFailure: false,
     };
   }
 
@@ -100,7 +179,7 @@ export const importCallRecordingTranscript = async ({
         transcriptId: transcriptArtifact.id,
         subCode: transcriptArtifact.statusSubCode ?? null,
       }),
-      requestedTranscript: false,
+      hasRetryableFailure: false,
     };
   }
 
@@ -117,15 +196,30 @@ export const importCallRecordingTranscript = async ({
 
   const downloadResult = await downloadTranscript({
     transcriptId: transcriptIdToDownload,
+    signal,
   });
 
   if (downloadResult.outcome === 'filled') {
+    // Twenty stores an empty JSON array as null, which would read as never imported.
+    const isEmptyTranscript =
+      isArray(downloadResult.content) && downloadResult.content.length === 0;
+
     return {
       updateData: {
-        transcript: downloadResult.content as Record<string, unknown>,
+        transcript: isEmptyTranscript
+          ? buildEmptyTranscriptMarker({
+              recallTranscriptId: transcriptIdToDownload,
+            })
+          : (downloadResult.content as Record<string, unknown>),
       },
-      requestedTranscript: false,
+      hasRetryableFailure: false,
     };
+  }
+
+  if (downloadResult.outcome === 'deleted') {
+    return buildExpiredTranscriptArtifactResult({
+      recallTranscriptId: transcriptIdToDownload,
+    });
   }
 
   if (downloadResult.outcome === 'failed') {
@@ -135,7 +229,7 @@ export const importCallRecordingTranscript = async ({
         transcriptId: transcriptIdToDownload,
         subCode: downloadResult.subCode,
       }),
-      requestedTranscript: false,
+      hasRetryableFailure: false,
     };
   }
 
@@ -143,16 +237,35 @@ export const importCallRecordingTranscript = async ({
     console.warn(
       `[call-recorder] could not fill transcript for call recording ${callRecordingId}: ${downloadResult.errorMessage}`,
     );
+
+    return buildEmptyTranscriptArtifactResult({ hasRetryableFailure: true });
   }
 
   return buildEmptyTranscriptArtifactResult();
 };
 
-const buildEmptyTranscriptArtifactResult =
-  (): ImportCallRecordingTranscriptResult => ({
-    updateData: {},
-    requestedTranscript: false,
-  });
+const buildEmptyTranscriptArtifactResult = ({
+  hasRetryableFailure = false,
+}: {
+  hasRetryableFailure?: boolean;
+} = {}): ImportCallRecordingTranscriptResult => ({
+  updateData: {},
+  hasRetryableFailure,
+});
+
+const buildExpiredTranscriptArtifactResult = ({
+  recallTranscriptId,
+}: {
+  recallTranscriptId: string | null;
+}): ImportCallRecordingTranscriptResult => ({
+  updateData: {
+    transcript: buildEmptyTranscriptMarker({
+      recallTranscriptId,
+      subCode: TRANSCRIPT_EXPIRED_SUB_CODE,
+    }),
+  },
+  hasRetryableFailure: false,
+});
 
 const selectRecallTranscriptArtifact = (
   transcripts: RecallTranscriptSummary[],

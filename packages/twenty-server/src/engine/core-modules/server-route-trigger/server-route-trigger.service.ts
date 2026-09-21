@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { Request } from 'express';
 import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import {
   LogicFunctionExecutionException,
@@ -15,6 +13,7 @@ import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -23,6 +22,8 @@ import {
   buildRouteTriggerResponse,
   type RouteTriggerResponse,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import { DEFAULT_SERVER_ROUTE_HTTP_METHODS } from 'src/engine/core-modules/server-route-trigger/constants/default-server-route-http-methods.constant';
+import { SERVER_ROUTE_DISPATCH_JOB_PRIORITY } from 'src/engine/core-modules/server-route-trigger/constants/server-route-dispatch-job-priority.constant';
 import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
@@ -33,6 +34,8 @@ import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const QUEUED_TARGET_RETRY_LIMIT = 3;
 
@@ -41,8 +44,8 @@ export class ServerRouteTriggerService {
   private readonly logger = new Logger(ServerRouteTriggerService.name);
 
   constructor(
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    @InjectWorkspaceScopedRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -64,6 +67,19 @@ export class ServerRouteTriggerService {
       throw new ServerRouteTriggerException(
         `Server resolver function ${resolverLogicFunctionUniversalIdentifier} not found`,
         ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const allowedHttpMethods =
+      resolver.serverRouteTriggerSettings?.httpMethods ??
+      DEFAULT_SERVER_ROUTE_HTTP_METHODS;
+
+    if (
+      !allowedHttpMethods.some((httpMethod) => httpMethod === request.method)
+    ) {
+      throw new ServerRouteTriggerException(
+        `Server resolver function ${resolverLogicFunctionUniversalIdentifier} does not accept ${request.method} requests`,
+        ServerRouteTriggerExceptionCode.METHOD_NOT_ALLOWED,
       );
     }
 
@@ -170,10 +186,14 @@ export class ServerRouteTriggerService {
         workspaceId,
         payload,
       },
-      { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
+      {
+        retryLimit: QUEUED_TARGET_RETRY_LIMIT,
+        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        priority: SERVER_ROUTE_DISPATCH_JOB_PRIORITY,
+      },
     );
 
-    return { statusCode: 202, headers: {}, body: { queued: true } };
+    return { statusCode: 200, headers: {}, body: { queued: true } };
   }
 
   private async findLogicFunctionOrFail({
@@ -185,18 +205,20 @@ export class ServerRouteTriggerService {
     workspaceId: string;
     applicationRegistrationId?: string;
   }): Promise<LogicFunctionEntity> {
-    const logicFunction = await this.logicFunctionRepository.findOne({
-      where: {
-        universalIdentifier: logicFunctionUniversalIdentifier,
-        workspaceId,
+    const logicFunction = await this.logicFunctionRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          universalIdentifier: logicFunctionUniversalIdentifier,
+          ...(isDefined(applicationRegistrationId)
+            ? { application: { applicationRegistrationId } }
+            : {}),
+        },
         ...(isDefined(applicationRegistrationId)
-          ? { application: { applicationRegistrationId } }
+          ? { relations: { application: true } }
           : {}),
       },
-      ...(isDefined(applicationRegistrationId)
-        ? { relations: { application: true } }
-        : {}),
-    });
+    );
 
     if (!isDefined(logicFunction)) {
       throw new ServerRouteTriggerException(

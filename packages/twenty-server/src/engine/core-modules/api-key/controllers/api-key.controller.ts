@@ -6,14 +6,19 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { isMetadataRestRequest } from 'src/engine/api/rest/metadata/utils/is-metadata-rest-request.util';
+import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.input';
 import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
@@ -25,26 +30,38 @@ import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
 /**
  * rest/apiKeys is deprecated, use rest/metadata/apiKeys instead
  * rest/apiKeys will be removed in the future
  */
-@Controller(['rest/apiKeys', 'rest/metadata/apiKeys'])
+@Controller([`${ApiPath.Rest}/apiKeys`, `${ApiPath.Rest}/metadata/apiKeys`])
 @UseGuards(
   JwtAuthGuard,
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
 )
-@UseFilters(PermissionsRestApiExceptionFilter, RestApiExceptionFilter)
+@UseFilters(
+  PermissionsRestApiExceptionFilter,
+  RestApiExceptionFilter,
+  AuthRestApiExceptionFilter,
+)
 export class ApiKeyController {
   constructor(private readonly apiKeyService: ApiKeyService) {}
 
   @Get()
   async findAll(
+    @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ApiKeyEntity[]> {
-    return this.apiKeyService.findActiveByWorkspaceId(workspace.id);
+  ) {
+    const apiKeys = await this.apiKeyService.findActiveByWorkspaceId(
+      workspace.id,
+    );
+
+    return isMetadataRestRequest(request)
+      ? paginateMetadataRestItems({ items: apiKeys, request })
+      : apiKeys;
   }
 
   @Get(':id')
@@ -55,9 +72,12 @@ export class ApiKeyController {
     return this.apiKeyService.findById(id, workspace.id);
   }
 
-  // Minting an API key requires an ACCESS token — derived PLAYGROUND tokens
-  // and API keys must not escalate into a long-lived credential.
-  @UseGuards(RequireAccessTokenGuard)
+  // Creating a key assigns it a role, so it also requires ROLES to prevent
+  // binding a role above the caller's own.
+  @UseGuards(
+    RequireAccessTokenGuard,
+    SettingsPermissionGuard(PermissionFlagType.ROLES),
+  )
   @Post()
   async create(
     @Body() createApiKeyDto: CreateApiKeyInput,
@@ -90,7 +110,7 @@ export class ApiKeyController {
     if (updateApiKeyDto.revokedAt !== undefined) {
       updateData.revokedAt = updateApiKeyDto.revokedAt
         ? new Date(updateApiKeyDto.revokedAt)
-        : undefined;
+        : null;
     }
 
     return this.apiKeyService.update(id, workspace.id, updateData);

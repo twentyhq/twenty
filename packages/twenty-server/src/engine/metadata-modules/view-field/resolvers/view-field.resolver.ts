@@ -12,14 +12,13 @@ import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dt
 import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
-import { CreateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-permission.guard';
-import { DeleteViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-field-permission.guard';
-import { DestroyViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-field-permission.guard';
-import { UpdateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-field-permission.guard';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
+import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-child-entity-permission.guard';
+import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-child-entity-permission.guard';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @MetadataResolver(() => ViewFieldDTO)
-@UseFilters(ViewGraphqlApiExceptionFilter)
+@UseFilters(ViewGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewFieldResolver {
   constructor(private readonly viewFieldService: ViewFieldService) {}
@@ -43,7 +42,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(UpdateViewFieldPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewField'))
   async updateViewField(
     @Args('input') updateViewFieldInput: UpdateViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -55,7 +54,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(CreateViewFieldPermissionGuard)
+  @UseGuards(CreateViewChildEntityPermissionGuard)
   async createViewField(
     @Args('input') createViewFieldInput: CreateViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -67,7 +66,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => [ViewFieldDTO])
-  @UseGuards(CreateViewFieldPermissionGuard)
+  @UseGuards(CreateViewChildEntityPermissionGuard)
   async createManyViewFields(
     @Args('inputs', { type: () => [CreateViewFieldInput] })
     createViewFieldInputs: CreateViewFieldInput[],
@@ -80,7 +79,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(DeleteViewFieldPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewField'))
   async deleteViewField(
     @Args('input') deleteViewFieldInput: DeleteViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -92,7 +91,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(DestroyViewFieldPermissionGuard)
+  @UseGuards(ViewChildEntityPermissionGuard('viewField'))
   async destroyViewField(
     @Args('input') destroyViewFieldInput: DestroyViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

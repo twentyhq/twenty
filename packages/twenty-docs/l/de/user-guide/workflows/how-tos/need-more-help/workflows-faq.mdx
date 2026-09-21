@@ -29,8 +29,8 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     | Typ | Erforderliche Datensätze | Workflow-Läufe |
     | --- | ------------------------ | -------------- |
     \| **Global** | Keine | Einmal, ohne Datensatzeingabe |
-    \| **Single** | Ein oder mehrere ausgewählte | Einmal pro ausgewähltem Datensatz |
-    \| **Bulk** | Ein oder mehrere ausgewählte | Einmal, mit allen Datensätzen als Array |
+    \| **Single** | Ein oder mehrere ausgewählte Datensätze | Einmal pro ausgewähltem Datensatz |
+    \| **Bulk** | Ein oder mehrere ausgewählte Datensätze | Einmal, mit allen Datensätzen als Array |
 
     * **Global**: Verwenden Sie dies, wenn der Workflow keinen Datensatzkontext benötigt (z. B. einen Bericht erzeugen)
     * **Single**: Verwenden Sie dies, wenn Sie jeden ausgewählten Datensatz unabhängig verarbeiten möchten (z. B. einzelne E-Mails senden)
@@ -155,11 +155,9 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
   </Accordion>
 
   <Accordion title="Warum sehe ich meine Workflow-Ausführungen nicht?">
-    Workflow-Ausführungen schlagen möglicherweise aufgrund von Rate Limits sofort fehl.
+    Workflow-Ausführungen schlagen möglicherweise aufgrund von Rate Limits sofort fehl. Twenty erzwingt ein hartes Limit von 5.000 Ausführungen pro Stunde und Workspace.
 
-    **Hartes Limit: 5.000 Ausführungen pro Stunde und Workspace.**
-
-    Wenn Sie dieses Limit überschreiten, werden Workflows sofort als fehlgeschlagen markiert und erscheinen nicht wie erwartet in Ihrer Ausführungsliste.
+    Wenn Sie dieses Limit überschreiten, werden Workflows sofort als fehlgeschlagen markiert und erscheinen nicht in Ihrer Ausführungsliste.
 
     **Häufige Szenarien, die dieses Limit erreichen**:
     * Auswahl von mehr als 5.000 Datensätzen mit einem manuellen Single-Trigger

@@ -6,14 +6,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { computeTwentyStandardApplicationAllFlatEntityMapsPre231 } from 'src/database/commands/upgrade-version-command/2-10/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-31.util';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import { toPre231RecordPageUniversalIdentifier } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-31.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER =
@@ -24,8 +25,10 @@ const CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
 const CALL_RECORDING_REQUEST_STATUS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.callRecording.views.allCallRecordings.viewFields
     .recordingRequestStatus.universalIdentifier,
-  STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields.viewFields
-    .recordingRequestStatus.universalIdentifier,
+  toPre231RecordPageUniversalIdentifier(
+    STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields
+      .viewFields.recordingRequestStatus.universalIdentifier,
+  ),
 ];
 const CALL_RECORDING_REQUEST_STATUS_FIELD_NAME = 'recordingRequestStatus';
 
@@ -97,8 +100,8 @@ export class SyncCallRecordingRequestStatusCommand extends ProvisionedWorkspaceC
       return;
     }
 
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
+    const standardAllFlatEntityMaps =
+      computeTwentyStandardApplicationAllFlatEntityMapsPre231({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,

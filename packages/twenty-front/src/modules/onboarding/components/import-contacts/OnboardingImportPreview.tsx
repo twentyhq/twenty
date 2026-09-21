@@ -10,7 +10,7 @@ const PREVIEW_HEIGHT = 198;
 
 const StyledCard = styled.div`
   align-items: center;
-  background-color: ${themeCssVariables.background.secondary};
+  background-color: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: 12px;
   box-sizing: border-box;

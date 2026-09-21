@@ -1,0 +1,137 @@
+---
+title: 6. Публикация
+icon: rocket
+description: Добавьте метаданные торговой площадки и публикуйте свое приложение.
+---
+
+Ваше приложение работает. Последним шагом является его описание для рынка и публикации.
+
+## Добавить метаданные торговой площадки
+
+[Конфигурация приложений](/l/ru/developers/extend/apps/config/application) имеет идентификацию
+отображаемую на рынке: автор, категорию, логотип и поддержку
+ссылок. Поместите логотип в `public/` и укажите его в `logo`.
+
+```ts filename="src/application-config.ts"
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  displayName: 'Document Generator',
+  description:
+    'Create reusable document templates and generate personalized documents from your CRM records.',
+  logo: 'public/document-generator.svg',
+  author: 'Twenty',
+  category: 'Productivity',
+  websiteUrl: 'https://docs.twenty.com/l/ru/developers/extend/apps',
+  termsUrl: 'https://www.twenty.com/terms',
+  emailSupport: 'contact@twenty.com',
+  issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+});
+```
+
+<Tip>
+Роль по умолчанию объявлена `defineApplicationRole()` в своем собственном файле — вы
+больше не передаете `defaultRoleUniversalIdentifier` здесь.
+</Tip>
+
+Также добавьте ключевое слово `twenty-app` в `package.json`, чтобы приложение было найдено:
+
+```json filename="package.json"
+{ "keywords": ["twenty-app"] }
+```
+
+## Добавить скриншоты галереи
+
+Список торговых площадок продается со скриншотами. Поместите несколько PNG-файлов в
+`public/gallery/` и укажите их в `galleryImages` — они будут отображаться как галерея
+на странице каталога, в порядке следования в массиве.
+
+```ts filename="src/application-config.ts"
+export default defineApplication({
+  // ...identity from above
+  galleryImages: [
+    'public/gallery/01-generated-document.png',
+    'public/gallery/02-command-menu.png',
+    'public/gallery/03-template-editor.png',
+    'public/gallery/04-documents.png',
+  ],
+});
+```
+
+<Tip>
+Возглавие с выплатом: сделайте первый скриншот завершённый результат (сгенерированный
+документ), затем покажите как он срабатывает и аутентифицирует. Используйте четкие, высококачественные
+скриншоты — это первое, что видит пользователь.
+</Tip>
+
+Дайте `README.md` ту же обработку — это главная страница npm и GitHub.
+Начните с описания ценностного предложения и скриншота, перечислите ключевые функции,
+а затем поместите технические детали ниже основной части страницы.
+
+## Проверить перед отправкой
+
+Выполнить те же ворота CI делает:
+
+```bash filename="Terminal"
+yarn lint          # oxlint
+yarn typecheck     # tsgo
+yarn test:unit     # unit tests
+yarn twenty plan   # preview the metadata diff
+```
+
+План точно показывает, что изменится на сервере, не применяя эти изменения —
+хорошая финальная проверка. См.
+[Testing](/l/ru/developers/extend/apps/operations/testing) и
+[Синхронизация и восстановление](/l/ru/developers/extend/apps/operations/sync-and-recovery).
+
+## Публикация
+
+```bash filename="Terminal"
+# Public app → npm (default)
+yarn twenty app:publish
+
+# Or deploy privately to a specific server's registry
+yarn twenty app:publish --private -r <remote>
+```
+
+`app:publish` строит и публикует в npm по умолчанию; `--private` загружает
+tarball в частный реестр Twenty сервера. Для постройки опубликованного приложения
+в магазине экземпляра, запустите синхронизацию каталога:
+
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync -r <remote>
+```
+
+Подробности и контрольный список для выпуска:
+[Публикация](/l/ru/developers/extend/apps/operations/publishing).
+
+## Вы создали приложение 🎉
+
+В шести главах вы использовали большую часть поверхности SDK:
+
+* **Объекты, поля и отношение** для моделирования данных
+* **логическая функция** выставлена как **ИИ инструмент**, **действие рабочего процесса** и **HTTP маршруты**
+* **Виды, навигация, команда и передний компонент** для интерфейса
+* **Агент + навык** для естественного поколения
+* **Метаданные торговой площадки** и поток публикаций
+
+Готовое приложение находится по адресу
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+
+## Где перейти далее
+
+<CardGroup cols={2}>
+  <Card title="Ссылка на данные" icon="database" href="/l/ru/developers/extend/apps/data/overview">
+    Каждый параметр типа поля, отношения и индекса.
+  </Card>
+  <Card title="Ссылка на логику" icon="bolt" href="/l/ru/developers/extend/apps/logic/overview">
+    Вызовы cron и события базы данных, хранилище ключевого значения, OAuth соединения.
+  </Card>
+  <Card title="Ссылка на макет" icon="table-columns" href="/l/ru/developers/extend/apps/layout/overview">
+    Панели страниц, виджеты панели управления и другие поверхности интерфейса.
+  </Card>
+  <Card title="Операции" icon="rocket" href="/l/ru/developers/extend/apps/operations/overview">
+    CLI, testing, remotes and CI.
+  </Card>
+</CardGroup>

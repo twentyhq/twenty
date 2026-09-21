@@ -8,21 +8,13 @@ config({
 });
 
 export function generateFrontConfig(): void {
-  // When FRONT_AUTO_BASE_URL=true (or SERVER_URL is unset), inject an empty
-  // _env_ so the frontend's getDefaultUrl() fallback resolves the API origin
-  // from the page's own hostname at request time. This lets the same deploy
-  // be reached at both http://<external-ip> and http://localhost without a
-  // hairpin through the public interface.
-  const useAutoUrl =
-    process.env.FRONT_AUTO_BASE_URL === 'true' || !process.env.SERVER_URL;
-
-  const envForFront = useAutoUrl
-    ? {}
-    : { REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL };
-
+  // A page served by this server can always reach the API on the origin it
+  // was loaded from, so the front resolves it from window.location (see
+  // packages/twenty-front/src/config). Rewriting clears any value baked into
+  // index.html at build time.
   const configString = `<!-- BEGIN: Twenty Config -->
     <script id="twenty-env-config">
-      window._env_ = ${JSON.stringify(envForFront, null, 2)};
+      window._env_ = {};
     </script>
     <!-- END: Twenty Config -->`;
 

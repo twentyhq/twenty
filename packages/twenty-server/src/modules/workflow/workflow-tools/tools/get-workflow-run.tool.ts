@@ -26,7 +26,7 @@ const FAILED_STEP_STATUSES: StepStatus[] = [
 ];
 
 export const createGetWorkflowRunTool = (
-  deps: Pick<WorkflowToolDependencies, 'globalWorkspaceOrmManager'>,
+  deps: Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
   context: GetWorkflowRunToolContext,
 ) => ({
   name: 'get_workflow_run' as const,
@@ -37,11 +37,10 @@ export const createGetWorkflowRunTool = (
     try {
       const authContext = buildSystemAuthContext(context.workspaceId);
 
-      return await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      return await deps.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRunRepository =
-            await deps.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-              context.workspaceId,
+            deps.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
               'workflowRun',
               context.rolePermissionConfig,
             );

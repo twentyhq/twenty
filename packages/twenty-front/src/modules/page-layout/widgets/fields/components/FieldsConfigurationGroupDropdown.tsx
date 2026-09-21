@@ -5,8 +5,8 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { LightIconButton } from 'twenty-ui/components';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { getFieldsConfigurationGroupEditDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupEditDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -53,11 +53,9 @@ export const FieldsConfigurationGroupDropdown = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <LightIconButton
-          Icon={IconDotsVertical}
-          accent="tertiary"
-          aria-label={t`More options`}
-        />
+        <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownPlacement="bottom-start"
       dropdownComponents={

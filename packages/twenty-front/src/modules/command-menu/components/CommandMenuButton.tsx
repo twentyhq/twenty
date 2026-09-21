@@ -1,30 +1,31 @@
-import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
-import { styled } from '@linaria/react';
-import { type MessageDescriptor } from '@lingui/core';
-import { type MouseEvent } from 'react';
-import { type Nullable } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
-import { Button, IconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { getCommandMenuButtonLabel } from '@/command-menu/utils/getCommandMenuButtonLabel';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
-const StyledWrapper = styled.div`
-  font-size: ${themeCssVariables.font.size.md};
-`;
+import { type MouseEvent } from 'react';
+import { Link } from 'react-router-dom';
+import { type Nullable } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { type IconComponent } from 'twenty-ui/icon';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { IconButton } from 'twenty-ui/components';
 
 export type CommandMenuButtonProps = {
   command: {
     key: string;
-    label: Nullable<string | MessageDescriptor>;
-    shortLabel?: Nullable<string | MessageDescriptor>;
+    label: string;
+    shortLabel?: Nullable<string>;
+    hotKeys?: Nullable<string[]>;
     Icon: IconComponent;
     isPrimaryCTA?: boolean;
   };
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   to?: string;
   disabled?: boolean;
+  progress?: number;
+  loading?: boolean;
   isPrimaryAction?: boolean;
+  shouldHideLabel?: boolean;
 };
 
 export const CommandMenuButton = ({
@@ -32,54 +33,65 @@ export const CommandMenuButton = ({
   onClick,
   to,
   disabled = false,
+  progress,
+  loading = false,
   isPrimaryAction = false,
+  shouldHideLabel = false,
 }: CommandMenuButtonProps) => {
-  const resolvedLabel = getCommandMenuItemLabel(command.label);
+  const { hotKeys } = command;
+  const hasHotKeys = isNonEmptyArray(hotKeys);
+  const tooltipTitle = hasHotKeys
+    ? `${command.label} (${hotKeys.join(' → ')})`
+    : command.label;
 
-  const resolvedShortLabel = isDefined(command.shortLabel)
-    ? getCommandMenuItemLabel(command.shortLabel)
-    : undefined;
+  const resolvedShortLabel = getCommandMenuButtonLabel({
+    shortLabel: command.shortLabel,
+    isLoading: loading,
+    progress,
+    shouldHideLabel,
+  });
 
-  const buttonAccent = command.isPrimaryCTA ? 'blue' : 'default';
+  const buttonAccent =
+    isPrimaryAction || command.isPrimaryCTA === true ? 'blue' : 'default';
 
   return (
-    <>
-      {resolvedShortLabel !== undefined ? (
-        <Button
-          Icon={command.Icon}
-          size="small"
-          variant={isPrimaryAction ? 'primary' : 'secondary'}
-          accent={isPrimaryAction ? 'blue' : buttonAccent}
-          to={to}
-          onClick={onClick}
-          disabled={disabled}
-          title={resolvedShortLabel}
-          ariaLabel={resolvedLabel}
-        />
-      ) : (
-        <div id={`command-menu-item-entry-${command.key}`} key={command.key}>
-          <IconButton
-            Icon={command.Icon}
-            size="small"
-            variant={isPrimaryAction ? 'primary' : 'secondary'}
-            accent={isPrimaryAction ? 'blue' : buttonAccent}
+    <Tooltip
+      content={tooltipTitle}
+      delay={TooltipDelay.longDelay}
+      side="bottom"
+      sideOffset={5}
+      disabled={!hasHotKeys && isDefined(resolvedShortLabel)}
+    >
+      <div>
+        {resolvedShortLabel !== undefined ? (
+          <NavigationButton
+            startIcon={isDefined(command.Icon) ? <command.Icon /> : undefined}
+            size="sm"
             to={to}
             onClick={onClick}
             disabled={disabled}
-            ariaLabel={resolvedLabel}
-          />
-          <StyledWrapper>
-            <AppTooltip
-              anchorSelect={`#command-menu-item-entry-${command.key}`}
-              content={resolvedLabel}
-              delay={TooltipDelay.longDelay}
-              place={TooltipPosition.Bottom}
-              offset={5}
-              noArrow
-            />
-          </StyledWrapper>
-        </div>
-      )}
-    </>
+            loading={loading && !isDefined(progress)}
+            aria-label={command.label}
+            variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
+            color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
+          >
+            {resolvedShortLabel}
+          </NavigationButton>
+        ) : (
+          <IconButton
+            size="sm"
+            variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
+            color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
+            render={isDefined(to) ? <Link to={to} /> : undefined}
+            href={to}
+            onClick={onClick}
+            disabled={disabled}
+            aria-label={command.label}
+          >
+            <command.Icon />
+          </IconButton>
+        )}
+      </div>
+    </Tooltip>
   );
 };

@@ -11,6 +11,16 @@ import { type AllStandardObjectViewFilterName } from 'src/engine/workspace-manag
 import { type AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
 
+// A relation traversal filter applies the operand to a field of the related
+// records instead of the filtered field itself, e.g. people whose list
+// memberships point at the current list.
+export type StandardViewFilterRelationTargetField = {
+  [TargetObjectName in AllStandardObjectName]: {
+    objectName: TargetObjectName;
+    fieldName: AllStandardObjectFieldName<TargetObjectName>;
+  };
+}[AllStandardObjectName];
+
 export type CreateStandardViewFilterOptions<
   O extends AllStandardObjectName,
   V extends AllStandardObjectViewName<O>,
@@ -23,6 +33,7 @@ export type CreateStandardViewFilterOptions<
   subFieldName?: string | null;
   viewFilterGroupId?: string | null;
   positionInViewFilterGroup?: number | null;
+  relationTargetField?: StandardViewFilterRelationTargetField;
 };
 
 export type CreateStandardViewFilterArgs<
@@ -48,6 +59,7 @@ export const createStandardViewFilterFlatMetadata = <
     subFieldName = null,
     viewFilterGroupId = null,
     positionInViewFilterGroup = null,
+    relationTargetField,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -78,6 +90,31 @@ export const createStandardViewFilterFlatMetadata = <
     );
   }
 
+  const relationTargetFieldDefinition = isDefined(relationTargetField)
+    ? (
+        STANDARD_OBJECTS[relationTargetField.objectName].fields as Record<
+          string,
+          { universalIdentifier: string }
+        >
+      )[relationTargetField.fieldName]
+    : undefined;
+  const relationTargetFieldMetadataId = isDefined(relationTargetField)
+    ? (
+        standardObjectMetadataRelatedEntityIds[relationTargetField.objectName]
+          .fields as Record<string, { id: string }>
+      )[relationTargetField.fieldName]?.id
+    : undefined;
+
+  if (
+    isDefined(relationTargetField) &&
+    (!isDefined(relationTargetFieldDefinition) ||
+      !isDefined(relationTargetFieldMetadataId))
+  ) {
+    throw new Error(
+      `Invalid relation target field ${relationTargetField.objectName} ${relationTargetField.fieldName} for ${objectName} ${viewName.toString()} ${viewFilterName}`,
+    );
+  }
+
   return {
     id: v4(),
     universalIdentifier: viewFilterDefinition.universalIdentifier,
@@ -96,8 +133,9 @@ export const createStandardViewFilterFlatMetadata = <
     operand,
     value,
     subFieldName,
-    relationTargetFieldMetadataId: null,
-    relationTargetFieldMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataId: relationTargetFieldMetadataId ?? null,
+    relationTargetFieldMetadataUniversalIdentifier:
+      relationTargetFieldDefinition?.universalIdentifier ?? null,
     positionInViewFilterGroup,
     createdAt: now,
     updatedAt: now,

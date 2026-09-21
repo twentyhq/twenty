@@ -1,6 +1,6 @@
 import { getIsInputTabDisabled } from '@/side-panel/pages/workflow/step/view-run/utils/getIsInputTabDisabled';
 import { getIsOutputTabDisabled } from '@/side-panel/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { useCallback } from 'react';
@@ -18,7 +18,7 @@ export const useSetInitialWorkflowRunSidePanelTab = () => {
       workflowSelectedNode: string;
       stepExecutionStatus: WorkflowRunStepStatus;
     }) => {
-      const sidePanelPageInfo = store.get(sidePanelPageInfoState.atom);
+      const sidePanelPageInfo = store.get(sidePanelPageInfoSelector.atom);
 
       const activeTabId = activeTabIdComponentState.atomFamily({
         instanceId: sidePanelPageInfo.instanceId,

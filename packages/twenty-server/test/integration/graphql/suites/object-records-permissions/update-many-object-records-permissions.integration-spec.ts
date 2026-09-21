@@ -11,6 +11,15 @@ import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
+type RecordWithId = { id: string; [key: string]: unknown };
+
+// updateMany returns its RETURNING rows in an unspecified order, so key them by
+// id rather than asserting positionally.
+const keyRecordsById = (
+  records: RecordWithId[],
+): Record<string, RecordWithId> =>
+  Object.fromEntries(records.map((record) => [record.id, record]));
+
 describe('updateManyObjectRecordsPermissions', () => {
   let createdPersonIds: string[] = [];
 
@@ -106,10 +115,10 @@ describe('updateManyObjectRecordsPermissions', () => {
     expect(response.body.data).toBeDefined();
     expect(response.body.data.updatePeople).toBeDefined();
     expect(response.body.data.updatePeople).toHaveLength(2);
-    expect(response.body.data.updatePeople[0].id).toBe(personId1);
-    expect(response.body.data.updatePeople[1].id).toBe(personId2);
-    expect(response.body.data.updatePeople[0].jobTitle).toBe('Tech Lead');
-    expect(response.body.data.updatePeople[1].jobTitle).toBe('Tech Lead');
+    const updatedPeopleById = keyRecordsById(response.body.data.updatePeople);
+
+    expect(updatedPeopleById[personId1]?.jobTitle).toBe('Tech Lead');
+    expect(updatedPeopleById[personId2]?.jobTitle).toBe('Tech Lead');
   });
 
   it('should update multiple object records when executed by api key', async () => {
@@ -153,9 +162,9 @@ describe('updateManyObjectRecordsPermissions', () => {
     expect(response.body.data).toBeDefined();
     expect(response.body.data.updatePeople).toBeDefined();
     expect(response.body.data.updatePeople).toHaveLength(2);
-    expect(response.body.data.updatePeople[0].id).toBe(personId1);
-    expect(response.body.data.updatePeople[1].id).toBe(personId2);
-    expect(response.body.data.updatePeople[0].jobTitle).toBe('Product Manager');
-    expect(response.body.data.updatePeople[1].jobTitle).toBe('Product Manager');
+    const updatedPeopleById = keyRecordsById(response.body.data.updatePeople);
+
+    expect(updatedPeopleById[personId1]?.jobTitle).toBe('Product Manager');
+    expect(updatedPeopleById[personId2]?.jobTitle).toBe('Product Manager');
   });
 });

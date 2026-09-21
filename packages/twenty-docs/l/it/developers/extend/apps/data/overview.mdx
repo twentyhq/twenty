@@ -35,18 +35,22 @@ Il **data layer** di un'app Twenty è l'insieme dei dati che la tua app *aggiung
   <Card title="Relazioni" icon="diagram-project" href="/l/it/developers/extend/apps/data/relations">
     Connessioni bidirezionali `MANY_TO_ONE` / `ONE_TO_MANY` tra oggetti.
   </Card>
+  <Card title="Tipi di attività della timeline" icon="clock-rotate-left" href="/l/it/developers/extend/apps/data/timeline-activity-types">
+    Definisci eventi di audit automatici ed eventi espliciti dell'app per le timeline dei record.
+  </Card>
 </CardGroup>
 
 ## Entità in sintesi
 
-| Entità        | Scopo                                                                                                                                   | Definito con                             |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| **Oggetto**   | Un nuovo tipo di record personalizzato (ad es. PostCard, Invoice) con i propri campi                                                    | `defineObject()`                         |
-| **Campo**     | Una colonna su un oggetto. I campi autonomi possono estendere oggetti che non hai creato tu (ad es. aggiungere `loyaltyTier` a Company) | `defineField()`                          |
-| **Relazione** | Un collegamento bidirezionale tra due oggetti — entrambi i lati sono dichiarati come campi                                              | `defineField()` con `FieldType.RELATION` |
-| **Indice**    | Un indice di database per velocizzare una query ricorrente su uno dei tuoi oggetti                                                      | `defineIndex()`                          |
+| Entità                              | Scopo                                                                                                                                   | Definito con                             |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **Oggetto**                         | Un nuovo tipo di record personalizzato (ad es. PostCard, Invoice) con i propri campi                                                    | `defineObject()`                         |
+| **Campo**                           | Una colonna su un oggetto. I campi autonomi possono estendere oggetti che non hai creato tu (ad es. aggiungere `loyaltyTier` a Company) | `defineField()`                          |
+| **Relazione**                       | Un collegamento bidirezionale tra due oggetti — entrambi i lati sono dichiarati come campi                                              | `defineField()` con `FieldType.RELATION` |
+| **Indice**                          | Un indice di database per velocizzare una query ricorrente su uno dei tuoi oggetti                                                      | `defineIndex()`                          |
+| **Tipo di attività della timeline** | Un evento di audit automatico o un evento di dominio esplicito visualizzato nelle timeline dei record                                   | `defineTimelineActivityType()`           |
 
-L'SDK rileva questi elementi tramite analisi AST in fase di build, quindi l'organizzazione dei file dipende da te — la convenzione è `src/objects/`, `src/fields/` e `src/indexes/`. Gli UUID `universalIdentifier` stabili collegano tutto tra le varie distribuzioni.
+L'SDK rileva questi elementi tramite analisi AST in fase di build, quindi l'organizzazione dei file dipende da te — la convenzione è `src/objects/`, `src/fields/`, `src/indexes/` e `src/timeline-activity-types/`. Gli UUID `universalIdentifier` stabili collegano tutto tra le varie distribuzioni.
 
 ## Indici (facoltativi)
 

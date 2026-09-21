@@ -14,15 +14,15 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useContext, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 
 export const SelectFieldInput = () => {
   const { fieldDefinition, fieldValue } = useSelectField();
   const { addSelectOption } = useAddSelectOption(
-    fieldDefinition?.metadata?.fieldName,
+    fieldDefinition.fieldMetadataId,
   );
   const { canAddSelectOption } = useCanAddSelectOption(
-    fieldDefinition?.metadata?.fieldName,
+    fieldDefinition.fieldMetadataId,
   );
 
   const { onCancel, onSubmit } = useContext(FieldInputEventContext);
@@ -49,17 +49,9 @@ export const SelectFieldInput = () => {
   const selectedOption = selectOptions.find(
     (option) => option.value === fieldValue,
   );
-  // handlers
   const handleClearField = () => {
     clearField();
     onCancel?.();
-  };
-
-  const handleAddSelectOption = (optionName: string) => {
-    if (!canAddSelectOption) {
-      return;
-    }
-    addSelectOption(optionName);
   };
 
   const handleSubmit = (option: SelectOption) => {
@@ -110,7 +102,7 @@ export const SelectFieldInput = () => {
           : undefined
       }
       clearLabel={fieldDefinition.label}
-      onAddSelectOption={handleAddSelectOption}
+      onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
     />
   );
 };

@@ -1,3 +1,4 @@
+import { LightIconButton } from 'twenty-ui/components';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -10,7 +11,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type ViewFieldsSearchDropdownSectionProps = {
   searchInput: string;
@@ -76,18 +77,19 @@ export const ViewFieldsSearchDropdownSection = ({
               key={fieldMetadataItem.id}
               LeftIcon={getIcon(fieldMetadataItem.icon)}
               iconButtons={
-                isLabelIdentifier
-                  ? undefined
-                  : [
-                      {
-                        Icon: isVisible ? IconEyeOff : IconEye,
-                        onClick: () =>
-                          handleChangeFieldVisibility({
-                            fieldMetadataId: fieldMetadataItem.id,
-                            isVisible: !isVisible,
-                          }),
-                      },
-                    ]
+                isLabelIdentifier ? undefined : (
+                  <LightIconButton
+                    aria-label={isVisible ? t`Hide field` : t`Show field`}
+                    onClick={() =>
+                      handleChangeFieldVisibility({
+                        fieldMetadataId: fieldMetadataItem.id,
+                        isVisible: !isVisible,
+                      })
+                    }
+                  >
+                    {isVisible ? <IconEyeOff /> : <IconEye />}
+                  </LightIconButton>
+                )
               }
               text={fieldMetadataItem.label}
             />

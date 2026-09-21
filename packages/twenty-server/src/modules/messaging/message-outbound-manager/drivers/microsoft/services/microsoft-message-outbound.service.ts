@@ -7,8 +7,16 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { toMicrosoftRecipients } from 'src/modules/messaging/message-import-manager/utils/to-microsoft-recipients.util';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
+import { getConnectedAccountSendableHandleOrThrow } from 'src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util';
 import { type Client as MicrosoftGraphClient } from '@microsoft/microsoft-graph-client';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+
+type MicrosoftDraftMessage = {
+  id: string;
+  internetMessageId?: string;
+  conversationId?: string;
+};
 
 @Injectable()
 export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
@@ -30,7 +38,11 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
       id: messageId,
       internetMessageId,
       conversationId,
-    } = await this.createDraftMessage(microsoftClient, sendMessageInput);
+    } = await this.createDraftMessage({
+      microsoftClient,
+      sendMessageInput,
+      connectedAccount,
+    });
 
     await microsoftClient.api(`/me/messages/${messageId}/send`).post({});
 
@@ -49,7 +61,11 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
       connectedAccount.id,
     );
 
-    await this.createDraftMessage(microsoftClient, sendMessageInput);
+    await this.createDraftMessage({
+      microsoftClient,
+      sendMessageInput,
+      connectedAccount,
+    });
   }
 
   async sendDraft(
@@ -78,40 +94,62 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     return sendResult;
   }
 
-  private async createDraftMessage(
-    microsoftClient: MicrosoftGraphClient,
-    sendMessageInput: SendMessageInput,
-  ): Promise<{
-    id: string;
-    internetMessageId?: string;
-    conversationId?: string;
-  }> {
+  private async createDraftMessage({
+    microsoftClient,
+    sendMessageInput,
+    connectedAccount,
+  }: {
+    microsoftClient: MicrosoftGraphClient;
+    sendMessageInput: SendMessageInput;
+    connectedAccount: ConnectedAccountEntity;
+  }): Promise<MicrosoftDraftMessage> {
     const parentMessageGraphId = sendMessageInput.inReplyTo
-      ? await this.findMessageByInternetMessageId(
+      ? await this.findMessageByInternetMessageId({
           microsoftClient,
-          sendMessageInput.inReplyTo,
-        )
+          internetMessageId: sendMessageInput.inReplyTo,
+        })
       : undefined;
 
-    const message = this.composeMicrosoftMessage(sendMessageInput);
+    const message = this.composeMicrosoftMessage({
+      sendMessageInput,
+      connectedAccount,
+    });
 
-    if (isDefined(parentMessageGraphId)) {
-      const reply = await microsoftClient
-        .api(`/me/messages/${parentMessageGraphId}/createReply`)
-        .post({});
+    const draftMessage = isDefined(parentMessageGraphId)
+      ? await this.createReplyDraftMessage({
+          microsoftClient,
+          parentMessageGraphId,
+          message,
+        })
+      : await this.createNewDraftMessage({ microsoftClient, message });
 
-      const patched = await microsoftClient
-        .api(`/me/messages/${reply.id}`)
-        .patch(message);
+    await this.postAttachmentsToMessageCollection({
+      microsoftClient,
+      messageId: draftMessage.id,
+      attachments: sendMessageInput.attachments,
+    }).catch(async (error) => {
+      await microsoftClient
+        .api(`/me/messages/${draftMessage.id}`)
+        .delete()
+        .catch((deletionError) =>
+          this.logger.warn(
+            `Failed to delete Microsoft draft ${draftMessage.id} after its attachments failed to upload: ${deletionError}`,
+          ),
+        );
 
-      return {
-        id: reply.id,
-        internetMessageId:
-          patched?.internetMessageId ?? reply.internetMessageId,
-        conversationId: patched?.conversationId ?? reply.conversationId,
-      };
-    }
+      throw error;
+    });
 
+    return draftMessage;
+  }
+
+  private async createNewDraftMessage({
+    microsoftClient,
+    message,
+  }: {
+    microsoftClient: MicrosoftGraphClient;
+    message: Record<string, unknown>;
+  }): Promise<MicrosoftDraftMessage> {
     const response = await microsoftClient.api('/me/messages').post(message);
 
     return {
@@ -121,10 +159,60 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     };
   }
 
-  private async findMessageByInternetMessageId(
-    microsoftClient: MicrosoftGraphClient,
-    internetMessageId: string,
-  ): Promise<string | undefined> {
+  private async createReplyDraftMessage({
+    microsoftClient,
+    parentMessageGraphId,
+    message,
+  }: {
+    microsoftClient: MicrosoftGraphClient;
+    parentMessageGraphId: string;
+    message: Record<string, unknown>;
+  }): Promise<MicrosoftDraftMessage> {
+    const reply = await microsoftClient
+      .api(`/me/messages/${parentMessageGraphId}/createReply`)
+      .post({});
+
+    const patched = await microsoftClient
+      .api(`/me/messages/${reply.id}`)
+      .patch(message);
+
+    return {
+      id: reply.id,
+      internetMessageId: patched?.internetMessageId ?? reply.internetMessageId,
+      conversationId: patched?.conversationId ?? reply.conversationId,
+    };
+  }
+
+  private async postAttachmentsToMessageCollection({
+    microsoftClient,
+    messageId,
+    attachments,
+  }: {
+    microsoftClient: MicrosoftGraphClient;
+    messageId: string;
+    attachments: SendMessageInput['attachments'];
+  }): Promise<void> {
+    if (!isDefined(attachments)) {
+      return;
+    }
+
+    for (const attachment of attachments) {
+      await microsoftClient.api(`/me/messages/${messageId}/attachments`).post({
+        '@odata.type': '#microsoft.graph.fileAttachment',
+        name: attachment.filename,
+        contentType: attachment.contentType,
+        contentBytes: attachment.content.toString('base64'),
+      });
+    }
+  }
+
+  private async findMessageByInternetMessageId({
+    microsoftClient,
+    internetMessageId,
+  }: {
+    microsoftClient: MicrosoftGraphClient;
+    internetMessageId: string;
+  }): Promise<string | undefined> {
     const escapedInternetMessageId = internetMessageId.split("'").join("''");
 
     const response = await microsoftClient
@@ -137,11 +225,29 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     return response?.value?.[0]?.id;
   }
 
-  private composeMicrosoftMessage(
-    sendMessageInput: SendMessageInput,
-  ): Record<string, unknown> {
+  private composeMicrosoftMessage({
+    sendMessageInput,
+    connectedAccount,
+  }: {
+    sendMessageInput: SendMessageInput;
+    connectedAccount: ConnectedAccountEntity;
+  }): Record<string, unknown> {
+    const from = isNonEmptyString(sendMessageInput.fromHandle)
+      ? {
+          from: {
+            emailAddress: {
+              address: getConnectedAccountSendableHandleOrThrow({
+                connectedAccount,
+                requestedFromHandle: sendMessageInput.fromHandle,
+              }),
+            },
+          },
+        }
+      : {};
+
     return {
       subject: sendMessageInput.subject,
+      ...from,
       body: {
         contentType: 'HTML',
         content: sendMessageInput.html,
@@ -149,17 +255,6 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
       toRecipients: toMicrosoftRecipients(sendMessageInput.to),
       ccRecipients: toMicrosoftRecipients(sendMessageInput.cc),
       bccRecipients: toMicrosoftRecipients(sendMessageInput.bcc),
-      ...(sendMessageInput.attachments &&
-      sendMessageInput.attachments.length > 0
-        ? {
-            attachments: sendMessageInput.attachments.map((attachment) => ({
-              '@odata.type': '#microsoft.graph.fileAttachment',
-              name: attachment.filename,
-              contentType: attachment.contentType,
-              contentBytes: attachment.content.toString('base64'),
-            })),
-          }
-        : {}),
     };
   }
 }

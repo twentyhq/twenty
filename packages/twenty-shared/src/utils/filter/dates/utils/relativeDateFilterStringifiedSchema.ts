@@ -24,11 +24,21 @@ export const relativeDateFilterStringifiedSchema = z
 
     const [_, direction, amount, unit, timezone, firstDayOfTheWeek] = result;
 
-    return relativeDateFilterSchema.parse({
+    const parseResult = relativeDateFilterSchema.safeParse({
       direction,
       amount,
       unit,
       timezone,
       firstDayOfTheWeek,
     });
+
+    if (!parseResult.success) {
+      context.addIssue(
+        `Cannot parse stringified inline relative date filter, value : "${value}"`,
+      );
+
+      return z.NEVER;
+    }
+
+    return parseResult.data;
   });

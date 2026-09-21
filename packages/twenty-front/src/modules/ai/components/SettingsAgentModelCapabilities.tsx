@@ -1,13 +1,11 @@
-import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useResolvedAiModel } from '@/ai/hooks/useResolvedAiModel';
+import { Section } from 'twenty-ui/components';
+import { InputLabel, Checkbox } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrandX, IconWorld } from 'twenty-ui/icon';
-import { Checkbox } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
@@ -60,9 +58,7 @@ export const SettingsAgentModelCapabilities = ({
   disabled = false,
 }: SettingsAgentModelCapabilitiesProps) => {
   const { theme } = useContext(ThemeContext);
-  const aiModels = useAtomStateValue(aiModelsState);
-
-  const selectedModel = aiModels.find((m) => m.modelId === selectedModelId);
+  const selectedModel = useResolvedAiModel(selectedModelId);
   const nativeCapabilities = selectedModel?.nativeCapabilities;
 
   if (!isDefined(nativeCapabilities)) {
@@ -117,7 +113,7 @@ export const SettingsAgentModelCapabilities = ({
   ];
 
   return (
-    <Section>
+    <Section.Root>
       <InputLabel>{t`Enable model-specific features`}</InputLabel>
       <div>
         {capabilities.map((capability) => (
@@ -133,16 +129,17 @@ export const SettingsAgentModelCapabilities = ({
               <span>{capability.label}</span>
             </StyledCheckboxLabel>
             <Checkbox
+              aria-label={capability.label}
               checked={capability.enabled}
-              onChange={(event) => {
-                event.stopPropagation();
-                handleCapabilityToggle(capability.key, event.target.checked);
+              onCheckedChange={(isChecked) => {
+                handleCapabilityToggle(capability.key, isChecked);
               }}
               disabled={disabled}
+              onClick={(event) => event.stopPropagation()}
             />
           </StyledCheckboxContainer>
         ))}
       </div>
-    </Section>
+    </Section.Root>
   );
 };

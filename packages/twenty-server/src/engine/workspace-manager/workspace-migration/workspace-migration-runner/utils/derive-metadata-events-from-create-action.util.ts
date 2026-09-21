@@ -99,6 +99,7 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'viewSort':
     case 'webhook':
     case 'connectionProvider':
+    case 'timelineActivityType':
     case 'searchFieldMetadata': {
       return [
         {

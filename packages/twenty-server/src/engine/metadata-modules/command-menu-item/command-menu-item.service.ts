@@ -1,26 +1,23 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import type DataLoader from 'dataloader';
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import {
-  type ApplicationTranslationCatalogLoaderPayload,
-  type ObjectMetadataLoaderPayload,
-  type StandardApplicationIdLoaderPayload,
-} from 'src/engine/dataloaders/dataloader.service';
+import { type ObjectMetadataLoaderPayload } from 'src/engine/dataloaders/dataloader.service';
 import {
   CommandMenuItemException,
   CommandMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
 import { type UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { interpolateNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/interpolate-navigation-command-menu-item-field.util';
-import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-create-command-menu-item-input-to-flat-command-menu-item-to-create.util';
 import { fromDeleteCommandMenuItemInputToFlatCommandMenuItemOrThrow } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-delete-command-menu-item-input-to-flat-command-menu-item-or-throw.util';
@@ -30,9 +27,12 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
-import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
+import { resetAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/reset-authored-overrides.util';
 
 @Injectable()
 export class CommandMenuItemService {
@@ -40,7 +40,7 @@ export class CommandMenuItemService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   async findAll(workspaceId: string): Promise<CommandMenuItemDTO[]> {
@@ -286,10 +286,15 @@ export class CommandMenuItemService {
     }
 
     const flatCommandMenuItemToUpdate: FlatCommandMenuItem = {
-      ...existingFlatCommandMenuItem,
+      ...resetAuthoredOverrides({
+        metadataName: 'commandMenuItem',
+        flatEntity: existingFlatCommandMenuItem,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
       isActive: true,
-      overrides: null,
-      universalOverrides: null,
       updatedAt: new Date().toISOString(),
     };
 
@@ -364,8 +369,15 @@ export class CommandMenuItemService {
     });
 
     const deactivatedFlatCommandMenuItem = {
-      ...flatCommandMenuItemToDelete,
-      isActive: false,
+      ...dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'commandMenuItem',
+        flatEntity: flatCommandMenuItemToDelete,
+        isActive: false,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
       updatedAt: new Date().toISOString(),
     };
 
@@ -434,23 +446,22 @@ export class CommandMenuItemService {
   }): Promise<ObjectMetadataDTO | null> {
     if (
       commandMenuItem.engineComponentKey !== EngineComponentKey.NAVIGATION ||
-      !isObjectMetadataCommandMenuItemPayload(commandMenuItem.payload)
+      !isDefined(commandMenuItem.navigationTargetObjectMetadataId)
     ) {
       return null;
     }
 
     return objectMetadataLoader.load({
-      objectMetadataId: commandMenuItem.payload.objectMetadataItemId,
+      objectMetadataId: commandMenuItem.navigationTargetObjectMetadataId,
       workspaceId,
     });
   }
 
-  async resolveNavigationField({
+  async resolveTranslatedField({
     commandMenuItem,
     fieldName,
     objectMetadataLoader,
-    standardApplicationIdLoader,
-    applicationTranslationCatalogLoader,
+    loaders,
     workspaceId,
     locale,
   }: {
@@ -460,74 +471,105 @@ export class CommandMenuItemService {
       ObjectMetadataLoaderPayload,
       ObjectMetadataDTO | null
     >;
-    standardApplicationIdLoader: DataLoader<
-      StandardApplicationIdLoaderPayload,
-      string
-    >;
-    applicationTranslationCatalogLoader: DataLoader<
-      ApplicationTranslationCatalogLoaderPayload,
-      Record<string, string> | undefined
-    >;
+    loaders: IDataloaders;
     workspaceId: string;
     locale: keyof typeof APP_LOCALES | undefined;
   }): Promise<string | undefined> {
+    const i18nContext =
+      await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+        {
+          applicationId: commandMenuItem.applicationId,
+          loaders,
+          locale,
+          workspaceId,
+        },
+      );
+
+    const effectiveValue = resolveEffectiveEntityProperty({
+      metadataName: 'commandMenuItem',
+      baseValue: commandMenuItem[fieldName],
+      overrides: commandMenuItem.overrides,
+      property: fieldName,
+      i18nContext,
+    });
+
+    // shortLabel and icon are nullable columns, and resolveEffectiveEntityProperty
+    // answers "what string should this be", flattening an absent value to ''.
+    // Handing that straight back would turn every null into an empty string.
+    const resolvedValue = isNonEmptyString(effectiveValue)
+      ? effectiveValue
+      : undefined;
+
     const objectMetadata = await this.loadNavigationObjectMetadata({
       commandMenuItem,
       objectMetadataLoader,
       workspaceId,
     });
 
-    const standardApplicationId = await standardApplicationIdLoader.load({
-      workspaceId,
-    });
-
-    const isStandardApp = isDefined(objectMetadata)
-      ? objectMetadata.applicationId === standardApplicationId
-      : false;
-
-    // The loader returns undefined for the standard app, so the standard-app
-    // short-circuit lives in the loader, not here.
-    const applicationCatalog = isDefined(objectMetadata)
-      ? await applicationTranslationCatalogLoader.load({
-          applicationId: objectMetadata.applicationId,
-          workspaceId,
-          locale: locale ?? SOURCE_LOCALE,
-        })
-      : undefined;
+    if (!isDefined(objectMetadata)) {
+      return interpolateNavigationCommandMenuItemField({
+        commandMenuItem,
+        resolvedValue,
+        objectMetadata: null,
+        objectMetadataI18nContext: i18nContext,
+      });
+    }
 
     return interpolateNavigationCommandMenuItemField({
       commandMenuItem,
-      fieldName,
+      resolvedValue,
       objectMetadata,
-      isStandardApp,
-      locale,
-      i18nInstance: this.i18nService.getI18nInstance(locale ?? SOURCE_LOCALE),
-      applicationCatalog,
+      // The navigated-to object may belong to a different application than the
+      // command menu item pointing at it.
+      objectMetadataI18nContext:
+        await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+          {
+            applicationId: objectMetadata.applicationId,
+            loaders,
+            locale,
+            workspaceId,
+          },
+        ),
     });
+  }
+
+  async findByCoreWorkflowVersionId(
+    coreWorkflowVersionId: string,
+    workspaceId: string,
+  ): Promise<CommandMenuItemDTO | null> {
+    return this.findByWorkflowVersionReference(
+      coreWorkflowVersionId,
+      workspaceId,
+      'coreWorkflowVersionId',
+    );
   }
 
   async findByWorkflowVersionId(
     workflowVersionId: string,
     workspaceId: string,
   ): Promise<CommandMenuItemDTO | null> {
+    return this.findByWorkflowVersionReference(
+      workflowVersionId,
+      workspaceId,
+      'workflowVersionId',
+    );
+  }
+
+  private async findByWorkflowVersionReference(
+    versionId: string,
+    workspaceId: string,
+    reference: 'workflowVersionId' | 'coreWorkflowVersionId',
+  ): Promise<CommandMenuItemDTO | null> {
     const { flatCommandMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatCommandMenuItemMaps'],
-        },
+        { workspaceId, flatMapsKeys: ['flatCommandMenuItemMaps'] },
       );
-
     const flatCommandMenuItem = Object.values(
       flatCommandMenuItemMaps.byUniversalIdentifier,
-    ).find(
-      (item) => isDefined(item) && item.workflowVersionId === workflowVersionId,
-    );
+    ).find((item) => isDefined(item) && item[reference] === versionId);
 
-    if (!isDefined(flatCommandMenuItem)) {
-      return null;
-    }
-
-    return fromFlatCommandMenuItemToCommandMenuItemDto(flatCommandMenuItem);
+    return isDefined(flatCommandMenuItem)
+      ? fromFlatCommandMenuItemToCommandMenuItemDto(flatCommandMenuItem)
+      : null;
   }
 }

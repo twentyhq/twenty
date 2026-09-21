@@ -6,6 +6,7 @@ export const settingsDraftRoleFamilyState = createAtomFamilyState<
   string
 >({
   key: 'settingsDraftRoleFamilyState',
+  scope: 'routed-flow',
   defaultValue: {
     __typename: 'Role',
     id: '',

@@ -1,13 +1,14 @@
 import { type WorkflowTrigger } from '@/workflow/types/Workflow';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { act, renderHook } from '@testing-library/react';
+import { createElement, type ReactNode } from 'react';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 const mockMutate = jest.fn();
 const mockGetUpdatableWorkflowVersion = jest.fn();
 const mockGetRecordFromCache = jest.fn();
 const mockMarkStepForRecomputation = jest.fn();
-const mockEnqueueErrorSnackBar = jest.fn();
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({ cache: {} }),
@@ -25,8 +26,11 @@ jest.mock('@/object-record/hooks/useObjectPermissions', () => ({
   useObjectPermissions: () => ({ objectPermissionsByObjectMetadataId: {} }),
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({ enqueueErrorSnackBar: mockEnqueueErrorSnackBar }),
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/primitives/feedback', () => ({
+  ...jest.requireActual('twenty-ui/primitives/feedback'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 jest.mock('@/object-record/cache/hooks/useGetRecordFromCache', () => ({
@@ -53,6 +57,13 @@ jest.mock('@apollo/client/react', () => ({
   useMutation: () => [mockMutate],
 }));
 
+const Wrapper = ({ children }: { children: ReactNode }) =>
+  createElement(
+    WorkflowVisualizerComponentInstanceContext.Provider,
+    { value: { instanceId: 'workflow-visualizer-test' } },
+    children,
+  );
+
 describe('useUpdateWorkflowVersionTrigger', () => {
   const trigger: WorkflowTrigger = {
     name: 'Company created',
@@ -75,7 +86,9 @@ describe('useUpdateWorkflowVersionTrigger', () => {
   it('updates the trigger via the dedicated mutation and marks it for recomputation', async () => {
     mockGetUpdatableWorkflowVersion.mockResolvedValue('version-id');
 
-    const { result } = renderHook(() => useUpdateWorkflowVersionTrigger());
+    const { result } = renderHook(() => useUpdateWorkflowVersionTrigger(), {
+      wrapper: Wrapper,
+    });
 
     await act(async () => {
       await result.current.updateTrigger(trigger);
@@ -114,7 +127,9 @@ describe('useUpdateWorkflowVersionTrigger', () => {
         nextStepIds: [],
       } as unknown as WorkflowTrigger;
 
-      const { result } = renderHook(() => useUpdateWorkflowVersionTrigger());
+      const { result } = renderHook(() => useUpdateWorkflowVersionTrigger(), {
+        wrapper: Wrapper,
+      });
 
       await act(async () => {
         await result.current.updateTrigger(testTrigger);

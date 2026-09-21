@@ -155,11 +155,9 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
   </Accordion>
 
   <Accordion title="Por que não vejo minhas execuções de fluxo de trabalho?">
-    As execuções de fluxo de trabalho podem estar falhando imediatamente devido a limites de taxa.
+    As execuções de fluxo de trabalho podem estar falhando imediatamente devido a limites de taxa. Twenty impõe um limite rígido de 5.000 execuções por hora por espaço de trabalho.
 
-    **Limite rígido: 5.000 execuções por hora por espaço de trabalho.**
-
-    Se você exceder esse limite, os fluxos de trabalho são marcados imediatamente como falhos e não aparecerão na sua lista de execuções como esperado.
+    Se você exceder esse limite, os fluxos de trabalho são marcados imediatamente como falhos e não aparecerão na sua lista de execuções.
 
     **Cenários comuns que atingem esse limite**:
     * Selecionar mais de 5.000 registros com um gatilho manual Single
@@ -168,7 +166,7 @@ description: Perguntas frequentes sobre fluxos de trabalho na Twenty.
 
     **Soluções**:
     * Use gatilhos **Bulk** em vez de Single para processar muitos registros em uma única execução
-    * Espace operações em lotes grandes
+    * Espaçe as operações em lotes grandes
     * Use filtros para reduzir a frequência dos gatilhos
     * Agende fluxos de trabalho pesados fora do horário de pico
   </Accordion>

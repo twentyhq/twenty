@@ -43,6 +43,10 @@ export type RatingFilter = {
   eq?: string;
   in?: string[];
   is?: IsFilter;
+  gt?: string;
+  gte?: string;
+  lt?: string;
+  lte?: string;
 };
 
 export type FloatFilter = {
@@ -83,7 +87,7 @@ export type CurrencyFilter = {
   currencyCode?: SelectFilter;
 };
 
-export type URLFilter = {
+export type UrlFilter = {
   url?: StringFilter;
   label?: StringFilter;
 };
@@ -130,6 +134,10 @@ export type SelectFilter = {
   in?: string[];
   eq?: string;
   neq?: string;
+  gt?: string;
+  gte?: string;
+  lt?: string;
+  lte?: string;
 };
 
 export type MultiSelectFilter = {
@@ -174,7 +182,7 @@ export type LeafFilter =
   | DateFilter
   | DateTimeFilter
   | CurrencyFilter
-  | URLFilter
+  | UrlFilter
   | FullNameFilter
   | BooleanFilter
   | AddressFilter

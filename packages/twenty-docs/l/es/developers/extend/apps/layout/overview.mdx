@@ -55,3 +55,5 @@ La **capa de diseño** de una aplicación de Twenty es todo lo que el usuario ve
 | **Menú de comandos (Cmd+K)**               | Una acción rápida fijada o un comando oculto                                                                                                  | `defineCommandMenuItem`                   |
 
 Los componentes de frontend se ejecutan dentro de un Web Worker aislado usando Remote DOM — se renderizan de forma nativa en la página (no dentro de un iframe), pero no pueden acceder directamente a la página o al DOM del host. La comunicación con Twenty ocurre a través de una API de host de paso de mensajes.
+
+Todavía están en desarrollo activo: el sandbox implementa un DOM parcial, por lo que los usos avanzados pueden fallar. Consulta [Limitaciones actuales](/l/es/developers/extend/apps/layout/front-components#current-limitations).

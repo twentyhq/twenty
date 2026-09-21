@@ -1,3 +1,4 @@
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   AgentMessageRole,
@@ -33,7 +34,11 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
 
   const buildService = ({
     thread = failedThread,
-    lastUserMessage = { id: 'user-message-id', turnId: 'turn-id' },
+    lastUserMessage = { id: 'user-message-id', turnId: 'turn-id' } as {
+      id: string;
+      turnId: string;
+      processedAt?: Date;
+    },
     threadMessages = [userMessageEntity],
   } = {}) => {
     const threadRepository = {
@@ -53,15 +58,28 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       clear: jest.fn().mockResolvedValue(undefined),
     };
 
+    const metricsService = { incrementCounterBy: jest.fn() };
+
+    const eventPublisherService = {
+      publish: jest.fn(),
+      resetStreamState: jest.fn(),
+    };
+
     const service = new AgentChatStreamingService(
       threadRepository as never,
       { find: jest.fn() } as never,
       messageQueueService as never,
       agentChatService as never,
-      { publish: jest.fn() } as never,
+      eventPublisherService as never,
       { signFileByIdUrl: jest.fn() } as never,
       streamHeartbeatService as never,
-      { incrementCounterBy: jest.fn() } as never,
+      metricsService as never,
+      new AgentChatStreamRecoveryService(
+        threadRepository as never,
+        streamHeartbeatService as never,
+        eventPublisherService as never,
+        metricsService as never,
+      ),
     );
 
     return { service, threadRepository, messageQueueService, agentChatService };
@@ -155,5 +173,48 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     );
     expect(result.messageId).toBe('user-message-id');
     expect(result.turnId).toBe('turn-id');
+  });
+
+  it('should retry the hidden kickoff turn when the thread only contains the kickoff message', async () => {
+    const hiddenKickoffMessageEntity = {
+      id: 'kickoff-message-id',
+      role: AgentMessageRole.USER,
+      status: AgentMessageStatus.SENT,
+      isHidden: true,
+      parts: [{ type: 'text', textContent: 'kickoff prompt', orderIndex: 0 }],
+    } as unknown as AgentMessageEntity;
+    const { service, threadRepository, messageQueueService, agentChatService } =
+      buildService({
+        lastUserMessage: {
+          id: 'kickoff-message-id',
+          turnId: 'kickoff-turn-id',
+          processedAt: new Date('2026-01-01T00:00:01.000Z'),
+        },
+        threadMessages: [hiddenKickoffMessageEntity],
+      });
+
+    const result = await service.retryLastFailedTurn(retryArguments);
+
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      expect.objectContaining({ id: 'thread-id' }),
+      { activeStreamId: result.streamId, lastStreamError: null },
+    );
+    expect(
+      agentChatService.deleteAssistantMessagesForTurn,
+    ).toHaveBeenCalledWith({
+      turnId: 'kickoff-turn-id',
+      workspaceId: 'workspace-id',
+    });
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        existingTurnId: 'kickoff-turn-id',
+        lastUserMessageText: 'kickoff prompt',
+        hasTitle: true,
+      }),
+    );
+    expect(result.messageId).toBe('kickoff-message-id');
+    expect(result.turnId).toBe('kickoff-turn-id');
   });
 });

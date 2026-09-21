@@ -18,6 +18,7 @@ import {
   type FieldManifest,
   type NavigationMenuItemManifest,
   type SkillManifest,
+  type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
 } from 'twenty-shared/application';
 
@@ -47,6 +48,7 @@ export type DefinableEntity =
   | NavigationMenuItemManifest
   | PageLayoutConfig
   | PageLayoutTabConfig
+  | StandalonePageLayoutWidgetManifest
   | PermissionFlagConfig
   | CommandMenuItemConfig;
 

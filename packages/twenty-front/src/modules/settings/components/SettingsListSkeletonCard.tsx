@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCardContainer = styled.div`
   height: 40px;
 
-  > * {
+  > div {
     background-color: ${themeCssVariables.background.secondary};
     height: 100%;
   }

@@ -57,35 +57,37 @@ Lorsqu'une exécution échoue :
 1. Ouvrez l'exécution échouée
 2. Trouvez l'étape à l'origine de l'échec
 3. Consultez le message d'erreur pour plus de détails
-4. Problèmes courants :
-   * Champs obligatoires manquants
-   * Format de données invalide
-   * Erreurs d'API externes
-   * Problèmes d'autorisations
 
-## Réexécuter les flux de travail
+Problèmes courants:
 
-Si une exécution échoue, vous pouvez :
+* Champs obligatoires manquants
+* Format de données invalide
+* Erreurs de l'API externe
+* Problèmes d'autorisation
 
-* Corrigez le problème sous-jacent et attendez le prochain déclenchement
-* Pour les flux de travail manuels, déclenchez à nouveau avec les mêmes données ou des données mises à jour
-* Révisez la logique du flux de travail pour éviter de futurs échecs
+## Ré-exécution des Workflows
 
-## Conseils de performances
+Si un run échoue, vous pouvez:
 
-### Gestion de l'historique des exécutions
+* Corriger le problème sous-jacent et attendre le prochain déclenchement
+* Pour les flux de travail manuels, déclenchez à nouveau avec les mêmes données ou mises à jour
+* Examinez la logique du workflow pour éviter les échecs futurs
 
-* Les exécutions sont conservées à des fins d'historique
+## Conseils de performance
+
+### Gestion de l'historique des courses
+
+* Les courses sont conservées pour référence historique
 * Les exécutions très anciennes peuvent être archivées automatiquement
-* Exportez les données d'exécution si vous devez conserver des enregistrements
+* Exporter les données d'exécution si vous avez besoin de conserver les enregistrements
 
-### Meilleures pratiques de surveillance
+### Suivi des meilleures pratiques
 
-* Vérifiez régulièrement les exécutions après l'activation de nouveaux flux de travail
-* Passez en revue les exécutions échouées pour identifier des tendances
+* Vérifier les exécutions régulières après l'activation des nouveaux workflows
+* La revue a échoué pour identifier les patrons
 
 ## Articles connexes
 
-* [Déclencheurs de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
-* [Actions de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-actions)
-* [Dépannage des flux de travail](/l/fr/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)
+* [Déclencheurs de workflows](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
+* [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions)
+* [Dépannage du workflow](/l/fr/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

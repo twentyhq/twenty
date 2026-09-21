@@ -1,0 +1,89 @@
+.root {
+  align-items: center;
+  color: var(--t-font-color-primary);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: var(--t-font-size-sm);
+  font-weight: var(--t-font-weight-regular);
+  gap: var(--t-spacing-2);
+  vertical-align: middle;
+  width: fit-content;
+
+  @include focus-ring;
+}
+
+.control {
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid var(--t-font-color-secondary);
+  border-radius: var(--t-border-radius-rounded);
+  box-sizing: content-box;
+  corner-shape: round;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  margin-inline-start: 3px;
+  transform: scale(0.95);
+  transition: transform duration(normal) ease;
+}
+
+.sm .control {
+  block-size: 16px;
+  inline-size: 16px;
+}
+
+.md .control {
+  block-size: 18px;
+  inline-size: 18px;
+}
+
+.root[data-checked] .control {
+  background-color: var(--t-color-blue);
+  border: none;
+  transform: scale(1.05);
+}
+
+.indicator {
+  background-color: var(--t-gray-scale-gray1);
+  block-size: 6px;
+  border-radius: 50%;
+  corner-shape: round;
+  inline-size: 6px;
+}
+
+.md .indicator {
+  block-size: 8px;
+  inline-size: 8px;
+}
+
+@include hover-capable {
+  .root:not([data-disabled]):not([data-readonly]):hover .control {
+    background-color: var(--t-background-tertiary);
+    outline: 4px solid var(--t-background-tertiary);
+  }
+
+  .root[data-checked]:not([data-disabled]):not([data-readonly]):hover .control {
+    background-color: var(--t-color-blue);
+    outline-color: var(--t-color-transparent-blue2);
+  }
+}
+
+.root[data-disabled] {
+  cursor: not-allowed;
+  opacity: 0.32;
+}
+
+.root[data-disabled] .control {
+  opacity: 0.375;
+}
+
+.root[data-readonly] {
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .control {
+    transition: none;
+  }
+}

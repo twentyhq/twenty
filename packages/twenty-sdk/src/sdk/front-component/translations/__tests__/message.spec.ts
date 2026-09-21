@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
   getTranslationCatalogKey,
-  interpolateMessage,
   normalizeMessageDescriptor,
   parseTranslationCatalogKey,
 } from '@/sdk/front-component/translations/message';
@@ -38,23 +37,5 @@ describe('translation catalog key', () => {
     expect(
       parseTranslationCatalogKey(getTranslationCatalogKey('Open', 'door')),
     ).toEqual({ message: 'Open', context: 'door' });
-  });
-});
-
-describe('interpolateMessage', () => {
-  it('returns the template unchanged when no values are given', () => {
-    expect(interpolateMessage('Hello {name}')).toBe('Hello {name}');
-  });
-
-  it('substitutes named placeholders', () => {
-    expect(interpolateMessage('Saved {count} cards', { count: 3 })).toBe(
-      'Saved 3 cards',
-    );
-  });
-
-  it('leaves unknown placeholders intact', () => {
-    expect(interpolateMessage('Hi {name} from {city}', { name: 'Ada' })).toBe(
-      'Hi Ada from {city}',
-    );
   });
 });

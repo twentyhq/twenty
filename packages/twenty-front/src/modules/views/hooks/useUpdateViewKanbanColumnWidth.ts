@@ -1,8 +1,10 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { getViewPersistTarget } from '@/object-record/record-table-widget/utils/getViewPersistTarget';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewApiUpdate } from '@/views/hooks/internal/usePerformViewApiUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateViewKanbanColumnWidth = () => {
@@ -10,26 +12,39 @@ export const useUpdateViewKanbanColumnWidth = () => {
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
-  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
+  const { performViewApiUpdate } = usePerformViewApiUpdate();
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   const updateViewKanbanColumnWidth = useCallback(
     async (kanbanColumnWidth: number) => {
-      if (!canPersistChanges) {
+      const persistTarget = getViewPersistTarget(recordTableWidgetContext);
+
+      if (persistTarget.target === 'none') {
         return;
       }
 
-      if (!isDefined(contextStoreCurrentViewId)) {
+      if (persistTarget.target === 'pageLayoutDraft') {
+        persistTarget.widgetContext.updateViewDraft({ kanbanColumnWidth });
         return;
       }
 
-      await performViewAPIUpdate({
+      if (!canPersistChanges || !isDefined(contextStoreCurrentViewId)) {
+        return;
+      }
+
+      await performViewApiUpdate({
         id: contextStoreCurrentViewId,
         input: {
           kanbanColumnWidth,
         },
       });
     },
-    [canPersistChanges, contextStoreCurrentViewId, performViewAPIUpdate],
+    [
+      canPersistChanges,
+      contextStoreCurrentViewId,
+      performViewApiUpdate,
+      recordTableWidgetContext,
+    ],
   );
 
   return {

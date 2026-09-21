@@ -19,7 +19,7 @@ As ações definem o que acontece após um gatilho ser acionado. Você pode enca
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Criar um Registro
+### Criar Registro
 
 Adiciona um novo registro a um objeto selecionado.
 
@@ -112,7 +112,7 @@ Cria um novo registro ou atualiza um existente com base em critérios de corresp
 
 **Configuração**:
 
-* Selecione o array de registros de uma etapa anterior (por exemplo, resultados de Search Records, de um gatilho Manual com Bulk, de um nó de código). Quando uma etapa de código ou de função lógica retorna um array de nível superior, selecione a opção **Whole list** para iterar por toda a saída.
+* Selecione o array de registros de uma etapa anterior (por exemplo, resultados de Search Records, de um gatilho manual com disponibilidade em lote ou de um nó de código). Quando uma etapa de código ou de função lógica retorna um array de nível superior, selecione a opção **Whole list** para iterar por toda a saída.
 * Defina as ações a serem realizadas em cada registro no loop.
 
 <Note>
@@ -219,18 +219,18 @@ Apresenta um formulário durante a execução do fluxo de trabalho para coletar 
 **Configuração**:
 
 * Configure os campos que os usuários deverão preencher. Para cada campo, escolha
-  * um tipo entre texto, número, data, um determinado registro, um campo de seleção. Campos de seleção de todos os objetos estão disponíveis.
+  * um tipo entre texto, número, data, um determinado registro, um campo de seleção. Os campos de todos os objetos estão disponíveis para seleção.
   * um rótulo
   * um valor padrão em `Placeholder` (opcional)
 * Edite o título do formulário
 
 **Saída**: Respostas do formulário estão disponíveis para uso em etapas subsequentes.
 
-**Exemplo**: O fluxo de trabalho "Quick Lead" está disponível por padrão em todos os espaços de trabalho, disponível em qualquer lugar no Menu de Comando `Cmd + K`.
+**Exemplo**: O fluxo de trabalho "Quick Lead" está disponível por padrão em todos os espaços de trabalho, disponível em qualquer lugar no Menu de Comando `Cmd+K`.
 
 **Como preencher o formulário**:
 
-* Acione seu fluxo de trabalho manual a partir do menu de comando `Cmd K`
+* Acione seu fluxo de trabalho manual a partir do Menu de Comando `Cmd+K`
 * Preencha o formulário exibido no painel lateral e clique em `Submit`.
 
 <Note>

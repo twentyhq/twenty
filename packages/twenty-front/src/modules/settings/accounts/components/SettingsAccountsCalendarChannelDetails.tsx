@@ -2,13 +2,12 @@ import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { UPDATE_CALENDAR_CHANNEL } from '@/settings/accounts/graphql/mutations/updateCalendarChannel';
 import { useMutation } from '@apollo/client/react';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from '@react-email/components';
+import { Section } from 'twenty-ui/components';
 import { IconUserPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type CalendarChannelVisibility } from '~/generated/graphql';
 
@@ -46,8 +45,8 @@ export const SettingsAccountsCalendarChannelDetails = ({
 
   return (
     <StyledDetailsContainer>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Event visibility`}
           description={t`Define what will be visible to other users in your workspace`}
         />
@@ -55,14 +54,14 @@ export const SettingsAccountsCalendarChannelDetails = ({
           value={calendarChannel.visibility}
           onChange={handleVisibilityChange}
         />
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Contact auto-creation`}
           description={t`Automatically create contacts for people you've participated in an event with.`}
         />
         <Card rounded>
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconUserPlus}
             title={t`Auto-creation`}
             description={t`Automatically create contacts for people.`}
@@ -74,7 +73,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
             }}
           />
         </Card>
-      </Section>
+      </Section.Root>
     </StyledDetailsContainer>
   );
 };

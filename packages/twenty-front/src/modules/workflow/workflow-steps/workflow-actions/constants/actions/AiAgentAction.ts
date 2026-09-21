@@ -7,5 +7,5 @@ export const AI_AGENT_ACTION: {
 } = {
   defaultLabel: 'AI Agent',
   type: 'AI_AGENT',
-  icon: 'IconBrain',
+  icon: 'IconLego',
 };

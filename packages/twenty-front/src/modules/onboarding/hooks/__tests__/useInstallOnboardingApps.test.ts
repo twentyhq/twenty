@@ -79,10 +79,10 @@ describe('useInstallOnboardingApps', () => {
       await result.current.installOnboardingApps.installSelectedAppsAndContinue();
     });
 
-    expect(mockTriggerInstallAppsOnboardingStep).toHaveBeenCalledWith([
-      'app-1',
-      'app-2',
-    ]);
+    expect(mockTriggerInstallAppsOnboardingStep).toHaveBeenCalledWith({
+      universalIdentifiers: ['app-1', 'app-2'],
+      isAutoSkipped: false,
+    });
     expect(result.current.onboardingFreeCredits.installApps).toBe(2);
   });
 

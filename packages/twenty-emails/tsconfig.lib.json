@@ -4,6 +4,9 @@
     "outDir": "../../.cache/tsc",
     "composite": true,
     "declaration": true,
+    // tsconfig.json sets noEmit for the typecheck target; the build's
+    // declaration emit must undo it.
+    "noEmit": false,
     "types": ["node", "@nx/react/typings/image.d.ts", "vite/client"]
   },
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],

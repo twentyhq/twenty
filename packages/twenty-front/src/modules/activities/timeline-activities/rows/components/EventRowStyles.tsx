@@ -1,27 +1,29 @@
 import { styled } from '@linaria/react';
 
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { TIMELINE_ICON_SLOT_SIZE } from '@/activities/timeline-activities/constants/TimelineIconSlotSize';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+export const StyledEventRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+  width: 100%;
+`;
 
 export const StyledEventRowContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   justify-content: space-between;
+  min-height: ${TIMELINE_ICON_SLOT_SIZE}px;
 `;
 
 export const StyledEventRowContent = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
   overflow: hidden;
-`;
-
-export const StyledEventRowDate = styled.div`
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    display: none;
-  }
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
 export const StyledEventRowLinkedRecord = styled.span`

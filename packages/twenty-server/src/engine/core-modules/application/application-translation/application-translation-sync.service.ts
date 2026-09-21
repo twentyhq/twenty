@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import { ApplicationTranslationEntity } from 'src/engine/core-modules/application/application-translation/application-translation.entity';
+import { computeApplicationTranslationSyncPlan } from 'src/engine/core-modules/application/application-translation/utils/compute-application-translation-sync-plan.util';
 
 @Injectable()
 export class ApplicationTranslationSyncService {
@@ -26,66 +27,40 @@ export class ApplicationTranslationSyncService {
     applicationRegistrationId: string;
     translations: TranslationsManifest | undefined;
   }): Promise<void> {
+    // Absence says nothing about translations, so it must not prune: this
+    // table is cross-workspace, and a sync from a toolchain that does not
+    // compile them would drop the locales an app published, everywhere.
+    if (!isDefined(translations)) {
+      return;
+    }
+
     const existingRows = await this.applicationTranslationRepository.find({
       where: { applicationRegistrationId },
       withDeleted: true,
     });
 
-    const existingRowByLocale = new Map<
-      keyof typeof APP_LOCALES,
-      ApplicationTranslationEntity
-    >();
+    const { rowsToUpdate, rowsToInsert, rowIdsToSoftDelete } =
+      computeApplicationTranslationSyncPlan({ existingRows, translations });
 
-    for (const row of existingRows) {
-      const currentRow = existingRowByLocale.get(row.locale);
+    await Promise.all([
+      ...rowsToUpdate.map(({ id, messages }) =>
+        this.applicationTranslationRepository.update(id, {
+          messages,
+          deletedAt: null,
+        }),
+      ),
+      ...rowsToInsert.map(({ locale, messages }) =>
+        this.applicationTranslationRepository.insert({
+          applicationRegistrationId,
+          locale,
+          messages,
+        }),
+      ),
+    ]);
 
-      const shouldPreferRow =
-        !isDefined(currentRow) ||
-        (isDefined(currentRow.deletedAt) && !isDefined(row.deletedAt));
-
-      if (shouldPreferRow) {
-        existingRowByLocale.set(row.locale, row);
-      }
-    }
-
-    const manifestLocales = new Set<keyof typeof APP_LOCALES>();
-    const upsertPromises: Promise<unknown>[] = [];
-
-    for (const [locale, messages] of Object.entries(translations ?? {}) as [
-      keyof typeof APP_LOCALES,
-      Record<string, string>,
-    ][]) {
-      manifestLocales.add(locale);
-
-      const existingRow = existingRowByLocale.get(locale);
-
-      if (isDefined(existingRow)) {
-        upsertPromises.push(
-          this.applicationTranslationRepository.update(existingRow.id, {
-            messages,
-            deletedAt: null,
-          }),
-        );
-      } else {
-        upsertPromises.push(
-          this.applicationTranslationRepository.insert({
-            applicationRegistrationId,
-            locale,
-            messages,
-          }),
-        );
-      }
-    }
-
-    await Promise.all(upsertPromises);
-
-    const rowsToSoftDelete = existingRows.filter(
-      (row) => !manifestLocales.has(row.locale) && !isDefined(row.deletedAt),
-    );
-
-    if (rowsToSoftDelete.length > 0) {
+    if (rowIdsToSoftDelete.length > 0) {
       await this.applicationTranslationRepository.softDelete(
-        rowsToSoftDelete.map((row) => row.id),
+        rowIdsToSoftDelete,
       );
     }
 

@@ -10,6 +10,7 @@ import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateF
 import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
 import { pendingCreateFromDraftPromiseState } from '@/ai/states/pendingCreateFromDraftPromiseState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 export const useEnsureAgentChatThreadExistsForDraft = (
   createChatThread: () => Promise<any>,
@@ -32,7 +33,7 @@ export const useEnsureAgentChatThreadExistsForDraft = (
         AGENT_CHAT_NEW_THREAD_DRAFT_KEY
       ] ?? '';
 
-    if (draft.trim() === '') {
+    if (tipTapDocumentToMarkdown(draft).trim() === '') {
       return;
     }
 

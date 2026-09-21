@@ -9,9 +9,27 @@ description: Distribute your Twenty app to the marketplace or deploy it internal
 Once your app is [built and tested locally](/developers/extend/apps/getting-started/concepts), you have two paths for distributing it:
 
 - **Deploy a tarball** — upload your app directly to a specific Twenty server for internal or private use.
-- **Publish to npm** — list your app in the Twenty marketplace for any workspace to discover and install.
+- **Publish to npm** — publish your package, [claim it in Twenty](#claiming-your-app), and complete its setup so other workspaces can discover and install it.
 
 Both paths start from the same **build** step.
+
+## Registration ownership
+
+Publishing an app creates an **application registration**: the app's identity on the instance, shared by every workspace that installs it. It holds the app's marketplace entry, its OAuth client, and its server-side state — the `serverVariables` an operator configures and the `server`-scoped entries of the [key-value store](/developers/extend/apps/logic/key-value-store).
+
+A `universalIdentifier` is unique across the whole instance and a registration belongs to at most one workspace (its owner) — or none until it is claimed — so installing an app and developing one are two different rights:
+
+| Action | Requirement |
+|--------|-------------|
+| Installing an app | The app is listed on the marketplace, pre-installed by the operator, or its registration belongs to your workspace. |
+| Developing an app (`yarn twenty dev`, `apply`, `plan`) | The registration belongs to your workspace. |
+
+Syncing code and a manifest under an identifier is a claim of authorship, so being able to install an app never grants the right to publish code under its identity. A workspace that is not the owner is refused, whether the app is listed, pre-installed, or private.
+
+Two situations lead to that refusal:
+
+- **The identifier belongs to another workspace.** Change the `universalIdentifier` in your app config, which is the usual answer when you forked someone else's app. If you need to keep the identifier, the owning workspace has to transfer the registration to yours.
+- **The identifier belongs to no workspace.** Apps imported by the marketplace catalog sync start unowned. [Claim yours with GitHub](#claiming-your-app) before developing on it. Publishing with npm provenance provides proof of authorship; it does not automatically assign an owner workspace in Twenty.
 
 ## Building your app
 
@@ -49,11 +67,7 @@ yarn twenty app:publish --private
 
 ### Sharing a deployed app
 
-<Warning>
-Sharing private (tarball) apps across workspaces is an **Enterprise** feature. The **Distribution** tab will show an upgrade prompt instead of the share controls until your workspace has a valid Enterprise key. See [Settings > Admin Panel > Enterprise](/settings/admin-panel#enterprise) to activate it.
-</Warning>
-
-Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. Once your workspace is on the Enterprise plan, you can share a deployed app like this:
+Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. To share a deployed app:
 
 1. Go to **Settings > Applications > Registrations** and open your app
 2. In the **Distribution** tab, click **Copy share link**
@@ -69,7 +83,7 @@ To release an update:
 
 1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
 2. Run `yarn twenty app:publish --private` (or `yarn twenty app:publish --private --remote production`)
-3. Workspaces that have the app installed and enabled auto-upgrade for it (in the app's Settings tab) are upgraded automatically in the background; the others will see the upgrade available in their settings
+3. Workspaces that have the app installed and enabled auto-upgrade for it (in the app's General tab) are upgraded automatically in the background; the others will see the upgrade available in their settings
 
 <Note>
 Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is allowed, and a final release like `1.0.0` is correctly recognized as higher than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver string.
@@ -168,7 +182,7 @@ Publishes your app to npm with provenance when you push a version tag (e.g. `v1.
 
 **One-time setup:**
 
-On npmjs.com open your package > **Settings → Trusted Publisher** and register this repository with the `publish.yml` workflow (see the [npm trusted publishing docs](https://docs.npmjs.com/trusted-publishers)). Publishing with provenance certifies which GitHub repository built the package, which is also how you claim ownership of your app in a Twenty marketplace.
+On npmjs.com open your package > **Settings → Trusted Publisher** and register this repository with the `publish.yml` workflow (see the [npm trusted publishing docs](https://docs.npmjs.com/trusted-publishers)). Publishing with provenance certifies which GitHub repository built the package. After publishing, [claim ownership in Twenty](#claiming-your-app).
 
 <Note>
 npm only accepts provenance from **public** source repositories. If you publish from a private repo, npm rejects the OIDC provenance bundle with an `E422 ... Unsupported GitHub Actions source repository visibility: "private"` error. To publish from a private repo, opt out of provenance by setting `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` in the publish step's `env` (a commented-out hint is included in the scaffolded `publish.yml`):
@@ -179,6 +193,8 @@ npm only accepts provenance from **public** source repositories. If you publish 
           TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
         run: yarn twenty app:publish
 ```
+
+Without GitHub provenance, the package cannot be claimed through **Claim with GitHub**. Use a public repository with provenance if you need this ownership flow.
 </Note>
 
 ### Pinning the reusable actions
@@ -187,7 +203,7 @@ The `ci.yml` and `cd.yml` workflows reference reusable actions at `@main`, so ac
 
 ## Publishing to npm
 
-Publishing to npm makes your app discoverable in the Twenty marketplace. Any Twenty workspace can browse, install, and upgrade marketplace apps directly from the UI.
+Publishing to npm makes your app eligible for the Twenty marketplace. After catalog sync and any required [server-route setup](#setting-up-server-routes), workspaces can browse, install, and upgrade it from the UI. Community apps appear when users turn off the **Vetted only** filter.
 
 ### Requirements
 
@@ -261,6 +277,8 @@ The metadata shown in the marketplace comes from your `defineApplication()` conf
 
 <Note>
 If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
+
+The About tab renders markdown text only. Images do not render, whether they use markdown syntax or `<img>` tags, and raw HTML such as badges or `<div align="center">` blocks shows as plain text.
 </Note>
 
 ### CI publishing
@@ -272,6 +290,69 @@ For other CI systems (GitLab CI, CircleCI, etc.), run `yarn install` then `yarn 
 <Note>
 **npm provenance** adds a trust badge to your npm listing, letting users verify the package was built from a specific commit in a public CI pipeline. It is also what lets you claim ownership of your app in a Twenty marketplace. See the [npm provenance docs](https://docs.npmjs.com/generating-provenance-statements) for details.
 </Note>
+
+After the package has synced into the catalog, continue with [Claiming your app](#claiming-your-app). The claim flow requires provenance pointing to a **GitHub** repository.
+
+## Claiming your app
+
+Claiming assigns your app's registration to the Twenty workspace that will manage it. App claiming is available to all workspaces. Your role needs the **Applications** and **MCP & APIs** permissions to claim through the **Developer** tab.
+
+Ownership is per Twenty instance: claiming on Twenty Cloud does not claim the app on a separate self-hosted server. Other workspaces on the same instance install your app without claiming it themselves.
+
+### Before you claim
+
+- Publish your package from a **public GitHub repository** using GitHub Actions and [npm trusted publishing with provenance](#ci-publishing). The version imported into Twenty's catalog must carry the provenance attestation.
+- Include the `twenty-app` keyword in `package.json` and wait for [catalog sync](#how-marketplace-discovery-works).
+- Choose the workspace that will own the app. For apps with server routes, this workspace also runs and pays for the shared resolver.
+- Sign in to GitHub as the **personal account that owns the source repository**, or as an **owner of the organization** that owns it. Repository collaborator access or npm package maintainer access alone is not sufficient.
+
+### Claim with GitHub
+
+1. In your intended owner workspace, go to **Settings > Applications > Developer** (`/settings/applications#developer`).
+2. In **Claim an application**, enter the exact npm package name, including its scope (for example, `@your-org/twenty-app`), or the app's `universalIdentifier`.
+3. Click **Look up** and check that the result is your app. If it is not found, click **Sync catalog** if available, wait for the sync to finish, then look it up again.
+4. Click **Claim with GitHub** and authorize Twenty. For an organization-owned repository, grant access to that organization in GitHub's **Organization access** section. Personal repositories do not need an organization grant.
+5. When you return to Twenty, confirm that the app appears under **My apps** with type **NPM**. Open it and check **Distribution > Ownership** for **Claimed by this workspace**.
+
+Claiming does not install the app. If it exposes server routes, complete the setup below before other workspaces depend on its webhooks.
+
+### Setting up server routes
+
+A [server route](/developers/extend/apps/logic/logic-functions#server-route-trigger) receives events for multiple workspaces at one URL. Its resolver runs in the registration's **owner workspace**, then dispatches work to the appropriate installed workspace.
+
+1. Open your app under **My apps** and fill in any required **Server Variables** in the **Config** tab.
+2. In **Distribution**, click **See on marketplace** to open the app page and install it in the **owner workspace**. You can open this page even before the app appears in marketplace search.
+3. Register the server webhook URL with your provider and test an event from a second workspace where the app is installed. Check both the resolver and the target function's logs.
+
+<Warning>
+An unclaimed app, or an app not installed in its owner workspace, has no server-route resolver to run. Requests return `404` (`LOGIC_FUNCTION_NOT_FOUND`), even if the app is installed in other workspaces. These apps stay out of marketplace search until claimed, installed on the owner workspace, and configured with all required server variables.
+</Warning>
+
+### Owner workspace costs and availability
+
+See [how logic function runs are metered](/user-guide/billing/capabilities/credits#how-logic-function-runs-are-metered) for credit consumption, pricing, and which workspace is billed.
+
+Uninstalling the app from the owner workspace or deleting that workspace removes the shared resolver and interrupts server webhooks for every install on that instance.
+
+### Ownership after a repository move
+
+Moving the GitHub repository to another personal account or organization does not transfer or remove an existing Twenty claim. The registration remains attached to its owner workspace. Keep the same npm package and app `universalIdentifier`; changing the Twenty owner workspace requires a separate ownership transfer.
+
+### Troubleshooting a claim
+
+If you have trouble claiming your app, contact us on [Discord](https://discord.gg/cx5n4Jzs57) or [open a GitHub issue](https://github.com/twentyhq/twenty/issues/new/choose).
+
+<Accordion title="Self-hosted GitHub claim configuration">
+The server administrator configures `APP_CLAIM_GITHUB_CLIENT_ID` and `APP_CLAIM_GITHUB_CLIENT_SECRET` with a GitHub OAuth app. Set its authorization callback URL to your `SERVER_URL` followed by `/application-registration-claim/github/callback`, for example `https://twenty.example.com/application-registration-claim/github/callback`. This configuration is already managed for you on Twenty Cloud.
+</Accordion>
+
+## Marketplace visibility and vetting
+
+Claiming establishes ownership; it does not grant a **Vetted** badge. The marketplace defaults to **Vetted only**. To find community apps, go to **Settings > Applications > Marketplace**, open the filter, and uncheck **Vetted only**. You can also share your app's direct install page using **My apps > your app > Distribution > Copy sharing link**.
+
+The Vetted label currently applies to apps maintained by Twenty, for which the team can vouch for security and quality. Third-party apps can be published and installed without this label.
+
+If your app is still missing with **Vetted only** turned off, confirm catalog sync has completed, all required server variables are filled in, and any server-route setup is complete.
 
 ## Installing apps
 

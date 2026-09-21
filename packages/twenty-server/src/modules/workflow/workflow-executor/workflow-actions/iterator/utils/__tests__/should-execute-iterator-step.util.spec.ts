@@ -128,7 +128,6 @@ describe('shouldExecuteIteratorStep', () => {
         'step-2': { status: StepStatus.SUCCESS },
       };
 
-      // Only step-1 is in the loop
       getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
       const result = shouldExecuteIteratorStep({
@@ -229,6 +228,30 @@ describe('shouldExecuteIteratorStep', () => {
         'iterator-1': { status: StepStatus.RUNNING }, // Iterator has been started
         'step-1': { status: StepStatus.SUCCESS },
         'step-2': { status: StepStatus.SUCCESS },
+      };
+
+      getAllStepIdsInLoop.mockReturnValue(['step-1']);
+
+      const result = shouldExecuteIteratorStep({
+        step: iteratorStep,
+        steps,
+        stepInfos,
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('should return true when a loop step failed and continues on failure, even without the iteration flag', () => {
+      const iteratorStep = createMockIteratorStep('iterator-1', [], ['step-1']);
+      const steps = [
+        createMockCodeStep('step-1', ['iterator-1'], {
+          continueOnFailure: true,
+        }),
+        iteratorStep,
+      ];
+      const stepInfos = {
+        'iterator-1': { status: StepStatus.RUNNING },
+        'step-1': { status: StepStatus.FAILED_SAFELY, error: 'some error' },
       };
 
       getAllStepIdsInLoop.mockReturnValue(['step-1']);
@@ -379,7 +402,6 @@ describe('shouldExecuteIteratorStep', () => {
         stepInfos,
       });
 
-      // Should return false because step-2 info is undefined
       expect(result).toBe(false);
     });
 
@@ -457,7 +479,7 @@ describe('shouldExecuteIteratorStep', () => {
           },
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -477,7 +499,6 @@ describe('shouldExecuteIteratorStep', () => {
         stepInfos,
       });
 
-      // getAllStepIdsInLoop should not be called if initialLoopStepIds is undefined
       expect(getAllStepIdsInLoop).not.toHaveBeenCalled();
       expect(result).toBe(true);
     });

@@ -1,0 +1,110 @@
+enum SomeEnum {
+  X
+  Y
+  Z
+}
+
+enum SomeEnum2 {
+  hello
+  world
+}
+
+type Query {
+  """Some description"""
+  repository(name: String!, owner: String): Repository!
+  optionalArgs(name: String, owner: String): Repository!
+  user: User
+  someScalarValue(x: Float): String
+  recursiveType(requiredVal: [String!]): [RecursiveType]
+  throwsError: String!
+  account: Account
+  coordinates: Point
+  unionThatImplementsInterface(typename: String): GenericError
+  InterfaceNotImplemented: InterfaceNotImplemented
+}
+
+type RecursiveType {
+  value: String
+  recurse(arg: Int): RecursiveType
+}
+
+type Repository {
+  createdAt: String!
+  forks(filter: String): ForkConnection
+}
+
+type ForkConnection {
+  edges: [ForkEdge]
+}
+
+type ForkEdge {
+  cursor: String
+  node: Fork
+}
+
+type Fork {
+  name: String
+  number: Int
+}
+
+type User {
+  """Some description"""
+  name: String
+  common: Int
+}
+
+type Subscription {
+  user: User
+}
+
+union Account = User | Guest
+
+type Guest {
+  anonymous: Boolean
+  common: Int
+}
+
+type House implements Point {
+  owner: User
+  x: String
+  y: String
+}
+
+type Bank implements Point {
+  address: String
+  x: String
+  y: String
+}
+
+interface Point {
+  x: String
+  y: String
+}
+
+interface ClientError {
+  message: String!
+}
+
+type ClientErrorNameAlreadyTaken implements ClientError {
+  message: String!
+  ownProp1: String
+}
+
+type ClientErrorNameInvalid implements ClientError {
+  message: String!
+  ownProp2: String
+}
+
+type ClientErrorWithoutInterface {
+  ownProp3: String
+}
+
+union GenericError = ClientErrorNameAlreadyTaken | ClientErrorNameInvalid | ClientErrorWithoutInterface
+
+interface InterfaceNotImplemented {
+  id: ID!
+  title: String
+  url: String
+  permalink: String
+  entry_id: ID
+}

@@ -31,4 +31,10 @@ export class AuthorizeAppInput {
   @MaxLength(1024)
   @IsOptional()
   scope?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @MaxLength(2048)
+  @IsOptional()
+  issuer?: string;
 }

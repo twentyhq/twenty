@@ -4,8 +4,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { EventLogTable } from 'twenty-shared/types';
 
-import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
+import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { getClickHouseTableName } from 'src/engine/core-modules/event-logs/registry/event-log-registry';
 
 export type EventLogCleanupParams = {

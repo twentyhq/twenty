@@ -1,12 +1,14 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
+import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { DUPLICATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/duplicateWorkflowVersionStep';
-import { flowComponentState } from '@/workflow/states/flowComponentState';
-import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
 import { useMutation } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
+  DuplicateCoreWorkflowVersionStepDocument,
   type DuplicateWorkflowVersionStepInput,
   type DuplicateWorkflowVersionStepMutation,
   type DuplicateWorkflowVersionStepMutationVariables,
@@ -14,11 +16,17 @@ import {
 
 export const useDuplicateWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();
+  const isCore = useIsWorkflowCoreEnabled();
+  const handleCoreMutationError = useWorkflowEditorMutationErrorHandler();
+  const [mutateCore] = useMutation(DuplicateCoreWorkflowVersionStepDocument, {
+    client: apolloCoreClient,
+    onError: handleCoreMutationError,
+  });
 
-  const { updateWorkflowVersionCache } = useUpdateWorkflowVersionCache();
+  const { applyWorkflowVersionStepChanges } =
+    useApplyWorkflowVersionStepChanges();
 
-  const setFlow = useSetAtomComponentState(flowComponentState);
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [mutate] = useMutation<
     DuplicateWorkflowVersionStepMutation,
@@ -30,27 +38,30 @@ export const useDuplicateWorkflowVersionStep = () => {
   const duplicateWorkflowVersionStep = async (
     input: DuplicateWorkflowVersionStepInput,
   ) => {
-    const result = await mutate({
-      variables: { input },
-      onError: (error) => {
-        enqueueErrorSnackBar({ apolloError: error });
-      },
-    });
+    const { workflowVersionId, ...stepInput } = input;
+    const result = isCore
+      ? await mutateCore({
+          variables: {
+            input: { ...stepInput, coreWorkflowVersionId: workflowVersionId },
+          },
+        })
+      : await mutate({
+          variables: { input },
+          onError: (error) => {
+            enqueueToast(getToastOptionsFromError({ error }));
+          },
+        });
 
     const workflowVersionStepChanges =
       result?.data?.duplicateWorkflowVersionStep;
 
-    const updatedWorkflowVersion = updateWorkflowVersionCache({
+    applyWorkflowVersionStepChanges({
       workflowVersionStepChanges,
       workflowVersionId: input.workflowVersionId,
     });
 
-    if (isDefined(updatedWorkflowVersion)) {
-      setFlow({
-        workflowVersionId: updatedWorkflowVersion.id,
-        trigger: updatedWorkflowVersion.trigger,
-        steps: updatedWorkflowVersion.steps,
-      });
+    if (isCore) {
+      await invalidateCoreWorkflowVersions(apolloCoreClient);
     }
 
     return result;

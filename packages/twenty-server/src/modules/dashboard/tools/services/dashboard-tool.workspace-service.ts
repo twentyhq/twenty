@@ -8,7 +8,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { createAddDashboardTabTool } from 'src/modules/dashboard/tools/add-dashboard-tab.tool';
 import { createAddDashboardWidgetTool } from 'src/modules/dashboard/tools/add-dashboard-widget.tool';
@@ -27,7 +27,7 @@ export class DashboardToolWorkspaceService {
     pageLayoutService: PageLayoutService,
     pageLayoutTabService: PageLayoutTabService,
     pageLayoutWidgetService: PageLayoutWidgetService,
-    globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    workspaceOrmManager: WorkspaceOrmManager,
     recordPositionService: RecordPositionService,
     applicationService: ApplicationService,
     flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -36,7 +36,7 @@ export class DashboardToolWorkspaceService {
       pageLayoutService,
       pageLayoutTabService,
       pageLayoutWidgetService,
-      globalWorkspaceOrmManager,
+      workspaceOrmManager,
       recordPositionService,
       applicationService,
       flatEntityMapsCacheService,
@@ -45,16 +45,23 @@ export class DashboardToolWorkspaceService {
 
   generateDashboardTools(
     workspaceId: string,
-    _rolePermissionConfig: RolePermissionConfig,
+    rolePermissionConfig: RolePermissionConfig,
   ): ToolSet {
     const context = { workspaceId };
+    const contextWithPermissions = { workspaceId, rolePermissionConfig };
 
     const createCompleteDashboard = createCreateCompleteDashboardTool(
       this.deps,
-      context,
+      contextWithPermissions,
     );
-    const listDashboards = createListDashboardsTool(this.deps, context);
-    const getDashboard = createGetDashboardTool(this.deps, context);
+    const listDashboards = createListDashboardsTool(
+      this.deps,
+      contextWithPermissions,
+    );
+    const getDashboard = createGetDashboardTool(
+      this.deps,
+      contextWithPermissions,
+    );
     const addDashboardTab = createAddDashboardTabTool(this.deps, context);
     const addDashboardWidget = createAddDashboardWidgetTool(this.deps, context);
     const updateDashboardWidget = createUpdateDashboardWidgetTool(

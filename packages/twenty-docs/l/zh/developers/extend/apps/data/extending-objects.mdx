@@ -43,6 +43,8 @@ export default defineField({
 
 * 文件位置由你决定。 约定是使用 `src/fields/\<name>.field.ts`，但 SDK 会在整个 `src/` 中检测字段。
 
+* `writability` 也可以按字段单独设置：`MetadataWritability.APPLICATION` 将写入限制为你应用自身的逻辑函数，`MetadataWritability.SYSTEM` 保留用于平台管理的数据。 字段的可写性只能比其所属对象的级别更严格，读取操作不会受到影响。 有关完整语义，请参见[对象](/l/zh/developers/extend/apps/data/objects)。
+
 * 要在标准页面布局（例如任务或公司详情页面）中添加一个选项卡，请使用 [`definePageLayoutTab`](/l/zh/developers/extend/apps/layout/page-layouts#definepagelayouttab)，并结合来自 `twenty-sdk/define` 的 `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS`。
 
 ## 向现有对象添加关系

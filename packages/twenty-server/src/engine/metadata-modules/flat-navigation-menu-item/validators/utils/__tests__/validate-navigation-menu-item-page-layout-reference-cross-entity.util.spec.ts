@@ -1,9 +1,8 @@
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemType, PageLayoutType } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { validateNavigationMenuItemPageLayoutReferenceCrossEntity } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 const NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER =
   '00000000-0000-0000-0000-000000000001';

@@ -76,7 +76,6 @@ describe('Custom object renaming', () => {
   };
 
   it('1. should create one custom object with standard relations', async () => {
-    // Arrange
     const standardObjects = await makeMetadataAPIRequest(
       standardObjectsGraphqlOperation,
     );
@@ -93,7 +92,6 @@ describe('Custom object renaming', () => {
       isLabelSyncedWithName: false,
     };
 
-    // Act
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: CUSTOM_OBJECT,
@@ -103,7 +101,6 @@ describe('Custom object renaming', () => {
       `,
     });
 
-    // Assert
     expect(data.createOneObject.nameSingular).toBe(CUSTOM_OBJECT.nameSingular);
 
     listingObjectId = data.createOneObject.id;
@@ -124,7 +121,6 @@ describe('Custom object renaming', () => {
       .map((field) => field.node);
 
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
-      // relation field
       const relationFieldMetadata = relationFieldsMetadataForListing.find(
         // @ts-expect-error legacy noImplicitAny
         (field) =>
@@ -152,13 +148,11 @@ describe('Custom object renaming', () => {
   });
 
   it('2. should rename custom object', async () => {
-    // Arrange
     const HOUSE_NAME_SINGULAR = `house${uniqueSuffix}`;
     const HOUSE_NAME_PLURAL = `houses${uniqueSuffix}`;
     const HOUSE_LABEL_SINGULAR = `House ${uniqueSuffix}`;
     const HOUSE_LABEL_PLURAL = `Houses ${uniqueSuffix}`;
 
-    // Act
     const { data } = await updateOneObjectMetadata({
       expectToFail: false,
       gqlFields: `
@@ -178,7 +172,6 @@ describe('Custom object renaming', () => {
       },
     });
 
-    // Assert
     expect(data.updateOneObject.nameSingular).toBe(HOUSE_NAME_SINGULAR);
     expect(data.updateOneObject.namePlural).toBe(HOUSE_NAME_PLURAL);
     expect(data.updateOneObject.labelSingular).toBe(HOUSE_LABEL_SINGULAR);

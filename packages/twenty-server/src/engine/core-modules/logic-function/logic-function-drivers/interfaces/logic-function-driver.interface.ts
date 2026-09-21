@@ -1,3 +1,5 @@
+import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
+
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { type LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -12,6 +14,7 @@ export type LogicFunctionExecuteError = {
 export type LogicFunctionExecuteResult = {
   data: object | null;
   duration: number;
+  billedDurationMs: number;
   logs: string;
   status: LogicFunctionExecutionStatus;
   error?: LogicFunctionExecuteError;
@@ -22,6 +25,7 @@ export type LogicFunctionExecuteParams = {
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
   payload: object;
+  context: LogicFunctionExecutionContext;
   env?: Record<string, string>;
   timeoutMs?: number;
   forceExecutionMode?: LogicFunctionExecutionMode;

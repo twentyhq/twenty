@@ -13,13 +13,13 @@ Krediler, sizin adınıza çalıştırdığımız ve gerçek bir maliyeti olan h
 
 Maliyet yapılan iş ile birlikte ölçeklenir. Gündelik otomasyonlar ve hızlı yapay zeka mesajları bir kredinin çok küçük bir kısmına mal olur; büyük, çok adımlı yapay zeka ajan görevleri daha fazla tutar. Kabaca tablo şöyle:
 
-| Ne yaparsınız                                                                                                                                 | Yaklaşık maliyet                      | Ne anlama gelir                    |
-| --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ---------------------------------- |
-| Standart bir iş akışı adımını çalıştırın (kayıt arama, kayıt oluşturma, kayıtları güncelleme) veya bir uygulamanın mantık işlevini tetikleyin | $0.0001                               | **Kredi başına 10.000 çalıştırma** |
-| Harici bir API çağırın veya bir kod düğümü çalıştırın                                                                                         | Bir kredinin küçük bir kısmı          | Kredi başına binlerce              |
-| Hızlı bir yapay zeka sohbet mesajı veya basit bir yapay zeka adımı gönderin                                                                   | Sentin bir kısmı                      | Kredi başına yüzlerce              |
-| Büyük bir yapay zeka ajan görevi çalıştırın (ör. "10 çalışma alanı nesnesini yapılandır")                                                     | **~$1 veya daha fazlasına** çıkabilir | Kredi başına birkaç tane           |
-| Bir yapay zeka web araması çalıştırın                                                                                                         | Arama başına sabit maliyet            | Kredi başına yüzlerce arama        |
+| Ne yaparsınız                                                                                                                                      | Yaklaşık maliyet                      | Ne anlama gelir                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ---------------------------------- |
+| Standart bir iş akışı adımını çalıştırın (kayıt arama, kayıt oluşturma veya kayıtları güncelleme) ya da bir uygulamanın mantık işlevini tetikleyin | $0.0001                               | **Kredi başına 10.000 çalıştırma** |
+| Harici bir API çağırın veya bir kod düğümü çalıştırın                                                                                              | Bir kredinin küçük bir kısmı          | Kredi başına binlerce              |
+| Hızlı bir yapay zeka sohbet mesajı veya basit bir yapay zeka adımı gönderin                                                                        | Sentin bir kısmı                      | Kredi başına yüzlerce              |
+| Büyük bir yapay zeka ajan görevi çalıştırın (ör. "10 çalışma alanı nesnesini yapılandır")                                                          | **~$1 veya daha fazlasına** çıkabilir | Kredi başına birkaç tane           |
+| Bir yapay zeka web araması çalıştırın                                                                                                              | Arama başına sabit maliyet            | Kredi başına yüzlerce arama        |
 
 <Note>
 Çoğu ekip için, standart otomasyonlar fiilen ücretsizdir — bakiyenizde fark edilir bir azalma yalnızca yapay zeka özelliklerine yüklendiğinizde veya ağır kod düğümleri çalıştırdığınızda olur. Bu, tasarım gereğidir: dahil edilen krediler, bir sayaç izlemeden geliştirme yapabilmeniz için tasarlanmıştır.
@@ -31,7 +31,7 @@ Her uygulama çalıştırmaları için ücret almaz. Call Recorder ve Last Conta
 
 ## Yapay zeka kullanımı nasıl ölçülür
 
-Bir eylem bir yapay zeka modelini çağırdığında, kullanılan tam token sayısını ölçer ve bunları **model sağlayıcısının yayımlanmış tarifeleri** üzerinden fiyatlandırırız, ardından bu dolar tutarını doğrudan kredilere çeviririz — böylece harcamanız, şişirilmiş bir dahili oran yerine işin gerçek maliyetiyle bire bir örtüşür. Kısa bir sohbet mesajı sentin bir kısmına mal olur. Büyük bir ajan görevi — örneğin on çalışma alanı nesnesini yapılandırmak — büyüyen bir bağlam üzerinde birçok model çağrısı yapar, bu nedenle bir dolar veya daha fazlasına kadar çıkabilir. Kullandığınız her şey için, token seviyesine kadar ayrıntılı olarak ücretlendirilirsiniz.
+Bir eylem bir yapay zeka modelini çağırdığında, kullanılan tam token sayısını ölçer ve bunları **model sağlayıcısının yayımlanmış tarifeleri** üzerinden fiyatlandırırız, ardından bu dolar tutarını doğrudan kredilere çeviririz — böylece harcamanız, şişirilmiş bir dahili oran yerine işin gerçek maliyetiyle bire bir örtüşür. Kısa bir sohbet mesajı sentin bir kısmına mal olur. Büyük bir ajan görevi — örneğin 10 çalışma alanı nesnesini yapılandırmak — büyüyen bir bağlam üzerinde birçok model çağrısı yapar, bu nedenle maliyeti bir dolar veya daha fazlasına kadar çıkabilir. Kullandığınız her şey için, token seviyesine kadar ayrıntılı olarak ücretlendirilirsiniz.
 
 Maliyet modele göre değişir: hafif bir model, üst seviye bir muhakeme modeline kıyasla mesaj başına çok daha ucuzdur. **Ayarlar → Faturalandırma** bölümünde, hangi modelin kullanıldığını da içeren eylem başına dökümü görebilirsiniz.
 
@@ -50,10 +50,10 @@ Bu krediler, günlük otomasyonu rahatça karşılayacak şekilde tasarlanmışt
 
 Kullanılmamış krediler otomatik olarak bir sonraki faturalandırma dönemine devredilir.
 
-* **Üst sınır**: Devir, bir dönemin tam tahsisatıyla sınırlandırılır; bu nedenle hiçbir zaman planınızın dönem başına sağladığından daha fazla krediyi devredemezsiniz.
+* **Üst sınır**: Devir, bir dönemin tam tahsisatıyla sınırlandırılır; bu nedenle hiçbir zaman fatura döneminizin dönem başına sağladığından daha fazlasını devredemezsiniz.
 * **Görünürlük**: Devreden kredileriniz olduğunda, **Ayarlar → Faturalandırma** bölümünde **Devreden Krediler** olarak ayrı bir satırda görünür ve **Toplam Kullanılabilir** bakiyenin yanında yer alır.
 
-## Kullanımı İzleme
+## Kullanımı izleme
 
 Bakiyenizi ve nereye gittiğini takip edin:
 

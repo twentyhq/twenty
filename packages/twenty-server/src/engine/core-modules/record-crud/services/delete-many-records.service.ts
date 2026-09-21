@@ -8,8 +8,10 @@ import {
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type DeleteManyRecordsParams } from 'src/engine/core-modules/record-crud/types/delete-many-records-params.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { isDefined, isEmptyObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
+
+import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
 
 @Injectable()
 export class DeleteManyRecordsService {
@@ -23,7 +25,7 @@ export class DeleteManyRecordsService {
   async execute(params: DeleteManyRecordsParams): Promise<ToolOutput> {
     const { objectName, filter, authContext, rolePermissionConfig } = params;
 
-    if (!isDefined(filter) || isEmptyObject(filter)) {
+    if (!isDefined(filter) || isRecordFilterEmpty(filter)) {
       return {
         success: false,
         message: `Failed to delete records from ${objectName}`,

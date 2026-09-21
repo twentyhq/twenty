@@ -1,5 +1,6 @@
 import { ViewType, ViewKey } from 'twenty-shared/types';
 
+import { INDEX_VIEW_NAME } from 'src/engine/metadata-modules/view/constants/index-view-name.constant';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import {
   createStandardViewFlatMetadata,
@@ -20,11 +21,11 @@ export const computeStandardMessageChannelMessageAssociationMessageFolderViews =
           objectName: 'messageChannelMessageAssociationMessageFolder',
           context: {
             viewName: 'allMessageChannelMessageAssociationMessageFolders',
-            name: 'All {objectLabelPlural}',
+            name: INDEX_VIEW_NAME,
             type: ViewType.TABLE,
             key: ViewKey.INDEX,
             position: 0,
-            icon: 'IconList',
+            icon: 'IconTable',
           },
         }),
       messageChannelMessageAssociationMessageFolderRecordPageFields:
@@ -38,7 +39,7 @@ export const computeStandardMessageChannelMessageAssociationMessageFolderViews =
             type: ViewType.FIELDS_WIDGET,
             key: null,
             position: 0,
-            icon: 'IconList',
+            icon: 'IconListDetails',
           },
         }),
     };

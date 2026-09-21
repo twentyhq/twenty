@@ -35,12 +35,9 @@ export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends Metad
   },
 ) {
   buildSideEffects({
-    flatEntity: flatObjectMetadata,
+    flatEntity: sourceFlatObjectMetadata,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
-    const sourceFlatObjectMetadata =
-      flatObjectMetadata as UniversalFlatObjectMetadata;
-
     const standardTargetFlatObjectMetadataByNameSingular = {} as Record<
       DefaultRelationStandardObjectNameSingular,
       UniversalFlatObjectMetadata

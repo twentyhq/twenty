@@ -1,18 +1,19 @@
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import {
   buildPermissionSummaryFromRoleManifest,
   type PermissionSummaryItem,
 } from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
+import { LightButton } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { StyledAppModal } from '~/pages/settings/applications/components/SettingsAppModalLayout';
 
 type SettingsApplicationInstallPermissionValidationModalProps = {
   modalInstanceId: string;
@@ -96,7 +97,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   onAuthorize,
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
-  const { closeModal } = useModal();
+  const { closeDialog } = useDialog();
 
   const permissionItems: PermissionSummaryItem[] = useMemo(() => {
     if (!defaultRole) {
@@ -107,65 +108,70 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   }, [defaultRole]);
 
   const handleAuthorize = () => {
-    closeModal(modalInstanceId);
+    closeDialog(modalInstanceId);
     onAuthorize();
   };
 
   const handleClose = () => {
-    closeModal(modalInstanceId);
+    closeDialog(modalInstanceId);
   };
 
   return (
-    <StyledAppModal
-      modalId={modalInstanceId}
-      isClosable
+    <DialogInstance
+      dialogId={modalInstanceId}
+      dismissible
       onClose={handleClose}
-      size="fullscreen"
-      padding="none"
-      overlay="transparent"
     >
-      <StyledFullscreenContainer>
-        <StyledLightButton
-          Icon={IconChevronLeft}
-          title={t`Back to settings`}
-          onClick={handleClose}
-        />
+      {({ container, backdrop, viewportProps, onKeyDown }) => (
+        <Dialog.Popup
+          aria-label={t`Install ${appDisplayName} on your workspace`}
+          {...{ container, backdrop, viewportProps, onKeyDown }}
+          size="fullscreen"
+          style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
+        >
+          <StyledFullscreenContainer>
+            <StyledLightButton
+              startIcon={<IconChevronLeft />}
+              onClick={handleClose}
+            >{t`Back to settings`}</StyledLightButton>
 
-        <StyledContent>
-          <StyledAppConnectionHeaderContainer>
-            <AppConnectionHeader
-              appLogoUrl={appLogoUrl}
-              appName={appDisplayName}
-            />
-          </StyledAppConnectionHeaderContainer>
+            <StyledContent>
+              <StyledAppConnectionHeaderContainer>
+                <AppConnectionHeader
+                  appLogoUrl={appLogoUrl}
+                  appName={appDisplayName}
+                />
+              </StyledAppConnectionHeaderContainer>
 
-          <StyledTitle>
-            {t`Install ${appDisplayName} on your workspace`}
-          </StyledTitle>
+              <StyledTitle>
+                {t`Install ${appDisplayName} on your workspace`}
+              </StyledTitle>
 
-          {permissionItems.length > 0 && (
-            <StyledPermissionsCard>
-              <StyledPermissionsTitle>
-                {t`${appDisplayName} would like to:`}
-              </StyledPermissionsTitle>
-              {permissionItems.map((item) => (
-                <StyledPermissionRow key={item.label}>
-                  <StyledPermissionIcon>
-                    <item.Icon size={16} />
-                  </StyledPermissionIcon>
-                  {item.label}
-                </StyledPermissionRow>
-              ))}
-            </StyledPermissionsCard>
-          )}
+              {permissionItems.length > 0 && (
+                <StyledPermissionsCard>
+                  <StyledPermissionsTitle>
+                    {t`${appDisplayName} would like to:`}
+                  </StyledPermissionsTitle>
+                  {permissionItems.map((item) => (
+                    <StyledPermissionRow key={item.label}>
+                      <StyledPermissionIcon>
+                        <item.Icon size={16} />
+                      </StyledPermissionIcon>
+                      {item.label}
+                    </StyledPermissionRow>
+                  ))}
+                </StyledPermissionsCard>
+              )}
 
-          <AuthorizeActionButtons
-            onCancel={handleClose}
-            onAuthorize={handleAuthorize}
-            isLoading={isInstalling}
-          />
-        </StyledContent>
-      </StyledFullscreenContainer>
-    </StyledAppModal>
+              <AuthorizeActionButtons
+                onCancel={handleClose}
+                onAuthorize={handleAuthorize}
+                isLoading={isInstalling}
+              />
+            </StyledContent>
+          </StyledFullscreenContainer>
+        </Dialog.Popup>
+      )}
+    </DialogInstance>
   );
 };

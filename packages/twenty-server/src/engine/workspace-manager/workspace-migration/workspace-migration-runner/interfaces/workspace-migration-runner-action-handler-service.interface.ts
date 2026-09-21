@@ -4,6 +4,9 @@ import { AllMetadataName } from 'twenty-shared/metadata';
 import { QueryRunner } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -74,6 +77,9 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
+
+  @Inject(MetricsService)
+  protected readonly metricsService: MetricsService;
 
   public abstract transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<TUniversalAction>,
@@ -320,18 +326,43 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     label,
     method,
   }: {
-    label: string;
+    label: 'executeForMetadata' | 'executeForWorkspaceSchema';
     method: () => Promise<void>;
   }): Promise<void> {
+    const startedAt = performance.now();
+
+    const recordActionDuration = (status: 'success' | 'fail') =>
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.WorkspaceMigrationActionDurationMs,
+        value: performance.now() - startedAt,
+        unit: 'ms',
+        attributes: {
+          actionType: this.actionType,
+          metadataName: this.metadataName,
+          step: label,
+          status,
+        },
+        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+      });
+
     this.logger.perfTime(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
       `${this.actionType}_${this.metadataName} ${label}`,
     );
-    await method();
+
+    try {
+      await method();
+    } catch (error) {
+      recordActionDuration('fail');
+      throw error;
+    }
+
     this.logger.perfTimeEnd(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
       `${this.actionType}_${this.metadataName} ${label}`,
     );
+
+    recordActionDuration('success');
   }
 }
 

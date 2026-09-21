@@ -22,9 +22,6 @@ export const convertUpdateViewInputToGql = (
       anyFieldFilterValue: view.anyFieldFilterValue,
     }),
     ...(isDefined(view.key) && { key: view.key }),
-    ...(isDefined(view.openRecordIn) && {
-      openRecordIn: view.openRecordIn,
-    }),
     ...(isDefined(view.type) && { type: view.type }),
     ...(isDefined(view.calendarLayout) && {
       calendarLayout: view.calendarLayout,

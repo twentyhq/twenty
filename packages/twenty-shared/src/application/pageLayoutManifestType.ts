@@ -1,18 +1,27 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
-  type GridPosition,
   type PageLayoutTabLayoutMode,
+  type PageLayoutType,
   type PageLayoutWidgetConditionalDisplay,
+  type PageLayoutWidgetPosition,
   type PageLayoutWidgetUniversalConfiguration,
+  type PageLayoutWidgetVerticalListHeightBehavior,
+  type WidgetType,
 } from '@/types';
 
 export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   title: string;
-  type: string;
+  type: `${WidgetType}`;
   objectUniversalIdentifier?: string;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay;
-  gridPosition?: GridPosition;
+  position?: PageLayoutWidgetPosition;
+  heightBehavior?: `${PageLayoutWidgetVerticalListHeightBehavior}`;
   configuration: PageLayoutWidgetUniversalConfiguration;
+};
+
+export type StandalonePageLayoutWidgetManifest = PageLayoutWidgetManifest & {
+  pageLayoutTabUniversalIdentifier: string;
+  position: PageLayoutWidgetPosition;
 };
 
 export type PageLayoutTabManifest = SyncableEntityOptions & {
@@ -26,7 +35,7 @@ export type PageLayoutTabManifest = SyncableEntityOptions & {
 
 export type PageLayoutManifest = SyncableEntityOptions & {
   name: string;
-  type: string;
+  type: `${PageLayoutType}`;
   objectUniversalIdentifier?: string;
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier?: string;
   tabs?: PageLayoutTabManifest[];

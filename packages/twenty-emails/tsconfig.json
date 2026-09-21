@@ -3,6 +3,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "moduleResolution": "bundler",
+    "noEmit": true,
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,

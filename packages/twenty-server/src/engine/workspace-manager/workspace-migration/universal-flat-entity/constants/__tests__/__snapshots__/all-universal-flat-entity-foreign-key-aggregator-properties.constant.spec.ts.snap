@@ -29,10 +29,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "fieldPermissionUniversalIdentifiers",
     "viewUniversalIdentifiers",
     "searchFieldMetadataUniversalIdentifiers",
+    "pageLayoutUniversalIdentifiers",
+    "commandMenuItemUniversalIdentifiers",
+    "navigationMenuItemUniversalIdentifiers",
   ],
   "objectPermission": [],
   "pageLayout": [
     "tabUniversalIdentifiers",
+    "navigationMenuItemUniversalIdentifiers",
   ],
   "pageLayoutTab": [
     "widgetUniversalIdentifiers",
@@ -58,6 +62,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   ],
   "searchFieldMetadata": [],
   "skill": [],
+  "timelineActivityType": [],
   "view": [
     "viewFieldUniversalIdentifiers",
     "viewFilterUniversalIdentifiers",
@@ -65,6 +70,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "viewGroupUniversalIdentifiers",
     "viewFieldGroupUniversalIdentifiers",
     "viewSortUniversalIdentifiers",
+    "navigationMenuItemUniversalIdentifiers",
   ],
   "viewField": [],
   "viewFieldGroup": [

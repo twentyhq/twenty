@@ -37,7 +37,7 @@ export const InstallApps = () => {
     );
 
     return isDefined(marketplaceApp)
-      ? [{ ...app, logo: marketplaceApp.logo ?? null }]
+      ? [{ ...app, logoUrl: marketplaceApp.logoUrl ?? null }]
       : [];
   });
 

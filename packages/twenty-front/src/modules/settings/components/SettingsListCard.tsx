@@ -4,12 +4,12 @@ import { type ComponentType, useContext } from 'react';
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
 
 import { type IconComponent, IconPlus } from 'twenty-ui/icon';
-import { Card, CardFooter } from 'twenty-ui/surfaces';
+import { Card, CardFooter } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
 const StyledFooterContainer = styled.div`
-  > * {
+  > div {
     align-items: center;
     display: flex;
     padding: ${themeCssVariables.spacing[1]};
@@ -44,7 +44,7 @@ type SettingsListCardProps<ListItem extends { id: string }> = {
   isLoading?: boolean;
   onRowClick?: (item: ListItem) => void;
   RowIcon?: IconComponent;
-  RowIconFn?: (item: ListItem) => IconComponent;
+  RowIconFn?: (item: ListItem) => IconComponent | undefined;
   RowIconColor?: string;
   RowRightComponent: ComponentType<{ item: ListItem }>;
   footerButtonLabel?: string;

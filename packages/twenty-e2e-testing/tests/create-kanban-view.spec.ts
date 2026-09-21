@@ -4,8 +4,7 @@ test.describe.serial('Create Kanban View', () => {
 // the same database, and a duplicate label makes the form unsubmittable.
 const industryLabel = `Industry ${Date.now()}`;
 test('Create Industry Select Field', async ({ page }) => {
-    await page.getByTestId('workspace-dropdown').click();
-    await page.getByRole('link', { name: 'Settings' }).click();
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await page.getByRole('link', { name: 'Data model' }).click();
     await page.getByRole('link', { name: 'Opportunities' }).click();
     await expect(page.getByRole('button', { name: 'New Field' })).toBeVisible();

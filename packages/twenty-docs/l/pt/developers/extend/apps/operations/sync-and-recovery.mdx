@@ -121,5 +121,6 @@ Quando algo dá errado, o diff de metadados e os erros nomeados permitem localiz
 
 * **Erro de build do manifesto** — a CLI falha antes de sincronizar (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); corrija o código-fonte do seu app.
 * **Erro de sincronização / migração** — o build é bem-sucedido, mas aplicar o diff falha, nomeando a entidade e o `universalIdentifier`; corrija os metadados em conflito.
+* **Erro no tamanho das dependências** — a sincronização ou instalação falha porque as `dependencies` de produção do app são grandes demais para serem instaladas como uma camada de runtime (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); mova para `devDependencies` os pacotes que suas funções de lógica não importam em tempo de execução (bibliotecas de UI, ferramentas de desenvolvimento).
 * **Erro de tempo de execução no código do app** — a sincronização é concluída com êxito, mas suas funções de lógica ou componentes se comportam de forma incorreta em tempo de execução; verifique os [logs de função](/l/pt/developers/extend/apps/operations/cli).
 * **Estado da instância local** — nenhuma das opções acima e o espaço de trabalho ainda parece incorreto; prossiga descendo na escada de recuperação.

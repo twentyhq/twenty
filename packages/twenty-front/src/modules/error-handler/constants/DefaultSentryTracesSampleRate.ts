@@ -1,0 +1,1 @@
+export const DEFAULT_SENTRY_TRACES_SAMPLE_RATE = 0.1;

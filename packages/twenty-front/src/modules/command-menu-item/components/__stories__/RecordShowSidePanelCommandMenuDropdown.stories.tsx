@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
 import { userEvent, within } from 'storybook/test';
@@ -13,7 +14,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
 const meta: Meta<typeof RecordPageSidePanelCommandMenuDropdown> = {
@@ -38,7 +39,8 @@ const meta: Meta<typeof RecordPageSidePanelCommandMenuDropdown> = {
               <CommandMenuContext.Provider
                 value={{
                   displayType: 'dropdownItem',
-                  containerType: 'command-menu-show-page-dropdown',
+                  containerType:
+                    CommandMenuItemContainerType.CommandMenuShowPageDropdown,
                   commandMenuItems: createMockCommandMenuItems(),
                   commandMenuContextApi: {
                     ...EMPTY_COMMAND_MENU_CONTEXT_API,
@@ -57,7 +59,7 @@ const meta: Meta<typeof RecordPageSidePanelCommandMenuDropdown> = {
     ComponentDecorator,
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     RouterDecorator,
   ],
   args: {
@@ -82,19 +84,19 @@ export const WithButtonClicks: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
 
-    let actionButton = await canvas.findByText('Options');
+    let actionButton = await canvas.findByRole('button', { name: 'Options' });
     await userEvent.click(actionButton);
 
     const deleteButton = await canvas.findByText('Delete');
     await userEvent.click(deleteButton);
 
-    actionButton = await canvas.findByText('Options');
+    actionButton = await canvas.findByRole('button', { name: 'Options' });
     await userEvent.click(actionButton);
 
     const addToFavoritesButton = await canvas.findByText('Add to favorites');
     await userEvent.click(addToFavoritesButton);
 
-    actionButton = await canvas.findByText('Options');
+    actionButton = await canvas.findByRole('button', { name: 'Options' });
     await userEvent.click(actionButton);
 
     const exportButton = await canvas.findByText('Export');

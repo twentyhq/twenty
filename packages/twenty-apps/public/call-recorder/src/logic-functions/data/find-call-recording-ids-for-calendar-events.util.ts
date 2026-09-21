@@ -6,31 +6,12 @@ import {
   fetchAllNodes,
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
+import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 
 const CALENDAR_EVENT_ID_BATCH_SIZE = TWENTY_PAGE_SIZE;
 
 type CallRecordingIdNode = {
   id: string;
-};
-
-const getCalendarEventIdBatches = (calendarEventIds: string[]): string[][] => {
-  const uniqueCalendarEventIds = [...new Set(calendarEventIds)];
-  const calendarEventIdBatches: string[][] = [];
-
-  for (
-    let batchStartIndex = 0;
-    batchStartIndex < uniqueCalendarEventIds.length;
-    batchStartIndex += CALENDAR_EVENT_ID_BATCH_SIZE
-  ) {
-    calendarEventIdBatches.push(
-      uniqueCalendarEventIds.slice(
-        batchStartIndex,
-        batchStartIndex + CALENDAR_EVENT_ID_BATCH_SIZE,
-      ),
-    );
-  }
-
-  return calendarEventIdBatches;
 };
 
 export const findCallRecordingIdsForCalendarEvents = async (
@@ -43,8 +24,9 @@ export const findCallRecordingIdsForCalendarEvents = async (
 
   const callRecordingIds: string[] = [];
 
-  for (const calendarEventIdBatch of getCalendarEventIdBatches(
-    calendarEventIds,
+  for (const calendarEventIdBatch of getBatches(
+    [...new Set(calendarEventIds)],
+    CALENDAR_EVENT_ID_BATCH_SIZE,
   )) {
     const callRecordingNodes = await fetchAllNodes<CallRecordingIdNode>(
       async (afterCursor) => {

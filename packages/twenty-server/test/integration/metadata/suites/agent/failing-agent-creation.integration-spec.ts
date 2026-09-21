@@ -1,3 +1,4 @@
+import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
@@ -32,7 +33,7 @@ describe('Agent creation should fail', () => {
       input: {
         label: globalTestContext.existingAgentLabel,
         prompt: 'Existing agent for testing',
-        modelId: 'openai/gpt-4.1',
+        modelId: TEST_AI_MODEL_ID,
       },
     });
 
@@ -49,13 +50,12 @@ describe('Agent creation should fail', () => {
   });
 
   const failingAgentCreationTestCases: CreateOneAgentTestingContext = [
-    // Missing required properties tests
     {
       title: 'when label is missing',
       context: {
         input: {
           prompt: 'Test prompt',
-          modelId: 'openai/gpt-4.1',
+          modelId: TEST_AI_MODEL_ID,
         } as CreateAgentInput,
       },
     },
@@ -64,7 +64,7 @@ describe('Agent creation should fail', () => {
       context: {
         input: {
           label: 'Test Agent Missing Prompt',
-          modelId: 'openai/gpt-4.1',
+          modelId: TEST_AI_MODEL_ID,
         } as CreateAgentInput,
       },
     },
@@ -83,7 +83,7 @@ describe('Agent creation should fail', () => {
         input: {
           label: '',
           prompt: 'Test prompt',
-          modelId: 'openai/gpt-4.1',
+          modelId: TEST_AI_MODEL_ID,
         },
       },
     },
@@ -93,7 +93,7 @@ describe('Agent creation should fail', () => {
         input: {
           label: 'Empty Prompt Agent',
           prompt: '',
-          modelId: 'openai/gpt-4.1',
+          modelId: TEST_AI_MODEL_ID,
         },
       },
     },
@@ -107,25 +107,23 @@ describe('Agent creation should fail', () => {
         },
       },
     },
-    // Name uniqueness test
     {
       title: 'when computed name already exists',
       context: {
         input: {
           label: globalTestContext.existingAgentLabel,
           prompt: 'Duplicate agent',
-          modelId: 'openai/gpt-4.1',
+          modelId: TEST_AI_MODEL_ID,
         },
       },
     },
-    // Invalid response format tests
     {
       title: 'when responseFormat has invalid type',
       context: {
         input: {
           label: 'Invalid Response Format Agent',
           prompt: 'Test prompt',
-          modelId: 'openai/gpt-4.1',
+          modelId: TEST_AI_MODEL_ID,
           responseFormat: {
             type: 'invalid',
           } as any,
@@ -138,7 +136,7 @@ describe('Agent creation should fail', () => {
         input: {
           label: 'JSON Without Schema Agent',
           prompt: 'Test prompt',
-          modelId: 'openai/gpt-4.1',
+          modelId: TEST_AI_MODEL_ID,
           responseFormat: {
             type: 'json',
           } as any,
@@ -151,7 +149,7 @@ describe('Agent creation should fail', () => {
         input: {
           label: 'Text With Schema Agent',
           prompt: 'Test prompt',
-          modelId: 'openai/gpt-4.1',
+          modelId: TEST_AI_MODEL_ID,
           responseFormat: {
             type: 'text',
             schema: { type: 'object' },

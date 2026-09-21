@@ -8,16 +8,17 @@ import { isRecordBoardDropProcessingComponentState } from '@/object-record/recor
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { getBoardCardDropBehavior } from '@/object-record/record-board/utils/getBoardCardDropBehavior';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
-import { resolveDropFromPointerY } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerY';
+import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
 import { useProcessBoardCardDrop } from '@/object-record/record-drag/hooks/useProcessBoardCardDrop';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
-import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { getRecordIndexRemoveSortingModalId } from '@/object-record/record-index/utils/getRecordIndexRemoveSortingModalId';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
@@ -75,7 +76,8 @@ export const useRecordBoardDndKit = (): {
       isRecordBoardDropProcessingComponentState,
     );
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
     number | null
@@ -114,9 +116,10 @@ export const useRecordBoardDndKit = (): {
   const handleDragMove = (event: DragMovePayload) => {
     const { target, position } = event.operation;
 
-    const resolvedDrop = resolveDropFromPointerY({
+    const resolvedDrop = resolveDropFromPointer({
       target,
-      pointerY: position.current.y,
+      pointer: position.current,
+      defaultOrientation: 'horizontal',
       getDroppableItemCount,
     });
 
@@ -142,9 +145,10 @@ export const useRecordBoardDndKit = (): {
     const sourceDroppableId = (source.data as DragDropItemData).droppableId;
     const sourceIndex = (source.data as DragDropItemData).index;
 
-    const resolvedDrop = resolveDropFromPointerY({
+    const resolvedDrop = resolveDropFromPointer({
       target,
-      pointerY: position.current.y,
+      pointer: position.current,
+      defaultOrientation: 'horizontal',
       getDroppableItemCount,
     });
     if (!isDefined(resolvedDrop)) {
@@ -163,7 +167,7 @@ export const useRecordBoardDndKit = (): {
 
     if (boardCardDropBehavior.shouldBlockDrop) {
       resetDragState();
-      openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+      openDialog(getRecordIndexRemoveSortingModalId(recordIndexId));
       return;
     }
 

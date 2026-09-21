@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { type SubmitHandler, type UseFormReturn } from 'react-hook-form';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
+import { useAuth } from '@/auth/hooks/useAuth';
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
@@ -9,35 +10,33 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { isErrorLike } from '@apollo/client/errors';
-import { useLingui } from '@lingui/react/macro';
-import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
-import { isMatchingLocation } from '~/utils/isMatchingLocation';
-import { useAuth } from '@/auth/hooks/useAuth';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
+import { useLingui } from '@lingui/react/macro';
+import { AppPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
+import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
+
 export const useSignInUp = (form: UseFormReturn<Form>) => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { t } = useLingui();
 
   const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useAtomState(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
-  const isMultiWorkspaceEnabled = useAtomStateValue(
-    isMultiWorkspaceEnabledState,
-  );
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { isCaptchaReady } = useCaptcha();
   const setLastAuthenticatedMethod = useSetAtomState(
     lastAuthenticatedMethodState,
@@ -74,13 +73,12 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const errorMsgUserAlreadyExist = t`An error occurred while checking user existence`;
   const continueWithCredentials = useCallback(async () => {
     if (!form.getValues('email')) {
-      return enqueueErrorSnackBar({
-        message: t`Email is required`,
-      });
+      return enqueueToast({ variant: 'error', children: t`Email is required` });
     }
     if (!isCaptchaReady) {
-      return enqueueErrorSnackBar({
-        message: t`Captcha (anti-bot check) is still loading, try again`,
+      return enqueueToast({
+        variant: 'error',
+        children: t`Captcha (anti-bot check) is still loading, try again`,
       });
     }
     try {
@@ -94,7 +92,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       });
 
       if (isDefined(error)) {
-        return enqueueErrorSnackBar({ apolloError: error });
+        return enqueueToast(getToastOptionsFromError({ error }));
       }
 
       setSignInUpMode(
@@ -104,13 +102,13 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       );
       setSignInUpStep(SignInUpStep.Password);
     } catch {
-      enqueueErrorSnackBar({ message: errorMsgUserAlreadyExist });
+      enqueueToast({ variant: 'error', children: errorMsgUserAlreadyExist });
     }
   }, [
     readCaptchaToken,
     form,
     isCaptchaReady,
-    enqueueErrorSnackBar,
+    enqueueToast,
     t,
     checkUserExistsQuery,
     setSignInUpMode,
@@ -125,8 +123,9 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
 
       if (!isCaptchaReady) {
-        return enqueueErrorSnackBar({
-          message: t`Captcha (anti-bot check) is still loading, try again`,
+        return enqueueToast({
+          variant: 'error',
+          children: t`Captcha (anti-bot check) is still loading, try again`,
         });
       }
 
@@ -161,7 +160,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         if (
           !isInviteMode &&
           signInUpMode === SignInUpMode.SignUp &&
-          (!isOnAWorkspace || !isMultiWorkspaceEnabled)
+          (!isOnAWorkspace || !isDefined(workspacePublicData))
         ) {
           return await signUpWithCredentials(
             data.email.toLowerCase().trim(),
@@ -184,9 +183,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           verifyEmailRedirectPath,
         });
       } catch (error: unknown) {
-        enqueueErrorSnackBar({
-          ...(isErrorLike(error) ? { apolloError: error } : {}),
-        });
+        enqueueToast(getToastOptionsFromError({ error }));
       }
     },
     [
@@ -200,10 +197,10 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       signUpWithCredentialsInWorkspace,
       workspaceInviteHash,
       workspacePersonalInviteToken,
-      enqueueErrorSnackBar,
+      enqueueToast,
       buildSearchParamsFromUrlSyncedStates,
       isOnAWorkspace,
-      isMultiWorkspaceEnabled,
+      workspacePublicData,
       setLastAuthenticatedMethod,
       t,
     ],

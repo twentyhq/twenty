@@ -44,7 +44,7 @@ export type LearnToolsResult = {
 };
 
 export type LearnToolsOptions = {
-  excludeTools?: Set<string>;
+  isToolAllowed?: (toolName: string) => boolean;
   spillLargeOutput?: boolean;
 };
 
@@ -59,9 +59,9 @@ export const createLearnToolsTool = (
   execute: async (parameters: LearnToolsInput): Promise<LearnToolsResult> => {
     const { toolNames, aspects } = parameters;
 
-    const excludeTools = options?.excludeTools;
-    const allowedNames = excludeTools
-      ? toolNames.filter((name) => !excludeTools.has(name))
+    const { isToolAllowed } = options ?? {};
+    const allowedNames = isToolAllowed
+      ? toolNames.filter((name) => isToolAllowed(name))
       : toolNames;
 
     const toolInfos = await toolRegistry.getToolInfo(

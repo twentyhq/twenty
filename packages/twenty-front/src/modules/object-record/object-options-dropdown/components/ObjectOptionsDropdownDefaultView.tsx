@@ -19,7 +19,7 @@ import {
   IconLock,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const ObjectOptionsDropdownDefaultView = () => {
@@ -87,7 +87,7 @@ export const ObjectOptionsDropdownDefaultView = () => {
               onClick={() => onContentChange('fields')}
               LeftIcon={IconListDetails}
               text={t`Fields`}
-              contextualText={t`${visibleFieldsCount} shown`}
+              contextualText={t`${visibleFieldsCount} selected`}
               contextualTextPosition="right"
               hasSubMenu
             />

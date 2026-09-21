@@ -1,25 +1,29 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 
+import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { DeleteChatThreadDocument } from '~/generated-metadata/graphql';
 
 export const useDeleteChatThread = () => {
   const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const setAgentChatInput = useSetAtomState(agentChatInputState);
+  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
   const store = useStore();
 
   const [deleteMutation] = useMutation(DeleteChatThreadDocument);
@@ -37,6 +41,8 @@ export const useDeleteChatThread = () => {
         return;
       }
 
+      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+
       const remaining = sortChatThreadsByLastActivityDesc(
         store
           .get(agentChatVisibleThreadsSelector.atom)
@@ -48,17 +54,21 @@ export const useDeleteChatThread = () => {
         const nextThreadId = remaining[0].id;
 
         setCurrentAiChatThread(nextThreadId);
-        setAgentChatInput(draftsByThreadId[nextThreadId] ?? '');
+        projectAiChatThreadToUrl(nextThreadId);
+        setAgentChatInput(
+          tipTapDocumentToMarkdown(draftsByThreadId[nextThreadId] ?? ''),
+        );
       } else {
         setCurrentAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
+        projectAiChatThreadToUrl(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
         setAgentChatInput(
-          draftsByThreadId[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '',
+          tipTapDocumentToMarkdown(
+            draftsByThreadId[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '',
+          ),
         );
       }
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 

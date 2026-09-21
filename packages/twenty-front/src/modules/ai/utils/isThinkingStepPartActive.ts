@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 
 export const isThinkingStepPartActive = (
@@ -12,7 +10,6 @@ export const isThinkingStepPartActive = (
 
   return (
     isLastMessageStreaming &&
-    !isDefined(part.output) &&
-    !isDefined(part.errorText)
+    (part.state === 'input-streaming' || part.state === 'input-available')
   );
 };

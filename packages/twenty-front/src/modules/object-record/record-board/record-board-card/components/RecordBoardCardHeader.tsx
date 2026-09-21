@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
@@ -10,21 +11,21 @@ import { StopPropagationContainer } from '@/object-record/record-board/record-bo
 import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState';
 import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
+import { OpenRecordIn } from 'twenty-shared/types';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipVariant } from 'twenty-ui/data-display';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
-import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
+import { useIsMobile, useIsTouchDevice } from 'twenty-ui/utilities';
 
 const StyledCompactIconContainer = styled.div`
   align-items: center;
@@ -69,14 +70,15 @@ export const RecordBoardCardHeader = () => {
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  const recordIndexOpenRecordIn = useAtomStateValue(
-    recordIndexOpenRecordInState,
-  );
+  const openRecordIn = useResolveOpenRecordIn(objectMetadataItem.nameSingular);
+
+  const isTouchDevice = useIsTouchDevice();
+  const isMobile = useIsMobile();
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const triggerEvent =
-    recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL
+    openRecordIn === OpenRecordIn.SIDE_PANEL || isTouchDevice
       ? 'CLICK'
       : 'MOUSE_DOWN';
 
@@ -88,7 +90,7 @@ export const RecordBoardCardHeader = () => {
             <RecordChip
               objectNameSingular={objectMetadataItem.nameSingular}
               record={recordStore}
-              variant={ChipVariant.Transparent}
+              variant="ghost"
               onClick={() => {
                 activateBoardCard({ rowIndex, columnIndex });
                 unfocusBoardCard();
@@ -104,28 +106,35 @@ export const RecordBoardCardHeader = () => {
         <StyledCompactIconContainer className="compact-icon-container">
           <StopPropagationContainer>
             <LightIconButton
-              Icon={recordBoardCardIsExpanded ? IconEyeOff : IconEye}
-              accent="tertiary"
+              emphasis="subtle"
               onClick={() => {
                 setRecordBoardCardIsExpanded(!recordBoardCardIsExpanded);
               }}
-            />
+              aria-label={
+                recordBoardCardIsExpanded ? t`Collapse card` : t`Expand card`
+              }
+              aria-expanded={recordBoardCardIsExpanded}
+            >
+              {recordBoardCardIsExpanded ? <IconEyeOff /> : <IconEye />}
+            </LightIconButton>
           </StopPropagationContainer>
         </StyledCompactIconContainer>
       )}
-      <StyledCheckboxContainer className="checkbox-container">
-        <StopPropagationContainer>
-          <Checkbox
-            hoverable
-            checked={isRecordBoardCardSelected}
-            onChange={(value) => {
-              setIsRecordBoardCardSelected(value.target.checked);
-              checkIfLastUnselectAndCloseDropdown();
-            }}
-            variant={CheckboxVariant.Secondary}
-          />
-        </StopPropagationContainer>
-      </StyledCheckboxContainer>
+      {!isMobile && (
+        <StyledCheckboxContainer className="checkbox-container">
+          <StopPropagationContainer>
+            <Checkbox
+              hoverable
+              checked={isRecordBoardCardSelected}
+              onCheckedChange={(isChecked) => {
+                setIsRecordBoardCardSelected(isChecked);
+                checkIfLastUnselectAndCloseDropdown();
+              }}
+              variant="outline"
+            />
+          </StopPropagationContainer>
+        </StyledCheckboxContainer>
+      )}
     </RecordCardHeaderContainer>
   );
 };

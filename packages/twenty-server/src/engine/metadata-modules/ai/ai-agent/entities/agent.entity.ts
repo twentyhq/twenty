@@ -10,7 +10,7 @@ import {
 
 import { AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/modelConfiguration';
-import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
+import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
@@ -46,7 +46,7 @@ export class AgentEntity
   @Column({
     nullable: false,
     type: 'varchar',
-    default: AUTO_SELECT_SMART_MODEL_ID,
+    default: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
   })
   modelId: ModelId;
 

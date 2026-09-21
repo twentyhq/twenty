@@ -10,7 +10,6 @@ export const computeStandardPersonViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'person'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
-    // allPeople view fields
     allPeopleName: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'person',
@@ -260,7 +259,6 @@ export const computeStandardPersonViewFields = (
         viewFieldGroupName: 'general',
       },
     }),
-    // Work group
     personRecordPageFieldsCompany: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'person',
@@ -287,7 +285,6 @@ export const computeStandardPersonViewFields = (
         viewFieldGroupName: 'work',
       },
     }),
-    // Social group
     personRecordPageFieldsLinkedinLink: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'person',
@@ -301,7 +298,6 @@ export const computeStandardPersonViewFields = (
         viewFieldGroupName: 'social',
       },
     }),
-    // System group
     personRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'person',
@@ -352,6 +348,44 @@ export const computeStandardPersonViewFields = (
         isVisible: false,
         size: 150,
         viewFieldGroupName: 'system',
+      },
+    }),
+
+    // messageListRecordPageMembers view fields
+    messageListRecordPageMembersName: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'messageListRecordPageMembers',
+        viewFieldName: 'name',
+        fieldName: 'name',
+        position: 0,
+        isVisible: true,
+        size: 210,
+      },
+    }),
+    messageListRecordPageMembersEmails: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'messageListRecordPageMembers',
+        viewFieldName: 'emails',
+        fieldName: 'emails',
+        position: 1,
+        isVisible: true,
+        size: 150,
+      },
+    }),
+    messageListRecordPageMembersCompany: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'messageListRecordPageMembers',
+        viewFieldName: 'company',
+        fieldName: 'company',
+        position: 2,
+        isVisible: true,
+        size: 150,
       },
     }),
   };

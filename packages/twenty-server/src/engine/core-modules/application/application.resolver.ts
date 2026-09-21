@@ -1,16 +1,26 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Parent, Query, ResolveField } from '@nestjs/graphql';
 
-import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
+import { type ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
+import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
+import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -68,18 +78,35 @@ export class ApplicationResolver {
     @Parent() application: Pick<ApplicationDTO, 'id' | 'logo'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): string | null {
-    const logo = application.logo;
+    return buildPublicAssetLogoUrl({
+      logo: application.logo,
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+      workspaceId: workspace.id,
+      applicationId: application.id,
+    });
+  }
 
-    if (!isDefined(logo) || logo.length === 0) {
-      return null;
+  @ResolveField(() => [ApplicationVariableEntityDTO])
+  applicationVariables(
+    @Parent()
+    application: Pick<ApplicationDTO, 'id'> & {
+      applicationVariables?: ApplicationVariableEntity[];
+    },
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
+  ): ApplicationVariableEntity[] | undefined {
+    if (
+      isDefined(callingApplication) &&
+      callingApplication.id !== application.id
+    ) {
+      throw new ForbiddenError(
+        new ApplicationException(
+          'An application token can only read its own application variables',
+          ApplicationExceptionCode.FORBIDDEN,
+        ),
+      );
     }
 
-    if (isAbsoluteUrl(logo)) {
-      return logo;
-    }
-
-    const serverUrl = this.twentyConfigService.get('SERVER_URL');
-
-    return `${serverUrl}/public-assets/${workspace.id}/${application.id}/${logo}`;
+    return application.applicationVariables;
   }
 }

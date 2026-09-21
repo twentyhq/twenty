@@ -4,6 +4,8 @@ import { styled } from '@linaria/react';
 import { useRouter } from 'next/navigation';
 
 import { PartnerApplicationWizard } from '@/partner-application';
+import { localizeHref } from '@/platform/i18n/localize-href';
+import { useLocale } from '@/platform/i18n/use-locale';
 import { buildSchemeContext, mediaUp, MODAL_SURFACE, spacing } from '@/tokens';
 
 // The full-page home of the wizard, on the same dark surface as the modal
@@ -31,12 +33,13 @@ const ApplyContainer = styled.div`
 
 export function PartnerApplicationPageContent() {
   const router = useRouter();
+  const locale = useLocale();
 
   return (
     <ApplyBackground data-scheme="dark">
       <ApplyContainer>
         <PartnerApplicationWizard
-          onSuccess={() => router.push('/partners/list')}
+          onSuccess={() => router.push(localizeHref(locale, '/partners'))}
           resetSignal={0}
         />
       </ApplyContainer>

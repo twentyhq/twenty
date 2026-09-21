@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Query } from '@nestjs/graphql';
+import { Args, Context, Query } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,18 +10,22 @@ import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 import { SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
 import { SearchApiExceptionFilter } from 'src/engine/core-modules/search/filters/search-api-exception.filter';
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @CoreResolver()
 @UseFilters(
   SearchApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 @UsePipes(ResolverValidationPipe)
 @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
@@ -43,6 +47,7 @@ export class SearchResolver {
       excludedObjectNameSingulars,
       after,
     }: SearchArgs,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
   ) {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -73,7 +78,6 @@ export class SearchResolver {
         includedObjectNameSingulars,
         excludedObjectNameSingulars,
         after,
-        workspaceId: workspace.id,
       });
 
     return await this.searchService.computeSearchObjectResults({
@@ -82,6 +86,8 @@ export class SearchResolver {
       workspaceId: workspace.id,
       limit,
       after,
+      loaders: context.loaders,
+      locale: context.req.locale,
     });
   }
 }

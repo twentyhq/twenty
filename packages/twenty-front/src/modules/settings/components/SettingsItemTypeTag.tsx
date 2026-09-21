@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 
 import { AppChip } from '@/applications/components/AppChip';
-import { Avatar, Chip, ChipAccent, ChipVariant } from 'twenty-ui/data-display';
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { isDefined } from 'twenty-shared/utils';
 
 type SettingsItemTypeTagProps = {
@@ -22,18 +22,19 @@ export const SettingsItemTypeTag = ({
     return (
       <Chip
         className={className}
-        label={t`Remote`}
-        variant={ChipVariant.Transparent}
-        accent={ChipAccent.TextPrimary}
-        leftComponent={
+        variant="ghost"
+        color="primary"
+        startElement={
           <Avatar
-            type="app"
+            shape="square"
+            variant="outline"
             size="sm"
-            placeholder="Remote"
-            placeholderColorSeed="Remote"
+            name="Remote"
+            colorSeed="Remote"
           />
         }
-      />
+        style={{ paddingInlineStart: 0 }}
+      >{t`Remote`}</Chip>
     );
   } else {
     return null;

@@ -2,8 +2,8 @@ import {
   RemoteFragmentRenderer,
   createRemoteComponentRenderer,
 } from '@remote-dom/react/host';
-import { createHtmlHostWrapper } from '../utils/createHtmlHostWrapper';
-import { RemoteStyleRenderer } from '../components/RemoteStyleRenderer';
+import { createHtmlHostWrapper } from '@/host/elements/utils/createHtmlHostWrapper';
+import { RemoteStyleRenderer } from '@/host/components/RemoteStyleRenderer';
 type ComponentRegistryValue =
   | ReturnType<typeof createRemoteComponentRenderer>
   | typeof RemoteFragmentRenderer;

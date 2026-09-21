@@ -1,5 +1,5 @@
-import { getInitialEditorContent } from '@/workflow/workflow-variables/utils/getInitialEditorContent';
-import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
+import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
+import { WorkflowVariableTag } from '@/workflow/workflow-variables/extensions/WorkflowVariableTag';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import Paragraph from '@tiptap/extension-paragraph';
@@ -48,7 +48,7 @@ export const useTextVariableEditor = ({
       Placeholder.configure({
         placeholder,
       }),
-      VariableTag,
+      WorkflowVariableTag,
       ...(multiline
         ? [
             HardBreak.configure({
@@ -70,7 +70,6 @@ export const useTextVariableEditor = ({
         if (event.key === 'Enter' && !event.shiftKey) {
           event.preventDefault();
 
-          // Insert hard break using the view's state and dispatch
           if (multiline === true) {
             const { state } = view;
             const { tr } = state;
@@ -91,7 +90,6 @@ export const useTextVariableEditor = ({
           state: { schema, tr },
         } = view;
 
-        // Format pasted JSON content with pretty-printing
         if (isJsonObject(plainText)) {
           const parsedJson = parseJson<JsonValue>(plainText);
           const formattedJson = multiline
@@ -109,7 +107,6 @@ export const useTextVariableEditor = ({
           return true;
         }
 
-        // In multiline mode, convert newlines to hardBreak nodes
         if (multiline && plainText.includes('\n')) {
           const docNode = schema.nodeFromJSON(
             getInitialEditorContent(plainText),

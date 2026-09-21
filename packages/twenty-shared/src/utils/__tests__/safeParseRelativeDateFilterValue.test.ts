@@ -520,7 +520,6 @@ describe('safeParseRelativeDateFilterJsonStringified', () => {
           unit: 'DAY',
         });
 
-        // THIS direction should work with amount present, as the schema allows it
         const result = safeParseRelativeDateFilterJsonStringified(input);
         expect(result).toEqual({
           direction: 'THIS',

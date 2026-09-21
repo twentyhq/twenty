@@ -1,14 +1,13 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
-import { OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID } from '@/workflow/constants/OverrideWorkflowDraftConfirmationModalId';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
-import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useState } from 'react';
+import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
+import { useLingui } from '@lingui/react/macro';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
@@ -18,60 +17,82 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
   workflowId: string;
   workflowVersionId: string;
 }) => {
-  const { openModal } = useModal();
+  const isCore = useIsWorkflowCoreEnabled();
+  const { t } = useLingui();
   const workflow = useWorkflowWithCurrentVersion(workflowId);
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
   const navigate = useNavigateApp();
-  const [hasNavigated, setHasNavigated] = useState(false);
 
   const hasAlreadyDraftVersion =
-    workflow?.versions.some((version) => version.status === 'DRAFT') || false;
+    workflow?.versions.some((version) => version.status === 'DRAFT') ?? false;
 
-  const handleExecute = () => {
-    if (!isDefined(workflow) || hasNavigated) {
+  const handleExecute = async () => {
+    await createDraftFromWorkflowVersion({
+      workflowId,
+      workflowVersionIdToCopy: workflowVersionId,
+    });
+
+    if (isCore) {
+      navigate(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflowId });
       return;
     }
-
-    if (hasAlreadyDraftVersion) {
-      openModal(OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID);
-    } else {
-      const executeCommandWithoutWaiting = async () => {
-        await createDraftFromWorkflowVersion({
-          workflowId,
-          workflowVersionIdToCopy: workflowVersionId,
-        });
-
-        navigate(AppPath.RecordShowPage, {
-          objectNameSingular: CoreObjectNameSingular.Workflow,
-          objectRecordId: workflowId,
-        });
-
-        setHasNavigated(true);
-      };
-
-      executeCommandWithoutWaiting();
-    }
+    navigate(AppPath.RecordShowPage, {
+      objectNameSingular: CoreObjectNameSingular.Workflow,
+      objectRecordId: workflowId,
+    });
   };
 
+  if (!isDefined(workflow)) {
+    return null;
+  }
+
+  if (!hasAlreadyDraftVersion) {
+    return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
+  }
+
   return (
-    <>
-      <HeadlessEngineCommandWrapperEffect execute={handleExecute} />
-      <OverrideWorkflowDraftConfirmationModal
-        workflowId={workflowId}
-        workflowVersionIdToCopy={workflowVersionId}
-      />
-    </>
+    <HeadlessConfirmationModalEngineCommandEffect
+      title={t`A draft already exists`}
+      subtitle={t`A draft already exists for this workflow. Are you sure you want to erase it?`}
+      confirmButtonText={t`Override Draft`}
+      linkButton={{
+        title: t`Go to Draft`,
+        to: isCore
+          ? getAppPath(AppPath.WorkflowCoreShowPage, {
+              coreWorkflowId: workflowId,
+            })
+          : getAppPath(AppPath.RecordShowPage, {
+              objectNameSingular: CoreObjectNameSingular.Workflow,
+              objectRecordId: workflowId,
+            }),
+      }}
+      execute={handleExecute}
+    />
   );
 };
 
 export const UseAsDraftWorkflowVersionSingleRecordCommand = () => {
+  const isCore = useIsWorkflowCoreEnabled();
   const { selectedRecords } = useHeadlessCommandContextApi();
 
-  const recordId = selectedRecords[0]?.id;
-  const workflowVersion = useWorkflowVersion(recordId ?? '');
+  const selectedRecord = selectedRecords[0];
+  const { coreWorkflowVersion, loading } = useCoreWorkflowVersion(
+    isCore ? selectedRecord?.coreWorkflowVersionId : undefined,
+  );
 
-  if (!recordId || !isDefined(workflowVersion?.workflow?.id)) {
+  if (isCore && (loading || !isDefined(coreWorkflowVersion))) {
+    return null;
+  }
+
+  const workflowId = isCore
+    ? coreWorkflowVersion?.coreWorkflowId
+    : selectedRecord?.workflowId;
+  const workflowVersionId = isCore
+    ? coreWorkflowVersion?.id
+    : selectedRecord?.id;
+
+  if (!isDefined(workflowId) || !isDefined(workflowVersionId)) {
     throw new Error(
       'Record ID and workflow ID are required to use as draft workflow version',
     );
@@ -79,8 +100,8 @@ export const UseAsDraftWorkflowVersionSingleRecordCommand = () => {
 
   return (
     <UseAsDraftWorkflowVersionSingleRecordCommandContent
-      workflowId={workflowVersion.workflow.id}
-      workflowVersionId={workflowVersion.id}
+      workflowId={workflowId}
+      workflowVersionId={workflowVersionId}
     />
   );
 };

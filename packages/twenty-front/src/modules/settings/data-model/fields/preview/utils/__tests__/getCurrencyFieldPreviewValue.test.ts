@@ -16,7 +16,6 @@ const mockedOpportunityObjectMetadataItem =
 
 describe('getCurrencyFieldPreviewValue', () => {
   it('returns null if the field is not a Currency field', () => {
-    // Given
     const fieldMetadataItem = mockedCompanyObjectMetadataItem?.fields.find(
       ({ type }) => type !== FieldMetadataType.CURRENCY,
     );
@@ -25,10 +24,8 @@ describe('getCurrencyFieldPreviewValue', () => {
       throw new Error('Field not found');
     }
 
-    // When
     const previewValue = getCurrencyFieldPreviewValue({ fieldMetadataItem });
 
-    // Then
     expect(previewValue).toBeNull();
   });
 
@@ -43,7 +40,6 @@ describe('getCurrencyFieldPreviewValue', () => {
   }
 
   it("returns the parsed defaultValue if a valid defaultValue is found in the field's metadata", () => {
-    // Given
     const defaultValue = {
       amountMicros: 3000000000,
       currencyCode: `'${CurrencyCode.EUR}'`,
@@ -53,12 +49,10 @@ describe('getCurrencyFieldPreviewValue', () => {
       defaultValue,
     };
 
-    // When
     const previewValue = getCurrencyFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithDefaultValue,
     });
 
-    // Then
     expect(previewValue).toEqual({
       amountMicros: defaultValue.amountMicros,
       currencyCode: CurrencyCode.EUR,
@@ -66,7 +60,6 @@ describe('getCurrencyFieldPreviewValue', () => {
   });
 
   it("returns a placeholder amountMicros if it is empty in the field's metadata defaultValue", () => {
-    // Given
     const defaultValue = {
       amountMicros: null,
       currencyCode: `'${CurrencyCode.EUR}'`,
@@ -76,12 +69,10 @@ describe('getCurrencyFieldPreviewValue', () => {
       defaultValue,
     };
 
-    // When
     const previewValue = getCurrencyFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithDefaultValue,
     });
 
-    // Then
     expect(previewValue).toEqual({
       amountMicros: 2000000000,
       currencyCode: CurrencyCode.EUR,
@@ -89,7 +80,6 @@ describe('getCurrencyFieldPreviewValue', () => {
   });
 
   it("returns a placeholder default value if the defaultValue found in the field's metadata is invalid", () => {
-    // Given
     const defaultValue = {
       amountMicros: null,
       currencyCode: "''",
@@ -99,12 +89,10 @@ describe('getCurrencyFieldPreviewValue', () => {
       defaultValue,
     };
 
-    // When
     const previewValue = getCurrencyFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithDefaultValue,
     });
 
-    // Then
     expect(previewValue).toEqual({
       amountMicros: 2000000000,
       currencyCode: CurrencyCode.USD,
@@ -112,19 +100,16 @@ describe('getCurrencyFieldPreviewValue', () => {
   });
 
   it("returns a placeholder default value if no defaultValue is found in the field's metadata", () => {
-    // Given
     const defaultValue = null;
     const fieldMetadataItemWithDefaultValue = {
       ...fieldMetadataItem,
       defaultValue,
     };
 
-    // When
     const previewValue = getCurrencyFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithDefaultValue,
     });
 
-    // Then
     expect(previewValue).toEqual({
       amountMicros: 2000000000,
       currencyCode: CurrencyCode.USD,

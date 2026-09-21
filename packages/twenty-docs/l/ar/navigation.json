@@ -145,6 +145,14 @@
               "label": "الإرشادات"
             }
           }
+        },
+        "legal": {
+          "label": "قانوني",
+          "groups": {
+            "legalHowTos": {
+              "label": "الإرشادات"
+            }
+          }
         }
       }
     },
@@ -177,9 +185,6 @@
             },
             "appsOperations": {
               "label": "العمليات"
-            },
-            "appsTranslations": {
-              "label": "الترجمات"
             }
           }
         },

@@ -1,20 +1,18 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { isDefined } from 'twenty-shared/utils';
+import { SettingsRow, Section } from 'twenty-ui/components';
 import { IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { SearchInput } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
 import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSettingsAgentToolsTable';
 import { type SettingsAgentToolItem } from '~/pages/settings/ai/types/SettingsAgentToolItem';
+import { isOwnedByInstalledApplication } from '~/pages/settings/ai/utils/isOwnedByInstalledApplication';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledSearchContainer = styled.div`
@@ -40,7 +38,10 @@ export const SettingsAgentToolsTab = () => {
     currentWorkspace?.workspaceCustomApplication?.id;
 
   const isManaged = (applicationId?: string | null) =>
-    isDefined(applicationId) && applicationId !== workspaceCustomApplicationId;
+    isOwnedByInstalledApplication({
+      applicationId,
+      workspaceCustomApplicationId,
+    });
 
   const isCustom = (tool: SettingsAgentToolItem) =>
     isDefined(tool.applicationId);
@@ -72,8 +73,8 @@ export const SettingsAgentToolsTab = () => {
     .sort((a, b) => (a.label ?? a.name).localeCompare(b.label ?? b.name));
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Tools`}
         description={t`Use filter to see existing tools or create your own`}
       />
@@ -91,27 +92,21 @@ export const SettingsAgentToolsTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemToggle
-                      LeftIcon={IconTool}
-                      onToggleChange={setShowCustomTools}
-                      toggled={showCustomTools}
-                      text={t`Custom`}
-                      toggleSize="small"
-                    />
-                    <MenuItemToggle
-                      LeftIcon={IconLock}
-                      onToggleChange={setShowManagedTools}
-                      toggled={showManagedTools}
-                      text={t`Managed`}
-                      toggleSize="small"
-                    />
-                    <MenuItemToggle
-                      LeftIcon={IconPuzzle}
-                      onToggleChange={setShowStandardTools}
-                      toggled={showStandardTools}
-                      text={t`Standard`}
-                      toggleSize="small"
-                    />
+                    <SettingsRow
+                      startIcon={<IconTool />}
+                      onCheckedChange={setShowCustomTools}
+                      checked={showCustomTools}
+                    >{t`Custom`}</SettingsRow>
+                    <SettingsRow
+                      startIcon={<IconLock />}
+                      onCheckedChange={setShowManagedTools}
+                      checked={showManagedTools}
+                    >{t`Managed`}</SettingsRow>
+                    <SettingsRow
+                      startIcon={<IconPuzzle />}
+                      onCheckedChange={setShowStandardTools}
+                      checked={showStandardTools}
+                    >{t`Standard`}</SettingsRow>
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }
@@ -128,6 +123,6 @@ export const SettingsAgentToolsTab = () => {
         }
         currentWorkspace={currentWorkspace}
       />
-    </Section>
+    </Section.Root>
   );
 };

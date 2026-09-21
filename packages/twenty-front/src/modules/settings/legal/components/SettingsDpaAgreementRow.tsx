@@ -1,6 +1,7 @@
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { IconDownload } from 'twenty-ui/icon';
 
 import { type DpaAgreement } from '@/settings/legal/types/Dpa';
@@ -34,7 +35,12 @@ export const SettingsDpaAgreementRow = ({
 
   return (
     <TableRow gridAutoColumns={DPA_AGREEMENT_ROW_GRID_COLUMNS}>
-      <TableCell whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
+      <TableCell
+        color={themeCssVariables.font.color.primary}
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+      >
         <StyledEllipsisLabel>{label}</StyledEllipsisLabel>
       </TableCell>
       <TableCell>{agreement.templateVersion}</TableCell>
@@ -42,12 +48,11 @@ export const SettingsDpaAgreementRow = ({
       <TableCell align="right">
         {agreement.downloadUrl ? (
           <Button
-            Icon={IconDownload}
-            title={t`Download`}
-            size="small"
-            variant="tertiary"
+            startIcon={<IconDownload />}
+            size="sm"
             onClick={() => onDownload(agreement)}
-          />
+            variant="ghost"
+          >{t`Download`}</Button>
         ) : (
           '—'
         )}

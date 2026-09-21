@@ -25,6 +25,11 @@ rawDataSource
     );
 
     await performQuery(
+      'CREATE EXTENSION IF NOT EXISTS "citext"',
+      'create extension "citext"',
+    );
+
+    await performQuery(
       `CREATE OR REPLACE FUNCTION public.unaccent_immutable(input text)
     RETURNS text
     LANGUAGE sql

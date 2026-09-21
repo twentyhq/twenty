@@ -17,7 +17,7 @@ Tento pracovní postup používá **Ruční spouštěč**, takže uživatelé mo
 
 Než nastavíte pracovní postup:
 
-1. **Vytvořte klíč API**: Přejděte do **Nastavení → API** a vytvořte nový klíč API. Tento token budete potřebovat pro logickou funkci.
+1. **Vytvořte klíč API**: Přejděte do **Nastavení → API** a vytvořte nový klíč API. Tento token budeš potřebovat pro logickou funkci.
 2. **Nastavte službu pro generování PDF** (volitelné): Pokud chcete dynamicky generovat PDF (např. nabídky), použijte službu jako Carbone, PDFMonkey nebo DocuSeal k vytvoření PDF a získání adresy URL pro stažení.
 
 ## Nastavení krok za krokem
@@ -29,12 +29,12 @@ Než nastavíte pracovní postup:
 3. Zvolte objekt, ke kterému chcete připojovat PDF (např. **Společnost** nebo **Příležitost**)
 
 <Tip>
-S **Ručním spouštěčem** mohou uživatelé spustit tento pracovní postup pomocí tlačítka, které se zobrazí vpravo nahoře po výběru záznamu, aby vygenerovali a připojili PDF.
+s manuálním spouštěčem, uživatelé mohou spustit tento pracovní postup pomocí tlačítka, které se zobrazí vpravo nahoře, jakmile je vybrán záznam - toto běží pracovní postup pro generování a připojení PDF.
 </Tip>
 
 ### Krok 2: Přidejte logickou funkci
 
-1. Přidejte akci **Code** (logická funkce)
+1. Přidat akci **Code** (funkce Logike)
 2. Vytvořte novou funkci pomocí kódu níže
 3. Nakonfigurujte vstupní parametry
 
@@ -237,7 +237,7 @@ Pro vytváření dynamických nabídek nebo faktur:
 | 1    | Ruční spouštěč (Společnost) | Uživatel spustí na záznamu                             |
 | 2    | Vyhledat záznam             | Získat podrobnosti o příležitosti nebo řádkové položce |
 | 3    | HTTP požadavek              | Zavolat API pro generování PDF s daty záznamu          |
-| 4    | Serverless funkce           | Stáhnout a připojit vygenerované PDF                   |
+| 4    | Logická funkce              | Stáhnout a připojit vygenerované PDF                   |
 
 ### Oblíbené služby pro generování PDF
 
@@ -246,7 +246,7 @@ Pro vytváření dynamických nabídek nebo faktur:
 * **DocuSeal** - Platforma pro automatizaci dokumentů
 * **Documint** - Generování dokumentů primárně přes API
 
-Každá služba poskytuje API, které vrací adresu URL PDF, kterou pak můžete předat logické funkci.
+Každá služba poskytuje API, které vrátí PDF adresu URL, kterou můžete předat funkci Logika.
 
 ## Řešení potíží
 

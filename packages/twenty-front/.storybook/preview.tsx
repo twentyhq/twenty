@@ -24,6 +24,10 @@ import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import { resetJotaiStore } from '../src/modules/ui/utilities/state/jotai/jotaiStore';
 // oxlint-disable-next-line no-restricted-imports
 import { UserContext } from '../src/modules/users/contexts/UserContext';
+// Stories rendering CodeEditor / GraphiQL need Monaco's worker factory, which
+// the app normally sets up in src/index.tsx.
+// oxlint-disable-next-line no-restricted-imports
+import '../src/modules/app/utils/setupMonacoEnvironment';
 
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
@@ -33,10 +37,8 @@ import { ThemeProvider } from 'twenty-ui/theme-constants';
 // oxlint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';
 
-// Initialize i18n globally for all stories
 i18n.load({ [SOURCE_LOCALE]: enMessages });
 i18n.activate(SOURCE_LOCALE);
-import { mockedUserJWT } from '~/testing/mock-data/jwt';
 // oxlint-disable-next-line no-restricted-imports
 import { ClickOutsideListenerContext } from '../src/modules/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 
@@ -145,6 +147,10 @@ const preview: Preview = {
   loaders: [mswLoader, waitForInterFontLoadedBeforeScreenshot],
 
   parameters: {
+    argos: {
+      // CSS zoom combined with viewport-sized stories makes the iframe grow during capture.
+      fitToContent: { zoom: 1 },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -156,9 +162,6 @@ const preview: Preview = {
       storySort: {
         order: ['UI', 'Modules', 'Pages'],
       },
-    },
-    cookie: {
-      tokenPair: `{%22accessOrWorkspaceAgnosticToken%22:{%22token%22:%22${mockedUserJWT}%22%2C%22expiresAt%22:%222023-07-18T15:06:40.704Z%22%2C%22__typename%22:%22AuthToken%22}%2C%22refreshToken%22:{%22token%22:%22${mockedUserJWT}%22%2C%22expiresAt%22:%222023-10-15T15:06:41.558Z%22%2C%22__typename%22:%22AuthToken%22}%2C%22__typename%22:%22AuthTokenPair%22}`,
     },
   },
 };

@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
@@ -20,10 +21,11 @@ import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-re
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
-@Controller('rest')
+@Controller(ApiPath.Rest)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, CustomPermissionGuard)
-@UseFilters(RestApiExceptionFilter)
+@UseFilters(RestApiExceptionFilter, AuthRestApiExceptionFilter)
 export class RestApiCoreController {
   private readonly logger = new Logger(RestApiCoreController.name);
   constructor(private readonly restApiCoreService: RestApiCoreService) {}
@@ -106,7 +108,7 @@ export class RestApiCoreController {
     res.status(200).send(result);
   }
 
-  @Patch('restore/*path')
+  @Patch('*path/restore')
   async handleApiRestore(
     @Req() request: AuthenticatedRequest,
     @Res() res: Response,

@@ -17,12 +17,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/icon';
 
-export const ADD_RECORD_GROUP_PICKER_INSTANCE_ID =
-  'object-options-add-record-group-picker';
-
 export const ObjectOptionsDropdownAddRecordGroupContent = () => {
   const { t } = useLingui();
-  const { onContentChange, objectMetadataItem } = useObjectOptionsDropdown();
+  const { onContentChange, dropdownId } = useObjectOptionsDropdown();
+  const addRecordGroupPickerInstanceId = `${dropdownId}-add-record-group-picker`;
   const { currentView } = useGetCurrentViewOnly();
 
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
@@ -33,7 +31,7 @@ export const ObjectOptionsDropdownAddRecordGroupContent = () => {
 
   const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
-    ADD_RECORD_GROUP_PICKER_INSTANCE_ID,
+    addRecordGroupPickerInstanceId,
   );
 
   const targetObjectNameSingular =
@@ -76,7 +74,7 @@ export const ObjectOptionsDropdownAddRecordGroupContent = () => {
 
   return (
     <SingleRecordPickerComponentInstanceContext.Provider
-      value={{ instanceId: ADD_RECORD_GROUP_PICKER_INSTANCE_ID }}
+      value={{ instanceId: addRecordGroupPickerInstanceId }}
     >
       <DropdownContent>
         <DropdownMenuHeader
@@ -90,7 +88,7 @@ export const ObjectOptionsDropdownAddRecordGroupContent = () => {
           {t`New group`}
         </DropdownMenuHeader>
         <SingleRecordPickerMenuItemsWithSearch
-          focusId={ADD_RECORD_GROUP_PICKER_INSTANCE_ID}
+          focusId={addRecordGroupPickerInstanceId}
           onCancel={handleBack}
           onMorphItemSelected={handleRecordSelected}
           objectNameSingulars={[targetObjectNameSingular]}

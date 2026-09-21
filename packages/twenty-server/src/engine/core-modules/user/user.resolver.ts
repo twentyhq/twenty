@@ -20,7 +20,10 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  type AuthContext,
+  type AuthContextUser,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,
@@ -43,14 +46,20 @@ import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util';
+import { assertWorkspaceMemberUpdateValuesAreValid } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
+import { AuthAuthenticatedAt } from 'src/engine/decorators/auth/auth-authenticated-at.decorator';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
+import { AuthImpersonationContext } from 'src/engine/decorators/auth/auth-impersonation-context.decorator';
+import { canCredentialAutoLoginIntoWorkspaces } from 'src/engine/core-modules/auth/utils/can-credential-auto-login-into-workspaces.util';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -66,7 +75,7 @@ import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permi
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -80,7 +89,7 @@ const getHMACKey = (email?: string, key?: string | null) => {
 };
 
 @MetadataResolver(() => UserEntity)
-@UseFilters(PermissionsGraphqlApiExceptionFilter)
+@UseFilters(PermissionsGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
 export class UserResolver {
   constructor(
     @InjectRepository(UserEntity)
@@ -95,7 +104,7 @@ export class UserResolver {
     private readonly permissionsService: PermissionsService,
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   private async getUserWorkspacePermissions({
@@ -122,9 +131,12 @@ export class UserResolver {
 
   @Query(() => UserEntity)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @AllowSuspendedWorkspace()
   async currentUser(
     @AuthUser() { id: userId }: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace: WorkspaceEntity,
+    @AuthImpersonationContext()
+    impersonationContext: AuthContext['impersonationContext'],
   ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       where: {
@@ -182,6 +194,7 @@ export class UserResolver {
         ...currentUserWorkspace,
         ...userWorkspacePermissions,
         twoFactorAuthenticationMethodSummary,
+        isImpersonating: isDefined(impersonationContext),
       },
       currentWorkspace: refreshedWorkspace,
     };
@@ -203,6 +216,7 @@ export class UserResolver {
 
     const userVarAllowList: string[] = [
       OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+      OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
       AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
       AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES,
     ];
@@ -370,12 +384,14 @@ export class UserResolver {
 
   @Mutation(() => UserEntity)
   @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @AllowSuspendedWorkspace()
   async deleteUser(@AuthUser() { id: userId }: AuthContextUser) {
     return this.userService.deleteUser(userId);
   }
 
   @Mutation(() => UserWorkspaceEntity)
   @UseGuards(UserAuthGuard, CustomPermissionGuard)
+  @AllowSuspendedWorkspace()
   async deleteUserFromWorkspace(
     @Args('workspaceMemberIdToDelete') workspaceMemberIdToDelete: string,
     @AuthUser() { id: userId }: AuthContextUser,
@@ -394,23 +410,19 @@ export class UserResolver {
     const authContext = buildSystemAuthContext(workspace.id);
 
     const workspaceMemberToDelete =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspace.id,
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceMemberRepository =
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
 
-          return workspaceMemberRepository.findOne({
-            where: {
-              id: workspaceMemberIdToDelete,
-            },
-          });
-        },
-        authContext,
-      );
+        return workspaceMemberRepository.findOne({
+          where: {
+            id: workspaceMemberIdToDelete,
+          },
+        });
+      }, authContext);
 
     if (!isDefined(workspaceMemberToDelete)) {
       throw new BadRequestException(
@@ -449,6 +461,7 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+  @AllowSuspendedWorkspace()
   async updateWorkspaceMemberSettings(
     @Args('input') input: UpdateWorkspaceMemberSettingsInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -495,10 +508,13 @@ export class UserResolver {
       update: input.update,
     });
 
+    assertWorkspaceMemberUpdateValuesAreValid({
+      update: input.update,
+    });
+
     const workspaceMemberRepository =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () =>
-        this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          workspace.id,
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () =>
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
           {
             shouldBypassPermissionChecks: true,
@@ -507,7 +523,7 @@ export class UserResolver {
       );
 
     const workspaceMember =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(() =>
+      await this.workspaceOrmManager.executeInWorkspaceContext(() =>
         workspaceMemberRepository.findOne({
           where: {
             id: input.workspaceMemberId,
@@ -525,7 +541,7 @@ export class UserResolver {
         ...(input.update as Partial<WorkspaceMemberWorkspaceEntity>),
       };
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(() =>
+    await this.workspaceOrmManager.executeInWorkspaceContext(() =>
       workspaceMemberRepository.save(workspaceMemberUpdatePayload),
     );
 
@@ -565,7 +581,39 @@ export class UserResolver {
     if (!workspace) return null;
 
     return this.onboardingService.getOnboardingStatus({
-      user,
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @ResolveField(() => OnboardingStatus, {
+    nullable: true,
+  })
+  async previousOnboardingStatus(
+    @Parent() user: UserEntity,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<OnboardingStatus | null> {
+    if (!workspace) return null;
+
+    return this.onboardingService.getPreviousReversibleOnboardingStatus({
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @ResolveField(() => Boolean, {
+    nullable: true,
+  })
+  async isWorkspaceCreator(
+    @Parent() user: UserEntity,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<boolean | null> {
+    if (!workspace) return null;
+
+    return this.userWorkspaceService.isWorkspaceCreator({
+      userId: user.id,
       workspaceId: workspace.id,
     });
   }
@@ -597,6 +645,9 @@ export class UserResolver {
   async availableWorkspaces(
     @AuthUser() user: AuthContextUser,
     @AuthProvider() authProvider: AuthProviderEnum,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+    @AuthAuthenticatedAt() authenticatedAt: Date | undefined,
   ): Promise<AvailableWorkspaces> {
     return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
@@ -604,6 +655,14 @@ export class UserResolver {
       ),
       user,
       authProvider,
+      canCredentialAutoLoginIntoWorkspaces({
+        isWorkspaceScopedCredential: isDefined(workspace),
+        authenticatedAt,
+        autoLoginWindow: this.twentyConfigService.get(
+          'WORKSPACE_AUTO_LOGIN_WINDOW',
+        ),
+        now: new Date(),
+      }),
     );
   }
 

@@ -4,6 +4,7 @@ import {
   ConflictError,
   ForbiddenError,
   NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   WorkspaceException,
@@ -20,10 +21,13 @@ export const workspaceGraphqlApiExceptionHandler = (error: Error) => {
       case WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN:
       case WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN:
       case WorkspaceExceptionCode.SUBDOMAIN_NOT_VALID:
+      case WorkspaceExceptionCode.APPLICATION_UNINSTALL_IN_PROGRESS:
         throw new ConflictError(error);
       case WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED:
       case WorkspaceExceptionCode.WORKSPACE_CUSTOM_DOMAIN_DISABLED:
         throw new ForbiddenError(error);
+      case WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID:
+        throw new UserInputError(error);
       default: {
         return assertUnreachable(error.code);
       }

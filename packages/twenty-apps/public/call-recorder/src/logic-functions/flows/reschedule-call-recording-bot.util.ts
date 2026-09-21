@@ -1,14 +1,13 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recall-api-not-found-status';
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
-
-const RECALL_BOT_NOT_FOUND_STATUS = 404;
 
 export const rescheduleCallRecordingBot = async (
   client: CoreApiClient,
@@ -42,6 +41,7 @@ export const rescheduleCallRecordingBot = async (
   const rescheduleResult = await rescheduleRecallBot({
     externalBotId,
     meetingUrl,
+    meetingStartsAt,
     joinAt,
     metadata: buildRecallRoutingMetadata({
       callRecordingId: callRecording.id,
@@ -57,7 +57,7 @@ export const rescheduleCallRecordingBot = async (
   // single writer. The recorded attempt state is resolved (its bot is
   // confirmed gone), so clearing it lets recovery schedule directly instead
   // of treating the row as an ambiguous attempt.
-  if (rescheduleResult.status === RECALL_BOT_NOT_FOUND_STATUS) {
+  if (rescheduleResult.status === RECALL_API_NOT_FOUND_STATUS) {
     await updateCallRecording(client, {
       id: callRecording.id,
       data: {

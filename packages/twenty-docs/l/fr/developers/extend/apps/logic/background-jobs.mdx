@@ -1,0 +1,197 @@
+---
+title: Tâches en arrière-plan
+description: Confiez les travaux longs ou soumis à des limitations de débit aux workers de Twenty en mettant en file d’attente une autre exécution de fonction logique au lieu de tout faire en ligne.
+icon: layer-group
+---
+
+Une exécution de fonction logique est limitée par son `timeoutSeconds` (900 secondes maximum). Tout ce qui ne peut pas se terminer dans cette fenêtre — une resynchronisation complète, une diffusion par enregistrement, une API tierce qui vous applique des limitations de débit — doit être découpé en exécutions plus petites.
+
+`enqueueJobs` fait exactement cela : il demande aux workers de Twenty d’exécuter plus tard l’une des fonctions logiques de votre application, une fois par charge utile, chaque exécution dans son propre processus avec son propre budget de délai d’expiration. La fonction appelante retourne immédiatement.
+
+```text
+  ┌─────────────────┐  enqueueJobs(...)  ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## Mettre des exécutions en file d’attente
+
+Importez `enqueueJobs` depuis `twenty-sdk/logic-function`, pointez-le vers le `universalIdentifier` de la fonction logique à exécuter et transmettez une charge utile par exécution pour la mise en file d’attente.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJobs } from 'twenty-sdk/logic-function';
+
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payloads: [{ page: 1 }],
+});
+```
+
+Chaque exécution reçoit sa charge utile comme argument du gestionnaire, exactement comme pour tout autre déclencheur. La cible doit appartenir à la **même application** que l’appelant — la mise en file d’attente de la fonction d’une autre application est rejetée avec `Logic function not found` et rien n’est mis en file d’attente. Un seul appel accepte jusqu’à `200` charges utiles.
+
+<Note>
+`enqueueJobs` renvoie dès que les jobs sont acceptés, et non pas lorsqu’ils ont été exécutés. Il ne renvoie pas les résultats des cibles — faites en sorte que chaque cible écrive ce qu’elle produit dans le [key-value store](/l/fr/developers/extend/apps/logic/key-value-store) ou dans un enregistrement d’espace de travail si vous devez les lire à nouveau.
+</Note>
+
+<Note>
+L’ancien assistant `enqueueJob`, qui met en file d’attente un seul job par appel, est obsolète. Utilisez plutôt `enqueueJobs` avec une liste `payloads` à un élément.
+</Note>
+
+## Options du job
+
+Les options s’appliquent à chaque exécution du lot.
+
+| Option       | Par défaut | Plage                     | Ce que cela fait                                                                                                                                                                                                                                        |
+| ------------ | ---------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`        | `0`–`10`                  | Nombre total de tentatives supplémentaires dans la file d'attente. Les nouvelles tentatives demandées par l'application sont limitées à `3`. N’augmentez cette valeur que pour les gestionnaires qui peuvent être exécutés deux fois en toute sécurité. |
+| `delayMs`    | `0`        | `0`–`604800000` (7 jours) | Attendez ce délai avant que les exécutions deviennent éligibles.                                                                                                                                                                                        |
+
+```ts
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payloads: [{ page: 1 }],
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**La priorité n’est pas encore configurable.** Les jobs mis en file d’attente s’exécutent toujours avec la priorité la plus basse, de sorte que le travail de la plateforme n’est jamais retardé derrière les jobs des applications. Le contrôle de la priorité arrive bientôt.
+</Note>
+
+L’exécution mise en file d’attente hérite de l’utilisateur exécutant la fonction qui l’a mise en file d’attente, elle agit donc avec les mêmes autorisations.
+
+## Réessayer après un échec transitoire.
+
+Twenty ne réessaie pas toutes les exceptions du code d'application. Une erreur ordinaire levée est traitée comme un échec permanent. En cas d'échec transitoire, une fonction logique mise en file d'attente peut demander jusqu'à trois nouvelles tentatives en levant `RetryableLogicFunctionError`.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Levez directement `RetryableLogicFunctionError` lorsque cela est possible. Si vous l'étendez, ne remplacez pas son `name` : Twenty reconnaît le nom sérialisé `RetryableLogicFunctionError` dans les environnements d'exécution.
+
+`retryCount` est égal à `0` lors de l'exécution initiale et n'augmente que lorsque le code d'application demande une nouvelle tentative. `maxRetries` est au maximum de `3` et peut être inférieur lorsque la tâche mise en file d'attente a une limite globale de nouvelles tentatives plus faible. Les défaillances de la plateforme n'augmentent pas `retryCount`, bien qu'elles consomment toujours le budget de sécurité global de la file d'attente.
+
+La file d'attente retarde les tentatives avec un délai exponentiel et une gigue. Le délai exact n'est intentionnellement pas garanti, le code d'application ne doit donc pas dépendre d'une nouvelle tentative à un moment précis. Une fois `maxRetries` atteint, un autre `RetryableLogicFunctionError` est enregistré comme échec final de l'application sans nouvelle exécution.
+
+<Warning>
+Les nouvelles tentatives réexécutent l'intégralité du gestionnaire et peuvent survenir après la réussite de certains effets secondaires. Rendez le gestionnaire idempotent avant de demander des nouvelles tentatives.
+</Warning>
+
+## Utilisation : paginer une longue synchronisation
+
+La forme classique est une fonction qui met *elle-même* en file d’attente la prochaine exécution avec le curseur suivant. Chaque exécution traite une page de travail bien à l’intérieur de son propre délai d’expiration, et la chaîne s’arrête lorsqu’il ne reste plus rien.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payloads: [{ cursor: nextCursor }],
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## Répartition par enregistrement
+
+Quand le travail est naturellement par élément, mettez en file d’attente un job par élément dans un seul appel et laissez les workers les traiter en parallèle au lieu de boucler en ligne.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  payloads: companies.map((company) => ({ companyId: company.id })),
+  retryLimit: 2,
+});
+```
+
+## Bonnes pratiques pour les tâches de longue durée
+
+Deux règles couvrent presque toutes les longues tâches : **utilisez la récursion au lieu de boucles** et **traitez un bloc borné par exécution**.
+
+Une exécution qui essaie de tout faire est un mode d’échec — elle atteint le délai d’expiration, et avec une nouvelle tentative elle recommence tout depuis zéro. Au lieu de cela, dimensionnez un bloc de manière à ce qu’il se termine confortablement dans `timeoutSeconds`, conservez votre position et mettez en file d’attente l’exécution suivante.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJobs, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payloads: [{ offset: offset + CHUNK_SIZE }],
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Ce qui rend cette approche robuste :
+
+* **Dimensionnez le bloc à partir de l’élément le plus lent, pas de la moyenne.** `CHUNK_SIZE × worst-case item time` doit tenir dans `timeoutSeconds` avec une marge de sécurité, sinon la fin d’un bloc est perdue lorsque l’exécution est interrompue.
+* **Rendez la condition de terminaison explicite.** Utilisez la récursion uniquement lorsqu’un bloc complet est revenu. Une chaîne qui s’arrête uniquement sur "no results" continuera indéfiniment si la source renvoie un jour une page courte en cours de route.
+* **Conservez la progression avant de mettre en file d’attente l’exécution suivante,** afin qu’un maillon ayant échoué redémarre au dernier bloc terminé plutôt qu’au début.
+* **Gardez chaque bloc idempotent.** Le retraitement d’un bloc après une nouvelle tentative ne doit pas provoquer une double écriture — indexez les écritures sur l’enregistrement ou l’identifiant externe que vous traitez.
+* **Préférez une chaîne par blocs à un énorme déploiement parallèle** lorsque le travail touche un tiers soumis à des limitations de débit : une chaîne avec `delayMs` se régule elle-même, alors que des milliers de jobs mis en file d’attente d’un coup deviennent tous éligibles immédiatement.

@@ -11,6 +11,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { IconCheck } from 'twenty-ui/icon';
 
 const StyledBooleanSelectContainer = styled.div<{ selected?: boolean }>`
@@ -33,6 +35,10 @@ const StyledIconCheckContainer = styled.div`
 `;
 
 export const ObjectFilterDropdownBooleanSelect = () => {
+  const objectFilterDropdownComponentInstanceId =
+    useAvailableComponentInstanceIdOrThrow(
+      ObjectFilterDropdownComponentInstanceContext,
+    );
   const { theme } = useContext(ThemeContext);
   const options = [true, false];
 
@@ -56,7 +62,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <SelectableList
-        selectableListInstanceId="boolean-select"
+        selectableListInstanceId={`${objectFilterDropdownComponentInstanceId}-boolean-select`}
         selectableItemIdArray={options.map((option) => option.toString())}
         focusId="boolean-select"
       >

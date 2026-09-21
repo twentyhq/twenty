@@ -109,7 +109,7 @@ curl http://localhost:3000
 
 ### Expuneți Twenty pentru Acces Extern
 
-Implicit, Twenty rulează pe `localhost` la portul `3000`. Pentru a-l accesa printr-un domeniu extern sau adresă IP, trebuie să configurați `SERVER_URL` în fișierul dvs. `.env`.
+Implicit, Twenty rulează pe `localhost` la portul `3000`. Interfața de utilizator accesează API-ul folosind originea proprie a browserului, astfel încât se poate încărca de pe orice nume de gazdă care ajunge la container — totuși setează `SERVER_URL` la URL-ul tău public: serverul îl folosește pentru linkuri generate (e-mailuri, callback-uri OAuth) și pentru a detecta utilizarea HTTPS, necesară pentru cookie-uri securizate.
 
 #### Înțelegerea `SERVER_URL`
 
@@ -229,7 +229,7 @@ Adăugați în crontab-ul dvs. (`crontab -e`):
 1. Opriți aplicația:
 
 ```bash
-docker compose stop twenty-server twenty-front
+docker compose stop server worker
 ```
 
 2. Restaurați baza de date:

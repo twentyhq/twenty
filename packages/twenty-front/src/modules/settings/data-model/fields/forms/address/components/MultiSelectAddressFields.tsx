@@ -1,3 +1,4 @@
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -12,8 +13,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { t } from '@lingui/core/macro';
 import { type MouseEvent, useMemo, useState } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 
 type CallToActionButton = {
   text: string;
@@ -93,7 +94,7 @@ export const MultiSelectAddressFields = <Value extends SelectValue>({
               autoFocus
             />
             <DropdownMenuSeparator />
-            <DropdownMenuItemsContainer hasMaxHeight>
+            <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
               {filteredOptions?.map((option) => {
                 return (
                   <SelectableListItem
@@ -103,15 +104,18 @@ export const MultiSelectAddressFields = <Value extends SelectValue>({
                       onChange?.(onOptionSelected(option.value, values));
                     }}
                   >
-                    <MenuItemMultiSelectTag
+                    <ListItem
                       key={`${option.value}`}
-                      selected={values?.includes(option?.value) || false}
-                      text={option.label}
-                      color="transparent"
                       onClick={() =>
                         onChange?.(onOptionSelected(option.value, values))
                       }
-                    />
+                      role="option"
+                      aria-selected={values?.includes(option?.value) || false}
+                      selected={values?.includes(option?.value) || false}
+                      indicator="checkbox"
+                    >
+                      <Tag color={'transparent'}>{option.label}</Tag>
+                    </ListItem>
                   </SelectableListItem>
                 );
               })}

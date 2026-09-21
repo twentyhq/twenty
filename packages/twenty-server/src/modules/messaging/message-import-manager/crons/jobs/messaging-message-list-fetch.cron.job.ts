@@ -1,12 +1,13 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import groupBy from 'lodash.groupby';
+import { POLLED_MESSAGE_CHANNEL_TYPES } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Not, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
 import {
   MessageChannelSyncStage,
-  MessageChannelType,
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -16,7 +17,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
@@ -33,8 +33,6 @@ export class MessagingMessageListFetchCronJob {
   private readonly logger = new Logger(MessagingMessageListFetchCronJob.name);
 
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(MessageChannelEntity)
@@ -48,25 +46,28 @@ export class MessagingMessageListFetchCronJob {
     MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    const activeWorkspaces = await this.workspaceRepository.find({
-      where: {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
-
-    for (const activeWorkspace of activeWorkspaces) {
-      try {
-        const pendingMessageChannels = await this.messageChannelRepository.find(
-          {
-            where: {
-              workspaceId: activeWorkspace.id,
-              isSyncEnabled: true,
-              syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-              type: Not(MessageChannelType.EMAIL_GROUP),
-            },
+    const pendingMessageChannelsAcrossWorkspaces =
+      await this.messageChannelRepository.find({
+        where: {
+          isSyncEnabled: true,
+          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+          type: In([...POLLED_MESSAGE_CHANNEL_TYPES]),
+          workspace: {
+            activationStatus: WorkspaceActivationStatus.ACTIVE,
+            deletedAt: IsNull(),
           },
-        );
+        },
+      });
 
+    const pendingMessageChannelsByWorkspaceId = groupBy(
+      pendingMessageChannelsAcrossWorkspaces,
+      'workspaceId',
+    );
+
+    for (const [workspaceId, pendingMessageChannels] of Object.entries(
+      pendingMessageChannelsByWorkspaceId,
+    )) {
+      try {
         const messageChannelsToSchedule = pendingMessageChannels.filter(
           (messageChannel) =>
             !isThrottled(
@@ -86,7 +87,7 @@ export class MessagingMessageListFetchCronJob {
 
         if (throttledCount > 0) {
           this.logger.log(
-            `Skipped ${throttledCount} throttled message channels for workspace ${activeWorkspace.id}`,
+            `Skipped ${throttledCount} throttled message channels for workspace ${workspaceId}`,
           );
         }
 
@@ -107,7 +108,7 @@ export class MessagingMessageListFetchCronJob {
           })
           .where({
             id: In(messageChannelIdsToSchedule),
-            workspaceId: activeWorkspace.id,
+            workspaceId,
             isSyncEnabled: true,
             syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
           })
@@ -122,7 +123,7 @@ export class MessagingMessageListFetchCronJob {
           await this.messageQueueService.add<MessagingMessageListFetchJobData>(
             MessagingMessageListFetchJob.name,
             {
-              workspaceId: activeWorkspace.id,
+              workspaceId,
               messageChannelId,
             },
           );
@@ -130,7 +131,7 @@ export class MessagingMessageListFetchCronJob {
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: {
-            id: activeWorkspace.id,
+            id: workspaceId,
           },
         });
       }

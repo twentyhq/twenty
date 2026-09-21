@@ -4,7 +4,7 @@ import { RecordTableRowDraggableContextProvider } from '@/object-record/record-t
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
 import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDragAndDrop';
-import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
@@ -19,9 +19,8 @@ export const RecordTableBodyLoading = () => {
     isRecordTableDragColumnHiddenComponentState,
   );
 
-  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
-    isRecordTableCheckboxColumnHiddenComponentState,
-  );
+  const isRecordTableCheckboxColumnHidden =
+    useIsRecordTableCheckboxColumnHidden();
 
   return (
     <RecordTableBody>

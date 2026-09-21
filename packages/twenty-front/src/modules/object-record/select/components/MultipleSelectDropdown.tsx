@@ -1,3 +1,4 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { Key } from 'ts-key-enum';
 
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -12,8 +13,8 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
-import { Avatar } from 'twenty-ui/data-display';
-import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 
 export const MultipleSelectDropdown = ({
   selectableListId,
@@ -87,7 +88,7 @@ export const MultipleSelectDropdown = ({
       selectableItemIdArray={selectableItemIds}
       focusId={focusId}
     >
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
         {itemsInDropdown?.map((item) => {
           return (
             <SelectableListItem
@@ -97,25 +98,29 @@ export const MultipleSelectDropdown = ({
                 handleItemSelectChange(item, !item.isSelected);
               }}
             >
-              <MenuItemMultiSelectAvatar
+              <ListItem
                 key={item.id}
+                focused={item.id === selectedItemId}
+                role="option"
+                aria-selected={item.isSelected}
                 selected={item.isSelected}
-                isKeySelected={item.id === selectedItemId}
-                onSelectChange={(newCheckedValue) => {
+                indicator="checkbox"
+                onClick={() => {
                   resetSelectedItem();
-                  handleItemSelectChange(item, newCheckedValue);
+                  handleItemSelectChange(item, !item.isSelected);
                 }}
-                text={item.name}
-                avatar={
+                startIcon={
                   <Avatar
-                    avatarUrl={getAbsoluteImageUrl(item.avatarUrl)}
-                    placeholderColorSeed={item.id}
-                    placeholder={item.name}
+                    src={getAbsoluteImageUrl(item.avatarUrl)}
+                    colorSeed={item.id}
+                    name={item.name}
                     size="md"
-                    type={item.avatarType}
+                    shape={item.avatarShape}
                   />
                 }
-              />
+              >
+                <OverflowingTextWithTooltip text={item.name} />
+              </ListItem>
             </SelectableListItem>
           );
         })}

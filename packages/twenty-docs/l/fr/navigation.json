@@ -145,6 +145,14 @@
               "label": "Guides pratiques"
             }
           }
+        },
+        "legal": {
+          "label": "Juridique",
+          "groups": {
+            "legalHowTos": {
+              "label": "Guides pratiques"
+            }
+          }
         }
       }
     },
@@ -177,9 +185,6 @@
             },
             "appsOperations": {
               "label": "Opérations"
-            },
-            "appsTranslations": {
-              "label": "Traductions"
             }
           }
         },

@@ -14,6 +14,7 @@ export { IconBrandAnthropic } from './components/IconBrandAnthropic';
 export { IconBrandGemini } from './components/IconBrandGemini';
 export { IconBrandGroq } from './components/IconBrandGroq';
 export { IconBrandMistral } from './components/IconBrandMistral';
+export { IconBrandTypesafeAi } from './components/IconBrandTypesafeAi';
 export { IconBrandXai } from './components/IconBrandXai';
 export { IconChartBarHorizontal } from './components/IconChartBarHorizontal';
 export { IconGmail } from './components/IconGmail';
@@ -108,6 +109,7 @@ export {
   IconBrandLinkedin,
   IconBrandNpm,
   IconBrandOpenai,
+  IconBrandTypescript,
   IconBrandWhatsapp,
   IconBrandX,
   IconBriefcase,
@@ -157,6 +159,8 @@ export {
   IconColumnInsertRight,
   IconColumns,
   IconCommand,
+  IconCompass,
+  IconMessageCircle,
   IconComment,
   IconCopy,
   IconCopyPlus,
@@ -218,6 +222,7 @@ export {
   IconDatabase,
   IconDatabaseExport,
   IconDecimal,
+  IconDeviceDesktop,
   IconDeviceFloppy,
   IconDoorEnter,
   IconDotsVertical,
@@ -237,6 +242,7 @@ export {
   IconFileImport,
   IconFileInfo,
   IconFilePencil,
+  IconFiles,
   IconFileText,
   IconFileUpload,
   IconFileZip,
@@ -293,6 +299,7 @@ export {
   IconId,
   IconInbox,
   IconInfoCircle,
+  IconInfoSquareRounded,
   IconItalic,
   IconJetpack,
   IconJson,
@@ -302,9 +309,11 @@ export {
   IconLayout,
   IconLayoutDashboard,
   IconLayoutGrid,
+  IconLayoutGridAdd,
   IconLayoutKanban,
   IconLayoutList,
   IconLayoutNavbar,
+  IconLayoutSidebar,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
   IconLayoutSidebarRight,
@@ -336,8 +345,8 @@ export {
   IconMathXy,
   IconMaximize,
   IconMessage,
-  IconMessageCircle,
   IconMessageCirclePlus,
+  IconMicrophone,
   IconMinus,
   IconMoneybag,
   IconMoodSmile,
@@ -357,6 +366,7 @@ export {
   IconPencil,
   IconPencilOff,
   IconPercentage,
+  IconPerspective,
   IconPhone,
   IconPhoto,
   IconPhotoUp,
@@ -409,7 +419,9 @@ export {
   IconSettingsAutomation,
   IconSettingsBolt,
   IconShare,
+  IconShare2,
   IconShield,
+  IconShoppingBag,
   IconSitemap,
   IconSlash,
   IconSortAscending,
@@ -491,6 +503,15 @@ export {
   IconX,
 } from './components/TablerIcons';
 export { ThinkingOrbitLoaderIcon } from './components/ThinkingOrbitLoaderIcon';
+export type {
+  TwentyIconDictionaryCategory,
+  TwentyIconDictionaryEntry,
+} from './constants/TwentyIconDictionary';
+export {
+  TWENTY_ICON_DICTIONARY_FIGMA_URL,
+  TWENTY_ICON_DICTIONARY_CATEGORIES,
+  TWENTY_ICON_DICTIONARY,
+} from './constants/TwentyIconDictionary';
 export { useIcons } from './hooks/useIcons';
 export { IconsProvider } from './providers/IconsProvider';
 export type { IconComponentProps, IconComponent } from './types/IconComponent';

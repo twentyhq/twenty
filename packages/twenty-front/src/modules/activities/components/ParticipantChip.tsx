@@ -2,10 +2,11 @@ import { styled } from '@linaria/react';
 import React from 'react';
 
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
+import { getEmailParticipantAvatarColorSeed } from '@/activities/emails/utils/getEmailParticipantAvatarColorSeed';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledAvatarContainer = styled.span`
@@ -70,9 +71,10 @@ export const ParticipantChip = ({
         <StyledChip>
           <StyledAvatarContainer>
             <Avatar
-              avatarUrl={getAbsoluteImageUrl(avatarUrl)}
-              type="rounded"
-              placeholder={displayName}
+              src={getAbsoluteImageUrl(avatarUrl)}
+              shape="circle"
+              name={displayName}
+              colorSeed={getEmailParticipantAvatarColorSeed(participant)}
               size="sm"
             />
           </StyledAvatarContainer>

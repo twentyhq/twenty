@@ -8,7 +8,7 @@ import {
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { styled } from '@linaria/react';
 import { type IconComponent } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { isDefined } from 'twenty-shared/utils';
 
 type SettingsOptionCardContentButtonProps = {

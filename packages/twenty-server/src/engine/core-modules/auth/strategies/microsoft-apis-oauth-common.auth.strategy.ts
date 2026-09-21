@@ -6,7 +6,7 @@ import { type VerifyCallback } from 'passport-google-oauth20';
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-export type MicrosoftAPIScopeConfig = {
+export type MicrosoftApiScopeConfig = {
   isCalendarEnabled?: boolean;
   isMessagingAliasFetchingEnabled?: boolean;
 };

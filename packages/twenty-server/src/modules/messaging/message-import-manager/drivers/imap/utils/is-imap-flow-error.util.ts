@@ -6,6 +6,7 @@ export const isImapFlowError = (error: Error): error is ImapFlowError => {
   return (
     isDefined(error) &&
     ('serverResponseCode' in error ||
+      'responseStatus' in error ||
       'responseText' in error ||
       'executedCommand' in error ||
       'authenticationFailed' in error)

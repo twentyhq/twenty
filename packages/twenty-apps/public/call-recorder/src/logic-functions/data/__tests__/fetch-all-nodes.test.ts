@@ -40,4 +40,23 @@ describe('fetchAllNodes', () => {
       'Pagination query returned no connection',
     );
   });
+
+  it('stops starting page requests when the request policy closes', async () => {
+    const fetchPage = vi.fn().mockResolvedValue({
+      pageInfo: { hasNextPage: true, endCursor: 'cursor-1' },
+      edges: [{ node: 'node-1' }],
+    });
+    const shouldStartPageRequest = vi
+      .fn()
+      .mockReturnValueOnce(true)
+      .mockReturnValueOnce(false);
+
+    const nodes = await fetchAllNodes<string>(
+      fetchPage,
+      shouldStartPageRequest,
+    );
+
+    expect(nodes).toEqual(['node-1']);
+    expect(fetchPage).toHaveBeenCalledTimes(1);
+  });
 });

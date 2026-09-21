@@ -14,26 +14,41 @@ my-twenty-app/
     default-role.ts                         # Permissions for logic functions
     constants/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    front-components/
+      main-page.tsx                         # Welcome page component
+    navigation-menu-items/
+      main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
+    page-layouts/
+      main-page.page-layout.ts              # Standalone page hosting the component
     __tests__/
-      setup-test.ts
-      app-install.integration-test.ts
-  .github/workflows/ci.yml                  # GitHub Actions
-  public/                                   # Static assets
-  vitest.config.ts                          # Test runner config
+      application-config.test.ts            # Unit test
+      global-setup.ts                       # Integration test setup (sync + uninstall)
+      schema.integration-test.ts            # Integration test against a live server
+  .github/workflows/
+    ci.yml                                  # Lint, typecheck, unit + integration tests
+    cd.yml                                  # Deploy + install on push to main
+    publish.yml                             # Publish to npm on version tags (with provenance)
+  public/
+    logo.svg                                # Static assets
+  vitest.config.ts                          # Integration test runner config
+  vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
   .nvmrc, .yarnrc.yml, .oxlintrc.json
-  README.md, LLMS.md
+  README.md, AGENTS.md, CLAUDE.md, CHANGELOG.md, SETUP.md
 ```
 
 ## Ключевые файлы
 
-| Файл / Папка                             | Назначение                                                                           |
-| ---------------------------------------- | ------------------------------------------------------------------------------------ |
-| `src/application-config.ts`              | **Обязательно.** Основной файл конфигурации для вашего приложения.                   |
-| `src/default-role.ts`                    | Роль по умолчанию, контролирующая, к чему имеют доступ ваши логические функции.      |
-| `src/constants/universal-identifiers.ts` | Автоматически генерируемые UUID и метаданные (отображаемое имя, описание).           |
-| `src/__tests__/`                         | Интеграционные тесты (настройка + пример теста).                                     |
-| `public/`                                | Статические ресурсы (изображения, шрифты), обслуживаемые вместе с вашим приложением. |
+| Файл / Папка                                                               | Назначение                                                                                                                    |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `src/application-config.ts`                                                | **Обязательно.** Основной файл конфигурации для вашего приложения.                                                            |
+| `src/default-role.ts`                                                      | Роль по умолчанию, контролирующая, к чему имеют доступ ваши логические функции.                                               |
+| `src/constants/universal-identifiers.ts`                                   | Автоматически генерируемые UUID и метаданные (отображаемое имя, описание).                                                    |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | Стартовая приветственная страница: фронтенд-компонент, отображаемый отдельным макетом страницы и доступный из боковой панели. |
+| `src/__tests__/`                                                           | Модульный тест плюс интеграционный тест (с его глобальной настройкой), которые синхронизируют приложение с реальным сервером. |
+| `public/`                                                                  | Статические ресурсы (изображения, шрифты), обслуживаемые вместе с вашим приложением.                                          |
+| `AGENTS.md` / `CLAUDE.md`                                                  | Руководство для ИИ-агентов, пишущих код для приложения.                                                                       |
+| `CHANGELOG.md` / `SETUP.md`                                                | Журнал значимых изменений и инструкции по настройке для локальной разработки.                                                 |
 
 <Note>
 **Организация файлов — на ваше усмотрение.** Приведенные выше папки являются соглашениями — SDK обнаруживает сущности с помощью AST-анализа вызовов `export default defineEntity(...)` независимо от того, где расположен файл.
@@ -47,15 +62,18 @@ my-twenty-app/
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "^2.13.0",
-    "twenty-sdk": "^2.13.0"
+    "twenty-client-sdk": "2.20.0",
+    "twenty-sdk": "2.20.0",
+    "twenty-ui": "1.0.0-alpha.1"
   }
 }
 ```
 
+Генератор заготовок фиксирует версии `twenty-sdk` и `twenty-client-sdk` на своей собственной версии — сохраняйте их синхронизацию при обновлении.
+
 * **`twenty-sdk`** поставляет `twenty` CLI и инструменты сборки/скэффолдинга. Он выполняется только на этапах разработки и сборки и никогда не импортируется во время выполнения опубликованного приложения.
 * **`twenty-client-sdk`** *действительно* импортируется кодом вашего приложения (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), но Twenty предоставляет его во время выполнения — функции логики получают его из сгенерированного слоя SDK, а фронтенд‑компоненты получают его из модулей, отдаваемых сервером. Установленная вами копия используется только для проверки типов и сборки на этапе деплоя, поэтому её не нужно включать в развертываемый бандл.
 
-Если любой из пакетов находится в `dependencies`, он попадает в бандл среды выполнения установленного приложения, где он является лишним грузом. `twenty build` выдаёт предупреждение, если любой из них всё ещё указан в `dependencies`.
+Если любой из пакетов находится в `dependencies`, он попадает в бандл среды выполнения установленного приложения, где он является лишним грузом. `twenty dev:build` выдаёт предупреждение, если любой из них всё ещё указан в `dependencies`.
 
-Добавляйте собственные зависимости среды выполнения вашего приложения (библиотеки, которые ваши функции логики действительно импортируют во время выполнения) в `dependencies`, как обычно.
+Добавляйте собственные зависимости среды выполнения вашего приложения (библиотеки, которые ваши функции логики действительно импортируют во время выполнения) в `dependencies`, как обычно. Держите дерево лёгким: `dependencies` устанавливаются в слой выполнения с ограничением 250 МБ в распакованном виде, и операция синхронизации или установки завершается ошибкой размера зависимостей при превышении этого лимита — UI-библиотеки и инструменты разработки должны находиться в `devDependencies`.

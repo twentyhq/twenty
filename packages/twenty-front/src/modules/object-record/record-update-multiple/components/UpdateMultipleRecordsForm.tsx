@@ -8,7 +8,7 @@ import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-m
 import { styled } from '@linaria/react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSectionContainer = styled.div`
@@ -54,7 +54,7 @@ export const UpdateMultipleRecordsForm = ({
 
   return (
     <StyledSectionContainer>
-      <Section>
+      <Section.Root>
         {fieldsWithDefinitions.map(({ fieldMetadataItem, fieldDefinition }) => {
           const fieldName = fieldDefinition.metadata.fieldName;
           const isRelation = isFieldRelation(fieldDefinition);
@@ -88,7 +88,7 @@ export const UpdateMultipleRecordsForm = ({
             />
           );
         })}
-      </Section>
+      </Section.Root>
     </StyledSectionContainer>
   );
 };

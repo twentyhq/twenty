@@ -2,14 +2,13 @@ import {
   FormCallingCodeSelectInput,
   type FormCallingCodeSelectInputUpdatedValue,
 } from '@/object-record/record-field/ui/form-types/components/FormCallingCodeSelectInput';
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
-import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { Field } from 'twenty-ui/primitives/input';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 
 type FormPhoneFieldInputProps = {
   label?: string;
@@ -36,17 +35,17 @@ export const FormPhoneFieldInput = ({
     });
   };
 
-  const handleNumberChange = (number: string | number | null) => {
+  const handleNumberChange = (number: string) => {
     onChange({
       primaryPhoneCountryCode: defaultValue?.primaryPhoneCountryCode ?? '',
       primaryPhoneCallingCode: defaultValue?.primaryPhoneCallingCode ?? '',
-      primaryPhoneNumber: isDefined(number) ? `${number}` : '',
+      primaryPhoneNumber: number,
     });
   };
 
   return (
     <FormFieldInputContainer>
-      {label && <InputLabel>{label}</InputLabel>}
+      {label && <Field.Label>{label}</Field.Label>}
       <FormNestedFieldInputContainer>
         <FormCallingCodeSelectInput
           label={t`Calling Code`}
@@ -56,7 +55,7 @@ export const FormPhoneFieldInput = ({
           readonly={readonly}
           VariablePicker={VariablePicker}
         />
-        <FormNumberFieldInput
+        <FormTextFieldInput
           label={t`Phone Number`}
           defaultValue={defaultValue?.primaryPhoneNumber ?? ''}
           onChange={handleNumberChange}

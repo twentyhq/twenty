@@ -1,34 +1,34 @@
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { useQuery } from '@apollo/client/react';
-import { isNonEmptyArray } from '@sniptt/guards';
-import { formatDistanceToNow } from 'date-fns';
-import { useContext, useMemo } from 'react';
-
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
+import { useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyArray } from '@sniptt/guards';
+import { formatDistanceToNow } from 'date-fns';
+import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
+import { IconButton, Section } from 'twenty-ui/components';
 import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
-import { IconButton } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -69,7 +69,7 @@ const StyledTableRows = styled.div`
 export const SettingsWorkspaceMembersInviteTab = () => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const roles = useSettingsAllRoles();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
@@ -87,18 +87,15 @@ export const SettingsWorkspaceMembersInviteTab = () => {
     GetWorkspaceInvitationsDocument,
   );
 
-  useSnackBarOnQueryError(invitationsError);
-
   const workspaceInvitations = invitationsData?.findWorkspaceInvitations ?? [];
 
   const handleRemoveWorkspaceInvitation = async (appTokenId: string) => {
     const result = await deleteWorkspaceInvitation({ appTokenId });
     if (isDefined(result.error)) {
-      enqueueErrorSnackBar({
-        message: t`Error deleting invitation`,
-        options: {
-          duration: 2000,
-        },
+      enqueueToast({
+        variant: 'error',
+        children: t`Error deleting invitation`,
+        duration: 2000,
       });
     }
   };
@@ -106,11 +103,10 @@ export const SettingsWorkspaceMembersInviteTab = () => {
   const handleResendWorkspaceInvitation = async (appTokenId: string) => {
     const result = await resendInvitation({ appTokenId });
     if (isDefined(result.error)) {
-      enqueueErrorSnackBar({
-        message: t`Error resending invitation`,
-        options: {
-          duration: 2000,
-        },
+      enqueueToast({
+        variant: 'error',
+        children: t`Error resending invitation`,
+        duration: 2000,
       });
     }
   };
@@ -123,20 +119,23 @@ export const SettingsWorkspaceMembersInviteTab = () => {
 
   return (
     <>
+      <ToastOnQueryErrorEffect error={invitationsError} />
+
+      <SettingsRolesQueryEffect />
       {currentWorkspace?.inviteHash &&
         currentWorkspace?.isPublicInviteLinkEnabled && (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Invite by link`}
               description={t`Share this link to invite users to join your workspace`}
             />
             <WorkspaceInviteLink
               inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
             />
-          </Section>
+          </Section.Root>
         )}
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Invite by email`}
           description={t`Send an invite email to your team`}
         />
@@ -168,26 +167,29 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                     mobileGridAutoColumns="2fr 1fr 1fr 72px"
                     key={workspaceInvitation.id}
                   >
-                    <TableCell minWidth="0" overflow="hidden">
+                    <TableCell
+                      color={themeCssVariables.font.color.primary}
+                      minWidth="0"
+                      overflow="hidden"
+                    >
                       <StyledIconWrapper>
                         <IconMail
                           size={theme.icon.size.md}
                           stroke={theme.icon.stroke.sm}
                         />
                       </StyledIconWrapper>
-                      <StyledTextContainerWithEllipsis
-                        id={`invitation-email-${workspaceInvitation.id}`}
-                      >
-                        {workspaceInvitation.email}
-                      </StyledTextContainerWithEllipsis>
-                      <AppTooltip
-                        anchorSelect={`#invitation-email-${workspaceInvitation.id}`}
+                      <Tooltip
                         content={workspaceInvitation.email}
-                        noArrow
-                        place="top"
-                        positionStrategy="fixed"
+                        side="top"
+                        positionMethod="fixed"
                         delay={TooltipDelay.shortDelay}
-                      />
+                      >
+                        <StyledTextContainerWithEllipsis
+                          id={`invitation-email-${workspaceInvitation.id}`}
+                        >
+                          {workspaceInvitation.email}
+                        </StyledTextContainerWithEllipsis>
+                      </Tooltip>
                     </TableCell>
                     <TableCell minWidth="0" overflow="hidden">
                       <StyledTextContainerWithEllipsis>
@@ -196,33 +198,36 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                       </StyledTextContainerWithEllipsis>
                     </TableCell>
                     <TableCell align="center">
-                      <Status
-                        color="gray"
-                        text={getExpiresAtText(workspaceInvitation.expiresAt)}
-                      />
+                      <Status color="gray">
+                        {getExpiresAtText(workspaceInvitation.expiresAt)}
+                      </Status>
                     </TableCell>
                     <TableCell align="right">
                       <StyledButtonContainer>
                         <IconButton
+                          aria-label={t`Resend invitation`}
                           onClick={() => {
                             handleResendWorkspaceInvitation(
                               workspaceInvitation.id,
                             );
                           }}
-                          variant="tertiary"
-                          size="medium"
-                          Icon={IconReload}
-                        />
+                          variant="ghost"
+                          size="md"
+                        >
+                          <IconReload />
+                        </IconButton>
                         <IconButton
+                          aria-label={t`Remove invitation`}
                           onClick={() => {
                             handleRemoveWorkspaceInvitation(
                               workspaceInvitation.id,
                             );
                           }}
-                          variant="tertiary"
-                          size="medium"
-                          Icon={IconTrash}
-                        />
+                          variant="ghost"
+                          size="md"
+                        >
+                          <IconTrash />
+                        </IconButton>
                       </StyledButtonContainer>
                     </TableCell>
                   </TableRow>
@@ -231,14 +236,14 @@ export const SettingsWorkspaceMembersInviteTab = () => {
             </Table>
           </StyledTableContainer>
         )}
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Approved Domains`}
           description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
         />
         <SettingsApprovedAccessDomainsListCard />
-      </Section>
+      </Section.Root>
     </>
   );
 };

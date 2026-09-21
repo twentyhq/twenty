@@ -9,6 +9,7 @@ import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
+import { extractFrontComponentSharedDependencies } from '@/cli/utilities/build/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
@@ -22,6 +23,7 @@ import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
+import { type TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, join, relative } from 'path';
@@ -48,14 +50,16 @@ import {
   type UninstallLogicFunctionApplicationManifest,
   type RoleManifest,
   type SkillManifest,
+  type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
+  type TimelineActivityTypeManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
 import {
   getInputSchemaFromSourceCode,
   jsonSchemaToInputSchema,
 } from 'twenty-shared/logic-function';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -99,6 +103,7 @@ export const buildManifest = async (
 
   let applicationConfig: ApplicationConfig | undefined;
   const objectConfigs: ObjectConfig[] = [];
+  const roleConfigs: RoleConfig[] = [];
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const indexes: IndexManifest[] = [];
@@ -115,7 +120,9 @@ export const buildManifest = async (
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
   const pageLayoutTabs: PageLayoutTabManifest[] = [];
+  const pageLayoutWidgets: StandalonePageLayoutWidgetManifest[] = [];
   const commandMenuItems: CommandMenuItemManifest[] = [];
+  const timelineActivityTypes: TimelineActivityTypeManifest[] = [];
   const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
@@ -141,7 +148,9 @@ export const buildManifest = async (
   const navigationMenuItemsFilePaths: string[] = [];
   const pageLayoutsFilePaths: string[] = [];
   const pageLayoutTabsFilePaths: string[] = [];
+  const pageLayoutWidgetsFilePaths: string[] = [];
   const commandMenuItemsFilePaths: string[] = [];
+  const timelineActivityTypesFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -213,8 +222,7 @@ export const buildManifest = async (
           appPath,
           filePath,
         });
-        const roleConfig = fromRoleConfigToRoleManifest(extract.config);
-        roles.push(roleConfig);
+        roleConfigs.push(extract.config);
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         rolesFilePaths.push(relativePath);
@@ -477,6 +485,19 @@ export const buildManifest = async (
         pageLayoutTabsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.PageLayoutWidgets: {
+        const extract =
+          await extractManifestFromFile<StandalonePageLayoutWidgetManifest>({
+            appPath,
+            filePath,
+          });
+
+        pageLayoutWidgets.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        pageLayoutWidgetsFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.CommandMenuItems: {
         const extract = await extractManifestFromFile<CommandMenuItemConfig>({
           appPath,
@@ -489,6 +510,19 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         commandMenuItemsFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.TimelineActivityTypes: {
+        const extract =
+          await extractManifestFromFile<TimelineActivityTypeConfig>({
+            appPath,
+            filePath,
+          });
+
+        timelineActivityTypes.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        timelineActivityTypesFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.PublicAssets: {
@@ -548,6 +582,15 @@ export const buildManifest = async (
 
       objects.push(objectManifest);
     }
+
+    for (const roleConfig of roleConfigs) {
+      roles.push(
+        fromRoleConfigToRoleManifest({
+          roleConfig,
+          applicationUniversalIdentifier: applicationConfig.universalIdentifier,
+        }),
+      );
+    }
   }
 
   if (postInstallLogicFunctions.length > 1) {
@@ -563,20 +606,21 @@ export const buildManifest = async (
   }
 
   if (uninstallLogicFunctions.length > 1) {
-    errors.push(
-      'Only one uninstall logic function is allowed per application',
-    );
+    errors.push('Only one uninstall logic function is allowed per application');
   }
 
   if (settingsFrontComponentUniversalIdentifiers.length > 1) {
-    errors.push(
-      'Only one settings front component is allowed per application',
-    );
+    errors.push('Only one settings front component is allowed per application');
   }
 
   if (applicationRoleUniversalIdentifiers.length > 1) {
     errors.push('Only one defineApplicationRole is allowed per application');
   }
+
+  const { sharedDependencies, errors: sharedDependenciesErrors } =
+    await extractFrontComponentSharedDependencies(appPath);
+
+  errors.push(...sharedDependenciesErrors);
 
   const resolvedDefaultRoleUniversalIdentifier =
     applicationConfig?.defaultRoleUniversalIdentifier ??
@@ -634,6 +678,9 @@ export const buildManifest = async (
                   },
                 }
               : {}),
+            ...(isDefined(sharedDependencies)
+              ? { frontComponentSharedDependencies: sharedDependencies }
+              : {}),
           };
         })()
       : undefined;
@@ -664,7 +711,9 @@ export const buildManifest = async (
         navigationMenuItems: navigationMenuItems.sort(byId),
         pageLayouts: pageLayouts.sort(byId),
         pageLayoutTabs: pageLayoutTabs.sort(byId),
+        pageLayoutWidgets: pageLayoutWidgets.sort(byId),
         commandMenuItems: commandMenuItems.sort(byId),
+        timelineActivityTypes: timelineActivityTypes.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -685,7 +734,9 @@ export const buildManifest = async (
     navigationMenuItems: navigationMenuItemsFilePaths,
     pageLayouts: pageLayoutsFilePaths,
     pageLayoutTabs: pageLayoutTabsFilePaths,
+    pageLayoutWidgets: pageLayoutWidgetsFilePaths,
     commandMenuItems: commandMenuItemsFilePaths,
+    timelineActivityTypes: timelineActivityTypesFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors, warnings };

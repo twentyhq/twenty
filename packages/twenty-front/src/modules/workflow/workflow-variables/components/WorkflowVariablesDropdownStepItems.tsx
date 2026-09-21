@@ -1,13 +1,14 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
@@ -15,6 +16,7 @@ import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/g
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
+import { getWorkflowVariableRecordObjectDisplay } from '@/workflow/workflow-variables/utils/getWorkflowVariableRecordObjectDisplay';
 import {
   getWorkflowVariableSpecialItems,
   type WorkflowVariableSpecialItem,
@@ -22,11 +24,12 @@ import {
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 
 type WorkflowVariablesDropdownStepItemsProps = {
   step: StepOutputSchemaV2;
+  initialPath?: string[];
   onSelect: (value: string) => void;
   onBack: () => void;
   shouldDisplayRecordObjects: boolean;
@@ -35,6 +38,7 @@ type WorkflowVariablesDropdownStepItemsProps = {
 
 export const WorkflowVariablesDropdownStepItems = ({
   step,
+  initialPath,
   onSelect,
   onBack,
   shouldDisplayRecordObjects,
@@ -42,19 +46,23 @@ export const WorkflowVariablesDropdownStepItems = ({
 }: WorkflowVariablesDropdownStepItemsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const { getSelectIconPropsFromObjectMetadataItem } =
-    useObjectMetadataSelectHelpers();
   const {
     searchInputValue,
     setSearchInputValue,
     handleSelectField,
     goBack,
-    filteredOptions,
+    options,
     currentPath,
+    isSearching,
+    searchResults,
+    handleSelectSearchResult,
   } = useVariableDropdown({
     step,
-    onSelect,
+    initialPath,
+    onSelect: ({ rawVariableName }) => onSelect(rawVariableName),
     onBack,
+    shouldDisplayRecordObjects,
+    objectNameSingularsToSelect,
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -87,7 +95,6 @@ export const WorkflowVariablesDropdownStepItems = ({
   const specialItems = getWorkflowVariableSpecialItems({
     step,
     currentPath,
-    searchInputValue,
   });
 
   const handleSelectSpecialItem = (
@@ -109,32 +116,17 @@ export const WorkflowVariablesDropdownStepItems = ({
       )
     : undefined;
 
-  const isObjectFoundThroughSearch = isDefined(searchInputValue)
-    ? isDefined(displayedSubStepObject?.label) &&
-      displayedSubStepObject?.label
-        .toLowerCase()
-        .includes(searchInputValue.toLowerCase())
-    : true;
-
-  const objectLabel = displayedSubStepObjectMetadata?.labelSingular;
-
-  const isSubStepObjectSelectable =
-    !isDefined(objectNameSingularsToSelect) ||
-    (isDefined(displayedSubStepObjectMetadata) &&
-      objectNameSingularsToSelect.includes(
-        displayedSubStepObjectMetadata.nameSingular,
-      ));
+  const displayedSubStepObjectDisplay = isDefined(displayedSubStepObject)
+    ? getWorkflowVariableRecordObjectDisplay({
+        recordObject: displayedSubStepObject,
+        objectMetadataItem: displayedSubStepObjectMetadata,
+        objectNameSingularsToSelect,
+      })
+    : undefined;
 
   const shouldDisplaySubStepObject =
     shouldDisplayRecordObjects &&
-    isObjectFoundThroughSearch &&
-    isSubStepObjectSelectable;
-
-  const displayedSubStepObjectIconProps = isDefined(
-    displayedSubStepObjectMetadata,
-  )
-    ? getSelectIconPropsFromObjectMetadataItem(displayedSubStepObjectMetadata)
-    : undefined;
+    displayedSubStepObjectDisplay?.isSelectable === true;
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
@@ -157,62 +149,95 @@ export const WorkflowVariablesDropdownStepItems = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {specialItems.map((specialItem) => (
-          <MenuItemSelect
-            key={specialItem.id}
-            selected={false}
-            focused={false}
-            onClick={() => handleSelectSpecialItem(specialItem)}
-            text={specialItem.label}
-            hasSubMenu={false}
-            LeftIcon={getIcon(specialItem.iconName)}
-            contextualText={specialItem.contextualText}
+        {isSearching ? (
+          <WorkflowVariableSearchResultItems
+            searchResults={searchResults}
+            onSelect={handleSelectSearchResult}
           />
-        ))}
-        {shouldDisplaySubStepObject && (
-          <MenuItemSelect
-            selected={false}
-            focused={false}
-            onClick={handleSelectObject}
-            text={objectLabel || ''}
-            hasSubMenu={false}
-            LeftIcon={displayedSubStepObjectIconProps?.Icon}
-            leftIconColor={displayedSubStepObjectIconProps?.iconThemeColor}
-            contextualText={t`Pick a ${objectLabel} record`}
-          />
-        )}
-        {filteredOptions.length > 0 &&
-          (shouldDisplaySubStepObject || specialItems.length > 0) && (
-            <DropdownMenuSeparator />
-          )}
-        {filteredOptions.map(([key, subStep]) => {
-          if (!isDefined(subStep)) {
-            return null;
-          }
+        ) : (
+          <>
+            {specialItems.map((specialItem) => (
+              <ListItem
+                key={specialItem.id}
+                focused={false}
+                onClick={() => handleSelectSpecialItem(specialItem)}
+                role="option"
+                aria-selected={false}
+                selected={false}
+                indicator="check"
+                hasSubmenu={false}
+                description={specialItem.contextualText}
+                startIcon={
+                  <SelectOptionIcon Icon={getIcon(specialItem.iconName)} />
+                }
+              >
+                <OverflowingTextWithTooltip text={specialItem.label} />
+              </ListItem>
+            ))}
+            {shouldDisplaySubStepObject && (
+              <ListItem
+                focused={false}
+                onClick={handleSelectObject}
+                role="option"
+                aria-selected={false}
+                selected={false}
+                indicator="check"
+                hasSubmenu={false}
+                description={t`Pick a ${displayedSubStepObjectDisplay?.label} record`}
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={getIcon(displayedSubStepObjectDisplay?.icon)}
+                    color={displayedSubStepObjectDisplay?.iconColor}
+                  />
+                }
+              >
+                <OverflowingTextWithTooltip
+                  text={displayedSubStepObjectDisplay?.label ?? ''}
+                />
+              </ListItem>
+            )}
+            {options.length > 0 &&
+              (shouldDisplaySubStepObject || specialItems.length > 0) && (
+                <DropdownMenuSeparator />
+              )}
+            {options.map(([key, subStep]) => {
+              if (!isDefined(subStep)) {
+                return null;
+              }
 
-          return (
-            <MenuItemSelect
-              key={key}
-              selected={false}
-              focused={false}
-              onClick={() => handleSelectField(key)}
-              text={subStep.label || key}
-              hasSubMenu={!subStep.isLeaf}
-              LeftIcon={
-                subStep.icon
-                  ? getIcon(subStep.icon)
-                  : getIcon(
-                      getStepItemIcon({
-                        itemType: subStep.type,
-                      }),
-                    )
-              }
-              contextualText={
-                subStep.isLeaf ? subStep?.value?.toString() : undefined
-              }
-            />
-          );
-        })}
+              return (
+                <ListItem
+                  key={key}
+                  focused={false}
+                  onClick={() => handleSelectField(key)}
+                  role="option"
+                  aria-selected={false}
+                  selected={false}
+                  indicator="check"
+                  hasSubmenu={!subStep.isLeaf}
+                  description={
+                    subStep.isLeaf ? subStep.value?.toString() : undefined
+                  }
+                  startIcon={
+                    <SelectOptionIcon
+                      Icon={
+                        subStep.icon
+                          ? getIcon(subStep.icon)
+                          : getIcon(
+                              getStepItemIcon({
+                                itemType: subStep.type,
+                              }),
+                            )
+                      }
+                    />
+                  }
+                >
+                  <OverflowingTextWithTooltip text={subStep.label || key} />
+                </ListItem>
+              );
+            })}
+          </>
+        )}
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

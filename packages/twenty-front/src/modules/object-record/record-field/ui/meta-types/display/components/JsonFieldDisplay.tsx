@@ -1,10 +1,13 @@
 import { useJsonFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useJsonFieldDisplay';
-import { JsonDisplay } from '@/ui/field/display/components/JsonDisplay';
+import { JsonDisplay } from 'twenty-ui/primitives/data-display';
 import { ExpandedFieldDisplay } from '@/ui/layout/expandable-list/components/ExpandedFieldDisplay';
 import { t } from '@lingui/core/macro';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { isTwoFirstDepths, JsonTree } from 'twenty-ui/json-visualizer';
+import {
+  isTwoFirstDepths,
+  JsonTree,
+} from 'twenty-ui/primitives/json-visualizer';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const JsonFieldDisplay = () => {

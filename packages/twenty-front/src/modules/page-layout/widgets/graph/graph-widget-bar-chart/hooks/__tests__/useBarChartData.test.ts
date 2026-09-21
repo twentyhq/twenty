@@ -1,4 +1,5 @@
 import { useBarChartData } from '@/page-layout/widgets/graph/graph-widget-bar-chart/hooks/useBarChartData';
+import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartEnrichedKey';
 import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartSeries';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { renderHook } from '@testing-library/react';
@@ -258,5 +259,84 @@ describe('useBarChartData', () => {
 
     expect(result.current.visibleKeys).toEqual(['sales', 'costs']);
     expect(result.current.enrichedKeys).toHaveLength(2);
+  });
+
+  const colorsByKey = (enrichedKeys: BarChartEnrichedKey[]) =>
+    Object.fromEntries(
+      enrichedKeys.map((item) => [item.key, item.colorScheme.name]),
+    );
+
+  const shadesByKey = (enrichedKeys: BarChartEnrichedKey[]) =>
+    Object.fromEntries(
+      enrichedKeys.map((item) => [item.key, item.colorScheme.solid]),
+    );
+
+  it('should keep the same automatic palette color per key when key order changes', () => {
+    const { result: firstOrderResult } = renderHook(() =>
+      useBarChartData({
+        keys: ['sales', 'revenue', 'expenses'],
+        series: undefined,
+        colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
+      }),
+    );
+
+    const { result: reorderedResult } = renderHook(() =>
+      useBarChartData({
+        keys: ['expenses', 'sales', 'revenue'],
+        series: undefined,
+        colorRegistry: mockColorRegistry,
+        colorMode: 'automaticPalette',
+      }),
+    );
+
+    const expectedColorsByKey = {
+      sales: 'green',
+      revenue: 'purple',
+      expenses: 'green',
+    };
+
+    expect(colorsByKey(firstOrderResult.current.enrichedKeys)).toEqual(
+      expectedColorsByKey,
+    );
+    expect(colorsByKey(reorderedResult.current.enrichedKeys)).toEqual(
+      expectedColorsByKey,
+    );
+  });
+
+  it('should keep the same gradient shade per key when key order changes in explicitSingleColor mode', () => {
+    const gradientSeries = (keys: string[]): BarChartSeriesWithColor[] =>
+      keys.map((key) => ({ key, label: key, color: 'green' }));
+
+    const { result: firstOrderResult } = renderHook(() =>
+      useBarChartData({
+        keys: ['sales', 'costs', 'revenue'],
+        series: gradientSeries(['sales', 'costs', 'revenue']),
+        colorRegistry: mockColorRegistry,
+        colorMode: 'explicitSingleColor',
+      }),
+    );
+
+    const { result: reorderedResult } = renderHook(() =>
+      useBarChartData({
+        keys: ['revenue', 'sales', 'costs'],
+        series: gradientSeries(['revenue', 'sales', 'costs']),
+        colorRegistry: mockColorRegistry,
+        colorMode: 'explicitSingleColor',
+      }),
+    );
+
+    const expectedShadesByKey = {
+      costs: 'green4',
+      revenue: 'green6',
+      sales: 'green8',
+    };
+
+    expect(shadesByKey(firstOrderResult.current.enrichedKeys)).toEqual(
+      expectedShadesByKey,
+    );
+    expect(shadesByKey(reorderedResult.current.enrichedKeys)).toEqual(
+      expectedShadesByKey,
+    );
   });
 });

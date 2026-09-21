@@ -11,39 +11,34 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedBackendCommandMenuItems } from '~/testing/mock-data/command-menu-items';
+import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
 import {
   mockCurrentWorkspace,
   mockedLimitedPermissionsUserData,
-  mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { type SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { ContextStorePageType } from 'twenty-shared/types';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { type SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
-import { SidePanelPages } from 'twenty-shared/types';
+import { ContextStorePageType, SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
@@ -84,7 +79,7 @@ const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
     (Story) => {
       jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
       jotaiStore.set(metadataStoreState.atomFamily('commandMenuItems'), {
-        current: mockedBackendCommandMenuItems,
+        current: mockedCommandMenuItems,
         draft: [],
         status: 'up-to-date',
       });
@@ -92,15 +87,7 @@ const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
         currentWorkspaceMemberState.atom,
         mockedWorkspaceMemberData,
       );
-      jotaiStore.set(
-        currentUserWorkspaceState.atom,
-        mockedUserData.currentUserWorkspace,
-      );
       jotaiStore.set(isSidePanelOpenedState.atom, true);
-      jotaiStore.set(sidePanelPageInfoState.atom, {
-        title: 'Command Menu',
-        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
-      });
       jotaiStore.set(sidePanelNavigationStackState.atom, [
         {
           page: SidePanelPages.CommandMenuDisplay,
@@ -144,7 +131,7 @@ const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
     },
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     ComponentWithRouterDecorator,
   ],
   parameters: {
@@ -168,6 +155,9 @@ export const DefaultWithoutSearch: Story = {
 };
 
 export const LimitedPermissions: Story = {
+  parameters: {
+    currentUserWorkspace: mockedLimitedPermissionsUserData.currentUserWorkspace,
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(await canvas.findByText('Go to People')).toBeVisible();
@@ -178,16 +168,6 @@ export const LimitedPermissions: Story = {
     expect(await canvas.findByText('Go to Settings')).toBeVisible();
     expect(await canvas.findByText('Go to Notes')).toBeVisible();
   },
-  decorators: [
-    (Story) => {
-      jotaiStore.set(
-        currentUserWorkspaceState.atom,
-        mockedLimitedPermissionsUserData.currentUserWorkspace,
-      );
-
-      return <Story />;
-    },
-  ],
 };
 
 export const MatchingNavigate: Story = {
@@ -210,28 +190,16 @@ export const MatchingNavigateShortcuts: Story = {
   },
 };
 
-// TEMP_DISABLED_TEST: Temporarily commented out due to test failure
-// export const SearchRecordsAction: Story = {
-//   play: async ({ canvasElement }) => {
-//     const canvas = within(canvasElement.ownerDocument.body);
-//     const searchRecordsButton = await canvas.findByText('Search records');
-//     await userEvent.click(searchRecordsButton);
-//     const searchInput = await canvas.findByPlaceholderText('Type anything...');
-//     await sleep(openTimeout);
-//     await userEvent.type(searchInput, 'n');
-//     expect(await canvas.findByText('Linkedin')).toBeVisible();
-//     const companyTexts = await canvas.findAllByText('Company');
-//     expect(companyTexts[0]).toBeVisible();
-//   },
-// };
-
 export const NoResultsSearchFallback: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const searchInput = await canvas.findByTestId(SIDE_PANEL_FOCUS_ID);
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'input without results');
-    expect(await canvas.findByText('No results found')).toBeVisible();
+    expect(await canvas.findByText('Fallback')).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
+    });
   },
   parameters: {
     msw: {
@@ -253,65 +221,4 @@ export const NoResultsSearchFallback: Story = {
       ],
     },
   },
-};
-
-// TEMP_DISABLED_TEST: Temporarily commented out due to test failure
-// export const ClickOnSearchRecordsAndGoBack: Story = {
-//   play: async ({ canvasElement }) => {
-//     const canvas = within(canvasElement.ownerDocument.body);
-//     const searchRecordsButton = await canvas.findByText('Search records');
-//     await userEvent.click(searchRecordsButton);
-//     await sleep(openTimeout);
-//     const goBackButton = await canvas.findByTestId(
-//       'command-menu-go-back-button',
-//     );
-//     await userEvent.click(goBackButton);
-//     expect(await canvas.findByText('Search records')).toBeVisible();
-//   },
-// };
-
-export const SubPageNavigation: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // Let the side panel finish opening before interacting, otherwise the
-    // click can land mid-transition and the sub-page navigation is dropped.
-    await sleep(openTimeout);
-
-    const objectButton = await canvas.findByText('Object');
-    expect(objectButton).toBeVisible();
-
-    await userEvent.click(objectButton);
-
-    expect(await canvas.findByText('Pick an object')).toBeVisible();
-
-    const backButton = await canvas.findByRole('button', { name: 'Go back' });
-    await userEvent.click(backButton);
-
-    await waitFor(() => {
-      expect(canvas.getByText('Object')).toBeVisible();
-    });
-  },
-  decorators: [
-    (Story) => {
-      jotaiStore.set(
-        sidePanelPageState.atom,
-        SidePanelPages.NavigationMenuAddItem,
-      );
-      jotaiStore.set(sidePanelPageInfoState.atom, {
-        title: 'Add item',
-        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
-      });
-      jotaiStore.set(sidePanelNavigationStackState.atom, [
-        {
-          page: SidePanelPages.NavigationMenuAddItem,
-          pageTitle: 'Add item',
-          pageIcon: IconPlus,
-          pageId: '1',
-        },
-      ]);
-
-      return <Story />;
-    },
-  ],
 };

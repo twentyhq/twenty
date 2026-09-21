@@ -1,10 +1,12 @@
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
+import { WorkflowStepTabPanel } from '@/workflow/workflow-steps/components/WorkflowStepTabPanel';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
 import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel } from 'twenty-ui/primitives/input';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -25,7 +27,7 @@ import { useMemo } from 'react';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
-import { Callout } from 'twenty-ui/feedback';
+import { Callout } from 'twenty-ui/primitives/feedback';
 import { IconPlayerPlay, IconSettingsAutomation } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
@@ -216,12 +218,74 @@ export const WorkflowEditActionLogicFunction = ({
     },
   ];
 
+  const stepBody = (
+    <WorkflowStepBody>
+      {isTestTabActive ? (
+        <>
+          <WorkflowEditActionCodeFields
+            functionInput={testInput}
+            inputSchema={
+              logicFunction?.workflowActionTriggerSettings?.inputSchema
+            }
+            onInputChange={handleTestInputChange}
+            readonly={actionOptions.readonly}
+          />
+          <StyledResultContainer>
+            <InputLabel>{t`Result`}</InputLabel>
+            <LogicFunctionExecutionResult
+              logicFunctionTestData={logicFunctionTestData}
+              isTesting={isExecuting}
+            />
+          </StyledResultContainer>
+          {logicFunctionTestData.output.logs.length > 0 && (
+            <StyledResultContainer>
+              <LogicFunctionLogs
+                componentInstanceId={`workflow-edit-action-logs-${action.id}`}
+                value={isExecuting ? '' : logicFunctionTestData.output.logs}
+              />
+            </StyledResultContainer>
+          )}
+        </>
+      ) : (
+        <StyledContainer>
+          {hasInputFields ? (
+            <WorkflowEditActionCodeFields
+              functionInput={functionInput}
+              inputSchema={
+                logicFunction?.workflowActionTriggerSettings?.inputSchema
+              }
+              readonly={actionOptions.readonly}
+              onInputChange={handleInputChange}
+              VariablePicker={WorkflowVariablePicker}
+              fullWidth
+            />
+          ) : (
+            <Callout
+              variant={'neutral'}
+              title={t`No input fields for this action`}
+              description={t`You can see the function logic in your application settings.`}
+            />
+          )}
+          <WorkflowExpectedOutputBodyInput
+            defaultValue={action.settings.expectedOutputSchema}
+            onChange={handleExpectedOutputBodyChange}
+            readonly={actionOptions.readonly}
+          />
+        </StyledContainer>
+      )}
+    </WorkflowStepBody>
+  );
+
   return (
-    <>
+    <TabListRoot
+      componentInstanceId={WORKFLOW_LOGIC_FUNCTION_ACTION_TAB_LIST_COMPONENT_ID}
+      enabled={!isThirdPartyApp}
+    >
       <LogicFunctionTestInputInitEffect logicFunctionId={logicFunctionId} />
       {!isThirdPartyApp && (
         <StyledTabListContainer>
           <TabList
+            aria-label={t`Function step`}
             tabs={tabs}
             behaveAsLinks={false}
             componentInstanceId={
@@ -230,61 +294,13 @@ export const WorkflowEditActionLogicFunction = ({
           />
         </StyledTabListContainer>
       )}
-      <WorkflowStepBody>
-        {isTestTabActive ? (
-          <>
-            <WorkflowEditActionCodeFields
-              functionInput={testInput}
-              inputSchema={
-                logicFunction?.workflowActionTriggerSettings?.inputSchema
-              }
-              onInputChange={handleTestInputChange}
-              readonly={actionOptions.readonly}
-            />
-            <StyledResultContainer>
-              <InputLabel>{t`Result`}</InputLabel>
-              <LogicFunctionExecutionResult
-                logicFunctionTestData={logicFunctionTestData}
-                isTesting={isExecuting}
-              />
-            </StyledResultContainer>
-            {logicFunctionTestData.output.logs.length > 0 && (
-              <StyledResultContainer>
-                <LogicFunctionLogs
-                  componentInstanceId={`workflow-edit-action-logs-${action.id}`}
-                  value={isExecuting ? '' : logicFunctionTestData.output.logs}
-                />
-              </StyledResultContainer>
-            )}
-          </>
-        ) : (
-          <StyledContainer>
-            {hasInputFields ? (
-              <WorkflowEditActionCodeFields
-                functionInput={functionInput}
-                inputSchema={
-                  logicFunction?.workflowActionTriggerSettings?.inputSchema
-                }
-                readonly={actionOptions.readonly}
-                onInputChange={handleInputChange}
-                VariablePicker={WorkflowVariablePicker}
-                fullWidth
-              />
-            ) : (
-              <Callout
-                variant={'neutral'}
-                title={t`No input fields for this action`}
-                description={t`You can see the function logic in your application settings.`}
-              />
-            )}
-            <WorkflowExpectedOutputBodyInput
-              defaultValue={action.settings.expectedOutputSchema}
-              onChange={handleExpectedOutputBodyChange}
-              readonly={actionOptions.readonly}
-            />
-          </StyledContainer>
-        )}
-      </WorkflowStepBody>
+      {isThirdPartyApp ? (
+        stepBody
+      ) : (
+        <WorkflowStepTabPanel value={activeTabId ?? ''}>
+          {stepBody}
+        </WorkflowStepTabPanel>
+      )}
       {!actionOptions.readonly && (
         <WorkflowStepFooter
           stepId={action.id}
@@ -301,6 +317,6 @@ export const WorkflowEditActionLogicFunction = ({
           }
         />
       )}
-    </>
+    </TabListRoot>
   );
 };

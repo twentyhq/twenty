@@ -30,10 +30,12 @@ import {
 
 const CREATABLE_VIEW_TYPES = [
   ViewType.TABLE,
+  ViewType.LIST,
   ViewType.KANBAN,
   ViewType.CALENDAR,
   ViewType.TABLE_WIDGET,
   ViewType.KANBAN_WIDGET,
+  ViewType.LIST_WIDGET,
   ViewType.CALENDAR_WIDGET,
 ] as const;
 
@@ -77,7 +79,7 @@ const CreateViewInputSchema = z.object({
     .optional()
     .default(ViewType.TABLE)
     .describe(
-      'View type. Use the *_WIDGET variants (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) for views backing a dashboard widget so they stay out of record index view pickers.',
+      'View type. Use the *_WIDGET variants (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) for views backing a dashboard widget so they stay out of record index view pickers.',
     ),
   visibility: z
     .enum([ViewVisibility.WORKSPACE, ViewVisibility.UNLISTED])
@@ -646,11 +648,12 @@ export class ViewToolsFactory {
           'Get filter and sort parameters from a view. Use these parameters with find_* tools to query records matching the view.',
         inputSchema: GetViewQueryParamsInputSchema,
         execute: async (parameters: { viewId: string }) => {
-          return this.viewQueryParamsService.resolveViewToQueryParams(
-            parameters.viewId,
+          return this.viewQueryParamsService.resolveViewToQueryParams({
+            viewId: parameters.viewId,
             workspaceId,
             currentWorkspaceMemberId,
-          );
+            currentUserWorkspaceId: userWorkspaceId,
+          });
         },
       },
     };
@@ -671,7 +674,7 @@ DECLARATIVE CHILDREN (replace semantics): fields, filters, and sorts each descri
 - Omitting the key leaves existing entries untouched.
 This means you never need to fetch child ids to edit a view — just pass the desired end state. For surgical single-entry edits, the granular tools (create_view_filter, update_view_sort, etc.) remain available.
 
-VIEW TYPES: TABLE (default), KANBAN (requires mainGroupByFieldName, a SELECT field), CALENDAR (requires calendarFieldName + calendarLayout).`,
+VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT field), CALENDAR (requires calendarFieldName + calendarLayout).`,
         inputSchema: UpsertCompleteViewInputSchema,
         execute: async (parameters: {
           id?: string;

@@ -13,7 +13,6 @@ export default defineCommandMenuItem({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   label: 'Open Dashboard',
   shortLabel: 'Dashboard',
-  icon: 'IconLayoutDashboard',
   isPinned: true,
   availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
@@ -22,51 +21,23 @@ export default defineCommandMenuItem({
 
 ## Поля конфигурации
 
-| Поле                                    | Обязательно | Описание                                                                                                                                                                               |
-| --------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier`                   | Да          | Стабильный уникальный идентификатор для команды                                                                                                                                        |
-| `label`                                 | Да          | Полная метка, отображаемая в меню команд (Cmd+K)                                                                                                                                       |
-| `frontComponentUniversalIdentifier`     | Да          | `universalIdentifier` фронтенд-компонента, который открывается этой командой                                                                                                           |
-| `shortLabel`                            | Нет         | Короткая метка, отображаемая на закреплённой кнопке быстрого действия                                                                                                                  |
-| `icon`                                  | Нет         | Имя значка, отображаемое рядом с меткой (например, `'IconBolt'`, `'IconSend'`)                                                                                                         |
-| `isPinned`                              | Нет         | При значении `true` показывает команду как кнопку быстрого действия в правом верхнем углу страницы                                                                                     |
-| `availabilityType`                      | Нет         | Определяет, где отображается команда: `'GLOBAL'` (доступна всегда), `'RECORD_SELECTION'` (только при выборе записей) или `'FALLBACK'` (показывается, когда другие команды не подходят) |
-| `availabilityObjectUniversalIdentifier` | Нет         | Ограничивает команду страницами определённого типа объектов (например, только для записей Company)                                                                                     |
-| `conditionalAvailabilityExpression`     | Нет         | Логическое выражение, которое динамически управляет видимостью (см. ниже)                                                                                                              |
+| Поле                                    | Обязательно | Описание                                                                                                                                                                                                                                                                                               |
+| --------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | Да          | Стабильный уникальный идентификатор для команды                                                                                                                                                                                                                                                        |
+| `label`                                 | Да          | Полная метка, отображаемая в меню команд (Cmd+K)                                                                                                                                                                                                                                                       |
+| `frontComponentUniversalIdentifier`     | Да          | `universalIdentifier` фронтенд-компонента, который открывается этой командой                                                                                                                                                                                                                           |
+| `shortLabel`                            | Нет         | Короткая метка, отображаемая на закреплённой кнопке быстрого действия                                                                                                                                                                                                                                  |
+| `icon`                                  | Нет         | **Устарело** — игнорируется в пользу значка приложения; при установке этого параметра сборка выводит предупреждение                                                                                                                                                                                    |
+| `isPinned`                              | Нет         | При значении `true` показывает команду как кнопку быстрого действия в правом верхнем углу страницы                                                                                                                                                                                                     |
+| `availabilityType`                      | Нет         | Определяет, где отображается команда: `'GLOBAL'` (доступна всегда), `'GLOBAL_OBJECT_CONTEXT'` (только на страницах с объектным контекстом — индексные страницы и карточки записей), `'RECORD_SELECTION'` (только при выборе записей) или `'FALLBACK'` (показывается, когда другие команды не подходят) |
+| `availabilityObjectUniversalIdentifier` | Нет         | Ограничивает команду страницами определённого типа объектов (например, только для записей Company)                                                                                                                                                                                                     |
+| `conditionalAvailabilityExpression`     | Нет         | Логическое выражение, которое динамически управляет видимостью (см. ниже)                                                                                                                                                                                                                              |
 
 ## Команды без интерфейса
 
 Элемент командного меню в паре с [фронтенд-компонентом без интерфейса](/l/ru/developers/extend/apps/layout/front-components#headless-vs-non-headless) — идиоматичный способ предоставить действие в один клик: выполнить код, перейти или подтвердить и выполнить. Страница Front Components описывает [SDK Command components](/l/ru/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`), которые реализуют шаблон «действие и размонтирование».
 
-Типичный сценарий:
-
-```tsx src/front-components/run-action.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command } from 'twenty-sdk/command';
-import { CoreApiClient } from 'twenty-sdk/clients';
-
-const RunAction = () => {
-  const execute = async () => {
-    const client = new CoreApiClient();
-    await client.mutation({
-      createTask: {
-        __args: { data: { title: 'Created by my app' } },
-        id: true,
-      },
-    });
-  };
-
-  return <Command execute={execute} />;
-};
-
-export default defineFrontComponent({
-  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
-  name: 'run-action',
-  description: 'Creates a task from the command menu',
-  component: RunAction,
-  isHeadless: true,
-});
-```
+Типичный сценарий: headless-компонент рендерит `<Command execute={...} />` (см. [полный пример](/l/ru/developers/extend/apps/layout/front-components#sdk-command-components)), и пункт меню команды указывает на него:
 
 ```ts src/command-menu-items/run-action.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -74,7 +45,6 @@ import { defineCommandMenuItem } from 'twenty-sdk/define';
 export default defineCommandMenuItem({
   universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
   label: 'Run my action',
-  icon: 'IconPlayerPlay',
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```

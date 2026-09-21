@@ -10,7 +10,6 @@ import { useQuery } from '@apollo/client/react';
 import { renderHook } from '@testing-library/react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-// Mocks
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
   useQuery: jest.fn(),

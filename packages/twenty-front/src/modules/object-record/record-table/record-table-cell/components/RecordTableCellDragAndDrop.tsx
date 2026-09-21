@@ -8,7 +8,7 @@ import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZInde
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
-import { IconListViewGrip } from 'twenty-ui/input';
+import { IconListViewGrip } from 'twenty-ui/primitives/input';
 
 const StyledContainer = styled.div`
   border-color: transparent;
@@ -16,8 +16,10 @@ const StyledContainer = styled.div`
   display: flex;
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  &:hover .icon {
-    opacity: 1;
+  @media (hover: hover) {
+    &:hover .icon {
+      opacity: 1;
+    }
   }
 
   z-index: ${TABLE_Z_INDEX.columnGrip};
@@ -39,6 +41,7 @@ export const RecordTableCellDragAndDrop = () => {
   return (
     <RecordTableCellStyleWrapper
       data-select-disable
+      isDragging={isDragging}
       hasRightBorder={false}
       hasBottomBorder={false}
       widthClassName={RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME}

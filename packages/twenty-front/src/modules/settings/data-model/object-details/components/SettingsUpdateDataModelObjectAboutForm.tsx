@@ -1,24 +1,30 @@
+import { Button } from 'twenty-ui/primitives/input';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
-import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
-import { computeUpdatedNavigationMemorizedUrlAfterObjectNamePluralChange } from '@/settings/data-model/object-details/utils/computeUpdatedNavigationMemorizedUrlAfterObjectNamePluralChange';
+import {
+  TRANSLATION_INTENT_MODAL_ID,
+  useSaveUpdateDataModelObjectAboutForm,
+} from '@/settings/data-model/object-details/hooks/useSaveUpdateDataModelObjectAboutForm';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
-import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { parseThemeColor } from 'twenty-ui/utilities';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+
+const StyledCenteredButton = styled(Button)`
+  box-sizing: border-box;
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
 
 type SettingsUpdateDataModelObjectAboutFormProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -27,24 +33,15 @@ type SettingsUpdateDataModelObjectAboutFormProps = {
 export const SettingsUpdateDataModelObjectAboutForm = ({
   objectMetadataItem,
 }: SettingsUpdateDataModelObjectAboutFormProps) => {
+  const { t } = useLingui();
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
-
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const isCustomObject = getIsMetadataItemCustom(objectMetadataItem);
-
   const readonly =
     isObjectMetadataReadOnly({
       objectMetadataItem,
     }) || isDDLLocked;
-  const navigate = useNavigateSettings();
-  const setUpdatedObjectNamePlural = useSetAtomState(
-    updatedObjectNamePluralState,
-  );
-  const setNavigationMemorizedUrl = useSetAtomState(
-    navigationMemorizedUrlState,
-  );
 
-  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const {
     description,
     icon,
@@ -66,105 +63,22 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       namePlural,
       nameSingular,
       ...(isCustomObject
-        ? { color: parseThemeColor(objectMetadataItem.color) }
+        ? { color: getObjectColorWithFallback(objectMetadataItem) }
         : {}),
     },
   });
 
-  const handleSave = async (
-    formValues: SettingsDataModelObjectAboutFormValues,
-  ) => {
-    if (readonly) {
-      return;
-    }
-
-    if (!(Object.keys(formConfig.formState.dirtyFields).length > 0)) {
-      return;
-    }
-
-    const objectNamePluralForRedirection =
-      formValues.namePlural ?? objectMetadataItem.namePlural;
-
-    if (readonly) {
-      return;
-    }
-
-    setUpdatedObjectNamePlural(objectNamePluralForRedirection);
-    const updateResult = await updateObjectMetadata(formValues);
-
-    if (updateResult.status === 'failed') {
-      return;
-    }
-
-    const updatedObject = updateResult.response;
-
-    if (formValues.isLabelSyncedWithName !== isLabelSyncedWithName) {
-      formConfig.reset({
-        description,
-        icon: icon ?? undefined,
-        isLabelSyncedWithName: formValues.isLabelSyncedWithName,
-        labelPlural: updatedObject?.data?.updateOneObject.labelPlural,
-        labelSingular: updatedObject?.data?.updateOneObject.labelSingular,
-        namePlural: updatedObject?.data?.updateOneObject.namePlural,
-        nameSingular: updatedObject?.data?.updateOneObject.nameSingular,
-        ...(isCustomObject
-          ? {
-              color: parseThemeColor(
-                updatedObject?.data?.updateOneObject.color ??
-                  objectMetadataItem.color,
-              ),
-            }
-          : {}),
-      });
-    } else {
-      formConfig.reset(formValues);
-    }
-
-    navigate(SettingsPath.ObjectDetail, {
-      objectNamePlural: objectNamePluralForRedirection,
-    });
-
-    const updatedObjectNamePlural =
-      updatedObject?.data?.updateOneObject.namePlural;
-
-    if (!isDefined(updatedObjectNamePlural)) {
-      return;
-    }
-
-    setNavigationMemorizedUrl((previousNavigationMemorizedUrl) =>
-      computeUpdatedNavigationMemorizedUrlAfterObjectNamePluralChange(
-        previousNavigationMemorizedUrl,
-        objectMetadataItem.namePlural,
-        updatedObjectNamePlural,
-      ),
-    );
-  };
-
-  const updateObjectMetadata = async (
-    formValues: SettingsDataModelObjectAboutFormValues,
-  ) => {
-    const updatePayload = { ...formValues };
-
-    if (!isCustomObject) {
-      const {
-        nameSingular: _nameSingular,
-        namePlural: _namePlural,
-        isLabelSyncedWithName: _isLabelSyncedWithName,
-        color: _color,
-        ...payloadWithoutNames
-      } = updatePayload;
-
-      return await updateOneObjectMetadataItem({
-        idToUpdate: objectMetadataItem.id,
-        updatePayload: payloadWithoutNames,
-      });
-    }
-
-    return await updateOneObjectMetadataItem({
-      idToUpdate: objectMetadataItem.id,
-      updatePayload,
-    });
-  };
+  const {
+    handleSave,
+    saveAsTranslation,
+    handleRenameForAllLanguages,
+    cancelPendingSave,
+    currentLanguageLabel,
+  } = useSaveUpdateDataModelObjectAboutForm({
+    objectMetadataItem,
+    formConfig,
+    readonly,
+  });
 
   return (
     // oxlint-disable-next-line react/jsx-props-no-spreading
@@ -173,6 +87,23 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         onNewDirtyField={() => formConfig.handleSubmit(handleSave)()}
         disableEdition={readonly}
         objectMetadataItem={objectMetadataItem}
+      />
+      <ConfirmationDialog
+        dialogId={TRANSLATION_INTENT_MODAL_ID}
+        title={t`Translate or rename?`}
+        subtitle={t`You are editing the ${currentLanguageLabel} translation. Renaming instead changes the source label, for every language.`}
+        confirmButtonText={t`Only in ${currentLanguageLabel}`}
+        confirmButtonColor="accent"
+        hideCancelButton
+        onConfirmClick={saveAsTranslation}
+        onClose={cancelPendingSave}
+        AdditionalButtons={
+          <StyledCenteredButton
+            fullWidth
+            onClick={handleRenameForAllLanguages}
+            variant="outline"
+          >{t`Rename for all languages`}</StyledCenteredButton>
+        }
       />
     </FormProvider>
   );

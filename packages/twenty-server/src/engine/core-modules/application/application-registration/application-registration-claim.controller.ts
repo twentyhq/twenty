@@ -1,10 +1,13 @@
-import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common';
 
-import { Response } from 'express';
-import { SettingsPath } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
+import { Request, Response } from 'express';
+import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
+import { ApplicationRegistrationClaimStateCookieService } from 'src/engine/core-modules/application/application-registration/services/application-registration-claim-state-cookie.service';
+import { claimStateNonceMatches } from 'src/engine/core-modules/application/application-registration/utils/claim-state-nonce-matches.util';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
@@ -20,10 +23,11 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 // GitHub OAuth callback of the trusted-publishers claim flow. Auth context
 // travels in the signed state token, not in a session, hence the public
 // endpoint.
-@Controller('application-registration-claim')
+@Controller(ApiPath.ApplicationRegistrationClaim)
 export class ApplicationRegistrationClaimController {
   constructor(
     private readonly applicationRegistrationClaimService: ApplicationRegistrationClaimService,
+    private readonly claimStateCookieService: ApplicationRegistrationClaimStateCookieService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly guardRedirectService: GuardRedirectService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -35,6 +39,7 @@ export class ApplicationRegistrationClaimController {
     @Query('code') code: string | undefined,
     @Query('state') state: string | undefined,
     @Query('error') oauthError: string | undefined,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
     let workspace: WorkspaceEntity | null = null;
@@ -50,6 +55,25 @@ export class ApplicationRegistrationClaimController {
           statePayload.workspaceId,
         );
 
+      const stateNonce = this.claimStateCookieService.extractNonceFromRequest(
+        req,
+        statePayload.applicationRegistrationId,
+      );
+
+      if (
+        isNonEmptyString(stateNonce) &&
+        isNonEmptyString(statePayload.nonceHash) &&
+        claimStateNonceMatches({
+          nonce: stateNonce,
+          expectedNonceHash: statePayload.nonceHash,
+        })
+      ) {
+        this.claimStateCookieService.clearNonceCookie(
+          res,
+          statePayload.applicationRegistrationId,
+        );
+      }
+
       if (oauthError !== undefined || code === undefined) {
         throw new ApplicationRegistrationException(
           'GitHub authorization was denied',
@@ -60,6 +84,7 @@ export class ApplicationRegistrationClaimController {
       await this.applicationRegistrationClaimService.completeGithubClaim({
         statePayload,
         code,
+        stateNonce,
       });
 
       if (workspace === null) {

@@ -4,6 +4,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { getBillingExceptionStatusCode } from 'src/engine/core-modules/billing/utils/get-billing-exception-status-code.util';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum BillingExceptionCode {
@@ -15,6 +16,7 @@ export enum BillingExceptionCode {
   BILLING_SUBSCRIPTION_NOT_FOUND = 'BILLING_SUBSCRIPTION_NOT_FOUND',
   BILLING_SUBSCRIPTION_ITEM_NOT_FOUND = 'BILLING_SUBSCRIPTION_ITEM_NOT_FOUND',
   BILLING_SUBSCRIPTION_INVALID = 'BILLING_SUBSCRIPTION_INVALID',
+  BILLING_SUBSCRIPTION_ALREADY_EXISTS = 'BILLING_SUBSCRIPTION_ALREADY_EXISTS',
   BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND = 'BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND',
   BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND = 'BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND',
   BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND = 'BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND',
@@ -32,8 +34,15 @@ export enum BillingExceptionCode {
   BILLING_SUBSCRIPTION_PHASE_NOT_FOUND = 'BILLING_SUBSCRIPTION_PHASE_NOT_FOUND',
   BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND = 'BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND',
   BILLING_CREDITS_EXHAUSTED = 'BILLING_CREDITS_EXHAUSTED',
+  BILLING_SUBSCRIPTION_INACTIVE = 'BILLING_SUBSCRIPTION_INACTIVE',
   BILLING_SUBSCRIPTION_NOT_CANCELED = 'BILLING_SUBSCRIPTION_NOT_CANCELED',
   BILLING_CREDIT_AMOUNT_INVALID = 'BILLING_CREDIT_AMOUNT_INVALID',
+  BILLING_CREDIT_GRANT_NOT_FOUND = 'BILLING_CREDIT_GRANT_NOT_FOUND',
+  BILLING_CREDIT_GRANT_VALIDITY_INVALID = 'BILLING_CREDIT_GRANT_VALIDITY_INVALID',
+  BILLING_USAGE_UNAVAILABLE = 'BILLING_USAGE_UNAVAILABLE',
+  BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE = 'BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE',
+  BILLING_UPGRADE_INVOICE_PAYMENT_FAILED = 'BILLING_UPGRADE_INVOICE_PAYMENT_FAILED',
+  BILLING_UPGRADE_INVOICE_VOID_FAILED = 'BILLING_UPGRADE_INVOICE_VOID_FAILED',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -54,6 +63,8 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Subscription item not found.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID:
       return msg`Invalid subscription.`;
+    case BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS:
+      return msg`This workspace already has a subscription.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND:
       return msg`Workspace not found for subscription event.`;
     case BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND:
@@ -88,10 +99,24 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Multiple subscriptions found where one was expected.`;
     case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
       return msg`You have exhausted your credits. Please upgrade your plan to continue.`;
+    case BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE:
+      return msg`This workspace has no active subscription.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_CANCELED:
       return msg`Workspace cannot be deleted: subscription is not yet canceled.`;
     case BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID:
       return msg`Invalid credit amount.`;
+    case BillingExceptionCode.BILLING_CREDIT_GRANT_NOT_FOUND:
+      return msg`Credit grant not found.`;
+    case BillingExceptionCode.BILLING_CREDIT_GRANT_VALIDITY_INVALID:
+      return msg`Credit grant must expire after it becomes effective.`;
+    case BillingExceptionCode.BILLING_USAGE_UNAVAILABLE:
+      return msg`Usage could not be read. Please try again later.`;
+    case BillingExceptionCode.BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE:
+      return msg`This kind of credit grant cannot be created by hand.`;
+    case BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED:
+      return msg`Your payment method was declined. Please update it and try again.`;
+    case BillingExceptionCode.BILLING_UPGRADE_INVOICE_VOID_FAILED:
+      return msg`An unexpected billing error occurred. Please contact support.`;
     default:
       assertUnreachable(code);
   }
@@ -107,5 +132,6 @@ export class BillingException extends CustomException<BillingExceptionCode> {
       userFriendlyMessage:
         userFriendlyMessage ?? getBillingExceptionUserFriendlyMessage(code),
     });
+    this.statusCode = getBillingExceptionStatusCode(this);
   }
 }

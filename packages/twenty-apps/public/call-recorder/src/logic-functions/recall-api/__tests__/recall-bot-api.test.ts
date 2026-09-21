@@ -6,16 +6,25 @@ import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/crea
 import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { listRecallTranscripts } from 'src/logic-functions/recall-api/list-recall-transcripts.util';
-import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
+import {
+  listScheduledRecallBots,
+  listScheduledRecallBotsBeforeRequestCutoff,
+} from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
 import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
+import { CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-enabled-env-var-name';
+import { CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH } from 'src/logic-functions/constants/call-recorder-recording-notice-max-length';
+import { CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-message-env-var-name';
 import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-retention-hours-env-var-name';
+import { CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-transcript-provider-env-var-name';
+import { DEFAULT_CALL_RECORDER_RECORDING_NOTICE_MESSAGE } from 'src/logic-functions/constants/default-call-recorder-recording-notice-message';
 import { RECALL_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-api-key-env-var-name';
 import { RECALL_REGION_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-region-env-var-name';
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
+const MEETING_STARTS_AT = '2026-01-01T13:00:00.000Z';
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const RECALL_ROUTING_METADATA = {
   twentyWorkspaceId: WORKSPACE_ID,
@@ -25,7 +34,10 @@ const ENV_VAR_NAMES = [
   RECALL_API_KEY_ENV_VAR_NAME,
   RECALL_REGION_ENV_VAR_NAME,
   CALL_RECORDER_NAME_ENV_VAR_NAME,
+  CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME,
+  CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME,
   CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME,
+  CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME,
 ] as const;
 const ORIGINAL_ENV_VALUES = ENV_VAR_NAMES.map(
   (envVarName) => [envVarName, process.env[envVarName]] as const,
@@ -38,6 +50,9 @@ describe('recall bot api', () => {
     vi.useFakeTimers();
     vi.setSystemTime(NOW);
     delete process.env[CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME];
+    delete process.env[CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME];
+    delete process.env[CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME];
+    delete process.env[CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME];
     process.env[RECALL_API_KEY_ENV_VAR_NAME] = 'recall-api-key';
     process.env[RECALL_REGION_ENV_VAR_NAME] = 'ap-northeast-1';
     process.env[CALL_RECORDER_NAME_ENV_VAR_NAME] = 'Call Recorder';
@@ -65,6 +80,7 @@ describe('recall bot api', () => {
   it('creates Recall bot requests with the Token authorization scheme', async () => {
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -84,6 +100,29 @@ describe('recall bot api', () => {
       meeting_url: 'https://meet.google.com/abc-defg-hij',
       join_at: '2026-01-01T13:00:00.000Z',
       bot_name: 'Call Recorder',
+      chat: {
+        on_bot_join: {
+          send_to: 'everyone',
+          message: DEFAULT_CALL_RECORDER_RECORDING_NOTICE_MESSAGE,
+        },
+      },
+      automatic_leave: {
+        bot_detection: {
+          using_participant_names: {
+            matches: expect.arrayContaining(['Call Recorder', 'notetaker']),
+            activate_after: 300,
+            timeout: 10,
+          },
+          using_participant_events: {
+            activate_after: 300,
+            timeout: 10,
+          },
+        },
+        silence_detection: {
+          activate_after: 1200,
+          timeout: 300,
+        },
+      },
       recording_config: {
         video_mixed_mp4: {},
         audio_mixed_mp3: {},
@@ -93,11 +132,60 @@ describe('recall bot api', () => {
     });
   });
 
+  it('uses a custom recording notice when the bot joins', async () => {
+    process.env[CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME] =
+      'Acme records this meeting to prepare notes.';
+
+    await scheduleRecallBot({
+      meetingUrl: 'https://zoom.us/j/123456789',
+      meetingStartsAt: MEETING_STARTS_AT,
+      joinAt: '2026-01-01T13:00:00.000Z',
+      metadata: RECALL_ROUTING_METADATA,
+    });
+
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).chat).toEqual({
+      on_bot_join: {
+        send_to: 'everyone',
+        message: 'Acme records this meeting to prepare notes.',
+      },
+    });
+  });
+
+  it('omits chat configuration when recording notices are disabled', async () => {
+    process.env[CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME] = 'false';
+
+    await scheduleRecallBot({
+      meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
+      joinAt: '2026-01-01T13:00:00.000Z',
+      metadata: RECALL_ROUTING_METADATA,
+    });
+
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).chat).toBeUndefined();
+  });
+
+  it('truncates custom recording notices without splitting grapheme clusters', async () => {
+    process.env[CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME] =
+      `${'a'.repeat(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH - 1)}🇫🇷extra`;
+
+    await scheduleRecallBot({
+      meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
+      joinAt: '2026-01-01T13:00:00.000Z',
+      metadata: RECALL_ROUTING_METADATA,
+    });
+
+    expect(
+      JSON.parse(fetchMock.mock.calls[0][1].body).chat.on_bot_join.message,
+    ).toBe('a'.repeat(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH - 1));
+  });
+
   it('uses the configured Recall recording retention hours when scheduling a bot', async () => {
     process.env[CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME] = '240';
 
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -118,6 +206,7 @@ describe('recall bot api', () => {
 
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -141,6 +230,7 @@ describe('recall bot api', () => {
 
     const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -163,6 +253,7 @@ describe('recall bot api', () => {
     const result = await rescheduleRecallBot({
       externalBotId: 'recall-bot-gone',
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -187,6 +278,7 @@ describe('recall bot api', () => {
 
     await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
+      meetingStartsAt: MEETING_STARTS_AT,
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: RECALL_ROUTING_METADATA,
     });
@@ -302,6 +394,35 @@ describe('recall bot api', () => {
       truncated: true,
     });
     expect(fetchMock).toHaveBeenCalledTimes(10);
+  });
+
+  it('stops starting list page requests at the request cutoff', async () => {
+    const requestStartCutoffEpochMs = NOW.getTime() + 1_000;
+    fetchMock.mockImplementationOnce(async () => {
+      vi.setSystemTime(requestStartCutoffEpochMs);
+
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          next: 'https://ap-northeast-1.recall.ai/api/v1/bot/?cursor=page-2',
+          results: [{ id: 'bot-1' }],
+        }),
+      };
+    });
+
+    const scheduledRecallBotsResult =
+      await listScheduledRecallBotsBeforeRequestCutoff({
+        joinAtAfter: '2026-01-01T08:00:00.000Z',
+        requestStartCutoffEpochMs,
+      });
+
+    expect(scheduledRecallBotsResult).toEqual({
+      ok: true,
+      bots: [{ id: 'bot-1', metadata: {}, statusChanges: [], recordings: [] }],
+      truncated: true,
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('stops paginating when the next link points outside the configured region', async () => {
@@ -527,7 +648,7 @@ describe('recall bot api', () => {
     });
   });
 
-  it('creates an async transcript with the locked provider settings', async () => {
+  it('creates an async transcript with the default provider settings', async () => {
     fetchMock.mockResolvedValue({
       ok: true,
       status: 201,
@@ -549,24 +670,41 @@ describe('recall bot api', () => {
     });
   });
 
-  it('does not retry async transcript creation failures', async () => {
+  it('creates an async transcript with the configured provider', async () => {
+    process.env[CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME] =
+      'gladia_v2_async';
     fetchMock.mockResolvedValue({
-      ok: false,
-      status: 503,
-      json: async () => ({ detail: 'service unavailable' }),
+      ok: true,
+      status: 201,
+      json: async () => ({ id: 'recall-transcript-id' }),
     });
 
-    const result = await createAsyncRecallTranscript({
+    await createAsyncRecallTranscript({
       externalRecordingId: 'recall-recording-id',
     });
 
-    expect(result).toEqual({
-      ok: false,
-      status: 503,
-      errorMessage:
-        'Recall API responded with HTTP 503: {"detail":"service unavailable"}',
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
+      provider: {
+        gladia_v2_async: { language_config: { code_switching: true } },
+      },
+      diarization: { use_separate_streams_when_available: true },
     });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('sends the transcript creation with an idempotency key for the recording', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 201,
+      json: async () => ({ id: 'recall-transcript-id' }),
+    });
+
+    await createAsyncRecallTranscript({
+      externalRecordingId: 'recall-recording-id',
+    });
+
+    expect(fetchMock.mock.calls[0][1].headers['Idempotency-Key']).toBe(
+      'create-transcript:recall-recording-id',
+    );
   });
 
   it('fails when the transcript creation response has no id', async () => {
@@ -698,6 +836,7 @@ describe('recall bot api', () => {
       });
       const scheduleArguments = {
         meetingUrl: 'https://meet.google.com/abc-defg-hij',
+        meetingStartsAt: MEETING_STARTS_AT,
         joinAt: '2026-01-01T13:00:00.000Z',
         metadata: RECALL_ROUTING_METADATA,
       };
@@ -730,6 +869,30 @@ describe('recall bot api', () => {
 
       expect(fetchMock.mock.calls[3][1].headers['Idempotency-Key']).not.toBe(
         fetchMock.mock.calls[0][1].headers['Idempotency-Key'],
+      );
+    });
+
+    it('retries a lost transcript creation with the same idempotency key', async () => {
+      fetchMock.mockRejectedValueOnce(new Error('socket hang up'));
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 201,
+        json: async () => ({ id: 'recall-transcript-id' }),
+      });
+
+      const resultPromise = createAsyncRecallTranscript({
+        externalRecordingId: 'recall-recording-id',
+      });
+
+      await vi.runAllTimersAsync();
+
+      expect(await resultPromise).toEqual({
+        ok: true,
+        transcriptId: 'recall-transcript-id',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock.mock.calls[0][1].headers['Idempotency-Key']).toBe(
+        fetchMock.mock.calls[1][1].headers['Idempotency-Key'],
       );
     });
 

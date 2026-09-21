@@ -18,8 +18,10 @@ const RECALL_TRANSCRIPT_LIST_MAX_PAGES = 10;
 
 export const listRecallTranscripts = async ({
   externalRecordingId,
+  signal,
 }: {
   externalRecordingId: string;
+  signal?: AbortSignal;
 }): Promise<ListRecallTranscriptsResult> => {
   const configResult = getRecallApiConfig();
 
@@ -32,8 +34,10 @@ export const listRecallTranscripts = async ({
   });
   const result = await fetchRecallListPages({
     config: configResult.config,
+    signal,
     initialPath: `/transcript/?${searchParams.toString()}`,
     maxPages: RECALL_TRANSCRIPT_LIST_MAX_PAGES,
+    shouldStartPageRequest: () => true,
     extractPageItems: extractRecallTranscriptSummaries,
     malformedErrorMessage: 'Recall API returned malformed transcript list',
   });

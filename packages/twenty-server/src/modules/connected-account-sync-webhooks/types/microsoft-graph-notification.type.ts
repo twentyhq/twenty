@@ -1,10 +1,10 @@
-export type MicrosoftGraphNotification = {
+import { type ChangeNotification } from '@microsoft/microsoft-graph-types';
+
+export type MicrosoftGraphNotification = Omit<
+  ChangeNotification,
+  'subscriptionId'
+> & {
   subscriptionId: string;
-  clientState?: string;
-  changeType?: string;
-  resource?: string;
-  lifecycleEvent?: string;
-  resourceData?: { id?: string } | null;
 };
 
 export type MicrosoftGraphNotificationPayload = {

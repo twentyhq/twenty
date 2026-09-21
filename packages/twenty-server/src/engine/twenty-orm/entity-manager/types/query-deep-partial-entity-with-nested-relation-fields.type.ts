@@ -13,6 +13,10 @@ export type ConnectObject = {
   };
 };
 
+export type CreateObject = {
+  [RELATION_NESTED_QUERY_KEYWORDS.CREATE]: Record<string, unknown>;
+};
+
 export type DisconnectObject = {
   [RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT]: true;
 };
@@ -30,6 +34,6 @@ export type QueryDeepPartialEntityWithNestedRelationFields<T> = Omit<
   EntityRelationFields<T>
 > & {
   [K in keyof T]?: T[K] extends BaseWorkspaceEntity | null
-    ? T[K] | ConnectObject | DisconnectObject
+    ? T[K] | ConnectObject | CreateObject | DisconnectObject
     : T[K];
 };

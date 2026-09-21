@@ -1,23 +1,28 @@
+import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
-import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
+import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
+// An undefined request id lets the server fall back to the workspace chat
+// tier, so the client never has to know that setting to send a message.
 export const useAgentChatModelId = () => {
-  const { enabledModels } = useWorkspaceAiModelAvailability();
-  const agentChatUserSelectedModel = useAtomStateValue(
-    agentChatUserSelectedModelState,
+  const agentChatUserSelectedModelTier = useAtomStateValue(
+    agentChatUserSelectedModelTierState,
+  );
+  // The shared sender mounts above the chat surface providers.
+  const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
+    shouldOpenAiChatAfterOnboardingState,
   );
 
-  const isUserModelAvailable =
-    !isDefined(agentChatUserSelectedModel) ||
-    enabledModels.some((model) => model.modelId === agentChatUserSelectedModel);
+  const workspaceSetupModelId = shouldOpenAiChatAfterOnboarding
+    ? AUTO_SELECT_MODEL_ID_BY_TIER.fast
+    : undefined;
 
-  const selectedModelId = isUserModelAvailable
-    ? agentChatUserSelectedModel
-    : null;
-  const modelIdForRequest = selectedModelId ?? undefined;
+  const modelIdForRequest = isDefined(agentChatUserSelectedModelTier)
+    ? AUTO_SELECT_MODEL_ID_BY_TIER[agentChatUserSelectedModelTier]
+    : workspaceSetupModelId;
 
-  return { selectedModelId, modelIdForRequest };
+  return { modelIdForRequest };
 };

@@ -18,3 +18,11 @@ export { inputSchemaToOutputSchema } from './input-schema-to-output-schema';
 export { isRecordArraySchema } from './is-record-array-schema';
 export { isRecordObjectSchema } from './is-record-object-schema';
 export { jsonSchemaToInputSchema } from './json-schema-to-input-schema';
+export type {
+  LogicFunctionExecutionContext,
+  LogicFunctionRetryContext,
+} from './logic-function-execution-context.type';
+export {
+  RETRYABLE_LOGIC_FUNCTION_ERROR_NAME,
+  RetryableLogicFunctionError,
+} from './retryable-logic-function.error';

@@ -1,7 +1,8 @@
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PageCardLayoutProps = {
   header: ReactNode;
@@ -28,27 +29,21 @@ const StyledMainCardWrapper = styled.div`
   box-sizing: border-box;
   display: flex;
   flex: 1 1 0;
-  margin-left: -3px;
   min-width: 0;
-  padding-left: 4px;
   width: 0;
 
   @media print {
     display: block;
-    margin-left: 0;
     min-width: auto;
-    padding-left: 0;
     width: auto;
   }
 `;
 
-// oxlint-disable-next-line twenty/no-hardcoded-colors
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
-  border-radius: ${themeCssVariables.border.radius.lg} 0 0 0;
-  box-shadow:
-    -4px 0 4px 0 rgba(0, 0, 0, 0.006),
-    0 0 0 1px ${themeCssVariables.border.color.medium};
+  border-left: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 0;
+  box-shadow: ${themeCssVariables.boxShadow.sidebar};
   box-sizing: border-box;
   display: flex;
   flex: 1;
@@ -57,14 +52,13 @@ const StyledCard = styled.div`
   overflow: hidden;
   width: 100%;
 
-  .dark & {
-    box-shadow:
-      -4px 0 4px 0 rgba(0, 0, 0, 0.03),
-      0 0 0 1px ${themeCssVariables.border.color.medium};
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    border-left: none;
+    box-shadow: none;
   }
 
   @media print {
-    border-radius: 0;
+    border-left: none;
     box-shadow: none;
     display: block;
     min-height: auto;
@@ -85,6 +79,18 @@ const StyledBodyContent = styled.div`
   }
 `;
 
+const StyledSidePanelSurface = styled.div`
+  background: ${themeCssVariables.background.primary};
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  width: 100%;
+`;
+
 const StyledPrintHidden = styled.div`
   @media print {
     display: none;
@@ -97,20 +103,34 @@ export const PageCardLayout = ({
   children,
   showInformationBanner = true,
 }: PageCardLayoutProps) => {
+  const workspaceSurface = useWorkspaceSurface();
+  const shouldShowInformationBanner =
+    showInformationBanner && workspaceSurface.type === 'main';
+
+  const body = <StyledBodyContent>{children}</StyledBodyContent>;
+
+  if (workspaceSurface.type === 'side-panel') {
+    return (
+      <StyledSidePanelSurface data-page-surface="side-panel">
+        {header}
+        <StyledPrintHidden>{secondaryBar}</StyledPrintHidden>
+        {body}
+      </StyledSidePanelSurface>
+    );
+  }
+
   return (
-    <StyledRoot>
+    <StyledRoot data-page-surface="main">
       <StyledMainCardWrapper>
         <StyledCard>
           <StyledPrintHidden>{header}</StyledPrintHidden>
+          {shouldShowInformationBanner && (
+            <StyledPrintHidden>
+              <InformationBannerWrapper />
+            </StyledPrintHidden>
+          )}
           <StyledPrintHidden>{secondaryBar}</StyledPrintHidden>
-          <StyledBodyContent>
-            {showInformationBanner && (
-              <StyledPrintHidden>
-                <InformationBannerWrapper />
-              </StyledPrintHidden>
-            )}
-            {children}
-          </StyledBodyContent>
+          {body}
         </StyledCard>
       </StyledMainCardWrapper>
     </StyledRoot>

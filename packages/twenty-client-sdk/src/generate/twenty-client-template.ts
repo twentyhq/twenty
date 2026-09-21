@@ -1,3 +1,5 @@
+import type { TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
+
 // Ambient type stubs for the genql-generated code this template gets
 // injected into. They enable full typecheck/lint on this file.
 // __STRIPPED_DURING_INJECTION_START__
@@ -5,7 +7,7 @@ type QueryGenqlSelection = Record<string, unknown>;
 type MutationGenqlSelection = Record<string, unknown>;
 type GraphqlOperation = Record<string, unknown>;
 
-type ClientOptions = {
+type ClientOptions = Omit<RequestInit, 'body' | 'headers'> & {
   url?: string;
   headers?: HeadersInit | (() => HeadersInit | Promise<HeadersInit>);
   fetcher?: (
@@ -32,9 +34,13 @@ declare class GenqlError extends Error {
 // __STRIPPED_DURING_INJECTION_END__
 
 const APP_ACCESS_TOKEN_ENV_KEY = 'TWENTY_APP_ACCESS_TOKEN';
+const APP_APPLICATION_ACCESS_TOKEN_ENV_KEY =
+  'TWENTY_APP_APPLICATION_ACCESS_TOKEN';
 const API_KEY_ENV_KEY = 'TWENTY_API_KEY';
 
-type TwentyGeneratedClientOptions = ClientOptions;
+export type TwentyGeneratedClientOptions = ClientOptions & {
+  runAs?: TwentyClientRunAs;
+};
 
 type ProcessEnvironment = Record<string, string | undefined>;
 
@@ -158,6 +164,7 @@ export class TwentyGeneratedClient {
       fetch: customFetchImplementation,
       fetcher: _fetcher,
       batch: _batch,
+      runAs,
       ...requestOptions
     } = merged;
 
@@ -172,10 +179,15 @@ export class TwentyGeneratedClient {
       typeof headers === 'function' ? undefined : headers,
     );
 
-    // Priority: explicit header > app access token > api key (legacy).
+    // Priority: explicit header > the token for the requested access > api key
+    // (legacy).
     this.authorizationToken =
       tokenFromHeaders ??
-      processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] ??
+      processEnvironment[
+        runAs === 'application'
+          ? APP_APPLICATION_ACCESS_TOKEN_ENV_KEY
+          : APP_ACCESS_TOKEN_ENV_KEY
+      ] ??
       processEnvironment[API_KEY_ENV_KEY] ??
       null;
 

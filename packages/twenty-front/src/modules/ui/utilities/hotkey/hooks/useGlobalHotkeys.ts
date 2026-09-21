@@ -75,6 +75,7 @@ export const useGlobalHotkeys = ({
     {
       enableOnContentEditable,
       enableOnFormTags,
+      eventListenerOptions: options?.eventListenerOptions,
       ignoreModifiers,
     },
     dependencies,

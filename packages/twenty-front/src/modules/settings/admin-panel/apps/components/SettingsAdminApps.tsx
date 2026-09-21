@@ -2,10 +2,10 @@ import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -15,25 +15,24 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext, useState } from 'react';
-import { useDebounce } from 'use-debounce';
+import { SettingsPath } from 'twenty-shared/types';
 import {
   assertUnreachable,
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { SettingsPath } from 'twenty-shared/types';
+import { SettingsRow, Section } from 'twenty-ui/components';
 import {
   IconChevronRight,
   IconDotsVertical,
   IconPinned,
   IconRefresh,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button, SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { useToast } from 'twenty-ui/primitives/feedback';
+import { Button, SearchInput } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { Tag } from 'twenty-ui/data-display';
+import { useDebounce } from 'use-debounce';
 import {
   type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,
@@ -56,12 +55,31 @@ const TABLE_GRID = '1fr 100px 100px 100px 40px';
 const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
 const PAGE_SIZE = 25;
 
+const SOURCE_TYPE_FILTER_OPTIONS: {
+  sourceType: ApplicationRegistrationSourceType;
+  label: string;
+}[] = [
+  { sourceType: ApplicationRegistrationSourceType.NPM, label: 'NPM' },
+  { sourceType: ApplicationRegistrationSourceType.TARBALL, label: 'Tarball' },
+  { sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY, label: 'OAuth' },
+  { sourceType: ApplicationRegistrationSourceType.LOCAL, label: 'Local' },
+];
+
 export const SettingsAdminApps = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
   const [showPreInstalledOnly, setShowPreInstalledOnly] = useState(false);
+  const [sourceTypeFilters, setSourceTypeFilters] = useState<
+    ApplicationRegistrationSourceType[]
+  >([ApplicationRegistrationSourceType.NPM]);
+  const [isListedFilter, setIsListedFilter] = useState<boolean | undefined>(
+    undefined,
+  );
+  const [isConfiguredFilter, setIsConfiguredFilter] = useState<
+    boolean | undefined
+  >(undefined);
 
   const { data, loading, fetchMore } = useQuery(
     FindAllApplicationRegistrationsDocument,
@@ -73,9 +91,25 @@ export const SettingsAdminApps = () => {
         offset: 0,
         searchTerm: debouncedSearchQuery,
         isPreInstalledOnly: showPreInstalledOnly,
+        sourceTypes:
+          sourceTypeFilters.length > 0 ? sourceTypeFilters : undefined,
+        isListed: isListedFilter,
+        isConfigured: isConfiguredFilter,
       },
     },
   );
+
+  const toggleSourceTypeFilter = (
+    sourceType: ApplicationRegistrationSourceType,
+  ) => {
+    setSourceTypeFilters((currentFilters) =>
+      currentFilters.includes(sourceType)
+        ? currentFilters.filter(
+            (currentSourceType) => currentSourceType !== sourceType,
+          )
+        : [...currentFilters, sourceType],
+    );
+  };
 
   const [syncMarketplaceCatalog, { loading: isSyncing }] = useMutation(
     SyncMarketplaceCatalogDocument,
@@ -85,19 +119,22 @@ export const SettingsAdminApps = () => {
   const handleSyncCatalog = async () => {
     try {
       await syncMarketplaceCatalog();
-      enqueueSuccessSnackBar({
-        message: t`Marketplace catalog synchronization started.`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Marketplace catalog synchronization started.`,
       });
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to synchronize the marketplace catalog.`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to synchronize the marketplace catalog.`,
       });
     }
   };
 
-  const registrations = [
-    ...(data?.findAllApplicationRegistrations.registrations ?? []),
-  ].sort((a, b) => Number(a.isConfigured) - Number(b.isConfigured));
+  const registrations =
+    data?.findAllApplicationRegistrations.registrations ?? [];
+
+  const totalCount = data?.findAllApplicationRegistrations.totalCount ?? 0;
 
   const hasMore = data?.findAllApplicationRegistrations.hasMore ?? false;
 
@@ -148,25 +185,24 @@ export const SettingsAdminApps = () => {
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`General`}
           description={t`Manage the marketplace application catalog`}
         />
         <Button
-          Icon={IconRefresh}
-          title={t`Synchronize catalog`}
-          size="small"
-          variant="secondary"
+          startIcon={<IconRefresh />}
+          size="sm"
           onClick={handleSyncCatalog}
-          isLoading={isSyncing}
+          loading={isSyncing}
           disabled={isSyncing}
-        />
-      </Section>
-      <Section>
-        <H2Title
+          variant="outline"
+        >{t`Synchronize catalog`}</Button>
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`All App Registrations`}
-          description={t`All application registrations across the platform, including orphaned marketplace apps`}
+          description={t`All application registrations across the platform, including orphaned marketplace apps (${totalCount} matching)`}
         />
         <SearchInput
           placeholder={t`Search registrations...`}
@@ -181,15 +217,59 @@ export const SettingsAdminApps = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemToggle
-                      LeftIcon={IconPinned}
-                      onToggleChange={() =>
+                    <SettingsRow
+                      startIcon={<IconPinned />}
+                      onCheckedChange={() =>
                         setShowPreInstalledOnly(!showPreInstalledOnly)
                       }
-                      toggled={showPreInstalledOnly}
-                      text={t`Pre-installed only`}
-                      toggleSize="small"
-                    />
+                      checked={showPreInstalledOnly}
+                    >{t`Pre-installed only`}</SettingsRow>
+                    <DropdownMenuSectionLabel label={t`Source`} />
+                    {SOURCE_TYPE_FILTER_OPTIONS.map(({ sourceType, label }) => (
+                      <SettingsRow
+                        key={sourceType}
+                        onCheckedChange={() =>
+                          toggleSourceTypeFilter(sourceType)
+                        }
+                        checked={sourceTypeFilters.includes(sourceType)}
+                      >
+                        {label}
+                      </SettingsRow>
+                    ))}
+                    <DropdownMenuSectionLabel label={t`Listed`} />
+                    <SettingsRow
+                      onCheckedChange={() =>
+                        setIsListedFilter(
+                          isListedFilter === true ? undefined : true,
+                        )
+                      }
+                      checked={isListedFilter === true}
+                    >{t`Listed`}</SettingsRow>
+                    <SettingsRow
+                      onCheckedChange={() =>
+                        setIsListedFilter(
+                          isListedFilter === false ? undefined : false,
+                        )
+                      }
+                      checked={isListedFilter === false}
+                    >{t`Not listed`}</SettingsRow>
+                    <DropdownMenuSectionLabel label={t`Configured`} />
+                    <SettingsRow
+                      onCheckedChange={() =>
+                        setIsConfiguredFilter(
+                          isConfiguredFilter === true ? undefined : true,
+                        )
+                      }
+                      checked={isConfiguredFilter === true}
+                    >{t`Configured`}</SettingsRow>
+                    <SettingsRow
+                      onCheckedChange={() =>
+                        setIsConfiguredFilter(
+                          isConfiguredFilter === false ? undefined : false,
+                        )
+                      }
+                      checked={isConfiguredFilter === false}
+                    >{t`Not configured`}</SettingsRow>
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }
@@ -228,16 +308,15 @@ export const SettingsAdminApps = () => {
         {hasMore && (
           <StyledShowMoreContainer>
             <Button
-              title={t`Show more`}
-              Icon={IconDotsVertical}
+              startIcon={<IconDotsVertical />}
               onClick={handleShowMore}
               disabled={loading}
-              size="small"
-              variant="secondary"
-            />
+              size="sm"
+              variant="outline"
+            >{t`Show more`}</Button>
           </StyledShowMoreContainer>
         )}
-      </Section>
+      </Section.Root>
     </>
   );
 };
@@ -269,7 +348,7 @@ const SettingsAdminAppsTableRow = ({
         <ApplicationDisplay
           application={{
             name: registration.name,
-            logo: registration.logoUrl,
+            logoUrl: registration.logoUrl,
           }}
         />
       </StyledNameTableCell>
@@ -280,10 +359,9 @@ const SettingsAdminAppsTableRow = ({
         {registration.isListed ? t`Yes` : t`No`}
       </TableCell>
       <TableCell align="right">
-        <Tag
-          color={registration.isConfigured ? 'green' : 'red'}
-          text={registration.isConfigured ? t`Yes` : t`No`}
-        />
+        <Tag color={registration.isConfigured ? 'green' : 'red'}>
+          {registration.isConfigured ? t`Yes` : t`No`}
+        </Tag>
       </TableCell>
       <TableCell align="right">
         <IconChevronRight

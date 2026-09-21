@@ -1,0 +1,128 @@
+---
+title: Tooltip
+description: Show supplementary information when a trigger is hovered or focused.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TooltipReference from '/snippets/ui/generated/surfaces/tooltip.mdx';
+
+Use `Tooltip` for a short explanation of a control or truncated text. Keep essential information visible, give controls an accessible name, and use [Popover](/ui/primitives/surfaces/popover) when the content contains links, buttons, or other controls.
+
+<StoryEmbed
+  storyId="ui-surfaces-tooltip--documentation"
+  title="Tooltip example"
+/>
+
+## Single trigger
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ExportHelp = () => (
+  <Tooltip content="Download the visible records as a CSV file" side="top">
+    <span>
+      <Button>Export records</Button>
+    </span>
+  </Tooltip>
+);
+```
+
+The convenience component accepts one trigger element as `children`. Native elements receive the trigger attributes, event handlers, and ref directly. Custom trigger components must forward all of them. A wrapper element also works with a component that does not forward every trigger prop.
+
+Hover opens the tooltip after `delay` milliseconds, which defaults to `600`. Keyboard focus opens it immediately. `closeDelay` defaults to `0`; hovering over the popup keeps it open unless `disableHoverablePopup` is set. Escape dismisses it.
+
+## Controlled state
+
+Use `open` and `onOpenChange` together when the application owns visibility. Use `defaultOpen` only to set the initial visibility of an uncontrolled tooltip.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ControlledExportHelp = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Tooltip
+      content="Download the visible records as a CSV file"
+      open={open}
+      onOpenChange={setOpen}
+      delay={300}
+    >
+      <span>
+        <Button>Export records</Button>
+      </span>
+    </Tooltip>
+  );
+};
+```
+
+## Rich content and composition
+
+`Tooltip.Content` provides a title, optional description, and optional leading icon. Use it as `content` or inside `Tooltip.Popup`.
+
+```tsx
+import { IconInfoCircle } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ExportDetails = () => (
+  <Tooltip.Root>
+    <Tooltip.Trigger render={<span />}>
+      <Button>Export records</Button>
+    </Tooltip.Trigger>
+    <Tooltip.Popup side="right" align="start" arrow>
+      <Tooltip.Content
+        startIcon={<IconInfoCircle />}
+        description="Only the records matching your current filters are included."
+      >
+        Export visible records
+      </Tooltip.Content>
+    </Tooltip.Popup>
+  </Tooltip.Root>
+);
+```
+
+| Part       | Purpose                                                       |
+| ---------- | ------------------------------------------------------------- |
+| `Root`     | Coordinates visibility and trigger interactions.              |
+| `Trigger`  | Renders the element that opens the tooltip on hover or focus. |
+| `Popup`    | Renders positioned content in a portal.                       |
+| `Content`  | Styles primary text, a description, and an icon.              |
+| `Provider` | Coordinates opening delays across a group of tooltips.        |
+
+`Tooltip.createHandle()` connects detached triggers to a shared `Root` through their `handle` prop. Keep each popup's content supplementary even when several triggers share it.
+
+## Disabled controls
+
+Native disabled buttons cannot receive keyboard focus. Wrap one in a focusable trigger so users can discover why the action is unavailable.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const UnavailableExport = () => (
+  <Tooltip content="Select at least one record to export">
+    <span tabIndex={0} aria-label="Export records unavailable">
+      <Button disabled>Export records</Button>
+    </span>
+  </Tooltip>
+);
+```
+
+Setting `disabled` on `Tooltip` suppresses the tooltip itself. It does not disable the control.
+
+## Placement and overflowing text
+
+The popup defaults to `side="top"`, `align="center"`, `sideOffset={10}`, and a maximum width of `300` pixels. Placement adjusts to available space. Use `arrow` for an arrow and `container` to override the theme's portal destination; see [theming](/ui/theming).
+
+Use `OverflowingTextWithTooltip` when a text label should show its full value only when truncated. Its existing `text`, `tooltipContent`, and `tooltipPlace` props remain available.
+
+## Props
+
+The reference is generated from the public component types. Native popup attributes and event handlers are also accepted.
+
+<TooltipReference />

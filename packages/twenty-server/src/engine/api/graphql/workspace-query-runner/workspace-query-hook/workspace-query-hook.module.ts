@@ -19,7 +19,7 @@ import { ProjectQueryHookModule } from 'src/modules/project/query-hooks/project-
 import { ShiftQueryHookModule } from 'src/modules/shift/query-hooks/shift-query-hook.module';
 import { SprintQueryHookModule } from 'src/modules/sprint/query-hooks/sprint-query-hook.module';
 import { TaskQueryHookModule } from 'src/modules/task/query-hooks/task-query-hook.module';
-import { WorklogQueryHookModule } from 'src/modules/worklog/query-hooks/worklog-query-hook.module';
+import { TimelineQueryHookModule } from 'src/modules/timeline/query-hooks/timeline-query-hook.module';
 import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/query-hooks/workspace-member-query-hook.module';
 
 @Module({
@@ -31,15 +31,7 @@ import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/que
     WorkspaceMemberQueryHookModule,
     NoteQueryHookModule,
     TaskQueryHookModule,
-    IssueQueryHookModule,
-    WorklogQueryHookModule,
-    ShiftQueryHookModule,
-    ProjectQueryHookModule,
-    SprintQueryHookModule,
-    EpicQueryHookModule,
-    IssueCommentQueryHookModule,
-    IssueStatusQueryHookModule,
-    AppAccessQueryHookModule,
+    TimelineQueryHookModule,
     DiscoveryModule,
   ],
   providers: [

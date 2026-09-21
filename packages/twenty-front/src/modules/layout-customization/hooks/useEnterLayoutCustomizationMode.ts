@@ -9,23 +9,30 @@ import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/comm
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
+import { useToast } from 'twenty-ui/primitives/feedback';
+
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const useEnterLayoutCustomizationMode = () => {
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
-  const { enqueueWarningSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
+  const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
 
   const enterLayoutCustomizationMode = useCallback((): boolean => {
+    if (!hasLayoutsPermission) {
+      return false;
+    }
+
     const isLayoutCustomizationModeAlreadyEnabled = store.get(
       isLayoutCustomizationModeEnabledState.atom,
     );
@@ -46,8 +53,9 @@ export const useEnterLayoutCustomizationMode = () => {
       );
 
       if (isDashboardInEditMode) {
-        enqueueWarningSnackBar({
-          message: t`Save or cancel dashboard changes before editing the layout.`,
+        enqueueToast({
+          variant: 'warning',
+          children: t`Save or cancel dashboard changes before editing the layout.`,
         });
 
         return false;
@@ -61,7 +69,6 @@ export const useEnterLayoutCustomizationMode = () => {
       prefetchNavigationMenuItems,
     );
     store.set(navigationMenuItemsDraftState.atom, workspaceNavigationMenuItems);
-    store.set(navigationMenuItemEditSectionState.atom, 'workspace');
 
     const persistedCommandMenuItems = store.get(commandMenuItemsSelector.atom);
     store.set(commandMenuItemsDraftState.atom, persistedCommandMenuItems);
@@ -71,7 +78,7 @@ export const useEnterLayoutCustomizationMode = () => {
     store.set(isLayoutCustomizationModeEnabledState.atom, true);
 
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
-    const currentSidePanelPage = store.get(sidePanelPageState.atom);
+    const currentSidePanelPage = store.get(sidePanelPageInfoSelector.atom).page;
 
     if (
       isSidePanelOpened &&
@@ -86,7 +93,7 @@ export const useEnterLayoutCustomizationMode = () => {
     }
 
     return true;
-  }, [enqueueWarningSnackBar, navigateSidePanel, store]);
+  }, [enqueueToast, hasLayoutsPermission, navigateSidePanel, store]);
 
   return { enterLayoutCustomizationMode };
 };

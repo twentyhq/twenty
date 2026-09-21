@@ -113,13 +113,15 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
     targetTableName: 'DEPRECATED',
     imageIdentifierFieldMetadataId,
     imageIdentifierFieldMetadataUniversalIdentifier,
-    // Empty aggregator arrays for newly created entities
     fieldIds: [],
     viewIds: [],
     indexMetadataIds: [],
     searchFieldMetadataIds: [],
+    navigationMenuItemIds: [],
+    commandMenuItemIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
+    pageLayoutIds: [],
     ...emptyUniversalForeignKeyAggregators,
   };
 };

@@ -55,3 +55,5 @@ Twenty 앱의 **레이아웃 레이어**는 사용자가 보는 모든 것을 �
 | **명령 메뉴 (Cmd+K)** | 고정된 빠른 작업 또는 숨겨진 명령                      | `defineCommandMenuItem`                   |
 
 프런트 컴포넌트는 Remote DOM을 사용하는 격리된 Web Worker 내부에서 실행됩니다. 이들은 페이지 안에서 네이티브하게 렌더링되지만(iframe 내부가 아님), 호스트 페이지나 DOM에 직접 접근할 수는 없습니다. Twenty와의 통신은 메시지 전달 호스트 API를 통해 이루어집니다.
+
+여전히 활발히 개발 중입니다. 샌드박스는 DOM을 부분적으로만 구현하고 있어 고급 사용 사례에서는 실패할 수 있습니다. [현재 제한 사항](/l/ko/developers/extend/apps/layout/front-components#current-limitations)을 참고하세요.

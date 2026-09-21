@@ -1,5 +1,6 @@
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { RecordFieldsComponentInstanceContext } from '@/object-record/record-field/states/context/RecordFieldsComponentInstanceContext';
+import { RecordListComponentInstanceContext } from '@/object-record/record-list/states/contexts/RecordListComponentInstanceContext';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
@@ -29,7 +30,11 @@ export const RecordComponentInstanceContextsWrapper = ({
             <RecordCalendarComponentInstanceContext.Provider
               value={{ instanceId: componentInstanceId }}
             >
-              {children}
+              <RecordListComponentInstanceContext.Provider
+                value={{ instanceId: componentInstanceId }}
+              >
+                {children}
+              </RecordListComponentInstanceContext.Provider>
             </RecordCalendarComponentInstanceContext.Provider>
           </RecordFieldsComponentInstanceContext.Provider>
         </RecordSortsComponentInstanceContext.Provider>

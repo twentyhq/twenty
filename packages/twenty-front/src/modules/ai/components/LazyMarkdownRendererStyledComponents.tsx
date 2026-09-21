@@ -162,10 +162,11 @@ export const StyledParagraph = styled.div`
 `;
 
 export const StyledSkeletonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  width: 100%;
+  max-width: 100%;
+
+  .react-loading-skeleton {
+    max-width: 100%;
+  }
 `;
 
 export const StyledTableScrollContainer = styled.div`

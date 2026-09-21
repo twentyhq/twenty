@@ -4,7 +4,7 @@ import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsS
 import { useDeleteChatThread } from '@/ai/hooks/useDeleteChatThread';
 import { aiChatThreadPendingDeleteFamilyState } from '@/ai/states/aiChatThreadPendingDeleteFamilyState';
 import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
@@ -36,8 +36,8 @@ export const AiChatThreadDeleteConfirmationModal = ({
   };
 
   return (
-    <ConfirmationModal
-      modalInstanceId={modalInstanceId}
+    <ConfirmationDialog
+      dialogId={modalInstanceId}
       title={t`Delete chat`}
       subtitle={
         <Trans>
@@ -48,7 +48,7 @@ export const AiChatThreadDeleteConfirmationModal = ({
       onConfirmClick={handleDelete}
       onClose={() => setAiChatThreadPendingDelete(null)}
       confirmButtonText={t`Delete`}
-      confirmButtonAccent="danger"
+      confirmButtonColor="danger"
     />
   );
 };

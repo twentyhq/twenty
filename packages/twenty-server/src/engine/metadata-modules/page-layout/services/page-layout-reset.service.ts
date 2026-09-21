@@ -10,6 +10,7 @@ import { splitEntitiesByResetStrategy } from 'src/engine/metadata-modules/flat-e
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
+import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
@@ -42,6 +43,7 @@ import { ViewService } from 'src/engine/metadata-modules/view/services/view.serv
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
+import { resetAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/reset-authored-overrides.util';
 
 @Injectable()
 export class PageLayoutResetService {
@@ -124,9 +126,14 @@ export class PageLayoutResetService {
     const now = new Date().toISOString();
 
     const widgetToUpdate: FlatPageLayoutWidget = {
-      ...widget,
-      overrides: null,
-      universalOverrides: null,
+      ...resetAuthoredOverrides({
+        metadataName: 'pageLayoutWidget',
+        flatEntity: widget,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
       updatedAt: now,
     };
 
@@ -268,8 +275,14 @@ export class PageLayoutResetService {
     const now = new Date().toISOString();
 
     const tabToUpdate: FlatPageLayoutTab = {
-      ...tab,
-      overrides: null,
+      ...resetAuthoredOverrides({
+        metadataName: 'pageLayoutTab',
+        flatEntity: tab,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
       updatedAt: now,
     };
 
@@ -417,6 +430,12 @@ export class PageLayoutResetService {
 
     const now = new Date().toISOString();
 
+    const layoutToUpdate: FlatPageLayout = {
+      ...layout,
+      isFirstTabPinned: true,
+      updatedAt: now,
+    };
+
     const existingTabs = Object.values(
       flatPageLayoutTabMaps.byUniversalIdentifier,
     )
@@ -425,6 +444,7 @@ export class PageLayoutResetService {
 
     const { toHardDelete: tabsToDelete, toReset: tabsToReset } =
       splitEntitiesByResetStrategy({
+        metadataName: 'pageLayoutTab',
         entities: existingTabs,
         workspaceCustomApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
@@ -477,6 +497,11 @@ export class PageLayoutResetService {
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
+            pageLayout: {
+              flatEntityToCreate: [],
+              flatEntityToUpdate: [layoutToUpdate],
+              flatEntityToDelete: [],
+            },
             pageLayoutTab: {
               flatEntityToCreate: [],
               flatEntityToUpdate: tabsToReset,
@@ -594,6 +619,7 @@ export class PageLayoutResetService {
 
     const { toHardDelete: widgetsToDelete, toReset: widgetsToReset } =
       splitEntitiesByResetStrategy({
+        metadataName: 'pageLayoutWidget',
         entities: existingWidgets,
         workspaceCustomApplicationUniversalIdentifier,
         now,
@@ -744,6 +770,7 @@ export class PageLayoutResetService {
 
     const { toHardDelete: groupsToDelete, toReset: groupsToReset } =
       splitEntitiesByResetStrategy({
+        metadataName: 'viewFieldGroup',
         entities: existingGroups,
         workspaceCustomApplicationUniversalIdentifier,
         now,
@@ -751,6 +778,7 @@ export class PageLayoutResetService {
 
     const { toHardDelete: fieldsToDelete, toReset: fieldsToReset } =
       splitEntitiesByResetStrategy({
+        metadataName: 'viewField',
         entities: existingFields,
         workspaceCustomApplicationUniversalIdentifier,
         now,

@@ -121,5 +121,6 @@ Când ceva nu merge bine, diff-ul de metadate și erorile nominalizate îți per
 
 * **Eroare de construire a manifestului** — CLI-ul eșuează înainte de sincronizare (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); repară sursa aplicației.
 * **Eroare de sincronizare / migrare** — build-ul reușește, dar aplicarea diff-ului eșuează, menționând entitatea și `universalIdentifier`-ul; repară metadatele care intră în conflict.
+* **Eroare de dimensiune a dependențelor** — sincronizarea sau instalarea eșuează deoarece `dependencies` de producție ale aplicației sunt prea mari pentru a fi instalate ca strat de rulare (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); mută pachetele pe care funcțiile tale logice nu le importă la rulare (biblioteci UI, unelte de dezvoltare) în `devDependencies`.
 * **Eroare de execuție în codul aplicației** — sincronizarea reușește, dar funcțiile sau componentele tale logice se comportă incorect la execuție; verifică [jurnalele funcțiilor](/l/ro/developers/extend/apps/operations/cli).
 * **Stare locală a instanței** — niciuna dintre cele de mai sus și spațiul de lucru tot arată greșit; coboară pe scara de recuperare.

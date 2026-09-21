@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { openSidePanelPage, SidePanelPages } from 'twenty-sdk/front-component';
+import { AppPath, openSidePanelPage } from 'twenty-sdk/front-component';
 
 import { FrontComponentCard } from '@/__stories__/shared/front-components/front-component-card';
-import { BUTTON_STYLE } from '@/__stories__/shared/front-components/styles';
-
-const STATUS_STYLE = {
-  fontSize: 13,
-  color: '#1f2937',
-  fontFamily: 'monospace',
-};
+import {
+  BUTTON_STYLE,
+  STATUS_STYLE,
+} from '@/__stories__/shared/front-components/styles';
 
 const HostApiSidePanelOpenFrontComponent = () => {
   const [status, setStatus] = useState('idle');
@@ -17,9 +14,11 @@ const HostApiSidePanelOpenFrontComponent = () => {
   const handleClick = async () => {
     try {
       await openSidePanelPage({
-        page: SidePanelPages.ViewRecord,
-        recordId: 'test-record-id',
-        objectNameSingular: 'company',
+        to: AppPath.RecordShowPage,
+        params: {
+          objectNameSingular: 'company',
+          objectRecordId: 'test-record-id',
+        },
       });
       setStatus('sidePanel:success');
     } catch (error) {

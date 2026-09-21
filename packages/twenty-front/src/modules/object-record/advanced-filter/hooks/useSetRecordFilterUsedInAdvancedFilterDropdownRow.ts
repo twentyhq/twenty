@@ -1,7 +1,9 @@
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
+import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
@@ -34,6 +36,20 @@ export const useSetRecordFilterUsedInAdvancedFilterDropdownRow = () => {
           instanceId: advancedFilterRowObjectFilterDropdownComponentInstanceId,
         }),
         recordFilter,
+      );
+
+      store.set(
+        subFieldNameUsedInDropdownComponentState.atomFamily({
+          instanceId: advancedFilterRowObjectFilterDropdownComponentInstanceId,
+        }),
+        recordFilter.subFieldName,
+      );
+
+      store.set(
+        relationTargetFieldMetadataIdUsedInDropdownComponentState.atomFamily({
+          instanceId: advancedFilterRowObjectFilterDropdownComponentInstanceId,
+        }),
+        recordFilter.relationTargetFieldMetadataId ?? null,
       );
     },
     [store],

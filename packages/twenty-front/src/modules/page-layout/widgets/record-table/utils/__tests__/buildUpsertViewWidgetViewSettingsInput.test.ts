@@ -1,16 +1,11 @@
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { buildUpsertViewWidgetViewSettingsInput } from '@/page-layout/widgets/record-table/utils/buildUpsertViewWidgetViewSettingsInput';
-import {
-  ViewCalendarLayout,
-  ViewOpenRecordIn,
-  ViewType,
-} from '~/generated-metadata/graphql';
+import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 
 const buildFlatView = (overrides: Partial<FlatView>): FlatView =>
   ({
     type: ViewType.TABLE_WIDGET,
     shouldHideEmptyGroups: false,
-    openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
     ...overrides,
   }) as FlatView;
 
@@ -22,7 +17,6 @@ describe('buildUpsertViewWidgetViewSettingsInput', () => {
       type: ViewType.TABLE_WIDGET,
       mainGroupByFieldMetadataId: null,
       shouldHideEmptyGroups: false,
-      openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
       kanbanAggregateOperation: null,
       kanbanAggregateOperationFieldMetadataId: null,
       kanbanColumnWidth: null,

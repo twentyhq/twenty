@@ -41,8 +41,9 @@ describe('getSubdomainSlugFromDisplayName', () => {
     expect(getSubdomainSlugFromDisplayName('日本語')).toBe('ri-ben-yu');
   });
 
-  it('should return undefined when the result is shorter than the minimum length', () => {
-    expect(getSubdomainSlugFromDisplayName('AB')).toBeUndefined();
+  it('should accept results as short as a single character', () => {
+    expect(getSubdomainSlugFromDisplayName('AB')).toBe('ab');
+    expect(getSubdomainSlugFromDisplayName('A')).toBe('a');
   });
 
   it('should clamp long names to the maximum length without a trailing hyphen', () => {

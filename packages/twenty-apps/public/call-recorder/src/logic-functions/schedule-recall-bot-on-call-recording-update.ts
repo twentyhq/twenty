@@ -6,7 +6,7 @@ import {
   type ObjectRecordBaseEvent,
 } from 'twenty-sdk/define';
 
-import { SCHEDULE_RECALL_BOT_ON_CALL_RECORDING_UPDATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/schedule-recall-bot-on-call-recording-update-logic-function-universal-identifier';
+import { SCHEDULE_RECALL_BOT_ON_CALL_RECORDING_UPDATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import {

@@ -2,6 +2,7 @@ import { type FieldManifest } from 'twenty-shared/application';
 import {
   type FieldMetadataDefaultActor,
   FieldMetadataType,
+  MetadataWritability,
 } from 'twenty-shared/types';
 
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
@@ -152,6 +153,101 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
       });
 
       expect(result.isUIEditable).toBe(true);
+    });
+  });
+
+  describe('writability', () => {
+    it('defaults to OPEN when omitted from the manifest', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.writability).toBe(MetadataWritability.OPEN);
+    });
+
+    it('carries the manifest value through', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({
+          writability: MetadataWritability.APPLICATION,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.writability).toBe(MetadataWritability.APPLICATION);
+    });
+  });
+
+  describe('label sync', () => {
+    it('should default isLabelSyncedWithName to false', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.isLabelSyncedWithName).toBe(false);
+    });
+
+    it('should respect an explicit isLabelSyncedWithName', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({ isLabelSyncedWithName: true }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.isLabelSyncedWithName).toBe(true);
+    });
+  });
+
+  describe('options', () => {
+    it.each([
+      FieldMetadataType.SELECT,
+      FieldMetadataType.MULTI_SELECT,
+    ] as const)('defaults missing %s option colors to gray', (type) => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({
+          type,
+          options: [
+            { value: 'OPEN', label: 'Open', position: 0 },
+            { value: 'CLOSED', label: 'Closed', color: 'red', position: 1 },
+          ],
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.options).toEqual([
+        { value: 'OPEN', label: 'Open', color: 'gray', position: 0 },
+        { value: 'CLOSED', label: 'Closed', color: 'red', position: 1 },
+      ]);
+    });
+
+    it('leaves rating options without colors', () => {
+      const ratingOptions = [{ value: 'RATING_1', label: '1', position: 0 }];
+
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({
+          type: FieldMetadataType.RATING,
+          options: ratingOptions,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.options).toEqual(ratingOptions);
+    });
+
+    it('keeps options null when the manifest has none', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.options).toBeNull();
     });
   });
 });

@@ -6,23 +6,23 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
-import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
+import { type SocialSsoSignInUpActionType } from '@/auth/types/socialSsoSignInUp.type';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { MainButton } from 'twenty-ui/components';
 import { IconMicrosoft } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/layout';
-import { MainButton } from 'twenty-ui/input';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
-import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
+import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SignInUpWithMicrosoft = ({
   action,
   isGlobalScope,
 }: {
-  action: SocialSSOSignInUpActionType;
+  action: SocialSsoSignInUpActionType;
   isGlobalScope?: boolean;
 }) => {
   const { theme } = useContext(ThemeContext);
@@ -44,18 +44,17 @@ export const SignInUpWithMicrosoft = ({
 
   return (
     <>
-      <StyledSSOButtonContainer>
+      <StyledSsoButtonContainer>
         <MainButton
-          Icon={() => <IconMicrosoft size={theme.icon.size.md} />}
-          title={t`Continue with Microsoft`}
+          startIcon={<IconMicrosoft size={theme.icon.size.md} />}
           onClick={handleClick}
-          variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
           fullWidth
-        />
+          variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
+        >{t`Continue with Microsoft`}</MainButton>
         {isLastUsed && (isGlobalScope || hasMultipleAuthMethods) && (
           <LastUsedPill />
         )}
-      </StyledSSOButtonContainer>
+      </StyledSsoButtonContainer>
       <HorizontalSeparator visible={false} />
     </>
   );

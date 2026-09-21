@@ -7,21 +7,18 @@ describe('normalizeLocale', () => {
   });
 
   it('should return the locale when there is a direct match in APP_LOCALES', () => {
-    // Test a few valid locales
     expect(normalizeLocale('en')).toBe('en');
     expect(normalizeLocale('fr-FR')).toBe('fr-FR');
     expect(normalizeLocale('es-ES')).toBe('es-ES');
   });
 
   it('should handle case-insensitive matches', () => {
-    // Test with lowercase variants of the locales
     expect(normalizeLocale('fr-fr')).toBe('fr-FR');
     expect(normalizeLocale('es-es')).toBe('es-ES');
     expect(normalizeLocale('DE-de')).toBe('de-DE');
   });
 
   it('should match just the language part if full locale not found', () => {
-    // Test with just the language code
     expect(normalizeLocale('fr')).toBe('fr-FR');
     expect(normalizeLocale('es')).toBe('es-ES');
     expect(normalizeLocale('de')).toBe('de-DE');

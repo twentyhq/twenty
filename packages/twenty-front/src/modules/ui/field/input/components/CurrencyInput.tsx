@@ -6,6 +6,7 @@ import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-typ
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
+import { CURRENCY_MICROS_DECIMAL_PLACES } from '@/ui/field/input/constants/CurrencyMicrosDecimalPlaces';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -61,7 +62,6 @@ export type CurrencyInputProps = {
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
-  decimals?: number;
   currencyCode: string;
   onEnter: (newText: string) => void;
   onEscape: (newText: string) => void;
@@ -85,7 +85,6 @@ export const CurrencyInput = ({
   onClickOutside,
   onChange,
   onSelect,
-  decimals,
 }: CurrencyInputProps) => {
   const { theme } = useContext(ThemeContext);
   const [internalText, setInternalText] = useState(value);
@@ -96,7 +95,13 @@ export const CurrencyInput = ({
   const { thousandsSeparator, radix } =
     getSeparatorsForNumberFormat(numberFormat);
 
-  const handleChange = (value: string) => {
+  // imask re-emits accept while formatting the incoming value, with no
+  // originating input event; only a user keystroke may change the draft
+  const handleAccept = (value: string, event?: InputEvent) => {
+    if (!isDefined(event)) {
+      return;
+    }
+
     setInternalText(value);
     onChange?.(value);
   };
@@ -140,8 +145,10 @@ export const CurrencyInput = ({
           mask={Number}
           thousandsSeparator={thousandsSeparator}
           radix={radix}
-          scale={decimals}
-          onAccept={(value: string) => handleChange(value)}
+          scale={CURRENCY_MICROS_DECIMAL_PLACES}
+          onAccept={(value: string, _maskRef: unknown, event?: InputEvent) =>
+            handleAccept(value, event)
+          }
           inputRef={wrapperRef}
           autoComplete="off"
           placeholder={placeholder}

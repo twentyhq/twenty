@@ -9,31 +9,38 @@ const tasks = [
   {
     id: '1',
     status: 'DONE',
+    __typename: 'Task',
   },
   {
     id: '2',
     status: 'DONE',
+    __typename: 'Task',
   },
   {
     id: '3',
     status: 'DONE',
+    __typename: 'Task',
   },
   {
     id: '4',
+    __typename: 'Task',
   },
   {
     id: '5',
     dueAt: '2024-03-15T07:33:14.212Z',
+    __typename: 'Task',
   },
   {
     id: '6',
     dueAt: '2024-03-15T07:33:14.212Z',
+    __typename: 'Task',
   },
 ];
 
 const useActivitiesMock = jest.fn(() => {
   return {
     activities: tasks,
+    fetchMoreActivities: jest.fn(),
   };
 });
 
@@ -57,8 +64,6 @@ describe('useTasks', () => {
       wrapper: Wrapper,
     });
 
-    expect(result.current).toEqual({
-      tasks: tasks,
-    });
+    expect(result.current.tasks).toEqual(tasks);
   });
 });

@@ -17,14 +17,18 @@ export enum AppPath {
   BookCall = '/book-call',
 
   // Onboarded
-  WorkspaceSetup = '/workspace-setup',
+  AiChat = '/chat/:threadId?',
   Index = '/',
+  // Mobile only: the navigation menu is a page there rather than a drawer.
+  Home = '/home',
   TasksPage = '/objects/tasks',
   OpportunitiesPage = '/objects/opportunities',
 
   RecordIndexPage = '/objects/:objectNamePlural',
   RecordShowPage = '/object/:objectNameSingular/:objectRecordId',
   PageLayoutPage = '/page/:pageLayoutId',
+  WorkflowCoreIndexPage = '/workflow-core',
+  WorkflowCoreShowPage = '/workflow-core/:coreWorkflowId',
 
   TaskManagerBoardPage = '/task',
   TaskManagerBacklogPage = '/task/backlog',

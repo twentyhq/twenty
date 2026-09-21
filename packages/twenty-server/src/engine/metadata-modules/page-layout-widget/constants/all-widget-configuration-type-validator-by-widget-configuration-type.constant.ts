@@ -1,10 +1,15 @@
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
+import { CallRecordingSummaryConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/call-recording-summary-configuration.dto';
+import { CallRecordingTranscriptConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/call-recording-transcript-configuration.dto';
 import { EmailThreadConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/email-thread-configuration.dto';
+import { MessageCampaignBodyConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/message-campaign-body-configuration.dto';
+import { MessageCampaignDetailsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/message-campaign-details-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { CalendarConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/calendar-configuration.dto';
 import { EmailsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/emails-configuration.dto';
 import { FieldConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-configuration.dto';
 import { FieldRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-rich-text-configuration.dto';
+import { FormFieldConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/form-field-configuration.dto';
 import { FieldsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/fields-configuration.dto';
 import { FilesConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/files-configuration.dto';
 import { FrontComponentConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/front-component-configuration.dto';
@@ -35,9 +40,14 @@ export const ALL_WIDGET_CONFIGURATION_TYPE_VALIDATOR_BY_WIDGET_CONFIGURATION_TYP
     FRONT_COMPONENT: FrontComponentConfigurationDTO,
     EMAILS: EmailsConfigurationDTO,
     EMAIL_THREAD: EmailThreadConfigurationDTO,
+    CALL_RECORDING_SUMMARY: CallRecordingSummaryConfigurationDTO,
+    CALL_RECORDING_TRANSCRIPT: CallRecordingTranscriptConfigurationDTO,
+    MESSAGE_CAMPAIGN_BODY: MessageCampaignBodyConfigurationDTO,
+    MESSAGE_CAMPAIGN_DETAILS: MessageCampaignDetailsConfigurationDTO,
     FIELD: FieldConfigurationDTO,
     FIELD_RICH_TEXT: FieldRichTextConfigurationDTO,
     FIELDS: FieldsConfigurationDTO,
+    FORM_FIELD: FormFieldConfigurationDTO,
     FILES: FilesConfigurationDTO,
     NOTES: NotesConfigurationDTO,
     TASKS: TasksConfigurationDTO,

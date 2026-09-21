@@ -12,7 +12,6 @@ export const handleCompositeKey = (
 ): void => {
   const parsedFieldKey = parseCompositeFieldKey(key);
 
-  // If composite field key can't be parsed, return
   if (!parsedFieldKey) {
     return;
   }

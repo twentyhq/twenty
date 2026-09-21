@@ -7,13 +7,23 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import {
+  WebhookSubscriptionDriverException,
+  WebhookSubscriptionDriverExceptionCode,
+} from 'src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception';
 import { WebhookSubscriptionDriverFactory } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-driver-factory.service';
-import { type WebhookSubscriptionContext } from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
+import { WebhookSubscriptionExceptionHandlerService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-exception-handler.service';
+import { WebhookSubscriptionStatusService } from 'src/modules/connected-account/webhook-subscription-manager/services/webhook-subscription-status.service';
+import { WorkspaceActivationService } from 'src/modules/connected-account/webhook-subscription-manager/services/workspace-activation.service';
+import {
+  type WebhookSubscriptionContext,
+  type WebhookSubscriptionResult,
+} from 'src/modules/connected-account/webhook-subscription-manager/types/webhook-subscription-driver.type';
 
 @Injectable()
 export class CalendarWebhookSubscriptionService {
@@ -22,14 +32,24 @@ export class CalendarWebhookSubscriptionService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    private readonly workspaceActivationService: WorkspaceActivationService,
     private readonly webhookSubscriptionDriverFactory: WebhookSubscriptionDriverFactory,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly metricsService: MetricsService,
+    private readonly webhookSubscriptionStatusService: WebhookSubscriptionStatusService,
+    private readonly webhookSubscriptionExceptionHandlerService: WebhookSubscriptionExceptionHandlerService,
   ) {}
 
   async createSubscription(
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
+    const isWorkspaceServiceable =
+      await this.workspaceActivationService.isWorkspaceServiceable(workspaceId);
+
+    if (!isWorkspaceServiceable) {
+      return;
+    }
+
     const calendarChannel = await this.calendarChannelRepository.findOne({
       where: { id: calendarChannelId, workspaceId },
       relations: ['connectedAccount'],
@@ -56,7 +76,6 @@ export class CalendarWebhookSubscriptionService {
       return;
     }
 
-    const clientState = calendarChannel.webhookSubscriptionClientState ?? v4();
     const driver = this.webhookSubscriptionDriverFactory.getDriver(
       connectedAccount.provider,
     );
@@ -68,39 +87,106 @@ export class CalendarWebhookSubscriptionService {
       ? this.toContext(calendarChannel)
       : null;
 
+    const clientState =
+      await this.webhookSubscriptionStatusService.claimSubscriptionCreation(
+        WebhookSubscriptionChannelType.CALENDAR,
+        calendarChannel.id,
+        workspaceId,
+      );
+
+    if (!isDefined(clientState)) {
+      return;
+    }
+
+    let result: WebhookSubscriptionResult;
+
     try {
-      const result = await driver.createSubscription(
+      result = await driver.createSubscription(
         calendarChannel.connectedAccountId,
         WebhookSubscriptionChannelType.CALENDAR,
         clientState,
       );
-
-      await this.calendarChannelRepository.update(calendarChannel.id, {
-        webhookSubscriptionExternalId: result.externalSubscriptionId,
-        webhookSubscriptionExternalResourceId: result.externalResourceId,
-        webhookSubscriptionClientState: clientState,
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
-        webhookSubscriptionExpiresAt: result.expiresAt,
-      });
     } catch (error) {
-      await this.calendarChannelRepository.update(calendarChannel.id, {
-        webhookSubscriptionClientState: clientState,
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
-        webhookSubscriptionExpiresAt: null,
+      await this.webhookSubscriptionStatusService.resetPendingSubscription(
+        WebhookSubscriptionChannelType.CALENDAR,
+        calendarChannel.id,
+      );
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionCreationFailed,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
 
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: workspaceId },
-      });
+      await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
+        error,
+        'CREATE',
+        WebhookSubscriptionChannelType.CALENDAR,
+        calendarChannel,
+        workspaceId,
+      );
 
-      throw error;
+      return;
     }
+
+    const hasSettledClaim =
+      await this.webhookSubscriptionStatusService.settleClaimedSubscription(
+        WebhookSubscriptionChannelType.CALENDAR,
+        calendarChannel.id,
+        workspaceId,
+        clientState,
+        result,
+      );
+
+    if (!hasSettledClaim) {
+      await driver
+        .deleteSubscription({
+          connectedAccountId: calendarChannel.connectedAccountId,
+          channelType: WebhookSubscriptionChannelType.CALENDAR,
+          externalSubscriptionId: result.externalSubscriptionId,
+          externalResourceId: result.externalResourceId,
+          clientState,
+        })
+        .catch(() => undefined);
+
+      return;
+    }
+
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.ConnectedAccountWebhookSubscriptionCreated,
+      amount: 1,
+      attributes: this.buildMetricAttributes(connectedAccount.provider),
+    });
 
     if (isDefined(previousSubscription)) {
       await driver
         .deleteSubscription(previousSubscription)
         .catch(() => undefined);
     }
+  }
+
+  async recreateSubscription({
+    calendarChannelId,
+    workspaceId,
+    removedSubscriptionId,
+  }: {
+    calendarChannelId: string;
+    workspaceId: string;
+    removedSubscriptionId: string | null;
+  }): Promise<void> {
+    const cleared =
+      await this.webhookSubscriptionStatusService.clearRemovedSubscription(
+        WebhookSubscriptionChannelType.CALENDAR,
+        calendarChannelId,
+        workspaceId,
+        removedSubscriptionId,
+      );
+
+    if (!cleared) {
+      return;
+    }
+
+    await this.createSubscription(calendarChannelId, workspaceId);
   }
 
   async renewSubscription({
@@ -110,6 +196,13 @@ export class CalendarWebhookSubscriptionService {
     calendarChannelId: string;
     workspaceId: string;
   }): Promise<void> {
+    const isWorkspaceServiceable =
+      await this.workspaceActivationService.isWorkspaceServiceable(workspaceId);
+
+    if (!isWorkspaceServiceable) {
+      return;
+    }
+
     const calendarChannel = await this.calendarChannelRepository.findOne({
       where: { id: calendarChannelId, workspaceId },
       relations: ['connectedAccount'],
@@ -143,22 +236,36 @@ export class CalendarWebhookSubscriptionService {
         this.toContext(calendarChannel),
       );
 
-      await this.calendarChannelRepository.update(calendarChannel.id, {
-        webhookSubscriptionExternalId: result.externalSubscriptionId,
-        webhookSubscriptionExternalResourceId: result.externalResourceId,
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
-        webhookSubscriptionExpiresAt: result.expiresAt,
+      await this.webhookSubscriptionStatusService.markAsActive(
+        WebhookSubscriptionChannelType.CALENDAR,
+        calendarChannel.id,
+        result,
+      );
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionRenewed,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
     } catch (error) {
-      await this.calendarChannelRepository.update(calendarChannel.id, {
-        webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionRenewalFailed,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
 
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: calendarChannel.workspaceId },
-      });
+      const recoveryAction =
+        await this.webhookSubscriptionExceptionHandlerService.handleDriverException(
+          error,
+          'RENEW',
+          WebhookSubscriptionChannelType.CALENDAR,
+          calendarChannel,
+          calendarChannel.workspaceId,
+        );
 
-      throw error;
+      if (recoveryAction === 'RECREATE') {
+        await this.createSubscription(calendarChannelId, workspaceId);
+      }
     }
   }
 
@@ -191,11 +298,57 @@ export class CalendarWebhookSubscriptionService {
 
     try {
       await driver.deleteSubscription(this.toContext(calendarChannel));
-    } catch (error) {
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: calendarChannel.workspaceId },
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionDeleted,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
       });
+    } catch (error) {
+      if (
+        error instanceof WebhookSubscriptionDriverException &&
+        error.code === WebhookSubscriptionDriverExceptionCode.NOT_FOUND
+      ) {
+        return;
+      }
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.ConnectedAccountWebhookSubscriptionDeletionFailed,
+        amount: 1,
+        attributes: this.buildMetricAttributes(connectedAccount.provider),
+      });
+
+      throw error;
     }
+  }
+
+  async revokeSubscription({
+    calendarChannelId,
+    workspaceId,
+  }: {
+    calendarChannelId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const isWorkspaceServiceable =
+      await this.workspaceActivationService.isWorkspaceServiceable(workspaceId);
+
+    if (isWorkspaceServiceable) {
+      return;
+    }
+
+    await this.deleteSubscription(calendarChannelId, workspaceId);
+
+    await this.webhookSubscriptionStatusService.markAsExpired(
+      WebhookSubscriptionChannelType.CALENDAR,
+      calendarChannelId,
+    );
+  }
+
+  private buildMetricAttributes(provider: string) {
+    return {
+      channel_type: WebhookSubscriptionChannelType.CALENDAR,
+      provider,
+    };
   }
 
   private toContext(

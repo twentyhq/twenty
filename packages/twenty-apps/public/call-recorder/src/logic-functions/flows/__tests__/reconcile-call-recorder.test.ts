@@ -67,6 +67,7 @@ type CallRecordingNode = {
   calendarEventId?: string | null;
   externalBotId?: string | null;
   externalRecordingId?: string | null;
+  callRecorderFailureReason?: string | null;
 };
 
 type FakeCoreApiClientFixture = {
@@ -164,6 +165,29 @@ class FakeCoreApiClient {
         updateCallRecording: {
           id,
         },
+      };
+    }
+
+    if (mutation.updateCalendarEvents !== undefined) {
+      const { filter, data } = mutation.updateCalendarEvents.__args;
+      const updatedCalendarEvents = this.calendarEvents.filter(
+        (calendarEvent) =>
+          filter.id.in.includes(calendarEvent.id) &&
+          filter.callRecorderPreference.is === 'NULL' &&
+          (calendarEvent.callRecorderPreference ?? null) === null,
+      );
+
+      for (const calendarEvent of updatedCalendarEvents) {
+        Object.assign(calendarEvent, data);
+      }
+
+      this.mutations.push({
+        name: 'updateCalendarEvents',
+        args: { filter, data },
+      });
+
+      return {
+        updateCalendarEvents: updatedCalendarEvents.map(({ id }) => ({ id })),
       };
     }
 
@@ -655,6 +679,45 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         id: buildCustomerSyncCallRecordingId(),
         title: 'Renamed Customer Sync',
         status: 'JOINING',
+      }),
+    ]);
+  });
+
+  it('resets a NOT_RECORDED recording to SCHEDULED and clears its reason for an upcoming meeting', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent()],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          title: 'Customer Sync',
+          status: 'NOT_RECORDED',
+          recordingRequestStatus: 'REQUESTED',
+          startedAt: FUTURE_STARTS_AT,
+          endedAt: FUTURE_ENDS_AT,
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-1',
+          callRecorderFailureReason: 'timeout_exceeded_noone_joined',
+        },
+      ],
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        action: 'UPDATED',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
+      }),
+    ]);
+    expect(client.callRecordings).toEqual([
+      expect.objectContaining({
+        id: buildCustomerSyncCallRecordingId(),
+        status: 'SCHEDULED',
+        callRecorderFailureReason: null,
       }),
     ]);
   });

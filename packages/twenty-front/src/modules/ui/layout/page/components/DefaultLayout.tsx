@@ -17,7 +17,7 @@ const StyledLayout = styled.div`
   background: ${themeCssVariables.grayScale.gray3};
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  height: calc(100dvh / var(--t-zoom, 1));
   overflow: hidden;
   position: relative;
   scrollbar-color: ${themeCssVariables.border.color.medium} transparent;
@@ -63,7 +63,6 @@ const StyledMainContainer = styled.div`
   display: flex;
   flex: 0 1 100%;
   min-width: 0;
-  overflow: hidden;
 
   @media print {
     display: block;

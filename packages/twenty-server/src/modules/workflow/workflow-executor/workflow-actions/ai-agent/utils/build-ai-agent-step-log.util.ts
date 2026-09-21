@@ -31,9 +31,7 @@ export const buildAiAgentStepLog = ({
         executionResult.usage.outputTokenDetails?.reasoningTokens,
       cacheReadTokens: executionResult.usage.inputTokenDetails?.cacheReadTokens,
       cacheCreationTokens: executionResult.cacheCreationTokens,
-      totalTokens:
-        (executionResult.usage.totalTokens ?? 0) +
-        executionResult.cacheCreationTokens,
+      totalTokens: executionResult.usage.totalTokens ?? 0,
     },
     cost: {
       totalCostInDollars: executionResult.totalCostInDollars ?? 0,

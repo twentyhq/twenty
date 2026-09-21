@@ -1,24 +1,28 @@
-import { useContext } from 'react';
-
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLayoutDashboard, IconReload } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Section } from 'twenty-ui/components';
+import { IconAddressBook, IconPencil, IconReload } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useResetPageLayoutToDefault } from '@/page-layout/hooks/useResetPageLayoutToDefault';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
-import { SettingsCard } from '@/settings/components/SettingsCard';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
+import { SettingsDiscoveryHeroCardFooter } from '@/settings/components/SettingsDiscoveryHeroCardFooter';
+import recordPageLayoutCoverDark from '@/settings/data-model/object-details/assets/record-page-layout-cover-dark.png';
+import recordPageLayoutCoverLight from '@/settings/data-model/object-details/assets/record-page-layout-cover-light.png';
+import { ObjectOpenRecordInPicker } from '@/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledContentContainer = styled.div`
@@ -28,17 +32,18 @@ const StyledContentContainer = styled.div`
 `;
 
 const RESET_PAGE_LAYOUT_MODAL_ID = 'reset-page-layout-to-default-modal';
+const RECORD_PAGE_LAYOUT_HERO_INSTANCE_ID_PREFIX = 'record-page-layout-hero';
 
 type ObjectLayoutProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
-  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const navigateApp = useNavigateApp();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
-  const { openModal } = useModal();
+  const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
+  const { openDialog } = useDialog();
   const { resetPageLayoutToDefault } = useResetPageLayoutToDefault();
 
   const pageLayout = useAtomFamilySelectorValue(
@@ -55,7 +60,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
   const firstRecord = records[0];
 
   const handleCustomizeRecordPage = () => {
-    if (!isDefined(firstRecord)) {
+    if (!hasLayoutsPermission || !isDefined(firstRecord)) {
       return;
     }
 
@@ -63,18 +68,25 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
       return;
     }
 
-    navigateApp(AppPath.RecordShowPage, {
-      objectNameSingular: objectMetadataItem.nameSingular,
-      objectRecordId: firstRecord.id,
-    });
+    // Customizing a layout takes over the whole page, so it is the main outlet
+    // that has to move even when this settings page is hosted in the panel.
+    navigateApp(
+      AppPath.RecordShowPage,
+      {
+        objectNameSingular: objectMetadataItem.nameSingular,
+        objectRecordId: firstRecord.id,
+      },
+      undefined,
+      { surface: 'main' },
+    );
   };
 
   const handleResetPageLayout = () => {
-    openModal(RESET_PAGE_LAYOUT_MODAL_ID);
+    openDialog(RESET_PAGE_LAYOUT_MODAL_ID);
   };
 
   const handleConfirmReset = async () => {
-    if (!isDefined(pageLayout)) {
+    if (!hasLayoutsPermission || !isDefined(pageLayout)) {
       return;
     }
 
@@ -85,39 +97,63 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
 
   return (
     <StyledContentContainer>
-      <Section>
-        <H2Title
-          title={t`Customize`}
-          description={t`Customize the layout for this role`}
+      <Section.Root>
+        <Section.Header
+          title={t`Record page`}
+          description={t`Customize the workspace record page`}
         />
-        <SettingsCard
-          title={t`Customize record page`}
-          Icon={<IconLayoutDashboard size={theme.icon.size.md} />}
-          onClick={handleCustomizeRecordPage}
-          disabled={!isDefined(firstRecord)}
+        <SettingsDiscoveryHeroCard
+          lightSrc={recordPageLayoutCoverLight}
+          darkSrc={recordPageLayoutCoverDark}
+          coverHeight={153}
+          instanceIdPrefix={RECORD_PAGE_LAYOUT_HERO_INSTANCE_ID_PREFIX}
+          tabs={[]}
+          footer={
+            <SettingsDiscoveryHeroCardFooter
+              Icon={IconAddressBook}
+              title={t`Customize record page`}
+              description={t`Customize how your record page looks.`}
+              action={
+                <Button
+                  size="sm"
+                  startIcon={<IconPencil />}
+                  onClick={handleCustomizeRecordPage}
+                  disabled={!hasLayoutsPermission || !isDefined(firstRecord)}
+                  variant="solid"
+                  color="accent"
+                >{t`Customize`}</Button>
+              }
+            />
+          }
         />
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
+          title={t`Navigation`}
+          description={t`Where records of this object open`}
+        />
+        <ObjectOpenRecordInPicker objectMetadataItem={objectMetadataItem} />
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Reset`}
           description={t`Reset all overrides on this layout to return it to the app default`}
         />
         <Button
-          title={t`Reset to default`}
-          variant="secondary"
-          size="small"
-          Icon={IconReload}
+          size="sm"
+          startIcon={<IconReload />}
           onClick={handleResetPageLayout}
-          disabled={!isDefined(pageLayout)}
-        />
-      </Section>
-      <ConfirmationModal
-        modalInstanceId={RESET_PAGE_LAYOUT_MODAL_ID}
+          disabled={!hasLayoutsPermission || !isDefined(pageLayout)}
+          variant="outline"
+        >{t`Reset to default`}</Button>
+      </Section.Root>
+      <ConfirmationDialog
+        dialogId={RESET_PAGE_LAYOUT_MODAL_ID}
         title={t`Reset to default`}
         subtitle={t`This action cannot be undone.`}
         onConfirmClick={handleConfirmReset}
         confirmButtonText={t`Reset`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
       />
     </StyledContentContainer>
   );

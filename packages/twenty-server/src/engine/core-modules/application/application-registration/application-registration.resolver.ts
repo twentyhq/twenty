@@ -8,6 +8,7 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
+import { type Request } from 'express';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
@@ -18,7 +19,6 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
@@ -54,6 +54,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 import {
@@ -92,7 +93,7 @@ export class ApplicationRegistrationResolver {
   async findApplicationRegistrationByUniversalIdentifier(
     @Args('universalIdentifier') universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity | null> {
-    return this.applicationRegistrationService.findOneByUniversalIdentifier(
+    return this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
       universalIdentifier,
     );
   }
@@ -210,11 +211,11 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @Mutation(() => ApplicationRegistrationVariableEntity)
+  @Mutation(() => ApplicationRegistrationVariableDTO)
   async createApplicationRegistrationVariable(
     @Args('input') input: CreateApplicationRegistrationVariableInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationVariableEntity> {
+  ): Promise<ApplicationRegistrationVariableDTO> {
     return this.applicationRegistrationVariableService.createVariable(
       input,
       workspaceId,
@@ -225,11 +226,11 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @Mutation(() => ApplicationRegistrationVariableEntity)
+  @Mutation(() => ApplicationRegistrationVariableDTO)
   async updateApplicationRegistrationVariable(
     @Args('input') input: UpdateApplicationRegistrationVariableInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationVariableEntity> {
+  ): Promise<ApplicationRegistrationVariableDTO> {
     return this.applicationRegistrationVariableService.updateVariable(
       input,
       workspaceId,
@@ -259,8 +260,13 @@ export class ApplicationRegistrationResolver {
   async uploadAppTarball(
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream }: FileUpload,
-    @Args('universalIdentifier', { type: () => String, nullable: true })
-    universalIdentifier: string | undefined,
+    @Args('universalIdentifier', {
+      type: () => String,
+      nullable: true,
+      deprecationReason:
+        'Ignored: the application universalIdentifier is read from the tarball manifest.',
+    })
+    _universalIdentifier: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
     const maxSize = this.twentyConfigService.get(
@@ -274,14 +280,10 @@ export class ApplicationRegistrationResolver {
 
       return this.applicationTarballService.uploadTarball({
         tarballBuffer,
-        universalIdentifier,
         ownerWorkspaceId: workspaceId,
       });
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message.includes('maximum allowed size')
-      ) {
+      if (error instanceof StreamSizeExceededError) {
         throw new ApplicationRegistrationException(
           `Tarball exceeds maximum size of ${maxSize} bytes`,
           ApplicationRegistrationExceptionCode.INVALID_INPUT,
@@ -363,12 +365,21 @@ export class ApplicationRegistrationResolver {
     @Args() { applicationRegistrationId }: ApplicationRegistrationClaimInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+    @Context() context: { req: Request },
   ): Promise<string> {
+    if (!isDefined(context.req.res)) {
+      throw new ApplicationRegistrationException(
+        'Cannot start a GitHub claim without a response to bind it to',
+        ApplicationRegistrationExceptionCode.CLAIM_STATE_MISMATCH,
+      );
+    }
+
     return this.applicationRegistrationClaimService.buildGithubAuthorizationUrl(
       {
         applicationRegistrationId,
         workspaceId,
         userId: user?.id ?? null,
+        response: context.req.res,
       },
     );
   }

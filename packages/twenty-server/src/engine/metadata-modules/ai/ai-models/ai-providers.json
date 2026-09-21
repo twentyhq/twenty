@@ -5,6 +5,220 @@
     "apiKey": "{{OPENAI_API_KEY}}",
     "models": [
       {
+        "name": "gpt-5-nano",
+        "label": "GPT-5 Nano",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 0.05,
+        "outputCostPerMillionTokens": 0.4,
+        "cachedInputCostPerMillionTokens": 0.005,
+        "contextWindowTokens": 400000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 13,
+          "outputTokensPerSecond": 173.04,
+          "effort": "high",
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gpt-4.1-nano",
+        "label": "GPT-4.1 nano",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 0.1,
+        "outputCostPerMillionTokens": 0.4,
+        "cachedInputCostPerMillionTokens": 0.025,
+        "contextWindowTokens": 1047576,
+        "maxOutputTokens": 32768,
+        "modalities": ["image"],
+        "benchmark": {
+          "intelligenceIndex": 7.8,
+          "outputTokensPerSecond": 163.34,
+          "measuredAt": "2026-09-21"
+        },
+        "isDeprecated": true
+      },
+      {
+        "name": "gpt-4o-2024-05-13",
+        "label": "GPT-4o (2024-05-13)",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 5,
+        "outputCostPerMillionTokens": 15,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 4096,
+        "modalities": ["image"],
+        "benchmark": {
+          "intelligenceIndex": 7.3,
+          "outputTokensPerSecond": 131.17,
+          "measuredAt": "2026-09-21"
+        },
+        "isDeprecated": true
+      },
+      {
+        "name": "gpt-5-pro",
+        "label": "GPT-5 Pro",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 15,
+        "outputCostPerMillionTokens": 120,
+        "contextWindowTokens": 400000,
+        "maxOutputTokens": 272000,
+        "modalities": ["image"],
+        "supportsReasoning": true
+      },
+      {
+        "name": "gpt-5.6-sol",
+        "label": "GPT-5.6 Sol",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 4,
+        "outputCostPerMillionTokens": 20,
+        "cachedInputCostPerMillionTokens": 0.4,
+        "cacheCreationCostPerMillionTokens": 5,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 8,
+          "outputCostPerMillionTokens": 30,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.8,
+          "cacheCreationCostPerMillionTokens": 10
+        },
+        "contextWindowTokens": 1050000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
+        "benchmark": {
+          "intelligenceIndex": 47,
+          "outputTokensPerSecond": 75.3,
+          "costPerTask": 1.9885,
+          "effort": "max",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "none": {
+            "intelligenceIndex": 28.3,
+            "outputTokensPerSecond": 64.7,
+            "effort": "none",
+            "measuredAt": "2026-09-21"
+          },
+          "low": {
+            "intelligenceIndex": 33.5,
+            "outputTokensPerSecond": 72.14,
+            "costPerTask": 0.2606,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "medium": {
+            "intelligenceIndex": 39.2,
+            "outputTokensPerSecond": 73.23,
+            "costPerTask": 0.505,
+            "effort": "medium",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 42.3,
+            "outputTokensPerSecond": 77.63,
+            "costPerTask": 0.808,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          },
+          "xhigh": {
+            "intelligenceIndex": 44,
+            "outputTokensPerSecond": 71.93,
+            "costPerTask": 1.1844,
+            "effort": "xhigh",
+            "measuredAt": "2026-09-21"
+          },
+          "max": {
+            "intelligenceIndex": 47,
+            "outputTokensPerSecond": 75.3,
+            "costPerTask": 1.9885,
+            "effort": "max",
+            "measuredAt": "2026-09-21"
+          }
+        }
+      },
+      {
+        "name": "gpt-4o-2024-08-06",
+        "label": "GPT-4o (2024-08-06)",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 2.5,
+        "outputCostPerMillionTokens": 10,
+        "cachedInputCostPerMillionTokens": 1.25,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 16384,
+        "modalities": ["image"],
+        "benchmark": {
+          "intelligenceIndex": 7.7,
+          "outputTokensPerSecond": 131.05,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gpt-6-astra",
+        "label": "GPT-6 Astra",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 10,
+        "outputCostPerMillionTokens": 50,
+        "cachedInputCostPerMillionTokens": 1,
+        "cacheCreationCostPerMillionTokens": 12.5,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 20,
+          "outputCostPerMillionTokens": 75,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 2,
+          "cacheCreationCostPerMillionTokens": 25
+        },
+        "contextWindowTokens": 1050000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high", "xhigh", "max"],
+        "benchmark": {
+          "intelligenceIndex": 52.7,
+          "outputTokensPerSecond": 70.76,
+          "costPerTask": 3.2575,
+          "effort": "max",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "low": {
+            "intelligenceIndex": 45.8,
+            "outputTokensPerSecond": 62.04,
+            "costPerTask": 0.8175,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "medium": {
+            "intelligenceIndex": 49.6,
+            "outputTokensPerSecond": 66.05,
+            "costPerTask": 1.5406,
+            "effort": "medium",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 50.9,
+            "outputTokensPerSecond": 65.13,
+            "costPerTask": 1.7253,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          },
+          "xhigh": {
+            "intelligenceIndex": 52.4,
+            "outputTokensPerSecond": 65.79,
+            "costPerTask": 2.3088,
+            "effort": "xhigh",
+            "measuredAt": "2026-09-21"
+          },
+          "max": {
+            "intelligenceIndex": 52.7,
+            "outputTokensPerSecond": 70.76,
+            "costPerTask": 3.2575,
+            "effort": "max",
+            "measuredAt": "2026-09-21"
+          }
+        }
+      },
+      {
         "name": "gpt-5.2-pro",
         "label": "GPT-5.2 Pro",
         "modelFamily": "GPT",
@@ -14,6 +228,302 @@
         "maxOutputTokens": 128000,
         "modalities": ["image"],
         "supportsReasoning": true
+      },
+      {
+        "name": "gpt-5.3-codex-spark",
+        "label": "GPT-5.3 Codex Spark",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 1.75,
+        "outputCostPerMillionTokens": 14,
+        "cachedInputCostPerMillionTokens": 0.175,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 32000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
+        "name": "gpt-4.1-mini",
+        "label": "GPT-4.1 mini",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 0.4,
+        "outputCostPerMillionTokens": 1.6,
+        "cachedInputCostPerMillionTokens": 0.1,
+        "contextWindowTokens": 1047576,
+        "maxOutputTokens": 32768,
+        "modalities": ["image", "pdf"],
+        "benchmark": {
+          "intelligenceIndex": 10.2,
+          "outputTokensPerSecond": 149.05,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gpt-5.4",
+        "label": "GPT-5.4",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 2.5,
+        "outputCostPerMillionTokens": 15,
+        "cachedInputCostPerMillionTokens": 0.25,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 5,
+          "outputCostPerMillionTokens": 22.5,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.5
+        },
+        "contextWindowTokens": 1050000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh"],
+        "benchmark": {
+          "intelligenceIndex": 39,
+          "outputTokensPerSecond": 142.8,
+          "effort": "xhigh",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "none": {
+            "intelligenceIndex": 18.2,
+            "outputTokensPerSecond": 111.44,
+            "effort": "none",
+            "measuredAt": "2026-09-21"
+          },
+          "low": {
+            "intelligenceIndex": 27.6,
+            "outputTokensPerSecond": 111.2,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "xhigh": {
+            "intelligenceIndex": 39,
+            "outputTokensPerSecond": 142.8,
+            "effort": "xhigh",
+            "measuredAt": "2026-09-21"
+          }
+        }
+      },
+      {
+        "name": "gpt-4-turbo",
+        "label": "GPT-4 Turbo",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 10,
+        "outputCostPerMillionTokens": 30,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 4096,
+        "modalities": ["image"],
+        "benchmark": {
+          "intelligenceIndex": 7,
+          "outputTokensPerSecond": 31.55,
+          "measuredAt": "2026-09-21"
+        },
+        "isDeprecated": true
+      },
+      {
+        "name": "gpt-5.1",
+        "label": "GPT-5.1",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 1.25,
+        "outputCostPerMillionTokens": 10,
+        "cachedInputCostPerMillionTokens": 0.125,
+        "contextWindowTokens": 400000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 24.7,
+          "outputTokensPerSecond": 133.51,
+          "effort": "high",
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "o1",
+        "label": "o1",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 15,
+        "outputCostPerMillionTokens": 60,
+        "cachedInputCostPerMillionTokens": 7.5,
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 100000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 15.2,
+          "measuredAt": "2026-09-21"
+        },
+        "isDeprecated": true
+      },
+      {
+        "name": "gpt-4o",
+        "label": "GPT-4o",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 2.5,
+        "outputCostPerMillionTokens": 10,
+        "cachedInputCostPerMillionTokens": 1.25,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 16384,
+        "modalities": ["image", "pdf"],
+        "benchmark": {
+          "intelligenceIndex": 9,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gpt-5.6-luna",
+        "label": "GPT-5.6 Luna",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 0.2,
+        "outputCostPerMillionTokens": 1.2,
+        "cachedInputCostPerMillionTokens": 0.02,
+        "cacheCreationCostPerMillionTokens": 0.25,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 0.4,
+          "outputCostPerMillionTokens": 1.8,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.04,
+          "cacheCreationCostPerMillionTokens": 0.5
+        },
+        "contextWindowTokens": 1050000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
+        "benchmark": {
+          "intelligenceIndex": 37.3,
+          "outputTokensPerSecond": 166.47,
+          "costPerTask": 0.1783,
+          "effort": "max",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "none": {
+            "intelligenceIndex": 15.5,
+            "outputTokensPerSecond": 150.12,
+            "costPerTask": 0.0101,
+            "effort": "none",
+            "measuredAt": "2026-09-21"
+          },
+          "low": {
+            "intelligenceIndex": 21,
+            "outputTokensPerSecond": 154.49,
+            "costPerTask": 0.0098,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "medium": {
+            "intelligenceIndex": 25,
+            "outputTokensPerSecond": 153.88,
+            "costPerTask": 0.0156,
+            "effort": "medium",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 32.1,
+            "outputTokensPerSecond": 159.54,
+            "costPerTask": 0.044,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          },
+          "xhigh": {
+            "intelligenceIndex": 34.6,
+            "outputTokensPerSecond": 164.66,
+            "costPerTask": 0.0853,
+            "effort": "xhigh",
+            "measuredAt": "2026-09-21"
+          },
+          "max": {
+            "intelligenceIndex": 37.3,
+            "outputTokensPerSecond": 166.47,
+            "costPerTask": 0.1783,
+            "effort": "max",
+            "measuredAt": "2026-09-21"
+          }
+        }
+      },
+      {
+        "name": "gpt-5.3-codex",
+        "label": "GPT-5.3 Codex",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 1.75,
+        "outputCostPerMillionTokens": 14,
+        "cachedInputCostPerMillionTokens": 0.175,
+        "contextWindowTokens": 400000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 32.5,
+          "outputTokensPerSecond": 179.44,
+          "effort": "xhigh",
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gpt-4o-mini",
+        "label": "GPT-4o mini",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 0.15,
+        "outputCostPerMillionTokens": 0.6,
+        "cachedInputCostPerMillionTokens": 0.075,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 16384,
+        "modalities": ["image", "pdf"],
+        "benchmark": {
+          "intelligenceIndex": 6.7,
+          "outputTokensPerSecond": 137.07,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "o1-pro",
+        "label": "o1-pro",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 150,
+        "outputCostPerMillionTokens": 600,
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 100000,
+        "modalities": ["image"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 12.4,
+          "measuredAt": "2026-09-21"
+        },
+        "isDeprecated": true
+      },
+      {
+        "name": "gpt-4.1",
+        "label": "GPT-4.1",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 8,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "contextWindowTokens": 1047576,
+        "maxOutputTokens": 32768,
+        "modalities": ["image", "pdf"],
+        "benchmark": {
+          "intelligenceIndex": 12.7,
+          "outputTokensPerSecond": 189.83,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gpt-5.4-nano",
+        "label": "GPT-5.4 nano",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 0.2,
+        "outputCostPerMillionTokens": 1.25,
+        "cachedInputCostPerMillionTokens": 0.02,
+        "contextWindowTokens": 400000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 20.7,
+          "outputTokensPerSecond": 183.93,
+          "costPerTask": 0.1831,
+          "effort": "xhigh",
+          "measuredAt": "2026-09-21"
+        }
       },
       {
         "name": "gpt-5.5-pro",
@@ -32,38 +542,61 @@
         "supportsReasoning": true
       },
       {
-        "name": "gpt-4.1-mini",
-        "label": "GPT-4.1 mini",
+        "name": "gpt-5.4-mini",
+        "label": "GPT-5.4 mini",
         "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 0.4,
-        "outputCostPerMillionTokens": 1.6,
-        "cachedInputCostPerMillionTokens": 0.1,
-        "contextWindowTokens": 1047576,
-        "maxOutputTokens": 32768,
-        "modalities": ["image", "pdf"]
+        "inputCostPerMillionTokens": 0.75,
+        "outputCostPerMillionTokens": 4.5,
+        "cachedInputCostPerMillionTokens": 0.075,
+        "contextWindowTokens": 400000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 24.1,
+          "outputTokensPerSecond": 232.32,
+          "costPerTask": 0.4097,
+          "effort": "xhigh",
+          "measuredAt": "2026-09-21"
+        }
       },
       {
-        "name": "gpt-4o",
-        "label": "GPT-4o",
+        "name": "gpt-5.6",
+        "label": "GPT-5.6",
         "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 2.5,
-        "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 1.25,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 16384,
-        "modalities": ["image", "pdf"]
-      },
-      {
-        "name": "gpt-5.3-codex-spark",
-        "label": "GPT-5.3 Codex Spark",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 1.75,
-        "outputCostPerMillionTokens": 14,
-        "cachedInputCostPerMillionTokens": 0.175,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 32000,
+        "inputCostPerMillionTokens": 4,
+        "outputCostPerMillionTokens": 20,
+        "cachedInputCostPerMillionTokens": 0.4,
+        "cacheCreationCostPerMillionTokens": 5,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 8,
+          "outputCostPerMillionTokens": 30,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.8,
+          "cacheCreationCostPerMillionTokens": 10
+        },
+        "contextWindowTokens": 1050000,
+        "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true
+      },
+      {
+        "name": "gpt-5-mini",
+        "label": "GPT-5 Mini",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 0.25,
+        "outputCostPerMillionTokens": 2,
+        "cachedInputCostPerMillionTokens": 0.025,
+        "contextWindowTokens": 400000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 20.6,
+          "outputTokensPerSecond": 103.47,
+          "effort": "medium",
+          "measuredAt": "2026-09-21"
+        }
       },
       {
         "name": "gpt-5.4-pro",
@@ -82,36 +615,126 @@
         "supportsReasoning": true
       },
       {
-        "name": "gpt-5.6-sol",
-        "label": "GPT-5.6 Sol",
+        "name": "gpt-5.6-terra",
+        "label": "GPT-5.6 Terra",
         "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 5,
-        "outputCostPerMillionTokens": 30,
-        "cachedInputCostPerMillionTokens": 0.5,
-        "cacheCreationCostPerMillionTokens": 6.25,
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 12,
+        "cachedInputCostPerMillionTokens": 0.2,
+        "cacheCreationCostPerMillionTokens": 2.5,
         "longContextCost": {
-          "inputCostPerMillionTokens": 10,
-          "outputCostPerMillionTokens": 45,
+          "inputCostPerMillionTokens": 4,
+          "outputCostPerMillionTokens": 18,
           "thresholdTokens": 200000,
-          "cachedInputCostPerMillionTokens": 1,
-          "cacheCreationCostPerMillionTokens": 12.5
+          "cachedInputCostPerMillionTokens": 0.4,
+          "cacheCreationCostPerMillionTokens": 5
         },
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
+        "benchmark": {
+          "intelligenceIndex": 42.1,
+          "outputTokensPerSecond": 105.46,
+          "costPerTask": 1.3987,
+          "effort": "max",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "none": {
+            "intelligenceIndex": 20.8,
+            "outputTokensPerSecond": 91.73,
+            "costPerTask": 0.1397,
+            "effort": "none",
+            "measuredAt": "2026-09-21"
+          },
+          "low": {
+            "intelligenceIndex": 27.5,
+            "outputTokensPerSecond": 90.47,
+            "costPerTask": 0.1445,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "medium": {
+            "intelligenceIndex": 30.1,
+            "outputTokensPerSecond": 98.06,
+            "costPerTask": 0.1834,
+            "effort": "medium",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 34.2,
+            "outputTokensPerSecond": 90.55,
+            "costPerTask": 0.3379,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          },
+          "xhigh": {
+            "intelligenceIndex": 38,
+            "outputTokensPerSecond": 104.26,
+            "costPerTask": 0.6318,
+            "effort": "xhigh",
+            "measuredAt": "2026-09-21"
+          },
+          "max": {
+            "intelligenceIndex": 42.1,
+            "outputTokensPerSecond": 105.46,
+            "costPerTask": 1.3987,
+            "effort": "max",
+            "measuredAt": "2026-09-21"
+          }
+        }
       },
       {
-        "name": "gpt-4.1-nano",
-        "label": "GPT-4.1 nano",
+        "name": "gpt-4",
+        "label": "GPT-4",
         "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 0.1,
-        "outputCostPerMillionTokens": 0.4,
-        "cachedInputCostPerMillionTokens": 0.025,
-        "contextWindowTokens": 1047576,
-        "maxOutputTokens": 32768,
-        "modalities": ["image"],
+        "inputCostPerMillionTokens": 30,
+        "outputCostPerMillionTokens": 60,
+        "contextWindowTokens": 8192,
+        "maxOutputTokens": 8192,
+        "benchmark": {
+          "intelligenceIndex": 6.7,
+          "measuredAt": "2026-09-21"
+        },
         "isDeprecated": true
+      },
+      {
+        "name": "gpt-5.2",
+        "label": "GPT-5.2",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 1.75,
+        "outputCostPerMillionTokens": 14,
+        "cachedInputCostPerMillionTokens": 0.175,
+        "contextWindowTokens": 400000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 30.4,
+          "outputTokensPerSecond": 100.61,
+          "effort": "xhigh",
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gpt-5",
+        "label": "GPT-5",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 1.25,
+        "outputCostPerMillionTokens": 10,
+        "cachedInputCostPerMillionTokens": 0.125,
+        "contextWindowTokens": 400000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 23,
+          "outputTokensPerSecond": 113.37,
+          "effort": "high",
+          "measuredAt": "2026-09-21"
+        }
       },
       {
         "name": "gpt-5.2-chat-latest",
@@ -123,6 +746,38 @@
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
         "modalities": ["image"],
+        "supportsReasoning": true,
+        "isDeprecated": true
+      },
+      {
+        "name": "o4-mini",
+        "label": "o4-mini",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 1.1,
+        "outputCostPerMillionTokens": 4.4,
+        "cachedInputCostPerMillionTokens": 0.275,
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 100000,
+        "modalities": ["image"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 16.7,
+          "outputTokensPerSecond": 152.87,
+          "effort": "high",
+          "measuredAt": "2026-09-21"
+        },
+        "isDeprecated": true
+      },
+      {
+        "name": "gpt-realtime-2.1",
+        "label": "GPT-Realtime-2.1",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 4,
+        "outputCostPerMillionTokens": 24,
+        "cachedInputCostPerMillionTokens": 0.4,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 32000,
+        "modalities": ["audio", "image"],
         "supportsReasoning": true
       },
       {
@@ -135,6 +790,55 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
         "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 12.5,
+          "outputTokensPerSecond": 199.18,
+          "measuredAt": "2026-09-21"
+        },
+        "isDeprecated": true
+      },
+      {
+        "name": "o3",
+        "label": "o3",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 8,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 100000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 20.2,
+          "outputTokensPerSecond": 143.73,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "o3-pro",
+        "label": "o3-pro",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 20,
+        "outputCostPerMillionTokens": 80,
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 100000,
+        "modalities": ["image"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 21.9,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gpt-5.3-chat-latest",
+        "label": "GPT-5.3 Chat (latest)",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 1.75,
+        "outputCostPerMillionTokens": 14,
+        "cachedInputCostPerMillionTokens": 0.175,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 16384,
+        "modalities": ["image"],
         "isDeprecated": true
       },
       {
@@ -153,64 +857,50 @@
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "o3-pro",
-        "label": "o3-pro",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 20,
-        "outputCostPerMillionTokens": 80,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 100000,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-4o-mini",
-        "label": "GPT-4o mini",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 0.15,
-        "outputCostPerMillionTokens": 0.6,
-        "cachedInputCostPerMillionTokens": 0.075,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 16384,
-        "modalities": ["image", "pdf"]
-      },
-      {
-        "name": "gpt-5",
-        "label": "GPT-5",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 1.25,
-        "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 0.125,
-        "contextWindowTokens": 400000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-realtime-2.1",
-        "label": "GPT-Realtime-2.1",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 4,
-        "outputCostPerMillionTokens": 24,
-        "cachedInputCostPerMillionTokens": 0.4,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 32000,
-        "modalities": ["audio", "image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-4o-2024-05-13",
-        "label": "GPT-4o (2024-05-13)",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 5,
-        "outputCostPerMillionTokens": 15,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 4096,
-        "modalities": ["image"],
-        "isDeprecated": true
+        "supportsReasoning": true,
+        "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
+        "benchmark": {
+          "intelligenceIndex": 38.4,
+          "outputTokensPerSecond": 114.98,
+          "costPerTask": 2.634,
+          "effort": "xhigh",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "none": {
+            "intelligenceIndex": 23.2,
+            "outputTokensPerSecond": 93.89,
+            "effort": "none",
+            "measuredAt": "2026-09-21"
+          },
+          "low": {
+            "intelligenceIndex": 30.7,
+            "outputTokensPerSecond": 97.25,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "medium": {
+            "intelligenceIndex": 33.8,
+            "outputTokensPerSecond": 102.5,
+            "costPerTask": 0.9017,
+            "effort": "medium",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 37,
+            "outputTokensPerSecond": 108.38,
+            "costPerTask": 1.5413,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          },
+          "xhigh": {
+            "intelligenceIndex": 38.4,
+            "outputTokensPerSecond": 114.98,
+            "costPerTask": 2.634,
+            "effort": "xhigh",
+            "measuredAt": "2026-09-21"
+          }
+        }
       },
       {
         "name": "gpt-4o-2024-11-20",
@@ -221,284 +911,11 @@
         "cachedInputCostPerMillionTokens": 1.25,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": ["image"]
-      },
-      {
-        "name": "gpt-5.4",
-        "label": "GPT-5.4",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 2.5,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.25,
-        "longContextCost": {
-          "inputCostPerMillionTokens": 5,
-          "outputCostPerMillionTokens": 22.5,
-          "thresholdTokens": 200000,
-          "cachedInputCostPerMillionTokens": 0.5
-        },
-        "contextWindowTokens": 1050000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-5.3-chat-latest",
-        "label": "GPT-5.3 Chat (latest)",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 1.75,
-        "outputCostPerMillionTokens": 14,
-        "cachedInputCostPerMillionTokens": 0.175,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 16384,
-        "modalities": ["image"]
-      },
-      {
-        "name": "gpt-5.4-nano",
-        "label": "GPT-5.4 nano",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 0.2,
-        "outputCostPerMillionTokens": 1.25,
-        "cachedInputCostPerMillionTokens": 0.02,
-        "contextWindowTokens": 400000,
-        "maxOutputTokens": 128000,
         "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-5-pro",
-        "label": "GPT-5 Pro",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 15,
-        "outputCostPerMillionTokens": 120,
-        "contextWindowTokens": 400000,
-        "maxOutputTokens": 272000,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-5.4-mini",
-        "label": "GPT-5.4 mini",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 0.75,
-        "outputCostPerMillionTokens": 4.5,
-        "cachedInputCostPerMillionTokens": 0.075,
-        "contextWindowTokens": 400000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "o1",
-        "label": "o1",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 15,
-        "outputCostPerMillionTokens": 60,
-        "cachedInputCostPerMillionTokens": 7.5,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 100000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true,
-        "isDeprecated": true
-      },
-      {
-        "name": "gpt-5.6-luna",
-        "label": "GPT-5.6 Luna",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 1,
-        "outputCostPerMillionTokens": 6,
-        "cachedInputCostPerMillionTokens": 0.1,
-        "cacheCreationCostPerMillionTokens": 1.25,
-        "longContextCost": {
-          "inputCostPerMillionTokens": 2,
-          "outputCostPerMillionTokens": 9,
-          "thresholdTokens": 200000,
-          "cachedInputCostPerMillionTokens": 0.2,
-          "cacheCreationCostPerMillionTokens": 2.5
-        },
-        "contextWindowTokens": 1050000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-5.2",
-        "label": "GPT-5.2",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 1.75,
-        "outputCostPerMillionTokens": 14,
-        "cachedInputCostPerMillionTokens": 0.175,
-        "contextWindowTokens": 400000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-5.3-codex",
-        "label": "GPT-5.3 Codex",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 1.75,
-        "outputCostPerMillionTokens": 14,
-        "cachedInputCostPerMillionTokens": 0.175,
-        "contextWindowTokens": 400000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-5-mini",
-        "label": "GPT-5 Mini",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 0.25,
-        "outputCostPerMillionTokens": 2,
-        "cachedInputCostPerMillionTokens": 0.025,
-        "contextWindowTokens": 400000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "o1-pro",
-        "label": "o1-pro",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 150,
-        "outputCostPerMillionTokens": 600,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 100000,
-        "modalities": ["image"],
-        "supportsReasoning": true,
-        "isDeprecated": true
-      },
-      {
-        "name": "gpt-5.6",
-        "label": "GPT-5.6",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 5,
-        "outputCostPerMillionTokens": 30,
-        "cachedInputCostPerMillionTokens": 0.5,
-        "cacheCreationCostPerMillionTokens": 6.25,
-        "longContextCost": {
-          "inputCostPerMillionTokens": 10,
-          "outputCostPerMillionTokens": 45,
-          "thresholdTokens": 200000,
-          "cachedInputCostPerMillionTokens": 1,
-          "cacheCreationCostPerMillionTokens": 12.5
-        },
-        "contextWindowTokens": 1050000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-5.1",
-        "label": "GPT-5.1",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 1.25,
-        "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 0.125,
-        "contextWindowTokens": 400000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-4-turbo",
-        "label": "GPT-4 Turbo",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 10,
-        "outputCostPerMillionTokens": 30,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 4096,
-        "modalities": ["image"],
-        "isDeprecated": true
-      },
-      {
-        "name": "gpt-4o-2024-08-06",
-        "label": "GPT-4o (2024-08-06)",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 2.5,
-        "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 1.25,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 16384,
-        "modalities": ["image"]
-      },
-      {
-        "name": "gpt-5-nano",
-        "label": "GPT-5 Nano",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 0.05,
-        "outputCostPerMillionTokens": 0.4,
-        "cachedInputCostPerMillionTokens": 0.005,
-        "contextWindowTokens": 400000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "o3",
-        "label": "o3",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 8,
-        "cachedInputCostPerMillionTokens": 0.5,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 100000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-5.6-terra",
-        "label": "GPT-5.6 Terra",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 2.5,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.25,
-        "cacheCreationCostPerMillionTokens": 3.125,
-        "longContextCost": {
-          "inputCostPerMillionTokens": 5,
-          "outputCostPerMillionTokens": 22.5,
-          "thresholdTokens": 200000,
-          "cachedInputCostPerMillionTokens": 0.5,
-          "cacheCreationCostPerMillionTokens": 6.25
-        },
-        "contextWindowTokens": 1050000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gpt-4.1",
-        "label": "GPT-4.1",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 8,
-        "cachedInputCostPerMillionTokens": 0.5,
-        "contextWindowTokens": 1047576,
-        "maxOutputTokens": 32768,
-        "modalities": ["image", "pdf"]
-      },
-      {
-        "name": "o4-mini",
-        "label": "o4-mini",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 1.1,
-        "outputCostPerMillionTokens": 4.4,
-        "cachedInputCostPerMillionTokens": 0.275,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 100000,
-        "modalities": ["image"],
-        "supportsReasoning": true,
-        "isDeprecated": true
-      },
-      {
-        "name": "gpt-4",
-        "label": "GPT-4",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 30,
-        "outputCostPerMillionTokens": 60,
-        "contextWindowTokens": 8192,
-        "maxOutputTokens": 8192,
-        "isDeprecated": true
+        "benchmark": {
+          "intelligenceIndex": 9,
+          "measuredAt": "2026-09-21"
+        }
       }
     ]
   },
@@ -518,20 +935,171 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "max"],
+        "benchmark": {
+          "intelligenceIndex": 30.1,
+          "outputTokensPerSecond": 50.62,
+          "costPerTask": 2.4859,
+          "effort": "max",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "low": {
+            "intelligenceIndex": 23.3,
+            "outputTokensPerSecond": 44.03,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 24.7,
+            "outputTokensPerSecond": 43.67,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          },
+          "max": {
+            "intelligenceIndex": 30.1,
+            "outputTokensPerSecond": 50.62,
+            "costPerTask": 2.4859,
+            "effort": "max",
+            "measuredAt": "2026-09-21"
+          }
+        }
       },
       {
-        "name": "claude-haiku-4-5",
-        "label": "Claude Haiku 4.5 (latest)",
+        "name": "claude-opus-5",
+        "label": "Claude Opus 5",
         "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 1,
-        "outputCostPerMillionTokens": 5,
-        "cachedInputCostPerMillionTokens": 0.1,
-        "cacheCreationCostPerMillionTokens": 1.25,
+        "inputCostPerMillionTokens": 5,
+        "outputCostPerMillionTokens": 25,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "cacheCreationCostPerMillionTokens": 6.25,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
+        "benchmark": {
+          "intelligenceIndex": 50.8,
+          "outputTokensPerSecond": 62.13,
+          "costPerTask": 5.8584,
+          "effort": "max",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "low": {
+            "intelligenceIndex": 39.4,
+            "outputTokensPerSecond": 62.36,
+            "costPerTask": 1.0983,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "medium": {
+            "intelligenceIndex": 44.8,
+            "outputTokensPerSecond": 60.03,
+            "costPerTask": 2.1895,
+            "effort": "medium",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 48.1,
+            "outputTokensPerSecond": 61.13,
+            "costPerTask": 3.6133,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          },
+          "xhigh": {
+            "intelligenceIndex": 49.7,
+            "outputTokensPerSecond": 58.17,
+            "costPerTask": 4.8778,
+            "effort": "xhigh",
+            "measuredAt": "2026-09-21"
+          },
+          "max": {
+            "intelligenceIndex": 50.8,
+            "outputTokensPerSecond": 62.13,
+            "costPerTask": 5.8584,
+            "effort": "max",
+            "measuredAt": "2026-09-21"
+          }
+        }
+      },
+      {
+        "name": "claude-opus-4-5",
+        "label": "Claude Opus 4.5 (latest)",
+        "modelFamily": "CLAUDE",
+        "inputCostPerMillionTokens": 5,
+        "outputCostPerMillionTokens": 25,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "cacheCreationCostPerMillionTokens": 6.25,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
+        "benchmark": {
+          "intelligenceIndex": 29.1,
+          "outputTokensPerSecond": 50.7,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "claude-fable-5-1",
+        "label": "Claude Fable 5.1",
+        "modelFamily": "CLAUDE",
+        "inputCostPerMillionTokens": 10,
+        "outputCostPerMillionTokens": 50,
+        "cachedInputCostPerMillionTokens": 0.25,
+        "cacheCreationCostPerMillionTokens": 12.5,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
+        "benchmark": {
+          "intelligenceIndex": 53.4,
+          "outputTokensPerSecond": 69.71,
+          "costPerTask": 7.6297,
+          "effort": "max",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "low": {
+            "intelligenceIndex": 46.8,
+            "outputTokensPerSecond": 57.19,
+            "costPerTask": 2.371,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "medium": {
+            "intelligenceIndex": 48.9,
+            "outputTokensPerSecond": 58.28,
+            "costPerTask": 2.9826,
+            "effort": "medium",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 51.2,
+            "outputTokensPerSecond": 59.11,
+            "costPerTask": 3.9125,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          },
+          "xhigh": {
+            "intelligenceIndex": 53.2,
+            "outputTokensPerSecond": 64.39,
+            "costPerTask": 5.9783,
+            "effort": "xhigh",
+            "measuredAt": "2026-09-21"
+          },
+          "max": {
+            "intelligenceIndex": 53.4,
+            "outputTokensPerSecond": 69.71,
+            "costPerTask": 7.6297,
+            "effort": "max",
+            "measuredAt": "2026-09-21"
+          }
+        }
       },
       {
         "name": "claude-opus-4-6",
@@ -544,60 +1112,28 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "claude-fable-5",
-        "label": "Claude Fable 5",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 10,
-        "outputCostPerMillionTokens": 50,
-        "cachedInputCostPerMillionTokens": 1,
-        "cacheCreationCostPerMillionTokens": 12.5,
-        "contextWindowTokens": 1000000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "claude-opus-4-8",
-        "label": "Claude Opus 4.8",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 5,
-        "outputCostPerMillionTokens": 25,
-        "cachedInputCostPerMillionTokens": 0.5,
-        "cacheCreationCostPerMillionTokens": 6.25,
-        "contextWindowTokens": 1000000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "claude-opus-4-1",
-        "label": "Claude Opus 4.1 (latest)",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 15,
-        "outputCostPerMillionTokens": 75,
-        "cachedInputCostPerMillionTokens": 1.5,
-        "cacheCreationCostPerMillionTokens": 18.75,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 32000,
-        "modalities": ["image", "pdf"],
         "supportsReasoning": true,
-        "isDeprecated": true
-      },
-      {
-        "name": "claude-sonnet-4-5",
-        "label": "Claude Sonnet 4.5 (latest)",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 3,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.3,
-        "cacheCreationCostPerMillionTokens": 3.75,
-        "contextWindowTokens": 1000000,
-        "maxOutputTokens": 64000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "efforts": ["low", "medium", "high", "max"],
+        "benchmark": {
+          "intelligenceIndex": 31.9,
+          "outputTokensPerSecond": 43.15,
+          "effort": "max",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "high": {
+            "intelligenceIndex": 26.4,
+            "outputTokensPerSecond": 41.5,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          },
+          "max": {
+            "intelligenceIndex": 31.9,
+            "outputTokensPerSecond": 43.15,
+            "effort": "max",
+            "measuredAt": "2026-09-21"
+          }
+        }
       },
       {
         "name": "claude-sonnet-4-5-20250929",
@@ -613,17 +1149,38 @@
         "supportsReasoning": true
       },
       {
-        "name": "claude-opus-4-5-20251101",
-        "label": "Claude Opus 4.5",
+        "name": "claude-opus-4-7",
+        "label": "Claude Opus 4.7",
         "modelFamily": "CLAUDE",
         "inputCostPerMillionTokens": 5,
         "outputCostPerMillionTokens": 25,
         "cachedInputCostPerMillionTokens": 0.5,
         "cacheCreationCostPerMillionTokens": 6.25,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 64000,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
+        "benchmark": {
+          "intelligenceIndex": 40.7,
+          "outputTokensPerSecond": 51.34,
+          "effort": "max",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "high": {
+            "intelligenceIndex": 30.9,
+            "outputTokensPerSecond": 44.86,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          },
+          "max": {
+            "intelligenceIndex": 40.7,
+            "outputTokensPerSecond": 51.34,
+            "effort": "max",
+            "measuredAt": "2026-09-21"
+          }
+        }
       },
       {
         "name": "claude-haiku-4-5-20251001",
@@ -639,8 +1196,64 @@
         "supportsReasoning": true
       },
       {
-        "name": "claude-opus-4-7",
-        "label": "Claude Opus 4.7",
+        "name": "claude-fable-5",
+        "label": "Claude Fable 5",
+        "modelFamily": "CLAUDE",
+        "inputCostPerMillionTokens": 10,
+        "outputCostPerMillionTokens": 50,
+        "cachedInputCostPerMillionTokens": 1,
+        "cacheCreationCostPerMillionTokens": 12.5,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
+        "benchmark": {
+          "intelligenceIndex": 49.6,
+          "outputTokensPerSecond": 67.87,
+          "costPerTask": 8.746,
+          "effort": "max",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "max": {
+            "intelligenceIndex": 49.6,
+            "outputTokensPerSecond": 67.87,
+            "costPerTask": 8.746,
+            "effort": "max",
+            "measuredAt": "2026-09-21"
+          }
+        }
+      },
+      {
+        "name": "claude-haiku-4-5",
+        "label": "Claude Haiku 4.5 (latest)",
+        "modelFamily": "CLAUDE",
+        "inputCostPerMillionTokens": 1,
+        "outputCostPerMillionTokens": 5,
+        "cachedInputCostPerMillionTokens": 0.1,
+        "cacheCreationCostPerMillionTokens": 1.25,
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 64000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
+        "name": "claude-sonnet-4-5",
+        "label": "Claude Sonnet 4.5 (latest)",
+        "modelFamily": "CLAUDE",
+        "inputCostPerMillionTokens": 3,
+        "outputCostPerMillionTokens": 15,
+        "cachedInputCostPerMillionTokens": 0.3,
+        "cacheCreationCostPerMillionTokens": 3.75,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 64000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
+        "name": "claude-opus-4-8",
+        "label": "Claude Opus 4.8",
         "modelFamily": "CLAUDE",
         "inputCostPerMillionTokens": 5,
         "outputCostPerMillionTokens": 25,
@@ -649,20 +1262,24 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "claude-opus-4-5",
-        "label": "Claude Opus 4.5 (latest)",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 5,
-        "outputCostPerMillionTokens": 25,
-        "cachedInputCostPerMillionTokens": 0.5,
-        "cacheCreationCostPerMillionTokens": 6.25,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 64000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
+        "benchmark": {
+          "intelligenceIndex": 41.8,
+          "outputTokensPerSecond": 60.13,
+          "costPerTask": 4.081,
+          "effort": "max",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "max": {
+            "intelligenceIndex": 41.8,
+            "outputTokensPerSecond": 60.13,
+            "costPerTask": 4.081,
+            "effort": "max",
+            "measuredAt": "2026-09-21"
+          }
+        }
       },
       {
         "name": "claude-sonnet-5",
@@ -675,34 +1292,71 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh", "max"],
+        "benchmark": {
+          "intelligenceIndex": 38.2,
+          "outputTokensPerSecond": 79.24,
+          "costPerTask": 5.0912,
+          "effort": "max",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "low": {
+            "intelligenceIndex": 24.3,
+            "outputTokensPerSecond": 66.58,
+            "costPerTask": 0.5088,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "medium": {
+            "intelligenceIndex": 28.1,
+            "outputTokensPerSecond": 70.53,
+            "costPerTask": 0.9991,
+            "effort": "medium",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 31.7,
+            "outputTokensPerSecond": 72.11,
+            "costPerTask": 1.7925,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          },
+          "xhigh": {
+            "intelligenceIndex": 34.4,
+            "outputTokensPerSecond": 74.74,
+            "costPerTask": 2.872,
+            "effort": "xhigh",
+            "measuredAt": "2026-09-21"
+          },
+          "max": {
+            "intelligenceIndex": 38.2,
+            "outputTokensPerSecond": 79.24,
+            "costPerTask": 5.0912,
+            "effort": "max",
+            "measuredAt": "2026-09-21"
+          }
+        }
       },
       {
-        "name": "claude-opus-5",
-        "label": "Claude Opus 5",
+        "name": "claude-opus-4-5-20251101",
+        "label": "Claude Opus 4.5",
         "modelFamily": "CLAUDE",
         "inputCostPerMillionTokens": 5,
         "outputCostPerMillionTokens": 25,
         "cachedInputCostPerMillionTokens": 0.5,
         "cacheCreationCostPerMillionTokens": 6.25,
-        "contextWindowTokens": 1000000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "claude-opus-4-1-20250805",
-        "label": "Claude Opus 4.1",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 15,
-        "outputCostPerMillionTokens": 75,
-        "cachedInputCostPerMillionTokens": 1.5,
-        "cacheCreationCostPerMillionTokens": 18.75,
         "contextWindowTokens": 200000,
-        "maxOutputTokens": 32000,
+        "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
-        "isDeprecated": true
+        "efforts": ["low", "medium", "high"],
+        "benchmark": {
+          "intelligenceIndex": 29.1,
+          "outputTokensPerSecond": 50.7,
+          "measuredAt": "2026-09-21"
+        }
       }
     ]
   },
@@ -711,131 +1365,6 @@
     "label": "Google",
     "apiKey": "{{GOOGLE_API_KEY}}",
     "models": [
-      {
-        "name": "gemini-2.5-computer-use-preview-10-2025",
-        "label": "Gemini 2.5 Computer Use Preview 10-2025",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 1.25,
-        "outputCostPerMillionTokens": 10,
-        "longContextCost": {
-          "inputCostPerMillionTokens": 2.5,
-          "outputCostPerMillionTokens": 15,
-          "thresholdTokens": 200000
-        },
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 65536,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "deep-research-preview-04-2026",
-        "label": "Deep Research Preview (Apr-21-2026)",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 12,
-        "cachedInputCostPerMillionTokens": 0.2,
-        "longContextCost": {
-          "inputCostPerMillionTokens": 4,
-          "outputCostPerMillionTokens": 18,
-          "thresholdTokens": 200000,
-          "cachedInputCostPerMillionTokens": 0.4
-        },
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-flash-latest",
-        "label": "Gemini Flash Latest",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 1.5,
-        "outputCostPerMillionTokens": 9,
-        "cachedInputCostPerMillionTokens": 0.15,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-3.5-flash",
-        "label": "Gemini 3.5 Flash",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 1.5,
-        "outputCostPerMillionTokens": 9,
-        "cachedInputCostPerMillionTokens": 0.15,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-2.5-flash",
-        "label": "Gemini 2.5 Flash",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.3,
-        "outputCostPerMillionTokens": 2.5,
-        "cachedInputCostPerMillionTokens": 0.03,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-3.5-flash-lite",
-        "label": "Gemini 3.5 Flash Lite",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.3,
-        "outputCostPerMillionTokens": 2.5,
-        "cachedInputCostPerMillionTokens": 0.03,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "deep-research-max-preview-04-2026",
-        "label": "Deep Research Max Preview (Apr-21-2026)",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 12,
-        "cachedInputCostPerMillionTokens": 0.2,
-        "longContextCost": {
-          "inputCostPerMillionTokens": 4,
-          "outputCostPerMillionTokens": 18,
-          "thresholdTokens": 200000,
-          "cachedInputCostPerMillionTokens": 0.4
-        },
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-3.1-flash-lite-preview",
-        "label": "Gemini 3.1 Flash Lite Preview",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.25,
-        "outputCostPerMillionTokens": 1.5,
-        "cachedInputCostPerMillionTokens": 0.025,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true,
-        "isDeprecated": true
-      },
-      {
-        "name": "gemini-3-flash-preview",
-        "label": "Gemini 3 Flash Preview",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.5,
-        "outputCostPerMillionTokens": 3,
-        "cachedInputCostPerMillionTokens": 0.05,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
-      },
       {
         "name": "gemini-3.1-pro-preview-customtools",
         "label": "Gemini 3.1 Pro Preview Custom Tools",
@@ -866,48 +1395,19 @@
         "supportsReasoning": true
       },
       {
-        "name": "gemini-robotics-er-1.6-preview",
-        "label": "Gemini Robotics-ER 1.6 Preview",
+        "name": "deep-research-max-preview-04-2026",
+        "label": "Deep Research Max Preview (Apr-21-2026)",
         "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 1,
-        "outputCostPerMillionTokens": 5,
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 12,
+        "cachedInputCostPerMillionTokens": 0.2,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 4,
+          "outputCostPerMillionTokens": 18,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.4
+        },
         "contextWindowTokens": 131072,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "video", "audio"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-2.0-flash",
-        "label": "Gemini 2.0 Flash",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.1,
-        "outputCostPerMillionTokens": 0.4,
-        "cachedInputCostPerMillionTokens": 0.025,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 8192,
-        "modalities": ["image", "audio", "video", "pdf"],
-        "isDeprecated": true
-      },
-      {
-        "name": "gemini-3.6-flash",
-        "label": "Gemini 3.6 Flash",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 1.5,
-        "outputCostPerMillionTokens": 7.5,
-        "cachedInputCostPerMillionTokens": 0.15,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-3.1-flash-lite",
-        "label": "Gemini 3.1 Flash Lite",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.25,
-        "outputCostPerMillionTokens": 1.5,
-        "cachedInputCostPerMillionTokens": 0.025,
-        "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true
@@ -928,11 +1428,98 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
+        "benchmark": {
+          "intelligenceIndex": 29.7,
+          "outputTokensPerSecond": 131.45,
+          "costPerTask": 0.6747,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "deep-research-preview-04-2026",
+        "label": "Deep Research Preview (Apr-21-2026)",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 12,
+        "cachedInputCostPerMillionTokens": 0.2,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 4,
+          "outputCostPerMillionTokens": 18,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.4
+        },
+        "contextWindowTokens": 131072,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true
       },
       {
-        "name": "gemini-flash-lite-latest",
-        "label": "Gemini Flash-Lite Latest",
+        "name": "gemini-2.5-flash-lite",
+        "label": "Gemini 2.5 Flash-Lite",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0.1,
+        "outputCostPerMillionTokens": 0.4,
+        "cachedInputCostPerMillionTokens": 0.01,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "audio", "video", "pdf"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 8.5,
+          "outputTokensPerSecond": 388.3,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gemini-2.5-computer-use-preview-10-2025",
+        "label": "Gemini 2.5 Computer Use Preview 10-2025",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 1.25,
+        "outputCostPerMillionTokens": 10,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 2.5,
+          "outputCostPerMillionTokens": 15,
+          "thresholdTokens": 200000
+        },
+        "contextWindowTokens": 131072,
+        "maxOutputTokens": 65536,
+        "modalities": ["image"],
+        "supportsReasoning": true
+      },
+      {
+        "name": "gemini-3.6-flash",
+        "label": "Gemini 3.6 Flash",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0.75,
+        "outputCostPerMillionTokens": 3.75,
+        "cachedInputCostPerMillionTokens": 0.075,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high"],
+        "benchmark": {
+          "intelligenceIndex": 34,
+          "outputTokensPerSecond": 222.61,
+          "costPerTask": 0.9288,
+          "effort": "high",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "high": {
+            "intelligenceIndex": 34,
+            "outputTokensPerSecond": 222.61,
+            "costPerTask": 0.9288,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          }
+        }
+      },
+      {
+        "name": "gemini-3.1-flash-lite",
+        "label": "Gemini 3.1 Flash Lite",
         "modelFamily": "GEMINI",
         "inputCostPerMillionTokens": 0.25,
         "outputCostPerMillionTokens": 1.5,
@@ -940,7 +1527,218 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 15.6,
+          "outputTokensPerSecond": 357.21,
+          "costPerTask": 0.0394,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gemini-3.1-flash-live-preview",
+        "label": "Gemini 3.1 Flash Live Preview",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0.75,
+        "outputCostPerMillionTokens": 4.5,
+        "contextWindowTokens": 131072,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio"],
         "supportsReasoning": true
+      },
+      {
+        "name": "gemini-3.5-flash",
+        "label": "Gemini 3.5 Flash",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 1.5,
+        "outputCostPerMillionTokens": 9,
+        "cachedInputCostPerMillionTokens": 0.15,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high"],
+        "benchmark": {
+          "intelligenceIndex": 33.6,
+          "outputTokensPerSecond": 252.9,
+          "effort": "medium",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "minimal": {
+            "intelligenceIndex": 23.8,
+            "outputTokensPerSecond": 198.96,
+            "effort": "minimal",
+            "measuredAt": "2026-09-21"
+          },
+          "medium": {
+            "intelligenceIndex": 33.6,
+            "outputTokensPerSecond": 252.9,
+            "effort": "medium",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 32.6,
+            "outputTokensPerSecond": 244.3,
+            "costPerTask": 1.5625,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          }
+        }
+      },
+      {
+        "name": "gemini-3.1-flash-lite-preview",
+        "label": "Gemini 3.1 Flash Lite Preview",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0.25,
+        "outputCostPerMillionTokens": 1.5,
+        "cachedInputCostPerMillionTokens": 0.025,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 15.6,
+          "outputTokensPerSecond": 357.21,
+          "costPerTask": 0.0394,
+          "measuredAt": "2026-09-21"
+        },
+        "isDeprecated": true
+      },
+      {
+        "name": "gemini-3.5-flash-lite",
+        "label": "Gemini 3.5 Flash Lite",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0.3,
+        "outputCostPerMillionTokens": 2.5,
+        "cachedInputCostPerMillionTokens": 0.03,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high"],
+        "benchmark": {
+          "intelligenceIndex": 22.2,
+          "outputTokensPerSecond": 401.93,
+          "costPerTask": 0.1235,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gemini-flash-lite-latest",
+        "label": "Gemini Flash-Lite Latest",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0.3,
+        "outputCostPerMillionTokens": 2.5,
+        "cachedInputCostPerMillionTokens": 0.03,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 22.2,
+          "outputTokensPerSecond": 401.93,
+          "costPerTask": 0.1235,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gemini-3-flash-preview",
+        "label": "Gemini 3 Flash Preview",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0.5,
+        "outputCostPerMillionTokens": 3,
+        "cachedInputCostPerMillionTokens": 0.05,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["minimal", "low", "medium", "high"],
+        "benchmark": {
+          "intelligenceIndex": 26.3,
+          "outputTokensPerSecond": 219.56,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "gemini-3.8-flash",
+        "label": "Gemini 3.8 Flash",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0.75,
+        "outputCostPerMillionTokens": 3.75,
+        "cachedInputCostPerMillionTokens": 0.075,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
+        "benchmark": {
+          "intelligenceIndex": 40.9,
+          "outputTokensPerSecond": 330.93,
+          "costPerTask": 1.2428,
+          "effort": "high",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "low": {
+            "intelligenceIndex": 33.5,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "medium": {
+            "intelligenceIndex": 39.8,
+            "costPerTask": 0.931,
+            "effort": "medium",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 40.9,
+            "outputTokensPerSecond": 330.93,
+            "costPerTask": 1.2428,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          }
+        }
+      },
+      {
+        "name": "gemini-3.7-flash",
+        "label": "Gemini 3.7 Flash",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0.75,
+        "outputCostPerMillionTokens": 3.75,
+        "cachedInputCostPerMillionTokens": 0.075,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
+        "benchmark": {
+          "intelligenceIndex": 39.6,
+          "outputTokensPerSecond": 330.6,
+          "effort": "medium",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "low": {
+            "intelligenceIndex": 36.9,
+            "outputTokensPerSecond": 331.38,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "medium": {
+            "intelligenceIndex": 39.6,
+            "outputTokensPerSecond": 330.6,
+            "effort": "medium",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 39.1,
+            "outputTokensPerSecond": 334.67,
+            "costPerTask": 0.9253,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          }
+        }
       },
       {
         "name": "gemini-2.5-pro",
@@ -958,60 +1756,49 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 16.1,
+          "outputTokensPerSecond": 145.32,
+          "costPerTask": 0.2317,
+          "measuredAt": "2026-09-21"
+        }
       },
       {
-        "name": "gemini-3-pro-preview",
-        "label": "Gemini 3 Pro Preview",
+        "name": "gemini-flash-latest",
+        "label": "Gemini Flash Latest",
         "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 12,
-        "cachedInputCostPerMillionTokens": 0.2,
-        "longContextCost": {
-          "inputCostPerMillionTokens": 4,
-          "outputCostPerMillionTokens": 18,
-          "thresholdTokens": 200000,
-          "cachedInputCostPerMillionTokens": 0.4
-        },
+        "inputCostPerMillionTokens": 0.75,
+        "outputCostPerMillionTokens": 3.75,
+        "cachedInputCostPerMillionTokens": 0.075,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
-        "isDeprecated": true
+        "benchmark": {
+          "intelligenceIndex": 40.9,
+          "outputTokensPerSecond": 330.93,
+          "costPerTask": 1.2428,
+          "effort": "high",
+          "measuredAt": "2026-09-21"
+        }
       },
       {
-        "name": "gemini-2.5-flash-lite",
-        "label": "Gemini 2.5 Flash-Lite",
+        "name": "gemini-2.5-flash",
+        "label": "Gemini 2.5 Flash",
         "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.1,
-        "outputCostPerMillionTokens": 0.4,
-        "cachedInputCostPerMillionTokens": 0.01,
+        "inputCostPerMillionTokens": 0.3,
+        "outputCostPerMillionTokens": 2.5,
+        "cachedInputCostPerMillionTokens": 0.03,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-2.0-flash-lite",
-        "label": "Gemini 2.0 Flash-Lite",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.075,
-        "outputCostPerMillionTokens": 0.3,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 8192,
-        "modalities": ["image", "audio", "video", "pdf"],
-        "isDeprecated": true
-      },
-      {
-        "name": "gemini-3.1-flash-live-preview",
-        "label": "Gemini 3.1 Flash Live Preview",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.75,
-        "outputCostPerMillionTokens": 4.5,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "video", "audio"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 13.1,
+          "outputTokensPerSecond": 230.04,
+          "measuredAt": "2026-09-21"
+        }
       }
     ]
   },
@@ -1020,26 +1807,6 @@
     "label": "Mistral",
     "apiKey": "{{MISTRAL_API_KEY}}",
     "models": [
-      {
-        "name": "mistral-small-2506",
-        "label": "Mistral Small 3.2",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.1,
-        "outputCostPerMillionTokens": 0.3,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 16384,
-        "modalities": ["image"]
-      },
-      {
-        "name": "pixtral-large-latest",
-        "label": "Pixtral Large (latest)",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 6,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000,
-        "modalities": ["image"]
-      },
       {
         "name": "pixtral-12b",
         "label": "Pixtral 12B",
@@ -1051,13 +1818,62 @@
         "modalities": ["image"]
       },
       {
-        "name": "open-mixtral-8x7b",
-        "label": "Mixtral 8x7B",
+        "name": "devstral-small-2507",
+        "label": "Devstral Small",
         "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.7,
-        "outputCostPerMillionTokens": 0.7,
-        "contextWindowTokens": 32000,
-        "maxOutputTokens": 32000
+        "inputCostPerMillionTokens": 0.1,
+        "outputCostPerMillionTokens": 0.3,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 128000,
+        "isDeprecated": true
+      },
+      {
+        "name": "mistral-small-2506",
+        "label": "Mistral Small 3.2",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.1,
+        "outputCostPerMillionTokens": 0.3,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 16384,
+        "modalities": ["image"]
+      },
+      {
+        "name": "magistral-small",
+        "label": "Magistral Small",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.5,
+        "outputCostPerMillionTokens": 1.5,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 128000,
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 8.2,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "devstral-2512",
+        "label": "Devstral 2",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.4,
+        "outputCostPerMillionTokens": 2,
+        "contextWindowTokens": 262144,
+        "maxOutputTokens": 262144,
+        "isDeprecated": true
+      },
+      {
+        "name": "devstral-small-2505",
+        "label": "Devstral Small 2505",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.1,
+        "outputCostPerMillionTokens": 0.3,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 128000,
+        "benchmark": {
+          "intelligenceIndex": 8.7,
+          "measuredAt": "2026-09-21"
+        },
+        "isDeprecated": true
       },
       {
         "name": "labs-devstral-small-2512",
@@ -1078,14 +1894,158 @@
         "outputCostPerMillionTokens": 5,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 9.1,
+          "measuredAt": "2026-09-21"
+        }
+      },
+      {
+        "name": "zai-glm-5-3",
+        "label": "GLM-5.3",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 1.4,
+        "outputCostPerMillionTokens": 4.4,
+        "cachedInputCostPerMillionTokens": 0.14,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 131072,
         "supportsReasoning": true
       },
       {
-        "name": "mistral-medium-2508",
-        "label": "Mistral Medium 3.1",
+        "name": "open-mixtral-8x22b",
+        "label": "Mixtral 8x22B",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 6,
+        "contextWindowTokens": 64000,
+        "maxOutputTokens": 64000
+      },
+      {
+        "name": "open-mixtral-8x7b",
+        "label": "Mixtral 8x7B",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.7,
+        "outputCostPerMillionTokens": 0.7,
+        "contextWindowTokens": 32000,
+        "maxOutputTokens": 32000
+      },
+      {
+        "name": "open-mistral-7b",
+        "label": "Mistral 7B",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.25,
+        "outputCostPerMillionTokens": 0.25,
+        "contextWindowTokens": 8000,
+        "maxOutputTokens": 8000
+      },
+      {
+        "name": "mistral-medium-latest",
+        "label": "Mistral Medium (latest)",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 1.5,
+        "outputCostPerMillionTokens": 7.5,
+        "contextWindowTokens": 262144,
+        "maxOutputTokens": 262144,
+        "modalities": ["image"],
+        "supportsReasoning": true
+      },
+      {
+        "name": "devstral-medium-2507",
+        "label": "Devstral Medium",
         "modelFamily": "MISTRAL",
         "inputCostPerMillionTokens": 0.4,
         "outputCostPerMillionTokens": 2,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 128000,
+        "isDeprecated": true
+      },
+      {
+        "name": "mistral-medium-2604",
+        "label": "Mistral Medium 3.5",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 1.5,
+        "outputCostPerMillionTokens": 7.5,
+        "contextWindowTokens": 262144,
+        "maxOutputTokens": 262144,
+        "modalities": ["image"],
+        "supportsReasoning": true
+      },
+      {
+        "name": "mistral-large-2512",
+        "label": "Mistral Large 3",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.5,
+        "outputCostPerMillionTokens": 1.5,
+        "contextWindowTokens": 262144,
+        "maxOutputTokens": 262144,
+        "modalities": ["image"]
+      },
+      {
+        "name": "devstral-medium-latest",
+        "label": "Devstral 2 (latest)",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.4,
+        "outputCostPerMillionTokens": 2,
+        "contextWindowTokens": 262144,
+        "maxOutputTokens": 262144,
+        "isDeprecated": true
+      },
+      {
+        "name": "voxtral-small-latest",
+        "label": "Voxtral Small (latest)",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.1,
+        "outputCostPerMillionTokens": 0.3,
+        "contextWindowTokens": 32000,
+        "maxOutputTokens": 32000,
+        "modalities": ["audio"]
+      },
+      {
+        "name": "ministral-8b-latest",
+        "label": "Ministral 8B (latest)",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.1,
+        "outputCostPerMillionTokens": 0.1,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 128000
+      },
+      {
+        "name": "mistral-nemo",
+        "label": "Mistral Nemo",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.15,
+        "outputCostPerMillionTokens": 0.15,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 128000
+      },
+      {
+        "name": "mistral-small-latest",
+        "label": "Mistral Small (latest)",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.15,
+        "outputCostPerMillionTokens": 0.6,
+        "contextWindowTokens": 256000,
+        "maxOutputTokens": 256000,
+        "modalities": ["image"],
+        "supportsReasoning": true,
+        "efforts": ["none", "high"]
+      },
+      {
+        "name": "open-mistral-nemo",
+        "label": "Open Mistral Nemo",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.15,
+        "outputCostPerMillionTokens": 0.15,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 128000,
+        "isDeprecated": true
+      },
+      {
+        "name": "mistral-large-latest",
+        "label": "Mistral Large (latest)",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.5,
+        "outputCostPerMillionTokens": 1.5,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
         "modalities": ["image"]
@@ -1100,82 +2060,14 @@
         "maxOutputTokens": 16384
       },
       {
-        "name": "mistral-medium-latest",
-        "label": "Mistral Medium (latest)",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 1.5,
-        "outputCostPerMillionTokens": 7.5,
-        "contextWindowTokens": 262144,
-        "maxOutputTokens": 262144,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "devstral-small-2507",
-        "label": "Devstral Small",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.1,
-        "outputCostPerMillionTokens": 0.3,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000,
-        "isDeprecated": true
-      },
-      {
-        "name": "open-mistral-7b",
-        "label": "Mistral 7B",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.25,
-        "outputCostPerMillionTokens": 0.25,
-        "contextWindowTokens": 8000,
-        "maxOutputTokens": 8000
-      },
-      {
-        "name": "mistral-medium-2505",
-        "label": "Mistral Medium 3",
+        "name": "devstral-latest",
+        "label": "Devstral 2",
         "modelFamily": "MISTRAL",
         "inputCostPerMillionTokens": 0.4,
         "outputCostPerMillionTokens": 2,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 131072,
-        "modalities": ["image"]
-      },
-      {
-        "name": "ministral-3b-latest",
-        "label": "Ministral 3B (latest)",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.04,
-        "outputCostPerMillionTokens": 0.04,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000
-      },
-      {
-        "name": "mistral-small-latest",
-        "label": "Mistral Small (latest)",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.15,
-        "outputCostPerMillionTokens": 0.6,
-        "contextWindowTokens": 256000,
-        "maxOutputTokens": 256000,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "open-mixtral-8x22b",
-        "label": "Mixtral 8x22B",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 6,
-        "contextWindowTokens": 64000,
-        "maxOutputTokens": 64000
-      },
-      {
-        "name": "mistral-nemo",
-        "label": "Mistral Nemo",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.15,
-        "outputCostPerMillionTokens": 0.15,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000
+        "contextWindowTokens": 262144,
+        "maxOutputTokens": 262144,
+        "isDeprecated": true
       },
       {
         "name": "mistral-small-2603",
@@ -1189,34 +2081,14 @@
         "supportsReasoning": true
       },
       {
-        "name": "mistral-medium-2604",
-        "label": "Mistral Medium 3.5",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 1.5,
-        "outputCostPerMillionTokens": 7.5,
-        "contextWindowTokens": 262144,
-        "maxOutputTokens": 262144,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "devstral-latest",
-        "label": "Devstral 2",
+        "name": "mistral-medium-2505",
+        "label": "Mistral Medium 3",
         "modelFamily": "MISTRAL",
         "inputCostPerMillionTokens": 0.4,
         "outputCostPerMillionTokens": 2,
-        "contextWindowTokens": 262144,
-        "maxOutputTokens": 262144,
-        "isDeprecated": true
-      },
-      {
-        "name": "ministral-8b-latest",
-        "label": "Ministral 8B (latest)",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.1,
-        "outputCostPerMillionTokens": 0.1,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000
+        "contextWindowTokens": 131072,
+        "maxOutputTokens": 131072,
+        "modalities": ["image"]
       },
       {
         "name": "codestral-latest",
@@ -1228,84 +2100,37 @@
         "maxOutputTokens": 4096
       },
       {
-        "name": "devstral-medium-latest",
-        "label": "Devstral 2 (latest)",
+        "name": "ministral-3b-latest",
+        "label": "Ministral 3B (latest)",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.04,
+        "outputCostPerMillionTokens": 0.04,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 128000
+      },
+      {
+        "name": "mistral-medium-2508",
+        "label": "Mistral Medium 3.1",
         "modelFamily": "MISTRAL",
         "inputCostPerMillionTokens": 0.4,
         "outputCostPerMillionTokens": 2,
-        "contextWindowTokens": 262144,
-        "maxOutputTokens": 262144,
-        "isDeprecated": true
-      },
-      {
-        "name": "devstral-2512",
-        "label": "Devstral 2",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.4,
-        "outputCostPerMillionTokens": 2,
-        "contextWindowTokens": 262144,
-        "maxOutputTokens": 262144,
-        "isDeprecated": true
-      },
-      {
-        "name": "mistral-large-latest",
-        "label": "Mistral Large (latest)",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.5,
-        "outputCostPerMillionTokens": 1.5,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
         "modalities": ["image"]
       },
       {
-        "name": "devstral-medium-2507",
-        "label": "Devstral Medium",
+        "name": "pixtral-large-latest",
+        "label": "Pixtral Large (latest)",
         "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.4,
-        "outputCostPerMillionTokens": 2,
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 6,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 128000,
-        "isDeprecated": true
-      },
-      {
-        "name": "devstral-small-2505",
-        "label": "Devstral Small 2505",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.1,
-        "outputCostPerMillionTokens": 0.3,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000,
-        "isDeprecated": true
-      },
-      {
-        "name": "magistral-small",
-        "label": "Magistral Small",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.5,
-        "outputCostPerMillionTokens": 1.5,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000,
-        "supportsReasoning": true
-      },
-      {
-        "name": "open-mistral-nemo",
-        "label": "Open Mistral Nemo",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.15,
-        "outputCostPerMillionTokens": 0.15,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000,
-        "isDeprecated": true
-      },
-      {
-        "name": "mistral-large-2512",
-        "label": "Mistral Large 3",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.5,
-        "outputCostPerMillionTokens": 1.5,
-        "contextWindowTokens": 262144,
-        "maxOutputTokens": 262144,
-        "modalities": ["image"]
+        "modalities": ["image"],
+        "benchmark": {
+          "intelligenceIndex": 7.1,
+          "measuredAt": "2026-09-21"
+        }
       }
     ]
   },
@@ -1330,11 +2155,18 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 30000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 24.9,
+          "outputTokensPerSecond": 114.96,
+          "costPerTask": 0.1653,
+          "effort": "high",
+          "measuredAt": "2026-09-21"
+        }
       },
       {
-        "name": "grok-4.20-0309-non-reasoning",
-        "label": "Grok 4.20 (Non-Reasoning)",
+        "name": "grok-4.20-0309-reasoning",
+        "label": "Grok 4.20 (Reasoning)",
         "modelFamily": "GROK",
         "inputCostPerMillionTokens": 1.25,
         "outputCostPerMillionTokens": 2.5,
@@ -1347,7 +2179,8 @@
         },
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 30000,
-        "modalities": ["image", "pdf"]
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
       },
       {
         "name": "grok-4.5",
@@ -1360,12 +2193,29 @@
           "inputCostPerMillionTokens": 4,
           "outputCostPerMillionTokens": 12,
           "thresholdTokens": 200000,
-          "cachedInputCostPerMillionTokens": 1
+          "cachedInputCostPerMillionTokens": 0.6
         },
         "contextWindowTokens": 500000,
         "maxOutputTokens": 500000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high"],
+        "benchmark": {
+          "intelligenceIndex": 38.8,
+          "outputTokensPerSecond": 63.28,
+          "costPerTask": 1.0365,
+          "effort": "high",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "high": {
+            "intelligenceIndex": 38.8,
+            "outputTokensPerSecond": 63.28,
+            "costPerTask": 1.0365,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          }
+        }
       },
       {
         "name": "grok-build-0.1",
@@ -1386,8 +2236,64 @@
         "supportsReasoning": true
       },
       {
-        "name": "grok-4.20-0309-reasoning",
-        "label": "Grok 4.20 (Reasoning)",
+        "name": "grok-4.6",
+        "label": "Grok 4.6",
+        "modelFamily": "GROK",
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 6,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 4,
+          "outputCostPerMillionTokens": 12,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 1
+        },
+        "contextWindowTokens": 500000,
+        "maxOutputTokens": 500000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "efforts": ["low", "medium", "high", "xhigh"],
+        "benchmark": {
+          "intelligenceIndex": 44.3,
+          "outputTokensPerSecond": 69.7,
+          "costPerTask": 1.8589,
+          "effort": "high",
+          "measuredAt": "2026-09-21"
+        },
+        "benchmarkByEffort": {
+          "low": {
+            "intelligenceIndex": 35.1,
+            "outputTokensPerSecond": 58.21,
+            "costPerTask": 0.4753,
+            "effort": "low",
+            "measuredAt": "2026-09-21"
+          },
+          "medium": {
+            "intelligenceIndex": 42.8,
+            "outputTokensPerSecond": 61.45,
+            "costPerTask": 1.4963,
+            "effort": "medium",
+            "measuredAt": "2026-09-21"
+          },
+          "high": {
+            "intelligenceIndex": 44.3,
+            "outputTokensPerSecond": 69.7,
+            "costPerTask": 1.8589,
+            "effort": "high",
+            "measuredAt": "2026-09-21"
+          },
+          "xhigh": {
+            "intelligenceIndex": 44.2,
+            "outputTokensPerSecond": 66.94,
+            "costPerTask": 2.3237,
+            "effort": "xhigh",
+            "measuredAt": "2026-09-21"
+          }
+        }
+      },
+      {
+        "name": "grok-4.20-0309-non-reasoning",
+        "label": "Grok 4.20 (Non-Reasoning)",
         "modelFamily": "GROK",
         "inputCostPerMillionTokens": 1.25,
         "outputCostPerMillionTokens": 2.5,
@@ -1401,7 +2307,30 @@
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 30000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "benchmark": {
+          "intelligenceIndex": 14.6,
+          "effort": "none",
+          "measuredAt": "2026-09-21"
+        }
+      }
+    ]
+  },
+  "typesafe-ai": {
+    "npm": "@ai-sdk/typesafe-ai",
+    "label": "TypeSafe AI",
+    "apiKey": "{{TYPESAFE_AI_API_KEY}}",
+    "models": [
+      {
+        "name": "jev-latest",
+        "label": "Jev",
+        "kind": "evaluation",
+        "description": "Structured decisions in one round trip: classification, routing, scoring and verification. Returns calibrated probabilities instead of text.",
+        "inputCostPerMillionTokens": 0.042,
+        "outputCostPerMillionTokens": 0,
+        "supportedQuestionTypes": ["choice", "score", "boolean"],
+        "maxCriteriaPerQuestion": 255,
+        "maxScoreLevels": 10,
+        "medianLatencyMs": 200
       }
     ]
   }

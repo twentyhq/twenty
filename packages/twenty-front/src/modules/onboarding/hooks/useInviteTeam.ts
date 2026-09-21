@@ -1,21 +1,25 @@
+import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
+import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
+import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import { PageFocusId } from '@/types/PageFocusId';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
+import { useQuery } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
-import { useQuery } from '@apollo/client/react';
+import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { z } from 'zod';
+import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
 
 const validationSchema = z.object({
   emails: z.array(z.object({ email: z.union([z.literal(''), z.email()]) })),
@@ -25,11 +29,18 @@ type InviteTeamFormInput = z.infer<typeof validationSchema>;
 
 export const useInviteTeam = () => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const isBookCallOnboardingStepEnabled = useAtomStateValue(
+    isBookCallOnboardingStepEnabledState,
+  );
+  const isCompanyEnrichmentEnabled = useAtomStateValue(
+    isCompanyEnrichmentEnabledState,
+  );
+  const store = useStore();
 
   const [isNavigating, setIsNavigating] = useState(false);
 
@@ -130,38 +141,64 @@ export const useInviteTeam = () => {
         ),
       );
 
-      const result = await sendInvitation({ emails });
-
-      if (isDefined(result.error)) {
-        throw result.error;
-      }
-
-      const creditsRewardPerUser =
-        onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
-
-      setOnboardingFreeCredits((current) => ({
-        ...current,
-        inviteTeam: emails.length * creditsRewardPerUser,
-      }));
-
-      if (emails.length > 0) {
-        enqueueSuccessSnackBar({
-          message: t`Invite link sent to email addresses`,
-          options: {
-            duration: 2000,
-          },
-        });
-      }
-
-      setNextOnboardingStatus();
       setIsNavigating(true);
+
+      try {
+        // Only wait when enrichment is actually going to run, otherwise the
+        // settlement never resolves and every submit burns the full timeout.
+        const companyEnrichmentSettlement =
+          isBookCallOnboardingStepEnabled && isCompanyEnrichmentEnabled
+            ? waitForCompanyEnrichmentSettlement({ store })
+            : Promise.resolve();
+
+        const result = await sendInvitation({ emails });
+
+        if (isDefined(result.error)) {
+          throw result.error;
+        }
+
+        const sentInvitationsCount =
+          result.data?.sendInvitations.result.length ?? 0;
+
+        const creditsRewardPerUser =
+          onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
+
+        setOnboardingFreeCredits((current) => ({
+          ...current,
+          inviteTeam: sentInvitationsCount * creditsRewardPerUser,
+        }));
+
+        if (emails.length > 0) {
+          enqueueToast({
+            variant: 'success',
+            children: t`Invite link sent to email addresses`,
+            duration: 2000,
+          });
+        }
+
+        await companyEnrichmentSettlement;
+
+        setNextOnboardingStatus({
+          stepHistoryEffect:
+            sentInvitationsCount > 0
+              ? 'clearAfterIrreversibleStep'
+              : 'recordAsReversible',
+        });
+      } catch (error) {
+        setIsNavigating(false);
+
+        throw error;
+      }
     },
     [
-      enqueueSuccessSnackBar,
+      enqueueToast,
+      isBookCallOnboardingStepEnabled,
+      isCompanyEnrichmentEnabled,
       onboardingConfig?.inviteTeamCreditsRewardPerUser,
       sendInvitation,
       setNextOnboardingStatus,
       setOnboardingFreeCredits,
+      store,
       t,
     ],
   );

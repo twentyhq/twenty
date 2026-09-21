@@ -2,7 +2,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconCopy } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -31,12 +31,11 @@ export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
         />
       </StyledLinkContainer>
       <Button
-        Icon={IconCopy}
-        title={t`Copy`}
+        startIcon={<IconCopy />}
         onClick={() => {
           copyToClipboard(apiKey, t`API Key copied to clipboard`);
         }}
-      />
+      >{t`Copy`}</Button>
     </StyledContainer>
   );
 };

@@ -2,9 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { isNonEmptyString } from '@sniptt/guards';
-import { ServerAdminAccessChangedEmail } from 'twenty-emails';
+import { ServerAdminAccessChangedEmail, renderEmail } from 'twenty-emails';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -249,8 +248,8 @@ export class AdminPanelServerAdminService {
               canImpersonate: targetUser.canImpersonate,
               locale,
             });
-            const html = await render(emailTemplate, { pretty: true });
-            const text = await render(emailTemplate, { plainText: true });
+            const html = await renderEmail(emailTemplate, { pretty: true });
+            const text = await renderEmail(emailTemplate, { plainText: true });
 
             const i18n = this.i18nService.getI18nInstance(locale);
             const subject = i18n._(msg`Server administrator access changed`);

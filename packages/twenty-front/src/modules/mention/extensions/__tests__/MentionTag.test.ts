@@ -67,9 +67,7 @@ describe('MentionTag', () => {
 
       const text = editor.getText();
 
-      expect(text).toBe(
-        'Hello [[record:company:abc-123:Acme Corp[[/record]] world',
-      );
+      expect(text).toBe('Hello [[record:company:abc-123:Acme Corp]] world');
     });
 
     it('should handle mentions with empty label', () => {
@@ -95,7 +93,7 @@ describe('MentionTag', () => {
 
       const text = editor.getText();
 
-      expect(text).toBe('[[record:person:id-456:[[/record]]');
+      expect(text).toBe('[[record:person:id-456:]]');
     });
 
     it('should serialize multiple mentions in the same paragraph', () => {
@@ -132,7 +130,7 @@ describe('MentionTag', () => {
       const text = editor.getText();
 
       expect(text).toBe(
-        '[[record:person:r1:Alice[[/record]] and [[record:company:r2:Beta Inc[[/record]]',
+        '[[record:person:r1:Alice]] and [[record:company:r2:Beta Inc]]',
       );
     });
   });
@@ -158,9 +156,7 @@ describe('MentionTag', () => {
 
       const text = editor.getText();
 
-      expect(text).toContain(
-        '[[record:opportunity:test-id:Big Deal[[/record]]',
-      );
+      expect(text).toContain('[[record:opportunity:test-id:Big Deal]]');
     });
   });
 

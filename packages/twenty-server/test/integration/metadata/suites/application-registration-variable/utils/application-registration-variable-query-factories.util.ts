@@ -6,6 +6,7 @@ const VARIABLE_GQL_FIELDS = `
   description
   isSecret
   isRequired
+  isDeprecated
   isFilled
   createdAt
   updatedAt
