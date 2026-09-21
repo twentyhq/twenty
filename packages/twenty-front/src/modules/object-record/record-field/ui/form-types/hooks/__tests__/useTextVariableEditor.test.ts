@@ -245,3 +245,23 @@ describe('useTextVariableEditor', () => {
     });
   });
 });
+
+describe('external content updates', () => {
+  it('loads changed values without emitting another update', () => {
+    const onUpdate = jest.fn();
+    const { result, rerender } = renderHook(
+      ({ defaultValue }) =>
+        useTextVariableEditor({
+          placeholder: 'Example',
+          multiline: false,
+          readonly: false,
+          defaultValue,
+          onUpdate,
+        }),
+      { initialProps: { defaultValue: 'Lawyer' } },
+    );
+    rerender({ defaultValue: 'Accountant' });
+    expect(content(result.current!)).toBe('Accountant');
+    expect(onUpdate).not.toHaveBeenCalled();
+  });
+});

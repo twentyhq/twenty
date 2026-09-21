@@ -21,15 +21,13 @@ export class AiEvaluationService {
   async evaluate({
     workspaceId,
     userWorkspaceId,
-    modelId: requestedModelId,
     state,
     questions,
     abortSignal,
-  }: AiEvaluationRequest): Promise<AiEvaluationResult> {
+  }: Omit<AiEvaluationRequest, 'modelId'>): Promise<AiEvaluationResult> {
     assertEvaluationQuestionsAreWellFormed(questions);
 
     const modelId = resolveJevEvaluationModelId({
-      requestedModelId,
       isModelAvailable:
         this.aiModelRegistryService.isModelAdminAllowed(JEV_MODEL_ID) &&
         isDefined(this.aiModelRegistryService.getEvaluationModel(JEV_MODEL_ID)),
