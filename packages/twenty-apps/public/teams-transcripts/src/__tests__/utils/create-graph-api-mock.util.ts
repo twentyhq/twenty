@@ -11,12 +11,17 @@ import { MICROSOFT_GRAPH_BASE_URL } from 'src/constants/teams.constant';
 const DEFAULT_ACCESS_TOKEN = 'graph-delegated-test-token';
 const DEFAULT_PAGE_SIZE = 50;
 
-const graphError = (
-  status: number,
-  code: string,
-  message: string,
-  innerErrorCode?: string,
-) =>
+const graphError = ({
+  status,
+  code,
+  message,
+  innerErrorCode,
+}: {
+  status: number;
+  code: string;
+  message: string;
+  innerErrorCode?: string;
+}) =>
   HttpResponse.json(
     {
       error: {
@@ -92,11 +97,11 @@ export const createGraphApiMock = ({
       });
 
       if (authorization !== `Bearer ${accessToken}`) {
-        return graphError(
-          401,
-          'InvalidAuthenticationToken',
-          'Access token is empty or invalid.',
-        );
+        return graphError({
+          status: 401,
+          code: 'InvalidAuthenticationToken',
+          message: 'Access token is empty or invalid.',
+        });
       }
 
       if (isDefined(state.pendingFailure)) {
@@ -142,7 +147,11 @@ export const createGraphApiMock = ({
         );
 
         if (!isDefined(meeting)) {
-          return graphError(404, 'NotFound', 'Online meeting not found.');
+          return graphError({
+            status: 404,
+            code: 'NotFound',
+            message: 'Online meeting not found.',
+          });
         }
 
         return paginate({
