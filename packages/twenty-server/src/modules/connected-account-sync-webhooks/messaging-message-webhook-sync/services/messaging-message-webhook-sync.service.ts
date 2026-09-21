@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { MessageChannelSyncStage } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MESSAGING_MESSAGE_WEBHOOK_SYNC_INLINE_IMPORT_MAX_MESSAGES } from 'src/modules/connected-account-sync-webhooks/messaging-message-webhook-sync/constants/messaging-message-webhook-sync-inline-import-max-messages.constant';
 import { type MessagingMessageWebhookSyncJobData } from 'src/modules/connected-account-sync-webhooks/messaging-message-webhook-sync/types/messaging-message-webhook-sync-job-data.type';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 
 @Injectable()
@@ -17,6 +17,7 @@ export class MessagingMessageWebhookSyncService {
   constructor(
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly messagingMessageListFetchService: MessagingMessageListFetchService,
   ) {}
 
@@ -24,13 +25,13 @@ export class MessagingMessageWebhookSyncService {
     messageChannelId,
     workspaceId,
   }: MessagingMessageWebhookSyncJobData): Promise<void> {
-    const isMessageChannelScheduled =
-      await this.markMessageChannelAsListFetchScheduledIfPending({
-        messageChannelId,
+    const [scheduledMessageChannelId] =
+      await this.messageChannelSyncStatusService.markAsMessagesListFetchScheduledIfPending(
+        [messageChannelId],
         workspaceId,
-      });
+      );
 
-    if (!isMessageChannelScheduled) {
+    if (!isDefined(scheduledMessageChannelId)) {
       this.logger.log(
         `Skipping webhook sync for message channel ${messageChannelId}, a sync is already in progress`,
       );
@@ -52,28 +53,5 @@ export class MessagingMessageWebhookSyncService {
       workspaceId,
       MESSAGING_MESSAGE_WEBHOOK_SYNC_INLINE_IMPORT_MAX_MESSAGES,
     );
-  }
-
-  private async markMessageChannelAsListFetchScheduledIfPending({
-    messageChannelId,
-    workspaceId,
-  }: MessagingMessageWebhookSyncJobData): Promise<boolean> {
-    const updateResult = await this.messageChannelRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-        syncStageStartedAt: new Date(),
-      })
-      .where({
-        id: messageChannelId,
-        workspaceId,
-        isSyncEnabled: true,
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-      })
-      .returning('id')
-      .execute();
-
-    return updateResult.raw.length > 0;
   }
 }
