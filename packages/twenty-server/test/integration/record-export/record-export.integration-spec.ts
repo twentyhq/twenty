@@ -13,8 +13,6 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { createClient } from 'graphql-sse';
 import { setTimeout } from 'node:timers/promises';
 import { Readable } from 'node:stream';
@@ -31,11 +29,7 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import {
-  FeatureFlagKey,
-  FileFolder,
-  OrderByDirection,
-} from 'twenty-shared/types';
+import { FileFolder, OrderByDirection } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -74,7 +68,6 @@ describe('record export lifecycle (integration)', () => {
   let query: RecordExportWorkspaceService;
   let originalRoleId: string;
   let roleId: string;
-  let wasAsyncCsvExportEnabled: boolean;
   const connections: ReturnType<typeof createClient>[] = [];
   const exportIds = new Set<string>();
   const downloadTokens = new Map<string, string>();
@@ -189,17 +182,6 @@ describe('record export lifecycle (integration)', () => {
   };
 
   beforeAll(async () => {
-    const featureFlagService =
-      getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
-    wasAsyncCsvExportEnabled = await featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-      SEED_APPLE_WORKSPACE_ID,
-    );
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
     exports = getAppProviderByClassName('RecordExportWorkspaceService');
     cache = global.app.get<CacheStorageService>(
       CacheStorageNamespace.EngineRecordExport,
@@ -281,11 +263,6 @@ describe('record export lifecycle (integration)', () => {
   });
 
   afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-      value: wasAsyncCsvExportEnabled,
-      expectToFail: false,
-    });
     if (isDefined(originalRoleId)) {
       await updateWorkspaceMemberRole({
         input: {
@@ -312,28 +289,6 @@ describe('record export lifecycle (integration)', () => {
       );
     }
   }, 60_000);
-
-  it('rejects new async exports when disabled and still downloads an already prepared file', async () => {
-    const ready = await exportToCompletion();
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-    try {
-      const { events } = subscribe();
-      await expect(nextExport(events)).rejects.toThrow(
-        'Asynchronous CSV export is not enabled for this workspace',
-      );
-      await download(ready).expect(200);
-    } finally {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-        value: true,
-        expectToFail: false,
-      });
-    }
-  });
 
   it('exports every selected page in column and record order, then deletes the download', async () => {
     const recordExport = await exportToCompletion({

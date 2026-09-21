@@ -1,4 +1,3 @@
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useMountCommand } from '@/command-menu-item/engine-command/hooks/useMountCommand';
@@ -16,7 +15,6 @@ import { ENGINE_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/engine-c
 import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemClick = ({
   item,
@@ -27,9 +25,6 @@ export const useCommandMenuItemClick = ({
   Icon: IconComponent;
   label: string;
 }) => {
-  const isAsyncCsvExportEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-  );
   const { commandMenuContextApi } = useContext(CommandMenuContext);
   const mountCommand = useMountCommand();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
@@ -84,7 +79,7 @@ export const useCommandMenuItemClick = ({
       const isExport =
         isValidElement(engineComponent) &&
         engineComponent.type === ExportRecordsCommand;
-      if (!isExport || !isAsyncCsvExportEnabled) {
+      if (!isExport) {
         closeCommandMenu();
       }
 

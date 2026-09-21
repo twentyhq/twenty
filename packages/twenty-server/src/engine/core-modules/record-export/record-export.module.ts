@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { GenerateRecordExportJob } from 'src/engine/core-modules/record-export/jobs/generate-record-export.job';
@@ -20,7 +19,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     TypeOrmModule.forFeature([FileEntity]),
     UserSessionModule,
     CoreCommonApiModule,
-    FeatureFlagModule,
     JwtModule,
     UserWorkspaceModule,
     PermissionsModule,

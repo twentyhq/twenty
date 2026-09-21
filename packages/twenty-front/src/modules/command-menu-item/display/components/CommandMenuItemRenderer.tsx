@@ -1,4 +1,3 @@
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { AppMenuItem } from '@/applications/components/AppMenuItem';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
@@ -20,7 +19,6 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledPreviewWrapper = styled.div`
   cursor: not-allowed;
@@ -43,9 +41,6 @@ const CommandMenuItemButtonRenderer = ({
   isPrimaryAction = false,
   shouldHideLabel = false,
 }: CommandMenuItemButtonRendererProps) => {
-  const isAsyncCsvExportEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-  );
   const { commandMenuContextApi, isInPreviewMode } =
     useContext(CommandMenuContext);
   const { getIcon } = useIcons();
@@ -89,8 +84,8 @@ const CommandMenuItemButtonRenderer = ({
       command={command}
       onClick={disabled ? undefined : handleClick}
       disabled={disabled}
-      progress={isAsyncCsvExportEnabled ? progress : undefined}
-      loading={isAsyncCsvExportEnabled && showDisabledLoader}
+      progress={progress}
+      loading={showDisabledLoader}
       isPrimaryAction={isPrimaryAction}
       shouldHideLabel={shouldHideLabel}
     />
@@ -103,9 +98,6 @@ const CommandMenuItemSelectableRenderer = ({
 }: CommandMenuItemRendererProps & {
   displayType: 'listItem' | 'dropdownItem';
 }) => {
-  const isAsyncCsvExportEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-  );
   const { commandMenuContextApi } = useContext(CommandMenuContext);
   const { getIcon } = useIcons();
 
@@ -139,7 +131,7 @@ const CommandMenuItemSelectableRenderer = ({
   };
 
   const loaderComponent =
-    isAsyncCsvExportEnabled && disabled && showDisabledLoader ? (
+    disabled && showDisabledLoader ? (
       isDefined(progress) ? (
         <CommandListItemLoader progress={progress} />
       ) : (
