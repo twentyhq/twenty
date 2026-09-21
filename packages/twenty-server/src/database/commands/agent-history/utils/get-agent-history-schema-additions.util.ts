@@ -1,4 +1,7 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_FIELDS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -9,6 +12,14 @@ type AgentHistorySchemaMaps = Pick<
   AllFlatEntityMaps,
   'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatIndexMaps'
 >;
+
+// agentChatThread.recordTargets is the far leg of a relation whose near leg
+// lives on agentChatThreadTarget, an object this migration does not provision.
+// Creating it here would emit half a relation and fail validation, so the
+// command that provisions that object owns both legs instead.
+const FIELD_UNIVERSAL_IDENTIFIERS_PROVISIONED_ELSEWHERE = new Set([
+  STANDARD_OBJECT_FIELDS.agentChatThread.recordTargets.universalIdentifier,
+]);
 
 export const getAgentHistorySchemaAdditions = ({
   existing,
@@ -60,6 +71,9 @@ export const getAgentHistorySchemaAdditions = ({
     .filter(
       (field) =>
         objectIdentifiers.has(field.objectMetadataUniversalIdentifier) &&
+        !FIELD_UNIVERSAL_IDENTIFIERS_PROVISIONED_ELSEWHERE.has(
+          field.universalIdentifier,
+        ) &&
         !isDefined(
           existing.flatFieldMetadataMaps.byUniversalIdentifier[
             field.universalIdentifier

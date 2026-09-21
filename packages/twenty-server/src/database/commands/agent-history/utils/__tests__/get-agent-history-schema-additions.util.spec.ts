@@ -1,4 +1,7 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECT_FIELDS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 
 import { getAgentHistorySchemaAdditions } from 'src/database/commands/agent-history/utils/get-agent-history-schema-additions.util';
@@ -40,6 +43,25 @@ describe('getAgentHistorySchemaAdditions', () => {
         entry.objectMetadataUniversalIdentifier,
       );
     }
+  });
+
+  it('leaves out the relation leg owned by agentChatThreadTarget', () => {
+    const additions = getAgentHistorySchemaAdditions({
+      existing: {
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      },
+      standard: createStandardMetadata(),
+    });
+
+    // Its near leg lives on an object this migration does not provision, so
+    // emitting it here would be half a relation.
+    expect(
+      additions.fields.map((field) => field.universalIdentifier),
+    ).not.toContain(
+      STANDARD_OBJECT_FIELDS.agentChatThread.recordTargets.universalIdentifier,
+    );
   });
 
   it('adds nothing when all history metadata already exists', () => {
