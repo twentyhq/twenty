@@ -899,6 +899,14 @@ describe('record export lifecycle (integration)', () => {
     );
     await expect(download(recordExport)).rejects.toThrow();
     await waitUntil(async () => !(await fileExists(stored)));
+    await waitUntil(async () => {
+      const rows = await globalThis.testDataSource.query(
+        'SELECT id FROM core.file WHERE id = $1',
+        [stored.id],
+      );
+
+      return rows.length === 0;
+    });
     await expect(getExport(stored.id)).rejects.toThrow('Export not found');
   });
 

@@ -44,7 +44,9 @@ export const SidePanelWorkflowSelectAction = ({
   );
 
   const handleActionClick = (actionType: WorkflowActionType) => {
-    if (actionType === 'CLASSIFY' && !jevAvailable) return;
+    if (actionType === 'CLASSIFY' && !jevAvailable) {
+      return;
+    }
     onActionSelected({ type: actionType });
   };
 

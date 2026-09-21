@@ -1,4 +1,5 @@
 import { setupI18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -99,7 +100,10 @@ const EMPTY_ACTION: WorkflowClassifyAction = {
   },
 };
 
-const renderEditor = (evaluationAvailable = false) => {
+const renderEditor = (
+  evaluationAvailable = false,
+  i18n = setupI18n({ locale: 'en', messages: { en: {} } }),
+) => {
   const store = createStore();
   store.set(aiEvaluationModelsState.atom, [
     {
@@ -130,7 +134,7 @@ const renderEditor = (evaluationAvailable = false) => {
   render(
     <MemoryRouter>
       <Provider store={store}>
-        <I18nProvider i18n={setupI18n({ locale: 'en', messages: { en: {} } })}>
+        <I18nProvider i18n={i18n}>
           <Editor />
         </I18nProvider>
       </Provider>
@@ -140,6 +144,45 @@ const renderEditor = (evaluationAvailable = false) => {
 };
 
 describe('WorkflowEditActionClassify', () => {
+  it('persists the choice example in the active locale', async () => {
+    const user = userEvent.setup();
+    const onUpdate = renderEditor(
+      false,
+      setupI18n({
+        locale: 'fr',
+        messages: {
+          fr: {
+            [msg`Lawyer`.id]: 'Avocat',
+            [msg`Advises clients on legal matters`.id]:
+              'Conseille les clients sur les questions juridiques',
+          },
+        },
+      }),
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Add question' }));
+
+    expect(onUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        settings: expect.objectContaining({
+          input: expect.objectContaining({
+            questions: [
+              expect.objectContaining({
+                criteria: [
+                  expect.objectContaining({
+                    name: 'Avocat',
+                    description:
+                      'Conseille les clients sur les questions juridiques',
+                  }),
+                ],
+              }),
+            ],
+          }),
+        }),
+      }),
+    );
+  });
+
   it('guides an empty form with job-profile placeholders without inserting sample data', async () => {
     const user = userEvent.setup();
     const onUpdate = renderEditor();

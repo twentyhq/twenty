@@ -66,25 +66,25 @@ type WorkflowEditActionClassifyProps = {
       };
 };
 
-const buildEmptyQuestion = (): WorkflowClassifyQuestion => ({
-  id: v4(),
-  name: '',
-  type: 'choice',
-  instructions: '',
-  criteria: [
-    {
-      id: v4(),
-      name: 'Lawyer',
-      description: 'Advises clients on legal matters',
-    },
-  ],
-});
-
 export const WorkflowEditActionClassify = ({
   action,
   actionOptions,
 }: WorkflowEditActionClassifyProps) => {
   const { t } = useLingui();
+
+  const buildEmptyQuestion = (): WorkflowClassifyQuestion => ({
+    id: v4(),
+    name: '',
+    type: 'choice',
+    instructions: '',
+    criteria: [
+      {
+        id: v4(),
+        name: t`Lawyer`,
+        description: t`Advises clients on legal matters`,
+      },
+    ],
+  });
 
   const readonly = actionOptions.readonly === true;
   const questions = action.settings.input.questions;

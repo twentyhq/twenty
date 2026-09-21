@@ -295,7 +295,9 @@ export const Select = <Value extends SelectValue>({
                   >
                     {filteredOptions.map((option) => {
                       const handleSelectOption = () => {
-                        if (option.disabled) return;
+                        if (option.disabled) {
+                          return;
+                        }
                         onChange?.(option.value);
                         onBlur?.();
                         closeDropdown(dropdownId);
