@@ -1,0 +1,1 @@
+export const MAX_EXECUTED_STEPS_COUNT = 20;

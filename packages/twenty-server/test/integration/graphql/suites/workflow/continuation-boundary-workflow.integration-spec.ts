@@ -11,7 +11,7 @@ import {
   type WorkflowIfElseAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { MAX_EXECUTED_STEPS_COUNT } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
+import { MAX_EXECUTED_STEPS_COUNT } from 'src/modules/workflow/workflow-executor/constants/max-executed-steps-count.constant';
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schema = getWorkspaceSchemaName(workspaceId);
