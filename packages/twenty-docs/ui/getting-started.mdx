@@ -16,10 +16,14 @@ Twenty UI is Twenty's React component library. It provides components, icons, an
 For a standalone React application, install the library and its peer dependencies:
 
 ```bash
-yarn add twenty-ui monaco-editor react@^19 react-dom@^19
+yarn add twenty-ui react@^19 react-dom@^19
 ```
 
-`monaco-editor` powers the code editor components, but install it even if you never render an editor: the `twenty-ui/primitives/input`, `twenty-ui/primitives/feedback`, and `twenty-ui/primitives/navigation` entry points reference it, and bundlers fail to resolve it otherwise.
+The [code editor](/ui/components/code-editor) has a separate entry point, `twenty-ui/components/code-editor`. Other components do not require Monaco. To use the code editor, install its optional peer dependencies and configure Monaco workers for your bundler before mounting it:
+
+```bash
+yarn add @monaco-editor/react monaco-editor
+```
 
 If you are building a Twenty app, follow [Using Twenty UI components](/developers/extend/apps/layout/front-components#using-twenty-ui-components). The front component renderer supplies the workspace theme and has a different setup from a standalone browser application.
 
@@ -68,10 +72,11 @@ Each primitive family has a matching public entry point, such as
 | Import                                 | Contents                                                     |
 | -------------------------------------- | ------------------------------------------------------------ |
 | `twenty-ui/components`                 | Shared design presets and reusable app building blocks       |
+| `twenty-ui/components/code-editor`     | Code editor, editor header, and editor theme helpers         |
 | `twenty-ui/primitives/accessibility`   | Hidden elements and keyboard interaction helpers             |
 | `twenty-ui/primitives/data-display`    | Avatars, chips, tags, status indicators, and display helpers |
 | `twenty-ui/primitives/feedback`        | Toasts, banners, progress bars, and loaders                  |
-| `twenty-ui/primitives/input`           | Buttons, form controls, pickers, and code editors            |
+| `twenty-ui/primitives/input`           | Buttons, form controls, and pickers                          |
 | `twenty-ui/primitives/json-visualizer` | JSON tree viewer                                             |
 | `twenty-ui/primitives/layout`          | Layout, animation, resizing, and section components          |
 | `twenty-ui/primitives/navigation`      | Links, list items, menus, and tabs                           |

@@ -10,7 +10,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -47,7 +47,7 @@ export const SettingsRoleSettings = ({
     roleId,
   );
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const descriptionTextAreaId = `${roleId}-description`;
   const nameTextInputId = `${roleId}-name`;
@@ -124,7 +124,7 @@ export const SettingsRoleSettings = ({
             <Button
               size="sm"
               onClick={() => {
-                openModal(ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID);
+                openDialog(ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID);
               }}
               disabled={!isEditable}
               variant="outline"

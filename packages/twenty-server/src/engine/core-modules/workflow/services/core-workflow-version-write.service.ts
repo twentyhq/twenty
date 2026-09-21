@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import isEqual from 'lodash.isequal';
 import { v4 as uuidv4 } from 'uuid';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
@@ -12,7 +13,10 @@ import {
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { CoreWorkflowMigrationWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-migration-write.service';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
+import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
@@ -38,27 +42,80 @@ export type ValidatedDraftCoreWorkflowVersion = {
   steps: WorkflowAction[] | null;
 };
 
+export class CoreWorkflowVersionPostCommitError extends Error {
+  constructor(readonly cause: unknown) {
+    super(
+      'Workflow version content was committed, but cache invalidation failed',
+    );
+    this.name = 'CoreWorkflowVersionPostCommitError';
+  }
+}
+
 @Injectable()
 export class CoreWorkflowVersionWriteService {
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
-    private readonly coreWorkflowMigrationWriteService: CoreWorkflowMigrationWriteService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
   ) {}
 
+  private async runCoreWorkflowMigration({
+    workspaceId,
+    failureMessage,
+    operations,
+  }: {
+    workspaceId: string;
+    failureMessage: string;
+    operations: AllFlatEntityOperationByMetadataName;
+  }): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: operations,
+          workspaceId,
+          isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        failureMessage,
+      );
+    }
+  }
+
   async getValidatedDraftCoreWorkflowVersion({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<ValidatedDraftCoreWorkflowVersion> {
+    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowVersionIds: [coreWorkflowVersionId],
+      },
+    );
+
     const coreWorkflowVersion =
       await this.coreWorkflowVersionRepository.findOne(workspaceId, {
         where: { id: coreWorkflowVersionId },
@@ -94,49 +151,48 @@ export class CoreWorkflowVersionWriteService {
   async writeContentAndMirror({
     workspaceId,
     coreWorkflowVersionId,
+    expectedVersion,
     trigger,
     steps,
   }: {
     workspaceId: string;
     coreWorkflowVersionId: string;
-    trigger?: WorkflowTrigger | null;
-    steps?: WorkflowAction[] | null;
+    expectedVersion: Pick<WorkflowVersionEntity, 'triggers' | 'steps'>;
+    trigger: WorkflowTrigger | null;
+    steps: WorkflowAction[] | null;
   }): Promise<void> {
-    if (trigger === undefined && steps === undefined) {
-      return;
-    }
-
     await this.assertContentIsNotMalformed({
       workspaceId,
       coreWorkflowVersionId,
-      ...(await this.mergeWithPersistedContent({
-        workspaceId,
-        coreWorkflowVersionId,
-        trigger,
-        steps,
-      })),
+      trigger,
+      steps,
     });
 
-    const setClauses: string[] = [];
-    const parameters: (string | null)[] = [coreWorkflowVersionId, workspaceId];
+    // main added a compare-and-set on the previous content to catch two people
+    // editing the same draft. The runner cannot express that, so the check moves
+    // ahead of it and nothing is written when the row has already moved.
+    const persistedVersion = await this.coreWorkflowVersionRepository.findOne(
+      workspaceId,
+      {
+        where: { id: coreWorkflowVersionId },
+        select: { id: true, triggers: true, steps: true, status: true },
+      },
+    );
 
-    if (trigger !== undefined) {
-      parameters.push(isDefined(trigger) ? JSON.stringify([trigger]) : null);
-      setClauses.push(`"triggers" = $${parameters.length}`);
+    if (
+      !isDefined(persistedVersion) ||
+      persistedVersion.status !== CoreWorkflowVersionStatus.DRAFT ||
+      !isEqual(persistedVersion.triggers ?? null, expectedVersion.triggers ?? null) ||
+      !isEqual(persistedVersion.steps ?? null, expectedVersion.steps ?? null)
+    ) {
+      throw new WorkflowQueryValidationException(
+        `Core workflow version '${coreWorkflowVersionId}' changed during this edit`,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Workflow version changed, please reload and retry`,
+        },
+      );
     }
-
-    if (steps !== undefined) {
-      parameters.push(isDefined(steps) ? JSON.stringify(steps) : null);
-      setClauses.push(`"steps" = $${parameters.length}`);
-    }
-
-    const mirrorUpdatePayload: Pick<
-      Partial<WorkflowVersionWorkspaceEntity>,
-      'trigger' | 'steps'
-    > = {
-      ...(trigger === undefined ? {} : { trigger }),
-      ...(steps === undefined ? {} : { steps }),
-    };
 
     const { flatWorkflowVersionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -148,7 +204,7 @@ export class CoreWorkflowVersionWriteService {
       flatEntityMaps: flatWorkflowVersionMaps,
     });
 
-    await this.coreWorkflowMigrationWriteService.run({
+    await this.runCoreWorkflowMigration({
       workspaceId,
       failureMessage:
         'Multiple validation errors occurred while writing workflow version content',
@@ -159,10 +215,8 @@ export class CoreWorkflowVersionWriteService {
           flatEntityToUpdate: [
             {
               ...flatWorkflowVersion,
-              ...(trigger === undefined
-                ? {}
-                : { triggers: isDefined(trigger) ? [trigger] : null }),
-              ...(steps === undefined ? {} : { steps }),
+              triggers: isDefined(trigger) ? [trigger] : null,
+              steps,
             },
           ],
         },
@@ -176,19 +230,24 @@ export class CoreWorkflowVersionWriteService {
             .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
               shouldBypassPermissionChecks: true,
             })
-            .update({ coreWorkflowVersionId }, mirrorUpdatePayload);
+            .update({ coreWorkflowVersionId }, { trigger, steps });
 
           assertExactlyOneMirrorRowWasWritten({
             affected: mirrorUpdateResult.affected,
             coreWorkflowVersionId,
           });
+
         },
       );
     }, buildSystemAuthContext(workspaceId));
 
-    await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
-      workspaceId,
-    );
+    try {
+      await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+        workspaceId,
+      );
+    } catch (error) {
+      throw new CoreWorkflowVersionPostCommitError(error);
+    }
   }
 
   async createDraftCoreWorkflowVersionAndMirror({
@@ -235,7 +294,7 @@ export class CoreWorkflowVersionWriteService {
 
     const createdAt = new Date().toISOString();
 
-    await this.coreWorkflowMigrationWriteService.run({
+    await this.runCoreWorkflowMigration({
       workspaceId,
       failureMessage:
         'Multiple validation errors occurred while creating workflow version draft',
@@ -301,42 +360,6 @@ export class CoreWorkflowVersionWriteService {
     return this.coreWorkflowVersionRepository.count(workspaceId, {
       where: { coreWorkflowId },
     });
-  }
-
-  private async mergeWithPersistedContent({
-    workspaceId,
-    coreWorkflowVersionId,
-    trigger,
-    steps,
-  }: {
-    workspaceId: string;
-    coreWorkflowVersionId: string;
-    trigger?: WorkflowTrigger | null;
-    steps?: WorkflowAction[] | null;
-  }): Promise<{
-    trigger: WorkflowTrigger | null;
-    steps: WorkflowAction[] | null;
-  }> {
-    if (trigger !== undefined && steps !== undefined) {
-      return { trigger, steps };
-    }
-
-    const persistedCoreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { id: coreWorkflowVersionId },
-        select: { id: true, triggers: true, steps: true },
-      });
-
-    return {
-      trigger:
-        trigger === undefined
-          ? (persistedCoreWorkflowVersion?.triggers?.[0] ?? null)
-          : trigger,
-      steps:
-        steps === undefined
-          ? (persistedCoreWorkflowVersion?.steps ?? null)
-          : steps,
-    };
   }
 
   private async assertContentIsNotMalformed({

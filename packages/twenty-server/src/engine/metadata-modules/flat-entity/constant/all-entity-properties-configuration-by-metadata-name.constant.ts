@@ -2014,6 +2014,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
   },
   workflow: {
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    visibility: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdByUserWorkspaceId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     lastPublishedVersionId: {
       toCompare: true,
       toStringify: false,

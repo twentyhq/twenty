@@ -1,1 +1,1 @@
-export type CallRecordingArtifactImportScope = 'transcript' | 'media';
+export type CallRecordingArtifactImportScope = 'transcript' | 'audio' | 'video';

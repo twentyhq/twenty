@@ -1,6 +1,6 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Dispatch, type SetStateAction, useState } from 'react';
@@ -60,7 +60,7 @@ export const ConfigVariableEdit = ({
 }: ConfigVariableEditProps) => {
   const { t } = useLingui();
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const { enqueueToast } = useToast();
 
@@ -100,7 +100,7 @@ export const ConfigVariableEdit = ({
 
   const handleCancel = () => {
     if (canOpenCancelModal) {
-      openModal(RESET_VARIABLE_MODAL_ID);
+      openDialog(RESET_VARIABLE_MODAL_ID);
       return;
     }
 
@@ -158,8 +158,8 @@ export const ConfigVariableEdit = ({
               />
             </StyledButtonContainer>
           )}
-          <ConfirmationModal
-            modalInstanceId={RESET_VARIABLE_MODAL_ID}
+          <ConfirmationDialog
+            dialogId={RESET_VARIABLE_MODAL_ID}
             title={t`Reset variable`}
             subtitle={t`Are you sure you want to reset this variable?`}
             onConfirmClick={handleConfirmReset}

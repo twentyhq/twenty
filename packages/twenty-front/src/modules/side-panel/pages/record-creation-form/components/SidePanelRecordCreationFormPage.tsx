@@ -1,3 +1,7 @@
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordFormFieldInputs } from '@/object-record/record-form/components/RecordFormFieldInputs';
@@ -14,11 +18,13 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -75,6 +81,7 @@ const SidePanelRecordCreationForm = ({
     useAtomComponentState(recordCreationFormDraftComponentState);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const currentFocusId = useAtomStateValue(currentFocusIdSelector);
 
   const draftRecord = recordCreationFormDraft ?? initialDraftRecord;
 
@@ -113,8 +120,15 @@ const SidePanelRecordCreationForm = ({
     goBackFromSidePanel();
   };
 
+  const containerRef = useHotkeysOnFocusedElement({
+    keys: [`${Key.Meta}+${Key.Enter}`, `${Key.Control}+${Key.Enter}`],
+    focusId: currentFocusId ?? SIDE_PANEL_FOCUS_ID,
+    callback: handleCreateClick,
+    dependencies: [currentFocusId, handleCreateClick],
+  });
+
   return (
-    <StyledContainer>
+    <StyledContainer ref={containerRef}>
       <StyledContent>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
@@ -132,6 +146,7 @@ const SidePanelRecordCreationForm = ({
             size="sm"
             onClick={handleCreateClick}
             disabled={isSubmitting}
+            hotkeys={[getOsControlSymbol(), '⏎']}
             data-testid="record-creation-form-create-button"
             variant="solid"
             color="accent"

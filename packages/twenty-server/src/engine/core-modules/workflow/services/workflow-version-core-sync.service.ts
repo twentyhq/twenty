@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,18 +12,8 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import {
-  CoreWorkflowMetadataException,
-  CoreWorkflowMetadataExceptionCode,
-} from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { CoreWorkflowMigrationWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-migration-write.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatWorkflowVersionMaps } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version-maps.type';
-import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
-import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
+import { hasCoreWorkflowWorkspaceVersionIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-version-id-column.util';
+import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
 import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -51,10 +41,6 @@ export class WorkflowVersionCoreSyncService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPositionService: RecordPositionService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
-    private readonly coreWorkflowMigrationWriteService: CoreWorkflowMigrationWriteService,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly applicationService: ApplicationService,
   ) {}
 
   async upsertToCore(
@@ -106,6 +92,7 @@ export class WorkflowVersionCoreSyncService {
 
       return {
         id: coreWorkflowVersionId,
+        workspaceWorkflowVersionId: workflowVersion.id,
         workflowId: workflowVersion.workflowId,
         coreWorkflowId: resolvedCoreWorkflowId,
         triggers: isDefined(workflowVersion.trigger)
@@ -113,93 +100,14 @@ export class WorkflowVersionCoreSyncService {
           : null,
         steps: workflowVersion.steps ?? null,
         status: workflowVersion.status as unknown as WorkflowVersionStatus,
-        workspaceWorkflowVersionId: workflowVersion.id,
         universalIdentifier: uuidv4(),
         applicationId,
       };
     });
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    const { flatWorkflowVersionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
-      );
-
-    const flatWorkflowVersionsToCreate: (UniversalFlatWorkflowVersion & {
-      id?: string;
-    })[] = [];
-    const flatWorkflowVersionsToUpdate: UniversalFlatWorkflowVersion[] = [];
-
-    const timestamp = new Date().toISOString();
-
-    // The table decides which rows exist: a stale map would send a persisted id
-    // down the create branch and hit the primary key.
-    const persistedCoreVersionIds = new Set(
-      (
-        await this.coreWorkflowVersionRepository.find(workspaceId, {
-          where: { id: In(coreRows.map(({ id }) => id)) },
-          select: { id: true },
-        })
-      ).map(({ id }) => id),
-    );
-
-    for (const coreRow of coreRows) {
-      const existingFlatWorkflowVersion = persistedCoreVersionIds.has(
-        coreRow.id,
-      )
-        ? findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: coreRow.id,
-            flatEntityMaps: flatWorkflowVersionMaps,
-          })
-        : undefined;
-
-      if (
-        persistedCoreVersionIds.has(coreRow.id) &&
-        !isDefined(existingFlatWorkflowVersion)
-      ) {
-        throw new CoreWorkflowMetadataException(
-          `Core workflow version ${coreRow.id} is persisted but missing from the flat entity maps`,
-          CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_NOT_FOUND,
-        );
-      }
-
-      const flatWorkflowVersion: UniversalFlatWorkflowVersion & { id: string } =
-        {
-          ...coreRow,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-          createdAt: timestamp,
-          updatedAt: timestamp,
-        };
-
-      if (isDefined(existingFlatWorkflowVersion)) {
-        flatWorkflowVersionsToUpdate.push({
-          ...existingFlatWorkflowVersion,
-          ...flatWorkflowVersion,
-          universalIdentifier: existingFlatWorkflowVersion.universalIdentifier,
-          createdAt: existingFlatWorkflowVersion.createdAt,
-        });
-      } else {
-        flatWorkflowVersionsToCreate.push(flatWorkflowVersion);
-      }
-    }
-
-    await this.coreWorkflowMigrationWriteService.run({
-      workspaceId,
-      failureMessage:
-        'Multiple validation errors occurred while mirroring workflow versions to core',
-      operations: {
-        workflowVersion: {
-          flatEntityToCreate: flatWorkflowVersionsToCreate,
-          flatEntityToDelete: [],
-          flatEntityToUpdate: flatWorkflowVersionsToUpdate,
-        },
-      },
-    });
+    await this.coreWorkflowVersionRepository.upsert(workspaceId, coreRows, [
+      'id',
+    ]);
 
     await this.writeBackCoreVersionIds(
       workspaceId,
@@ -243,106 +151,11 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
-    await this.deleteCoreVersionsThroughMigration(
-      workspaceId,
-      coreWorkflowVersionIds,
-    );
+    await this.coreWorkflowVersionRepository.delete(workspaceId, {
+      id: In(coreWorkflowVersionIds),
+    });
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
-  }
-
-  private async resolveFlatVersionsOrThrow({
-    workspaceId,
-    coreWorkflowVersionIds,
-    flatWorkflowVersionMaps,
-  }: {
-    workspaceId: string;
-    coreWorkflowVersionIds: string[];
-    flatWorkflowVersionMaps: FlatWorkflowVersionMaps;
-  }): Promise<FlatWorkflowVersion[]> {
-    const resolve = (maps: FlatWorkflowVersionMaps) =>
-      coreWorkflowVersionIds.map((coreWorkflowVersionId) =>
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: coreWorkflowVersionId,
-          flatEntityMaps: maps,
-        }),
-      );
-
-    let resolved = resolve(flatWorkflowVersionMaps);
-
-    // A miss means the cache is behind the table, and skipping the delete would
-    // leave an orphan core row that still broadcasts and still reads, so refresh
-    // once before giving up.
-    if (resolved.some((flatVersion) => !isDefined(flatVersion))) {
-      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-        workspaceId,
-        flatMapsKeys: ['flatWorkflowVersionMaps'],
-      });
-
-      const { flatWorkflowVersionMaps: recomputedMaps } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
-        );
-
-      resolved = resolve(recomputedMaps);
-    }
-
-    const stillMissingIds = coreWorkflowVersionIds.filter(
-      (_, index) => !isDefined(resolved[index]),
-    );
-
-    if (stillMissingIds.length > 0) {
-      const stillPersisted = await this.coreWorkflowVersionRepository.find(
-        workspaceId,
-        { where: { id: In(stillMissingIds) }, select: { id: true } },
-      );
-
-      if (stillPersisted.length > 0) {
-        throw new CoreWorkflowMetadataException(
-          `Core workflow versions ${stillPersisted.map(({ id }) => id).join(', ')} are persisted but missing from the flat entity maps`,
-          CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_NOT_FOUND,
-        );
-      }
-    }
-
-    return resolved.filter(isDefined);
-  }
-
-  private async deleteCoreVersionsThroughMigration(
-    workspaceId: string,
-    coreWorkflowVersionIds: string[],
-  ): Promise<void> {
-    if (coreWorkflowVersionIds.length === 0) {
-      return;
-    }
-
-    const { flatWorkflowVersionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
-      );
-
-    const flatWorkflowVersionsToDelete = await this.resolveFlatVersionsOrThrow({
-      workspaceId,
-      coreWorkflowVersionIds,
-      flatWorkflowVersionMaps,
-    });
-
-    if (flatWorkflowVersionsToDelete.length === 0) {
-      return;
-    }
-
-    await this.coreWorkflowMigrationWriteService.run({
-      workspaceId,
-      failureMessage:
-        'Multiple validation errors occurred while deleting workflow versions',
-      operations: {
-        workflowVersion: {
-          flatEntityToCreate: [],
-          flatEntityToDelete: flatWorkflowVersionsToDelete,
-          flatEntityToUpdate: [],
-        },
-      },
-    });
   }
 
   async findCoreVersionById(
@@ -351,6 +164,15 @@ export class WorkflowVersionCoreSyncService {
   ): Promise<WorkflowVersionEntity | null> {
     return this.coreWorkflowVersionRepository.findOne(workspaceId, {
       where: { id: coreWorkflowVersionId },
+    });
+  }
+
+  async findCoreVersionByWorkspaceVersionId(
+    workspaceId: string,
+    workspaceWorkflowVersionId: string,
+  ): Promise<WorkflowVersionEntity | null> {
+    return this.coreWorkflowVersionRepository.findOne(workspaceId, {
+      where: { workspaceWorkflowVersionId },
     });
   }
 
@@ -364,10 +186,7 @@ export class WorkflowVersionCoreSyncService {
     transactionScope: WorkspaceTransactionScope;
     workflowVersion: WorkflowVersionWorkspaceEntity;
     applicationId?: string;
-  }): Promise<{
-    coreWorkflowVersionId: string;
-    writeCoreVersion: () => Promise<void>;
-  } | null> {
+  }): Promise<{ coreWorkflowVersionId: string } | null> {
     if (!(await this.workspaceHasCoreWorkflowVersionIdField(workspaceId))) {
       this.logger.warn(
         `workflowVersion.coreWorkflowVersionId field missing for workspace ${workspaceId}, skipping transactional core mirror`,
@@ -379,26 +198,102 @@ export class WorkflowVersionCoreSyncService {
     const resolvedApplicationId =
       applicationId ?? (await this.getCustomApplicationIdOrThrow(workspaceId));
 
+    const hasWorkspaceVersionMapping =
+      await hasCoreWorkflowWorkspaceVersionIdColumn((query) =>
+        transactionScope.executeRawQuery(query),
+      );
     const candidateCoreVersionId = workflowVersion.coreWorkflowVersionId;
+    const candidateRows = isNonEmptyString(candidateCoreVersionId)
+      ? ((await transactionScope.executeRawQuery(
+          `SELECT "id", "workspaceId", "workflowId"${hasWorkspaceVersionMapping ? ', "workspaceWorkflowVersionId"' : ''} FROM core."workflowVersion" WHERE id = $1 FOR UPDATE`,
+          [candidateCoreVersionId],
+        )) as {
+          id: string;
+          workspaceId: string;
+          workflowId: string | null;
+          workspaceWorkflowVersionId?: string | null;
+        }[])
+      : [];
+    const candidate = candidateRows[0];
 
-    const linkedCoreVersionId =
-      isNonEmptyString(candidateCoreVersionId) &&
-      (await this.isCoreVersionOwnedByWorkspace({
-        coreWorkflowVersionId: candidateCoreVersionId,
-        workspaceId,
-        transactionScope,
-      }))
-        ? candidateCoreVersionId
-        : null;
+    if (
+      isDefined(candidate) &&
+      (candidate.workspaceId !== workspaceId ||
+        candidate.workflowId !== workflowVersion.workflowId ||
+        (isDefined(candidate.workspaceWorkflowVersionId) &&
+          candidate.workspaceWorkflowVersionId !== workflowVersion.id))
+    ) {
+      throw new Error(
+        `Conflicting core mapping for workflow version ${workflowVersion.id} in workspace ${workspaceId}`,
+      );
+    }
 
-    const isNewLink = !isDefined(linkedCoreVersionId);
-    const coreWorkflowVersionId = linkedCoreVersionId ?? uuidv4();
+    const reverseRows = hasWorkspaceVersionMapping
+      ? ((await transactionScope.executeRawQuery(
+          `SELECT id FROM core."workflowVersion" WHERE "workspaceId" = $1 AND "workspaceWorkflowVersionId" = $2 FOR UPDATE`,
+          [workspaceId, workflowVersion.id],
+        )) as { id: string }[])
+      : [];
+
+    if (
+      reverseRows.length > 1 ||
+      (isDefined(candidate) &&
+        isDefined(reverseRows[0]) &&
+        reverseRows[0].id !== candidate.id)
+    ) {
+      throw new Error(
+        `Ambiguous core mapping for workflow version ${workflowVersion.id} in workspace ${workspaceId}`,
+      );
+    }
+
+    const coreWorkflowVersionId =
+      reverseRows[0]?.id ?? candidateCoreVersionId ?? uuidv4();
+    const isNewLink =
+      workflowVersion.coreWorkflowVersionId !== coreWorkflowVersionId;
 
     const coreWorkflowId = await this.resolveCoreWorkflowIdInTransaction({
       workspaceId,
       workflowId: workflowVersion.workflowId,
       transactionScope,
     });
+
+    // The conflict target is the primary key alone, so without the workspaceId
+    // predicate a core row owned by another workspace would have its triggers
+    // and steps overwritten.
+    const mirroredRows = await transactionScope.executeRawQuery(
+      `INSERT INTO core."workflowVersion"
+         ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "coreWorkflowId"${hasWorkspaceVersionMapping ? ', "workspaceWorkflowVersionId"' : ''})
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9${hasWorkspaceVersionMapping ? ', $10' : ''})
+       ON CONFLICT ("id") DO UPDATE SET
+         ${hasWorkspaceVersionMapping ? '"workspaceWorkflowVersionId" = EXCLUDED."workspaceWorkflowVersionId",' : ''}
+         "triggers" = EXCLUDED."triggers",
+         "steps" = EXCLUDED."steps",
+         "status" = EXCLUDED."status",
+         "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId")
+       WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId" RETURNING id`,
+      [
+        coreWorkflowVersionId,
+        workspaceId,
+        workflowVersion.workflowId,
+        isDefined(workflowVersion.trigger)
+          ? JSON.stringify([workflowVersion.trigger])
+          : null,
+        isDefined(workflowVersion.steps)
+          ? JSON.stringify(workflowVersion.steps)
+          : null,
+        workflowVersion.status,
+        uuidv4(),
+        resolvedApplicationId,
+        coreWorkflowId,
+        ...(hasWorkspaceVersionMapping ? [workflowVersion.id] : []),
+      ],
+    );
+
+    if (mirroredRows.length !== 1) {
+      throw new Error(
+        `Core workflow version ${coreWorkflowVersionId} could not be mirrored in workspace ${workspaceId}`,
+      );
+    }
 
     if (isNewLink) {
       await this.writeBackCoreVersionIdInTransaction(
@@ -408,92 +303,7 @@ export class WorkflowVersionCoreSyncService {
       );
     }
 
-    return {
-      coreWorkflowVersionId,
-      // The core row cannot be written inside the caller's transaction (the
-      // migration runner owns its own), and callers read it back immediately,
-      // so they await this rather than letting it race them.
-      writeCoreVersion: () =>
-        this.mirrorCoreVersionThroughMigration({
-          workspaceId,
-          coreWorkflowVersionId,
-          coreWorkflowId,
-          applicationId: resolvedApplicationId,
-          workflowVersion,
-        }),
-    };
-  }
-
-  private async mirrorCoreVersionThroughMigration({
-    workspaceId,
-    coreWorkflowVersionId,
-    coreWorkflowId,
-    workflowVersion,
-  }: {
-    workspaceId: string;
-    coreWorkflowVersionId: string;
-    coreWorkflowId: string | null;
-    applicationId: string;
-    workflowVersion: WorkflowVersionWorkspaceEntity;
-  }): Promise<void> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    const { flatWorkflowVersionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
-      );
-
-    const existingFlatWorkflowVersion = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: coreWorkflowVersionId,
-      flatEntityMaps: flatWorkflowVersionMaps,
-    });
-
-    const timestamp = new Date().toISOString();
-
-    const flatWorkflowVersion: UniversalFlatWorkflowVersion & { id: string } = {
-      id: coreWorkflowVersionId,
-      universalIdentifier:
-        existingFlatWorkflowVersion?.universalIdentifier ?? uuidv4(),
-      workflowId: workflowVersion.workflowId,
-      // The upsert this replaced coalesced the parent, so an unresolved link
-      // must not wipe one that is already persisted.
-      coreWorkflowId:
-        coreWorkflowId ?? existingFlatWorkflowVersion?.coreWorkflowId ?? null,
-      triggers: isDefined(workflowVersion.trigger)
-        ? [workflowVersion.trigger]
-        : null,
-      steps: workflowVersion.steps ?? null,
-      status: workflowVersion.status as unknown as WorkflowVersionStatus,
-      workspaceWorkflowVersionId: workflowVersion.id,
-      applicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
-      createdAt: existingFlatWorkflowVersion?.createdAt ?? timestamp,
-      updatedAt: timestamp,
-    };
-
-    await this.coreWorkflowMigrationWriteService.run({
-      workspaceId,
-      failureMessage:
-        'Multiple validation errors occurred while mirroring a workflow version to core',
-      operations: {
-        workflowVersion: isDefined(existingFlatWorkflowVersion)
-          ? {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                { ...existingFlatWorkflowVersion, ...flatWorkflowVersion },
-              ],
-            }
-          : {
-              flatEntityToCreate: [flatWorkflowVersion],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-      },
-    });
+    return { coreWorkflowVersionId };
   }
 
   private async resolveCoreWorkflowIdByWorkflowId(
@@ -572,8 +382,32 @@ export class WorkflowVersionCoreSyncService {
 
     const pointedCoreWorkflowId = workflow?.coreWorkflowId ?? null;
 
-    if (isNonEmptyString(pointedCoreWorkflowId)) {
+    const isColumnAvailable = await hasCoreWorkflowWorkspaceWorkflowIdColumn(
+      (query) => transactionScope.executeRawQuery(query),
+    );
+
+    if (!isColumnAvailable) {
       return pointedCoreWorkflowId;
+    }
+
+    if (isNonEmptyString(pointedCoreWorkflowId)) {
+      const pointedRows = (await transactionScope.executeRawQuery(
+        `SELECT "workspaceId", "workspaceWorkflowId" FROM core."workflow" WHERE id = $1 FOR UPDATE`,
+        [pointedCoreWorkflowId],
+      )) as { workspaceId: string; workspaceWorkflowId: string | null }[];
+      const pointed = pointedRows[0];
+
+      if (isDefined(pointed)) {
+        if (
+          pointed.workspaceId !== workspaceId ||
+          pointed.workspaceWorkflowId !== workflowId
+        ) {
+          throw new Error(
+            `Conflicting core mapping for workflow ${workflowId} in workspace ${workspaceId}`,
+          );
+        }
+        return pointedCoreWorkflowId;
+      }
     }
 
     const coreWorkflowIdByWorkspaceWorkflowId =
@@ -585,25 +419,6 @@ export class WorkflowVersionCoreSyncService {
       });
 
     return coreWorkflowIdByWorkspaceWorkflowId.get(workflowId) ?? null;
-  }
-
-  // Must run inside the caller's transaction so the ownership answer cannot go
-  // stale before the insert below uses it.
-  private async isCoreVersionOwnedByWorkspace({
-    coreWorkflowVersionId,
-    workspaceId,
-    transactionScope,
-  }: {
-    coreWorkflowVersionId: string;
-    workspaceId: string;
-    transactionScope: WorkspaceTransactionScope;
-  }): Promise<boolean> {
-    const rows = await transactionScope.executeRawQuery(
-      `SELECT 1 FROM core."workflowVersion" WHERE "id" = $1 AND "workspaceId" = $2`,
-      [coreWorkflowVersionId, workspaceId],
-    );
-
-    return isNonEmptyArray(rows);
   }
 
   async mirrorWorkflowVersionWrites({
@@ -636,13 +451,6 @@ export class WorkflowVersionCoreSyncService {
           workflowVersion.id,
           result.coreWorkflowVersionId,
         );
-
-        // This path runs inside a transaction owned by its caller, so the core
-        // write is drained after that commit; the drain awaits it, which keeps
-        // the core row there before anything reads it back.
-        transactionScope.afterCommit(async () => {
-          await result.writeCoreVersion();
-        });
       }
     }
 
@@ -685,8 +493,6 @@ export class WorkflowVersionCoreSyncService {
       transactionScope: WorkspaceTransactionScope,
     ) => Promise<string>,
   ): Promise<void> {
-    const pendingCoreWrites: (() => Promise<void>)[] = [];
-
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
@@ -723,23 +529,15 @@ export class WorkflowVersionCoreSyncService {
               objectIdByNameSingular,
             });
 
-            const mirrorResult = await this.mirrorWorkflowVersionWrite({
+            await this.mirrorWorkflowVersionWrite({
               workspaceId,
               transactionScope,
               workflowVersion,
             });
-
-            if (isDefined(mirrorResult)) {
-              pendingCoreWrites.push(mirrorResult.writeCoreVersion);
-            }
           }
         },
       );
     }, buildSystemAuthContext(workspaceId));
-
-    for (const writeCoreVersion of pendingCoreWrites) {
-      await writeCoreVersion();
-    }
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
@@ -752,18 +550,9 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
-    const versionsToDelete = await this.coreWorkflowVersionRepository.find(
-      workspaceId,
-      {
-        where: { workflowId: In(workflowIds) },
-        select: { id: true },
-      },
-    );
-
-    await this.deleteCoreVersionsThroughMigration(
-      workspaceId,
-      versionsToDelete.map((version) => version.id),
-    );
+    await this.coreWorkflowVersionRepository.delete(workspaceId, {
+      workflowId: In(workflowIds),
+    });
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
@@ -802,18 +591,27 @@ export class WorkflowVersionCoreSyncService {
     workflowId: string,
   ): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
+      await this.workspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          const workflowVersionRepository =
+            transactionScope.getRepository<WorkflowVersionWorkspaceEntity>(
+              'workflowVersion',
+              { shouldBypassPermissionChecks: true },
+            );
+          const versions = await workflowVersionRepository.find({
+            where: { workflowId },
+          });
 
-      const versions = await workflowVersionRepository.find({
-        where: { workflowId },
-      });
-
-      await this.upsertToCore(workspaceId, versions);
+          await this.mirrorWorkflowVersionWrites({
+            workspaceId,
+            transactionScope,
+            workflowVersions: versions,
+          });
+        },
+      );
     }, buildSystemAuthContext(workspaceId));
+
+    await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
 
   private async writeBackCoreVersionIds(

@@ -15,6 +15,7 @@ import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit
 import { getCalendarDayPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-day-period.util';
 import { getCalendarMonthPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-month-period.util';
 import { getCalendarWeekPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-week-period.util';
+import { isAnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/utils/is-anchored-period-unit.util';
 
 @Injectable()
 export class UsagePeriodService implements OnModuleInit {
@@ -57,12 +58,7 @@ export class UsagePeriodService implements OnModuleInit {
   }): Promise<Partial<Record<PeriodUnit, UsagePeriod>>> {
     const periodUnits = [
       ...new Set(
-        limits
-          .map((limit) => limit.periodUnit)
-          .filter(
-            (periodUnit): periodUnit is AnchoredPeriodUnit =>
-              periodUnit !== 'second',
-          ),
+        limits.map((limit) => limit.periodUnit).filter(isAnchoredPeriodUnit),
       ),
     ];
 

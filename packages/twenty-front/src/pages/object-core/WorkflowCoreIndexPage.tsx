@@ -12,9 +12,7 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
-import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
-import { getDeletedRecordIdsFromOperation } from '@/object-core/utils/getDeletedRecordIdsFromOperation';
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
@@ -49,12 +47,7 @@ const StyledFetchMoreSentinel = styled.div`
 `;
 
 const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
-  isDefined(workflow.workspaceWorkflowId)
-    ? getAppPath(AppPath.RecordShowPage, {
-        objectNameSingular: CoreObjectNameSingular.Workflow,
-        objectRecordId: workflow.workspaceWorkflowId,
-      })
-    : undefined;
+  getAppPath(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflow.id });
 
 export const WorkflowCoreIndexPage = () => {
   const tableId = useWorkspaceSurfaceScopedComponentInstanceId(
@@ -73,6 +66,7 @@ export const WorkflowCoreIndexPage = () => {
   const { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow } =
     useCreateCoreWorkflow();
 
+<<<<<<< HEAD
   const {
     displayedCoreWorkflows,
     selectedRowIds,
@@ -91,6 +85,10 @@ export const WorkflowCoreIndexPage = () => {
         getDeletedRecordIdsFromOperation(detail.operation),
       ),
   });
+=======
+  const { displayedCoreWorkflows, selectedRowIds, toggleRow, selectRows } =
+    useCoreWorkflowsSelection({ coreWorkflows });
+>>>>>>> tt-workflow-core-sse
 
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,
@@ -188,8 +186,6 @@ export const WorkflowCoreIndexPage = () => {
                   selectedRowIds,
                   onToggleRow: toggleRow,
                   onToggleAllRows: selectRows,
-                  isItemSelectable: (coreWorkflow) =>
-                    isDefined(coreWorkflow.workspaceWorkflowId),
                 }}
               />
               {canCreateCoreWorkflow && (

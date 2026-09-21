@@ -31,6 +31,7 @@ const USAGE_UNIT_BY_OPERATION_TYPE: Record<
   [UsageOperationType.EMAIL_SEND]: UsageUnit.INVOCATION,
   [UsageOperationType.API_REQUEST]: UsageUnit.REQUEST,
   [UsageOperationType.WEBHOOK_CALL]: UsageUnit.REQUEST,
+  [UsageOperationType.STORAGE_FILE]: UsageUnit.BYTE,
   // Platform-raised only; ApplicationRecurringChargeService sets its own unit.
   [UsageOperationType.SUBSCRIPTION]: UsageUnit.CREDIT,
 };

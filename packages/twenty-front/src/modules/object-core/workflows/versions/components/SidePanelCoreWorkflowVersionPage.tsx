@@ -30,10 +30,8 @@ const StyledSpacer = styled.div`
 
 export const SidePanelCoreWorkflowVersionPage = () => {
   const { t } = useLingui();
-  const workspaceWorkflowVersionId = useSidePanelWorkflowVersionIdOrThrow();
-  const { coreWorkflowVersion } = useCoreWorkflowVersion(
-    workspaceWorkflowVersionId,
-  );
+  const coreWorkflowVersionId = useSidePanelWorkflowVersionIdOrThrow();
+  const { coreWorkflowVersion } = useCoreWorkflowVersion(coreWorkflowVersionId);
 
   if (!isDefined(coreWorkflowVersion)) {
     return null;
@@ -47,16 +45,14 @@ export const SidePanelCoreWorkflowVersionPage = () => {
       <StyledActions>
         <Tag color={tagProps.color}>{t(tagProps.label)}</Tag>
         <StyledSpacer />
-        {isDefined(coreWorkflowVersion.workspaceWorkflowId) && (
+        {isDefined(coreWorkflowVersion.coreWorkflowId) && (
           <CoreWorkflowVersionRestoreButton
-            workflowId={coreWorkflowVersion.workspaceWorkflowId}
-            workspaceWorkflowVersionId={workspaceWorkflowVersionId}
+            workflowId={coreWorkflowVersion.coreWorkflowId}
+            coreWorkflowVersionId={coreWorkflowVersionId}
           />
         )}
       </StyledActions>
-      <CoreWorkflowVersionCard
-        workspaceWorkflowVersionId={workspaceWorkflowVersionId}
-      />
+      <CoreWorkflowVersionCard coreWorkflowVersionId={coreWorkflowVersionId} />
     </StyledContainer>
   );
 };

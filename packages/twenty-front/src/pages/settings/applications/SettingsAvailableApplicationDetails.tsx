@@ -226,6 +226,7 @@ export const SettingsAvailableApplicationDetails = () => {
         }
         secondaryBar={
           <SettingsTabBar
+            aria-label={t`Available application details`}
             tabs={tabs}
             componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
           />

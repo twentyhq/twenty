@@ -690,6 +690,16 @@ export class ConfigVariables {
   MAX_TARBALL_UPLOAD_SIZE_BYTES: number = 100 * 1024 * 1024;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    description:
+      'Maximum bytes of file storage a single workspace may hold, all its files counted. An upload that would cross it is refused',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  WORKSPACE_STORAGE_LIMIT_BYTES: number = 100 * 1024 * 1024 * 1024;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Type of function execution (local or Lambda)',
     type: ConfigVariableType.ENUM,
@@ -1920,6 +1930,15 @@ export class ConfigVariables {
   })
   @IsOptional()
   MISTRAL_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for TypeSafe AI classification models (Jev)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  TYPESAFE_AI_API_KEY?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,

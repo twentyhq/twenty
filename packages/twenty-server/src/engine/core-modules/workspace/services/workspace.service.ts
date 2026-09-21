@@ -140,6 +140,7 @@ export class WorkspaceService {
     aiAgentModelTier: PermissionFlagType.AI_SETTINGS,
     isAutoModelSelectionEnabled: PermissionFlagType.AI_SETTINGS,
     aiModelIdByTier: PermissionFlagType.AI_SETTINGS,
+    aiEvaluationModelId: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
   };
@@ -174,8 +175,8 @@ export class WorkspaceService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly deleteCascadeMessageQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
-    private readonly logicFunctionMessageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.applicationLifecycleHookQueue)
+    private readonly applicationLifecycleHookMessageQueueService: MessageQueueService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
@@ -235,6 +236,46 @@ export class WorkspaceService {
           WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
         );
       }
+    }
+  }
+
+  // Same contract as a tier pin: stored as given, so an id that names nothing
+  // this instance can run must be refused here rather than stored and silently
+  // ignored at run time. A pin already stored is left alone so the rest of the
+  // form stays editable after an administrator withdraws the model.
+  private validateAiEvaluationModelId({
+    aiEvaluationModelId,
+    storedAiEvaluationModelId,
+  }: {
+    aiEvaluationModelId: string | null;
+    storedAiEvaluationModelId: string | null;
+  }): void {
+    if (!isNonEmptyString(aiEvaluationModelId)) {
+      return;
+    }
+
+    if (aiEvaluationModelId === storedAiEvaluationModelId) {
+      return;
+    }
+
+    if (
+      !isDefined(
+        this.aiModelRegistryService.getEvaluationModelConfig(
+          aiEvaluationModelId,
+        ),
+      )
+    ) {
+      throw new WorkspaceException(
+        `Model "${aiEvaluationModelId}" is not an evaluation model in this instance's catalog`,
+        WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+      );
+    }
+
+    if (!this.aiModelRegistryService.isModelAdminAllowed(aiEvaluationModelId)) {
+      throw new WorkspaceException(
+        'Selected model has been disabled by the administrator',
+        WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+      );
     }
   }
 
@@ -343,6 +384,13 @@ export class WorkspaceService {
       this.validateAiModelIdByTier({
         aiModelIdByTier: payload.aiModelIdByTier,
         storedAiModelIdByTier: workspace.aiModelIdByTier,
+      });
+    }
+
+    if (isDefined(payload.aiEvaluationModelId)) {
+      this.validateAiEvaluationModelId({
+        aiEvaluationModelId: payload.aiEvaluationModelId,
+        storedAiEvaluationModelId: workspace.aiEvaluationModelId,
       });
     }
 
@@ -737,7 +785,7 @@ export class WorkspaceService {
   async enqueueWorkspaceDeletionApplicationUninstall(
     workspaceId: string,
   ): Promise<void> {
-    await this.logicFunctionMessageQueueService.add<WorkspaceDeletionApplicationUninstallJobData>(
+    await this.applicationLifecycleHookMessageQueueService.add<WorkspaceDeletionApplicationUninstallJobData>(
       WorkspaceDeletionApplicationUninstallJob.name,
       { workspaceId },
       {

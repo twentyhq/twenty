@@ -1,3 +1,5 @@
+import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
+import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 
@@ -26,10 +28,16 @@ export const Default: Story = {
     text: 'Menu item text',
     LeftIcon: IconBell,
     accent: 'default',
-    iconButtons: [
-      { Icon: IconBell, onClick: action('Clicked'), ariaLabel: 'Notify' },
-      { Icon: IconBell, onClick: action('Clicked'), ariaLabel: 'Notify' },
-    ],
+    iconButtons: (
+      <ButtonGroup attached={false}>
+        <LightIconButton aria-label={'Notify'} onClick={action('Clicked')}>
+          <IconBell />
+        </LightIconButton>
+        <LightIconButton aria-label={'Notify'} onClick={action('Clicked')}>
+          <IconBell />
+        </LightIconButton>
+      </ButtonGroup>
+    ),
   },
   decorators: [ComponentDecorator],
 };
@@ -90,23 +98,27 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
             switch (choice) {
               case 'no icon button': {
                 return {
-                  iconButtons: [],
+                  iconButtons: null,
                 };
               }
               case 'two icon buttons': {
                 return {
-                  iconButtons: [
-                    {
-                      Icon: IconBell,
-                      onClick: action('Clicked on first icon button'),
-                      ariaLabel: 'Notify',
-                    },
-                    {
-                      Icon: IconBell,
-                      onClick: action('Clicked on second icon button'),
-                      ariaLabel: 'Notify',
-                    },
-                  ],
+                  iconButtons: (
+                    <ButtonGroup attached={false}>
+                      <LightIconButton
+                        aria-label={'Notify'}
+                        onClick={action('Clicked on first icon button')}
+                      >
+                        <IconBell />
+                      </LightIconButton>
+                      <LightIconButton
+                        aria-label={'Notify'}
+                        onClick={action('Clicked on second icon button')}
+                      >
+                        <IconBell />
+                      </LightIconButton>
+                    </ButtonGroup>
+                  ),
                 };
               }
               default:
@@ -242,18 +254,19 @@ export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
             switch (choice) {
               case 'no icon button': {
                 return {
-                  iconButtons: [],
+                  iconButtons: null,
                 };
               }
               case 'one icon button': {
                 return {
-                  iconButtons: [
-                    {
-                      Icon: IconBell,
-                      onClick: action('Clicked on icon button'),
-                      ariaLabel: 'Notify',
-                    },
-                  ],
+                  iconButtons: (
+                    <LightIconButton
+                      aria-label={'Notify'}
+                      onClick={action('Clicked on icon button')}
+                    >
+                      <IconBell />
+                    </LightIconButton>
+                  ),
                 };
               }
               default:

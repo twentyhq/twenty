@@ -50,6 +50,7 @@ const createRouter = ({
 export const ComponentWithRouterDecorator: Decorator = (Story, { args }) => {
   return (
     <RouterProvider
+      useTransitions={false}
       router={createRouter({
         Story,
         args,

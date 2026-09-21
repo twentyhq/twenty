@@ -104,6 +104,7 @@ type FrontComponent {
 type CommandMenuItem {
   id: UUID!
   workflowVersionId: UUID
+  coreWorkflowVersionId: UUID
   frontComponentId: UUID
   frontComponent: FrontComponent
   engineComponentKey: EngineComponentKey!
@@ -850,6 +851,7 @@ type Workspace {
   aiAgentModelTier: AiModelTier!
   isAutoModelSelectionEnabled: Boolean!
   aiModelIdByTier: JSON!
+  aiEvaluationModelId: String
   aiAdditionalInstructions: String
   workspaceCustomApplication: Application
   featureFlags: [FeatureFlag!]
@@ -1576,6 +1578,90 @@ type EnterpriseSubscriptionStatusDTO {
   isCancellationScheduled: Boolean!
 }
 
+type UsageQuotaDefinition {
+  resourceType: UsageResourceType!
+  limitKind: String!
+  allowedOperationTypes: [UsageOperationType!]!
+  allowedSpenderTypes: [String!]!
+  allowedMeters: [String!]!
+}
+
+enum UsageResourceType {
+  AI
+  WORKFLOW
+  APP
+  STORAGE
+  API
+  LOGIC_FUNCTION
+  EMAIL
+  WEBHOOK
+}
+
+enum UsageOperationType {
+  ALL
+  AI_CHAT_TOKEN
+  AI_WORKFLOW_TOKEN
+  WORKFLOW_EXECUTION
+  CODE_EXECUTION
+  WEB_SEARCH
+  CALL_RECORDING
+  EMAIL_SEND
+  API_REQUEST
+  WEBHOOK_CALL
+  STORAGE_FILE
+  SUBSCRIPTION
+}
+
+type UsageQuotaDefinitions {
+  definitions: [UsageQuotaDefinition!]!
+  isIntraWorkspaceLimitEntitled: Boolean!
+  hasAllowancePeriod: Boolean!
+}
+
+type UsageQuotaWithConsumption {
+  id: UUID!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String
+  spenderLabel: String
+  periodUnit: String!
+  meter: String!
+  limitValue: BigInt!
+  isEnforced: Boolean!
+  consumedValue: BigInt
+  remainingValue: BigInt
+  periodStart: DateTime
+  periodEnd: DateTime
+}
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+type UsageQuotaScopeConsumption {
+  consumedValue: BigInt
+  periodStart: DateTime!
+  periodEnd: DateTime!
+}
+
+type UsageLimit {
+  id: UUID!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String
+  limitKind: String!
+  periodCount: Int!
+  periodUnit: String!
+  meter: String!
+  limitValue: BigInt!
+  burstValue: BigInt
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type FileWithSignedUrl {
   id: UUID!
   path: String!
@@ -1794,88 +1880,6 @@ type UsageAnalytics {
   userDailyUsage: UsageUserDaily
 }
 
-type UsageQuotaDefinition {
-  resourceType: UsageResourceType!
-  allowedOperationTypes: [UsageOperationType!]!
-  allowedSpenderTypes: [String!]!
-  allowedMeters: [String!]!
-}
-
-enum UsageResourceType {
-  AI
-  WORKFLOW
-  APP
-  STORAGE
-  API
-  LOGIC_FUNCTION
-  EMAIL
-  WEBHOOK
-}
-
-enum UsageOperationType {
-  ALL
-  AI_CHAT_TOKEN
-  AI_WORKFLOW_TOKEN
-  WORKFLOW_EXECUTION
-  CODE_EXECUTION
-  WEB_SEARCH
-  CALL_RECORDING
-  EMAIL_SEND
-  API_REQUEST
-  WEBHOOK_CALL
-  SUBSCRIPTION
-}
-
-type UsageQuotaDefinitions {
-  definitions: [UsageQuotaDefinition!]!
-  isIntraWorkspaceLimitEntitled: Boolean!
-  hasAllowancePeriod: Boolean!
-}
-
-type UsageQuotaWithConsumption {
-  id: UUID!
-  resourceType: UsageResourceType!
-  operationType: UsageOperationType!
-  spenderType: String!
-  spenderId: String
-  spenderLabel: String
-  periodUnit: String!
-  meter: String!
-  limitValue: BigInt!
-  isEnforced: Boolean!
-  consumedValue: BigInt
-  remainingValue: BigInt
-  periodStart: DateTime
-  periodEnd: DateTime
-}
-
-"""
-The `BigInt` scalar type represents non-fractional signed whole numeric values.
-"""
-scalar BigInt
-
-type UsageQuotaScopeConsumption {
-  consumedValue: BigInt
-  periodStart: DateTime!
-  periodEnd: DateTime!
-}
-
-type UsageLimit {
-  id: UUID!
-  resourceType: UsageResourceType!
-  operationType: UsageOperationType!
-  spenderType: String!
-  spenderId: String
-  limitKind: String!
-  periodCount: Int!
-  periodUnit: String!
-  meter: String!
-  limitValue: BigInt!
-  burstValue: BigInt
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type ApprovedAccessDomain {
   id: UUID!
   domain: String!
@@ -1983,7 +1987,7 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
-  IS_APP_CLAIMING_ENABLED
+  IS_ASYNC_CSV_EXPORT_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_JSON_FILTER_ENABLED
@@ -1992,7 +1996,6 @@ enum FeatureFlagKey {
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
-  IS_API_RATE_LIMIT_V2_ENABLED
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
   IS_RECORD_SHARING_ENABLED
@@ -2121,6 +2124,21 @@ enum ModelFamily {
   GROK
 }
 
+type ClientAiEvaluationModelConfig {
+  modelId: String!
+  label: String!
+  description: String
+  providerLabel: String
+  isAvailable: Boolean!
+  supportedQuestionTypes: [String!]!
+  maxCriteriaPerQuestion: Float
+  maxScoreLevels: Float
+  medianLatencyMs: Float
+  inputCostPerMillionTokens: Float
+  outputCostPerMillionTokens: Float
+  isDeprecated: Boolean
+}
+
 type ClientAiModelTierConfig {
   tier: AiModelTier!
   modelId: String!
@@ -2187,6 +2205,7 @@ type ClientConfig {
   authProviders: AuthProviders!
   billing: Billing!
   aiModels: [ClientAiModelConfig!]!
+  aiEvaluationModels: [ClientAiEvaluationModelConfig!]!
   aiModelTiers: [ClientAiModelTierConfig!]!
   signInPrefilled: Boolean!
   isMultiWorkspaceEnabled: Boolean!
@@ -2841,6 +2860,7 @@ type ApplicationFileUploadTarget {
 }
 
 enum FileFolder {
+  RecordExport
   CorePicture
   AgentChat
   BuiltLogicFunction
@@ -3154,6 +3174,8 @@ type ToolIndexEntry {
   category: String!
   objectName: String
   icon: String
+  widgetName: String
+  frontComponentId: String
   inputSchema: JSON
 }
 
@@ -3299,6 +3321,14 @@ type EventLogQueryResult {
   records: [EventLogRecord!]!
   totalCount: Int!
   pageInfo: EventLogPageInfo!
+}
+
+type RecordExport {
+  id: UUID!
+  filename: String!
+  progress: Int!
+  errorMessage: String
+  downloadUrl: String
 }
 
 type AiChatUsage {
@@ -3635,11 +3665,11 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
-  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   usageLimits: [UsageLimit!]!
   usageQuotasWithConsumption: [UsageQuotaWithConsumption!]!
   usageQuotaDefinitions: UsageQuotaDefinitions!
   usageQuotaScopeConsumption(input: UsageQuotaScopeInput!): UsageQuotaScopeConsumption
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
   getViewFilterGroup(id: String!): ViewFilterGroup
   getViewFilters(viewId: String): [ViewFilter!]!
@@ -3656,12 +3686,12 @@ type Query {
   getApiKeyRoles: [Role!]!
   apiKey(input: GetApiKeyInput!): ApiKey
   currentUserSessions: [UserSession!]!
-  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
-  applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
-  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
+  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
+  applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
+  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getInviteSuggestions: [InviteSuggestion!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   getApprovedAccessDomains: [ApprovedAccessDomain!]!
@@ -3778,13 +3808,6 @@ type Query {
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
 }
 
-input UsageAnalyticsInput {
-  periodStart: DateTime
-  periodEnd: DateTime
-  userWorkspaceId: String
-  operationTypes: [UsageOperationType!]
-}
-
 input UsageQuotaScopeInput {
   resourceType: UsageResourceType!
   operationType: UsageOperationType!
@@ -3792,6 +3815,13 @@ input UsageQuotaScopeInput {
   spenderId: String
   periodUnit: String!
   meter: String!
+}
+
+input UsageAnalyticsInput {
+  periodStart: DateTime
+  periodEnd: DateTime
+  userWorkspaceId: String
+  operationTypes: [UsageOperationType!]
 }
 
 input GetApiKeyInput {
@@ -3948,8 +3978,6 @@ type Mutation {
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   revokeUserSession(userSessionId: UUID!): Boolean!
   revokeAllOtherUserSessions: Int!
-  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
@@ -3960,6 +3988,8 @@ type Mutation {
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   cancelSwitchResourceCreditPrice: BillingUpdate!
+  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
+  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
@@ -3989,6 +4019,7 @@ type Mutation {
   createOneObject(input: CreateOneObjectInput!): Object!
   deleteOneObject(input: DeleteOneObjectInput!): Object!
   updateOneObject(input: UpdateOneObjectInput!): Object!
+  updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
   createOneIndex(input: CreateOneIndexInput!): Index!
   deleteOneIndex(input: DeleteOneIndexInput!): Index!
   deleteOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
@@ -4485,7 +4516,7 @@ input UpdateViewFieldGroupInputUpdates {
   name: String
   position: Float
   isVisible: Boolean
-  deletedAt: String
+  deletedAt: String @deprecated(reason: "Ignored: view field groups are no longer soft-deleted. Use destroyViewFieldGroup instead.")
 }
 
 input CreateViewFieldGroupInput {
@@ -4885,6 +4916,7 @@ input UpdateWorkspaceInput {
   aiAgentModelTier: AiModelTier
   isAutoModelSelectionEnabled: Boolean
   aiModelIdByTier: JSON
+  aiEvaluationModelId: String
   aiAdditionalInstructions: String
   editableProfileFields: [String!]
   isInternalMessagesImportEnabled: Boolean
@@ -5502,6 +5534,7 @@ type Subscription {
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
   eventLogsLive(table: EventLogTable!): [EventLogRecord!]
+  exportRecords(input: CreateRecordExportInput!): RecordExport!
 }
 
 input LogicFunctionLogsInput {
@@ -5510,4 +5543,11 @@ input LogicFunctionLogsInput {
   name: String
   id: UUID
   universalIdentifier: UUID
+}
+
+input CreateRecordExportInput {
+  objectMetadataId: UUID!
+  fieldMetadataIds: [UUID!]!
+  filter: JSON
+  orderBy: JSON
 }

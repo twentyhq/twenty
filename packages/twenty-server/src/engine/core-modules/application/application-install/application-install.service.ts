@@ -37,9 +37,9 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import {
-  LogicFunctionTriggerJob,
-  type LogicFunctionTriggerJobData,
-} from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+  ApplicationLifecycleHookJob,
+  type ApplicationLifecycleHookJobData,
+} from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/application-lifecycle-hook.job';
 import {
   WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
   WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,
@@ -68,7 +68,7 @@ export class ApplicationInstallService {
     private readonly fileStorageService: FileStorageService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly cacheLockService: CacheLockService,
-    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
+    @InjectMessageQueue(MessageQueue.applicationLifecycleHookQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
@@ -630,8 +630,8 @@ export class ApplicationInstallService {
     );
 
     if (!shouldRunSynchronously) {
-      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
-        LogicFunctionTriggerJob.name,
+      await this.messageQueueService.add<ApplicationLifecycleHookJobData>(
+        ApplicationLifecycleHookJob.name,
         {
           logicFunctionId: flatLogicFunction.id,
           workspaceId,

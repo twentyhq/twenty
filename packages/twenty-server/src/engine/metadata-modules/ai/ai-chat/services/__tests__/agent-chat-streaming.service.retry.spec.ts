@@ -1,3 +1,4 @@
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   AgentMessageRole,
@@ -57,15 +58,28 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       clear: jest.fn().mockResolvedValue(undefined),
     };
 
+    const metricsService = { incrementCounterBy: jest.fn() };
+
+    const eventPublisherService = {
+      publish: jest.fn(),
+      resetStreamState: jest.fn(),
+    };
+
     const service = new AgentChatStreamingService(
       threadRepository as never,
       { find: jest.fn() } as never,
       messageQueueService as never,
       agentChatService as never,
-      { publish: jest.fn() } as never,
+      eventPublisherService as never,
       { signFileByIdUrl: jest.fn() } as never,
       streamHeartbeatService as never,
-      { incrementCounterBy: jest.fn() } as never,
+      metricsService as never,
+      new AgentChatStreamRecoveryService(
+        threadRepository as never,
+        streamHeartbeatService as never,
+        eventPublisherService as never,
+        metricsService as never,
+      ),
     );
 
     return { service, threadRepository, messageQueueService, agentChatService };

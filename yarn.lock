@@ -93,6 +93,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ai-sdk/gateway@npm:4.0.83":
+  version: 4.0.83
+  resolution: "@ai-sdk/gateway@npm:4.0.83"
+  dependencies:
+    "@ai-sdk/provider": "npm:4.0.16"
+    "@ai-sdk/provider-utils": "npm:5.0.42"
+    "@vercel/oidc": "npm:3.2.0"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/36b0e9fbd109bff20a32bc43d184bce58f1793b3bd8a07b57c62e1e4a054ee3eb03b5ace03c50409dbd28957efd5c5e9829509405036451954fd2d738db74a78
+  languageName: node
+  linkType: hard
+
 "@ai-sdk/google@npm:^4.0.64":
   version: 4.0.64
   resolution: "@ai-sdk/google@npm:4.0.64"
@@ -169,6 +182,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ai-sdk/provider-utils@npm:5.0.42":
+  version: 5.0.42
+  resolution: "@ai-sdk/provider-utils@npm:5.0.42"
+  dependencies:
+    "@ai-sdk/provider": "npm:4.0.16"
+    "@standard-schema/spec": "npm:^1.1.0"
+    "@workflow/serde": "npm:4.1.0"
+    eventsource-parser: "npm:^3.0.8"
+    undici: "npm:^7.29.0"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/bfa5b5f8103c64bc170851cccfa169f7dc41f9d1ea29b0e33da13cc4bdaf4d29f5ac9041efd88bd88b38050a9a4cc043700166be7aa3370e80a1bee57196771f
+  languageName: node
+  linkType: hard
+
 "@ai-sdk/provider@npm:3.0.2":
   version: 3.0.2
   resolution: "@ai-sdk/provider@npm:3.0.2"
@@ -178,12 +206,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/provider@npm:4.0.10":
-  version: 4.0.10
-  resolution: "@ai-sdk/provider@npm:4.0.10"
+"@ai-sdk/provider@npm:4.0.16":
+  version: 4.0.16
+  resolution: "@ai-sdk/provider@npm:4.0.16"
   dependencies:
     json-schema: "npm:^0.4.0"
-  checksum: 10c0/20e9cc820a90296469180d929ac9051cd71399e46073d829517ccda75d2406f86ad9f0ee554a1d1a34126c56dad40c223c761c4ca9a24cd00dbcb7c1e808434f
+  checksum: 10c0/d31e8feeba5d476318bb2bcb6f1db66d99070cd397520ecb1dde3d90ff23fcaecc5a42d9def34516e42eddb8c734e7de9d050368d49852cbe5028e6d163d704b
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/typesafe-ai@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@ai-sdk/typesafe-ai@npm:3.0.0"
+  dependencies:
+    "@ai-sdk/provider": "npm:4.0.16"
+    "@ai-sdk/provider-utils": "npm:5.0.42"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/46c252d95448a9d9cd7e476eaf4de5e664a8cb0604098c85e9f5b79b67a7f8eda6e6238c149a71b07733a8a79e11c5cdec1c31ec89142d71e649b64488a640d8
   languageName: node
   linkType: hard
 
@@ -15587,13 +15627,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.23.4":
-  version: 1.23.4
-  resolution: "@remix-run/router@npm:1.23.4"
-  checksum: 10c0/ef17eb2a606c125f09c55683585099725421af1c11f1c1d1c3841fe4eea3f99eb56b26ecbb17429a173c704ecae336c37e0d74855faa9330667433ef4f419436
-  languageName: node
-  linkType: hard
-
 "@remote-dom/core@npm:^1.10.1, @remote-dom/core@npm:^1.7.0":
   version: 1.10.1
   resolution: "@remote-dom/core@npm:1.10.1"
@@ -20001,7 +20034,6 @@ __metadata:
     electron: "npm:44.1.0"
     esbuild: "npm:^0.28.1"
     jsdom: "npm:^30.0.1"
-    monaco-editor: "npm:^0.52.2"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
     sass: "npm:^1.83.0"
@@ -24623,7 +24655,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ai@npm:7.0.93, ai@npm:^7.0.8":
+"ai@npm:7.0.103":
+  version: 7.0.103
+  resolution: "ai@npm:7.0.103"
+  dependencies:
+    "@ai-sdk/gateway": "npm:4.0.83"
+    "@ai-sdk/provider": "npm:4.0.16"
+    "@ai-sdk/provider-utils": "npm:5.0.42"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/6a4d88c68763aa6b98ce626c2201d4b1555270260f3418cd60de41767a8ab1dce5b9764b73e59d92c560014e5f191f72ffe0482e0ae0d9d9da8b310c28d860aa
+  languageName: node
+  linkType: hard
+
+"ai@npm:^7.0.8":
   version: 7.0.93
   resolution: "ai@npm:7.0.93"
   dependencies:
@@ -27759,7 +27804,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:^1.0.2":
+"cookie@npm:^1.0.1, cookie@npm:^1.0.2":
   version: 1.1.1
   resolution: "cookie@npm:1.1.1"
   checksum: 10c0/79c4ddc0fcad9c4f045f826f42edf54bcc921a29586a4558b0898277fa89fb47be95bc384c2253f493af7b29500c830da28341274527328f18eba9f58afa112c
@@ -27980,6 +28025,7 @@ __metadata:
     lodash.startcase: "npm:^4.4.0"
     twenty-sdk: "workspace:*"
     twenty-shared: "workspace:*"
+    twenty-ui: "workspace:*"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
     vite: "npm:^8.0.0"
@@ -39936,7 +39982,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"monaco-editor@npm:0.52.2, monaco-editor@npm:^0.52.2":
+"monaco-editor@npm:0.52.2":
   version: 0.52.2
   resolution: "monaco-editor@npm:0.52.2"
   checksum: 10c0/5a92da64f1e2ab375c0ce99364137f794d057c97bed10ecc65a08d6e6846804b8ecbd377eacf01e498f7dfbe1b21e8be64f728256681448f0484df90e767b435
@@ -44679,27 +44725,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^6.30.6":
-  version: 6.30.6
-  resolution: "react-router-dom@npm:6.30.6"
+"react-router-dom@npm:^7.18.4":
+  version: 7.18.4
+  resolution: "react-router-dom@npm:7.18.4"
   dependencies:
-    "@remix-run/router": "npm:1.23.4"
-    react-router: "npm:6.30.6"
+    react-router: "npm:7.18.4"
   peerDependencies:
-    react: ">=16.8"
-    react-dom: ">=16.8"
-  checksum: 10c0/57dbb2ae4ac787f78c4d10b764c1c5223635378033e33dda4e0a4417144ae847fb43dc98008075951826258287c27c67729ca713c90957cf2ecf9055561bdc2e
+    react: ">=18"
+    react-dom: ">=18"
+  checksum: 10c0/b337acffb669fd977423e3ef2a0551a5d68c2447c718942b232cae367fd599723525e412b4ad0d08607189f962571dfc7ef0373d47fcf0ae301a860510e5e1f1
   languageName: node
   linkType: hard
 
-"react-router@npm:6.30.6":
-  version: 6.30.6
-  resolution: "react-router@npm:6.30.6"
+"react-router@npm:7.18.4":
+  version: 7.18.4
+  resolution: "react-router@npm:7.18.4"
   dependencies:
-    "@remix-run/router": "npm:1.23.4"
+    cookie: "npm:^1.0.1"
+    set-cookie-parser: "npm:^2.6.0"
   peerDependencies:
-    react: ">=16.8"
-  checksum: 10c0/d101388d92a44e159ef30dd2402a7f7b6aace8f837bb42aed1f8a6b3a4eff769d1822bf69382f0acb85a790628dac081c22bedb2bca12707e0e5e91427010fc3
+    react: ">=18"
+    react-dom: ">=18"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+  checksum: 10c0/352d103f9d738c7bf56cbb135c0d3d44e6325d15e360f58b6e844c1f5f8cbcd4ccb2de347f14e53984683fc237505a045633e9cb92c5457a1162dae054e08a32
   languageName: node
   linkType: hard
 
@@ -47027,6 +47077,13 @@ __metadata:
   version: 3.1.0
   resolution: "set-cookie-parser@npm:3.1.0"
   checksum: 10c0/7465e389ff9fb7ff243fd55f0f48b5648d53a560903db170a7f766c2b82f22f4242c4d366fcdf12afdd376496f84058025d889e718459256ecbfc9a5fe7755f5
+  languageName: node
+  linkType: hard
+
+"set-cookie-parser@npm:^2.6.0":
+  version: 2.7.2
+  resolution: "set-cookie-parser@npm:2.7.2"
+  checksum: 10c0/4381a9eb7ee951dfe393fe7aacf76b9a3b4e93a684d2162ab35594fa4053cc82a4d7d7582bf397718012c9adcf839b8cd8f57c6c42901ea9effe33c752da4a45
   languageName: node
   linkType: hard
 
@@ -49965,6 +50022,7 @@ __metadata:
     "@chakra-ui/react": "npm:^3.33.0"
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.0"
+    "@monaco-editor/react": "npm:^4.7.0"
     "@mui/material": "npm:^7.3.8"
     "@quilted/threads": "npm:^4.0.1"
     "@remote-dom/core": "npm:^1.10.1"
@@ -49977,6 +50035,7 @@ __metadata:
     "@types/react-dom": "npm:^19.2.0"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     "@vitest/browser-playwright": "npm:^4.1.0"
+    monaco-editor: "npm:0.52.2"
     playwright: "npm:^1.60.0"
     prettier: "npm:^3.1.1"
     react: "npm:^19.2.0"
@@ -50083,7 +50142,7 @@ __metadata:
     "@vitest/coverage-istanbul": "npm:^4.1.0"
     "@wyw-in-js/vite": "npm:^1.1.0"
     "@xyflow/react": "npm:^12.4.2"
-    ai: "npm:7.0.93"
+    ai: "npm:7.0.103"
     apollo-link-rest: "npm:^0.10.0-rc.2"
     apollo-upload-client: "npm:^19.0.0"
     buffer: "npm:^6.0.3"
@@ -50152,7 +50211,7 @@ __metadata:
     react-phone-number-input: "patch:react-phone-number-input@npm%3A3.4.5#../../.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch"
     react-qr-code: "npm:^2.0.18"
     react-responsive: "npm:^9.0.2"
-    react-router-dom: "npm:^6.30.6"
+    react-router-dom: "npm:^7.18.4"
     react-textarea-autosize: "npm:^8.4.1"
     remark-gfm: "npm:^4.0.1"
     rollup-plugin-node-polyfills: "npm:^0.2.1"
@@ -50176,11 +50235,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules":
+"twenty-oxlint-rules@workspace:*, twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules":
   version: 0.0.0-use.local
   resolution: "twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules"
   dependencies:
     "@oxlint/plugins": "npm:^1.51.0"
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -50242,6 +50302,7 @@ __metadata:
     "@ai-sdk/openai": "npm:^4.0.60"
     "@ai-sdk/openai-compatible": "npm:^3.0.44"
     "@ai-sdk/provider-utils": "npm:^5.0.36"
+    "@ai-sdk/typesafe-ai": "npm:^3.0.0"
     "@ai-sdk/xai": "npm:^4.0.54"
     "@aws-sdk/client-lambda": "npm:3.1001.0"
     "@aws-sdk/client-s3": "npm:3.1001.0"
@@ -50340,7 +50401,7 @@ __metadata:
     "@types/unzipper": "npm:^0"
     "@types/uuid": "npm:^9.0.2"
     addressparser: "npm:1.0.1"
-    ai: "npm:7.0.93"
+    ai: "npm:7.0.103"
     archiver: "npm:7.0.1"
     axios: "npm:^1.16.0"
     axios-retry: "npm:^4.5.0"
@@ -50442,6 +50503,7 @@ __metadata:
     tslib: "npm:2.8.1"
     twenty-client-sdk: "workspace:*"
     twenty-emails: "workspace:*"
+    twenty-oxlint-rules: "workspace:*"
     twenty-shared: "workspace:*"
     type-fest: "npm:4.10.1"
     typeorm: "patch:typeorm@0.3.31#./patches/typeorm+0.3.31.patch"
@@ -50473,7 +50535,7 @@ __metadata:
     "@types/uuid": "npm:^9.0.2"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     addressparser: "npm:1.0.1"
-    ai: "npm:7.0.93"
+    ai: "npm:7.0.103"
     babel-plugin-module-resolver: "npm:^5.0.2"
     class-validator: "npm:^0.14.0"
     expr-eval-fork: "npm:3.0.3"
@@ -50486,7 +50548,7 @@ __metadata:
     microdiff: "npm:^1.3.2"
     prettier: "npm:^3.1.1"
     qs: "npm:^6.15.2"
-    react-router-dom: "npm:^6.30.6"
+    react-router-dom: "npm:^7.18.4"
     slash: "npm:^5.1.0"
     temporal-polyfill: "npm:^0.3.0"
     transliteration: "npm:^2.3.5"
@@ -50507,6 +50569,7 @@ __metadata:
     "@argos-ci/storybook": "npm:6.2.3"
     "@base-ui/react": "npm:^1.8.0"
     "@base-ui/utils": "npm:0.4.0"
+    "@fontsource/dm-mono": "npm:^5.2.7"
     "@fontsource/inter": "npm:^5.2.8"
     "@monaco-editor/react": "npm:^4.7.0"
     "@prettier/sync": "npm:^0.5.2"
@@ -50532,12 +50595,13 @@ __metadata:
     esbuild: "npm:^0.28.1"
     glob: "npm:^11.1.0"
     jsdom: "npm:^30.0.1"
+    monaco-editor: "npm:0.52.2"
     prettier: "npm:^3.1.1"
     react: "npm:^19.2.0"
     react-docgen-typescript: "npm:^2.2.2"
     react-dom: "npm:^19.2.0"
     react-responsive: "npm:^9.0.2"
-    react-router-dom: "npm:^6.30.6"
+    react-router-dom: "npm:^7.18.4"
     sass: "npm:^1.83.0"
     sass-embedded: "npm:^1.83.0"
     size-limit: "npm:^12.1.0"
@@ -50553,9 +50617,15 @@ __metadata:
     vitest: "npm:^4.1.0"
     zod: "npm:^4.1.11"
   peerDependencies:
+    "@monaco-editor/react": ^4.7.0
     monaco-editor: ">= 0.25.0 < 1"
     react: ^19.0.0
     react-dom: ^19.0.0
+  peerDependenciesMeta:
+    "@monaco-editor/react":
+      optional: true
+    monaco-editor:
+      optional: true
   languageName: unknown
   linkType: soft
 

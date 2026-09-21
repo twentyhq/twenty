@@ -67,6 +67,7 @@ export const SettingsWorkspaceCommunications = () => {
       title={t`Communication`}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Workspace communications`}
           tabs={tabs}
           componentInstanceId={COMMUNICATIONS_TABS_INSTANCE_ID}
         />

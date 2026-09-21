@@ -16,6 +16,8 @@ import { type UsageQuotaWithConsumption } from 'src/engine/core-modules/usage-li
 import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { buildCustomQuota } from 'src/engine/core-modules/usage-limit/utils/build-custom-quota.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
+import { isAnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/utils/is-anchored-period-unit.util';
+import { isQuotaMeter } from 'src/engine/core-modules/usage-limit/utils/is-quota-meter.util';
 import { normalizeSpenderId } from 'src/engine/core-modules/usage-limit/utils/normalize-spender-id.util';
 import { groupSpenderIdsByType } from 'src/engine/core-modules/usage-limit/utils/group-spender-ids-by-type.util';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
@@ -62,9 +64,11 @@ export class UsageQuotaConsumptionService {
   }): Promise<UsageQuotaScopeConsumption | null> {
     const periodUnit = scope.periodUnit;
 
-    if (periodUnit === 'second') {
+    if (!isAnchoredPeriodUnit(periodUnit) || !isQuotaMeter(scope.meter)) {
       return null;
     }
+
+    const meter = scope.meter;
 
     const period = await this.usagePeriodService.findCurrentPeriod({
       workspaceId,
@@ -89,7 +93,7 @@ export class UsageQuotaConsumptionService {
         });
 
       return {
-        consumedValue: Number(totals[scope.meter]),
+        consumedValue: Number(totals[meter]),
         periodStart: period.periodStart,
         periodEnd: period.periodEnd,
       };
@@ -125,7 +129,7 @@ export class UsageQuotaConsumptionService {
 
     const enforceableIds = new Set(enforceableLimits.map((limit) => limit.id));
 
-    const [consumptionById, spenderLabelById] = await Promise.all([
+    const [quotaConsumptionById, spenderLabelById] = await Promise.all([
       this.usageLimitQuotaService.readLimitConsumptions({
         workspaceId,
         limits: enforceableLimits,
@@ -137,7 +141,7 @@ export class UsageQuotaConsumptionService {
       buildCustomQuota({
         usageLimit,
         isEnforced: enforceableIds.has(usageLimit.id),
-        consumption: consumptionById.get(usageLimit.id),
+        consumption: quotaConsumptionById.get(usageLimit.id),
         spenderLabel: spenderLabelById.get(usageLimit.spenderId) ?? null,
       }),
     );

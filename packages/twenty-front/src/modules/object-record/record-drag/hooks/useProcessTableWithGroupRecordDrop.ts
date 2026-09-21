@@ -16,7 +16,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -30,7 +30,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
 
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const recordIdsByGroupFamilyState = useAtomComponentFamilyStateCallbackState(
     recordIndexRecordIdsByGroupComponentFamilyState,
@@ -95,7 +95,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
       const existingRecordSorts = store.get(currentRecordSorts);
 
       if (existingRecordSorts.length > 0) {
-        openModal(getRecordIndexRemoveSortingModalId(recordIndexId));
+        openDialog(getRecordIndexRemoveSortingModalId(recordIndexId));
         return;
       }
 
@@ -129,7 +129,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
       selectedRowIds,
       recordIdsByGroupFamilyState,
       recordIndexGroupFieldMetadataItem?.id,
-      openModal,
+      openDialog,
       updateOneRecord,
     ],
   );
