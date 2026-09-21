@@ -44,7 +44,7 @@ const StyledEditor = styled.div<{
       ${FORM_FIELD_PLACEHOLDER_STYLES}
       content: attr(data-placeholder);
       float: left;
-      height: 0;
+      height: ${({ multiline }) => (multiline ? 'auto' : '0')};
       pointer-events: none;
       white-space: ${({ multiline }) => (multiline ? 'normal' : 'nowrap')};
     }
