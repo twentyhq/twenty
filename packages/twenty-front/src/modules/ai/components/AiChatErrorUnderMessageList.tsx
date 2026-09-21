@@ -1,3 +1,4 @@
+import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { useRetryChatMessage } from '@/ai/hooks/useRetryChatMessage';
@@ -18,6 +19,7 @@ const StyledErrorWrapper = styled.div`
 `;
 
 export const AiChatErrorUnderMessageList = () => {
+  const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const { retryChatMessage } = useRetryChatMessage();
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
@@ -52,7 +54,10 @@ export const AiChatErrorUnderMessageList = () => {
 
   return (
     <StyledErrorWrapper>
-      <AiChatErrorRenderer error={agentChatError} onRetry={retryChatMessage} />
+      <AiChatErrorRenderer
+        error={agentChatError}
+        onRetry={isReadOnly ? undefined : retryChatMessage}
+      />
     </StyledErrorWrapper>
   );
 };

@@ -48,6 +48,10 @@ jest.mock('@/ai/components/AiChatCloseButton', () => ({
   AiChatCloseButton: () => <button>Close chat</button>,
 }));
 
+jest.mock('@/ai/components/AiChatSharingDropdown', () => ({
+  AiChatSharingDropdown: () => <button>Share</button>,
+}));
+
 const THREAD: AgentChatThread = {
   __typename: 'AgentChatThread',
   id: 'thread-1',
@@ -106,6 +110,15 @@ describe('AiChatPageHeader', () => {
       expect(screen.queryByRole('button', { name: 'Chat actions' })).toBeNull();
     },
   );
+
+  it('hides rename and mutation actions from shared viewers', () => {
+    setThreads([{ ...THREAD, canManage: false }]);
+    render(<AiChatPageHeader />, { wrapper: Wrapper });
+    expect(screen.getByText('Best leads')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Share' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Rename chat' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Chat actions' })).toBeNull();
+  });
 
   it('starts a new chat from the current conversation', async () => {
     const user = userEvent.setup();

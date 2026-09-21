@@ -1,3 +1,4 @@
+import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { styled } from '@linaria/react';
 
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
@@ -150,6 +151,7 @@ export const AiChatMessage = ({
   error,
   onRetry,
 }: AiChatMessageProps) => {
+  const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const agentChatMessage = useAtomComponentFamilySelectorValue(
     agentChatMessageComponentFamilySelector,
     { messageId },
@@ -186,7 +188,10 @@ export const AiChatMessage = ({
           </StyledFilesContainer>
         )}
         {shouldShowError && isDefined(error) && (
-          <AiChatErrorRenderer error={error} onRetry={onRetry} />
+          <AiChatErrorRenderer
+            error={error}
+            onRetry={isReadOnly ? undefined : onRetry}
+          />
         )}
       </StyledMessageContainer>
       {agentChatMessage.parts.length > 0 && (

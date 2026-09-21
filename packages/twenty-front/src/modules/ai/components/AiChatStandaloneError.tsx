@@ -1,3 +1,4 @@
+import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -21,6 +22,7 @@ const StyledErrorContainer = styled(StyledAiChatContentContainer)`
 `;
 
 export const AiChatStandaloneError = () => {
+  const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
   const { retryChatMessage } = useRetryChatMessage();
 
@@ -45,7 +47,10 @@ export const AiChatStandaloneError = () => {
 
   return (
     <StyledErrorContainer>
-      <AiChatErrorRenderer error={agentChatError} onRetry={retryChatMessage} />
+      <AiChatErrorRenderer
+        error={agentChatError}
+        onRetry={isReadOnly ? undefined : retryChatMessage}
+      />
     </StyledErrorContainer>
   );
 };

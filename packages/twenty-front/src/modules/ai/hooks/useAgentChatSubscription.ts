@@ -1,4 +1,10 @@
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
+import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
+import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { isChatAccessDenied } from '@/ai/utils/isChatAccessDenied';
 import { useEffect } from 'react';
+import { t } from '@lingui/core/macro';
 
 import { readUIMessageStream, type UIMessageChunk } from 'ai';
 import { print, type ExecutionResult } from 'graphql';
@@ -103,6 +109,7 @@ type AgentChatEventPayload = {
 
 export const useAgentChatSubscription = (threadId: string | null) => {
   const store = useStore();
+  const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
   const sseClient = useAtomStateValue(sseClientState);
   const agentChatStreamResubscribeNonce = useAtomStateValue(
     agentChatStreamResubscribeNonceState,
@@ -129,6 +136,13 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     useAtomComponentFamilyStateCallbackState(
       agentChatHandleEventCallbackComponentFamilyState,
     );
+  const fetchedMessagesFamilyCallback =
+    useAtomComponentFamilyStateCallbackState(
+      agentChatFetchedMessagesComponentFamilyState,
+    );
+  const queuedMessagesFamilyCallback = useAtomComponentFamilyStateCallbackState(
+    agentChatQueuedMessagesComponentFamilyState,
+  );
   const messagesFamilyCallback = useAtomComponentFamilyStateCallbackState(
     agentChatMessagesComponentFamilyState,
   );
@@ -156,6 +170,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     const handleEventCallbackAtom =
       handleEventCallbackFamilyCallback(familyKey);
     const messagesAtom = messagesFamilyCallback(familyKey);
+    const fetchedMessagesAtom = fetchedMessagesFamilyCallback(familyKey);
+    const queuedMessagesAtom = queuedMessagesFamilyCallback(familyKey);
     const usageAtom = usageFamilyCallback(familyKey);
     const threadTitleAtom = threadTitleFamilyCallback(familyKey);
 
@@ -164,6 +180,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     let latestMessage: ExtendedUIMessage | null = null;
     let writer: WritableStreamDefaultWriter<UIMessageChunk> | null = null;
     let disposed = false;
+    let accessDenied = false;
 
     store.set(firstLiveSeqAtom, null);
     store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
@@ -186,7 +203,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     const flushToAtom = () => {
       const messageToFlush = latestMessage;
 
-      if (!isDefined(messageToFlush)) {
+      if (disposed || accessDenied || !isDefined(messageToFlush)) {
         return;
       }
 
@@ -225,6 +242,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       let lastUsageCountedMessageId: string | null = null;
 
       for await (const message of messageStream) {
+        if (disposed || accessDenied) {
+          break;
+        }
         const extendedMessage = message as ExtendedUIMessage;
 
         const titlePart = extendedMessage.parts.find(
@@ -331,6 +351,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     };
 
     const handleEvent = (event: AgentChatSubscriptionEvent) => {
+      if (disposed || accessDenied) {
+        return;
+      }
       switch (event.type) {
         case 'stream-chunk': {
           if (isDefined(event.seq) && store.get(firstLiveSeqAtom) === null) {
@@ -400,6 +423,29 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
     store.set(handleEventCallbackAtom, () => handleEvent);
 
+    const handleAccessDenied = () => {
+      accessDenied = true;
+      latestMessage = null;
+      if (isDefined(throttleTimer)) {
+        clearTimeout(throttleTimer);
+        throttleTimer = null;
+      }
+      resetStreamProcessing();
+      store.set(messagesAtom, []);
+      store.set(fetchedMessagesAtom, []);
+      store.set(queuedMessagesAtom, []);
+      store.set(isStreamingAtom, false);
+      store.set(isAwaitingPersistedRefetchAtom, false);
+      store.set(
+        errorAtom,
+        createAiChatCodedError(
+          t`This conversation is no longer available.`,
+          'NOT_FOUND',
+        ),
+      );
+      void refreshAgentChatThreads();
+    };
+
     const dispose = sseClient.subscribe<AgentChatEventPayload>(
       {
         query: print(ON_AGENT_CHAT_EVENT),
@@ -407,16 +453,27 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       },
       {
         next: (value: ExecutionResult<AgentChatEventPayload>) => {
+          if (isChatAccessDenied(value.errors)) {
+            handleAccessDenied();
+            return;
+          }
           store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
 
           if (isDefined(value.data?.onAgentChatEvent?.event)) {
+            if (isGraphqlErrorOfType(store.get(errorAtom), 'NOT_FOUND')) {
+              accessDenied = false;
+              store.set(errorAtom, null);
+              dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+            }
             handleEvent(
               value.data.onAgentChatEvent.event as AgentChatSubscriptionEvent,
             );
           }
         },
-        error: () => {
-          // graphql-sse handles reconnection automatically
+        error: (errors) => {
+          if (Array.isArray(errors) && isChatAccessDenied(errors)) {
+            handleAccessDenied();
+          }
         },
         complete: () => {
           if (!disposed) {
@@ -449,7 +506,10 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     isAwaitingPersistedRefetchFamilyCallback,
     handleEventCallbackFamilyCallback,
     messagesFamilyCallback,
+    fetchedMessagesFamilyCallback,
+    queuedMessagesFamilyCallback,
     usageFamilyCallback,
     threadTitleFamilyCallback,
+    refreshAgentChatThreads,
   ]);
 };
