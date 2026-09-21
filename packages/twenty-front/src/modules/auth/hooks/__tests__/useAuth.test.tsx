@@ -99,6 +99,7 @@ const renderHooks = () => {
 describe('useAuth', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    sessionStorage.clear();
     getDefaultStore().set(returnToPathState.atom, '');
     getDefaultStore().set(signInUpStepState.atom, SignInUpStep.Init);
   });
@@ -261,6 +262,7 @@ describe('useAuth', () => {
         );
       });
 
+      expect(redirectToWorkspaceDomainSpy).toHaveBeenCalledTimes(1);
       expect(redirectToWorkspaceDomainSpy).toHaveBeenCalledWith(
         'https://apple.twenty.com',
         AppPath.Verify,

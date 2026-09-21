@@ -21,10 +21,8 @@ export const useRedirectToDefaultDomain = () => {
     if (url.hostname !== defaultDomain) {
       setLastAuthenticateWorkspaceDomain(null);
 
-      // Clearing the cookie is not enough: it only reaches cookies scoped to
-      // the front domain, and the default domain also resumes an existing
-      // session into its workspace. This marks the navigation as deliberate so
-      // both auto-redirects stand down.
+      // Clearing the cookie above misses custom domains and never covered the
+      // session resume, so mark the navigation as deliberate instead
       url.searchParams.set(STAY_ON_DEFAULT_DOMAIN_SEARCH_PARAM, 'true');
 
       const returnToPath = store.get(returnToPathState.atom);

@@ -39,8 +39,10 @@ describe('useRedirectToDefaultDomain', () => {
 
     result.current.redirectToDefaultDomain();
 
+    expect(setLastAuthenticateWorkspaceDomainSpy).toHaveBeenCalledTimes(1);
     expect(setLastAuthenticateWorkspaceDomainSpy).toHaveBeenCalledWith(null);
 
+    expect(redirectSpy).toHaveBeenCalledTimes(1);
     const url = getRedirectedUrl();
     expect(url.hostname).toBe('app.twenty.com');
     expect(url.searchParams.get('stayOnDefaultDomain')).toBe('true');
@@ -54,6 +56,7 @@ describe('useRedirectToDefaultDomain', () => {
       searchParams: { action: 'create-new-workspace' },
     });
 
+    expect(redirectSpy).toHaveBeenCalledTimes(1);
     const url = getRedirectedUrl();
     expect(url.searchParams.get('action')).toBe('create-new-workspace');
     expect(url.searchParams.get('stayOnDefaultDomain')).toBe('true');
