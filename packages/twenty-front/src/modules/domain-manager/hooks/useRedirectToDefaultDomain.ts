@@ -1,4 +1,5 @@
 import { returnToPathState } from '@/auth/states/returnToPathState';
+import { STAY_ON_DEFAULT_DOMAIN_SEARCH_PARAM } from '@/domain-manager/constants/StayOnDefaultDomainSearchParam';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
@@ -19,6 +20,12 @@ export const useRedirectToDefaultDomain = () => {
     const url = new URL(window.location.href);
     if (url.hostname !== defaultDomain) {
       setLastAuthenticateWorkspaceDomain(null);
+
+      // Clearing the cookie is not enough: it only reaches cookies scoped to
+      // the front domain, and the default domain also resumes an existing
+      // session into its workspace. This marks the navigation as deliberate so
+      // both auto-redirects stand down.
+      url.searchParams.set(STAY_ON_DEFAULT_DOMAIN_SEARCH_PARAM, 'true');
 
       const returnToPath = store.get(returnToPathState.atom);
       if (

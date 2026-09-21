@@ -8,6 +8,7 @@ import { useEffect, useCallback } from 'react';
 import { useInitializeQueryParamState } from '@/app/hooks/useInitializeQueryParamState';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
+import { isStayOnDefaultDomainRequested } from '@/domain-manager/utils/isStayOnDefaultDomainRequested';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceUrls } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
@@ -67,6 +68,7 @@ export const WorkspaceProviderEffect = () => {
     if (
       isMultiWorkspaceEnabled &&
       isDefaultDomain &&
+      !isStayOnDefaultDomainRequested() &&
       isDefined(lastAuthenticatedWorkspaceDomain) &&
       'workspaceUrl' in lastAuthenticatedWorkspaceDomain &&
       isDefined(lastAuthenticatedWorkspaceDomain?.workspaceUrl)

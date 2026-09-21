@@ -56,6 +56,7 @@ import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useL
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { isStayOnDefaultDomainRequested } from '@/domain-manager/utils/isStayOnDefaultDomainRequested';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -156,7 +157,7 @@ export const useAuth = () => {
         return;
       }
 
-      if (availableWorkspacesCount === 1) {
+      if (availableWorkspacesCount === 1 && !isStayOnDefaultDomainRequested()) {
         const targetWorkspace =
           getFirstAvailableWorkspaces(availableWorkspaces);
 
