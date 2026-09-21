@@ -100,6 +100,20 @@ type GraphqlResponse = {
   rawBody: string;
 };
 
+type FilesFieldUploadTarget = {
+  fileId: string;
+  uploadUrl: string;
+  contentType: string;
+};
+
+type FilesFieldUploadedFile = {
+  id: string;
+  path: string;
+  size: number;
+  createdAt: string;
+  url: string;
+};
+
 const getProcessEnvironment = (): ProcessEnvironment => {
   const processObject = (
     globalThis as { process?: { env?: ProcessEnvironment } }
@@ -247,6 +261,46 @@ export class MetadataApiClient {
   mutation<R extends MutationGenqlSelection>(request: R & { __name?: string }) {
     return this.client.mutation(request);
   }
+  // The file goes straight to storage: the API only hands out the upload
+  // target and confirms the bytes afterwards, so it is never buffered through
+  // the GraphQL server and the larger direct-upload size limit applies.
+  async uploadFileToFilesField({
+    file,
+    filename,
+    fieldMetadataUniversalIdentifier,
+  }: {
+    file: Blob | ArrayBuffer | ArrayBufferView;
+    filename: string;
+    fieldMetadataUniversalIdentifier: string;
+  }): Promise<FilesFieldUploadedFile> {
+    const size = file instanceof Blob ? file.size : file.byteLength;
+
+    const { createFileUpload: uploadTarget } =
+      await this.executeMutationOrThrow<{
+        createFileUpload: FilesFieldUploadTarget;
+      }>({
+        query: `mutation CreateFilesFieldFileUpload($filename: String!, $size: Float!, $fieldMetadataUniversalIdentifier: String!) {
+        createFileUpload(filename: $filename, size: $size, fileFolder: FilesField, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { fileId uploadUrl contentType }
+      }`,
+        variables: { filename, size, fieldMetadataUniversalIdentifier },
+      });
+
+    await this.putFileToUploadTarget({ file, uploadTarget });
+
+    const { completeFileUpload: uploadedFile } =
+      await this.executeMutationOrThrow<{
+        completeFileUpload: FilesFieldUploadedFile;
+      }>({
+        query: `mutation CompleteFilesFieldFileUpload($fileId: String!) {
+        completeFileUpload(fileId: $fileId) { id path size createdAt url }
+      }`,
+        variables: { fileId: uploadTarget.fileId },
+      });
+
+    return uploadedFile;
+  }
+
+  /** @deprecated Use uploadFileToFilesField, which sends the file straight to storage instead of through the API. */
   async uploadFile(
     fileBuffer: Buffer,
     filename: string,
@@ -303,6 +357,58 @@ export class MetadataApiClient {
     };
   }
 
+  private async putFileToUploadTarget({
+    file,
+    uploadTarget,
+  }: {
+    file: Blob | ArrayBuffer | ArrayBufferView;
+    uploadTarget: FilesFieldUploadTarget;
+  }): Promise<void> {
+    const fetchImplementation = this.getFetchImplementationOrThrow();
+
+    // The target is a presigned storage URL or a tokenized server route. It
+    // authenticates on its own, and a presigned URL rejects any header beyond
+    // the ones it was signed with, so none of the client's own headers go out.
+    const response = await fetchImplementation.call(
+      globalThis,
+      uploadTarget.uploadUrl,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': uploadTarget.contentType },
+        body: file as BodyInit,
+        credentials: 'omit',
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `File upload failed (${response.status} ${response.statusText}): ${await response.text()}`,
+      );
+    }
+  }
+
+  private async executeMutationOrThrow<TData>({
+    query,
+    variables,
+  }: {
+    query: string;
+    variables: Record<string, unknown>;
+  }): Promise<TData> {
+    const result = await this.executeGraphqlRequestWithOptionalRefresh({
+      operation: { query, variables },
+    });
+
+    if (result.errors) {
+      throw new GenqlError(result.errors, result.data);
+    }
+
+    if (!result.data) {
+      throw new Error('Empty GraphQL response');
+    }
+
+    return result.data as TData;
+  }
+
   private async executeGraphqlRequestWithOptionalRefresh({
     operation,
     headers,
@@ -348,12 +454,7 @@ export class MetadataApiClient {
     requestInit?: RequestInit;
     token: string | null;
   }): Promise<GraphqlResponse> {
-    if (!this.fetchImplementation) {
-      throw new Error(
-        'Global `fetch` function is not available, ' +
-          'pass a fetch implementation to the Twenty client',
-      );
-    }
+    const fetchImplementation = this.getFetchImplementationOrThrow();
 
     const resolvedHeaders = await this.resolveHeaders();
     const requestHeaders = new Headers(resolvedHeaders);
@@ -376,7 +477,7 @@ export class MetadataApiClient {
       requestHeaders.delete('Authorization');
     }
 
-    const response = await this.fetchImplementation.call(globalThis, this.url, {
+    const response = await fetchImplementation.call(globalThis, this.url, {
       ...this.requestOptions,
       ...requestInit,
       method: requestInit?.method ?? 'POST',
@@ -402,6 +503,17 @@ export class MetadataApiClient {
       payload,
       rawBody,
     };
+  }
+
+  private getFetchImplementationOrThrow(): typeof globalThis.fetch {
+    if (!this.fetchImplementation) {
+      throw new Error(
+        'Global `fetch` function is not available, ' +
+          'pass a fetch implementation to the Twenty client',
+      );
+    }
+
+    return this.fetchImplementation;
   }
 
   private async resolveHeaders(): Promise<HeadersInit> {
