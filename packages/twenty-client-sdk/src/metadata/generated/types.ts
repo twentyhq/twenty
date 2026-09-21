@@ -198,6 +198,9 @@ export default {
             "isDeprecated": [
                 8
             ],
+            "isRequired": [
+                8
+            ],
             "type": [
                 1
             ],
@@ -9265,7 +9268,7 @@ export default {
                 23,
                 {
                     "inputs": [
-                        483,
+                        484,
                         "[UpdateOneObjectInput!]!"
                     ]
                 }

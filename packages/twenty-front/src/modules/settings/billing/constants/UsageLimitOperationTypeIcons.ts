@@ -1,4 +1,5 @@
 import {
+  IconAddressBook,
   IconApi,
   IconCode,
   type IconComponent,
@@ -31,5 +32,6 @@ export const USAGE_LIMIT_OPERATION_TYPE_ICONS: Record<
   [UsageOperationType.API_REQUEST]: IconApi,
   [UsageOperationType.WEBHOOK_CALL]: IconWebhook,
   [UsageOperationType.STORAGE_FILE]: IconFiles,
+  [UsageOperationType.RECORD_WRITE]: IconAddressBook,
   [UsageOperationType.SUBSCRIPTION]: IconRepeat,
 };

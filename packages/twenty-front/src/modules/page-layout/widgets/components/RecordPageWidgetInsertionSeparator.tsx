@@ -1,12 +1,13 @@
 import { useNavigateToMoreWidgets } from '@/page-layout/hooks/useNavigateToMoreWidgets';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledInsertButton = styled(FloatingIconButton)`
+const INSERT_BUTTON_CLASS_NAME = css`
   background: ${themeCssVariables.background.transparent.primary};
   border-color: ${themeCssVariables.background.transparent.light};
   flex-shrink: 0;
@@ -39,11 +40,11 @@ const StyledSeparator = styled.div`
   &:focus-within {
     &::before,
     &::after,
-    ${StyledInsertButton} {
+    .${INSERT_BUTTON_CLASS_NAME} {
       opacity: 1;
     }
 
-    ${StyledInsertButton} {
+    .${INSERT_BUTTON_CLASS_NAME} {
       pointer-events: auto;
     }
   }
@@ -51,11 +52,11 @@ const StyledSeparator = styled.div`
   @media (hover: none) {
     &::before,
     &::after,
-    ${StyledInsertButton} {
+    .${INSERT_BUTTON_CLASS_NAME} {
       opacity: 1;
     }
 
-    ${StyledInsertButton} {
+    .${INSERT_BUTTON_CLASS_NAME} {
       pointer-events: auto;
     }
   }
@@ -72,17 +73,20 @@ export const RecordPageWidgetInsertionSeparator = ({
 
   return (
     <StyledSeparator>
-      <StyledInsertButton
-        Icon={IconPlus}
-        ariaLabel={t`Add widget above ${widget.title}`}
-        size="small"
+      <IconButton
+        elevated
+        className={INSERT_BUTTON_CLASS_NAME}
+        aria-label={t`Add widget above ${widget.title}`}
+        size="sm"
         onClick={() =>
           navigateToMoreWidgets({
             targetWidgetId: widget.id,
             direction: 'above',
           })
         }
-      />
+      >
+        <IconPlus />
+      </IconButton>
     </StyledSeparator>
   );
 };

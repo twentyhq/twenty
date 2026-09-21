@@ -114,6 +114,13 @@ describe('buildStockCounters', () => {
     ).toEqual([expect.objectContaining({ isDefault: true })]);
   });
 
+  it('keys a stored limit by its value so an edited limit warms afresh', () => {
+    const [before] = build({ limits: [buildLimit({ limitValue: 500 })] });
+    const [after] = build({ limits: [buildLimit({ limitValue: 2_000 })] });
+
+    expect(before.key).not.toBe(after.key);
+  });
+
   it('keys the default by its value so a changed setting warms afresh', () => {
     const [before] = build({ stockLimitDefaults: [buildDefault()] });
     const [after] = build({

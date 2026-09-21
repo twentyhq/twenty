@@ -18,8 +18,6 @@ import {
   ColorSchemePicker,
   FloatingButton,
   FloatingButtonGroup,
-  FloatingIconButton,
-  FloatingIconButtonGroup,
   IconListViewGrip,
   SearchInput,
   SegmentedControl,
@@ -121,17 +119,14 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'FloatingIconButton',
-    node: <FloatingIconButton Icon={IconSearch} ariaLabel="Search" />,
-  },
-  {
-    name: 'FloatingIconButtonGroup',
+    name: 'IconButton (elevated)',
     node: (
-      <FloatingIconButtonGroup
-        iconButtons={[{ Icon: IconSearch, ariaLabel: 'Search' }]}
-      />
+      <IconButton elevated size="sm" aria-label="Search">
+        <IconSearch />
+      </IconButton>
     ),
   },
+
   {
     name: 'IconButton',
     node: (

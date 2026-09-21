@@ -7,6 +7,9 @@ import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usag
 
 const ABSENT = '-';
 
+// The counter holds `limitValue - used`, so it only means anything for the value
+// it was warmed against. Keying on that value retires the counter as soon as the
+// limit changes, instead of leaving a remaining that outlives its limit.
 export const buildStockCounterKey = ({
   workspaceId,
   resourceType,
@@ -14,6 +17,7 @@ export const buildStockCounterKey = ({
   spenderType,
   spenderId,
   meter,
+  limitValue,
 }: {
   workspaceId: string;
   resourceType: UsageResourceType;
@@ -21,5 +25,6 @@ export const buildStockCounterKey = ({
   spenderType: SpenderType;
   spenderId?: string | null;
   meter: StockMeter;
+  limitValue: number;
 }): string =>
-  `{${workspaceId}}:stock:${resourceType}:${operationType}:${spenderType}:${isNonEmptyString(spenderId) ? spenderId : ABSENT}:${meter}`;
+  `{${workspaceId}}:stock:${resourceType}:${operationType}:${spenderType}:${isNonEmptyString(spenderId) ? spenderId : ABSENT}:${meter}:${limitValue}`;
