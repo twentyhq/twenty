@@ -1,3 +1,5 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import { useDiscardWorkspaceWorkflowDraft } from '@/workflow/hooks/useDiscardWorkspaceWorkflowDraft';
 import { isDefined } from 'twenty-shared/utils';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
@@ -5,7 +7,7 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { useDiscardCoreWorkflowDraft } from '@/object-core/workflows/hooks/useDiscardCoreWorkflowDraft';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 
-export const DiscardDraftWorkflowSingleRecordCommand = () => {
+const DiscardCoreWorkflowDraftCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
@@ -24,7 +26,7 @@ export const DiscardDraftWorkflowSingleRecordCommand = () => {
     }
 
     return discardCoreWorkflowDraft({
-      workspaceWorkflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+      coreWorkflowVersionId: workflowWithCurrentVersion.currentVersion.id,
     });
   };
 
@@ -33,5 +35,33 @@ export const DiscardDraftWorkflowSingleRecordCommand = () => {
       execute={handleExecute}
       ready={isDefined(workflowWithCurrentVersion)}
     />
+  );
+};
+
+const DiscardWorkspaceWorkflowDraftCommand = () => {
+  const { selectedRecords } = useHeadlessCommandContextApi();
+  const workflow = useWorkflowWithCurrentVersion(selectedRecords[0]?.id);
+  const { discardWorkspaceWorkflowDraft } = useDiscardWorkspaceWorkflowDraft();
+
+  return (
+    <HeadlessEngineCommandWrapperEffect
+      ready={isDefined(workflow)}
+      execute={() =>
+        isDefined(workflow)
+          ? discardWorkspaceWorkflowDraft({
+              workspaceWorkflowVersionId: workflow.currentVersion.id,
+            })
+          : undefined
+      }
+    />
+  );
+};
+
+export const DiscardDraftWorkflowSingleRecordCommand = () => {
+  const isCore = useIsWorkflowCoreEnabled();
+  return isCore ? (
+    <DiscardCoreWorkflowDraftCommand />
+  ) : (
+    <DiscardWorkspaceWorkflowDraftCommand />
   );
 };

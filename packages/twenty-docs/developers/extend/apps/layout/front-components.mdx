@@ -12,17 +12,19 @@ Front components are still under active development. Your code runs against a pa
 
 ## Where front components can be used
 
-Front components can render in three locations within Twenty:
+Front components can render in four locations within Twenty:
 
 - **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
 - **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
 - **App settings** — Defined with [`defineSettingsFrontComponent()`](#custom-settings-component), the front component is the whole content of the app's **Settings** tab, in place of the default **Variables** tab.
+- **AI chat** — A [logic function exposed as an AI tool](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) can name a front component, which then renders that tool's calls inline in the chat in place of the default step row.
 
-A front component on its own isn't reachable from the UI — you need to *surface* it. The three ways to do that are:
+A front component on its own isn't reachable from the UI — you need to *surface* it. The four ways to do that are:
 
 - **Pair it with a [command menu item](/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
 - **Embed it as a widget in a [page layout](/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
 - **Define it with [`defineSettingsFrontComponent()`](#custom-settings-component)** — makes it the whole content of the app's **Settings** tab, in place of the default **Variables** tab.
+- **Name it from a [logic function's `toolTriggerSettings`](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action)** — renders the tool's calls in the AI chat.
 
 ## Basic example
 
@@ -87,7 +89,7 @@ Beyond commands, you can embed a front component directly into a record page by 
 
 To replace the auto-generated variable configuration UI with your own component, define it with `defineSettingsFrontComponent` instead of `defineFrontComponent`. It takes the same [configuration fields](#configuration-fields) (except `isHeadless`, which is not accepted since a settings component always renders visible UI) and additionally marks the component as the app's settings UI.
 
-The component is the whole content of a dedicated **Settings** tab, and it replaces the auto-generated **Variables** tab: your app is expected to render its own variables. Twenty's system-managed sections — auto-upgrade, App URL, and connections — live in the app's **General** tab and cannot be overridden by the app.
+The component is the whole content of a dedicated **Settings** tab, and it replaces the auto-generated **Variables** tab: your app is expected to render its own variables. Twenty's system-managed sections — auto-upgrade, App URL, and connections — live in the app's **General** tab and cannot be overridden by the app. App URL only shows with **Advanced mode** on.
 
 ```tsx src/front-components/app-settings.tsx
 import { defineSettingsFrontComponent } from 'twenty-sdk/define';
@@ -419,6 +421,7 @@ Available hooks:
 | `useFrontComponentId()` | `string` | This component instance's ID |
 | `useTimelineActivityId()` | `string` or `null` | The current timeline activity ID when rendering a custom timeline row |
 | `useColorScheme()` | `'light'` or `'dark'` | The host UI's active color scheme (`System` is already resolved) |
+| `useToolCall()` | `FrontComponentToolCall` or `null` | The AI tool call this component is rendering, when it was surfaced from a logic function's `toolTriggerSettings` |
 | `useFrontComponentExecutionContext(selector)` | varies | Access the full execution context with a selector function |
 
 ## Application variables
@@ -447,6 +450,43 @@ Secret variables (`isSecret: true`) are **not** exposed to front components. The
 </Warning>
 
 `getApplicationVariable` always returns a **string** (or `undefined`), regardless of the variable's declared `type`. The string is serialized consistently by type (booleans as `"true"` / `"false"`, numbers as decimal strings, arrays / objects as JSON), the same format used for logic-function `process.env` — parse it yourself (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). See [Variable types](/developers/extend/apps/config/application#variable-types).
+
+### Reading and updating variables at runtime
+
+`getApplicationVariable` returns the values injected when the component loaded, so a value written afterwards only shows up on the next load. To read the stored values, or to write one (what a [custom settings component](#custom-settings-component) does when it saves what the user typed), go through `MetadataApiClient`:
+
+```tsx src/front-components/app-settings.tsx
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER = '39783023-bcac-41e3-b0d2-ff1944d8465d';
+
+const readApplicationVariables = async () => {
+  const { findOneApplication } = await new MetadataApiClient().query({
+    findOneApplication: {
+      __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+      applicationVariables: { key: true, value: true, isSecret: true },
+    },
+  });
+
+  return findOneApplication?.applicationVariables ?? [];
+};
+
+const saveRecipientName = async (recipientName: string) => {
+  await new MetadataApiClient().mutation({
+    updateOneApplicationVariable: {
+      __args: { key: 'DEFAULT_RECIPIENT_NAME', value: recipientName },
+    },
+  });
+};
+```
+
+Notes:
+- Your component's token is bound to your own application. `updateOneApplicationVariable` targets it, so `applicationId` is optional and naming another application is refused. Reading the `applicationVariables` of another application is refused the same way, and an application belonging to another workspace reads as not found.
+- The key must be one your app declares in [`defineApplication()`](/developers/extend/apps/config/application). Writing a key that is not declared is a not found.
+- Secret variables read back masked, never as the stored value. Writing them works normally.
+- Reading a variable's `value`, and writing it, need the `APPLICATIONS` settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.APPLICATIONS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles).
+
+### System variables
 
 The following system variables are always available via `process.env`:
 

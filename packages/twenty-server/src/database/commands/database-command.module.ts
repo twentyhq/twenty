@@ -1,3 +1,4 @@
+import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -62,6 +63,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
 
 @Module({
   imports: [
+    AgentHistoryMigrationModule,
     UpgradeVersionCommandModule,
     TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity]),
     WorkspaceExportModule,

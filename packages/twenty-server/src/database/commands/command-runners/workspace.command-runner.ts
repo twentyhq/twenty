@@ -14,8 +14,10 @@ export type WorkspaceCommandOptions = {
   verbose?: boolean;
 };
 
-export type RunOnWorkspaceArgs = {
-  options: WorkspaceCommandOptions;
+export type RunOnWorkspaceArgs<
+  TOptions extends WorkspaceCommandOptions = WorkspaceCommandOptions,
+> = {
+  options: TOptions;
   workspaceId: string;
   dataSource?: DataSource;
   index: number;
@@ -148,5 +150,7 @@ export abstract class WorkspaceCommandRunner<
     }
   }
 
-  public abstract runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void>;
+  public abstract runOnWorkspace(
+    args: RunOnWorkspaceArgs<Options>,
+  ): Promise<void>;
 }

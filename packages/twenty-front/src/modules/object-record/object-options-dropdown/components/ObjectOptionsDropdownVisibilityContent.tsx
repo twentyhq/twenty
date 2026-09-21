@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -22,8 +23,11 @@ import {
   IconCircleDashed,
   IconCopy,
 } from 'twenty-ui/icon';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import {
+  Tooltip,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/primitives/surfaces';
+import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 import {
   ViewVisibility,
   PermissionFlagType,
@@ -101,17 +105,21 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
               disabled={!!hasViewsPermission}
             >
               <div id="workspace-visibility-option">
-                <MenuItemSelect
-                  LeftIcon={IconCircle}
-                  text={t`Workspace`}
-                  contextualText={t`Everyone`}
-                  selected={currentVisibility === ViewVisibility.WORKSPACE}
+                <ListItem
                   focused={selectedItemId === ViewVisibility.WORKSPACE}
                   onClick={() =>
                     handleVisibilityChange(ViewVisibility.WORKSPACE)
                   }
                   disabled={!hasViewsPermission || !canPersistChanges}
-                />
+                  role="option"
+                  aria-selected={currentVisibility === ViewVisibility.WORKSPACE}
+                  selected={currentVisibility === ViewVisibility.WORKSPACE}
+                  indicator="check"
+                  description={t`Everyone`}
+                  startIcon={<SelectOptionIcon Icon={IconCircle} />}
+                >
+                  <OverflowingTextWithTooltip text={t`Workspace`} />
+                </ListItem>
               </div>
             </Tooltip>
           </SelectableListItem>
@@ -122,15 +130,19 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
               handleVisibilityChange(ViewVisibility.UNLISTED)
             }
           >
-            <MenuItemSelect
-              LeftIcon={IconCircleDashed}
-              text={t`Unlisted`}
-              contextualText={t`Visible to you`}
-              selected={currentVisibility === ViewVisibility.UNLISTED}
+            <ListItem
               focused={selectedItemId === ViewVisibility.UNLISTED}
               onClick={() => handleVisibilityChange(ViewVisibility.UNLISTED)}
               disabled={!canPersistChanges}
-            />
+              role="option"
+              aria-selected={currentVisibility === ViewVisibility.UNLISTED}
+              selected={currentVisibility === ViewVisibility.UNLISTED}
+              indicator="check"
+              description={t`Visible to you`}
+              startIcon={<SelectOptionIcon Icon={IconCircleDashed} />}
+            >
+              <OverflowingTextWithTooltip text={t`Unlisted`} />
+            </ListItem>
           </SelectableListItem>
           {currentVisibility === ViewVisibility.WORKSPACE && (
             <>

@@ -1,6 +1,8 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables/types/WorkflowVariableSearchResult';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowVariableSearchResultItemsProps = {
   searchResults: WorkflowVariableSearchResult[];
@@ -14,21 +16,29 @@ export const WorkflowVariableSearchResultItems = ({
   const { getIcon } = useIcons();
 
   return searchResults.map((result) => (
-    <MenuItemSelect
+    <ListItem
       key={JSON.stringify([
         result.stepId,
         result.path,
         result.isLeaf,
         result.isFullRecord,
       ])}
-      selected={false}
       focused={false}
       onClick={() => onSelect(result)}
-      text={result.label}
-      contextualText={result.breadcrumb}
-      LeftIcon={getIcon(result.icon)}
-      leftIconColor={result.iconColor}
-      hasSubMenu={!result.isLeaf}
-    />
+      role="option"
+      aria-selected={false}
+      selected={false}
+      indicator="check"
+      hasSubmenu={!result.isLeaf}
+      description={result.breadcrumb}
+      startIcon={
+        <SelectOptionIcon
+          Icon={getIcon(result.icon)}
+          color={result.iconColor}
+        />
+      }
+    >
+      <OverflowingTextWithTooltip text={result.label} />
+    </ListItem>
   ));
 };

@@ -10,12 +10,13 @@ type GraphqlOperation = {
 
 export const makeAdminPanelAPIRequest = (
   graphqlOperation: GraphqlOperation,
+  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 ) => {
   const client = request(`http://localhost:${APP_PORT}`);
 
   return client
     .post('/admin-panel')
-    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+    .set('Authorization', `Bearer ${token}`)
     .send({
       query: print(graphqlOperation.query),
       variables: graphqlOperation.variables || {},

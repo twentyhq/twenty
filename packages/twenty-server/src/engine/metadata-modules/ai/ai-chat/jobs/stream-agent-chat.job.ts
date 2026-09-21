@@ -1,3 +1,6 @@
+import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -52,8 +55,6 @@ import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/ut
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
@@ -76,8 +77,8 @@ export class StreamAgentChatJob {
   private hasRecordedTurnOutcome = false;
 
   constructor(
-    @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
-    private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
@@ -873,30 +874,25 @@ export class StreamAgentChatJob {
       });
     }
 
-    const totalsUpdate = await this.threadRepository.update(
+    const totalsUpdate = await updateAgentChatThreadUsage({
+      repository: this.threadRepository,
       workspaceId,
-      { id: threadId, activeStreamId: streamId },
-      {
-        totalInputTokens: () =>
-          `"totalInputTokens" + ${streamUsage.inputTokens}`,
-        totalOutputTokens: () =>
-          `"totalOutputTokens" + ${streamUsage.outputTokens}`,
-        totalInputCredits: () =>
-          `"totalInputCredits" + ${streamUsage.inputCredits}`,
-        totalOutputCredits: () =>
-          `"totalOutputCredits" + ${streamUsage.outputCredits}`,
-        totalCacheReadTokens: () =>
-          `"totalCacheReadTokens" + ${streamUsage.cacheReadTokens}`,
-        totalCacheCreationTokens: () =>
-          `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
+      threadId,
+      streamId,
+      usage: {
+        totalInputTokens: streamUsage.inputTokens,
+        totalOutputTokens: streamUsage.outputTokens,
+        totalInputCredits: streamUsage.inputCredits,
+        totalOutputCredits: streamUsage.outputCredits,
+        totalCacheReadTokens: streamUsage.cacheReadTokens,
+        totalCacheCreationTokens,
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: lastStepConversationSize,
         pendingQuestionMessageId: isDefined(pendingQuestionPart)
           ? assistantMessageId
           : null,
-        lastStreamError: null,
       },
-    );
+    });
 
     if (!totalsUpdate.affected) {
       return resolveSupersededTurnOutcome(outcome);

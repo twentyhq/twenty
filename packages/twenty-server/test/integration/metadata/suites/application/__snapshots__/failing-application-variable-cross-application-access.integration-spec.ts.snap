@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application variable access across applications should fail should refuse two application identifiers from a session 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "applicationId and applicationUniversalIdentifier cannot both be given",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Application variable access across applications should fail should require an application id from a session 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "applicationId or applicationUniversalIdentifier is required unless the caller is an application",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Application variable access across applications should fail should require an application identifier from a session 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "applicationId or applicationUniversalIdentifier is required unless the caller is an application",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Application variable access across applications should fail with a user-bound application token should refuse to read another application by id 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application variable access across applications should fail with a user-bound application token should refuse to read another application by universal identifier 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application variable access across applications should fail with a user-bound application token should refuse to update another application variable 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application variable access across applications should fail with an application token without user binding should refuse to read another application by id 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application variable access across applications should fail with an application token without user binding should refuse to read another application by universal identifier 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application variable access across applications should fail with an application token without user binding should refuse to update another application variable 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
+}
+`;

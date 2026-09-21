@@ -1,3 +1,6 @@
+import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
+import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
+import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { type Meta } from '@storybook/react-vite';
@@ -11,7 +14,6 @@ import {
   createCheckboxTest,
   createFieldControlsTest,
   createRadioGroupPreactTest,
-  listItemTest,
   sliderTest,
   toastTest,
 } from '@/__stories__/twenty-ui-gallery/utils/componentInteractionTests';
@@ -230,6 +232,30 @@ export const ListItemPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-list-item',
   runtime: 'preact',
   play: listItemTest,
+});
+
+export const PickerListItemsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-picker-list-items',
+  runtime: 'react',
+  play: pickerListItemsTest,
+});
+
+export const PickerListItemsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-picker-list-items',
+  runtime: 'preact',
+  play: pickerListItemsTest,
+});
+
+export const SettingsRowReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-settings-row',
+  runtime: 'react',
+  play: settingsRowTest,
+});
+
+export const SettingsRowPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-settings-row',
+  runtime: 'preact',
+  play: settingsRowTest,
 });
 
 export const TabsReact: Story = createGalleryStory({

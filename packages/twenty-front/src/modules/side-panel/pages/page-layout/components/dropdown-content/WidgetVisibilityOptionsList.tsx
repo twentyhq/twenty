@@ -1,3 +1,4 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { VISIBILITY_OPTIONS } from '@/side-panel/pages/page-layout/constants/VisibilityOptions';
 import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -7,7 +8,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WidgetVisibilityOptionsListProps = {
   currentOptionId: string;
@@ -44,14 +45,18 @@ export const WidgetVisibilityOptionsList = ({
               onSelectVisibility(option.id);
             }}
           >
-            <MenuItemSelect
-              text={visibilityLabels[option.id]}
-              selected={currentOptionId === option.id}
+            <ListItem
               focused={selectedItemId === option.id}
               onClick={() => {
                 onSelectVisibility(option.id);
               }}
-            />
+              role="option"
+              aria-selected={currentOptionId === option.id}
+              selected={currentOptionId === option.id}
+              indicator="check"
+            >
+              <OverflowingTextWithTooltip text={visibilityLabels[option.id]} />
+            </ListItem>
           </SelectableListItem>
         ))}
       </SelectableList>

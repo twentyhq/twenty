@@ -60,6 +60,10 @@ export const DuplicateAction = ({ onDuplicate }: DuplicateActionProps) => (
 
 The default element is a `div`. Use `render` to give an interactive row appropriate semantics, such as a button or link. `hotkeys` displays shortcut hints; your application must register the shortcuts.
 
+## Settings row
+
+Use [SettingsRow](/ui/components/settings-row) for a labeled switch row. It composes `ListItem` and `Switch`, manages their accessible association, and applies disabled behavior to both.
+
 ## Selection indicator
 
 ```tsx
@@ -83,6 +87,97 @@ export const ShowArchivedToggle = () => {
 ```
 
 `selected`, `focused`, and `disabled` control row styling. The `check` and `checkbox` indicators are visual; use a real [Checkbox](/ui/primitives/input/checkbox) for a form control. When using a disabled button or link through `render`, also supply the element's appropriate disabled behavior and semantics.
+
+## Picker rows
+
+Selection belongs to the parent. `ListItem` has no uncontrolled selection state: pass `selected` and update it from `onClick`. Use `indicator="check"` for a single choice and `indicator="checkbox"` for multiple choices. Both indicators are decorative and share the row's click handler.
+
+In an existing listbox, pass `role="option"` and `aria-selected`, and keep focus and arrow-key handling in the listbox. For a complete selection widget, use [Select](/ui/primitives/input/select). Standalone selection buttons can use `aria-pressed`, as in these examples.
+
+### Single selection
+
+Place an [Avatar](/ui/primitives/data-display/avatar) in `startIcon` to identify a record. Use `description` for supporting text, and `descriptionPlacement="end"` for a trailing value.
+
+<StoryEmbed
+  storyId="ui-navigation-listitem-picker--single-selection"
+  title="Single selection rows"
+  height={260}
+/>
+
+```tsx
+import { useState } from 'react';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const AssigneeButtons = () => {
+  const [assignee, setAssignee] = useState<string | null>(null);
+
+  return (
+    <div role="group" aria-label="Assignee">
+      {['Alex Morgan', 'Sam Taylor'].map((name) => (
+        <ListItem
+          key={name}
+          render={<button type="button" />}
+          aria-pressed={assignee === name}
+          selected={assignee === name}
+          indicator="check"
+          startIcon={<Avatar name={name} size="md" />}
+          onClick={() => setAssignee(name)}
+        >
+          {name}
+        </ListItem>
+      ))}
+    </div>
+  );
+};
+```
+
+### Multiple selection
+
+Compose [Tag](/ui/primitives/data-display/tag) as the row content for tagged values, or put `ColorSample` in `startIcon` for a color choice. A row can also contain plain text or an avatar.
+
+<StoryEmbed
+  storyId="ui-navigation-listitem-picker--multiple-selection"
+  title="Multiple selection rows"
+  height={260}
+/>
+
+```tsx
+import { useState } from 'react';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const TeammateButtons = () => {
+  const [teammates, setTeammates] = useState<string[]>([]);
+
+  const toggleTeammate = (name: string) => {
+    setTeammates((current) =>
+      current.includes(name)
+        ? current.filter((teammate) => teammate !== name)
+        : [...current, name],
+    );
+  };
+
+  return (
+    <div role="group" aria-label="Teammates">
+      {['Alex Morgan', 'Sam Taylor'].map((name) => (
+        <ListItem
+          key={name}
+          render={<button type="button" />}
+          aria-pressed={teammates.includes(name)}
+          selected={teammates.includes(name)}
+          indicator="checkbox"
+          onClick={() => toggleTeammate(name)}
+        >
+          <Tag color="blue">{name}</Tag>
+        </ListItem>
+      ))}
+    </div>
+  );
+};
+```
+
+The checkbox indicator is not a form control and does not submit a value. Use [Checkbox](/ui/primitives/input/checkbox) when you need form participation. Supply `disabled` to both the row and its rendered native button to prevent activation and remove it from the tab order.
 
 ## Slots
 

@@ -27,7 +27,7 @@ export const CreateRecordButton = () => (
 );
 ```
 
-Sizes are `sm` (24px) and `md` (32px). The defaults are `md`, `outline`, and `neutral`. Variants and colors match Button.
+Sizes are `xs` (20px), `sm` (24px), and `md` (32px). The defaults are `md`, `outline`, and `neutral`. Variants and colors match Button. Use `shape="round"` for a circular button; the default shape is `square`.
 
 <StoryEmbed
   title="Icon button example"
@@ -52,7 +52,7 @@ export const SearchRecordsButton = () => (
 
 <StoryEmbed
   title="Icon button with tooltip"
-  storyId="ui-components-iconbutton--tooltip"
+  storyId="ui-components-iconbutton--tooltip-documentation"
   height={180}
 />
 
@@ -92,3 +92,7 @@ Native attributes, event handlers, refs, and render composition pass through to 
 ## Props
 
 <IconButtonReference />
+
+## Compact and round controls
+
+Use `size="xs"` for a 20px control and `shape="round"` for circular corners. Existing `RoundedIconButton` controls become `IconButton` with `shape="round"`, `variant="solid"`, and `color="accent"`. Map their old `small` size to `xs` and `medium` size to `sm`. Supply icon children and an accessible name.

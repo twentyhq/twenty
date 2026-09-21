@@ -1,5 +1,6 @@
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsApplicationUninstallButton } from '@/settings/applications/components/SettingsApplicationUninstallButton';
+import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -126,9 +127,11 @@ export const SettingsApplicationDetailGeneralTab = ({
         />
       )}
       {applicationHasHttpTriggeredFunctions(application) && (
-        <SettingsApplicationFunctionDomainSection
-          applicationId={application.id}
-        />
+        <AdvancedSettingsWrapper>
+          <SettingsApplicationFunctionDomainSection
+            applicationId={application.id}
+          />
+        </AdvancedSettingsWrapper>
       )}
       <SettingsApplicationConnectionsSection applicationId={application.id} />
     </>

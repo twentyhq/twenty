@@ -1,4 +1,3 @@
-import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { useCallback, useMemo } from 'react';
 
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
@@ -93,14 +92,16 @@ export const useObjectOptionsForBoard = ({
   );
 
   const handleReorderBoardFields = useCallback(
-    (result: DraggableListDropResult) => {
-      if (!result.destination) {
-        return;
-      }
-
+    ({
+      recordFieldToMove,
+      targetRecordField,
+    }: {
+      recordFieldToMove: Pick<RecordField, 'id' | 'fieldMetadataItemId'>;
+      targetRecordField: Pick<RecordField, 'id'>;
+    }) => {
       const updatedRecordField = reorderVisibleRecordFields({
-        fromIndex: result.source.index - 1,
-        toIndex: result.destination.index - 1,
+        recordFieldToMove,
+        targetRecordField,
       });
 
       saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);

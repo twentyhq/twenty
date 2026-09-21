@@ -29,9 +29,10 @@ export class AppOAuthRevokeService {
     let provider;
 
     try {
-      provider = await this.connectionProviderService.findOneByIdOrThrow(
-        connectedAccount.connectionProviderId,
-      );
+      provider = await this.connectionProviderService.findOneByIdOrThrow({
+        id: connectedAccount.connectionProviderId,
+        workspaceId: connectedAccount.workspaceId,
+      });
     } catch {
       return;
     }
