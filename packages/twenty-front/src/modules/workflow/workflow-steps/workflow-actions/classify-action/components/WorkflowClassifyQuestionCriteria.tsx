@@ -114,9 +114,9 @@ export const WorkflowClassifyQuestionCriteria = ({
               placeholder={
                 variant === 'options'
                   ? index === 0
-                    ? t`e.g. Lawyer`
-                    : t`e.g. Engineer`
-                  : t`e.g. Experienced`
+                    ? t`Lawyer`
+                    : t`Engineer`
+                  : t`Experienced`
               }
               readonly={readonly}
               VariablePicker={WorkflowVariablePicker}
@@ -127,9 +127,9 @@ export const WorkflowClassifyQuestionCriteria = ({
               placeholder={
                 variant === 'options'
                   ? index === 0
-                    ? t`e.g. Advises clients on legal matters.`
-                    : t`e.g. Designs, builds, or maintains software or technical systems.`
-                  : t`e.g. At least two years of regular React use`
+                    ? t`Advises clients on legal matters`
+                    : t`Designs and builds technical systems`
+                  : t`At least two years of regular React use`
               }
               readonly={readonly}
               VariablePicker={WorkflowVariablePicker}

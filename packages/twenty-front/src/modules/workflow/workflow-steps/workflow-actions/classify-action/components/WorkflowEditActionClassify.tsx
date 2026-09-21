@@ -286,7 +286,7 @@ export const WorkflowEditActionClassify = ({
           label={t`Context`}
           multiline
           defaultValue={action.settings.input.state}
-          placeholder={t`e.g. Alex is a software engineer with five years of experience, including three years using React and TypeScript.`}
+          placeholder={t`Alex is a software engineer with three years of React experience.`}
           readonly={readonly}
           VariablePicker={WorkflowVariablePicker}
           onChange={(state) => updateInput({ state })}
@@ -303,10 +303,10 @@ export const WorkflowEditActionClassify = ({
                 defaultValue={question.name}
                 placeholder={
                   question.type === 'choice'
-                    ? t`e.g. profession`
+                    ? t`profession`
                     : question.type === 'score'
-                      ? t`e.g. react_experience`
-                      : t`e.g. uses_react`
+                      ? t`react_experience`
+                      : t`uses_react`
                 }
                 readonly={readonly}
                 onChange={(name) => updateQuestion(question.id, { name })}
@@ -349,10 +349,10 @@ export const WorkflowEditActionClassify = ({
               defaultValue={question.instructions}
               placeholder={
                 question.type === 'choice'
-                  ? t`e.g. What is this person's current profession, based on the profile?`
+                  ? t`What is this person's current profession?`
                   : question.type === 'score'
-                    ? t`e.g. Assess the React experience described in this profile. Use the highest level whose requirements are met.`
-                    : t`e.g. Does this person have professional experience using React?`
+                    ? t`Assess the React experience described in this profile. Use the highest level whose requirements are met.`
+                    : t`Does this person have professional experience using React?`
               }
               readonly={readonly}
               VariablePicker={WorkflowVariablePicker}

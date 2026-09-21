@@ -151,30 +151,24 @@ describe('WorkflowEditActionClassify', () => {
     ).toHaveValue('');
     expect(onUpdate).not.toHaveBeenCalled();
     await user.click(screen.getByRole('button', { name: 'Add question' }));
-    expect(screen.getByPlaceholderText('e.g. profession')).toHaveValue('');
+    expect(screen.getByPlaceholderText('profession')).toHaveValue('');
     expect(
-      screen.getByPlaceholderText(
-        "e.g. What is this person's current profession, based on the profile?",
-      ),
+      screen.getByPlaceholderText("What is this person's current profession?"),
     ).toHaveValue('');
-    expect(screen.getByPlaceholderText('e.g. Engineer')).toHaveValue('');
+    expect(screen.getByPlaceholderText('Engineer')).toHaveValue('');
     expect(
-      screen.getByPlaceholderText(
-        'e.g. Designs, builds, or maintains software or technical systems.',
-      ),
+      screen.getByPlaceholderText('Designs and builds technical systems'),
     ).toHaveValue('');
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Response type' }),
       'score',
     );
-    expect(screen.getByPlaceholderText('e.g. react_experience')).toBeVisible();
+    expect(screen.getByPlaceholderText('react_experience')).toBeVisible();
     expect(
       screen.getByPlaceholderText(/Assess the React experience/),
     ).toHaveValue('');
     expect(
-      screen.getByPlaceholderText(
-        'e.g. At least two years of regular React use',
-      ),
+      screen.getByPlaceholderText('At least two years of regular React use'),
     ).toHaveValue('');
   });
 
