@@ -98,4 +98,50 @@ describe('aiProviderModelConfigSchema', () => {
       ),
     ).toContain('benchmarkByEffort.turbo');
   });
+
+  it('accepts an evaluation model declaring its question types and both token costs', () => {
+    expect(
+      issuePaths({
+        name: 'jev-latest',
+        label: 'Jev',
+        kind: 'evaluation',
+        inputCostPerMillionTokens: 0.042,
+        outputCostPerMillionTokens: 0,
+        supportedQuestionTypes: ['choice', 'score', 'boolean'],
+        maxCriteriaPerQuestion: 255,
+      }),
+    ).toEqual([]);
+  });
+
+  it('rejects an evaluation model that declares no question types', () => {
+    expect(
+      issuePaths({
+        name: 'jev-latest',
+        label: 'Jev',
+        kind: 'evaluation',
+        inputCostPerMillionTokens: 0.042,
+        outputCostPerMillionTokens: 0,
+      }),
+    ).toEqual(['supportedQuestionTypes']);
+  });
+
+  // Free output has to say so with an explicit 0, or the model bills nothing
+  // while the provider still charges.
+  it('rejects an evaluation model that omits a token cost', () => {
+    expect(
+      issuePaths({
+        name: 'jev-latest',
+        label: 'Jev',
+        kind: 'evaluation',
+        inputCostPerMillionTokens: 0.042,
+        supportedQuestionTypes: ['choice'],
+      }),
+    ).toEqual(['inputCostPerMillionTokens']);
+  });
+
+  it('rejects question types declared on a model that is not an evaluation model', () => {
+    expect(
+      issuePaths(modelWith({ supportedQuestionTypes: ['choice'] })),
+    ).toEqual(['supportedQuestionTypes']);
+  });
 });

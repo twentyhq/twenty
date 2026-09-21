@@ -9,4 +9,5 @@ export const AI_SDK_PACKAGE_LABELS: Record<AiSdkPackage, string> = {
   '@ai-sdk/amazon-bedrock': 'AWS Bedrock',
   '@ai-sdk/openai-compatible': 'OpenAI-Compatible',
   '@ai-sdk/azure': 'Azure OpenAI',
+  '@ai-sdk/typesafe-ai': 'TypeSafe AI',
 };

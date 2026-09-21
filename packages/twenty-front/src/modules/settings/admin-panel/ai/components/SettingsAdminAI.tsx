@@ -132,8 +132,14 @@ export const SettingsAdminAI = () => {
 
   const defaultModelByTier = data?.getAdminAiModels?.defaultModelByTier ?? [];
 
+  // A tier default names the model that answers chats and agent runs, so only a
+  // language model can fill one: an evaluation model here is refused server-side.
   const enabledModels = models.filter(
-    (model) => model.isAvailable && model.isAdminEnabled && !model.isDeprecated,
+    (model) =>
+      model.kind === 'language' &&
+      model.isAvailable &&
+      model.isAdminEnabled &&
+      !model.isDeprecated,
   );
 
   const handleDefaultModelChange = async (

@@ -1,3 +1,5 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useEffect } from 'react';
 
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
@@ -24,7 +26,7 @@ import {
   IconSortAZ,
   IconSortZA,
 } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
   const { currentContentId, onContentChange, dropdownId } =
@@ -93,15 +95,21 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
             itemId={RecordGroupSort.Manual}
             onEnter={() => handleRecordGroupSortChange(RecordGroupSort.Manual)}
           >
-            <MenuItemSelect
+            <ListItem
               onClick={() =>
                 handleRecordGroupSortChange(RecordGroupSort.Manual)
               }
-              LeftIcon={IconHandMove}
-              text={RecordGroupSort.Manual}
-              selected={recordIndexRecordGroupSort === RecordGroupSort.Manual}
               focused={selectedItemId === RecordGroupSort.Manual}
-            />
+              role="option"
+              aria-selected={
+                recordIndexRecordGroupSort === RecordGroupSort.Manual
+              }
+              selected={recordIndexRecordGroupSort === RecordGroupSort.Manual}
+              indicator="check"
+              startIcon={<SelectOptionIcon Icon={IconHandMove} />}
+            >
+              <OverflowingTextWithTooltip text={RecordGroupSort.Manual} />
+            </ListItem>
           </SelectableListItem>
           {!isRelationGroupBy && (
             <>
@@ -111,17 +119,25 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
                   handleRecordGroupSortChange(RecordGroupSort.Alphabetical)
                 }
               >
-                <MenuItemSelect
+                <ListItem
                   onClick={() =>
                     handleRecordGroupSortChange(RecordGroupSort.Alphabetical)
                   }
-                  LeftIcon={IconSortAZ}
-                  text={RecordGroupSort.Alphabetical}
+                  focused={selectedItemId === RecordGroupSort.Alphabetical}
+                  role="option"
+                  aria-selected={
+                    recordIndexRecordGroupSort === RecordGroupSort.Alphabetical
+                  }
                   selected={
                     recordIndexRecordGroupSort === RecordGroupSort.Alphabetical
                   }
-                  focused={selectedItemId === RecordGroupSort.Alphabetical}
-                />
+                  indicator="check"
+                  startIcon={<SelectOptionIcon Icon={IconSortAZ} />}
+                >
+                  <OverflowingTextWithTooltip
+                    text={RecordGroupSort.Alphabetical}
+                  />
+                </ListItem>
               </SelectableListItem>
               <SelectableListItem
                 itemId={RecordGroupSort.ReverseAlphabetical}
@@ -131,22 +147,31 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
                   )
                 }
               >
-                <MenuItemSelect
+                <ListItem
                   onClick={() =>
                     handleRecordGroupSortChange(
                       RecordGroupSort.ReverseAlphabetical,
                     )
                   }
-                  LeftIcon={IconSortZA}
-                  text={RecordGroupSort.ReverseAlphabetical}
+                  focused={
+                    selectedItemId === RecordGroupSort.ReverseAlphabetical
+                  }
+                  role="option"
+                  aria-selected={
+                    recordIndexRecordGroupSort ===
+                    RecordGroupSort.ReverseAlphabetical
+                  }
                   selected={
                     recordIndexRecordGroupSort ===
                     RecordGroupSort.ReverseAlphabetical
                   }
-                  focused={
-                    selectedItemId === RecordGroupSort.ReverseAlphabetical
-                  }
-                />
+                  indicator="check"
+                  startIcon={<SelectOptionIcon Icon={IconSortZA} />}
+                >
+                  <OverflowingTextWithTooltip
+                    text={RecordGroupSort.ReverseAlphabetical}
+                  />
+                </ListItem>
               </SelectableListItem>
             </>
           )}
