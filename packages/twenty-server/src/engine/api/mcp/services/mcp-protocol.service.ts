@@ -347,11 +347,11 @@ export class McpProtocolService {
         apiKey,
       );
 
-      const authContext = isDefined(apiKey)
-        ? buildApiKeyAuthContext({ workspace, apiKey })
-        : isDefined(application)
-          ? buildApplicationAuthContext({ workspace, application })
-          : undefined;
+      const authContext = this.buildToolAuthContext({
+        workspace,
+        apiKey,
+        application,
+      });
 
       const toolSet = await this.buildMcpToolSet(workspace, roleId, {
         authContext,
@@ -397,5 +397,25 @@ export class McpProtocolService {
         },
       });
     }
+  }
+
+  private buildToolAuthContext({
+    workspace,
+    apiKey,
+    application,
+  }: {
+    workspace: FlatWorkspace;
+    apiKey: FlatApiKey | undefined;
+    application?: FlatApplication;
+  }): WorkspaceAuthContext | undefined {
+    if (isDefined(apiKey)) {
+      return buildApiKeyAuthContext({ workspace, apiKey });
+    }
+
+    if (isDefined(application)) {
+      return buildApplicationAuthContext({ workspace, application });
+    }
+
+    return undefined;
   }
 }
