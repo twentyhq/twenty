@@ -31,6 +31,8 @@ export const buildApiAccessLogLine = ({
     aborted: completed ? undefined : true,
     duration_ms: durationMs,
     ...formatActor(request),
+    impersonator_user_workspace_id:
+      request.impersonationContext?.impersonatorUserWorkspaceId,
     workspace_id: request.workspaceId,
     auth_provider: request.authProvider ?? undefined,
     token_type: request.tokenType,

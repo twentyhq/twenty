@@ -101,6 +101,25 @@ describe('buildApiAccessLogLine', () => {
     expect(line).toContain('auth_provider=password');
   });
 
+  it('should log the impersonator next to the impersonated actor', () => {
+    const line = build({
+      request: {
+        user: { id: 'impersonated-user-id' },
+        authProvider: 'impersonation',
+        impersonationContext: {
+          impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
+          impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
+        },
+      } as unknown as Partial<Request>,
+    });
+
+    expect(line).toContain('actor_id=impersonated-user-id');
+    expect(line).toContain(
+      'impersonator_user_workspace_id=impersonator-user-workspace-id',
+    );
+    expect(line).toContain('auth_provider=impersonation');
+  });
+
   it('should log anonymous when nothing authenticated the request', () => {
     const line = build();
 
