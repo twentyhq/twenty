@@ -14,36 +14,30 @@ const SEED: EnrichmentWorkflowSeed = {
   logicFunctionInput: { records: '{{trigger.companies}}' },
 };
 
-const CORE_WORKFLOW_ID = 'core-workflow-1';
-const CORE_WORKFLOW_VERSION_ID = 'core-version-1';
-
 type AnyRequest = Record<string, any>;
 
 describe('seedEnrichmentWorkflow', () => {
-  it('creates, configures and activates a new workflow using core ids', async () => {
+  it('creates, configures and activates a new workflow', async () => {
     const mutations: AnyRequest[] = [];
 
     const client = createCoreApiClientMock({
       queryResult: (request: unknown) => {
         const req = request as AnyRequest;
-
-        if ('coreWorkflows' in req) {
-          return { coreWorkflows: { edges: [] } };
+        if ('workflows' in req) {
+          return { workflows: { edges: [] } };
         }
-
-        if ('coreWorkflowVersionsByCoreWorkflowId' in req) {
+        if ('workflowVersions' in req) {
           return {
-            coreWorkflowVersionsByCoreWorkflowId: [
-              { id: CORE_WORKFLOW_VERSION_ID, status: 'DRAFT' },
-            ],
+            workflowVersions: {
+              edges: [{ node: { id: 'version-1', status: 'DRAFT' } }],
+            },
           };
         }
-
         return {};
       },
       mutationResult: (request: unknown) =>
-        'createCoreWorkflow' in (request as AnyRequest)
-          ? { createCoreWorkflow: { id: CORE_WORKFLOW_ID } }
+        'createWorkflow' in (request as AnyRequest)
+          ? { createWorkflow: { id: 'workflow-1' } }
           : {},
       onMutation: (request) => mutations.push(request as AnyRequest),
     });
@@ -58,41 +52,37 @@ describe('seedEnrichmentWorkflow', () => {
       objectNameSingular: 'company',
       workflowName: SEED.workflowName,
       status: 'created',
-      coreWorkflowId: CORE_WORKFLOW_ID,
+      workflowId: 'workflow-1',
     });
 
     const createRequest = mutations.find(
-      (request) => 'createCoreWorkflow' in request,
+      (request) => 'createWorkflow' in request,
     );
-
-    expect(createRequest?.createCoreWorkflow.__args.input).toEqual({
+    expect(createRequest?.createWorkflow.__args.data).toEqual({
       name: SEED.workflowName,
     });
 
-    const triggerRequest = mutations.find(
-      (request) => 'updateCoreWorkflowVersionTrigger' in request,
+    const updateRequest = mutations.find(
+      (request) => 'updateWorkflowVersion' in request,
     );
-    const triggerInput =
-      triggerRequest?.updateCoreWorkflowVersionTrigger.__args.input;
+    const { id, data } = updateRequest?.updateWorkflowVersion.__args ?? {};
+    expect(id).toBe('version-1');
 
-    expect(triggerInput.coreWorkflowVersionId).toBe(CORE_WORKFLOW_VERSION_ID);
-    expect(triggerInput.trigger.type).toBe('MANUAL');
-    expect(triggerInput.trigger.settings.availability).toEqual({
+    expect(data.trigger.type).toBe('MANUAL');
+    expect(data.trigger.settings.availability).toEqual({
       type: 'BULK_RECORDS',
       objectNameSingular: 'company',
     });
-    expect(triggerInput.trigger.settings.objectType).toBe('company');
-    expect(triggerInput.trigger.nextStepIds).toEqual([]);
+    expect(data.trigger.settings.objectType).toBe('company');
+    expect(data.trigger.nextStepIds).toEqual([]);
+    expect(data.steps).toBeUndefined();
 
     const createStepRequest = mutations.find(
-      (request) => 'createCoreWorkflowVersionStep' in request,
+      (request) => 'createWorkflowVersionStep' in request,
     );
     const createStepInput =
-      createStepRequest?.createCoreWorkflowVersionStep.__args.input;
-
-    expect(createStepInput.coreWorkflowVersionId).toBe(
-      CORE_WORKFLOW_VERSION_ID,
-    );
+      createStepRequest?.createWorkflowVersionStep.__args.input;
+    expect(createStepInput.workflowVersionId).toBe('version-1');
     expect(createStepInput.stepType).toBe('LOGIC_FUNCTION');
     expect(createStepInput.parentStepId).toBe('trigger');
     expect(createStepInput.defaultSettings.input.logicFunctionId).toBe(
@@ -100,14 +90,11 @@ describe('seedEnrichmentWorkflow', () => {
     );
 
     const updateStepRequest = mutations.find(
-      (request) => 'updateCoreWorkflowVersionStep' in request,
+      (request) => 'updateWorkflowVersionStep' in request,
     );
     const updateStepInput =
-      updateStepRequest?.updateCoreWorkflowVersionStep.__args.input;
-
-    expect(updateStepInput.coreWorkflowVersionId).toBe(
-      CORE_WORKFLOW_VERSION_ID,
-    );
+      updateStepRequest?.updateWorkflowVersionStep.__args.input;
+    expect(updateStepInput.workflowVersionId).toBe('version-1');
     expect(updateStepInput.step.id).toBe(createStepInput.id);
     expect(updateStepInput.step.type).toBe('LOGIC_FUNCTION');
     expect(updateStepInput.step.settings.input.logicFunctionId).toBe(
@@ -118,12 +105,11 @@ describe('seedEnrichmentWorkflow', () => {
     });
 
     const activateRequest = mutations.find(
-      (request) => 'activateCoreWorkflowVersion' in request,
+      (request) => 'activateWorkflowVersion' in request,
     );
-
     expect(
-      activateRequest?.activateCoreWorkflowVersion.__args.coreWorkflowVersionId,
-    ).toBe(CORE_WORKFLOW_VERSION_ID);
+      activateRequest?.activateWorkflowVersion.__args.workflowVersionId,
+    ).toBe('version-1');
   });
 
   it('skips creation when a workflow with the same name already exists', async () => {
@@ -131,16 +117,8 @@ describe('seedEnrichmentWorkflow', () => {
 
     const client = createCoreApiClientMock({
       queryResult: (request: unknown) =>
-        'coreWorkflows' in (request as AnyRequest)
-          ? {
-              coreWorkflows: {
-                edges: [
-                  {
-                    node: { id: 'existing-core-1', name: SEED.workflowName },
-                  },
-                ],
-              },
-            }
+        'workflows' in (request as AnyRequest)
+          ? { workflows: { edges: [{ node: { id: 'existing-1' } }] } }
           : {},
       onMutation: (request) => mutations.push(request as AnyRequest),
     });
@@ -152,53 +130,7 @@ describe('seedEnrichmentWorkflow', () => {
     });
 
     expect(result.status).toBe('skipped');
-    expect(result.coreWorkflowId).toBe('existing-core-1');
+    expect(result.workflowId).toBe('existing-1');
     expect(mutations).toHaveLength(0);
-  });
-
-  it('does not treat a differently named workflow as already seeded', async () => {
-    const client = createCoreApiClientMock({
-      queryResult: (request: unknown) => {
-        const req = request as AnyRequest;
-
-        if ('coreWorkflows' in req) {
-          return {
-            coreWorkflows: {
-              edges: [
-                {
-                  node: {
-                    id: 'other-core-1',
-                    name: `${SEED.workflowName} (copy)`,
-                  },
-                },
-              ],
-            },
-          };
-        }
-
-        if ('coreWorkflowVersionsByCoreWorkflowId' in req) {
-          return {
-            coreWorkflowVersionsByCoreWorkflowId: [
-              { id: CORE_WORKFLOW_VERSION_ID, status: 'DRAFT' },
-            ],
-          };
-        }
-
-        return {};
-      },
-      mutationResult: (request: unknown) =>
-        'createCoreWorkflow' in (request as AnyRequest)
-          ? { createCoreWorkflow: { id: CORE_WORKFLOW_ID } }
-          : {},
-    });
-
-    const result = await seedEnrichmentWorkflow({
-      client,
-      logicFunctionId: 'logic-function-1',
-      seed: SEED,
-    });
-
-    expect(result.status).toBe('created');
-    expect(result.coreWorkflowId).toBe(CORE_WORKFLOW_ID);
   });
 });

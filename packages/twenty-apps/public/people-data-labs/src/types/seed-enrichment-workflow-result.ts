@@ -2,6 +2,6 @@ export type SeedEnrichmentWorkflowResult = {
   objectNameSingular: string;
   workflowName: string;
   status: 'created' | 'skipped' | 'failed';
-  coreWorkflowId?: string;
+  workflowId?: string;
   error?: string;
 };

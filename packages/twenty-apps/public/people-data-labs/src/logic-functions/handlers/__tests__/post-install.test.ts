@@ -16,30 +16,25 @@ const buildMetadataClient = (
     ),
   }) as unknown as MetadataApiClient;
 
-const buildCoreQueryResult = (request: unknown) => {
-  const req = request as AnyRequest;
-
-  if ('coreWorkflows' in req) {
-    return { coreWorkflows: { edges: [] } };
-  }
-
-  if ('coreWorkflowVersionsByCoreWorkflowId' in req) {
-    return {
-      coreWorkflowVersionsByCoreWorkflowId: [
-        { id: 'core-version-1', status: 'DRAFT' },
-      ],
-    };
-  }
-
-  return {};
-};
-
 const buildCoreClient = () =>
   createCoreApiClientMock({
-    queryResult: buildCoreQueryResult,
+    queryResult: (request: unknown) => {
+      const req = request as AnyRequest;
+      if ('workflows' in req) {
+        return { workflows: { edges: [] } };
+      }
+      if ('workflowVersions' in req) {
+        return {
+          workflowVersions: {
+            edges: [{ node: { id: 'version-1', status: 'DRAFT' } }],
+          },
+        };
+      }
+      return {};
+    },
     mutationResult: (request: unknown) =>
-      'createCoreWorkflow' in (request as AnyRequest)
-        ? { createCoreWorkflow: { id: 'core-workflow-new' } }
+      'createWorkflow' in (request as AnyRequest)
+        ? { createWorkflow: { id: 'workflow-new' } }
         : {},
   });
 
@@ -112,20 +107,29 @@ describe('postInstallCore', () => {
     ]);
 
     const coreClient = createCoreApiClientMock({
-      queryResult: buildCoreQueryResult,
+      queryResult: (request: unknown) => {
+        const req = request as AnyRequest;
+        if ('workflows' in req) {
+          return { workflows: { edges: [] } };
+        }
+        if ('workflowVersions' in req) {
+          return {
+            workflowVersions: {
+              edges: [{ node: { id: 'version-1', status: 'DRAFT' } }],
+            },
+          };
+        }
+        return {};
+      },
       mutationResult: (request: unknown) => {
         const req = request as AnyRequest;
-
-        if ('createCoreWorkflow' in req) {
-          const args = (req.createCoreWorkflow as AnyRequest)
-            ?.__args as AnyRequest;
-          const workflowName = (args?.input as AnyRequest)?.name;
-
+        if ('createWorkflow' in req) {
+          const args = (req.createWorkflow as AnyRequest)?.__args as AnyRequest;
+          const workflowName = (args?.data as AnyRequest)?.name;
           return workflowName === 'Enrich companies with People Data Labs'
-            ? { createCoreWorkflow: {} }
-            : { createCoreWorkflow: { id: 'core-workflow-person' } };
+            ? { createWorkflow: {} }
+            : { createWorkflow: { id: 'workflow-person' } };
         }
-
         return {};
       },
     });
