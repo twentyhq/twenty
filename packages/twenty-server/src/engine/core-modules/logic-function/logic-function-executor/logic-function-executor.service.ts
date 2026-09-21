@@ -115,6 +115,7 @@ export class LogicFunctionExecutorService {
     executionMode,
     workspaceDeletionRequestTimestamp,
     retry = { retryCount: 0, maxRetries: 0 },
+    shouldEnforceUsageLimits = true,
   }: {
     logicFunctionId: string;
     workspaceId: string;
@@ -124,6 +125,7 @@ export class LogicFunctionExecutorService {
     executionMode?: LogicFunctionExecutionMode;
     workspaceDeletionRequestTimestamp?: string;
     retry?: LogicFunctionRetryContext;
+    shouldEnforceUsageLimits?: boolean;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, applicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
@@ -137,11 +139,13 @@ export class LogicFunctionExecutorService {
 
     await this.throttleExecution(workspaceId);
 
-    await this.assertExecutionAllowed({
-      workspaceId,
-      flatApplication,
-      flatLogicFunction,
-    });
+    if (shouldEnforceUsageLimits) {
+      await this.assertExecutionAllowed({
+        workspaceId,
+        flatApplication,
+        flatLogicFunction,
+      });
+    }
 
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,

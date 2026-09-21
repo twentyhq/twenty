@@ -519,6 +519,7 @@ export class ApplicationInstallService {
       logicFunctionId: flatLogicFunction.id,
       workspaceId,
       payload,
+      shouldEnforceUsageLimits: false,
     });
 
     if (!isDefined(result)) {
@@ -650,6 +651,7 @@ export class ApplicationInstallService {
       logicFunctionId: flatLogicFunction.id,
       workspaceId,
       payload,
+      shouldEnforceUsageLimits: false,
     });
 
     if (!isDefined(result)) {

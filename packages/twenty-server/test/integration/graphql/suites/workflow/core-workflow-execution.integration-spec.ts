@@ -945,7 +945,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     await waitForRun(runId, 'COMPLETED');
   });
 
-  it('preserves the subscription check and execution when billing enforcement is disabled', async () => {
+  it('fails the run when the subscription is inactive', async () => {
     const fixture = await createFixture({ mirrorless: true });
     const subscriptionCheck = jest
       .spyOn(
@@ -954,7 +954,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       )
       .mockResolvedValue('WORKSPACE_SUSPENDED');
     const runId = await runFixture(fixture);
-    const run = await waitForRun(runId, 'COMPLETED');
+    const run = await waitForRun(runId, 'FAILED');
     expect(subscriptionCheck).toHaveBeenCalledWith(workspaceId);
     expect(run.coreWorkflowVersionId).toBe(fixture.coreWorkflowVersionId);
     expect(run.state.flow.steps).toEqual(fixture.steps);
