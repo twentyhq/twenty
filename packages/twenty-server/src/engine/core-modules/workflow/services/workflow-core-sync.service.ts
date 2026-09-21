@@ -104,8 +104,6 @@ export class WorkflowCoreSyncService {
       return;
     }
 
-    const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
-
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -164,7 +162,6 @@ export class WorkflowCoreSyncService {
           : null,
         createdAt: new Date(workflow.createdAt),
         universalIdentifier: uuidv4(),
-        applicationId,
       };
     });
 

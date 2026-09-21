@@ -106,8 +106,6 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
-    const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
-
     const coreWorkflowIdByWorkflowId =
       await this.resolveCoreWorkflowIdByWorkflowId(
         workspaceId,
@@ -156,7 +154,6 @@ export class WorkflowVersionCoreSyncService {
         steps: workflowVersion.steps ?? null,
         status: toCoreWorkflowVersionStatus(workflowVersion.status),
         universalIdentifier: uuidv4(),
-        applicationId,
       };
     });
 
