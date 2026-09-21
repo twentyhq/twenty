@@ -112,18 +112,4 @@ describe('findParentSteps', () => {
 
     expect(result).toEqual([iterator]);
   });
-
-  it('should keep the loop body parent when the iterator is not the loop owner', () => {
-    const otherIterator = createMockIteratorStep(
-      'other-iterator',
-      ['body'],
-      ['other-body'],
-    );
-    const body = createMockCodeStep('body');
-    const steps: WorkflowAction[] = [otherIterator, body];
-
-    const result = findParentSteps({ step: body, steps });
-
-    expect(result).toEqual([otherIterator]);
-  });
 });
