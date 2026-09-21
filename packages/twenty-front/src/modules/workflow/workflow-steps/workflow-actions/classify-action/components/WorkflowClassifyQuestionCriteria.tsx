@@ -59,32 +59,34 @@ export const WorkflowClassifyQuestionCriteria = ({
   onChange,
 }: WorkflowClassifyQuestionCriteriaProps) => {
   const { t } = useLingui();
-  const [rows, setRows] = useState(() => [
-    ...criteria.filter(hasContent),
-    createEmptyCriterion(),
-  ]);
-
-  const updateRows = (updatedRows: WorkflowClassifyCriterion[]) => {
-    const filledRows = updatedRows.filter(hasContent);
-    const emptyRow = updatedRows.find((row) => !hasContent(row));
-    setRows([...filledRows, emptyRow ?? createEmptyCriterion()]);
-    onChange(filledRows);
-  };
+  const [emptyCriterion, setEmptyCriterion] = useState(createEmptyCriterion);
 
   const changeCriterion = (
     id: string,
     update: Partial<WorkflowClassifyCriterion>,
   ) => {
-    updateRows(
-      rows.map((row) => (row.id === id ? { ...row, ...update } : row)),
+    if (id === emptyCriterion.id) {
+      const criterion = { ...emptyCriterion, ...update };
+
+      if (hasContent(criterion)) {
+        setEmptyCriterion(createEmptyCriterion());
+        onChange([...criteria, criterion]);
+      }
+
+      return;
+    }
+
+    onChange(
+      criteria.map((criterion) =>
+        criterion.id === id ? { ...criterion, ...update } : criterion,
+      ),
     );
   };
 
-  const visibleRows = readonly
-    ? criteria
-    : rows.filter(
-        (row, index) => hasContent(row) || index < (maxCriteria ?? Infinity),
-      );
+  const visibleRows =
+    readonly || criteria.length >= (maxCriteria ?? Infinity)
+      ? criteria
+      : [...criteria, emptyCriterion];
 
   return (
     <StyledContainer>
@@ -120,13 +122,13 @@ export const WorkflowClassifyQuestionCriteria = ({
           />
           {!readonly && (
             <Button
-              disabled={!hasContent(criterion)}
+              disabled={criterion.id === emptyCriterion.id}
               startIcon={<IconTrash />}
               aria-label={
                 variant === 'options' ? t`Delete option` : t`Delete level`
               }
               onClick={() =>
-                updateRows(rows.filter((row) => row.id !== criterion.id))
+                onChange(criteria.filter((row) => row.id !== criterion.id))
               }
             />
           )}
