@@ -153,17 +153,45 @@ describe('Email workflow actions with no sender configured (integration)', () =>
     });
   }, 60000);
 
-  it('keeps the account pinned on the step even when another member owns it', async () => {
-    const subject = `Pinned sender send ${randomUUID()}`;
+  it('fails the step rather than sending from an account pinned on the step that another member keeps private', async () => {
+    const sentMessageCount = google.sentMessages.length;
 
     const workflowRun = await runWorkflowActionStep({
-      name: 'Pinned sender send email workflow',
+      name: 'Pinned private sender send email workflow',
+      stepType: 'SEND_EMAIL',
+      input: {
+        connectedAccountId: oldestAccount.connectedAccountId,
+        recipients: { to: RECIPIENT, cc: '', bcc: '' },
+        subject: `Pinned private sender ${randomUUID()}`,
+        body: '<p>Pinned private sender body</p>',
+      },
+    });
+
+    expect(workflowRun).toMatchObject({
+      status: 'FAILED',
+      stepStatus: 'FAILED',
+      stepError: expect.stringContaining('is not usable by this caller'),
+    });
+    expect(google.sentMessages).toHaveLength(sentMessageCount);
+  }, 60000);
+
+  it('sends from an account pinned on the step once its owner shares it with the workspace', async () => {
+    await setAccountOwnership({
+      connectedAccountId: oldestAccount.connectedAccountId,
+      userWorkspaceId: OTHER_MEMBER_USER_WORKSPACE_ID,
+      visibility: 'workspace',
+    });
+
+    const subject = `Pinned shared sender send ${randomUUID()}`;
+
+    const workflowRun = await runWorkflowActionStep({
+      name: 'Pinned shared sender send email workflow',
       stepType: 'SEND_EMAIL',
       input: {
         connectedAccountId: oldestAccount.connectedAccountId,
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject,
-        body: '<p>Pinned sender send body</p>',
+        body: '<p>Pinned shared sender send body</p>',
       },
     });
 
@@ -236,7 +264,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
       status: 'FAILED',
       stepStatus: 'FAILED',
       stepError: expect.stringContaining(
-        `No connected account available for user workspace '${CALLER_USER_WORKSPACE_ID}'`,
+        'No connected account available to this caller',
       ),
     });
     expect(google.sentMessages).toHaveLength(sentMessageCount);

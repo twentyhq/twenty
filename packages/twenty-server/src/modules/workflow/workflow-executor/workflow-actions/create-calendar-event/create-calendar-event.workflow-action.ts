@@ -36,10 +36,8 @@ export class CreateCalendarEventWorkflowAction extends ToolBackedWorkflowAction<
   protected override async buildToolExecutionContext(
     runInfo: WorkflowRunInfo,
   ): Promise<ToolExecutionContext> {
-    const authContext =
-      await this.workflowExecutionContextService.getWorkflowApplicationAuthContext(
-        runInfo,
-      );
+    const { authContext } =
+      await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
     return { workspaceId: runInfo.workspaceId, authContext };
   }
