@@ -339,7 +339,7 @@ export const WorkflowEditActionClassify = ({
 
             <StyledQuestionHeader>
               <FormTextFieldInput
-                label={t`Result name`}
+                label={t`Name`}
                 hint={t`Use this name to find the answer in later workflow steps.`}
                 defaultValue={question.name}
                 placeholder={
