@@ -1,6 +1,9 @@
 import { type GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 import { buildRecordJsonObjectSql } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/build-record-json-object-sql.util';
-import { SUB_QUERY_ALIAS } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
+import {
+  JSONB_BUILD_OBJECT_MAX_PAIRS,
+  SUB_QUERY_ALIAS,
+} from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 
 const buildGroupByDefinition = (
@@ -43,9 +46,10 @@ describe('buildRecordJsonObjectSql', () => {
     expect(sql).not.toContain('"record"');
   });
 
-  it('should chunk past the postgres 100-argument function limit', () => {
+  it('should chunk past the postgres function argument limit', () => {
+    const columnCount = JSONB_BUILD_OBJECT_MAX_PAIRS + 2;
     const columnNames = Array.from(
-      { length: 52 },
+      { length: columnCount },
       (_unused, index) => `column${index}`,
     );
 
@@ -57,8 +61,10 @@ describe('buildRecordJsonObjectSql', () => {
     const chunks = sql.split(' || ');
 
     expect(chunks).toHaveLength(2);
-    expect(chunks[0].split(', ').length / 2).toBe(50);
-    expect(chunks[1].split(', ').length / 2).toBe(3);
+    expect(chunks[0].split(', ').length / 2).toBe(JSONB_BUILD_OBJECT_MAX_PAIRS);
+    expect(chunks[1].split(', ').length / 2).toBe(
+      columnCount + 1 - JSONB_BUILD_OBJECT_MAX_PAIRS,
+    );
     expect(
       chunks.every((chunkSql) => chunkSql.startsWith('JSONB_BUILD_OBJECT(')),
     ).toBe(true);

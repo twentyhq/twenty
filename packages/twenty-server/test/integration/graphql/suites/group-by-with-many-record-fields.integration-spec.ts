@@ -12,9 +12,10 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { JSONB_BUILD_OBJECT_MAX_PAIRS } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
+
 const OBJECT_NAME_SINGULAR = 'groupByManyFields';
 const OBJECT_NAME_PLURAL = 'groupByManyFieldsRecords';
-const JSON_BUILD_OBJECT_MAX_PAIRS = 50;
 const ADDRESS_FIELD_NAMES = [
   'shippingAddress',
   'billingAddress',
@@ -173,9 +174,9 @@ describe('group-by with more than 50 selected record columns', () => {
     });
   });
 
-  it('selects more record columns than JSON_BUILD_OBJECT accepts as pairs', () => {
+  it('selects more record columns than one JSONB_BUILD_OBJECT call accepts', () => {
     expect(SELECTED_RECORD_COLUMN_COUNT).toBeGreaterThan(
-      JSON_BUILD_OBJECT_MAX_PAIRS,
+      JSONB_BUILD_OBJECT_MAX_PAIRS,
     );
   });
 
