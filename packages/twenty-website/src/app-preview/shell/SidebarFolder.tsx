@@ -112,7 +112,7 @@ export function SidebarFolder({
           <MiniIcon
             color={THEME_LIGHT.font.color.tertiary}
             icon={IconChevronDown}
-            size={12}
+            size={THEME_LIGHT.icon.size.sm}
           />
         </FolderChevron>
       </FolderButton>
