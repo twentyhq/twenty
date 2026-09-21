@@ -16,7 +16,6 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CONSUME_QUOTA_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/consume-quota-counters-script.constant';
 import { RELEASE_STOCK_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/release-stock-counters-script.constant';
-import { STOCK_METERS } from 'src/engine/core-modules/usage-limit/constants/usage-meters.constant';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
@@ -27,6 +26,7 @@ import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spen
 import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
 import { type StockCounter } from 'src/engine/core-modules/usage-limit/types/stock-counter.type';
 import { type StockLimitDefault } from 'src/engine/core-modules/usage-limit/types/stock-limit-default.type';
+import { type StockMeter } from 'src/engine/core-modules/usage-limit/types/stock-meter.type';
 import { type StockResourceType } from 'src/engine/core-modules/usage-limit/types/stock-resource-type.type';
 import { buildStockCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter-key.util';
 import { buildStockCounters } from 'src/engine/core-modules/usage-limit/utils/build-stock-counters.util';
@@ -148,14 +148,18 @@ export class UsageLimitStockService {
     operationType,
     spenderType,
     spenderId,
+    meter,
+    limitValue,
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
     operationType: UsageOperationType;
     spenderType: SpenderType;
-    spenderId: string;
+    spenderId: string | null;
+    meter: StockMeter;
+    limitValue: number;
   }) {
-    const keys = STOCK_METERS.map((meter) =>
+    const keys = [
       buildStockCounterKey({
         workspaceId,
         resourceType,
@@ -163,8 +167,9 @@ export class UsageLimitStockService {
         spenderType,
         spenderId,
         meter,
+        limitValue,
       }),
-    );
+    ];
 
     if (isStockResourceType(resourceType)) {
       keys.push(
