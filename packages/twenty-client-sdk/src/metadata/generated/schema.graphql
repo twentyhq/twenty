@@ -548,6 +548,11 @@ type Application {
   autoUpgrade: Boolean!
   defaultRoleId: String
   settingsCustomTabFrontComponentId: UUID
+  healthCheckLogicFunctionId: UUID
+  healthStatus: ApplicationHealthStatus
+  healthMessage: String
+  healthActionLabel: String
+  healthCheckedAt: DateTime
   defaultLogicFunctionRole: Role
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!
@@ -557,6 +562,13 @@ type Application {
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
   logoUrl: String
+}
+
+enum ApplicationHealthStatus {
+  OK
+  WARNING
+  ERROR
+  UNKNOWN
 }
 
 type TwoFactorAuthenticationMethodSummary {
@@ -4059,6 +4071,7 @@ type Mutation {
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
   syncMarketplaceCatalog: Boolean!
+  runApplicationHealthCheck(applicationId: UUID!): Boolean!
   createOneField(input: CreateOneFieldMetadataInput!): Field!
   updateOneField(input: UpdateOneFieldMetadataInput!): Field!
   deleteOneField(input: DeleteOneFieldInput!): Field!

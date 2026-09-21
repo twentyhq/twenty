@@ -26,6 +26,12 @@
   color: var(--t-font-color-inverted);
 }
 
+.primaryWarning {
+  backdrop-filter: blur(5px);
+  background: var(--t-color-orange);
+  color: var(--t-font-color-inverted);
+}
+
 .secondaryBlue {
   backdrop-filter: none;
   background: var(--t-background-transparent-blue);
@@ -36,4 +42,10 @@
   backdrop-filter: none;
   background: var(--t-background-transparent-danger);
   color: var(--t-color-red);
+}
+
+.secondaryWarning {
+  backdrop-filter: none;
+  background: var(--t-background-transparent-orange);
+  color: var(--t-color-orange);
 }

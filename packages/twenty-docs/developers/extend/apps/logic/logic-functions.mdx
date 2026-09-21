@@ -818,6 +818,50 @@ const handler = async (params: { parentMessageId?: string }) => {
 **Install hooks** — pre-install, post-install, and uninstall handlers — share this runtime but are declared with their own define functions and don't take trigger settings. See [Install Hooks](/developers/extend/apps/config/install-hooks) for `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, and `defineUninstallLogicFunction`.
 </Note>
 
+## Health check
+
+Declare a health check with `defineHealthCheck` to report whether your app is actually able to run. It is for what only the app can know: a key that is present but revoked, an account on the wrong plan, a webhook that was never registered. What Twenty can see by itself — a required variable nobody filled in — is covered by [`isRequired`](/developers/extend/apps/config/application) and needs no code.
+
+It runs server-side, so it reads secret variables like any other logic function.
+
+```ts src/logic-functions/health-check.ts
+import { defineHealthCheck } from 'twenty-sdk/define';
+
+export default defineHealthCheck({
+  universalIdentifier: 'f3b6a4d2-9c81-4e0a-b5c7-2d1e8f4a6b03',
+  name: 'health-check',
+  handler: async () => {
+    const response = await fetch('https://api.stripe.com/v1/account', {
+      headers: { Authorization: `Bearer ${process.env.API_KEY}` },
+    });
+
+    if (response.status === 401) {
+      return {
+        status: 'error',
+        message: 'Your Stripe key was revoked',
+        action: { label: 'Reconnect' },
+      };
+    }
+
+    return { status: 'ok' };
+  },
+});
+```
+
+The result is a discriminated union, not a boolean:
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `status` | Yes | `ok`, `warning` or `error` |
+| `message` | For `warning` / `error` | Shown in the banner on the app's settings page |
+| `action` | No | `{ label }` for the banner's button, which opens the app's configuration tab |
+
+Twenty runs the check when the app's settings page opens and stores the result on the application, so it never blocks the page on a third party.
+
+A check that throws, times out or returns a shape Twenty cannot read is recorded as **unknown**, never as an error, and no banner is shown. A third-party outage should not paint every installed app red — if it did, people would learn to ignore the signal.
+
+Only one health check is allowed per app; declaring more than one fails the build.
+
 ## Create a timeline activity
 
 Use `createTimelineActivity()` to publish an explicit domain event from a logic function. Define the event first as a [timeline activity type](/developers/extend/apps/data/timeline-activity-types), then address the type and objects by their stable universal identifiers:

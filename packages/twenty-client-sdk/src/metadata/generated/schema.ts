@@ -363,6 +363,11 @@ export interface Application {
     autoUpgrade: Scalars['Boolean']
     defaultRoleId?: Scalars['String']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
+    healthCheckLogicFunctionId?: Scalars['UUID']
+    healthStatus?: ApplicationHealthStatus
+    healthMessage?: Scalars['String']
+    healthActionLabel?: Scalars['String']
+    healthCheckedAt?: Scalars['DateTime']
     defaultLogicFunctionRole?: Role
     agents: Agent[]
     frontComponents: FrontComponent[]
@@ -374,6 +379,8 @@ export interface Application {
     logoUrl?: Scalars['String']
     __typename: 'Application'
 }
+
+export type ApplicationHealthStatus = 'OK' | 'WARNING' | 'ERROR' | 'UNKNOWN'
 
 export interface TwoFactorAuthenticationMethodSummary {
     twoFactorAuthenticationMethodId: Scalars['UUID']
@@ -3485,6 +3492,7 @@ export interface Mutation {
     updateApplication: Application
     uninstallApplication: Scalars['Boolean']
     syncMarketplaceCatalog: Scalars['Boolean']
+    runApplicationHealthCheck: Scalars['Boolean']
     createOneField: Field
     updateOneField: Field
     deleteOneField: Field
@@ -4007,6 +4015,11 @@ export interface ApplicationGenqlSelection{
     autoUpgrade?: boolean | number
     defaultRoleId?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
+    healthCheckLogicFunctionId?: boolean | number
+    healthStatus?: boolean | number
+    healthMessage?: boolean | number
+    healthActionLabel?: boolean | number
+    healthCheckedAt?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
     agents?: AgentGenqlSelection
     frontComponents?: FrontComponentGenqlSelection
@@ -7298,6 +7311,7 @@ export interface MutationGenqlSelection{
     updateApplication?: (ApplicationGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateApplicationInput} })
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
     syncMarketplaceCatalog?: boolean | number
+    runApplicationHealthCheck?: { __args: {applicationId: Scalars['UUID']} }
     createOneField?: (FieldGenqlSelection & { __args: {input: CreateOneFieldMetadataInput} })
     updateOneField?: (FieldGenqlSelection & { __args: {input: UpdateOneFieldMetadataInput} })
     deleteOneField?: (FieldGenqlSelection & { __args: {input: DeleteOneFieldInput} })
@@ -10459,6 +10473,13 @@ export const enumRowLevelPermissionPredicateOperand = {
    IS_IN_FUTURE: 'IS_IN_FUTURE' as const,
    IS_TODAY: 'IS_TODAY' as const,
    VECTOR_SEARCH: 'VECTOR_SEARCH' as const
+}
+
+export const enumApplicationHealthStatus = {
+   OK: 'OK' as const,
+   WARNING: 'WARNING' as const,
+   ERROR: 'ERROR' as const,
+   UNKNOWN: 'UNKNOWN' as const
 }
 
 export const enumPermissionFlagType = {

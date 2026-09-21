@@ -10,6 +10,7 @@ import {
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationHealthStatus } from 'src/engine/core-modules/application/enums/application-health-status.enum';
 import { ApplicationRegistrationSummaryDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-summary.dto';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
@@ -100,6 +101,29 @@ export class ApplicationDTO {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   settingsCustomTabFrontComponentId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  healthCheckLogicFunctionId?: string;
+
+  @IsOptional()
+  @Field(() => ApplicationHealthStatus, { nullable: true })
+  healthStatus?: ApplicationHealthStatus;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  healthMessage?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  healthActionLabel?: string;
+
+  @IsOptional()
+  @Field(() => Date, { nullable: true })
+  healthCheckedAt?: Date;
 
   @IsOptional()
   @Field(() => RoleDTO, { nullable: true })

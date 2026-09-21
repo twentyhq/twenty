@@ -18,6 +18,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -43,7 +44,9 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
+import { useApplicationHealthCheck } from '~/pages/settings/applications/hooks/useApplicationHealthCheck';
 import { useApplicationVariablesDraft } from '~/pages/settings/applications/hooks/useApplicationVariablesDraft';
+import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
 import { SettingsApplicationMissingConfigurationBanner } from '~/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab';
@@ -184,6 +187,20 @@ export const SettingsApplicationDetails = () => {
     ? CUSTOM_SETTINGS_TAB_ID
     : VARIABLES_TAB_ID;
 
+  useApplicationHealthCheck({
+    applicationId,
+    healthCheckLogicFunctionId: application?.healthCheckLogicFunctionId,
+    refetchApplication: refetch,
+  });
+
+  const healthStatus = application?.healthStatus;
+  const healthMessage = application?.healthMessage;
+
+  const shouldDisplayHealthBanner =
+    !isNonEmptyArray(missingRequiredApplicationVariables) &&
+    isDefined(healthStatus) &&
+    isNonEmptyString(healthMessage);
+
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
     // A custom settings tab lays out the application variables itself, so
@@ -297,6 +314,14 @@ export const SettingsApplicationDetails = () => {
             <SettingsApplicationMissingConfigurationBanner
               missingApplicationVariables={missingRequiredApplicationVariables}
               onConfigure={() => setActiveTabId(configurationTabId)}
+            />
+          )}
+          {shouldDisplayHealthBanner && (
+            <SettingsApplicationHealthBanner
+              healthStatus={healthStatus}
+              healthMessage={healthMessage}
+              healthActionLabel={application?.healthActionLabel}
+              onAction={() => setActiveTabId(configurationTabId)}
             />
           )}
           {isApplicationStopped && (

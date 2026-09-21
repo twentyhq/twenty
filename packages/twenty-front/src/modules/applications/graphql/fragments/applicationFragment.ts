@@ -25,6 +25,11 @@ export const APPLICATION_FRAGMENT = gql`
     autoUpgrade
     defaultRoleId
     settingsCustomTabFrontComponentId
+    healthCheckLogicFunctionId
+    healthStatus
+    healthMessage
+    healthActionLabel
+    healthCheckedAt
     availablePackages
     applicationVariables {
       id

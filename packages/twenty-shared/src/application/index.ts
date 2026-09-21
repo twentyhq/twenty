@@ -36,6 +36,15 @@ export {
   APPLICATION_CATEGORIES,
   isKnownApplicationCategory,
 } from './applicationCategoryType';
+export type {
+  ApplicationHealthCheckReportedStatus,
+  ApplicationHealthCheckAction,
+  ApplicationHealthCheckResult,
+} from './applicationHealthType';
+export {
+  APPLICATION_HEALTH_CHECK_REPORTED_STATUSES,
+  isApplicationHealthCheckResult,
+} from './applicationHealthType';
 export type { ApplicationManifest } from './applicationType';
 export type {
   ApplicationVariableType,
@@ -140,6 +149,7 @@ export type {
   FrontComponentManifest,
 } from './frontComponentManifestType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
+export type { HealthCheckLogicFunctionApplicationManifest } from './healthCheckLogicFunctionApplicationType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
 export type {
