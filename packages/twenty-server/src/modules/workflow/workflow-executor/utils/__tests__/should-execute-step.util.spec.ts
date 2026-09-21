@@ -565,4 +565,39 @@ describe('shouldExecuteStep', () => {
 
     expect(result).toBe(false);
   });
+  it('should return true for a loop body whose iterator is skipped, because skip propagation into a loop is dispatched by the iterator and not inferred from parents', () => {
+    const iterator = createMockIteratorStep('iterator', ['body'], ['body']);
+    const body = createMockCodeStep('body', ['iterator']);
+    const allSteps: WorkflowAction[] = [iterator, body];
+
+    const result = shouldExecuteStep({
+      step: body,
+      steps: allSteps,
+      stepInfos: {
+        iterator: { status: StepStatus.SKIPPED },
+        body: { status: StepStatus.NOT_STARTED },
+      },
+      workflowRunStatus: WorkflowRunStatus.RUNNING,
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false for a loop body already marked skipped by its iterator', () => {
+    const iterator = createMockIteratorStep('iterator', ['body'], ['body']);
+    const body = createMockCodeStep('body', ['iterator']);
+    const allSteps: WorkflowAction[] = [iterator, body];
+
+    const result = shouldExecuteStep({
+      step: body,
+      steps: allSteps,
+      stepInfos: {
+        iterator: { status: StepStatus.SKIPPED },
+        body: { status: StepStatus.SKIPPED },
+      },
+      workflowRunStatus: WorkflowRunStatus.RUNNING,
+    });
+
+    expect(result).toBe(false);
+  });
 });
