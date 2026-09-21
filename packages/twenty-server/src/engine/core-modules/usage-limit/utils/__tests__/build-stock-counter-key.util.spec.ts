@@ -14,19 +14,20 @@ const buildKey = (
     spenderType: 'workspace',
     spenderId: null,
     meter: 'bytes',
+    limitValue: 1000,
     ...overrides,
   });
 
 describe('buildStockCounterKey', () => {
   it('hashes on the workspace so every counter of a workspace shares a slot', () => {
     expect(buildKey()).toBe(
-      `{${WORKSPACE_ID}}:stock:STORAGE:STORAGE_FILE:workspace:-:bytes`,
+      `{${WORKSPACE_ID}}:stock:STORAGE:STORAGE_FILE:workspace:-:bytes:1000`,
     );
   });
 
   it('names an absent spender rather than leaving the segment empty', () => {
     expect(buildKey({ spenderType: 'application', spenderId: 'app-1' })).toBe(
-      `{${WORKSPACE_ID}}:stock:STORAGE:STORAGE_FILE:application:app-1:bytes`,
+      `{${WORKSPACE_ID}}:stock:STORAGE:STORAGE_FILE:application:app-1:bytes:1000`,
     );
   });
 
@@ -34,6 +35,7 @@ describe('buildStockCounterKey', () => {
     ['operationType', { operationType: UsageOperationType.CALL_RECORDING }],
     ['meter', { meter: 'quantity' as const }],
     ['spenderId', { spenderId: 'app-1' }],
+    ['limitValue', { limitValue: 2000 }],
   ])(
     'gives two limits differing only by %s their own counter',
     (_, differs) => {
