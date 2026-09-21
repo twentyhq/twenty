@@ -37,7 +37,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Adds a shadow to the button."
+        "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
       },
       {
         "name": "emphasis",
@@ -163,7 +163,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Adds a shadow to the button."
+        "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
       },
       {
         "name": "focusableWhenDisabled",
@@ -268,7 +268,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "true",
-        "description": "Adds a shadow to the button."
+        "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
       },
       {
         "name": "endIcon",
@@ -380,7 +380,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Adds a shadow to the button."
+        "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
       },
       {
         "name": "emphasis",
@@ -499,7 +499,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Adds a shadow to the button."
+        "description": "Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors."
       },
       {
         "name": "endIcon",

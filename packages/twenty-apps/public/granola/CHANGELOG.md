@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0
+## 1.0.0
 
 - Connect a workspace or personal Granola API key; the key type is detected and the signed webhook is registered automatically.
 - Synchronize shared summaries and speaker transcripts into Call Recordings with conservative calendar matching.

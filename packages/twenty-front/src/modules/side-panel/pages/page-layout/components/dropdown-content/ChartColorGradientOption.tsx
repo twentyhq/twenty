@@ -1,3 +1,4 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT } from '@/side-panel/pages/page-layout/constants/ChartSettingsPaletteColorGroupCount';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
@@ -5,7 +6,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ThemeColor } from 'twenty-ui/theme';
 type ChartColorGradientOptionProps = {
@@ -64,18 +65,22 @@ export const ChartColorGradientOption = ({
         onSelectColor(colorOption.colorName);
       }}
     >
-      <MenuItemSelect
-        text={colorOption.name}
-        selected={false}
+      <ListItem
         focused={
           selectedItemId === colorOption.id || currentColor === colorOption.id
         }
-        contextualText={colorSamples}
-        contextualTextPosition="right"
         onClick={() => {
           onSelectColor(colorOption.colorName);
         }}
-      />
+        role="option"
+        aria-selected={false}
+        selected={false}
+        indicator="check"
+        description={colorSamples}
+        descriptionPlacement={'end'}
+      >
+        <OverflowingTextWithTooltip text={colorOption.name} />
+      </ListItem>
     </SelectableListItem>
   );
 };
