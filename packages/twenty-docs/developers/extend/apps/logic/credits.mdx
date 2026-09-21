@@ -126,9 +126,9 @@ Notes:
 
 ## Checking before you spend
 
-A workspace can run out of credits. Your app is not stopped when that happens, but some of the platform's own work is. `runAgent` returns an error instead of running, and the other AI entry points refuse outright. So an app that does its expensive work first and calls the platform at the end can fail late, on a call it did not write.
+A workspace can run out of credits. When it does, the platform refuses to start your app's next logic function: the run fails before your handler is called, and so do AI entry points, workflow steps and outbound email. Charges themselves are never refused — a charge reports work you have already paid a provider for, so it is always recorded — which means the moment you find out is the *next* thing your app tries to do.
 
-Ask first:
+Ask first, and your app decides how to stop rather than being stopped mid-way:
 
 ```ts
 import { getCreditAvailability } from 'twenty-sdk/billing';
@@ -146,8 +146,28 @@ Notes:
 
 - It answers whether the workspace may spend, not how much it has left. Your app does not see the balance or the plan.
 - It fails open. If the check times out or the server is unreachable it reports credits available, so an infrastructure hiccup does not stop your app. Treat it as a hint worth honouring, not as an authorization decision.
-- It is a snapshot. Credits can run out between the check and the work.
-- The gate is not applied uniformly. Workflow runs are not credit-gated, and neither is every outbound email path, so a `false` here tells you the workspace is out of credits rather than predicting exactly which calls will fail.
+- It is a snapshot. Credits can run out between the check and the work — including because of your own charges, since every charge you make moves the same counter this reads.
+- A `false` tells you the workspace is out of credits. It does not predict which specific call will fail: not every outbound path is gated identically.
+
+### Batch work
+
+One check at the top of a run is not enough when the run charges as it goes. A batch that enriches 3,000 records charges after every chunk, so it can exhaust the workspace halfway through its own records and keep spending against a balance that is already gone. Check inside the loop instead:
+
+```ts
+for (const recordIdsChunk of chunk({ items: recordIds, size: 100 })) {
+  const { hasAvailableCredits } = await getCreditAvailability();
+
+  if (!hasAvailableCredits) {
+    break;
+  }
+
+  await enrichChunk({ recordIds: recordIdsChunk });
+}
+```
+
+Report the records you skipped rather than failing the whole run — the ones you already enriched were charged for, and the caller needs to know which are left. The People Data Labs app does this in `runBatchEnrichment`.
+
+The cost of the check is one request per chunk, against a chunk that is already doing real work. Size your chunks so that ratio stays sensible.
 
 ## Telling people what it costs
 

@@ -55,7 +55,23 @@ export const USAGE_LIMIT_DEFINITIONS = {
       allowedMeters: ['creditsUsedMicro', 'quantity'],
     },
   },
-  [UsageResourceType.APP]: {},
+  [UsageResourceType.APP]: {
+    quota: {
+      allowedOperationTypes: [
+        UsageOperationType.AI_CHAT_TOKEN,
+        UsageOperationType.AI_WORKFLOW_TOKEN,
+        UsageOperationType.WORKFLOW_EXECUTION,
+        UsageOperationType.CODE_EXECUTION,
+        UsageOperationType.WEB_SEARCH,
+        UsageOperationType.CALL_RECORDING,
+        UsageOperationType.EMAIL_SEND,
+      ],
+      allowedSpenderTypes: ['workspace', 'application', 'userWorkspace'],
+      // Quantity is whatever the charging app decided it counts, so it is not
+      // comparable between two apps sharing an operation type.
+      allowedMeters: ['creditsUsedMicro'],
+    },
+  },
   [UsageResourceType.STORAGE]: {
     stock: {
       allowedOperationTypes: [UsageOperationType.STORAGE_FILE],

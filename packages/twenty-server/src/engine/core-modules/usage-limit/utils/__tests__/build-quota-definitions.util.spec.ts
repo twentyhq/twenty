@@ -11,6 +11,7 @@ describe('buildQuotaDefinitions', () => {
     ).toEqual([
       [UsageResourceType.AI, 'quota'],
       [UsageResourceType.WORKFLOW, 'quota'],
+      [UsageResourceType.APP, 'quota'],
       [UsageResourceType.LOGIC_FUNCTION, 'quota'],
     ]);
   });

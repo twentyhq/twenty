@@ -1,16 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { chargeCredits } from 'twenty-sdk/billing';
+import { chargeCredits, getCreditAvailability } from 'twenty-sdk/billing';
 
 import { PDL_ACCESS_ERROR_MESSAGE } from 'src/constants/pdl-access-error-message';
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
-import { runBatchEnrichment } from 'src/logic-functions/utils/run-batch-enrichment';
+import {
+  OUT_OF_CREDITS_MESSAGE,
+  runBatchEnrichment,
+} from 'src/logic-functions/utils/run-batch-enrichment';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 
 vi.mock('twenty-sdk/billing', () => ({
   chargeCredits: vi.fn(async () => undefined),
+  getCreditAvailability: vi.fn(async () => ({ hasAvailableCredits: true })),
 }));
 
 const FAKE_COST_PER_MATCH_DOLLARS = 0.1;
@@ -144,6 +148,10 @@ const INVALID_API_KEY_OUTCOME: PdlEnrichResult<FakeData> = {
 describe('runBatchEnrichment', () => {
   beforeEach(() => {
     vi.mocked(chargeCredits).mockClear();
+    vi.mocked(getCreditAvailability).mockReset();
+    vi.mocked(getCreditAvailability).mockResolvedValue({
+      hasAvailableCredits: true,
+    });
   });
 
   it('reads every id in one call and enriches the set in one batch', async () => {
@@ -428,6 +436,32 @@ describe('runBatchEnrichment', () => {
     expect(harness.readRecords).toHaveBeenCalledTimes(2);
     expect(harness.enrichBatch).toHaveBeenCalledTimes(2);
     expect(result.matched).toBe(150);
+  });
+
+  it('stops enriching the remaining chunks once the workspace runs out of credits', async () => {
+    const ids = buildRecordIds(150);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+
+    vi.mocked(getCreditAvailability)
+      .mockResolvedValueOnce({ hasAvailableCredits: true })
+      .mockResolvedValueOnce({
+        hasAvailableCredits: false,
+        reason: 'no-credits',
+      });
+
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: ids.map((id) => ({ id })) },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.enrichBatch).toHaveBeenCalledTimes(1);
+    expect(result.matched).toBe(100);
+    expect(result.results[149]).toMatchObject({
+      recordId: 'r149',
+      status: 'ERROR',
+      error: OUT_OF_CREDITS_MESSAGE,
+    });
   });
 
   it('stops enriching the remaining chunks when PDL rejects the API key', async () => {

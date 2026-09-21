@@ -7,6 +7,7 @@ import { chargeMatchedEnrichments } from 'src/logic-functions/utils/charge-match
 
 vi.mock('twenty-sdk/billing', () => ({
   chargeCredits: vi.fn(async () => undefined),
+  getCreditAvailability: vi.fn(async () => ({ hasAvailableCredits: true })),
 }));
 
 describe('chargeMatchedEnrichments', () => {

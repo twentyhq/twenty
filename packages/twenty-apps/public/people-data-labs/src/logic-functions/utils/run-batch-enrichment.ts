@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { getCreditAvailability } from 'twenty-sdk/billing';
 
 import { aggregateBulkEnrichResult } from 'src/logic-functions/utils/aggregate-bulk-enrich-result';
 import {
@@ -17,6 +18,9 @@ import { isDefined } from 'src/utils/is-defined';
 
 const PDL_BATCH_SIZE = 100;
 
+export const OUT_OF_CREDITS_MESSAGE =
+  'Enrichment stopped: this workspace has run out of credits.';
+
 export const runBatchEnrichment = async <TNode, TData, TParams>({
   client,
   input,
@@ -30,8 +34,18 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
   const resultById = new Map<string, EnrichResult>();
   const companyIdByMatchKeyCache: CompanyIdByMatchKeyCache = new Map();
   let pdlAccessErrorMessage: string | undefined;
+  let outOfCreditsMessage: string | undefined;
 
+  // Checked per chunk rather than once up front: a batch charges as it goes,
+  // so a single run can exhaust the workspace halfway through its own records.
   for (const recordIdsChunk of chunk({ items: recordIds, size: PDL_BATCH_SIZE })) {
+    const { hasAvailableCredits } = await getCreditAvailability();
+
+    if (!hasAvailableCredits) {
+      outOfCreditsMessage = OUT_OF_CREDITS_MESSAGE;
+      break;
+    }
+
     const enrichChunkResult = await enrichChunk({
       client,
       recordIds: recordIdsChunk,
@@ -53,7 +67,10 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
       resultById.get(recordId) ??
       buildErrorResult({
         recordId,
-        error: pdlAccessErrorMessage ?? ENRICHMENT_FAILED_MESSAGE,
+        error:
+          pdlAccessErrorMessage ??
+          outOfCreditsMessage ??
+          ENRICHMENT_FAILED_MESSAGE,
       }),
   );
 
