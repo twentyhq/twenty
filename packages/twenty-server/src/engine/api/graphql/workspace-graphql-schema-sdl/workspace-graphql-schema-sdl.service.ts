@@ -14,8 +14,11 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { SCHEMA_SDL_CACHE_DEPENDENCIES } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/constants/schema-sdl-cache-dependencies.constant';
@@ -88,9 +91,22 @@ export class WorkspaceGraphqlSchemaSDLService {
           TWENTY_STANDARD_APPLICATION.universalIdentifier
         ];
 
-      const applicationIds = isDefined(twentyStandardApplicationId)
-        ? [twentyStandardApplicationId, applicationId]
-        : [applicationId];
+      const relationTargetApplicationIds =
+        this.getTransitiveRelationTargetApplicationIds({
+          applicationId,
+          allFlatFieldMetadataMaps,
+          allFlatObjectMetadataMaps,
+        });
+
+      const applicationIds = [
+        ...new Set([
+          applicationId,
+          ...(isDefined(twentyStandardApplicationId)
+            ? [twentyStandardApplicationId]
+            : []),
+          ...relationTargetApplicationIds,
+        ]),
+      ];
 
       flatObjectMetadataMaps = this.filterFlatEntityMapsByApplicationIds(
         allFlatObjectMetadataMaps,
@@ -233,5 +249,42 @@ export class WorkspaceGraphqlSchemaSDLService {
       applicationIds,
       flatEntityMaps,
     });
+  }
+
+  // Single-hop only: resolves relation targets declared on the requested
+  // application's own fields, without recursing into the newly-included
+  // application's own relation fields. This matches the confirmed two-app
+  // reproduction scope (twentyhq/twenty#26188); a deeper chain would still
+  // fail closed at the existing generator throw rather than silently
+  // producing an incomplete schema.
+  private getTransitiveRelationTargetApplicationIds({
+    applicationId,
+    allFlatFieldMetadataMaps,
+    allFlatObjectMetadataMaps,
+  }: {
+    applicationId: string;
+    allFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    allFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  }): string[] {
+    const applicationFlatFieldMetadatas = findFlatEntitiesByApplicationId({
+      applicationId,
+      flatEntityMaps: allFlatFieldMetadataMaps,
+    });
+
+    const relationTargetApplicationIds = applicationFlatFieldMetadatas
+      .filter(isMorphOrRelationFlatFieldMetadata)
+      .map((flatFieldMetadata) => {
+        if (!isDefined(flatFieldMetadata.relationTargetObjectMetadataId)) {
+          return undefined;
+        }
+
+        return findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId,
+          flatEntityMaps: allFlatObjectMetadataMaps,
+        })?.applicationId;
+      })
+      .filter(isDefined);
+
+    return [...new Set(relationTargetApplicationIds)];
   }
 }
