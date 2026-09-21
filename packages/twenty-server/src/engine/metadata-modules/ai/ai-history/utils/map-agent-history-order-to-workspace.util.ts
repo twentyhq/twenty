@@ -19,6 +19,14 @@ const isRelationOrder = (
   Object.keys(value).some((key) => key !== 'direction' && key !== 'nulls');
 
 const mapOrderValue = (value: FindOptionsOrderValue): OrderByValueLike => {
+  // Workspace find options support only one level of relation ordering.
+  if (isRelationOrder(value)) {
+    throw new AgentHistoryStorageException(
+      'INVALID_CRITERIA',
+      'Nested history relation ordering is not supported',
+    );
+  }
+
   const direction = isObject(value) ? value.direction : value;
   const nulls = isObject(value) ? value.nulls : undefined;
 

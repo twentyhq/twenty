@@ -57,6 +57,14 @@ describe('mapAgentHistoryOrderToWorkspace', () => {
     ).toEqual({});
   });
 
+  it('rejects deeper relation ordering before generating a query', () => {
+    expect(() =>
+      mapAgentHistoryOrderToWorkspace('agentChatThread', {
+        messages: { parts: { createdAt: 'ASC' } },
+      }),
+    ).toThrow('Nested history relation ordering is not supported');
+  });
+
   it.each([
     ['{"createdAt":"sideways"}', 'Invalid history sort direction'],
     [
