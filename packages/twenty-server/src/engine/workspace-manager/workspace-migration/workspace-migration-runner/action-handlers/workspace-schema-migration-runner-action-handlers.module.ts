@@ -119,9 +119,11 @@ import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
     CreateWorkflowActionHandlerService,
     UpdateWorkflowActionHandlerService,
     DeleteWorkflowActionHandlerService,
+
     CreateWorkflowVersionActionHandlerService,
     UpdateWorkflowVersionActionHandlerService,
     DeleteWorkflowVersionActionHandlerService,
+
     CreateFieldActionHandlerService,
     UpdateFieldActionHandlerService,
     DeleteFieldActionHandlerService,
