@@ -44,6 +44,16 @@ describe('selectDefaultConnectedAccount', () => {
     ).toBe('teammate');
   });
 
+  it('prefers the account of the person who started the run', () => {
+    expect(
+      selectDefaultConnectedAccount({
+        authContext: { type: 'application' } as WorkspaceAuthContext,
+        initiatorUserWorkspaceId: USER_WORKSPACE_ID,
+        connectedAccounts: [teammateAccount, ownAccount],
+      })?.id,
+    ).toBe('own');
+  });
+
   it('returns nothing when no account is available', () => {
     expect(
       selectDefaultConnectedAccount({

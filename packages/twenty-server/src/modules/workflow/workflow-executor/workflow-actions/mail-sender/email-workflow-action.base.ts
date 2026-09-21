@@ -10,6 +10,7 @@ import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/to
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
 import { buildEmailStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
 import { resolveEmailBody } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-body.util';
@@ -59,10 +60,19 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
   protected override async buildToolExecutionContext(
     runInfo: WorkflowRunInfo,
   ): Promise<ToolExecutionContext> {
-    const { authContext } =
-      await this.workflowExecutionContextService.getExecutionContext(runInfo);
+    const [authContext, { authContext: initiatorAuthContext }] =
+      await Promise.all([
+        this.workflowExecutionContextService.getWorkflowApplicationAuthContext(
+          runInfo,
+        ),
+        this.workflowExecutionContextService.getExecutionContext(runInfo),
+      ]);
 
-    return { workspaceId: runInfo.workspaceId, authContext };
+    return {
+      workspaceId: runInfo.workspaceId,
+      authContext,
+      ...getUserFromAuthContext(initiatorAuthContext),
+    };
   }
 
   protected buildStepLog({

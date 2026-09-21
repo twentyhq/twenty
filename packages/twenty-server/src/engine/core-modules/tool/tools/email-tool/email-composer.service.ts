@@ -299,6 +299,7 @@ export class EmailComposerService {
             messageFolders: true,
           },
         },
+        initiatorUserWorkspaceId: context.userWorkspaceId,
       });
 
     const messageChannel =

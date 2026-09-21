@@ -53,6 +53,9 @@ describe('DraftEmailWorkflowAction', () => {
         {
           provide: WorkflowExecutionContextService,
           useValue: {
+            getWorkflowApplicationAuthContext: jest
+              .fn()
+              .mockResolvedValue({ type: 'application' }),
             getExecutionContext: jest
               .fn()
               .mockResolvedValue({ authContext: { type: 'application' } }),

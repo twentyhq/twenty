@@ -21,6 +21,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { buildUnsupportedOperationMessage } from 'src/engine/metadata-modules/connected-account/utils/build-unsupported-operation-message.util';
 import { canActorActAsConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/can-actor-act-as-connected-account.util';
 import { canActorSeeConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/can-actor-see-connected-account.util';
+import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { selectDefaultConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/select-default-connected-account.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -210,11 +211,13 @@ export class ConnectedAccountAccessService {
     connectedAccountId,
     operation,
     relations,
+    initiatorUserWorkspaceId,
   }: {
     authContext: WorkspaceAuthContext;
     connectedAccountId: string | undefined;
     operation: ConnectedAccountOperation;
     relations?: FindOptionsRelations<ConnectedAccountEntity>;
+    initiatorUserWorkspaceId?: string;
   }): Promise<ConnectedAccountEntity> {
     if (isNonEmptyString(connectedAccountId)) {
       return this.getActableConnectedAccountOrThrow({
@@ -231,12 +234,22 @@ export class ConnectedAccountAccessService {
       });
     }
 
+    const actableConnectedAccounts = await this.listActableConnectedAccounts({
+      authContext,
+      operation,
+    });
+
     const defaultConnectedAccount = selectDefaultConnectedAccount({
       authContext,
-      connectedAccounts: await this.listActableConnectedAccounts({
-        authContext,
-        operation,
-      }),
+      initiatorUserWorkspaceId,
+      connectedAccounts: isDefined(initiatorUserWorkspaceId)
+        ? actableConnectedAccounts.filter((connectedAccount) =>
+            isConnectedAccountUsableByCaller({
+              connectedAccount,
+              userWorkspaceId: initiatorUserWorkspaceId,
+            }),
+          )
+        : actableConnectedAccounts,
     });
 
     if (!isDefined(defaultConnectedAccount)) {
