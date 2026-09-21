@@ -25,9 +25,9 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type WorkflowClassifyQuestion } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 import {
-  IconChartBar,
-  IconCheckbox,
-  IconCircleDot,
+  IconStairs,
+  IconPercentage,
+  IconListCheck,
   IconPlus,
   IconTrash,
 } from 'twenty-ui/icon';
@@ -105,9 +105,9 @@ export const WorkflowEditActionClassify = ({
   };
 
   const questionTypeIcons = {
-    choice: IconCircleDot,
-    score: IconChartBar,
-    boolean: IconCheckbox,
+    choice: IconListCheck,
+    score: IconStairs,
+    boolean: IconPercentage,
   };
 
   const aiEvaluationModels = useAtomStateValue(aiEvaluationModelsState);
