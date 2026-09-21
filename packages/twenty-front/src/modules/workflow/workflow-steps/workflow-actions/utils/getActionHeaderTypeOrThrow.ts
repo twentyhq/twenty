@@ -20,7 +20,7 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
   }
 
   if (RECORD_ACTIONS.some((action) => action.type === actionType)) {
-    return msg`Data`;
+    return msg`Record`;
   }
 
   if (AI_ACTIONS.some((action) => action.type === actionType)) {

@@ -17,7 +17,6 @@ import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAg
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { useWorkflowVersionContent } from '@/workflow/workflow-version/hooks/useWorkflowVersionContent';
-import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
@@ -137,9 +136,7 @@ export const SidePanelWorkflowStepInfo = ({
     ? getTriggerIconColor(stepDefinition.definition.type)
     : getActionIconColorOrThrow(stepDefinition.definition.type);
 
-  const headerType = isTrigger
-    ? t`Trigger`
-    : t(getActionHeaderTypeOrThrow(stepDefinition.definition.type));
+  const headerType = isTrigger ? t`Trigger` : t`Action`;
 
   const label = isDefined(thirdPartyApplicationInformation)
     ? thirdPartyApplicationInformation.name

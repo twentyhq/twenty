@@ -13,6 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import {
   type AiEvaluationQuestionType,
   AI_EVALUATION_QUESTION_TYPES,
+  JEV_MODEL_ID,
 } from 'twenty-shared/ai';
 import { type WorkflowClassifyQuestion } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
@@ -81,7 +82,7 @@ export const WorkflowEditActionClassify = ({
   const aiEvaluationModels = useAtomStateValue(aiEvaluationModelsState);
 
   const effectiveEvaluationModel = aiEvaluationModels.find(
-    (model) => model.modelId === 'typesafe-ai/jev-latest',
+    (model) => model.modelId === JEV_MODEL_ID,
   );
 
   const questionTypeOptions = AI_EVALUATION_QUESTION_TYPES.map(

@@ -5,7 +5,7 @@ const WORKSPACE_ID = 'workspace-id';
 
 const buildAiAgentStep = (agentId: string, stepId = 'step-1') => ({
   id: stepId,
-  name: 'Agent',
+  name: 'AI Agent',
   type: 'AI_AGENT',
   valid: true,
   settings: { input: { agentId }, outputSchema: {} },

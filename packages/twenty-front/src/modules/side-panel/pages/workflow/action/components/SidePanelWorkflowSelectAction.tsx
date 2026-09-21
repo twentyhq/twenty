@@ -1,3 +1,4 @@
+import { JEV_MODEL_ID } from 'twenty-shared/ai';
 import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -29,8 +30,8 @@ export const SidePanelWorkflowSelectAction = ({
   const { t } = useLingui();
 
   const aiEvaluationModels = useAtomStateValue(aiEvaluationModelsState);
-  const jevAvailable = aiEvaluationModels.some(
-    (model) => model.modelId === 'typesafe-ai/jev-latest' && model.isAvailable,
+  const isJevAvailable = aiEvaluationModels.some(
+    (model) => model.modelId === JEV_MODEL_ID && model.isAvailable,
   );
 
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
@@ -44,7 +45,7 @@ export const SidePanelWorkflowSelectAction = ({
   );
 
   const handleActionClick = (actionType: WorkflowActionType) => {
-    if (actionType === 'CLASSIFY' && !jevAvailable) {
+    if (actionType === 'CLASSIFY' && !isJevAvailable) {
       return;
     }
     onActionSelected({ type: actionType });
@@ -77,11 +78,11 @@ export const SidePanelWorkflowSelectAction = ({
           action.type === 'CLASSIFY'
             ? {
                 ...action,
-                disabled: !jevAvailable,
-                contextualText: jevAvailable
+                disabled: !isJevAvailable,
+                contextualText: isJevAvailable
                   ? undefined
                   : t`TypeSafe AI API key missing`,
-                tooltip: jevAvailable
+                tooltip: isJevAvailable
                   ? undefined
                   : t`Ask your administrator to configure TYPESAFE_AI_API_KEY in Settings → Admin panel and enable Jev.`,
               }

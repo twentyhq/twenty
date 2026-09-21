@@ -22,7 +22,7 @@ const getWorkflowVersionStepExceptionUserFriendlyMessage = (
     case WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE:
       return msg`Code step execution failed.`;
     case WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE:
-      return msg`Agent step execution failed.`;
+      return msg`AI agent step execution failed.`;
     default:
       assertUnreachable(code);
   }

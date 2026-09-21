@@ -12,25 +12,25 @@ export const getActionIconColorOrThrow = (
     case 'SEND_EMAIL':
     case 'DRAFT_EMAIL':
     case 'CREATE_CALENDAR_EVENT':
-      return themeCssVariables.color.red9;
+      return themeCssVariables.color.red;
     case 'CREATE_RECORD':
     case 'UPDATE_RECORD':
     case 'DELETE_RECORD':
     case 'UPSERT_RECORD':
     case 'FIND_RECORDS':
     case 'PICK_RECORD':
-      return themeCssVariables.color.gray9;
+      return themeCssVariables.font.color.tertiary;
     case 'FORM':
-      return themeCssVariables.color.orange9;
+      return themeCssVariables.color.orange;
     case 'ITERATOR':
     case 'EMPTY':
     case 'FILTER':
     case 'IF_ELSE':
     case 'DELAY':
-      return themeCssVariables.color.green9;
+      return themeCssVariables.color.green12;
     case 'AI_AGENT':
     case 'CLASSIFY':
-      return themeCssVariables.color.pink9;
+      return themeCssVariables.color.pink;
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);
   }

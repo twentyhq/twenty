@@ -7,10 +7,8 @@ import { type AiEvaluationRequest } from 'src/engine/metadata-modules/ai/ai-eval
 import { type AiEvaluationResult } from 'src/engine/metadata-modules/ai/ai-evaluation/types/ai-evaluation-result.type';
 import { assertEvaluationQuestionsAreWellFormed } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/assert-evaluation-questions-are-well-formed.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
+import { resolveJevEvaluationModelId } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/resolve-jev-evaluation-model-id.util';
+import { JEV_MODEL_ID } from 'twenty-shared/ai';
 
 @Injectable()
 export class AiEvaluationService {
@@ -30,23 +28,13 @@ export class AiEvaluationService {
   }: AiEvaluationRequest): Promise<AiEvaluationResult> {
     assertEvaluationQuestionsAreWellFormed(questions);
 
-    const modelId = 'typesafe-ai/jev-latest';
+    const modelId = resolveJevEvaluationModelId({
+      requestedModelId,
+      isModelAvailable:
+        this.aiModelRegistryService.isModelAdminAllowed(JEV_MODEL_ID) &&
+        isDefined(this.aiModelRegistryService.getEvaluationModel(JEV_MODEL_ID)),
+    });
     const runnerKind = 'evaluation-model' as const;
-    if (requestedModelId && requestedModelId !== modelId) {
-      throw new AiException(
-        'Classify only supports Jev. Remove the saved model override from this step.',
-        AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
-      );
-    }
-    if (
-      !this.aiModelRegistryService.isModelAdminAllowed(modelId) ||
-      !isDefined(this.aiModelRegistryService.getEvaluationModel(modelId))
-    ) {
-      throw new AiException(
-        'Jev is unavailable. Configure the TypeSafe AI API key and enable Jev before running Classify.',
-        AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
-      );
-    }
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,

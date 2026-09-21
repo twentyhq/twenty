@@ -1,3 +1,4 @@
+import { JEV_MODEL_ID } from 'twenty-shared/ai';
 import { setupI18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { I18nProvider } from '@lingui/react';
@@ -107,7 +108,7 @@ const renderEditor = (
   const store = createStore();
   store.set(aiEvaluationModelsState.atom, [
     {
-      modelId: 'typesafe-ai/jev',
+      modelId: JEV_MODEL_ID,
       label: 'Jev',
       isAvailable: evaluationAvailable,
       supportedQuestionTypes: ['choice', 'score', 'boolean'],

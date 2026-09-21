@@ -6,12 +6,12 @@ export const getTriggerIconColor = (
 ): string => {
   switch (triggerType) {
     case 'DATABASE_EVENT':
-      return themeCssVariables.color.blue9;
+      return themeCssVariables.color.blue;
     case 'CRON':
     case 'MANUAL':
     case 'WEBHOOK':
-      return themeCssVariables.color.purple9;
+      return themeCssVariables.color.purple;
     default:
-      return themeCssVariables.color.purple9;
+      return themeCssVariables.color.purple;
   }
 };

@@ -49,7 +49,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     if (!isWorkflowAiAgentAction(step)) {
       throw new WorkflowStepExecutorException(
-        'Step is not an Agent action',
+        'Step is not an AI Agent action',
         WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
       );
     }
@@ -109,7 +109,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     if (executionResult.hasNoMoreAvailableCredits) {
       return {
-        error: 'Agent stopped: no more available credits.',
+        error: 'AI agent stopped: no more available credits.',
       };
     }
 

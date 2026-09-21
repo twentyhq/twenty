@@ -177,7 +177,7 @@ export const WorkflowEditActionAiAgent = ({
     <TabListRoot componentInstanceId={componentInstanceId}>
       <StyledTabListContainer>
         <TabList
-          aria-label={t`Agent configuration`}
+          aria-label={t`AI agent configuration`}
           tabs={tabs}
           componentInstanceId={componentInstanceId}
           behaveAsLinks={false}

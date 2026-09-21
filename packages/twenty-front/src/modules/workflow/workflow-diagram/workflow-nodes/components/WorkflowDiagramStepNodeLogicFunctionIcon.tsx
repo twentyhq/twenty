@@ -1,7 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,7 +31,7 @@ export const WorkflowDiagramStepNodeLogicFunctionIcon = ({
   return (
     <FallbackIcon
       size={theme.icon.size.md}
-      color={getActionIconColorOrThrow('LOGIC_FUNCTION')}
+      color={theme.font.color.tertiary}
       stroke={theme.icon.stroke.sm}
     />
   );
