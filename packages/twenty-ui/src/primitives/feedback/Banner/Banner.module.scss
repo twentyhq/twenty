@@ -20,6 +20,12 @@
   color: var(--t-font-color-inverted);
 }
 
+.primaryGray {
+  backdrop-filter: blur(5px);
+  background: var(--t-font-color-secondary);
+  color: var(--t-font-color-inverted);
+}
+
 .primaryDanger {
   backdrop-filter: blur(5px);
   background: var(--t-color-red);
@@ -36,4 +42,10 @@
   backdrop-filter: none;
   background: var(--t-background-transparent-danger);
   color: var(--t-color-red);
+}
+
+.secondaryGray {
+  backdrop-filter: none;
+  background: var(--t-background-transparent-light);
+  color: var(--t-font-color-secondary);
 }
