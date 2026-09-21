@@ -58,9 +58,6 @@ export const WorkflowClassifyQuestionCriteria = ({
 }: WorkflowClassifyQuestionCriteriaProps) => {
   const { t } = useLingui();
   const [rows, setRows] = useState(() => [...criteria, createEmptyCriterion()]);
-  const [expandedDescriptions, setExpandedDescriptions] = useState<string[]>(
-    [],
-  );
 
   const updateRows = (updatedRows: WorkflowClassifyCriterion[]) => {
     const filledRows = updatedRows.filter(hasContent);
@@ -120,32 +117,17 @@ export const WorkflowClassifyQuestionCriteria = ({
                 )
               }
             />
-            {variant === 'options' &&
-              (isNonEmptyString(criterion.description) ||
-              expandedDescriptions.includes(criterion.id) ? (
-                <FormTextFieldInput
-                  defaultValue={criterion.description ?? ''}
-                  placeholder={t`When should this option be chosen?`}
-                  readonly={readonly}
-                  VariablePicker={WorkflowVariablePicker}
-                  onChange={(description) =>
-                    changeCriterion(criterion.id, { description })
-                  }
-                />
-              ) : (
-                !readonly &&
-                hasContent(criterion) && (
-                  <Button
-                    variant="ghost"
-                    onClick={() =>
-                      setExpandedDescriptions((previous) => [
-                        ...previous,
-                        criterion.id,
-                      ])
-                    }
-                  >{t`Add description`}</Button>
-                )
-              ))}
+            {variant === 'options' && (
+              <FormTextFieldInput
+                defaultValue={criterion.description ?? ''}
+                placeholder={t`When should this option be chosen?`}
+                readonly={readonly}
+                VariablePicker={WorkflowVariablePicker}
+                onChange={(description) =>
+                  changeCriterion(criterion.id, { description })
+                }
+              />
+            )}
           </StyledFields>
           {!readonly &&
             (hasContent(criterion) || index < visibleRows.length - 1) && (

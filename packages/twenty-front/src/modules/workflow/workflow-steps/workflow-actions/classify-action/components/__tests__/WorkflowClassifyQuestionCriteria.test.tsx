@@ -52,6 +52,9 @@ describe('WorkflowClassifyQuestionCriteria', () => {
         onChange={onChange}
       />,
     );
+    expect(
+      screen.getByPlaceholderText('When should this option be chosen?'),
+    ).toBeVisible();
     const input = screen.getByPlaceholderText('Option');
     await user.type(input, 'Billing');
     expect(input).toHaveFocus();
@@ -59,9 +62,11 @@ describe('WorkflowClassifyQuestionCriteria', () => {
     expect(onChange).toHaveBeenLastCalledWith([
       expect.objectContaining({ name: 'Billing' }),
     ]);
-    await user.click(screen.getByRole('button', { name: 'Add description' }));
+    expect(
+      screen.queryByRole('button', { name: 'Add description' }),
+    ).not.toBeInTheDocument();
     await user.type(
-      screen.getByPlaceholderText('When should this option be chosen?'),
+      screen.getAllByPlaceholderText('When should this option be chosen?')[0],
       'Invoices',
     );
     expect(onChange).toHaveBeenLastCalledWith([
@@ -129,7 +134,7 @@ describe('WorkflowClassifyQuestionCriteria', () => {
         onChange={jest.fn()}
       />,
     );
-    expect(screen.getAllByRole('textbox')).toHaveLength(1);
+    expect(screen.getAllByRole('textbox')).toHaveLength(2);
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 });
