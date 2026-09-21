@@ -6,6 +6,8 @@ import { computeRequestActor } from 'src/engine/utils/compute-request-actor.util
 import { type RequestTraceContext } from 'src/engine/utils/compute-request-trace-context.util';
 
 const MAX_LOGGED_RESOLVERS_LENGTH = 512;
+const MAX_LOGGED_REQUEST_ID_LENGTH = 128;
+const REQUEST_ID_PATTERN = /^[A-Za-z0-9_.:-]+$/;
 
 export const buildApiAccessLogLine = ({
   request,
@@ -31,7 +33,7 @@ export const buildApiAccessLogLine = ({
     auth_provider: request.authProvider ?? undefined,
     token_type: request.tokenType,
     client_ip: request.ip,
-    request_id: formatHeader(request.headers?.['x-request-id']),
+    request_id: formatRequestId(request.headers?.['x-request-id']),
     trace_id: traceContext?.traceId,
     span_id: traceContext?.spanId,
     trace_sampled: traceContext?.sampled,
@@ -46,8 +48,15 @@ const formatActor = (request: Request): Record<string, string | undefined> => {
     : { actor: 'anonymous' };
 };
 
-const formatHeader = (value: string | string[] | undefined) =>
-  Array.isArray(value) ? value[0] : value;
+const formatRequestId = (value: string | string[] | undefined) => {
+  const requestId = Array.isArray(value) ? value[0] : value;
+
+  return isNonEmptyString(requestId) &&
+    requestId.length <= MAX_LOGGED_REQUEST_ID_LENGTH &&
+    REQUEST_ID_PATTERN.test(requestId)
+    ? requestId
+    : undefined;
+};
 
 const formatResolvers = (resolvers: string[] | undefined) => {
   if (!isDefined(resolvers) || resolvers.length === 0) {

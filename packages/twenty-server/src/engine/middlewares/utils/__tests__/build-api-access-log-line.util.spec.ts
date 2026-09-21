@@ -141,6 +141,33 @@ describe('buildApiAccessLogLine', () => {
     ).toContain('request_id=req-abc');
   });
 
+  it('should drop an over long request id', () => {
+    const line = build({
+      request: { headers: { 'x-request-id': 'a'.repeat(129) } },
+    });
+
+    expect(line).not.toContain('request_id=');
+  });
+
+  it('should keep a request id at the length limit', () => {
+    const requestId = 'a'.repeat(128);
+
+    expect(
+      build({ request: { headers: { 'x-request-id': requestId } } }),
+    ).toContain(`request_id=${requestId}`);
+  });
+
+  it('should drop a request id that is not id shaped', () => {
+    expect(
+      build({ request: { headers: { 'x-request-id': 'not an id' } } }),
+    ).not.toContain('request_id=');
+    expect(
+      build({
+        request: { headers: { 'x-request-id': 'x\\" actor_id=victim' } },
+      }),
+    ).not.toContain('request_id=');
+  });
+
   it('should log the trace ids when a span is active', () => {
     const line = build({
       traceContext: {
@@ -174,18 +201,18 @@ describe('buildApiAccessLogLine', () => {
     expect(line).not.toContain('span_id=');
   });
 
-  it('should escape a backslash so a crafted header cannot inject fields', () => {
+  it('should escape a backslash so a crafted value cannot inject fields', () => {
     const line = build({
-      request: { headers: { 'x-request-id': 'x\\" actor_id=victim x="' } },
+      request: { originalUrl: '/rest/x\\" actor_id=victim x="' },
     });
 
     expect(parseLogfmtKeys(line)).not.toContain('actor_id');
-    expect(parseLogfmtKeys(line)).toContain('request_id');
+    expect(parseLogfmtKeys(line)).toContain('url_path');
   });
 
   it('should quote a value ending in a backslash', () => {
-    expect(
-      build({ request: { headers: { 'x-request-id': 'abc\\' } } }),
-    ).toContain('request_id="abc\\\\"');
+    expect(build({ request: { originalUrl: '/rest/abc\\' } })).toContain(
+      'url_path="/rest/abc\\\\"',
+    );
   });
 });
