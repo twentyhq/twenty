@@ -3,8 +3,6 @@ import { describe, expect, it } from 'vitest';
 import { isExternal } from '../../vite.shared';
 
 describe('isExternal', () => {
-  // Regression for #25824: every Node builtin must stay external so Vite's
-  // lib build never browser-stubs one the SDK relies on at runtime in Node.
   it.each([
     'crypto',
     'node:crypto',

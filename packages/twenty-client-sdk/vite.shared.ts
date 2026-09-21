@@ -9,9 +9,6 @@ const externalDeps = [
   ),
 ];
 
-// The SDK also runs in Node (server app sync, integration tests), but Vite's
-// lib build resolves for the browser and stubs any bundled Node builtin, which
-// throws when Node touches it. Externalize them all so they stay real imports.
 const nodeBuiltins = new Set<string>([
   ...builtinModules,
   ...builtinModules.map((moduleName) => `node:${moduleName}`),
