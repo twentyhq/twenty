@@ -1,4 +1,5 @@
 import {
+  mapAgentHistorySelectToWorkspace,
   mapAgentHistoryValuesToWorkspace,
   mapAgentHistoryWhereToWorkspace,
 } from 'src/engine/metadata-modules/ai/ai-history/utils/agent-history-workspace-mapping.util';
@@ -98,6 +99,7 @@ export class AgentHistoryRepository<
         );
         const records = await repository.find({
           ...options,
+          select: mapAgentHistorySelectToWorkspace(this.name, options?.select),
           order: mapAgentHistoryOrderToWorkspace(this.name, options?.order),
           where: mapAgentHistoryWhereToWorkspace<TRecord>(
             this.name,

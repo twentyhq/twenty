@@ -83,3 +83,32 @@ export function mapAgentHistoryWhereToWorkspace<
   const { deletedAt, ...rest } = where;
   return { ...rest, archivedAt: deletedAt };
 }
+
+export const mapAgentHistorySelectToWorkspace = <TRecord>(
+  objectName: AgentHistoryObjectName,
+  select: FindManyOptions<TRecord>['select'],
+): WorkspaceFindOptions['select'] => {
+  if (!select) {
+    return undefined;
+  }
+  const mapFieldName = (fieldName: string) =>
+    objectName === 'agentChatThread' && fieldName === 'deletedAt'
+      ? 'archivedAt'
+      : fieldName;
+
+  if (Array.isArray(select)) {
+    return select.map((fieldName) => mapFieldName(String(fieldName)));
+  }
+
+  return Object.fromEntries(
+    Object.entries(select).map(([fieldName, value]) => {
+      if (value !== undefined && typeof value !== 'boolean') {
+        throw new AgentHistoryStorageException(
+          'INVALID_CRITERIA',
+          'History field selections must be boolean',
+        );
+      }
+      return [mapFieldName(fieldName), value === true];
+    }),
+  );
+};

@@ -417,6 +417,21 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
       expect(archived.deletedAt).toEqual(new Date('2026-01-01T00:00:00Z'));
       expect(archived.createdAt).toBeInstanceOf(Date);
+      expect(archived.activeStreamId).toBeNull();
+      expect(archived.pendingQuestionMessageId).toBeNull();
+      const selected = await threads.findOneOrFail(WORKSPACE_ID, {
+        where: { id: THREAD_ID },
+        select: ['id', 'deletedAt', 'activeStreamId'],
+      });
+      expect(selected.deletedAt).toEqual(new Date('2026-01-01T00:00:00Z'));
+      expect(selected.activeStreamId).toBeNull();
+      const selectedWithObject = await threads.findOneOrFail(WORKSPACE_ID, {
+        where: { id: THREAD_ID },
+        select: { id: true, deletedAt: true },
+      });
+      expect(selectedWithObject.deletedAt).toEqual(
+        new Date('2026-01-01T00:00:00Z'),
+      );
       await threads.update(
         WORKSPACE_ID,
         { id: THREAD_ID },
@@ -429,7 +444,11 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         ['first', 'second'].map((stream) =>
           threads.update(
             WORKSPACE_ID,
-            { id: THREAD_ID, activeStreamId: IsNull() },
+            {
+              id: THREAD_ID,
+              activeStreamId: IsNull(),
+              pendingQuestionMessageId: IsNull(),
+            },
             { activeStreamId: stream },
           ),
         ),
@@ -446,6 +465,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         title: 'New workspace chat',
       });
       expect(created.createdAt).toBeInstanceOf(Date);
+      expect(created.activeStreamId).toBeNull();
       expect(created.totalInputCredits).toBe(0);
       expect(created.workspaceId).toBe(WORKSPACE_ID);
       const checkpointId = '20202020-8888-4888-8888-888888888888';
