@@ -1,3 +1,4 @@
+import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
@@ -27,6 +28,11 @@ export const SidePanelWorkflowSelectAction = ({
 }) => {
   const { t } = useLingui();
 
+  const aiEvaluationModels = useAtomStateValue(aiEvaluationModelsState);
+  const jevAvailable = aiEvaluationModels.some(
+    (model) => model.modelId === 'typesafe-ai/jev-latest' && model.isAvailable,
+  );
+
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -38,6 +44,7 @@ export const SidePanelWorkflowSelectAction = ({
   );
 
   const handleActionClick = (actionType: WorkflowActionType) => {
+    if (actionType === 'CLASSIFY' && !jevAvailable) return;
     onActionSelected({ type: actionType });
   };
 
@@ -64,7 +71,16 @@ export const SidePanelWorkflowSelectAction = ({
         {t`AI`}
       </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={AI_ACTIONS}
+        actions={AI_ACTIONS.map((action) =>
+          action.type === 'CLASSIFY' && !jevAvailable
+            ? {
+                ...action,
+                disabled: true,
+                description: t`Needs a TypeSafe AI API key`,
+                tooltip: t`Ask your administrator to configure TYPESAFE_AI_API_KEY in Settings → Admin panel and enable Jev.`,
+              }
+            : action,
+        )}
         onClick={handleActionClick}
       />
 
