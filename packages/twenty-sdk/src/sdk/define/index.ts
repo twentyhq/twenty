@@ -41,7 +41,10 @@ export type { TimelineActivityTypeManifest } from 'twenty-shared/application';
 
 export { defineSettingPage } from '@/sdk/define/setting-pages/define-setting-page';
 export type { SettingPageConfig } from '@/sdk/define/setting-pages/setting-page-config';
-export type { SettingPageManifest, SettingPageScope } from 'twenty-shared/application';
+export type {
+  SettingPageManifest,
+  SettingPageScope,
+} from 'twenty-shared/application';
 
 export {
   canAccessFullAdminPanel,

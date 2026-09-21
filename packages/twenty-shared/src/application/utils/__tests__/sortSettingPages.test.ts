@@ -8,9 +8,9 @@ describe('sortSettingPages', () => {
       { universalIdentifier: 'b', position: 1 },
     ]);
 
-    expect(sorted.map(({ universalIdentifier }) => universalIdentifier)).toEqual(
-      ['a', 'b', 'c'],
-    );
+    expect(
+      sorted.map(({ universalIdentifier }) => universalIdentifier),
+    ).toEqual(['a', 'b', 'c']);
   });
 
   it('should break a position tie on universalIdentifier so the order is stable across installs', () => {
@@ -19,9 +19,9 @@ describe('sortSettingPages', () => {
       { universalIdentifier: 'a', position: 1 },
     ]);
 
-    expect(sorted.map(({ universalIdentifier }) => universalIdentifier)).toEqual(
-      ['a', 'b'],
-    );
+    expect(
+      sorted.map(({ universalIdentifier }) => universalIdentifier),
+    ).toEqual(['a', 'b']);
   });
 
   it('should treat a missing position as 0', () => {
@@ -30,9 +30,9 @@ describe('sortSettingPages', () => {
       { universalIdentifier: 'a' },
     ]);
 
-    expect(sorted.map(({ universalIdentifier }) => universalIdentifier)).toEqual(
-      ['a', 'b'],
-    );
+    expect(
+      sorted.map(({ universalIdentifier }) => universalIdentifier),
+    ).toEqual(['a', 'b']);
   });
 
   it('should support fractional positions so a page can be slotted between two others', () => {
@@ -42,9 +42,9 @@ describe('sortSettingPages', () => {
       { universalIdentifier: 'a', position: 1 },
     ]);
 
-    expect(sorted.map(({ universalIdentifier }) => universalIdentifier)).toEqual(
-      ['a', 'b', 'c'],
-    );
+    expect(
+      sorted.map(({ universalIdentifier }) => universalIdentifier),
+    ).toEqual(['a', 'b', 'c']);
   });
 
   it('should not mutate the given array', () => {

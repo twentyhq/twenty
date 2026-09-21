@@ -20,7 +20,10 @@ export const defineSettingPage: DefineEntity<SettingPageConfig> = (config) => {
     errors.push('SettingPage must have a title');
   }
 
-  if (isNonEmptyString(config.title) && isReservedSettingPageTitle(config.title)) {
+  if (
+    isNonEmptyString(config.title) &&
+    isReservedSettingPageTitle(config.title)
+  ) {
     errors.push(
       `SettingPage title "${config.title}" is reserved for the built-in settings page`,
     );
