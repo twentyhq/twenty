@@ -1,5 +1,6 @@
 import { clsx } from 'clsx';
 import { useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { IconHelp, IconX } from '@ui/icon/components/TablerIcons';
@@ -34,7 +35,7 @@ const CALLOUT_ICON_VARIANT_CLASS_NAMES: Record<CalloutVariant, string> = {
 export type CalloutProps = {
   variant: CalloutVariant;
   title: string;
-  description: string;
+  description?: string;
   Icon?: IconComponent;
   action?: {
     label: string;
@@ -96,14 +97,16 @@ export const Callout = ({
           />
         )}
       </div>
-      <div
-        className={clsx(
-          styles.descriptionWrapper,
-          isDefined(action) && styles.descriptionWrapperWithAction,
-        )}
-      >
-        <div className={styles.description}>{description}</div>
-      </div>
+      {isNonEmptyString(description) && (
+        <div
+          className={clsx(
+            styles.descriptionWrapper,
+            isDefined(action) && styles.descriptionWrapperWithAction,
+          )}
+        >
+          <div className={styles.description}>{description}</div>
+        </div>
+      )}
       {isDefined(action) && (
         <div className={styles.footer}>
           <Button

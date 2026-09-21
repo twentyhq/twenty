@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/primitives/feedback';
+import { Callout } from 'twenty-ui/primitives/feedback';
 import { type ApplicationHealthStatus } from '~/generated-metadata/graphql';
 import { getApplicationHealthBannerAppearance } from '~/pages/settings/applications/utils/getApplicationHealthBannerAppearance';
 
@@ -21,15 +21,11 @@ export const SettingsApplicationHealthBanner = ({
   }
 
   return (
-    <InlineBanner
-      color={appearance.color}
-      LeftIcon={appearance.Icon}
-      message={healthMessage}
-      button={
-        isDefined(action)
-          ? { title: action.label, onClick: action.onClick }
-          : undefined
-      }
+    <Callout
+      variant={appearance.variant}
+      Icon={appearance.Icon}
+      title={healthMessage}
+      action={action}
     />
   );
 };

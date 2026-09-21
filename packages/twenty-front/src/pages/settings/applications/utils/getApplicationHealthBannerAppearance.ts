@@ -3,11 +3,11 @@ import {
   IconInfoCircle,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { type BannerColor } from 'twenty-ui/primitives/feedback';
+import { type CalloutVariant } from 'twenty-ui/primitives/feedback';
 import { ApplicationHealthStatus } from '~/generated-metadata/graphql';
 
 type ApplicationHealthBannerAppearance = {
-  color: BannerColor;
+  variant: CalloutVariant;
   Icon: IconComponent;
 };
 
@@ -15,11 +15,11 @@ const APPEARANCE_BY_STATUS: Partial<
   Record<ApplicationHealthStatus, ApplicationHealthBannerAppearance>
 > = {
   [ApplicationHealthStatus.INFO]: {
-    color: 'blue',
+    variant: 'info',
     Icon: IconInfoCircle,
   },
   [ApplicationHealthStatus.ERROR]: {
-    color: 'danger',
+    variant: 'error',
     Icon: IconAlertCircle,
   },
 };
