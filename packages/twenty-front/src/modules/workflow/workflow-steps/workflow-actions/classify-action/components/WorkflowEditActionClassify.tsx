@@ -322,7 +322,7 @@ export const WorkflowEditActionClassify = ({
 
             <Select
               dropdownId={`workflow-classify-question-type-${question.id}`}
-              label={t`Response type`}
+              label={t`Question type`}
               options={questionTypeOptions}
               dropdownWidth={GenericDropdownContentWidth.Large}
               value={question.type}

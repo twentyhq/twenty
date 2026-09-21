@@ -160,7 +160,7 @@ describe('WorkflowEditActionClassify', () => {
       screen.getAllByPlaceholderText('Designs and builds technical systems')[1],
     ).toHaveValue('');
     await user.selectOptions(
-      screen.getByRole('combobox', { name: 'Response type' }),
+      screen.getByRole('combobox', { name: 'Question type' }),
       'score',
     );
     expect(screen.getByPlaceholderText('react_experience')).toBeVisible();
