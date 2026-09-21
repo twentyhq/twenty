@@ -26,6 +26,110 @@ type Story = StoryObj<typeof IconButton>;
 
 export const Default: Story = { decorators: [ComponentDecorator] };
 
+export const Elevated: Story = {
+  ...Default,
+  args: { elevated: true, size: 'sm' },
+};
+
+export const ElevatedTooltip: Story = {
+  ...Elevated,
+  args: { ...Elevated.args, tooltip: 'Search records', tooltipDelay: 0 },
+};
+
+export const ElevatedAppearance: Story = {
+  ...Default,
+  args: { onClick: fn() },
+  render: (args) => (
+    <>
+      <IconButton {...args} aria-label="Regular action" />
+      <IconButton {...args} elevated aria-label="Elevated action" />
+      <IconButton {...args} elevated size="sm" aria-label="Compact action" />
+      <IconButton
+        {...args}
+        href="#search"
+        aria-label="Link without elevation"
+      />
+      <IconButton {...args} variant="solid" aria-label="Solid action" />
+      <IconButton
+        {...args}
+        variant="solid"
+        elevated
+        aria-label="Elevated solid action"
+      />
+      <IconButton {...args} color="accent" aria-label="Accent action" />
+      <IconButton
+        {...args}
+        color="accent"
+        elevated
+        aria-label="Elevated accent action"
+      />
+    </>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const regular = canvas.getByRole('button', { name: 'Regular action' });
+    const elevated = canvas.getByRole('button', { name: 'Elevated action' });
+    const compact = canvas.getByRole('button', { name: 'Compact action' });
+    const link = canvas.getByRole('link', { name: 'Link without elevation' });
+
+    await expect(regular.getBoundingClientRect().width).toBe(32);
+    await expect(getComputedStyle(regular).boxShadow).toBe('none');
+    await expect(getComputedStyle(regular).backdropFilter).toBe('none');
+    await expect(getComputedStyle(elevated).backgroundColor).not.toBe(
+      getComputedStyle(regular).backgroundColor,
+    );
+    await expect(getComputedStyle(elevated).borderColor).not.toBe(
+      getComputedStyle(regular).borderColor,
+    );
+    await expect(elevated.getBoundingClientRect().width).toBe(32);
+    await expect(elevated).toHaveAttribute('type', 'button');
+    await expect(compact.getBoundingClientRect().width).toBe(24);
+    await expect(compact.getBoundingClientRect().height).toBe(24);
+
+    for (const button of [elevated, compact]) {
+      await expect(getComputedStyle(button).boxShadow).not.toBe('none');
+      await expect(getComputedStyle(button).backdropFilter).not.toBe('none');
+      await expect(
+        button.querySelector('svg')?.getBoundingClientRect().width,
+      ).toBe(16);
+    }
+
+    for (const [regularName, elevatedName] of [
+      ['Solid action', 'Elevated solid action'],
+      ['Accent action', 'Elevated accent action'],
+    ]) {
+      const regularButton = canvas.getByRole('button', { name: regularName });
+      const elevatedButton = canvas.getByRole('button', { name: elevatedName });
+
+      for (const property of [
+        'backgroundColor',
+        'borderColor',
+        'color',
+      ] as const) {
+        await expect(getComputedStyle(elevatedButton)[property]).toBe(
+          getComputedStyle(regularButton)[property],
+        );
+      }
+      await expect(getComputedStyle(elevatedButton).boxShadow).not.toBe('none');
+      await expect(getComputedStyle(elevatedButton).backdropFilter).not.toBe(
+        'none',
+      );
+    }
+
+    elevated.focus();
+    await userEvent.keyboard('{Enter} ');
+    await expect(args.onClick).toHaveBeenCalledTimes(2);
+    await expect(link).toHaveAttribute('href', '#search');
+    await expect(getComputedStyle(link).boxShadow).toBe('none');
+    await expect(getComputedStyle(link).backdropFilter).toBe('none');
+  },
+};
+
+export const ElevatedAppearanceDark: Story = {
+  ...ElevatedAppearance,
+  globals: { colorScheme: 'dark' },
+};
+
 export const Keyboard: Story = {
   ...Default,
   args: { onClick: fn() },
@@ -184,6 +288,7 @@ export const Grouped: Story = {
 const CATALOG_STATES: Record<string, Partial<IconButtonProps>> = {
   default: {},
   small: { size: 'sm' },
+  elevated: { elevated: true },
   hover: { className: 'hover' },
   pressed: { className: 'pressed' },
   focused: { className: 'focused' },
