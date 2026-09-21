@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  FeatureFlagKey,
   RecordShareAccessLevel,
   RecordShareRowCause,
 } from 'twenty-shared/types';
@@ -15,7 +16,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
-import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util';
@@ -46,7 +46,6 @@ export class AgentChatSharingService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly recordShareService: RecordShareService,
-    private readonly sharingFeatureService: RecordSharingFeatureService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
   ) {}
@@ -75,9 +74,7 @@ export class AgentChatSharingService {
       return this.throwNotFound();
     }
     // SYSTEM history stays private even when generic record sharing is disabled.
-    if (
-      !(await this.sharingFeatureService.isRecordSharingEnabled(workspaceId))
-    ) {
+    if (!(await this.isThreadSharingEnabled(workspaceId))) {
       return this.throwNotFound();
     }
     const { objectMetadataId, principalIds } = await this.getShareContext(
@@ -103,11 +100,7 @@ export class AgentChatSharingService {
   async getSharedThreadIds(
     args: Omit<ThreadAccessArgs, 'threadId'>,
   ): Promise<string[]> {
-    if (
-      !(await this.sharingFeatureService.isRecordSharingEnabled(
-        args.workspaceId,
-      ))
-    ) {
+    if (!(await this.isThreadSharingEnabled(args.workspaceId))) {
       return [];
     }
     const userWorkspace = await this.assertActiveReader(args);
@@ -121,9 +114,7 @@ export class AgentChatSharingService {
   async getSharing(args: ThreadAccessArgs) {
     const thread = await this.getReadableThread(args);
     const canManage = thread.userWorkspaceId === args.userWorkspaceId;
-    const isEnabled = await this.sharingFeatureService.isRecordSharingEnabled(
-      args.workspaceId,
-    );
+    const isEnabled = await this.isThreadSharingEnabled(args.workspaceId);
     const objectMetadataId = await this.getThreadObjectMetadataId(
       args.workspaceId,
     );
@@ -178,9 +169,7 @@ export class AgentChatSharingService {
     }
     if (
       args.enabled &&
-      !(await this.sharingFeatureService.isRecordSharingEnabled(
-        args.workspaceId,
-      ))
+      !(await this.isThreadSharingEnabled(args.workspaceId))
     ) {
       throw new AiException(
         'Record sharing is not enabled for this workspace',
@@ -267,6 +256,17 @@ export class AgentChatSharingService {
       share.sourceId === share.recordId &&
       share.accessLevel === RecordShareAccessLevel.READ
     );
+  }
+
+  private async isThreadSharingEnabled(workspaceId: string): Promise<boolean> {
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['featureFlagsMap'],
+    );
+
+    // Thread sharing is available on every plan; role-based row policies have
+    // their own entitlement check.
+    return featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] === true;
   }
 
   private async assertActiveReader({

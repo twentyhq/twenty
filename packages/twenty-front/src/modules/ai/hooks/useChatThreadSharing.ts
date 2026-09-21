@@ -9,12 +9,17 @@ import {
   type ChatThreadShareTargetInput,
 } from '~/generated-metadata/graphql';
 
+const SHARING_REFRESH_INTERVAL_MS = 30_000;
+
 export const useChatThreadSharing = (threadId: string) => {
   const { data, loading, error, refetch } = useQuery(
     GetChatThreadSharingDocument,
     {
       variables: { threadId },
       fetchPolicy: 'network-only',
+      pollInterval: SHARING_REFRESH_INTERVAL_MS,
+      skipPollAttempt: () => document.visibilityState !== 'visible',
+      notifyOnNetworkStatusChange: false,
     },
   );
   const [setShareMutation, { loading: saving }] = useMutation(

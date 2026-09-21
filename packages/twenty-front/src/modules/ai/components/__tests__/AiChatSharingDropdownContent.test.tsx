@@ -13,14 +13,10 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const useSharing = jest.fn();
 const setShare = jest.fn();
 const refetch = jest.fn();
 const copyToClipboard = jest.fn();
 
-jest.mock('@/ai/hooks/useChatThreadSharing', () => ({
-  useChatThreadSharing: () => useSharing(),
-}));
 jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({ copyToClipboard }),
 }));
@@ -37,10 +33,23 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </JotaiProvider>
 );
 const renderSharing = (overrides = {}) => {
-  useSharing.mockReturnValue({ sharing, setShare, refetch, ...overrides });
-  return render(<AiChatSharingDropdownContent threadId="shared-thread" />, {
-    wrapper: Wrapper,
-  });
+  return render(
+    <AiChatSharingDropdownContent
+      threadId="shared-thread"
+      sharingState={{
+        sharing,
+        setShare,
+        refetch,
+        loading: false,
+        saving: false,
+        error: undefined,
+        ...overrides,
+      }}
+    />,
+    {
+      wrapper: Wrapper,
+    },
+  );
 };
 
 describe('Conversation sharing', () => {

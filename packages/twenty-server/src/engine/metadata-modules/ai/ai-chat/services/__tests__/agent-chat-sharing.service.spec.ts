@@ -1,6 +1,7 @@
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  FeatureFlagKey,
   RecordShareAccessLevel,
   RecordShareRowCause,
 } from 'twenty-shared/types';
@@ -40,11 +41,11 @@ const buildService = () => {
     findManualReadRecordIdsByPrincipals: jest.fn().mockResolvedValue([]),
     setManualShare: jest.fn(),
   };
-  const feature = { isRecordSharingEnabled: jest.fn().mockResolvedValue(true) };
   const permissions = {
     userHasWorkspaceSettingPermission: jest.fn().mockResolvedValue(true),
   };
   const maps = {
+    featureFlagsMap: { [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: true },
     flatObjectMetadataMaps: {
       byUniversalIdentifier: {
         [STANDARD_OBJECTS.agentChatThread.universalIdentifier]: {
@@ -69,7 +70,6 @@ const buildService = () => {
     threadRepository as never,
     userWorkspaceRepository as never,
     shares as never,
-    feature as never,
     cache as never,
     permissions as never,
   );
@@ -78,7 +78,6 @@ const buildService = () => {
     shares,
     threadRepository,
     userWorkspaceRepository,
-    feature,
     permissions,
     maps,
     thread,
@@ -94,9 +93,24 @@ const readShare = (principalId: string) => ({
 });
 
 describe('Agent chat sharing', () => {
-  it('keeps existing owners able to read without grants or a sharing entitlement', async () => {
-    const { service, feature, shares } = buildService();
-    feature.isRecordSharingEnabled.mockResolvedValue(false);
+  it('makes sharing available with the rollout flag and no Enterprise entitlement provider', async () => {
+    const { service } = buildService();
+    await expect(
+      service.getSharing({ ...args, userWorkspaceId: OWNER_ID }),
+    ).resolves.toMatchObject({ canManage: true, isEnabled: true });
+  });
+
+  it('keeps sharing unavailable when the rollout flag is absent', async () => {
+    const { service, maps } = buildService();
+    maps.featureFlagsMap = {} as typeof maps.featureFlagsMap;
+    await expect(
+      service.getSharing({ ...args, userWorkspaceId: OWNER_ID }),
+    ).resolves.toMatchObject({ canManage: true, isEnabled: false });
+  });
+
+  it('keeps existing owners able to read without grants when the rollout flag is disabled', async () => {
+    const { service, maps, shares } = buildService();
+    maps.featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] = false;
     await expect(
       service.getReadableThread({ ...args, userWorkspaceId: OWNER_ID }),
     ).resolves.toMatchObject({ id: THREAD_ID });
@@ -147,8 +161,8 @@ describe('Agent chat sharing', () => {
   });
 
   it('denies old grants when sharing is disabled', async () => {
-    const { service, feature, shares } = buildService();
-    feature.isRecordSharingEnabled.mockResolvedValue(false);
+    const { service, maps, shares } = buildService();
+    maps.featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] = false;
     shares.findByRecordIds.mockResolvedValue([
       readShare(EVERYONE_PRINCIPAL_ID),
     ]);
@@ -274,9 +288,9 @@ describe('Agent chat sharing', () => {
     ).rejects.toMatchObject({ code: 'INVALID_SHARE_WITH' });
   });
 
-  it('allows revocation after entitlement loss or member deletion', async () => {
-    const { service, feature, shares } = buildService();
-    feature.isRecordSharingEnabled.mockResolvedValue(false);
+  it('allows revocation after disabling the rollout flag or deleting a member', async () => {
+    const { service, maps, shares } = buildService();
+    maps.featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] = false;
     await service.setShare({
       ...args,
       userWorkspaceId: OWNER_ID,
@@ -321,6 +335,20 @@ describe('Agent chat sharing', () => {
     await expect(
       service.getReadableThread({ ...args, threadId: thread.id }),
     ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
+  });
+
+  it('rejects new grants while the rollout flag is disabled', async () => {
+    const { service, maps, shares } = buildService();
+    maps.featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] = false;
+    await expect(
+      service.setShare({
+        ...args,
+        userWorkspaceId: OWNER_ID,
+        target: { everyone: true },
+        enabled: true,
+      }),
+    ).rejects.toMatchObject({ code: 'INVALID_AGENT_INPUT' });
+    expect(shares.setManualShare).not.toHaveBeenCalled();
   });
 
   it('never shares the privileged workspace setup conversation', async () => {

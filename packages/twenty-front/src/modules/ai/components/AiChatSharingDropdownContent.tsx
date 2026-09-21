@@ -15,7 +15,7 @@ import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatSharingAction } from '@/ai/components/AiChatSharingAction';
-import { useChatThreadSharing } from '@/ai/hooks/useChatThreadSharing';
+import { type useChatThreadSharing } from '@/ai/hooks/useChatThreadSharing';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -34,14 +34,17 @@ const StyledDescription = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-type AiChatSharingDropdownContentProps = { threadId: string };
+type AiChatSharingDropdownContentProps = {
+  threadId: string;
+  sharingState: ReturnType<typeof useChatThreadSharing>;
+};
 
 export const AiChatSharingDropdownContent = ({
   threadId,
+  sharingState,
 }: AiChatSharingDropdownContentProps) => {
   const { t } = useLingui();
-  const { sharing, loading, error, saving, setShare, refetch } =
-    useChatThreadSharing(threadId);
+  const { sharing, loading, error, saving, setShare, refetch } = sharingState;
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
