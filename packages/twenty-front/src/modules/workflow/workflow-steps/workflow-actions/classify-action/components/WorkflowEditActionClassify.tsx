@@ -320,23 +320,6 @@ export const WorkflowEditActionClassify = ({
           <StyledQuestion key={question.id}>
             <HorizontalSeparator noMargin />
 
-            <Select
-              dropdownId={`workflow-classify-question-type-${question.id}`}
-              label={t`Question type`}
-              options={questionTypeOptions}
-              dropdownWidth={GenericDropdownContentWidth.Large}
-              value={question.type}
-              disabled={readonly}
-              description={
-                question.type === 'boolean' && !probabilityAvailable
-                  ? t`This question requires a compatible evaluation model. Choose one before running this step.`
-                  : undefined
-              }
-              onChange={(questionType) =>
-                handleQuestionTypeChange(question.id, questionType)
-              }
-            />
-
             <StyledQuestionHeader>
               <FormTextFieldInput
                 label={t`Name`}
@@ -366,6 +349,23 @@ export const WorkflowEditActionClassify = ({
                 />
               )}
             </StyledQuestionHeader>
+
+            <Select
+              dropdownId={`workflow-classify-question-type-${question.id}`}
+              label={t`Question type`}
+              options={questionTypeOptions}
+              dropdownWidth={GenericDropdownContentWidth.Large}
+              value={question.type}
+              disabled={readonly}
+              description={
+                question.type === 'boolean' && !probabilityAvailable
+                  ? t`This question requires a compatible evaluation model. Choose one before running this step.`
+                  : undefined
+              }
+              onChange={(questionType) =>
+                handleQuestionTypeChange(question.id, questionType)
+              }
+            />
 
             <FormTextFieldInput
               label={t`Question`}
