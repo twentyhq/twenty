@@ -1,8 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
-import { IconArrowRight, IconPlus } from '@ui/icon';
+import { IconArrowRight, IconPencil, IconPlus, IconX } from '@ui/icon';
+import { AnimatedIconCrossfade } from '@ui/primitives/layout/AnimatedIconCrossfade/AnimatedIconCrossfade';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -23,6 +24,50 @@ export default meta;
 type Story = StoryObj<typeof Button>;
 
 export const Default: Story = { decorators: [ComponentDecorator] };
+export const AnimatedIcon: Story = {
+  ...Default,
+  render: function Render() {
+    const [isEditing, setIsEditing] = useState(false);
+
+    return (
+      <Button
+        size="sm"
+        aria-expanded={isEditing}
+        onClick={() => setIsEditing(!isEditing)}
+        startIcon={
+          <AnimatedIconCrossfade
+            isActive={isEditing}
+            ActiveIcon={IconX}
+            InactiveIcon={IconPencil}
+          />
+        }
+      >
+        Edit actions
+      </Button>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Edit actions',
+    });
+    await document.fonts.ready;
+    const [pencil, cross] = button.querySelectorAll('svg');
+    const originalWidth = button.getBoundingClientRect().width;
+
+    await expect(button.getBoundingClientRect().height).toBe(24);
+    await expect(pencil.getBoundingClientRect().width).toBe(14);
+    button.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(button).toHaveAttribute('aria-expanded', 'true');
+    await waitFor(() => {
+      expect(getComputedStyle(pencil.parentElement!).opacity).toBe('0');
+      expect(getComputedStyle(cross.parentElement!).opacity).toBe('1');
+    });
+    await expect(button.getBoundingClientRect().width).toBe(originalWidth);
+    await userEvent.keyboard(' ');
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
+  },
+};
 export const Keyboard: Story = {
   ...Default,
   args: { onClick: fn(), onFocus: fn(), onBlur: fn() },
