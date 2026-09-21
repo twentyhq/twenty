@@ -668,7 +668,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
   }): Promise<void> {
     const { trigger, steps } =
       await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-        { workspaceId, coreWorkflowVersionId },
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
     await this.updatePositions({

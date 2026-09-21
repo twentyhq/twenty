@@ -7,7 +7,7 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 const WORKSPACE_MEMBER = {
   id: '20202020-0687-4c41-b707-ed1bfca972a7',
   name: { firstName: 'Tim', lastName: 'Apple' },
-} as WorkspaceMemberWorkspaceEntity;
+} satisfies Pick<WorkspaceMemberWorkspaceEntity, 'id' | 'name'>;
 
 const APPLICATION = {
   id: '20202020-1c25-4d02-bf25-6aeccf7ea419',

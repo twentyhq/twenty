@@ -5,6 +5,7 @@ import {
   type DefinitionNode,
   type DocumentNode,
 } from 'graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 const ROOT_TYPE_NAMES = ['Query', 'Mutation'];
 
@@ -37,9 +38,7 @@ export const mergeCoreWorkflowAppOperationsIntoSdl = ({
 }): string => {
   const baseDocument = parse(baseSdl);
   const baseDefinitionNames = new Set(
-    baseDocument.definitions
-      .map(getDefinitionName)
-      .filter((name): name is string => name !== undefined),
+    baseDocument.definitions.map(getDefinitionName).filter(isDefined),
   );
   const baseRootFieldNames = getRootFieldNames(baseDocument.definitions);
   const operationsDocument = parse(operationsSdl);
@@ -57,7 +56,7 @@ export const mergeCoreWorkflowAppOperationsIntoSdl = ({
   for (const definition of operationsDocument.definitions) {
     const definitionName = getDefinitionName(definition);
 
-    if (definitionName === undefined) {
+    if (!isDefined(definitionName)) {
       continue;
     }
 

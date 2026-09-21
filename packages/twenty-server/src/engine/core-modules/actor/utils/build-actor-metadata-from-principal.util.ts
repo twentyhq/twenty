@@ -10,7 +10,7 @@ export const buildActorMetadataFromPrincipal = ({
   workspaceMember,
   application,
 }: {
-  workspaceMember?: WorkspaceMemberWorkspaceEntity;
+  workspaceMember?: Pick<WorkspaceMemberWorkspaceEntity, 'id' | 'name'>;
   application?: FlatApplication;
 }): ActorMetadata | undefined => {
   if (isDefined(workspaceMember)) {

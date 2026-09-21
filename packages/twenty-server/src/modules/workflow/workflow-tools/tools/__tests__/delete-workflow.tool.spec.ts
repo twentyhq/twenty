@@ -36,10 +36,11 @@ describe('createDeleteWorkflowTool', () => {
 
     const result = (await tool.execute(baseInput)) as Record<string, unknown>;
 
-    expect(coreWorkflowMutationService.deleteWorkflows).toHaveBeenCalledWith(
-      'workspace-id',
-      { coreWorkflowIds: [CORE_WORKFLOW_ID] },
-    );
+    expect(coreWorkflowMutationService.deleteWorkflows).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      userWorkspaceId: undefined,
+      coreWorkflowIds: [CORE_WORKFLOW_ID],
+    });
     expect(result.success).toBe(true);
     expect(result.coreWorkflowId).toBe(CORE_WORKFLOW_ID);
   });

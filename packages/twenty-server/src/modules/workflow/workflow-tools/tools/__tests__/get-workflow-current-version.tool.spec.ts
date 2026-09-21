@@ -118,7 +118,7 @@ describe('get_workflow_current_version tool', () => {
     expect(result.error).toContain(CORE_WORKFLOW_ID);
   });
 
-  it('should return error when no draft or active version exists', async () => {
+  it('should return error when no draft, active or deactivated version exists', async () => {
     const deps = buildDeps({
       coreWorkflow: { id: CORE_WORKFLOW_ID },
       coreWorkflowVersions: [],
@@ -129,6 +129,6 @@ describe('get_workflow_current_version tool', () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain('no draft or active version');
+    expect(result.error).toContain('no draft, active or deactivated version');
   });
 });
