@@ -37,6 +37,7 @@ import { buildStockScopeKey } from 'src/engine/core-modules/usage-limit/utils/bu
 import { buildStockWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-warm-lock-key.util';
 import { findExhaustedStockCounter } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-stock-counter.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
+import { getStockExhaustedUserFriendlyMessage } from 'src/engine/core-modules/usage-limit/utils/get-stock-exhausted-user-friendly-message.util';
 import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock-limit.util';
 import { isStockResourceType } from 'src/engine/core-modules/usage-limit/utils/is-stock-resource-type.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -99,7 +100,12 @@ export class UsageLimitStockService {
         throw new UsageLimitException(
           `${exhausted.counter.resourceType} limit reached for this workspace`,
           UsageLimitExceptionCode.STOCK_EXHAUSTED,
-          { exhaustedScope: buildStockExhaustedScope(exhausted) },
+          {
+            userFriendlyMessage: getStockExhaustedUserFriendlyMessage(
+              exhausted.counter.resourceType,
+            ),
+            exhaustedScope: buildStockExhaustedScope(exhausted),
+          },
         );
       }
     } catch (error) {
