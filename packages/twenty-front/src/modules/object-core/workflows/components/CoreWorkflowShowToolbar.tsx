@@ -6,9 +6,13 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Select } from '@/ui/input/components/Select';
+import { CoreWorkflowVisibilitySelect } from '@/object-core/workflows/components/CoreWorkflowVisibilitySelect';
 import { CoreWorkflowVersionRestoreButton } from '@/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton';
 import { CORE_WORKFLOW_VERSION_STATUS_TAG_PROPS } from '@/object-core/workflows/versions/constants/CoreWorkflowVersionStatusTagProps';
-import { type GetCoreWorkflowVersionsQuery } from '~/generated/graphql';
+import {
+  type GetCoreWorkflowVersionsQuery,
+  type WorkflowVisibility,
+} from '~/generated/graphql';
 
 const StyledToolbar = styled.div`
   align-items: center;
@@ -22,6 +26,8 @@ type CoreWorkflowShowToolbarProps = {
   coreWorkflowId: string;
   versions: GetCoreWorkflowVersionsQuery['coreWorkflowVersions'];
   selectedVersionId: string | undefined;
+  visibility: WorkflowVisibility;
+  canChangeVisibility: boolean;
   isHistoricalVersion: boolean;
   isValidating: boolean;
   onVersionChange: (versionId: string) => void;
@@ -33,6 +39,8 @@ export const CoreWorkflowShowToolbar = ({
   coreWorkflowId,
   versions,
   selectedVersionId,
+  visibility,
+  canChangeVisibility,
   isHistoricalVersion,
   isValidating,
   onVersionChange,
@@ -66,5 +74,10 @@ export const CoreWorkflowShowToolbar = ({
     <Button size="sm" startIcon={<IconRefresh />} onClick={onRefresh}>
       {t`Refresh`}
     </Button>
+    <CoreWorkflowVisibilitySelect
+      coreWorkflowId={coreWorkflowId}
+      visibility={visibility}
+      disabled={!canChangeVisibility}
+    />
   </StyledToolbar>
 );

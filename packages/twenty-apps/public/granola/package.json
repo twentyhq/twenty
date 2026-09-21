@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/granola",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Sync Granola meeting notes into Twenty Call Recordings",
   "license": "MIT",
   "engines": {

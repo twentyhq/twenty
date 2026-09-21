@@ -58,7 +58,9 @@ const buildUpdateEvent = (overrides: Partial<HandlerEvent> = {}): HandlerEvent =
     ...overrides,
   }) as HandlerEvent;
 
-const stubPendingCallRecordingQueries = () => {
+const stubPendingCallRecordingQueries = ({
+  externalBotId = null,
+}: { externalBotId?: string | null } = {}) => {
   queryMock.mockImplementation(async (query: any) => {
     if (query.callRecordings !== undefined) {
       return {
@@ -68,7 +70,7 @@ const stubPendingCallRecordingQueries = () => {
             status: 'SCHEDULED',
             recordingRequestStatus: 'REQUESTED',
             calendarEventId: 'calendar-event-1',
-            externalBotId: null,
+            externalBotId,
             botScheduleAttemptedAt: null,
           },
         ]),
@@ -163,6 +165,61 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
       RECALL_CREATE_BOT_URL,
       expect.objectContaining({ method: 'POST' }),
     );
+  });
+
+  it('schedules a bot when the platform serializes the missing bot id as an empty string', async () => {
+    stubPendingCallRecordingQueries({ externalBotId: '' });
+
+    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
+      buildUpdateEvent({
+        properties: {
+          updatedFields: ['title', 'status', 'callRecorderFailureReason'],
+          before: {
+            id: 'call-recording-1',
+            status: 'FAILED',
+            recordingRequestStatus: 'REQUESTED',
+            externalBotId: '',
+          },
+          after: {
+            id: 'call-recording-1',
+            status: 'SCHEDULED',
+            recordingRequestStatus: 'REQUESTED',
+            externalBotId: '',
+          },
+        },
+      } as unknown as HandlerEvent),
+    );
+
+    expect(result).toEqual({
+      callRecordingId: 'call-recording-1',
+      result: { status: 'scheduled' },
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith(
+      RECALL_CREATE_BOT_URL,
+      expect.objectContaining({ method: 'POST' }),
+    );
+  });
+
+  it('schedules a bot when a slim payload diff clears the bot id to an empty string', async () => {
+    stubPendingCallRecordingQueries({ externalBotId: '' });
+
+    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
+      buildUpdateEvent({
+        properties: {
+          updatedFields: ['externalBotId'],
+          diff: {
+            externalBotId: { before: 'recall-bot-vanished', after: '' },
+          },
+        },
+      } as unknown as HandlerEvent),
+    );
+
+    expect(result).toEqual({
+      callRecordingId: 'call-recording-1',
+      result: { status: 'scheduled' },
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('skips events that are not call recording updates', async () => {

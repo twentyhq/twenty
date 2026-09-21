@@ -35,6 +35,8 @@ export class EntityEventsToDbListener {
   constructor(
     @InjectMessageQueue(MessageQueue.entityEventsToDbQueue)
     private readonly entityEventsToDbQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.eventLogQueue)
+    private readonly eventLogQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly webhookQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.triggerQueue)
@@ -141,7 +143,7 @@ export class EntityEventsToDbListener {
       return;
     }
 
-    await this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
+    await this.eventLogQueueService.add<WorkspaceEventBatch<T>>(
       CreateEventLogFromInternalEvent.name,
       batchEvent,
       { retryLimit: 1 },

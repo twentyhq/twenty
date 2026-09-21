@@ -33,6 +33,7 @@ import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import { WorkflowVisibility } from '~/generated/graphql';
 import { getWorkflowCurrentVersion } from '@/workflow/utils/getWorkflowCurrentVersion';
 
 const StyledContainer = styled.div`
@@ -49,9 +50,10 @@ const CoreWorkflowShowContent = ({
 }) => {
   const client = useApolloCoreClient();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const { record, loading, error } = useCoreWorkflowShowPageResource({
-    coreWorkflowId,
-  });
+  const { record, coreWorkflow, loading, error } =
+    useCoreWorkflowShowPageResource({
+      coreWorkflowId,
+    });
   const versions = useCoreWorkflowVersions(coreWorkflowId);
   const [searchParams, setSearchParams] = useSearchParams();
   const [editedName, setEditedName] = useState<string>();
@@ -158,6 +160,10 @@ const CoreWorkflowShowContent = ({
             coreWorkflowId={coreWorkflowId}
             versions={versions.coreWorkflowVersions}
             selectedVersionId={selectedVersion?.id}
+            visibility={
+              coreWorkflow?.visibility ?? WorkflowVisibility.WORKSPACE
+            }
+            canChangeVisibility={coreWorkflow?.canChangeVisibility ?? false}
             isHistoricalVersion={isHistoricalVersion}
             isValidating={isValidating}
             onVersionChange={(versionId) => {

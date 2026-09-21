@@ -1,3 +1,4 @@
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT } from '@/side-panel/pages/page-layout/constants/ChartSettingsPaletteColorGroupCount';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
@@ -6,7 +7,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getMainColorNameFromPaletteColorName } from 'twenty-ui/utilities';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ThemeColor } from 'twenty-ui/theme';
@@ -64,16 +65,20 @@ export const ChartColorPaletteOption = ({
         onSelectColor('auto');
       }}
     >
-      <MenuItemSelect
-        text={t`Default palette`}
-        selected={false}
+      <ListItem
         focused={selectedItemId === 'auto' || currentColor === 'auto'}
-        contextualText={colorSamples}
-        contextualTextPosition="right"
         onClick={() => {
           onSelectColor('auto');
         }}
-      />
+        role="option"
+        aria-selected={false}
+        selected={false}
+        indicator="check"
+        description={colorSamples}
+        descriptionPlacement={'end'}
+      >
+        <OverflowingTextWithTooltip text={t`Default palette`} />
+      </ListItem>
     </SelectableListItem>
   );
 };

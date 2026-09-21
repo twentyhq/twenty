@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type LanguageModelUsage } from 'ai';
-
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -10,13 +8,15 @@ import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
+import { type BillingTokenUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/billing-token-usage.type';
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-cost-config.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 
 export type BillingUsageInput = {
-  usage: LanguageModelUsage;
+  usage: BillingTokenUsage;
   cacheCreationTokens?: number;
 };
 
@@ -67,8 +67,18 @@ export class AiBillingService {
     });
   }
 
+  // Evaluation models are looked up first: they price like a language model
+  // but live in their own registry, and getEffectiveModelConfig would throw on
+  // an id it has never registered.
+  private getCostConfig(modelId: ModelId): AiModelCostConfig {
+    return (
+      this.aiModelRegistryService.getEvaluationModelConfig(modelId) ??
+      this.aiModelRegistryService.getEffectiveModelConfig(modelId)
+    );
+  }
+
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
-    const model = this.aiModelRegistryService.getEffectiveModelConfig(modelId);
+    const model = this.getCostConfig(modelId);
     const { usage, cacheCreationTokens = 0 } = billingInput;
 
     const breakdown = computeCostBreakdown(model, {
