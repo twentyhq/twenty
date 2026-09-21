@@ -177,8 +177,6 @@ export const SettingsApplicationDetails = () => {
     application?.settingsCustomTabFrontComponentId;
   const hasCustomSettingsTab = isDefined(settingsFrontComponentId);
 
-  // Saved values only: a draft the user has not saved yet does not configure
-  // the app, so the banner has to stay up until the save goes through.
   const missingRequiredApplicationVariables =
     getMissingRequiredApplicationVariables(displayedApplicationVariables);
 

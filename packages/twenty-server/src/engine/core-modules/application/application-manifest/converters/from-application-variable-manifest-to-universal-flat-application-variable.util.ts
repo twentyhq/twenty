@@ -44,8 +44,6 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       label: label ?? '',
       isSecret: isSecret ?? false,
       isDeprecated: isDeprecated ?? false,
-      // A deprecated variable is on its way out, so it never blocks the
-      // application configuration check even if it is still marked required.
       isRequired: (isDeprecated ?? false) ? false : (isRequired ?? false),
       type: type ?? FieldMetadataType.TEXT,
       options: options ?? null,
