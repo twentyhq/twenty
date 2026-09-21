@@ -69,15 +69,20 @@ export class WorkflowVersionCoreSyncService {
     workspaceId,
     failureMessage,
     operations,
+    applicationUniversalIdentifier,
   }: {
     workspaceId: string;
     failureMessage: string;
     operations: AllFlatEntityOperationByMetadataName;
+    applicationUniversalIdentifier?: string;
   }): Promise<void> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
+    const universalIdentifier =
+      applicationUniversalIdentifier ??
+      (
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        )
+      ).workspaceCustomFlatApplication.universalIdentifier;
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -85,8 +90,7 @@ export class WorkflowVersionCoreSyncService {
           allFlatEntityOperationByMetadataName: operations,
           workspaceId,
           isSystemBuild: false,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
+          applicationUniversalIdentifier: universalIdentifier,
         },
       );
 
@@ -230,6 +234,8 @@ export class WorkflowVersionCoreSyncService {
 
     await this.runCoreWorkflowMigration({
       workspaceId,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
       failureMessage:
         'Multiple validation errors occurred while mirroring workflow versions to core',
       operations: {
