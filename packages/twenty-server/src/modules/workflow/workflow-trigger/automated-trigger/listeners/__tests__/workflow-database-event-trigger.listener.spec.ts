@@ -16,8 +16,6 @@ import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/
 import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
 import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -143,23 +141,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           provide: 'MESSAGE_QUEUE_workflow-queue',
           useValue: messageQueueService,
-        },
-        {
-          provide: WorkflowCoreSyncService,
-          useValue: {
-            findCoreWorkflowByIdOrWorkspaceWorkflowId: jest
-              .fn()
-              .mockImplementation((_workspaceId: string, workflowId: string) =>
-                Promise.resolve({
-                  id: workflowId,
-                  lastPublishedCoreWorkflowVersionId: `core-version-${workflowId}`,
-                }),
-              ),
-          },
-        },
-        {
-          provide: MetricsService,
-          useValue: { incrementCounterForEvent: jest.fn() },
         },
         {
           provide: WorkflowCommonWorkspaceService,

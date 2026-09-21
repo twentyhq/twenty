@@ -35,9 +35,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -78,8 +75,6 @@ export class WorkflowDatabaseEventTriggerListener {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
-    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
-    private readonly metricsService: MetricsService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -384,8 +379,6 @@ export class WorkflowDatabaseEventTriggerListener {
         });
 
         if (shouldTriggerJob) {
-          await this.reportCacheDrift({ workspaceId, eventListener });
-
           await this.messageQueueService.add<WorkflowTriggerJobData>(
             WorkflowTriggerJob.name,
             {
@@ -400,41 +393,6 @@ export class WorkflowDatabaseEventTriggerListener {
         }
       }
     }
-  }
-
-  private async reportCacheDrift({
-    workspaceId,
-    eventListener,
-  }: {
-    workspaceId: string;
-    eventListener: DatabaseEventTriggerListener;
-  }): Promise<void> {
-    const cachedCoreWorkflowVersionId = eventListener.coreWorkflowVersionId;
-
-    if (!isDefined(cachedCoreWorkflowVersionId)) {
-      return;
-    }
-
-    const workflow =
-      await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
-        workspaceId,
-        eventListener.workflowId,
-      );
-    const publishedCoreWorkflowVersionId =
-      workflow?.lastPublishedCoreWorkflowVersionId ?? null;
-
-    if (publishedCoreWorkflowVersionId === cachedCoreWorkflowVersionId) {
-      return;
-    }
-
-    const message = `Automated trigger cache for workflow ${eventListener.workflowId} in workspace ${workspaceId} dispatches core version ${cachedCoreWorkflowVersionId} while core publishes ${publishedCoreWorkflowVersionId ?? 'none'}`;
-
-    this.logger.warn(message);
-    await this.metricsService.incrementCounterForEvent({
-      key: MetricsKeys.WorkflowTriggerCacheDrift,
-      eventId: `${workspaceId}:${eventListener.workflowId}`,
-      debugLog: message,
-    });
   }
 
   private async getDatabaseEventListeners(
