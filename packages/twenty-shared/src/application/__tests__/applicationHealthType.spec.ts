@@ -18,6 +18,7 @@ describe('isApplicationHealthCheckResult', () => {
     [{ status: 'error', message: '' }],
     [{ status: 'error', message: 'Boom', action: {} }],
     [{ status: 'error', message: 'Boom', action: { label: 2 } }],
+    [{ status: 'error', message: 'Boom', action: { label: '' } }],
   ])('should reject %p', (value) => {
     expect(isApplicationHealthCheckResult(value)).toBe(false);
   });

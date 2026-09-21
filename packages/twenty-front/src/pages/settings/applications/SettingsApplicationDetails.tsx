@@ -196,10 +196,15 @@ export const SettingsApplicationDetails = () => {
     ? () => setActiveTabId(configurationTabId)
     : undefined;
 
-  const { healthCheckResult } = useApplicationHealthCheck({
+  const { healthCheckResult, runHealthCheck } = useApplicationHealthCheck({
     applicationId,
     healthCheckLogicFunctionId: application?.healthCheckLogicFunctionId,
   });
+
+  const saveApplicationVariablesAndRecheckHealth = async () => {
+    await saveApplicationVariables();
+    await runHealthCheck();
+  };
 
   const healthBannerResult =
     !isNonEmptyArray(missingRequiredApplicationVariables) &&
@@ -305,7 +310,7 @@ export const SettingsApplicationDetails = () => {
               variant="solid"
               color="accent"
               size="sm"
-              onClick={saveApplicationVariables}
+              onClick={saveApplicationVariablesAndRecheckHealth}
               disabled={
                 !hasUnsavedApplicationVariables || isSavingApplicationVariables
               }

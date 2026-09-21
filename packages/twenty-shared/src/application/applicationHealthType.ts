@@ -44,9 +44,11 @@ export const isApplicationHealthCheckResult = (
     return true;
   }
 
-  return (
-    typeof action === 'object' &&
-    action !== null &&
-    typeof (action as Record<string, unknown>).label === 'string'
-  );
+  if (typeof action !== 'object' || action === null) {
+    return false;
+  }
+
+  const { label } = action as Record<string, unknown>;
+
+  return typeof label === 'string' && label.length > 0;
 };

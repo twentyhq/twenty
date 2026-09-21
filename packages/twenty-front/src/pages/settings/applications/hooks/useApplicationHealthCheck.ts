@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type ApplicationHealthCheckResult,
@@ -20,31 +20,25 @@ export const useApplicationHealthCheck = ({
   const [healthCheckResult, setHealthCheckResult] =
     useState<ApplicationHealthCheckResult | null>(null);
 
-  // oxlint-disable-next-line twenty/no-state-useref
-  const checkedApplicationIdRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (
-      !isDefined(healthCheckLogicFunctionId) ||
-      checkedApplicationIdRef.current === applicationId
-    ) {
+  const runHealthCheck = useCallback(async () => {
+    if (!isDefined(healthCheckLogicFunctionId)) {
       return;
     }
 
-    checkedApplicationIdRef.current = applicationId;
-
-    const run = async () => {
+    try {
       const { data } = await runApplicationHealthCheck({
         variables: { applicationId },
       });
 
       setHealthCheckResult(data?.runApplicationHealthCheck ?? null);
-    };
-
-    run().catch(() => {
+    } catch {
       setHealthCheckResult(null);
-    });
+    }
   }, [applicationId, healthCheckLogicFunctionId, runApplicationHealthCheck]);
 
-  return { healthCheckResult };
+  useEffect(() => {
+    runHealthCheck();
+  }, [runHealthCheck]);
+
+  return { healthCheckResult, runHealthCheck };
 };
