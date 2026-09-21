@@ -251,7 +251,21 @@ export const WorkflowEditActionClassify = ({
     // Criteria mean different things per type — named options, ordered levels,
     // nothing at all — so switching type starts them over rather than carrying
     // a list the new type would misread.
-    updateQuestion(questionId, { type: questionType, criteria: [] });
+    updateQuestion(questionId, {
+      type: questionType,
+      criteria:
+        questionType === 'score'
+          ? [
+              {
+                id: v4(),
+                name: t`Beginner`,
+                description: t`Less than two years of regular React use`,
+              },
+            ]
+          : questionType === 'choice'
+            ? buildEmptyQuestion().criteria
+            : [],
+    });
   };
 
   return (

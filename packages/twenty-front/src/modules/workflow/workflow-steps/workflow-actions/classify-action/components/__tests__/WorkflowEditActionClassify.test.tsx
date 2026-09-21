@@ -168,8 +168,15 @@ describe('WorkflowEditActionClassify', () => {
       screen.getByPlaceholderText(/Assess the React experience/),
     ).toHaveValue('');
     expect(
-      screen.getByPlaceholderText('At least two years of regular React use'),
+      screen.getAllByPlaceholderText('At least two years of regular React use')[1],
     ).toHaveValue('');
+    expect(screen.getByDisplayValue('Beginner')).toBeVisible();
+    expect(
+      screen.getByDisplayValue('Less than two years of regular React use'),
+    ).toBeVisible();
+    await user.click(screen.getAllByRole('button', { name: 'Delete level' })[0]);
+    expect(screen.queryByDisplayValue('Beginner')).not.toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Experienced')).toHaveValue('');
   });
 
   it('requires a language model choice and keeps probability disabled', async () => {
