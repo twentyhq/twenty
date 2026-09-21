@@ -73,6 +73,18 @@ export const WorkflowEditActionClassify = ({
     boolean: t`Estimate a probability`,
   };
 
+  const namePlaceholders: Record<AiEvaluationQuestionType, string> = {
+    choice: t`profession`,
+    score: t`customer_satisfaction`,
+    boolean: t`would_recommend`,
+  };
+
+  const questionPlaceholders: Record<AiEvaluationQuestionType, string> = {
+    choice: t`What is this person's current profession?`,
+    score: t`How satisfied is the customer based on their feedback? Grade from dissatisfied to satisfied.`,
+    boolean: t`Would this customer recommend the service based on their feedback?`,
+  };
+
   const questionTypeIcons = {
     choice: IconListCheck,
     score: IconStairs,
@@ -124,23 +136,24 @@ export const WorkflowEditActionClassify = ({
     questionId: string,
     questionType: AiEvaluationQuestionType,
   ) => {
+    const criteriaByType = {
+      choice: buildEmptyQuestion().criteria,
+      score: [
+        {
+          id: v4(),
+          name: t`Dissatisfied`,
+          description: t`Expresses frustration or disappointment`,
+        },
+      ],
+      boolean: [],
+    };
+
     // Criteria mean different things per type — named options, ordered levels,
     // nothing at all — so switching type starts them over rather than carrying
     // a list the new type would misread.
     updateQuestion(questionId, {
       type: questionType,
-      criteria:
-        questionType === 'score'
-          ? [
-              {
-                id: v4(),
-                name: t`Dissatisfied`,
-                description: t`Expresses frustration or disappointment`,
-              },
-            ]
-          : questionType === 'choice'
-            ? buildEmptyQuestion().criteria
-            : [],
+      criteria: criteriaByType[questionType],
     });
   };
 
@@ -170,13 +183,7 @@ export const WorkflowEditActionClassify = ({
               label={t`Name`}
               hint={t`Use this name to find the answer in later workflow steps.`}
               defaultValue={question.name}
-              placeholder={
-                question.type === 'choice'
-                  ? t`profession`
-                  : question.type === 'score'
-                    ? t`customer_satisfaction`
-                    : t`would_recommend`
-              }
+              placeholder={namePlaceholders[question.type]}
               readonly={readonly}
               onChange={(name) => updateQuestion(question.id, { name })}
               action={
@@ -213,13 +220,7 @@ export const WorkflowEditActionClassify = ({
               label={t`Question`}
               multiline
               defaultValue={question.instructions}
-              placeholder={
-                question.type === 'choice'
-                  ? t`What is this person's current profession?`
-                  : question.type === 'score'
-                    ? t`How satisfied is the customer based on their feedback? Grade from dissatisfied to satisfied.`
-                    : t`Would this customer recommend the service based on their feedback?`
-              }
+              placeholder={questionPlaceholders[question.type]}
               readonly={readonly}
               VariablePicker={WorkflowVariablePicker}
               onChange={(instructions) =>
