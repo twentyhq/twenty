@@ -13,6 +13,23 @@ import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subs
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
+type BroadcastEventRecord = {
+  userWorkspaceId?: string | null;
+  visibility?: WorkflowVisibility | null;
+  createdByUserWorkspaceId?: string | null;
+  coreWorkflowId?: string | null;
+};
+
+const getBroadcastEventRecord = (event: MetadataEventBatch['events'][number]) =>
+  (event.type === 'deleted'
+    ? event.properties.before
+    : event.properties.after) as BroadcastEventRecord | undefined;
+
+const getPrivateWorkflowOwner = (record: BroadcastEventRecord | undefined) =>
+  record?.visibility === WorkflowVisibility.PRIVATE
+    ? (record.createdByUserWorkspaceId ?? undefined)
+    : undefined;
+
 @Injectable()
 export class MetadataEventPublisher {
   constructor(
@@ -29,16 +46,16 @@ export class MetadataEventPublisher {
     const enrichedBatch =
       await this.enrichMetadataEventBatch(metadataEventBatch);
 
-    const privateWorkflowOwnerByRecordId =
-      await this.resolvePrivateWorkflowOwnerByRecordId(enrichedBatch);
+    const ownerUserWorkspaceIdByRecordId =
+      await this.resolveOwnerUserWorkspaceIdByRecordId(enrichedBatch);
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: enrichedBatch.workspaceId,
       updatedCollectionHash: enrichedBatch.updatedCollectionHash,
       events: enrichedBatch.events.map((event) => {
-        const ownerUserWorkspaceId =
-          this.resolveOwnerUserWorkspaceId(event) ??
-          privateWorkflowOwnerByRecordId.get(event.recordId);
+        const ownerUserWorkspaceId = ownerUserWorkspaceIdByRecordId.get(
+          event.recordId,
+        );
 
         return {
           type: event.type,
@@ -58,111 +75,59 @@ export class MetadataEventPublisher {
     });
   }
 
-  private resolveOwnerUserWorkspaceId(
-    event: MetadataEventBatch['events'][number],
-  ): string | undefined {
-    if (event.metadataName !== 'navigationMenuItem') {
-      return undefined;
-    }
-
-    const record = (
-      event.type === 'deleted'
-        ? event.properties.before
-        : event.properties.after
-    ) as { userWorkspaceId?: string | null } | undefined;
-
-    return record?.userWorkspaceId ?? undefined;
-  }
-
   // An unowned private workflow stays workspace-wide on purpose: the read path
   // opens it to everyone once its creator has left the workspace.
-  private async resolvePrivateWorkflowOwnerByRecordId(
-    metadataEventBatch: MetadataEventBatch,
-  ): Promise<Map<string, string>> {
-    const privateWorkflowOwnerByRecordId = new Map<string, string>();
+  private async resolveOwnerUserWorkspaceIdByRecordId({
+    metadataName,
+    workspaceId,
+    events,
+  }: MetadataEventBatch): Promise<Map<string, string>> {
+    const flatWorkflowMaps =
+      metadataName === 'workflowVersion'
+        ? (
+            await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+              { workspaceId, flatMapsKeys: ['flatWorkflowMaps'] },
+            )
+          ).flatWorkflowMaps
+        : undefined;
 
-    if (
-      metadataEventBatch.metadataName !== 'workflow' &&
-      metadataEventBatch.metadataName !== 'workflowVersion'
-    ) {
-      return privateWorkflowOwnerByRecordId;
-    }
+    const resolveOwner = (record: BroadcastEventRecord | undefined) => {
+      switch (metadataName) {
+        case 'navigationMenuItem':
+          return record?.userWorkspaceId ?? undefined;
+        case 'workflow':
+          return getPrivateWorkflowOwner(record);
+        case 'workflowVersion': {
+          const coreWorkflowId = record?.coreWorkflowId;
 
-    if (metadataEventBatch.metadataName === 'workflow') {
-      for (const event of metadataEventBatch.events) {
-        const ownerUserWorkspaceId = this.resolvePrivateWorkflowOwner(
-          this.resolveEventRecord(event),
-        );
-
-        if (isNonEmptyString(ownerUserWorkspaceId)) {
-          privateWorkflowOwnerByRecordId.set(
-            event.recordId,
-            ownerUserWorkspaceId,
-          );
+          return isNonEmptyString(coreWorkflowId) && isDefined(flatWorkflowMaps)
+            ? getPrivateWorkflowOwner(
+                findFlatEntityByIdInFlatEntityMaps({
+                  flatEntityMaps: flatWorkflowMaps,
+                  flatEntityId: coreWorkflowId,
+                }),
+              )
+            : undefined;
         }
+        default:
+          return undefined;
       }
+    };
 
-      return privateWorkflowOwnerByRecordId;
-    }
+    const ownerUserWorkspaceIdByRecordId = new Map<string, string>();
 
-    const { flatWorkflowMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId: metadataEventBatch.workspaceId,
-          flatMapsKeys: ['flatWorkflowMaps'],
-        },
-      );
-
-    for (const event of metadataEventBatch.events) {
-      const coreWorkflowId = this.resolveEventRecord(event)?.coreWorkflowId;
-
-      if (!isNonEmptyString(coreWorkflowId)) {
-        continue;
-      }
-
-      const ownerUserWorkspaceId = this.resolvePrivateWorkflowOwner(
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityMaps: flatWorkflowMaps,
-          flatEntityId: coreWorkflowId,
-        }),
-      );
+    for (const event of events) {
+      const ownerUserWorkspaceId = resolveOwner(getBroadcastEventRecord(event));
 
       if (isNonEmptyString(ownerUserWorkspaceId)) {
-        privateWorkflowOwnerByRecordId.set(
+        ownerUserWorkspaceIdByRecordId.set(
           event.recordId,
           ownerUserWorkspaceId,
         );
       }
     }
 
-    return privateWorkflowOwnerByRecordId;
-  }
-
-  private resolvePrivateWorkflowOwner(
-    record:
-      | {
-          visibility?: WorkflowVisibility | null;
-          createdByUserWorkspaceId?: string | null;
-        }
-      | undefined,
-  ): string | undefined {
-    return record?.visibility === WorkflowVisibility.PRIVATE
-      ? (record.createdByUserWorkspaceId ?? undefined)
-      : undefined;
-  }
-
-  private resolveEventRecord(event: MetadataEventBatch['events'][number]) {
-    return (
-      event.type === 'deleted'
-        ? event.properties.before
-        : event.properties.after
-    ) as
-      | {
-          visibility?: WorkflowVisibility | null;
-          createdByUserWorkspaceId?: string | null;
-          coreWorkflowId?: string | null;
-        }
-      | undefined;
+    return ownerUserWorkspaceIdByRecordId;
   }
 
   private async enrichMetadataEventBatch(
