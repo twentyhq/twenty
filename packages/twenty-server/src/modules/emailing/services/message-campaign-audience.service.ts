@@ -12,6 +12,7 @@ import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-doma
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
+import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
@@ -20,6 +21,7 @@ export class MessageCampaignAudienceService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly messageSuppressionService: MessageSuppressionService,
+    private readonly messageTrackingConsentService: MessageTrackingConsentService,
     private readonly userRoleService: UserRoleService,
   ) {}
 
@@ -65,12 +67,17 @@ export class MessageCampaignAudienceService {
       .map((rawRecipient) => rawRecipient.email)
       .filter(isNonEmptyString);
 
-    const suppressions =
-      await this.messageSuppressionService.findApplicableSuppressions({
+    const [suppressions, trackingRefusedEmails] = await Promise.all([
+      this.messageSuppressionService.findApplicableSuppressions({
         workspaceId,
         emailAddresses,
         unsubscribeTopicId,
-      });
+      }),
+      this.messageTrackingConsentService.findTrackingRefusedEmailAddresses({
+        workspaceId,
+        emailAddresses,
+      }),
+    ]);
 
     const hardSuppressedEmails = new Set<string>();
     const globallySuppressedEmails = new Set<string>();
@@ -97,6 +104,7 @@ export class MessageCampaignAudienceService {
       hardSuppressedEmails,
       globallySuppressedEmails,
       topicSuppressedEmails,
+      trackingRefusedEmails,
     });
   }
 

@@ -195,6 +195,7 @@ import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 's
 import { AddAppMessageChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789395506192-add-app-message-channel-type';
 import { AddAppMessageChannelUniqueHandleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789418882171-add-app-message-channel-unique-handle';
 import { AddCampaignTrackingFlagsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790090311001-add-campaign-tracking-flags';
+import { AddMessageTrackingConsentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790104541000-add-message-tracking-consent';
 import { AddWorkflowExecutionCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789719131000-add-workflow-execution-compatibility';
 import { CoreWorkflowCommandMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789730706712-core-workflow-command-menu-items';
 import { AddWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789893300000-add-workflow-visibility';
@@ -402,6 +403,7 @@ export const INSTANCE_COMMANDS = [
   AddAppMessageChannelTypeFastInstanceCommand,
   AddAppMessageChannelUniqueHandleFastInstanceCommand,
   AddCampaignTrackingFlagsFastInstanceCommand,
+  AddMessageTrackingConsentFastInstanceCommand,
   AddAiEvaluationModelToWorkspaceFastInstanceCommand,
   AddIsRequiredToApplicationVariablesFastInstanceCommand,
   AddDeferredWorkspaceMigrationActionTableFastInstanceCommand,

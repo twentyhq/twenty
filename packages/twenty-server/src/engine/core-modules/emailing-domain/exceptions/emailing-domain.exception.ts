@@ -15,6 +15,7 @@ export enum EmailingDomainExceptionCode {
   MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS = 'MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS',
   MESSAGE_CAMPAIGN_NOT_CANCELABLE = 'MESSAGE_CAMPAIGN_NOT_CANCELABLE',
   MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE = 'MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE',
+  MESSAGE_TRACKING_CONSENT_REFUSED_BY_RECIPIENT = 'MESSAGE_TRACKING_CONSENT_REFUSED_BY_RECIPIENT',
 }
 
 const getEmailingDomainExceptionUserFriendlyMessage = (
@@ -41,6 +42,8 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
       return msg`Only a scheduled or sending campaign can be canceled.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE:
       return msg`Pick a send time in the future.`;
+    case EmailingDomainExceptionCode.MESSAGE_TRACKING_CONSENT_REFUSED_BY_RECIPIENT:
+      return msg`This person opted out of email tracking themselves. Only they can opt back in, from the preferences link in their emails.`;
     default:
       assertUnreachable(code);
   }

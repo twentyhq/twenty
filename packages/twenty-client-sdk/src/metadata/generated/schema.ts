@@ -2639,6 +2639,7 @@ export interface CampaignAudiencePreviewDTO {
     hardSuppressed: Scalars['Int']
     globallyUnsubscribed: Scalars['Int']
     topicUnsubscribed: Scalars['Int']
+    trackingRefused: Scalars['Int']
     sendable: Scalars['Int']
     __typename: 'CampaignAudiencePreviewDTO'
 }
@@ -2690,6 +2691,22 @@ export interface MessageSuppressionList {
     records: MessageSuppression[]
     totalCount: Scalars['Int']
     __typename: 'MessageSuppressionList'
+}
+
+export interface MessageTrackingOptOut {
+    id: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    emailAddress: Scalars['String']
+    source: MessageTrackingConsentSource
+    __typename: 'MessageTrackingOptOut'
+}
+
+export type MessageTrackingConsentSource = 'PREFERENCES_PAGE' | 'WORKSPACE_MEMBER'
+
+export interface MessageTrackingOptOutList {
+    records: MessageTrackingOptOut[]
+    totalCount: Scalars['Int']
+    __typename: 'MessageTrackingOptOutList'
 }
 
 export interface UnsubscribeTopic {
@@ -3320,6 +3337,7 @@ export interface Query {
     getRoles: Role[]
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
     messageSuppressions: MessageSuppressionList
+    messageTrackingOptOuts: MessageTrackingOptOutList
     unsubscribeTopics: UnsubscribeTopic[]
     myMessageChannels: MessageChannel[]
     appMessageChannels: MessageChannel[]
@@ -6389,6 +6407,7 @@ export interface CampaignAudiencePreviewDTOGenqlSelection{
     hardSuppressed?: boolean | number
     globallyUnsubscribed?: boolean | number
     topicUnsubscribed?: boolean | number
+    trackingRefused?: boolean | number
     sendable?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6440,6 +6459,22 @@ export interface MessageSuppressionGenqlSelection{
 
 export interface MessageSuppressionListGenqlSelection{
     records?: MessageSuppressionGenqlSelection
+    totalCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MessageTrackingOptOutGenqlSelection{
+    id?: boolean | number
+    createdAt?: boolean | number
+    emailAddress?: boolean | number
+    source?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MessageTrackingOptOutListGenqlSelection{
+    records?: MessageTrackingOptOutGenqlSelection
     totalCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7116,6 +7151,7 @@ export interface QueryGenqlSelection{
     getRoles?: RoleGenqlSelection
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
     messageSuppressions?: (MessageSuppressionListGenqlSelection & { __args: {input: FindMessageSuppressionsInput} })
+    messageTrackingOptOuts?: (MessageTrackingOptOutListGenqlSelection & { __args: {input: FindMessageTrackingOptOutsInput} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     appMessageChannels?: (MessageChannelGenqlSelection & { __args?: {filter?: (ListAppMessageChannelsInput | null)} })
@@ -7185,6 +7221,8 @@ id: Scalars['ID']}
 export interface PreviewMessageCampaignAudienceInput {listId: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null)}
 
 export interface FindMessageSuppressionsInput {reason?: (MessageSuppressionReason | null),searchTerm?: (Scalars['String'] | null),unsubscribeTopicId?: (Scalars['UUID'] | null),limit: Scalars['Int'],offset: Scalars['Int']}
+
+export interface FindMessageTrackingOptOutsInput {searchTerm?: (Scalars['String'] | null),limit: Scalars['Int'],offset: Scalars['Int']}
 
 export interface ListAppMessageChannelsInput {connectedAccountId?: (Scalars['UUID'] | null)}
 
@@ -7925,7 +7963,7 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingProductDTO"')
       return BillingProductDTO_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApiKey_possibleTypes: string[] = ['ApiKey']
@@ -7933,7 +7971,7 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
       if (!obj?.__typename) throw new Error('__typename is missing in "isApiKey"')
       return ApiKey_possibleTypes.includes(obj.__typename)
     }
-    
+
 
 
     const ApplicationRegistrationSummary_possibleTypes: string[] = ['ApplicationRegistrationSummary']
@@ -9888,6 +9926,22 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const MessageTrackingOptOut_possibleTypes: string[] = ['MessageTrackingOptOut']
+    export const isMessageTrackingOptOut = (obj?: { __typename?: any } | null): obj is MessageTrackingOptOut => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageTrackingOptOut"')
+      return MessageTrackingOptOut_possibleTypes.includes(obj.__typename)
+    }
+
+
+
+    const MessageTrackingOptOutList_possibleTypes: string[] = ['MessageTrackingOptOutList']
+    export const isMessageTrackingOptOutList = (obj?: { __typename?: any } | null): obj is MessageTrackingOptOutList => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageTrackingOptOutList"')
+      return MessageTrackingOptOutList_possibleTypes.includes(obj.__typename)
+    }
+
+
+
     const UnsubscribeTopic_possibleTypes: string[] = ['UnsubscribeTopic']
     export const isUnsubscribeTopic = (obj?: { __typename?: any } | null): obj is UnsubscribeTopic => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUnsubscribeTopic"')
@@ -11109,6 +11163,11 @@ export const enumMessageSuppressionReason = {
 export const enumMessageSuppressionSource = {
    WEBHOOK: 'WEBHOOK' as const,
    SYSTEM: 'SYSTEM' as const
+}
+
+export const enumMessageTrackingConsentSource = {
+   PREFERENCES_PAGE: 'PREFERENCES_PAGE' as const,
+   WORKSPACE_MEMBER: 'WORKSPACE_MEMBER' as const
 }
 
 export const enumUnsubscribeTopicVisibility = {

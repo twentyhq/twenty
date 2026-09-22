@@ -3071,6 +3071,7 @@ type CampaignAudiencePreviewDTO {
   hardSuppressed: Int!
   globallyUnsubscribed: Int!
   topicUnsubscribed: Int!
+  trackingRefused: Int!
   sendable: Int!
 }
 
@@ -3121,6 +3122,23 @@ enum MessageSuppressionSource {
 
 type MessageSuppressionList {
   records: [MessageSuppression!]!
+  totalCount: Int!
+}
+
+type MessageTrackingOptOut {
+  id: UUID!
+  createdAt: DateTime!
+  emailAddress: String!
+  source: MessageTrackingConsentSource!
+}
+
+enum MessageTrackingConsentSource {
+  PREFERENCES_PAGE
+  WORKSPACE_MEMBER
+}
+
+type MessageTrackingOptOutList {
+  records: [MessageTrackingOptOut!]!
   totalCount: Int!
 }
 
@@ -3791,6 +3809,7 @@ type Query {
   getRoles: [Role!]!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
+  messageTrackingOptOuts(input: FindMessageTrackingOptOutsInput!): MessageTrackingOptOutList!
   unsubscribeTopics: [UnsubscribeTopic!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
@@ -3892,6 +3911,12 @@ input FindMessageSuppressionsInput {
   reason: MessageSuppressionReason
   searchTerm: String
   unsubscribeTopicId: UUID
+  limit: Int! = 30
+  offset: Int! = 0
+}
+
+input FindMessageTrackingOptOutsInput {
+  searchTerm: String
   limit: Int! = 30
   offset: Int! = 0
 }

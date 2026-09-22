@@ -7,11 +7,12 @@ import { useSettingsActiveTabId } from '@/settings/components/layout/useSettings
 import { SettingsWorkspaceUnsubscribeTopicSection } from '@/settings/unsubscribe-topics/components/SettingsWorkspaceUnsubscribeTopicSection';
 import { SettingsUnsubscribePreview } from '@/settings/unsubscribers/components/SettingsUnsubscribePreview';
 import { SettingsUnsubscribersList } from '@/settings/unsubscribers/components/SettingsUnsubscribersList';
+import { SettingsTrackingOptOutsList } from '@/settings/unsubscribers/components/SettingsTrackingOptOutsList';
 import { SETTINGS_UNSUBSCRIBE_TAB_IDS } from '@/settings/unsubscribers/constants/SettingsUnsubscribeTabIds';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconEye, IconForbid, IconMailCog } from 'twenty-ui/icon';
+import { IconClick, IconEye, IconForbid, IconMailCog } from 'twenty-ui/icon';
 
 const UNSUBSCRIBE_TABS_INSTANCE_ID = 'settings-unsubscribe-tabs';
 
@@ -32,6 +33,11 @@ export const SettingsWorkspaceUnsubscribe = () => {
       id: SETTINGS_UNSUBSCRIBE_TAB_IDS.TOPICS,
       title: t`Topics`,
       Icon: IconMailCog,
+    },
+    {
+      id: SETTINGS_UNSUBSCRIBE_TAB_IDS.TRACKING_OPT_OUTS,
+      title: t`Tracking opt-outs`,
+      Icon: IconClick,
     },
     {
       id: SETTINGS_UNSUBSCRIBE_TAB_IDS.PREVIEW,
@@ -77,6 +83,9 @@ export const SettingsWorkspaceUnsubscribe = () => {
         )}
         {activeTabId === SETTINGS_UNSUBSCRIBE_TAB_IDS.TOPICS && (
           <SettingsWorkspaceUnsubscribeTopicSection />
+        )}
+        {activeTabId === SETTINGS_UNSUBSCRIBE_TAB_IDS.TRACKING_OPT_OUTS && (
+          <SettingsTrackingOptOutsList />
         )}
         {activeTabId === SETTINGS_UNSUBSCRIBE_TAB_IDS.PREVIEW && (
           <SettingsUnsubscribePreview />

@@ -1,3 +1,4 @@
+import { MessageTrackingConsentDecision } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-decision.type';
 import { type TopicOptOutState } from 'src/engine/core-modules/emailing-domain/types/topic-opt-out-state.type';
 import { buildUnsubscribePreferencesPage } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-preferences-page.util';
 
@@ -5,6 +6,7 @@ const buildPage = (topics: TopicOptOutState[]) =>
   buildUnsubscribePreferencesPage({
     token: 'token-1',
     topics,
+    trackingPreference: undefined,
     updatePath: '/unsubscribe/update',
     unsubscribeAllPath: '/unsubscribe/all',
   });
@@ -74,10 +76,42 @@ describe('buildUnsubscribePreferencesPage', () => {
       topics: [
         { unsubscribeTopicId: 'topic-1', topicName: 'News', optedOut: false },
       ],
+      trackingPreference: undefined,
       updatePath: '/unsubscribe/update',
       unsubscribeAllPath: '/unsubscribe/all',
     });
 
     expect(page).not.toContain('<script>');
+  });
+
+  describe('when the workspace tracks clicks', () => {
+    it('offers the tracking choice even without topics', () => {
+      const page = buildUnsubscribePreferencesPage({
+        token: 'token-1',
+        topics: [],
+        trackingPreference: { decision: null },
+        updatePath: '/unsubscribe/update',
+        unsubscribeAllPath: '/unsubscribe/all',
+      });
+
+      expect(page).toContain('action="/unsubscribe/update"');
+      expect(page).toContain('value="GRANTED" checked />');
+      expect(page).toContain('value="DENIED" />');
+    });
+
+    it('preselects the refusal the recipient already made', () => {
+      const page = buildUnsubscribePreferencesPage({
+        token: 'token-1',
+        topics: [],
+        trackingPreference: {
+          decision: MessageTrackingConsentDecision.DENIED,
+        },
+        updatePath: '/unsubscribe/update',
+        unsubscribeAllPath: '/unsubscribe/all',
+      });
+
+      expect(page).toContain('value="GRANTED" />');
+      expect(page).toContain('value="DENIED" checked />');
+    });
   });
 });
