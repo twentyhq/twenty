@@ -11,7 +11,14 @@ import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-mod
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = '5f4a1c1e-0000-4000-8000-000000000001';
 
-const seedDefaultsFlatView = {
+type InitialObjectViewFixture = {
+  type: ViewType;
+  position: number;
+  icon: string;
+  deletedAt: string | null;
+};
+
+const seedDefaultsFlatView: InitialObjectViewFixture = {
   type: ViewType.TABLE,
   position: INITIAL_OBJECT_VIEW_POSITION,
   icon: VIEW_TYPE_DEFAULT_ICONS[ViewType.TABLE],
@@ -21,7 +28,7 @@ const seedDefaultsFlatView = {
 const buildFlatViewMaps = (
   flatViewByObjectUniversalIdentifier: Record<
     string,
-    typeof seedDefaultsFlatView | undefined
+    InitialObjectViewFixture | undefined
   >,
 ) => ({
   byUniversalIdentifier: Object.fromEntries(
@@ -40,7 +47,7 @@ const buildFlatViewMaps = (
 const computeUpdates = (
   flatViewByObjectUniversalIdentifier: Record<
     string,
-    typeof seedDefaultsFlatView | undefined
+    InitialObjectViewFixture | undefined
   >,
 ) =>
   computeInitialObjectViewDefaultUpdates({
