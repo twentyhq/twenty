@@ -9,6 +9,7 @@ export enum TargetFunction {
   DefinePostInstallLogicFunction = 'definePostInstallLogicFunction',
   DefinePreInstallLogicFunction = 'definePreInstallLogicFunction',
   DefineUninstallLogicFunction = 'defineUninstallLogicFunction',
+  DefineHealthCheck = 'defineHealthCheck',
   DefineObject = 'defineObject',
   DefinePermissionFlag = 'definePermissionFlag',
   DefineRole = 'defineRole',
@@ -69,6 +70,7 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
     ManifestEntityKey.LogicFunctions,
   [TargetFunction.DefineUninstallLogicFunction]:
     ManifestEntityKey.LogicFunctions,
+  [TargetFunction.DefineHealthCheck]: ManifestEntityKey.LogicFunctions,
   [TargetFunction.DefineObject]: ManifestEntityKey.Objects,
   [TargetFunction.DefinePermissionFlag]: ManifestEntityKey.PermissionFlags,
   [TargetFunction.DefineRole]: ManifestEntityKey.Roles,
