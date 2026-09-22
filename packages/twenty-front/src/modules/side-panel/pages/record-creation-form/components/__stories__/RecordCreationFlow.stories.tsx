@@ -364,6 +364,20 @@ export const Cancel: Story = {
   },
 };
 
+export const CancelWithEscapeFromFocusedField: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: /Create company/ }),
+    );
+    const nameInput = await canvas.findByRole('textbox');
+    await waitFor(() => expect(nameInput).toHaveFocus());
+    await userEvent.keyboard('{Escape}');
+    await expect(await canvas.findByText('Creation cancelled')).toBeVisible();
+    await expect(createCompanyRequest).not.toHaveBeenCalled();
+  },
+};
+
 const createCompanyFromCommandMenu = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
   await userEvent.click(await canvas.findByText('Create Company'));
