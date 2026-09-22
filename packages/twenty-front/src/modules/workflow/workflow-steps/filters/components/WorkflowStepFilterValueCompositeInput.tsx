@@ -1,3 +1,4 @@
+import { FormCurrencyAmountFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyAmountFieldInput';
 import { FormCountryMultiSelectInput } from '@/object-record/record-field/ui/form-types/components/FormCountryMultiSelectInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
@@ -67,7 +68,7 @@ export const WorkflowStepFilterValueCompositeInput = ({
             readonly={readonly}
           />
         ) : subFieldName === 'amountMicros' ? (
-          <FormNumberFieldInput
+          <FormCurrencyAmountFieldInput
             defaultValue={stepFilter.value}
             onChange={onChange}
             VariablePicker={WorkflowVariablePicker}

@@ -1,6 +1,6 @@
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
-import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
+import { FormCurrencyAmountFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyAmountFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FormFieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -65,12 +65,11 @@ export const FormCurrencyFieldInput = ({
           VariablePicker={VariablePicker}
           readonly={readonly}
         />
-        <FormNumberFieldInput
-          label={t`Amount Micros`}
+        <FormCurrencyAmountFieldInput
+          label={t`Amount`}
           defaultValue={defaultValue?.amountMicros ?? ''}
           onChange={handleAmountMicrosChange}
           VariablePicker={VariablePicker}
-          hint={t`Enter amount x 1 000 000 (e.g. $3.21 → 3210000)`}
           readonly={readonly}
         />
       </FormNestedFieldInputContainer>

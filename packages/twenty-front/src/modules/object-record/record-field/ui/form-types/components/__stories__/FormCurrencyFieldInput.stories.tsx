@@ -31,7 +31,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText('Currency Code');
-    await canvas.findByText('Amount Micros');
+    await canvas.findByText('Amount');
   },
 };
 
@@ -46,10 +46,12 @@ export const WithVariable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const amountMicros = await canvas.findAllByText('Amount Micros');
+    const amount = await canvas.findByText('Amount');
+    const amountMicrosVariable = await canvas.findByText('Amount Micros');
     const currencyCode = await canvas.findAllByText('Currency Code');
 
-    expect(amountMicros).toHaveLength(2);
+    expect(amount).toBeVisible();
+    expect(amountMicrosVariable).toBeVisible();
     expect(currencyCode).toHaveLength(2);
   },
 };
@@ -80,7 +82,7 @@ export const Disabled: Story = {
     const currency = await canvas.findByText(/USD/);
     expect(currency).toBeVisible();
 
-    const amountInput = await canvas.findByDisplayValue('44000000');
+    const amountInput = await canvas.findByDisplayValue('44');
     expect(amountInput).toBeVisible();
     expect(amountInput).toBeDisabled();
 
