@@ -4,8 +4,8 @@ export const toMediaSessionMediaTypes = ({
   audio,
   video,
 }: {
-  audio: unknown;
-  video: unknown;
+  audio: boolean;
+  video: boolean;
 }): MediaSessionMediaType[] => [
   ...(audio ? (['audio'] as const) : []),
   ...(video ? (['video'] as const) : []),

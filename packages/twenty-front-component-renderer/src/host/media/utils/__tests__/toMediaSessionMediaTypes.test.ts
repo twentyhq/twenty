@@ -17,18 +17,9 @@ describe('toMediaSessionMediaTypes', () => {
     );
   });
 
-  it('should reduce a detailed constraint object to its kind', () => {
-    expect(
-      toMediaSessionMediaTypes({
-        audio: false,
-        video: { deviceId: { exact: 'a-specific-camera' } },
-      }),
-    ).toEqual(['video']);
-  });
-
-  it('should ignore values the worker sends that are not booleans', () => {
-    expect(toMediaSessionMediaTypes({ audio: undefined, video: null })).toEqual(
-      [],
-    );
+  it('should derive video without requesting audio', () => {
+    expect(toMediaSessionMediaTypes({ audio: false, video: true })).toEqual([
+      'video',
+    ]);
   });
 });
